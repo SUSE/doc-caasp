@@ -1,0 +1,35 @@
+= SUSE Container as a Service Platform Documentation
+
+This is the source for the official SUSE Container as a Service Platform documentation
+
+Released versions of the documentation will be published at
+https://www.suse.com/documentation/ once available.
+
+== Contributing
+
+If you would like to contribute, please fork this repository and send
+pull requests. Always use the `develop` branch for your edits! +
+Contributors with direct access to the repository are encouraged to use the
+git-flow-avh workflow (package `git-flow-avh`). However, this is not a must.
+For help on style and structure, refer to the https://doc.opensuse.org/products/opensuse/Styleguide/opensuse_documentation_styleguide_sd/[Documentation Styleguide] 
+
+
+.*No commits to master*
+NOTE: Please do not make any commits to the `master` branch. `master` is
+reserved for releases only. Always commit to `develop`.
+
+== Editing DocBook
+
+To contribute to the documentation, you need to write DocBook.
+
+* You can learn about DocBook syntax at http://docbook.org/tdg5/en/html .
+* SUSE documents are generally built with DAPS (package `daps`) and the
+  SUSE XSL Stylesheets (package `suse-xsl-stylesheets`). It's available as a
+  SUSE rpm package from the the SUSE repository http://download.opensuse.org/repositories/Documentation:/Tools/[Documentation:Tools] or
+  directly from https://github.com/openSUSE/suse-xsl/[Github].
+* Basic daps usage:
+** `$ daps -d DC-<YOUR_BOOK> validate`: Make sure what you have written is
+    well-formed XML and valid DocBook 5
+** `$ daps -d DC-<YOUR_BOOK> pdf`: Build a PDF document
+** `$ daps -d DC-<YOUR_BOOK> html`: Build multi-page HTML document
+** Learn more at https://opensuse.github.io/daps
