@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE preface
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<chapter version="5.0" xml:id="preface.deployment"
+  xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xlink="http://www.w3.org/1999/xlink">
+ <info>
+  <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
+   <dm:bugtracker></dm:bugtracker>
+   <dm:translation>yes</dm:translation>
+  </dm:docmanager>
+ </info>
+ <title>About &productname;</title>
+ <para>
+  &productname; is a platform designed for fast deployment of container-based applications. You can deploy &productname; on you physical machines or you can use on virtual machines. After you deploy it, it is ready to run out of the box. It provides high scalability of your cluster&mdash;from 10 to 1000 nodes.
+  To enable as fast application deployment as possible, it is recommended to use container orchestration framework, e.g. Kubernetes.
+ </para>
+ <para>
+  While &productname; inherits benefits of &sle; uses tools and technologies well-known to system administrators&mdash;like <literal>cloud-init</literal> or Kubernetes&mdash;the main inovation (compared to &sls;) comes with <emphasis role="bold">transactional updates</emphasis>. A transactional update is an update that can be installed when the system is running without any down time. The transaction update can be rolled back, so if the upgrade fails or the update is not compatible with your infrastructure, you can restore the previous state. 
+ </para>
+ <sect1 xml:id="architecture">
+  <title>&productname; Architecture</title>
+  <para>
+   Minimal deployment consists of one server as an administration node, one dedicated for the container orchestration framework administration node, and at least two servers used as workers.
+  </para>
+ </sect1>
+ </chapter>
