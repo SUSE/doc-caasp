@@ -5,7 +5,7 @@
     %entities;
 ]>
 <!-- Converted by suse-upgrade version 1.1 -->
-<chapter version="5.0" xml:id="about.deployment"
+<chapter version="5.0" xml:id="deployment.about"
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -17,16 +17,16 @@
  </info>
  <title>About &productname;</title>
  <para>
-  &productname; is a platform designed for fast deployment of container-based applications. You can deploy &productname; on you physical machines or you can use it on virtual machines. After you deploy it, it is ready to run out of the box. It provides high scalability of your cluster&mdash;from 10 to 1000 nodes.
-  To enable as fast application deployment as possible, it is recommended to use container orchestration framework, e.g. Kubernetes.
+  &productname; is a platform designed for fast deployment of container-based applications. You can deploy &productname; on you physical machines or you can use it on virtual machines. After you deploy it, it is ready to run out of the box. It provides high scalability of your cluster&mdash;from 10 to 1000 nodes. 
+ </para>
+ <para>
+  &productname; was designed to simplify transformation of applications into container-based applications. Creating clouds with container-based application is much easier as you get rid off problems with compatibility and depenencies. To enable as fast application deployment as possible, it is recommended to use container orchestration framework, e.g. Kubernetes.
  </para>
  <para>
   While &productname; inherits benefits of &sle; uses tools and technologies well-known to system administrators&mdash;like <literal>cloud-init</literal>,  Kubernetes or Salt&mdash;the main inovation (compared to &sls;) comes with <emphasis role="bold">transactional updates</emphasis>. A transactional update is an update that can be installed when the system is running without any down time. The transaction update can be rolled back, so if the upgrade fails or the update is not compatible with your infrastructure, you can restore the previous state. 
  </para>
- <sect1 xml:id="architecture">
-  <title>&productname; Architecture</title>
-  <para>
-   &productname; uses the BTRFs the file system with the fokllowing characteristic:
+ <para>
+   &productname; uses the BTRFs file system with the following characteristic:
   </para>
   <itemizedlist>
    <listitem>
@@ -39,6 +39,62 @@
      Subvolumes for data sharing are read-write.
     </para>
    </listitem>
+   <listitem>
+    <para>
+     &productname; introduces overlays of <literal>/etc</literal> directories used by <literal>cloud-init</literal> and &salt;
+    </para>
+   </listitem>
   </itemizedlist>
+ <sect1 xml:id="caasp.architecture">
+  <title>&productname; Architecture</title>
+  <para>
+   A typical &productname; cluster consists of several types of nodes:
+  </para>
+  <itemizedlist>
+   <listitem>
+    <para>
+     &admin_node; - is a &smaster; that assigns roles to &sminion;s 
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     Kubernetes master - is a &sminion; that manages all containers.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     Kubernetes worker - is a &sminion; that runs containers.
+    </para>
+   </listitem>
+  </itemizedlist>
+  <para>
+   In large-scale clusters, there are other nodes that can help you to manage and run the cluster:
+  </para>
+  <itemizedlist>
+   <listitem>
+    <para>
+     a local &smt; server that manages subscriptions for workers and so decreases the traffic to &scc;
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     a log server that stores logs of cluster nodes.
+    </para>
+   </listitem>
+  </itemizedlist>
+  <para>
+   The following figure illustrates interactions of the nodes.
+  </para>
+  <figure xml:id="caasp.cluster.architecture">
+   <title>&productname; Nodes Architecture</title>
+   <mediaobject>
+    <imageobject>
+     <imagedata fileref="caasp_architecture.svg" format="SVG"/>
+    </imageobject>
+   </mediaobject>
+  </figure>
+ 
+  
+  
  </sect1>
  </chapter>
