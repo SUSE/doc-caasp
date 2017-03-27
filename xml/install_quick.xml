@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="urn:x-suse:xslt:profiling:docbook50-profile.xsl"
+ type="text/xml"
+ title="Profiling step"?>
+<!DOCTYPE article
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<?provo dirname="installquick/"?>
+<article version="5.1" xml:lang="en" xml:id="art.caasp.quickstart"
+ xmlns="http://docbook.org/ns/docbook"
+ xmlns:xi="http://www.w3.org/2001/XInclude"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <?suse-quickstart color="suse"?>
+ <title>&instquick;</title>
+ <subtitle>&productname; &productnumber;</subtitle>
+ <info>
+  <productnumber>&productnumber;</productnumber><productname>&productname;</productname><date>
+<?dbtimestamp format="B d, Y"?></date>
+  <abstract>
+   <para>
+    &abstract_installquick;
+   </para>
+
+   <para>
+    Use the following procedures to install a new version of &productnamereg;
+    &productnumber;. This document gives a quick overview on how to run through
+    a default installation of &productname; for the &amd64;/&intel64;
+    architecture.
+   </para>
+  </abstract>
+  <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
+   <dm:bugtracker></dm:bugtracker>
+   <dm:translation>yes</dm:translation>
+  </dm:docmanager>
+ </info>
+<?suse-quickstart color="suse"?>
+ <sect1 xml:id="sec.caasp.installquick">
+  <title>Welcome to &productname;</title>
+
+  <para>
+   For more detailed installation instructions and deployment strategies, see
+   the &productname; Documentation at
+   <link xlink:href="http://www.suse.com/documentation/"/>.
+  </para>
+
+  <sect2 xml:id="sec.caasp.installquick.sysreqs">
+   <title>Minimum System Requirements</title>
+   <itemizedlist mark="bullet" spacing="normal">
+    <listitem>
+     <para>
+      any AMD64/Intel* EM64T processor (32-bit processors are not supported)
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      512 MB physical RAM (1 GB or more recommended)
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      11 GB available disk space (more recommended)
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      800 x 600 display resolution (1024 x 768 or higher recommended)
+     </para>
+    </listitem>
+   </itemizedlist>
+  </sect2>
+
+  <sect2 xml:id="sec.caasp.installquick.install">
+   <title>Installing &productname;</title>
+   <para>
+    Use these instructions if there is no existing Linux system on your
+    machine, or if you want to replace an existing Linux system.
+   </para>
+   <procedure>
+    <step>
+     <para>
+      Insert the &productname; DVD into the drive, then reboot the computer to
+      start the installation program. On machines with a traditional BIOS you
+      will see the graphical boot screen shown below. On machines equipped with
+      UEFI, a slightly different boot screen is used. Secure boot on UEFI
+      machines is supported.
+     </para>
+     <para>
+      Use <keycap>F2</keycap> to change the language for the installer. A
+      corresponding keyboard layout is chosen automatically. <!-- See
+      <xref linkend="sec.i.yast2.bootscreen"/> or
+      <xref linkend="sec.i.yast2.bootscreen_uefi"/> for more information about
+      changing boot options. -->
+     </para>
+     <informalfigure>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="install_boot.png" width="100%"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="install_boot.png" width="100%"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+    </step>
+    <step>
+     <para>
+      Select <guimenu>Installation</guimenu> on the boot screen, then press
+      <keycap function="enter"/>. This boots the system and loads the
+      &productname; installer.
+     </para>
+    </step>
+    <step>
+     <para>
+      Enter the <guimenu>Registration Code or SMT Server URL</guimenu>.
+     </para>
+     
+     <para>
+      Set a <guimenu>Password for root User</guimenu> and confirm it.
+     </para>
+     <para>
+      Type a password for the system administrator account (called the
+      &rootuser; user).
+     </para>
+     <para>
+      You should never forget the &rootuser; password! After you entered it
+      here, the password cannot be retrieved. <!-- See
+       <xref linkend="sec.i.yast2.user.root"/> for more information. --> Proceed
+      with <guimenu>Next</guimenu>.
+     </para>
+     
+     <para>
+      Select the <guimenu>Keyboard Layout</guimenu>. 
+     </para>
+     <para>
+      The <guimenu>Language</guimenu> and <guimenu>Keyboard Layout</guimenu>
+      are initialized with the language settings you have chosen on the boot
+      screen. Change them here, if necessary.
+     </para>
+     
+     <para>
+      Select the <guimenu>System Role</guimenu> for your system.
+     </para>
+     
+     <!-- <para>
+      Read the License Agreement. It is presented in the language you have
+      chosen on the boot screen. <guimenu>License Translations</guimenu> are
+      available. You need to accept the agreement by checking <guimenu>I Agree
+      to the License Terms</guimenu> to install &productname;. Proceed with
+      <guimenu>Next</guimenu>.
+     </para>  -->
+     <informalfigure>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="install_overview_admin.png" width="100%"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="install_overview_admin.png" width="100%"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+
+     <para>
+      Optionally, you can customize the following settings. If you don not customize the, defaults are used. A brief summary of the settings is displayed below.
+     </para>
+     <variablelist>
+      <varlistentry>
+       <term>
+        Partitioning
+       </term>
+       <listitem>
+        <para>
+         
+        </para>
+        <warning>
+         <title>
+          Enough disk space for snapshots
+         </title>
+         <para>
+          At least 11 GB are required for snapshots.
+         </para>
+        </warning>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>
+        Booting
+       </term>
+       <listitem>
+        <para>
+         This section shows the boot loader configuration. Changing the
+         defaults is only recommended if really needed. <!-- Refer to
+          <xref linkend="cha.grub2"/> for details. -->
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>
+        Network Configuration
+       </term>
+       <listitem>
+        <para>
+         A system analysis is performed, where the installer probes for storage
+         devices, and tries to find other installed systems. If the network could
+         not be automatically configured while starting the installation system,
+         the <guimenu>Network Settings</guimenu> dialog opens.
+        </para>
+        <para>
+         After at least one network interface has been configured you can register
+         your system at the &scc; (SCC). Enter the e-mail address associated with
+         your SCC account and the registration code for &productname;. A
+         successful registration is a prerequisite for getting product updates and
+         being entitled to technical support. Proceed with
+         <guimenu>Next</guimenu>.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>
+        Kdump
+       </term>
+       <listitem>
+        <para>
+         Kdump saves the memory image (<quote>core dump</quote>) to the file
+         system in case the kernel crashes. This enables you to find the cause
+         of the crash by debugging the dump file. Kdump is preconfigured and
+         enabled by default. <!-- See <xref linkend="cha.tuning.kdump.basic"/> for
+          more information. -->
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>
+        System Information
+       </term>
+       <listitem>
+        <para>
+         View detailed hardware information by clicking
+         <guimenu>System Information</guimenu>. In the resulting screen you can also change
+         <guimenu>Kernel Settings</guimenu>&mdash;. <!-- See
+          <xref linkend="sec.i.yast2.proposal.system"/> for more information. -->
+        </para>
+       </listitem>
+      </varlistentry>
+     </variablelist>
+     
+    </step>
+    <step>
+     <tip>
+      <title>Installing Product Patches at Installation Time</title>
+      <para>
+       If &productname; has been successfully registered at the &scc;, you are
+       asked whether to install the latest available online updates during the
+       installation. If choosing <guimenu>Yes</guimenu>, the system will be
+       installed with the most current packages without having to apply the
+       updates after installation. Activating this option is recommended.
+      </para>
+     </tip>
+     <note>
+      <title>Release Notes</title>
+      <para>
+       From this point on, the Release Notes can be viewed from any screen
+       during the installation process by selecting <guimenu>Release
+       Notes</guimenu>.
+      </para>
+     </note>
+    </step>
+    <step>
+     <para>
+      Review the partition setup proposed by the system. If necessary, change
+      it. You have the following options:
+     </para>
+     <variablelist>
+      <varlistentry>
+       <term><guimenu>Edit Proposal Settings</guimenu>
+       </term>
+       <listitem>
+        <para>
+         Lets you change options for the proposed settings, but not the
+         suggested partition layout itself.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term><guimenu>Create Partition Setup</guimenu>
+       </term>
+       <listitem>
+        <para>
+         Select a disk to which to apply the proposal.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term><guimenu>Expert Partitioner</guimenu>
+       </term>
+       <listitem>
+        <para>
+         Opens the <guimenu>Expert Partitioner</guimenu> <!-- described in
+          <xref linkend="sec.yast2.i_y2_part_expert"/> -->.
+        </para>
+       </listitem>
+      </varlistentry>
+     </variablelist>
+     <para>
+      To accept the proposed setup without any changes, choose
+      <guimenu>Next</guimenu> to proceed.
+     </para>
+    </step>
+    <step>
+     <para>
+      Use the <guimenu>Installation Settings</guimenu> screen to review
+      and&mdash;if necessary&mdash;change several proposed installation
+      settings. The current configuration is listed for each setting. To change
+      it, click the headline. Some settings, such as firewall or SSH can
+      directly be changed by clicking the respective links.
+     </para>
+    </step>
+    <step>
+     <para>
+      After you have finalized the system configuration on the
+      <guimenu>Installation Overview</guimenu> screen, click
+      <guimenu>Install</guimenu>. Up to this point no changes have been made to
+      your system. After you click <guimenu>Install</guimenu> a second time,
+      the installation process starts.
+     </para>
+     <informalfigure>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="install_confirm.png" width="100%"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="install_confirm.png" width="100%"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+    </step>
+    <step>
+     <para>
+      During the installation, the progress is shown in detail on the
+      <guimenu>Details</guimenu> tab.
+     </para>
+     <informalfigure os="sled">
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="install_perform_sled.png" width="100%"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="install_perform_sled.png" width="100%"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+     <informalfigure os="sles">
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="install_perform_sles.png" width="100%"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="install_perform_sles.png" width="100%"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+    </step>
+    <step>
+     <para>
+      After the installation routine has finished, the computer is rebooted
+      into the installed system. Log in and start &yast; to fine-tune the
+      system. <!-- If you are not using a graphical desktop or are working from
+      remote, refer to <xref linkend="cha.yast.text"/> for information on using
+      &yast; from a terminal. -->
+     </para>
+    </step>
+   </procedure>
+  </sect2>
+ </sect1>
+ <xi:include href="common_copyright_quick.xml"/>
+ <xi:include href="common_gfdl1.2_i.xml"/>
+</article>
