@@ -42,7 +42,7 @@
    </listitem>
    <listitem>
     <para>
-     &productname; introduces overlays of <literal>/etc</literal> directories used by <literal>cloud-init</literal> and Salt
+     &productname; introduces overlays of <literal>/etc</literal> directories used by <literal>cloud-init</literal> and &salt;
     </para>
    </listitem>
   </itemizedlist>
@@ -54,17 +54,24 @@
   <itemizedlist>
    <listitem>
     <para>
-     &admin_node; - is a &smaster; that assigns roles to &sminion;s. The node runs the GUI dashboard that manages the whole cluster. 
+     &admin_node; - is a &smaster; that assigns roles to &sminion;s. The node runs the GUI dashboard that manages the whole cluster.
     </para>
    </listitem>
    <listitem>
     <para>
-     Kubernetes master - is a role of a  &sminion; that manages all containers.
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     Kubernetes worker - is a role of a  &sminion; that runs containers.
+    &node; that can be assigned the following roles:
+     <itemizedlist>
+      <listitem>
+       <para>
+       Kubernetes master that manages all containers.
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+       Kubernetes worker that runs containers.
+       </para>
+      </listitem>
+     </itemizedlist>
     </para>
    </listitem>
   </itemizedlist>
@@ -94,7 +101,5 @@
     </imageobject>
    </mediaobject>
   </figure>
-  
-    
  </sect1>
  </chapter>
