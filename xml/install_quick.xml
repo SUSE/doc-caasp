@@ -71,8 +71,8 @@
    </itemizedlist>
   </sect2>
 
-  <sect2 xml:id="sec.caasp.installquick.install">
-   <title>Installing &productname;</title>
+  <sect2 xml:id="sec.caasp.installquick.install.controller">
+   <title>Installing a &productname; controller node</title>
    <para>
     Use these instructions if there is no existing Linux system on your
     machine, or if you want to replace an existing Linux system.
@@ -112,44 +112,116 @@
      </para>
     </step>
     <step>
-     <para>
-      Enter the <guimenu>Registration Code or SMT Server URL</guimenu>.
-     </para>
-     
-     <para>
-      Set a <guimenu>Password for root User</guimenu> and confirm it.
-     </para>
-     <para>
-      Type a password for the system administrator account (called the
-      &rootuser; user).
-     </para>
-     <para>
-      You should never forget the &rootuser; password! After you entered it
-      here, the password cannot be retrieved. <!-- See
-       <xref linkend="sec.i.yast2.user.root"/> for more information. --> Proceed
-      with <guimenu>Next</guimenu>.
-     </para>
-     
-     <para>
-      Select the <guimenu>Keyboard Layout</guimenu>. 
-     </para>
-     <para>
-      The <guimenu>Language</guimenu> and <guimenu>Keyboard Layout</guimenu>
-      are initialized with the language settings you have chosen on the boot
-      screen. Change them here, if necessary.
-     </para>
-     
-     <para>
-      Select the <guimenu>System Role</guimenu> for your system.
-     </para>
-     
      <!-- <para>
       Read the License Agreement. It is presented in the language you have
       chosen on the boot screen. <guimenu>License Translations</guimenu> are
       available. You need to accept the agreement by checking <guimenu>I Agree
       to the License Terms</guimenu> to install &productname;. Proceed with
       <guimenu>Next</guimenu>.
-     </para>  -->
+      </para>  -->
+     <para>
+      Enter the following mandatory settings on the
+      <guimenu>Installation Overview</guimenu> screen.
+     </para>
+     <note>
+      <title>Help and Release Notes</title>
+      <para>
+       From this point on, a brief help document and the Release Notes can be
+       viewed from any screen during the installation process by selecting
+       <guimenu>Help</guimenu> or <guimenu>Release Notes</guimenu> respectively.
+      </para>
+     </note>
+
+     <variablelist>
+      <varlistentry>
+       <term>
+        Registration Code or SMT Server URL
+       </term>
+       <listitem>
+        <para>
+         Enter the <guimenu>Registration Code or SMT Server URL</guimenu>. SMT
+         Server URLs must use the <literal>https</literal> or
+         <literal>http</literal> protocol; other schemes are not supported.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>
+        Password for root User
+       </term>
+       <listitem>
+        <para>
+         Type a password for the system administrator account (called the
+         &rootuser; user) and confirm it.
+        </para>
+        <warning>
+         <title>
+          Do not forget the &rootuser; Password
+         </title>
+         <para>
+          You should never forget the &rootuser; password! After you entered it
+          here, the password cannot be retrieved. <!-- See
+           <xref linkend="sec.i.yast2.user.root"/> for more information. -->
+         </para>
+        </warning>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>
+        Keyboard Layout
+       </term>
+       <listitem>
+        <para>
+         The <guimenu>Keyboard Layout</guimenu> is initialized with the language
+         settings you have chosen on the boot screen. Change it here, if necessary.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>
+        System Role
+       </term>
+       <listitem>
+        <para>
+         Select the <guimenu>System Role</guimenu> for your system.
+        </para>
+        <variablelist>
+         <varlistentry>
+          <term>
+           Administration Dashboard
+          </term>
+          <listitem>
+           <para>
+            The controller node providing the administration dashboard for the
+            cluster.
+           </para>
+          </listitem>
+         </varlistentry>
+         <varlistentry>
+          <term>
+           Worker
+          </term>
+          <listitem>
+           <para>
+            A cluster node running containers.
+           </para>
+          </listitem>
+         </varlistentry>
+         <varlistentry>
+          <term>
+           Plain System
+          </term>
+          <listitem>
+           <para>
+            A plain node that is part of the cluster but not used for running containers.
+           </para>
+          </listitem>
+         </varlistentry>
+        </variablelist>
+       </listitem>
+      </varlistentry>
+     </variablelist>
+
      <informalfigure>
       <mediaobject>
        <imageobject role="fo">
@@ -162,7 +234,9 @@
      </informalfigure>
 
      <para>
-      Optionally, you can customize the following settings. If you don not customize the, defaults are used. A brief summary of the settings is displayed below.
+      Optionally, you can customize the following settings. If you do not make
+      any changes, defaults are used. A brief summary of the settings is
+      displayed below the respective settings option.
      </para>
      <variablelist>
       <varlistentry>
@@ -171,16 +245,70 @@
        </term>
        <listitem>
         <para>
-         
+         Review the partition setup proposed by the system and change it if
+         necessary. You have the following options:
         </para>
-        <warning>
-         <title>
-          Enough disk space for snapshots
-         </title>
-         <para>
-          At least 11 GB are required for snapshots.
-         </para>
-        </warning>
+        <variablelist>
+         <varlistentry>
+          <term>
+           Select a harddisk
+          </term>
+          <listitem>
+           <para>
+            Select a disk to which install &productname; to with the
+            recommended partitioning scheme.
+           </para>
+          </listitem>
+         </varlistentry>
+         <varlistentry>
+          <term><guimenu>Custom Partitioning (for Experts)</guimenu>
+          </term>
+          <listitem>
+           <para>
+            Opens the <guimenu>Expert Partitioner</guimenu><!--described in
+             <xref linkend="sec.yast2.i_y2_part_expert"/>-->.
+           </para>
+           <warning>
+            <title>
+             For Experts only
+            </title>
+            <para>
+             As the name suggests, the <guimenu>Expert Partitioner</guimenu>
+             is for experts only. Custom partitioning schemes that do not meet
+             the requirements of &productname; are not supported.
+            </para>
+            <itemizedlist>
+             <title>
+              Requirements for custom partitioning schemes
+             </title>
+             <listitem>
+              <para>
+               &productname; exclusively supports the file system types &btrfs; 
+               and OverlayFS. A read-only &btrfs; file system is used for the
+               root file system which enables transactional updates.
+              </para>
+             </listitem>
+             <listitem>
+              <para>
+               For snapshots, partitions must have a capacity of at least 11 GB.
+              </para>
+             </listitem>
+             <listitem>
+              <para>
+               Depending on the number and size of your containers, you will
+               need sufficient space under the <literal>/var</literal> mount
+               point.
+              </para>
+             </listitem>
+            </itemizedlist>
+           </warning>
+          </listitem>
+         </varlistentry>
+        </variablelist>
+        <para>
+         To accept the proposed setup without any changes, choose
+         <guimenu>Next</guimenu> to proceed.
+        </para>
        </listitem>
       </varlistentry>
       <varlistentry>
@@ -201,18 +329,9 @@
        </term>
        <listitem>
         <para>
-         A system analysis is performed, where the installer probes for storage
-         devices, and tries to find other installed systems. If the network could
-         not be automatically configured while starting the installation system,
-         the <guimenu>Network Settings</guimenu> dialog opens.
-        </para>
-        <para>
-         After at least one network interface has been configured you can register
-         your system at the &scc; (SCC). Enter the e-mail address associated with
-         your SCC account and the registration code for &productname;. A
-         successful registration is a prerequisite for getting product updates and
-         being entitled to technical support. Proceed with
-         <guimenu>Next</guimenu>.
+         If the network could not be automatically configured while starting
+         the installation system, you have to manually configure the
+         <guimenu>Network Settings</guimenu>.
         </para>
        </listitem>
       </varlistentry>
@@ -238,15 +357,16 @@
         <para>
          View detailed hardware information by clicking
          <guimenu>System Information</guimenu>. In the resulting screen you can also change
-         <guimenu>Kernel Settings</guimenu>&mdash;. <!-- See
+         <guimenu>Kernel Settings</guimenu>.<!--&mdash; See
           <xref linkend="sec.i.yast2.proposal.system"/> for more information. -->
         </para>
        </listitem>
       </varlistentry>
      </variablelist>
      
-    </step>
-    <step>
+     <para>
+      Proceed with <guimenu>Next</guimenu>.
+     </para>
      <tip>
       <title>Installing Product Patches at Installation Time</title>
       <para>
@@ -257,64 +377,6 @@
        updates after installation. Activating this option is recommended.
       </para>
      </tip>
-     <note>
-      <title>Release Notes</title>
-      <para>
-       From this point on, the Release Notes can be viewed from any screen
-       during the installation process by selecting <guimenu>Release
-       Notes</guimenu>.
-      </para>
-     </note>
-    </step>
-    <step>
-     <para>
-      Review the partition setup proposed by the system. If necessary, change
-      it. You have the following options:
-     </para>
-     <variablelist>
-      <varlistentry>
-       <term><guimenu>Edit Proposal Settings</guimenu>
-       </term>
-       <listitem>
-        <para>
-         Lets you change options for the proposed settings, but not the
-         suggested partition layout itself.
-        </para>
-       </listitem>
-      </varlistentry>
-      <varlistentry>
-       <term><guimenu>Create Partition Setup</guimenu>
-       </term>
-       <listitem>
-        <para>
-         Select a disk to which to apply the proposal.
-        </para>
-       </listitem>
-      </varlistentry>
-      <varlistentry>
-       <term><guimenu>Expert Partitioner</guimenu>
-       </term>
-       <listitem>
-        <para>
-         Opens the <guimenu>Expert Partitioner</guimenu> <!-- described in
-          <xref linkend="sec.yast2.i_y2_part_expert"/> -->.
-        </para>
-       </listitem>
-      </varlistentry>
-     </variablelist>
-     <para>
-      To accept the proposed setup without any changes, choose
-      <guimenu>Next</guimenu> to proceed.
-     </para>
-    </step>
-    <step>
-     <para>
-      Use the <guimenu>Installation Settings</guimenu> screen to review
-      and&mdash;if necessary&mdash;change several proposed installation
-      settings. The current configuration is listed for each setting. To change
-      it, click the headline. Some settings, such as firewall or SSH can
-      directly be changed by clicking the respective links.
-     </para>
     </step>
     <step>
      <para>
@@ -340,23 +402,13 @@
       During the installation, the progress is shown in detail on the
       <guimenu>Details</guimenu> tab.
      </para>
-     <informalfigure os="sled">
+     <informalfigure>
       <mediaobject>
        <imageobject role="fo">
-        <imagedata fileref="install_perform_sled.png" width="100%"/>
+        <imagedata fileref="install_perform.png" width="100%"/>
        </imageobject>
        <imageobject role="html">
-        <imagedata fileref="install_perform_sled.png" width="100%"/>
-       </imageobject>
-      </mediaobject>
-     </informalfigure>
-     <informalfigure os="sles">
-      <mediaobject>
-       <imageobject role="fo">
-        <imagedata fileref="install_perform_sles.png" width="100%"/>
-       </imageobject>
-       <imageobject role="html">
-        <imagedata fileref="install_perform_sles.png" width="100%"/>
+        <imagedata fileref="install_perform.png" width="100%"/>
        </imageobject>
       </mediaobject>
      </informalfigure>
@@ -364,13 +416,208 @@
     <step>
      <para>
       After the installation routine has finished, the computer is rebooted
-      into the installed system. Log in and start &yast; to fine-tune the
-      system. <!-- If you are not using a graphical desktop or are working from
-      remote, refer to <xref linkend="cha.yast.text"/> for information on using
-      &yast; from a terminal. -->
+      into the installed system.   
      </para>
     </step>
    </procedure>
+  </sect2>
+  
+  <sect2 xml:id="sec.caasp.installquick.controller.bootstrap">
+   <title>Bootstrapping a &productname; controller node</title>
+   <para>
+    In order to finalize the configuration and bootstrap your &productname;
+    cluster, a few additional steps are required.   
+   </para>
+   <procedure>
+    <step>
+     <para>
+      After the controller node has finished booting and you see the login
+      prompt, point a web browser to the hostname or IP address to open the
+      administration dashboard.
+     </para>
+     <informalfigure>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="velum_login.png" width="100%"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="velum_login.png" width="100%"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+    </step>
+    <step>
+     <para>
+      To create an Administrator account, click <guimenu>Create an
+      account</guimenu> and provide an e-mail address and a password. Confirm
+      the password and click <guimenu>Create Admin</guimenu>.
+     </para>
+     <informalfigure>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="velum_register.png" width="100%"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="velum_register.png" width="100%"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+    </step>
+    <step>
+     <para>
+     Log in with your new administrator account.
+     </para>
+     <informalfigure>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="velum_ca.png" width="100%"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="velum_ca.png" width="100%"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+     <para>
+      In order to secure transactions and communication between your cluster
+      nodes, it is required to generate certificates. Enter the necessary
+      information such as <guimenu>Company Name</guimenu> and
+      <guimenu>E-Mail</guimenu> for your certificate authority (CA). Click
+      <guimenu>Next</guimenu> to proceed.
+     </para>
+    </step>
+    <step>
+     <para>
+      In order to complete the installation, it is necessary to bootstrap a
+      few additional nodes, those will be the Kubernetes Master and Workers.
+      This process leverages &ay; and is (almost) fully automated.
+     </para>
+    </step>
+    <step>
+     <para>
+      The system will automatically discover all available cluster nodes on the
+      network. Select the master node and click <guimenu>Bootstrap
+      cluster</guimenu>. All other nodes will be set to the worker role.
+     </para>
+     <important>
+      <title>
+       Reliable Networking
+      </title>
+      <para>
+       Please make sure all nodes are on the same network and can
+       communicate without interruptions. If you are using host names to
+       specify nodes, please make sure you have reliable DNS resolution
+       at all times, especially in combination with DHCP.
+      </para>
+     </important>
+    </step>
+   </procedure>
+  </sect2> 
+    
+  <sect2 xml:id="sec.caasp.installquick.worker">
+   <title>Installing a &productname; worker</title>
+   <para>
+    Worker nodes can be installed manually or with &ay;. Manual installation is
+    only	feasible for a small number of workers. For larger numbers, &ay; is
+    recommended.
+   </para>
+   <para>
+    Before you can set up a worker, you have to install and bootstrap a
+    controller node to run the administration dashboard. Refer to
+    <xref linkend="sec.caasp.installquick.install.controller"/> for information
+    in how to install the controller node
+   </para>
+   <sect3 xml:id="sec.caasp.installquick.worker.manual">
+    <title>Manual Installation</title>
+    <procedure>
+     <step>
+      <para>
+       Follow the steps to described in 
+       <xref linkend="sec.caasp.installquick.install.controller"/>
+      </para>
+     </step>
+     <step>
+      <para>
+       In step 3, select <literal>Worker</literal> as <guimenu>System
+       Role</guimenu> and enter the host name or IP address of the 
+       <guimenu>Controller Node</guimenu>.
+      </para>
+      <important>
+       <title>
+        Reliable Networking
+       </title>
+       <para>
+        Please make sure all nodes are on the same network and can
+        communicate without interruptions. If you are using host names to
+        specify nodes, please make sure you have reliable DNS resolution
+        at all times, especially in combination with DHCP.
+       </para>
+      </important>
+     </step>
+    </procedure>
+   </sect3>
+   <sect3 xml:id="sec.caasp.installquick.worker.ay">
+    <title>Installation with &ay;</title>
+    <procedure>
+     <step>
+      <para>
+       Insert the &productname; DVD into the drive, then reboot the computer to
+       start the installation program.
+      </para>
+     </step>
+     <step>
+      <informalfigure>
+       <mediaobject>
+        <imageobject role="fo">
+         <imagedata fileref="install_boot_ay.png" width="100%"/>
+        </imageobject>
+        <imageobject role="html">
+         <imagedata fileref="install_boot_ay.png" width="100%"/>
+        </imageobject>
+       </mediaobject>
+      </informalfigure>
+      <para>
+       Select <guimenu>Installation</guimenu> on the boot screen. Enter the
+       necessary kernel parameters for &ay; and networking, namely
+      </para>
+      <variablelist>
+       <varlistentry>
+        <term>
+         autoyast
+        </term>
+        <listitem>
+         <para>
+          Path to the &ay; file. For more information, refer to
+          <link xlink:href="https://www.suse.com/documentation/sles-12/book_autoyast/data/invoking_autoinst.html#commandline_ay"></link>
+         </para>
+        </listitem>
+       </varlistentry>
+       <varlistentry>
+        <term>
+         netsetup
+        </term>
+        <listitem>
+         <para>
+          Network configration. If you are using dhcp, you can simply enter
+          <literal>dhcp</literal>. For manual configurations, refer to
+          <link xlink:href="https://www.suse.com/documentation/sles-12/singlehtml/book_autoyast/book_autoyast.html#ay.adv_network"></link>.
+         </para>
+        </listitem>
+       </varlistentry>
+      </variablelist>
+      <para> 
+       Press <keycap function="enter"/>. This boots the system and loads the
+       &productname; installer.
+      </para>
+     </step>
+     <step>
+      <para>
+       The rest of the installation will run fully automated. After a reboot,
+       the worker will be added to your cluster and should show up in the
+       dashboard. 
+      </para>
+     </step>
+    </procedure>
+   </sect3>
   </sect2>
  </sect1>
  <xi:include href="common_copyright_quick.xml"/>
