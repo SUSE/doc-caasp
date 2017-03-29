@@ -43,20 +43,28 @@
    <literal>cloud-init</literal> is used after the installation is complete. You then define a set of configuration files that will be applied during the boot phase.
   </para>
   <para>
-   The <literal>cloud-init</literal> configuration can be loaded from different sources: 
+   The <literal>cloud-init</literal> configuration can be loaded from different sources. The system searches for the configuration in the following order: 
   </para>
   <itemizedlist>
    <listitem>
     <para>
-     <literal>LocalDisk</literal> &ndash; <literal>cloud-init</literal> reads configuration from a local directory: <filename>/cloud-init-config</filename>
+     a local disk &ndash; <literal>cloud-init</literal> reads configuration from a local directory: <filename>/cloud-init-config</filename>
     </para>
    </listitem>
    <listitem>
     <para>
-     <literal>NoCloud</literal> &ndash; <literal>cloud-init</literal> reads configuration from a local directory or from a remote location.
+     any device that does not have a partition table and contains the <literal>vfat</literal> or <literal>iso9660</literal> filesystem &ndash; <literal>cloud-init</literal> reads configuration from a local directory or from a remote location.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+    remote location &ndash; you must specify an url of the remote location. You should set up the network before you try to use the remote configuration. You can use local configuration files to set up the network as described in <xref linkend="meta-data.config.file"/>.
     </para>
    </listitem>
   </itemizedlist>
+  <para>
+   If there is no configuration within the above mentioned locations, it is supposed that there is no <literal>cloud-init</literal> configuration.
+  </para>
   <para>
    <literal>cloud-init</literal> uses the following required configuration files: <filename>meta-data</filename>, <filename>user-data</filename>, and an optional file: <filename>vendor-data</filename>. Each file is described in the following sections.
   </para>
