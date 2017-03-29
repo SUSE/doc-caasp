@@ -24,9 +24,9 @@
    </para>
 
    <para>
-    Use the following procedures to install a new version of &productnamereg;
-    &productnumber;. This document gives a quick overview on how to run through
-    a default installation of &productname; for the &amd64;/&intel64;
+    Use the following procedures to set up a new &productnamereg;
+    &productnumber; cluster. This document gives a quick overview on how to run
+    through a default installation of &productname; for the &amd64;/&intel64;
     architecture.
    </para>
   </abstract>
@@ -37,7 +37,7 @@
  </info>
 <?suse-quickstart color="suse"?>
  <sect1 xml:id="sec.caasp.installquick">
-  <title>Welcome to &productname;</title>
+  <title>Installing &productname;</title>
 
   <para>
    For more detailed installation instructions and deployment strategies, see
@@ -120,9 +120,10 @@
       <guimenu>Next</guimenu>.
       </para>  -->
      <para>
-      Enter the following mandatory settings on the
-      <guimenu>Installation Overview</guimenu> screen.
+      Configure the following mandatory settings on the <guimenu>Installation
+      Overview</guimenu> screen.
      </para>
+
      <note>
       <title>Help and Release Notes</title>
       <para>
@@ -273,9 +274,9 @@
              For Experts only
             </title>
             <para>
-             As the name suggests, the <guimenu>Expert Partitioner</guimenu>
-             is for experts only. Custom partitioning schemes that do not meet
-             the requirements of &productname; are not supported.
+             As the name suggests, the <guimenu>Expert Partitioner</guimenu> is
+             for experts only. Custom partitioning schemes that do not meet the
+             requirements of &productname; are not supported.
             </para>
             <itemizedlist>
              <title>
@@ -329,10 +330,28 @@
        </term>
        <listitem>
         <para>
-         If the network could not be automatically configured while starting
+         If the network could not be configured automatically while starting
          the installation system, you have to manually configure the
-         <guimenu>Network Settings</guimenu>.
+         <guimenu>Network Settings</guimenu>. Please make sure at least one
+         network interface is connected to the internet in order to register
+         your product.
         </para>
+        <para>
+         By default, the installer will generate a unique host name. To set a
+         custom name, enter host and domain in the
+         <guimenu>Hostname/DNS</guimenu> tab.
+        </para>
+        <important>
+         <title>
+          Reliable Networking
+         </title>
+         <para>
+          Please make sure all nodes are on the same network and can
+          communicate without interruptions. If you are using host names to
+          specify nodes, please make sure you have reliable DNS resolution
+          at all times, especially in combination with DHCP.
+         </para>
+        </important>
        </listitem>
       </varlistentry>
       <varlistentry>
@@ -355,15 +374,14 @@
        </term>
        <listitem>
         <para>
-         View detailed hardware information by clicking
-         <guimenu>System Information</guimenu>. In the resulting screen you can also change
+         View detailed hardware information by clicking <guimenu>System
+         Information</guimenu>. In this screen you can also change
          <guimenu>Kernel Settings</guimenu>.<!--&mdash; See
           <xref linkend="sec.i.yast2.proposal.system"/> for more information. -->
         </para>
        </listitem>
       </varlistentry>
      </variablelist>
-     
      <para>
       Proceed with <guimenu>Next</guimenu>.
      </para>
@@ -416,7 +434,7 @@
     <step>
      <para>
       After the installation routine has finished, the computer is rebooted
-      into the installed system.   
+      into the installed system.
      </para>
     </step>
    </procedure>
@@ -433,7 +451,7 @@
      <para>
       After the controller node has finished booting and you see the login
       prompt, point a web browser to the hostname or IP address to open the
-      administration dashboard.
+      administration dashboard. The IP address is shown above the login prompt.
      </para>
      <informalfigure>
       <mediaobject>
@@ -488,27 +506,16 @@
     <step>
      <para>
       In order to complete the installation, it is necessary to bootstrap a
-      few additional nodes, those will be the Kubernetes Master and Workers.
+      few additional nodes; those will be the Kubernetes Master and Workers.
       This process leverages &ay; and is (almost) fully automated.
      </para>
     </step>
     <step>
      <para>
-      The system will automatically discover all available cluster nodes on the
+      The system will automatically discover available cluster nodes on the
       network. Select the master node and click <guimenu>Bootstrap
       cluster</guimenu>. All other nodes will be set to the worker role.
      </para>
-     <important>
-      <title>
-       Reliable Networking
-      </title>
-      <para>
-       Please make sure all nodes are on the same network and can
-       communicate without interruptions. If you are using host names to
-       specify nodes, please make sure you have reliable DNS resolution
-       at all times, especially in combination with DHCP.
-      </para>
-     </important>
     </step>
    </procedure>
   </sect2> 
@@ -577,7 +584,8 @@
       </informalfigure>
       <para>
        Select <guimenu>Installation</guimenu> on the boot screen. Enter the
-       necessary kernel parameters for &ay; and networking, namely
+       necessary <literal>Boot Options</literal> for &ay; and networking,
+       namely
       </para>
       <variablelist>
        <varlistentry>
