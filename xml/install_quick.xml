@@ -626,16 +626,42 @@
     </step>
     <step>
      <para>
-      In order to complete the installation, it is necessary to bootstrap a
-      few additional nodes; those will be the Kubernetes Master and Workers.
-      This process leverages &ay; and is (almost) fully automated.
+      To complete the installation, it is necessary to bootstrap a few
+      additional nodes; those will be the Kubernetes Master and Workers. This
+      process leverages &ay; and is (almost) fully automated.
+     </para>
+     <informalfigure>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="velum_nodes.png" width="100%"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="velum_nodes.png" width="100%"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+     <para>
+      The dashboard lists all worker nodes registered at the controller node.
+      Select the one that should become the Kubernetes master and click 
+      <guimenu>Bootstrap cluster</guimenu>. All other nodes will be set to the
+      worker role.
      </para>
     </step>
     <step>
+     <informalfigure>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="velum_status.png" width="100%"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="velum_status.png" width="100%"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
      <para>
-      The system will automatically discover available cluster nodes on the
-      network. Select the master node and click <guimenu>Bootstrap
-       cluster</guimenu>. All other nodes will be set to the worker role.
+      Please wait while the cluster is bootstrapped. Once finished, the status
+      indicator icon of the nodes changes accordingly and you can download the
+      <command>kubectl</command> configuration file.
      </para>
     </step>
    </procedure>
