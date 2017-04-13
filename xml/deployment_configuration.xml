@@ -43,7 +43,7 @@
    <literal>cloud-init</literal> is used after the installation is complete. You then define a set of configuration files that will be applied during the boot phase.
   </para>
   <para>
-   The <literal>cloud-init</literal> configuration can be loaded from different sources. The system searches for the configuration in the following order: 
+   The <literal>cloud-init</literal> configuration can be loaded from different sources. The system searches for the configuration file <filename>cloud.cfg</filename> in the following order: 
   </para>
   <itemizedlist>
    <listitem>
@@ -53,12 +53,12 @@
    </listitem>
    <listitem>
     <para>
-     any device that does not have a partition table and contains the <literal>vfat</literal> or <literal>iso9660</literal> filesystem &ndash; <literal>cloud-init</literal> reads configuration from a local directory or from a remote location.
+     a local media like DVD or ISO image without any partiions that are formated to <literal>vfat</literal> and have the label <literal>cidata</literal>.
     </para>
    </listitem>
    <listitem>
     <para>
-    remote location &ndash; you must specify an url of the remote location. You should set up the network before you try to use the remote configuration. You can use local configuration files to set up the network as described in <xref linkend="meta-data.config.file"/>.
+    remote location &ndash; you must specify an url of the remote location. You should set up the network before you try to use the remote configuration. You can use local configuration files to set up the network. The url looks as follows: <literal>cloud-init-url=http://my.example.com/cloud.cfg</literal>. The <filename>cloud.cfg</filename> is described in <xref linkend="cloud.config.file"/>. The content of the passed url is copied to <filename>/etc/cloud/cloud.cfg.d/91_kernel_cmdline_url.cfg</filename> and it is not overwritten even though the url changes.
     </para>
    </listitem>
   </itemizedlist>
@@ -66,15 +66,224 @@
    If there is no configuration within the above mentioned locations, it is supposed that there is no <literal>cloud-init</literal> configuration.
   </para>
   <para>
-   <literal>cloud-init</literal> uses the following required configuration files: <filename>meta-data</filename>, <filename>user-data</filename>, and an optional file: <filename>vendor-data</filename>. Each file is described in the following sections.
+   <literal>cloud-init</literal> uses the following required configuration: <filename>meta-data</filename>, <filename>user-data</filename>, and optionally: <filename>vendor-data</filename>. Each file is described in the following sections.
   </para>
+  
+  <sect2 xml:id="cloud.config.file">
+   <title>The <filename>cloud.cfg</filename> Configuration File</title>
+   <para>
+    The <filename>cloud.cfg</filename> is used to define a datasource and locations of other required configuration files. Use the <literal>#cloud-config</literal> syntax when defining the content.
+   </para>
+   <para>
+    An example with <literal>NoCloud</literal> datasource follows:
+   </para>
+   <screen>#cloud-config
+    datasource:
+     NoCloud:</screen>
+  </sect2>
   
   <sect2 xml:id="meta-data.config.file">
    <title>The <filename>meta-data</filename> Configuration File</title>
+   <para>
+    The file <filename>meta-data</filename> is a yaml formatted file that is intended to configure the system items like network, instance ID, etc. The file typically contains the <literal>instance-id</literal> and <literal>network-interfaces</literal> options, each is described further.
+   </para>
+   <variablelist>
+    <varlistentry>
+     <term><literal>instance-id</literal></term>
+     <listitem>
+      <para>
+      Defines the instance. If you perform any changes to the configuration (either <filename>user-data</filename> or <filename>meta-data</filename>) you have to update this option with another value. Thus the <literal>cloud-init</literal> recognizes if this the first boot of the particular instantiated host.
+      </para>
+      <screen>instance-id: iid-example001</screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+    </varlistentry>
+     <term><literal>network-interfaces</literal></term>
+     <listitem>
+      <para>
+       Here you can define the following options:
+        <itemizedlist>
+         <listitem>
+          <para>
+          <literal>auto</literal> to start the network in that configuration automatically during the boot phase.
+          </para>
+         </listitem>
+        </itemizedlist>
+      </para>
+     </listitem>
+   </variablelist>
   </sect2>
   
   <sect2 xml:id="user-data.config.file">
-   <title>The <filename>user-data</filename> Configuration File</title>
+   <title>The <filename>user-data</filename> Configuration File</title>   
+   <para>
+    The configuration file <filename>user-data</filename> is a yaml file used to configure users, ssh keys, time zone, etc. Each part of the file is described in following sections. 
+   </para>
+   
+   <sect3 xml:id="user-data.config.header">
+    <title><filename>user-data</filename> Header</title>
+   <para>
+    Each <filename>user-data</filename> file must start with <literal>#cloud-config</literal> that indicates the <literal>cloud-config</literal> format. In the snippet below you enable the debugging output and you disable passwordless authentification for &rootuser;. You'll have to login with the &rootuser; credentials then.
+   </para>
+   <screen>#cloud-config
+debug: True
+disable_root: False</screen>
+</sect3>
+
+<sect3 xml:id="user-data.config.runcmd.statements">
+   <title><literal>runcmd</literal> Statements</title>
+   <para>
+    In the <filename>user-data</filename> you can use the <literal>runcmd</literal> statement to run various command in your system. The <filename>user-data</filename> file can only contain only one <literal>runcmd<literal> statement, thus in case you need to run several commands, group them into one statement:
+   </para>
+   <screen>runcmd:
+    - /usr/bin/systemctl enable --now ntpd
+    - /usr/share/caasp-container-manifests/activate.sh</screen>
+    
+    <para>
+     By using the <literal>runcmd</literal> statement, you can perform the following in your system:
+    </para>
+    <variablelist>
+     <varlistentry>
+      <term>Configure keyboard layout</term>
+      <listitem>
+       <para>
+       configure the German keyboard layout with <emphasis>nodeadkeys</emphasis>:
+       </para>
+      <screen>runcmd:
+  - /usr/bin/localectl set-keymap de-latin1-nodeadkeys</screen>   
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>Enable and start the administration dashboard</term>
+      <listitem>
+       <para>
+        run the script <filename>activate.sh</filename> that imports the container needed for the administration dashboard and starts required services:
+       </para>
+       <screen>runcmd:
+ - /usr/share/caasp-container-manifests/activate.sh</screen>
+      </listitem>
+    </variablelist>
+  </sect3>
+
+<sect3 xml:id="user-data.config.authorized_keys">
+ <title>ssh Keys Managment</title>
+<para>
+ You can configure the behaviour of adding ssh keys to the <filename>authorized_keys</filename> and the ssh login pattern.
+</para>
+<screen>ssh_pwauth: True
+ssh_authorized_keys:
+  - ssh-rsa XXXKEY mail@example.com</screen>
+  <para>
+   The option <literal>ssh_authorized_keys</literal> defines whether the ssh key will be added to the <filename>authorized_keys</filename> file of the user. If <emphasis role="bold">not</emphasis> specified otherwise, the default user is &rootuser;.
+  </para>
+  <para>
+   The option <literal>ssh_pwauth: true</literal> allows you to login by using ssh with a password, if the password is set.
+  </para>
+  </sect3>
+  
+  <sect3 xml:id="user-data.config.setting.password">
+   <title>Setting Password</title>
+  <para>
+   The <filename>user-data</filename> file enables you to set default passwords by using the <literal>chpasswd</literal> option:
+  </para>
+  <screen>chpasswd:
+  list: |
+    root:linux
+  expire: True</screen>
+  <para>
+   In the example above you set a <emphasis>linux</emphasis> password for &rootuser;. The <literal>expire</literal> option defines whether the user will be prompted to change the default password at the first login.
+   </para>
+   </sect3>
+   
+   <sect3 xml:id="user-data.config.adding.custom.repository">
+    <title>Adding Custom Repository</title>
+    <para>
+     You can add a custom software repository to your system by using the <literal>zypp_repos</literal> option:
+    </para>
+    <screen>zypp_repos:
+  "Update Repo":
+      baseurl: http://my.example.com/CAASP/repo/SUSE-CAASP-1.0-CUSTOM/</screen>
+   </sect3>
+   
+   <sect3 xml:id="user-data.config.setting.timezone">
+    <title>Setting Timezone</title>
+    <para>
+     You can set a default timezone. Bear in mind that the configured value must exist in <filename>/usr/share/zoneinfo</filename>:
+    </para>
+    <screen>timezone: Europe/Berlin</screen>
+   </sect3>
+  
+  <sect3 xml:id="user-data.config.keyboard.layout">
+   <title>Setting Keyboard Layout</title>
+   <para>
+   To configure a default keyboard layout use the the following configuration that selects the german layout with <literal>nodeadkeys</literal>:
+   </para>
+   <screen>runcmd:
+  - /usr/bin/localectl set-keymap de-latin1-nodeadkeys</screen>
+  </sect3>
+  
+  <sect3 xml:id="user-data.config.keyboard.hostname">
+   <title>Setting Hostname</title>
+   <para>
+    You can set a particular hostname for the machine:
+   </para>
+   <screen>hostname: myhost
+fqdn: myhost.example.com</screen>
+  </sect3>
+  
+  <sect3 xml:id="user-data.config.nameserver">
+   <title>Configuring Nameserver</title>
+   <para>
+    You can configure the server to manage the <filename>resolv.conf</filename> file and thus set values of the file:
+   </para>
+   <screen>manage_resolv_conf: true
+resolv_conf:
+  nameservers: ['8.8.4.4', '8.8.8.8']
+  searchdomains:
+    - foo.example.com
+    - bar.example.com
+  domain: example.com
+  options:
+    rotate: true
+    timeout: 1</screen>
+  </sect3>
+  
+  <sect3 xml:id="user-data.config.ntp.server">
+   <title>NTP Server Configuration</title>
+   <para>
+    You can also configure the NTP server. The following snippet configures three NTP servers during the first boot and the NTP service is enabled and started: 
+   </para>
+   <screen>ntp:
+  servers:
+    - ntp1.example.com
+    - ntp2.example.com
+    - ntp3.example.com
+runcmd:
+  - /usr/bin/systemctl enable --now ntpd</screen>
+   
+  </sect3>
+  
+  <sect3 xml:id="user-data.config.salt.minion">
+   <title>&sminion; Configuration</title>
+   <para>
+    You can use the file to set the &sminion; and its communication with the &smaster;.
+   </para>
+   <screen>salt_minion:
+  conf:
+    master: saltmaster.example.com
+
+  public_key: |
+    -----BEGIN PUBLIC KEY-----
+    XXX
+    -----END PUBLIC KEY-----
+
+  private_key: |
+    -----BEGIN RSA PRIVATE KEY-----
+    XXX
+   -----END RSA PRIVATE KEY-----</screen>
+  </sect3>
+      
   </sect2>
   
   <sect2 xml:id="vendor-data.config.file">
