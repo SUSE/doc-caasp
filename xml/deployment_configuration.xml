@@ -1,5 +1,5 @@
- <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE preface
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter
 [
   <!ENTITY % entities SYSTEM "entity-decl.ent">
     %entities;
@@ -38,7 +38,7 @@
  </sect1>
  
  <sect1 xml:id="cloud-init.configuration">
-  <title><literal>cloud-init<literal> Configuration</title>
+  <title><literal>cloud-init</literal> Configuration</title>
   <para>
    <literal>cloud-init</literal> is used after the installation is complete. You then define a set of configuration files that will be applied during the boot phase.
   </para>
@@ -98,7 +98,7 @@
      </listitem>
     </varlistentry>
     <varlistentry>
-    </varlistentry>
+    
      <term><literal>network-interfaces</literal></term>
      <listitem>
       <para>
@@ -128,6 +128,7 @@
   broadcast 192.168.1.255
   gateway 192.168.1.1</screen>
      </listitem>
+ </varlistentry>
    </variablelist>
   </sect2>
   
@@ -150,7 +151,7 @@ disable_root: False</screen>
 <sect3 xml:id="user-data.config.runcmd.statements">
    <title><literal>runcmd</literal> Statements</title>
    <para>
-    In the <filename>user-data</filename> you can use the <literal>runcmd</literal> statement to run various commands in your system. The <filename>user-data</filename> file can only contain only one <literal>runcmd<literal> statement, thus in case you need to run several commands, group them into one statement:
+    In the <filename>user-data</filename> you can use the <literal>runcmd</literal> statement to run various commands in your system. The <filename>user-data</filename> file can only contain only one <literal>runcmd</literal> statement, thus in case you need to run several commands, group them into one statement:
    </para>
    <screen>runcmd:
     - /usr/bin/systemctl enable --now ntpd
@@ -179,6 +180,7 @@ disable_root: False</screen>
        <screen>runcmd:
  - /usr/share/caasp-container-manifests/activate.sh</screen>
       </listitem>
+</varlistentry>
     </variablelist>
   </sect3>
 
