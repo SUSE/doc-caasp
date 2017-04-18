@@ -109,8 +109,24 @@
           <literal>auto</literal> to start the network in that configuration automatically during the boot phase.
           </para>
          </listitem>
+         <listitem>
+          <para>
+           <literal>iface</literal> that defines the configured interfaces.
+          </para>
+         </listitem>
         </itemizedlist>
       </para>
+      <para>
+       A static network configuration then could look as follows:
+      </para>
+      <screen>network-interfaces: |
+  auto eth0
+  iface eth0 inet static
+  address 192.168.1.10
+  network 192.168.1.0
+  netmask 255.255.255.0
+  broadcast 192.168.1.255
+  gateway 192.168.1.1</screen>
      </listitem>
    </variablelist>
   </sect2>
@@ -134,7 +150,7 @@ disable_root: False</screen>
 <sect3 xml:id="user-data.config.runcmd.statements">
    <title><literal>runcmd</literal> Statements</title>
    <para>
-    In the <filename>user-data</filename> you can use the <literal>runcmd</literal> statement to run various command in your system. The <filename>user-data</filename> file can only contain only one <literal>runcmd<literal> statement, thus in case you need to run several commands, group them into one statement:
+    In the <filename>user-data</filename> you can use the <literal>runcmd</literal> statement to run various commands in your system. The <filename>user-data</filename> file can only contain only one <literal>runcmd<literal> statement, thus in case you need to run several commands, group them into one statement:
    </para>
    <screen>runcmd:
     - /usr/bin/systemctl enable --now ntpd
@@ -288,6 +304,12 @@ runcmd:
   
   <sect2 xml:id="vendor-data.config.file">
    <title>The <filename>vendor-data</filename> Configuration File</title>
+   <para>
+    The <filename>vendor-data</filename> is an optional configuration file that typically stores data related to the cloud you use. The data are provided by the entity that lanches the cloud instance.
+   </para>
+   <para>
+    The format is the same as used for <filename>user-data</filename>.
+   </para>
   </sect2>
  </sect1>
 </chapter>
