@@ -43,32 +43,51 @@
    <literal>cloud-init</literal> is used after the installation is complete. You then define a set of configuration files that will be applied during the boot phase.
   </para>
   <para>
-   The <literal>cloud-init</literal> configuration can be loaded from different sources. The system searches for the configuration file <filename>cloud.cfg</filename> in the following order: 
-  </para>
-  <itemizedlist>
-   <listitem>
+   The <literal>cloud-init</literal> configuration can be loaded from different data sources.Currently there are the following datasources:
+   </para>
+   
+   <itemizedlist>
+    <listitem>
+      <para>
+       the <literal>LocalDisk</literal> datasource
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       the <literal>NoCloud</literal> datasource
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       the <literal>None</literal> datasource, which means there is no <literal>cloud-init</literal> configuration.
+      </para>
+     </listitem>
+   </itemizedlist>
+   
+    
+   <para>
+    More details about the datasources are provided further.
+   </para>
+   
+   <sect2 xml:id="localdisk.datasource">
+    <title>The <literal>LocalDisk</literal> Datasource</title>
     <para>
-     a local disk &ndash; <literal>cloud-init</literal> reads configuration from a local directory: <filename>/cloud-init-config</filename>
+     The <literal>cloud-init</literal> searches for the configuration files: <filename>meta-data</filename>, <filename>user-data</filename> and optionally <filename>vendor-data</filename> in the local directory: <filename>/cloud-init-config</filename>
     </para>
-   </listitem>
-   <listitem>
+   </sect2>
+   
+   <sect2 xml:id="nocloud.datasource">
+    <title>The <literal>NoCloud</literal> Datasource</title>
     <para>
-     a local media like DVD or ISO image without any partiions that are formated to <literal>vfat</literal> and have the label <literal>cidata</literal>.
+     The <literal>NoCloud</literal> datasource enables you to read the <literal>cloud-init</literal> configuration without running a network service. <literal>cloud-init</literal> searches for the configuration files <filename>meta-data</filename>, <filename>user-data</filename> in a local filesystem formatted as <literal>vfat</literal> or <literal>iso9660</literal> with a label <literal>cidata</literal>. Typically it is a USB, DVD iso or unpartitioned disk. 
     </para>
-   </listitem>
-   <listitem>
     <para>
-    remote location &ndash; you must specify an url of the remote location. You should set up the network before you try to use the remote configuration. You can use local configuration files to set up the network. The url looks as follows: <literal>cloud-init-url=http://my.example.com/cloud.cfg</literal>. The <filename>cloud.cfg</filename> is described in <xref linkend="cloud.config.file"/>. The content of the passed url is copied to <filename>/etc/cloud/cloud.cfg.d/91_kernel_cmdline_url.cfg</filename> and it is not overwritten even though the url changes.
+     Alternatively you can specify a remote location of the <filename>cloud.cfg</filename>, but you have to configure network first, e.g. by using local configuration files. The url is specified during boot time and must be in the format: <literal>cloud-init-url=http://<replaceable>hostname.domain</replaceable>/cloud.cfg</literal>. The content of the passed url is copied to <filename>/etc/cloud/cloud.cfg.d/91_kernel_cmdline_url.cfg</filename> and it is not overwritten even though the url changes. 
     </para>
-   </listitem>
-  </itemizedlist>
-  <para>
-   If there is no configuration within the above mentioned locations, it is supposed that there is no <literal>cloud-init</literal> configuration.
-  </para>
-  <para>
-   <literal>cloud-init</literal> uses the following required configuration: <filename>meta-data</filename>, <filename>user-data</filename>, and optionally: <filename>vendor-data</filename>. Each file is described in the following sections.
-  </para>
-  
+   </sect2>  
+   
+    
+   
   <sect2 xml:id="cloud.config.file">
    <title>The <filename>cloud.cfg</filename> Configuration File</title>
    <para>
@@ -79,7 +98,11 @@
    </para>
    <screen>#cloud-config
     datasource:
-     NoCloud:</screen>
+     NoCloud:
+     # default seedfrom is None
+    # if found, then it should contain a url with:
+    #    &lt;url&gt;user-data and &lt;url&gt;meta-data
+    # seedfrom: http://my.example.com/&lt;path&gt;/</screen>
   </sect2>
   
   <sect2 xml:id="meta-data.config.file">
