@@ -29,12 +29,32 @@
  <para>
   The defaults for the first stage configuration are the following:
  </para>
- <itemizedlist>
+ <variablelist>
+  <varlistentry>
+   <term>timezone</term>
   <listitem>
    <para>
+    is set to <emphasis>UTC</emphasis> by default, but can be changed by <literal>cloud-init</literal>.
    </para>
   </listitem>
- </itemizedlist>
+  </varlistentry>
+  <varlistentry>
+   <term>keyboard</term>
+  <listitem>
+   <para>
+    is set to <emphasis>us</emphasis> by default, but can be changed during the installation process.
+   </para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+   <term>locale</term>
+  <listitem>
+   <para>
+    is set to <emphasis>en_US.utf8</emphasis> by default, but can be changed by <literal>cloud-init</literal>.
+   </para>
+  </listitem>
+  </varlistentry>
+ </variablelist>
  </sect1>
  
  <sect1 xml:id="cloud-init.configuration">
@@ -43,10 +63,10 @@
    <literal>cloud-init</literal> is used after the installation is complete. You then define a set of configuration files that will be applied during the boot phase.
   </para>
   <para>
-   The <literal>cloud-init</literal> configuration can be loaded from different data sources.Currently there are the following datasources:
+   The <literal>cloud-init</literal> configuration can be loaded from different data sources. Currently there are preconfigured the following datasources and <literal>cloud-init</literal> searches in them for configuration in the following order:
    </para>
    
-   <itemizedlist>
+   <orderedlist>
     <listitem>
       <para>
        the <literal>LocalDisk</literal> datasource
@@ -59,12 +79,12 @@
      </listitem>
      <listitem>
       <para>
-       the <literal>None</literal> datasource, which means there is no <literal>cloud-init</literal> configuration.
+       the <literal>OpenStack</literal> datasource - if there is a running OpenStack service, this datasource will be used. The configuration then depends on a particular set up and thus it is not covered by this manual.
       </para>
      </listitem>
-   </itemizedlist>
+   </orderedlist>
    
-    
+      
    <para>
     More details about the datasources are provided further.
    </para>
@@ -72,14 +92,14 @@
    <sect2 xml:id="localdisk.datasource">
     <title>The <literal>LocalDisk</literal> Datasource</title>
     <para>
-     The <literal>cloud-init</literal> searches for the configuration files: <filename>meta-data</filename>, <filename>user-data</filename> and optionally <filename>vendor-data</filename> in the local directory: <filename>/cloud-init-config</filename>
+     The <literal>cloud-init</literal> searches for the configuration files: <filename>meta-data</filename>, <filename>user-data</filename> and optionally <filename>vendor-data</filename> in the local directory: <filename>/cloud-init-config</filename>.
     </para>
    </sect2>
    
    <sect2 xml:id="nocloud.datasource">
     <title>The <literal>NoCloud</literal> Datasource</title>
     <para>
-     The <literal>NoCloud</literal> datasource enables you to read the <literal>cloud-init</literal> configuration without running a network service. <literal>cloud-init</literal> searches for the configuration files <filename>meta-data</filename>, <filename>user-data</filename> in a local filesystem formatted as <literal>vfat</literal> or <literal>iso9660</literal> with a label <literal>cidata</literal>. Typically it is a USB, DVD iso or unpartitioned disk. 
+     The <literal>NoCloud</literal> datasource enables you to read the <literal>cloud-init</literal> configuration without running a network service. <literal>cloud-init</literal> searches for the configuration files <filename>meta-data</filename>, <filename>user-data</filename> in the root directory of a local filesystem formatted as <literal>vfat</literal> or <literal>iso9660</literal> with a label <literal>cidata</literal>. Typically it is an unpartitioned USB stick or disk or a DVD iso. 
     </para>
     <para>
      Alternatively you can specify a remote location of the <filename>cloud.cfg</filename>, but you have to configure network first, e.g. by using local configuration files. The url is specified during boot time and must be in the format: <literal>cloud-init-url=http://<replaceable>hostname.domain</replaceable>/cloud.cfg</literal>. The content of the passed url is copied to <filename>/etc/cloud/cloud.cfg.d/91_kernel_cmdline_url.cfg</filename> and it is not overwritten even though the url changes. 
@@ -100,9 +120,9 @@
     datasource:
      NoCloud:
      # default seedfrom is None
-    # if found, then it should contain a url with:
-    #    &lt;url&gt;user-data and &lt;url&gt;meta-data
-    # seedfrom: http://my.example.com/&lt;path&gt;/</screen>
+     # if found, then it should contain a url with:
+     #    &lt;url&gt;user-data and &lt;url&gt;meta-data
+     # seedfrom: http://my.example.com/&lt;path&gt;/</screen>
   </sect2>
   
   <sect2 xml:id="meta-data.config.file">
@@ -174,11 +194,10 @@ disable_root: False</screen>
 <sect3 xml:id="user-data.config.runcmd.statements">
    <title><literal>runcmd</literal> Statements</title>
    <para>
-    In the <filename>user-data</filename> you can use the <literal>runcmd</literal> statement to run various commands in your system. The <filename>user-data</filename> file can only contain only one <literal>runcmd</literal> statement, thus in case you need to run several commands, group them into one statement:
+    In the <filename>user-data</filename> you can use the <literal>runcmd</literal> statement to run various commands in your system. The <filename>user-data</filename> file can contain only one <literal>runcmd</literal> statement, thus in case you need to run several commands, group them into one statement:
    </para>
    <screen>runcmd:
-    - /usr/bin/systemctl enable --now ntpd
-    - /usr/share/caasp-container-manifests/activate.sh</screen>
+    - /usr/bin/systemctl enable --now ntpd</screen>
     
     <para>
      By using the <literal>runcmd</literal> statement, you can perform the following in your system:
@@ -193,16 +212,7 @@ disable_root: False</screen>
       <screen>runcmd:
   - /usr/bin/localectl set-keymap de-latin1-nodeadkeys</screen>   
       </listitem>
-     </varlistentry>
-     <varlistentry>
-      <term>Enable and start the administration dashboard</term>
-      <listitem>
-       <para>
-        run the script <filename>activate.sh</filename> that imports the container needed for the administration dashboard and starts required services:
-       </para>
-       <screen>runcmd:
- - /usr/share/caasp-container-manifests/activate.sh</screen>
-      </listitem>
+     </varlistentry>     
 </varlistentry>
     </variablelist>
   </sect3>
@@ -255,14 +265,6 @@ ssh_authorized_keys:
     <screen>timezone: Europe/Berlin</screen>
    </sect3>
   
-  <sect3 xml:id="user-data.config.keyboard.layout">
-   <title>Setting Keyboard Layout</title>
-   <para>
-   To configure a default keyboard layout use the the following configuration that selects the german layout with <literal>nodeadkeys</literal>:
-   </para>
-   <screen>runcmd:
-  - /usr/bin/localectl set-keymap de-latin1-nodeadkeys</screen>
-  </sect3>
   
   <sect3 xml:id="user-data.config.keyboard.hostname">
    <title>Setting Hostname</title>
@@ -330,7 +332,7 @@ runcmd:
   <sect2 xml:id="vendor-data.config.file">
    <title>The <filename>vendor-data</filename> Configuration File</title>
    <para>
-    The <filename>vendor-data</filename> is an optional configuration file that typically stores data related to the cloud you use. The data are provided by the entity that lanches the cloud instance.
+    The <filename>vendor-data</filename> is an optional configuration file that typically stores data related to the cloud you use. The data are provided by the entity that launches the cloud instance.
    </para>
    <para>
     The format is the same as used for <filename>user-data</filename>.
