@@ -212,8 +212,16 @@ disable_root: False</screen>
       <screen>runcmd:
   - /usr/bin/localectl set-keymap de-latin1-nodeadkeys</screen>   
       </listitem>
-     </varlistentry>     
-</varlistentry>
+     </varlistentry>
+     <varlistentry>
+      <term>Start services</term>
+      <listitem>
+       <para>
+        for example, start the NTP server as described in <xref linkend="user-data.config.ntp.server"/>.
+       </para>
+      </listitem>      
+     </varlistentry>  
+
     </variablelist>
   </sect3>
 
@@ -222,15 +230,20 @@ disable_root: False</screen>
 <para>
  You can configure the behaviour of adding ssh keys to the <filename>authorized_keys</filename> and the ssh login pattern.
 </para>
-<screen>ssh_pwauth: True
+<screen>ssh_deletekeys: False
+ssh_pwauth: True
 ssh_authorized_keys:
   - ssh-rsa XXXKEY mail@example.com</screen>
   <para>
-   The option <literal>ssh_authorized_keys</literal> defines whether the ssh key will be added to the <filename>authorized_keys</filename> file of the user. If <emphasis role="bold">not</emphasis> specified otherwise, the default user is &rootuser;.
+  The option <literal>ssh_deletekeys</literal> disables/enables automatic deletion of old privat and public ssh keys of the host. The default value is <literal>true</literal>&mdash;the keys are deleted and new keys are generated. We do not recommend using the default value, as there could be a problem reported by <command>ssh</command> that the keys are incorrect or has been changed after the <literal>cloud-init</literal> configuration has been changed.
   </para>
   <para>
    The option <literal>ssh_pwauth: true</literal> allows you to login by using ssh with a password, if the password is set.
   </para>
+  <para>
+   The option <literal>ssh_authorized_keys</literal> defines whether the ssh key will be added to the <filename>authorized_keys</filename> file of the user. If <emphasis role="bold">not</emphasis> specified otherwise, the default user is &rootuser;.
+  </para>
+  
   </sect3>
   
   <sect3 xml:id="user-data.config.setting.password">
@@ -325,6 +338,30 @@ runcmd:
     -----BEGIN RSA PRIVATE KEY-----
     XXX
    -----END RSA PRIVATE KEY-----</screen>
+  </sect3>
+  
+  <sect3 xml:id="caasp.roles.assigment">
+   <title>Assigning Roles to the Cluster Nodes</title>
+   <para>
+    You need to specify which node of your cluster will be used as the &admin_node; and which nodes will be used as regular cluster nodes.
+   </para>
+   <para>
+    To assign the &admin_node; role to the cluster node, add the following to the configuration file:
+   </para>
+   <screen>suse_caasp:
+  role: admin</screen>
+  <para>
+   If the cluster node is assigned the  &admin_node;, all required containers are imported and started. Bear in mind, that a NTP server must be configured on that machine.
+  </para>
+  <para>
+  To other cluster nodes you assign the role <literal>cluster</literal>. The machine will register itself as &sminion; on the &admin_node; and configure a timesync service with &admin_node; as a reference. You don't have to install any NTP server, but if you need to use one, you have to disable the <command>systemd-timesyncd</command> first. An example of the <literal>cluster</literal> role assigment follows:
+  </para>
+  <screen>suse_caasp:
+  role: cluster
+  admin_node: admin.example.com</screen>
+  <para>
+   where the <literal>admin.example.com</literal> is the hostname of the &admin_node;.
+  </para>
   </sect3>
       
   </sect2>
