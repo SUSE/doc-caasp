@@ -102,18 +102,33 @@
     </imageobject>
    </mediaobject>
   </figure>
+  <para>
+   Each node is described further.
+  </para>
 
   <sect2 xml:id="administration_dashboard">
-   <title>The &admin_node;</title>
+   <title>The Administration Node</title>
    <para>
-    The &admin_node; is intended to manage deployment of the cluster and runs applications required for a proper function of the cluster. The &admin_node; runs the administration dashboard called &dashboard;. The dashboard runs inside a Docker container.
+    The &admin_node; is intended to manage deployment of the cluster and runs applications required for a proper function of the cluster. The &admin_node; runs the administration dashboard called &dashboard;, the <emphasis>salt-api</emphasis>, the MariaDB database, the <literal>salt-master</literal> and <literal>salt-minion</literal>. The dashboard, database and daemons all run in containers.
    </para>
-   
-   <sect3 xml:id="dashboard.description">
-    <title>Administration Dashboard Functions</title>
+   <para>
+   The &salt; daemons are used to manage the cluster nodes and to handle incoming/outgoing communication between nodes. The MariaDB database stores the dashboard data and &salt; events (commands completions, new &sminion;s that require registration, etc.). 
+   </para>
+   <para>
+   The dashboard is a web application that enables you to manage, monitor and deploy the cluster. The dashboard manages the cluster by using the <emphasis>salt-api</emphasis> to interact with the underlying &salt; technology. 
+   </para>
+   <para>
+   The containers on the &admin_node; are managed by <literal>kubelet</literal> as a static pod. Bear in mind that this <literal>kubelet</literal> does not managed the cluster nodes. Each cluster node has its own running instance of <literal>kubelet</literal>.
+   </para>
+         
+   <sect3 xml:id="master.node">
+    <title>The Master Node</title>
     <para>
-     The administration dashboard 
     </para>
+   </sect3>
+   
+   <sect3 xml:id="worker.node">
+    <title>The Worker Node</title>
    </sect3>
   </sect2>    
 
