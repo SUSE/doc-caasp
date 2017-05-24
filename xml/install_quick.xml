@@ -86,13 +86,13 @@
    </sect3>
   </sect2>
 
-  <sect2 xml:id="sec.caasp.installquick.install.controller">
+  <sect2 xml:id="sec.caasp.installquick.admin">
    <title>Installing a &productname; Controller Node</title>
    <para>
     Use these instructions if there is no existing Linux system on your
     machine, or if you want to replace an existing Linux system.
    </para>
-   <procedure xml:id="pro.caasp.installquick.install.controller">
+   <procedure xml:id="pro.caasp.installquick.admin">
     <step>
      <para>
       Insert the &productname; DVD into the drive, then reboot the computer to
@@ -213,18 +213,18 @@
         <variablelist>
          <varlistentry>
           <term>
-           Administration Dashboard
+           Administration Node (Dashboard)
           </term>
           <listitem>
            <para>
-            The controller node providing the administration dashboard for the
+            The &admin_node; providing the administration dashboard for the
             cluster.
            </para>
           </listitem>
          </varlistentry>
          <varlistentry>
           <term>
-           Worker
+           Cluster Node
           </term>
           <listitem>
            <para>
@@ -489,33 +489,33 @@
    </procedure>
   </sect2>
   
-  <sect2 xml:id="sec.caasp.installquick.worker">
-   <title>Installing a &productname; Worker</title>
+  <sect2 xml:id="sec.caasp.installquick.node">
+   <title>Installing a &productname; Cluster Node</title>
    <para>
-    Worker nodes can be installed manually or with &ay;. Manual installation is
-    only	feasible for a small number of workers. For larger numbers, &ay; is
+    Cluster nodes can be installed manually or with &ay;. Manual installation
+    is only feasible for a small number of workers. For larger numbers, &ay; is
     recommended.
    </para>
    <para>
-    Before you can set up a worker, you have to install and bootstrap a
-    controller node to run the administration dashboard. Refer to
-    <xref linkend="sec.caasp.installquick.install.controller"/> for information
+    Before you can set up a cluster node, you have to install and bootstrap a
+    &admin_node; to run the administration dashboard. Refer to
+    <xref linkend="sec.caasp.installquick.admin"/> for information
     on how to install the controller node
    </para>
-   <sect3 xml:id="sec.caasp.installquick.worker.manual">
+   <sect3 xml:id="sec.caasp.installquick.node.manual">
     <title>Manual Installation</title>
-    <procedure xml:id="pro.caasp.installquick.worker.manual">
+    <procedure xml:id="pro.caasp.installquick.node.manual">
      <step>
       <para>
        Follow the steps as described in
-       <xref linkend="sec.caasp.installquick.install.controller"/>
+       <xref linkend="sec.caasp.installquick.admin"/>
       </para>
      </step>
      <step>
       <para>
-       In step 3, select <literal>Worker</literal> as <guimenu>System
+       In step 3, select <literal>Cluster Node</literal> as <guimenu>System
        Role</guimenu> and enter the host name or IP address of the 
-       <guimenu>Controller Node</guimenu>.
+       <guimenu>Administration Node</guimenu>.
       </para>
       <important>
        <title>
@@ -531,9 +531,9 @@
      </step>
     </procedure>
    </sect3>
-   <sect3 xml:id="sec.caasp.installquick.worker.ay">
+   <sect3 xml:id="sec.caasp.installquick.node.ay">
     <title>Installation with &ay;</title>
-    <procedure xml:id="pro.caasp.installquick.worker.ay">
+    <procedure xml:id="pro.caasp.installquick.node.ay">
      <step>
       <para>
        Insert the &productname; DVD into the drive, then reboot the computer to
@@ -606,8 +606,8 @@
    <procedure xml:id="pro.caasp.installquick.bootstrap">
     <step>
      <para>
-      After the controller node has finished booting and you see the login
-      prompt, point a web browser to the hostname or IP address to open the
+      After the &admin_node; has finished booting and you see the login prompt,
+      point a web browser to the hostname or IP address to open the
       administration dashboard. The IP address is shown above the login prompt.
      </para>
      <informalfigure>
@@ -677,10 +677,10 @@
       </mediaobject>
      </informalfigure>
      <para>
-      The dashboard lists all worker nodes registered at the controller node.
-      Select the one that should become the Kubernetes master and click 
+      The dashboard lists all cluster nodes registered at the &admin_node;.
+      Select the one that should become the Kubernetes Master and click
       <guimenu>Bootstrap cluster</guimenu>. All other nodes will be set to the
-      worker role.
+      Worker role.
      </para>
     </step>
     <step>
