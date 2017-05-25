@@ -94,7 +94,7 @@
   <para>
    The following figure illustrates interactions of the nodes.
   </para>
-  <figure xml:id="caasp.cluster.architecture">
+  <figure xml:id="caasp.architecture.cluster">
    <title>&productname; Nodes Architecture</title>
    <mediaobject>
     <imageobject>
@@ -103,32 +103,45 @@
    </mediaobject>
   </figure>
   <para>
+   Now let's focus on a more detail view of the cluster that involves also services running on each node type.
+  </para>
+  <figure xml:id="caasp.architecture.services">
+   <title></title>
+  </figure>
+  <para>
    Each node is described further.
   </para>
 
   <sect2 xml:id="administration_dashboard">
    <title>The Administration Node</title>
    <para>
-    The &admin_node; is intended to manage deployment of the cluster and runs applications required for a proper function of the cluster. The &admin_node; runs the administration dashboard called &dashboard;, the <emphasis>salt-api</emphasis>, the MariaDB database, the <literal>salt-master</literal> and <literal>salt-minion</literal>. The dashboard, database and daemons all run in containers.
+    The &admin_node; is intended to manage deployment of the cluster and runs applications required for a proper function of the cluster. The &admin_node; runs the administration dashboard called &dashboard;, the <emphasis>salt-api</emphasis>, the MariaDB database, the <literal>etcd discovery</literal> server, the <literal>salt-master</literal> and <literal>salt-minion</literal>. The dashboard, database and daemons all run in separate containers.
    </para>
    <para>
-   The &salt; daemons are used to manage the cluster nodes and to handle incoming/outgoing communication between nodes. The MariaDB database stores the dashboard data and &salt; events (commands completions, new &sminion;s that require registration, etc.). 
+   The &salt; daemons are used to manage the cluster nodes and to handle incoming/outgoing communication between nodes, the <literal>salt-minion</literal> is used to generate a required CA certificate. The MariaDB database stores the dashboard data and &salt; events (commands completions, new &sminion;s that require registration, etc.). 
+   </para>
+   <para>
+    The <literal>etcd discovery</literal> is only used to bootstrap other instances of <literal>etcd</literal> and is not part of the <literal>etcd</literal> cluster that runs on the &kmaster; and &kworker;s.
    </para>
    <para>
    The dashboard is a web application that enables you to manage, monitor and deploy the cluster. The dashboard manages the cluster by using the <emphasis>salt-api</emphasis> to interact with the underlying &salt; technology. 
    </para>
    <para>
-   The containers on the &admin_node; are managed by <literal>kubelet</literal> as a static pod. Bear in mind that this <literal>kubelet</literal> does not managed the cluster nodes. Each cluster node has its own running instance of <literal>kubelet</literal>.
+   The containers on the &admin_node; are managed by <literal>kubelet</literal> as a static pod. Bear in mind that this <literal>kubelet</literal> does not manage the cluster nodes. Each cluster node has its own running instance of <literal>kubelet</literal>.
    </para>
          
    <sect3 xml:id="master.node">
     <title>The Master Node</title>
     <para>
+     The &kmaster; runs the services and daemons that handle orchestration of containers running on all &kworker;s. In contrast to the &admin_node;, the services and daemons do not run in containers.
     </para>
    </sect3>
    
    <sect3 xml:id="worker.node">
     <title>The Worker Node</title>
+    <para>
+     Each &kworker; can run several containers. To run the containers properly, there is an instance of <literal>etcd</literal>,  the Docker engine and <literal>kubelet</literal> that communicates with the &kmaster;.
+    </para>
    </sect3>
   </sect2>    
 
