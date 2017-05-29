@@ -46,8 +46,11 @@
     </para>
    </listitem>
   </itemizedlist>
+  
+  
  <sect1 xml:id="caasp.architecture">
-  <title>&productname; Architecture</title>
+  <title>&productname; Architecture</title>  
+  
   <para>
    A typical &productname; cluster consists of several types of nodes:
   </para>
@@ -69,7 +72,6 @@
    <listitem>
     <para>
      Kubernetes worker - that runs containers.
-
     </para>
    </listitem>
      </itemizedlist>
@@ -102,15 +104,48 @@
     </imageobject>
    </mediaobject>
   </figure>
+  
   <para>
-   Now let's focus on a more detail view of the cluster that involves also services running on each node type.
+   To make the whole cluste run, &productname; uses various technologies like, &salt;, flannel network, <literal>etcd</literal> cluster, controller, scheduler, <literal>kubelet</literal>, container engines and an API Server.
+  </para>
+  <para>
+   &salt; is used to manage deployment and communication within the cluster. The <literal>&salt;-api</literal> is used to communicate commands from &dashboard; to the <literal>salt-master</literal> daemon. The <literal>salt-master</literal> daemon stores events in the <emphasis>MariaDB</emphasis> (the database is either used to store &dashboard; data). The <literal>salt-minion</literal> daemon on the &admin_node; is used to generate required certificates and on the &sminion;s the daemons communicate with the &admin_node;.
+  </para>
+  <para>
+   As there can be several containers running on each host machine, each container is assigned an IP address that is used for communication with other containers on the same host machine. Containers might need to have a unique IP address exposed for network communication, thus flannel networking is used. Flannel gives each host an IP subnet from which the container engine is able to allocate IP addresses for containers. The mapping of IP addresses is stored by using <literal>etcd</literal>. The <literal>flanneld</literal> is used to manage routing of packets and mapping of IP addresses.
+  </para>
+  <para>
+   Within the cluster there are several instances of <literal>etcd</literal>, each with a different purpose. The <literal>etcd discovery</literal> running on the &admin_node; is used to bootstrap instances of <literal>etcd</literal> running on other nodes and is not part of the <literal>etcd</literal> cluster on other nodes. The <literal>etcd</literal> on the &kmaster; stores events from the API Server. The <literal>etcd</literal> instance on &kworker;s runs as a proxy that forwards clients to the <literal>etcd</literal> on the &kmaster;.
+  </para>
+  
+  <para>
+   Kubernetes is used to manage containers. The following services and daemons are used by Kubernetes:
+  </para>
+  <itemizedlist>
+   <listitem>
+    <para>
+     <literal>kubelet</literal> - is a node agent that ensures that all containers in a pod are running and healthy.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     <literal>kube-apiserver</literal> - exposes a REST API used to manage pods. The API server performs authentication and authorization.
+    </para>
+   </listitem>
+  </itemizedlist>
+  
+  <para>
+   Now let's focus on a more detailed view of the cluster that involves also services running on each node type.
   </para>
   <figure xml:id="caasp.architecture.services">
-   <title></title>
+   <title>Services on nodes</title>
+    <mediaobject>
+     <imageobject>
+      <imagedata fileref="" format="SVG"/>
+     </imageobject>
+    </mediaobject>
   </figure>
-  <para>
-   Each node is described further.
-  </para>
+  
 
   <sect2 xml:id="administration_dashboard">
    <title>The Administration Node</title>
@@ -135,12 +170,17 @@
     <para>
      The &kmaster; runs the services and daemons that handle orchestration of containers running on all &kworker;s. In contrast to the &admin_node;, the services and daemons do not run in containers.
     </para>
+    <para>
+    The <literal>flanneld</literal> manages communication between the API server and other nodes.
+    </para>
    </sect3>
    
    <sect3 xml:id="worker.node">
     <title>The Worker Node</title>
     <para>
      Each &kworker; can run several containers. To run the containers properly, there is an instance of <literal>etcd</literal>,  the container engine and <literal>kubelet</literal> that communicates with the &kmaster;.
+    </para>
+    <para>
     </para>
    </sect3>
   </sect2>    
