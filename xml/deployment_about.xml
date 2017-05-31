@@ -57,7 +57,7 @@
   <itemizedlist>
    <listitem>
     <para>
-     &admin_node; - is a &smaster; that assigns roles to &sminion;s. The node runs the GUI dashboard that manages the whole cluster.
+     &admin_node; - is a &smaster; that assigns roles to &sminion;s. The node runs the GUI dashboard that manages the whole cluster. For details refer to <xref linkend="administration_dashboard"/>.
     </para>
    </listitem>
    <listitem>
@@ -66,7 +66,7 @@
      <itemizedlist>
      <listitem>
     <para>
-     Kubernetes master - that manages all containers.
+     Kubernetes master - that manages nodes running containers.
     </para>
    </listitem>
    <listitem>
@@ -100,7 +100,7 @@
    <title>&productname; Nodes Architecture</title>
    <mediaobject>
     <imageobject>
-     <imagedata fileref="caasp_architecture.svg" format="SVG"/>
+     <imagedata fileref="caasp_generic_scheme.svg" format="SVG"/>
     </imageobject>
    </mediaobject>
   </figure>
@@ -119,7 +119,7 @@
   </para>
   
   <para>
-   Kubernetes is used to manage containers. The following services and daemons are used by Kubernetes:
+   Kubernetes is used to manage containers orchestration. The following services and daemons are used by Kubernetes:
   </para>
   <itemizedlist>
    <listitem>
@@ -132,6 +132,22 @@
      <literal>kube-apiserver</literal> - exposes a REST API used to manage pods. The API server performs authentication and authorization.
     </para>
    </listitem>
+   <listitem>
+    <para>
+     <emphasis>scheduler</emphasis> 
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     a set of <emphasis>controllers</emphasis> for handling pod replication, deployment, etc.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+    <literal>kube-proxy</literal> - runs on each node and is used do distribute load and reach services.
+    </para>
+   </listitem>
+   
   </itemizedlist>
   
   <para>
@@ -141,7 +157,7 @@
    <title>Services on nodes</title>
     <mediaobject>
      <imageobject>
-      <imagedata fileref="" format="SVG"/>
+      <imagedata fileref="caasp_nodes_architecture.svg" format="SVG"/>
      </imageobject>
     </mediaobject>
   </figure>
@@ -152,37 +168,14 @@
    <para>
     The &admin_node; is intended to manage deployment of the cluster and runs applications required for a proper function of the cluster. The &admin_node; runs the administration dashboard called &dashboard;, the <emphasis>salt-api</emphasis>, the MariaDB database, the <literal>etcd discovery</literal> server, the <literal>salt-master</literal> and <literal>salt-minion</literal>. The dashboard, database and daemons all run in separate containers.
    </para>
-   <para>
-   The &salt; daemons are used to manage the cluster nodes and to handle incoming/outgoing communication between nodes, the <literal>salt-minion</literal> is used to generate a required CA certificate. The MariaDB database stores the dashboard data and &salt; events (commands completions, new &sminion;s that require registration, etc.). 
-   </para>
-   <para>
-    The <literal>etcd discovery</literal> is only used to bootstrap other instances of <literal>etcd</literal> and is not part of the <literal>etcd</literal> cluster that runs on the &kmaster; and &kworker;s.
-   </para>
+   
    <para>
    The dashboard is a web application that enables you to manage, monitor and deploy the cluster. The dashboard manages the cluster by using the <emphasis>salt-api</emphasis> to interact with the underlying &salt; technology. 
    </para>
    <para>
    The containers on the &admin_node; are managed by <literal>kubelet</literal> as a static pod. Bear in mind that this <literal>kubelet</literal> does not manage the cluster nodes. Each cluster node has its own running instance of <literal>kubelet</literal>.
-   </para>
-         
-   <sect3 xml:id="master.node">
-    <title>The Master Node</title>
-    <para>
-     The &kmaster; runs the services and daemons that handle orchestration of containers running on all &kworker;s. In contrast to the &admin_node;, the services and daemons do not run in containers.
-    </para>
-    <para>
-    The <literal>flanneld</literal> manages communication between the API server and other nodes.
-    </para>
-   </sect3>
+   </para>         
    
-   <sect3 xml:id="worker.node">
-    <title>The Worker Node</title>
-    <para>
-     Each &kworker; can run several containers. To run the containers properly, there is an instance of <literal>etcd</literal>,  the container engine and <literal>kubelet</literal> that communicates with the &kmaster;.
-    </para>
-    <para>
-    </para>
-   </sect3>
   </sect2>    
 
  </sect1>
