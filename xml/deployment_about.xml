@@ -14,77 +14,97 @@
    <dm:bugtracker></dm:bugtracker>
    <dm:translation>yes</dm:translation>
   </dm:docmanager>
-<title>About &productname;</title>
+  <title>About &productname;</title>
  </info>
- 
  <para>
-  &productname; is a platform designed for fast deployment of container-based applications. You can deploy &productname; on you physical machines or you can use it on virtual machines. After you deploy it, it is ready to run out of the box. It provides high scalability of your cluster&mdash;from 10 to 1000 nodes. 
+  &productname; is a platform designed for fast deployment of container-based
+  applications. You can deploy &productname; on you physical machines or you
+  can use it on virtual machines. After you deploy it, it is ready to run out
+  of the box. It provides high scalability of your cluster&mdash;from 10 to
+  1000 nodes.
  </para>
  <para>
-  &productname; was designed to simplify transformation of applications into container-based applications. Creating clouds with container-based application is much easier as you get rid off problems with compatibility and depenencies. To enable as fast application deployment as possible, it is recommended to use container orchestration framework, e.g. Kubernetes.
+  &productname; was designed to simplify transformation of applications into
+  container-based applications. Creating clouds with container-based
+  application is much easier as you get rid off problems with compatibility and
+  dependencies. To enable as fast application deployment as possible, it is
+  recommended to use container orchestration framework, e.g. Kubernetes.
  </para>
  <para>
-  While &productname; inherits benefits of &sle; uses tools and technologies well-known to system administrators&mdash;like <literal>cloud-init</literal>,  Kubernetes or Salt&mdash;the main inovation (compared to &sls;) comes with <emphasis role="bold">transactional updates</emphasis>. A transactional update is an update that can be installed when the system is running without any down time. The transaction update can be rolled back, so if the upgrade fails or the update is not compatible with your infrastructure, you can restore the previous state. 
+  While &productname; inherits benefits of &sle; and uses tools and
+  technologies well-known to system administrators&mdash;like
+  <literal>cloud-init</literal>, Kubernetes or Salt&mdash;the main innovation
+  (compared to &sls;) comes with <emphasis role="bold">transactional
+  updates</emphasis>. A transactional update is an update that can be installed
+  when the system is running without any down time. The transaction update can
+  be rolled back, so if the upgrade fails or the update is not compatible with
+  your infrastructure, you can restore the previous state.
  </para>
  <para>
-   &productname; uses the BTRFs file system with the following characteristic:
-  </para>
-  <itemizedlist>
-   <listitem>
-    <para>
-     The base OS and snapshots are read-only.
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     Subvolumes for data sharing are read-write.
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     &productname; introduces overlays of <literal>/etc</literal> directories used by <literal>cloud-init</literal> and &salt;
-    </para>
-   </listitem>
-  </itemizedlist>
-  
-  
+  &productname; uses the BTRFs file system with the following characteristic:
+ </para>
+ <itemizedlist>
+  <listitem>
+   <para>
+    The base OS and snapshots are read-only.
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    Subvolumes for data sharing are read-write.
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    &productname; introduces overlays of <literal>/etc</literal> directories
+    used by <literal>cloud-init</literal> and &salt;
+   </para>
+  </listitem>
+ </itemizedlist>
  <sect1 xml:id="caasp.architecture">
-  <title>&productname; Architecture</title>  
-  
+  <title>&productname; Architecture</title>
+
   <para>
    A typical &productname; cluster consists of several types of nodes:
   </para>
+
   <itemizedlist>
    <listitem>
     <para>
-     &admin_node; - is a &smaster; that assigns roles to &sminion;s. The node runs the GUI dashboard that manages the whole cluster. For details refer to <xref linkend="administration_dashboard"/>.
+     &admin_node; - is a &smaster; that assigns roles to &sminion;s. The node
+     runs the GUI dashboard that manages the whole cluster. For details refer
+     to <xref linkend="administration_dashboard"/>.
     </para>
    </listitem>
    <listitem>
     <para>
-    &node; - is a &sminion; that can have a following role:
+     &node; - is a &sminion; that can have a following role:
      <itemizedlist>
-     <listitem>
-    <para>
-     Kubernetes master - that manages nodes running containers.
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     Kubernetes worker - that runs containers.
-    </para>
-   </listitem>
+      <listitem>
+       <para>
+        Kubernetes master - that manages nodes running containers.
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        Kubernetes worker - that runs containers.
+       </para>
+      </listitem>
      </itemizedlist>
     </para>
-   </listitem>   
+   </listitem>
   </itemizedlist>
+
   <para>
-   In large-scale clusters, there are other nodes that can help you to manage and run the cluster:
+   In large-scale clusters, there are other nodes that can help you to manage
+   and run the cluster:
   </para>
+
   <itemizedlist>
    <listitem>
     <para>
-     a local &smt; server that manages subscriptions for workers and so decreases the traffic to &scc;
+     a local &smt; server that manages subscriptions for workers and so
+     decreases the traffic to &scc;
     </para>
    </listitem>
    <listitem>
@@ -93,9 +113,11 @@
     </para>
    </listitem>
   </itemizedlist>
+
   <para>
    The following figure illustrates interactions of the nodes.
   </para>
+
   <figure xml:id="caasp.architecture.cluster">
    <title>&productname; Nodes Architecture</title>
    <mediaobject>
@@ -104,79 +126,121 @@
     </imageobject>
    </mediaobject>
   </figure>
-  
+
   <para>
-   To make the whole cluste run, &productname; uses various technologies like, &salt;, flannel network, <literal>etcd</literal> cluster, controller, scheduler, <literal>kubelet</literal>, container engines and an API Server.
+   To run the whole cluster, &productname; uses various technologies like
+   &salt;, flannel network, <literal>etcd</literal> cluster, controller,
+   scheduler, <literal>kubelet</literal>, container engines and an API Server.
   </para>
+
   <para>
-   &salt; is used to manage deployment and communication within the cluster. The <literal>&salt;-api</literal> is used to communicate commands from &dashboard; to the <literal>salt-master</literal> daemon. The <literal>salt-master</literal> daemon stores events in the <emphasis>MariaDB</emphasis> (the database is either used to store &dashboard; data). The <literal>salt-minion</literal> daemon on the &admin_node; is used to generate required certificates and on the &sminion;s the daemons communicate with the &admin_node;.
+   &salt; is used to manage deployment and administration of the cluster. The
+   <literal>&salt;-api</literal> is used to distribute commands from
+   &dashboard; to the <literal>salt-master</literal> daemon. The
+   <literal>salt-master</literal> daemon stores events in the
+   <emphasis>Maria DB</emphasis> (the database is also used to store &dashboard;
+   data). The <literal>salt-minion</literal> daemon on the &admin_node; is used
+   to generate required certificates and on the &sminion;s the daemons
+   communicate with the &admin_node;.
   </para>
+
   <para>
-   As there can be several containers running on each host machine, each container is assigned an IP address that is used for communication with other containers on the same host machine. Containers might need to have a unique IP address exposed for network communication, thus flannel networking is used. Flannel gives each host an IP subnet from which the container engine is able to allocate IP addresses for containers. The mapping of IP addresses is stored by using <literal>etcd</literal>. The <literal>flanneld</literal> is used to manage routing of packets and mapping of IP addresses.
+   As there can be several containers running on each host machine, each
+   container is assigned an IP address that is used for communication with
+   other containers on the same host machine. Containers might need to have a
+   unique IP address exposed for network communication, thus flannel networking
+   is used. Flannel gives each host an IP subnet from which the container
+   engine can allocate IP addresses for containers. The mapping of IP
+   addresses is stored by using <literal>etcd</literal>. The
+   <literal>flanneld</literal> is used to manage routing of packets and mapping
+   of IP addresses.
   </para>
+
   <para>
-   Within the cluster there are several instances of <literal>etcd</literal>, each with a different purpose. The <literal>etcd discovery</literal> running on the &admin_node; is used to bootstrap instances of <literal>etcd</literal> running on other nodes and is not part of the <literal>etcd</literal> cluster on other nodes. The <literal>etcd</literal> on the &kmaster; stores events from the API Server. The <literal>etcd</literal> instance on &kworker;s runs as a proxy that forwards clients to the <literal>etcd</literal> on the &kmaster;.
+   Within the cluster there are several instances of <literal>etcd</literal>,
+   each with a different purpose. The <literal>etcd discovery</literal> running
+   on the &admin_node; is used to bootstrap instances of
+   <literal>etcd</literal> running on other nodes and is not part of the
+   <literal>etcd</literal> cluster on other nodes. The <literal>etcd</literal>
+   on the &kmaster; stores events from the API Server. The
+   <literal>etcd</literal> instance on &kworker;s runs as a proxy that forwards
+   clients to the <literal>etcd</literal> on the &kmaster;.
   </para>
-  
+
   <para>
-   Kubernetes is used to manage containers orchestration. The following services and daemons are used by Kubernetes:
+   Kubernetes is used to manage containers orchestration. The following
+   services and daemons are used by Kubernetes:
   </para>
+
   <itemizedlist>
    <listitem>
     <para>
-     <literal>kubelet</literal> - is a node agent that ensures that all containers in a pod are running and healthy.
+     <literal>kubelet</literal> - is a node agent that ensures that all
+     containers in a pod are running and healthy.
     </para>
    </listitem>
    <listitem>
     <para>
-     <literal>kube-apiserver</literal> - exposes a REST API used to manage pods. The API server performs authentication and authorization.
+     <literal>kube-apiserver</literal> - exposes an REST API used to manage
+     pods. The API server performs authentication and authorization.
     </para>
    </listitem>
    <listitem>
     <para>
-     <emphasis>scheduler</emphasis> 
+     <emphasis>scheduler</emphasis>
     </para>
    </listitem>
    <listitem>
     <para>
-     a set of <emphasis>controllers</emphasis> for handling pod replication, deployment, etc.
+     a set of <emphasis>controllers</emphasis> for handling pod replication,
+     deployment, etc.
     </para>
    </listitem>
    <listitem>
     <para>
-    <literal>kube-proxy</literal> - runs on each node and is used do distribute load and reach services.
+     <literal>kube-proxy</literal> - runs on each node and is used do
+     distribute load and reach services.
     </para>
    </listitem>
-   
   </itemizedlist>
-  
+
   <para>
-   Now let's focus on a more detailed view of the cluster that involves also services running on each node type.
+   Now let's focus on a more detailed view of the cluster that involves also
+   services running on each node type.
   </para>
+
   <figure xml:id="caasp.architecture.services">
    <title>Services on nodes</title>
-    <mediaobject>
-     <imageobject>
-      <imagedata fileref="caasp_nodes_architecture.svg" format="SVG"/>
-     </imageobject>
-    </mediaobject>
+   <mediaobject>
+    <imageobject>
+     <imagedata fileref="caasp_nodes_architecture.svg" format="SVG"/>
+    </imageobject>
+   </mediaobject>
   </figure>
-  
 
   <sect2 xml:id="administration_dashboard">
    <title>The Administration Node</title>
    <para>
-    The &admin_node; is intended to manage deployment of the cluster and runs applications required for a proper function of the cluster. The &admin_node; runs the administration dashboard called &dashboard;, the <emphasis>salt-api</emphasis>, the MariaDB database, the <literal>etcd discovery</literal> server, the <literal>salt-master</literal> and <literal>salt-minion</literal>. The dashboard, database and daemons all run in separate containers.
+    The &admin_node; is intended to manage deployment of the cluster and runs
+    applications required for a proper function of the cluster. The
+    &admin_node; runs the administration dashboard called &dashboard;, the
+    <emphasis>salt-api</emphasis>, the Maria DB database, the <literal>etcd
+    discovery</literal> server, the <literal>salt-master</literal> and
+    <literal>salt-minion</literal>. The dashboard, database and daemons all run
+    in separate containers.
    </para>
-   
    <para>
-   The dashboard is a web application that enables you to manage, monitor and deploy the cluster. The dashboard manages the cluster by using the <emphasis>salt-api</emphasis> to interact with the underlying &salt; technology. 
+    The dashboard is a web application that enables you to manage, monitor and
+    deploy the cluster. The dashboard manages the cluster by using the
+    <emphasis>salt-api</emphasis> to interact with the underlying &salt;
+    technology.
    </para>
    <para>
-   The containers on the &admin_node; are managed by <literal>kubelet</literal> as a static pod. Bear in mind that this <literal>kubelet</literal> does not manage the cluster nodes. Each cluster node has its own running instance of <literal>kubelet</literal>.
-   </para>         
-   
-  </sect2>    
-
+    The containers on the &admin_node; are managed by
+    <literal>kubelet</literal> as a static pod. Bear in mind that this
+    <literal>kubelet</literal> does not manage the cluster nodes. Each cluster
+    node has its own running instance of <literal>kubelet</literal>.
+   </para>
+  </sect2>
  </sect1>
- </chapter>
+</chapter>

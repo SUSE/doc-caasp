@@ -20,7 +20,7 @@
   installation process and after installation you can configure your cluster by
   using <literal>cloud-init</literal>. The first stage configuration of
   &productname; comes as much preconfigured as possible. The second stage is
-  typically used for large scales clusters, if you have just several machine,
+  typically used for large scales clusters, if you have several machines,
   <literal>cloud-init</literal> is not necessary.
  </para>
  <para>
@@ -94,7 +94,7 @@
     <para>
      the <literal>OpenStack</literal> datasource - if there is a running
      OpenStack service, this datasource will be used. The configuration then
-     depends on a particular set up and thus it is not covered by this manual.
+     depends on a particular setup and thus it is not covered by this manual.
     </para>
    </listitem>
   </orderedlist>
@@ -218,7 +218,7 @@
    <title>The <filename>user-data</filename> Configuration File</title>
    <para>
     The configuration file <filename>user-data</filename> is a YAML file used
-    to configure users, ssh keys, time zone, etc. Each part of the file is
+    to configure users, SSH keys, time zone, etc. Each part of the file is
     described in following sections.
    </para>
    <sect3 xml:id="user-data.config.header">
@@ -228,7 +228,7 @@
      <literal>#cloud-config</literal> that indicates the
      <literal>cloud-config</literal> format. In the snippet below you enable
      the debugging output and you disable passwordless authentication for
-     &rootuser;. You'll have to login with the &rootuser; credentials then.
+     &rootuser;. You will have to login with the &rootuser; credentials then.
     </para>
 <screen>#cloud-config
 debug: True
@@ -273,10 +273,10 @@ disable_root: False</screen>
     </variablelist>
    </sect3>
    <sect3 xml:id="user-data.config.authorized_keys">
-    <title>ssh Keys Management</title>
+    <title>SSH Keys Management</title>
     <para>
-     You can configure the behaviour of adding ssh keys to the
-     <filename>authorized_keys</filename> and the ssh login pattern.
+     You can configure the behaviour of adding SSH keys to the
+     <filename>authorized_keys</filename> and the SSH login pattern.
     </para>
 <screen>ssh_deletekeys: False
 ssh_pwauth: True
@@ -284,7 +284,7 @@ ssh_authorized_keys:
   - ssh-rsa XXXKEY mail@example.com</screen>
     <para>
      The option <literal>ssh_deletekeys</literal> disables/enables automatic
-     deletion of old private and public ssh keys of the host. The default value
+     deletion of old private and public SSH keys of the host. The default value
      is <literal>true</literal>&mdash;the keys are deleted and new keys are
      generated. We do not recommend using the default value, as there could be
      a problem reported by <command>ssh</command> that the keys are incorrect
@@ -296,7 +296,7 @@ ssh_authorized_keys:
      using ssh with a password, if the password is set.
     </para>
     <para>
-     The option <literal>ssh_authorized_keys</literal> defines whether the ssh
+     The option <literal>ssh_authorized_keys</literal> defines whether the SSH
      key will be added to the <filename>authorized_keys</filename> file of the
      user. If <emphasis role="bold">not</emphasis> specified otherwise, the
      default user is &rootuser;.
@@ -337,9 +337,9 @@ ssh_authorized_keys:
 <screen>timezone: Europe/Berlin</screen>
    </sect3>
    <sect3 xml:id="user-data.config.keyboard.hostname">
-    <title>Setting Hostname</title>
+    <title>Setting Host name</title>
     <para>
-     You can set a particular hostname for the machine:
+     You can set a particular host name for the machine:
     </para>
 <screen>hostname: myhost
 fqdn: myhost.example.com</screen>
@@ -410,14 +410,14 @@ runcmd:
   role: admin</screen>
     <para>
      If the cluster node is assigned the &admin_node;, all required containers
-     are imported and started. Bear in mind, that a NTP server must be
+     are imported and started. Bear in mind, that an NTP server must be
      configured on that machine.
     </para>
     <para>
      To other cluster nodes you assign the role <literal>cluster</literal>. The
      machine will register itself as &sminion; on the &admin_node; and
-     configure a timesync service with &admin_node; as a reference. You don't
-     have to install any NTP server, but if you need to use one, you have to
+     configure a timesync service with &admin_node; as a reference. You do not
+     have to install any NTP server, but if you need to use one, you need to
      disable the <command>systemd-timesyncd</command> first. An example of the
      <literal>cluster</literal> role assignment follows:
     </para>
@@ -425,7 +425,7 @@ runcmd:
   role: cluster
   admin_node: admin.example.com</screen>
     <para>
-     where the <literal>admin.example.com</literal> is the hostname of the
+     where the <literal>admin.example.com</literal> is the host name of the
      &admin_node;.
     </para>
    </sect3>
