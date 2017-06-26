@@ -45,6 +45,36 @@ lock-group=default</screen>
  </varlistentry>
  <varlistentry>
   <entry><literal>window-duration</literal></entry>
+  <listitem>
+   <para>
+    configures duration of the maintenance window when the system can be rebooted. Use the format <emphasis>XXhYYm</emphasis>
+   </para>
+  </listitem>
+ </varlistentry>
+ <varlistentry>
+  <term><literal>strategy</literal></term>
+  <listitem>
+   <para>
+    defines a strategy of rebooting. You can use any of the following values:
+    <itemizedlist>
+     <listitem>
+      <para>
+       <emphasis role="bold"><literal>instantly</literal></emphasis> - when a signal is received, services will be rebooted without any log or without waiting for a maintenance window.
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       <emphasis role="bold"><literal>maint-window</literal></emphasis> - the cluster reboots only within the set maintenance window. If you do not configure the maintenance window, the cluster reboots immediately.
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       <emphasis role="bold"><literal>etcd-lock</literal></emphasis>
+      </para>
+     </listitem>
+    </imtezedlist>
+   </para>
+  </listitem>
  </varlistentry>
 </variablelist>
 
