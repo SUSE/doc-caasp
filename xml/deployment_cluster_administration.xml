@@ -15,15 +15,60 @@
    <dm:translation>yes</dm:translation>
   </dm:docmanager>
  </info>
- <sect1 xml:id="commands.cluster.managment">
-  <title>Commands for Cluster Management</title>
+ 
+ <sect1 xml:id="transactional.updates">
+  <title>Handling Transactional Updates</title>
   <para>
-   
+   For security and stability reasons, the operating system and application should always be up-to-date. While with a single machine you can keep the system up-to-date quite easily by running several commands, in large-scaled cluster the update process become a real burden. Thus transactional automatic updates have been introduced. Transactional updates can be characterized as follows:
   </para>
-  <sect2 xml:id="reboot.managment">
-   <title>Rebooting Strategies</title>
+  <itemizedlist>
+   <listitem>
+    <para>
+     they are atomic.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+    They do not influence the running system.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     They can be rolled back.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     The system needs to be rebooted to activate the changes.
+    </para>
+   </listitem>
+  </itemizedlist>
+  <para>
+   Transactional updates are managed by the <filename>transactional-update</filename>, which is called once a day. The script checks if any update is available. If there is an update to be applied, a new snapshot of the root file system is created and the system is updated by using <command>zypper up</command>. All RPMS released to this point are applied. The snapshot is then marked as active and will be used after the next reboot of the system. The script can reboot the cluster itself or it can instruct the <literal>rebootmgr</literal> to schedule the reboot according to the configured policies (for details refer to <xref linkend="reboot.managment"/>.
+  </para>
+  
+  <sect2 xml:id="transactional.updates.disabling">
+   <title>Disabling Transactional Updates</title>
    <para>
-    In production you typically need to carefully shedule rebooting of your cluster as you may need to reboot during a specific time period and usually you do not want to reboot all nodes at the same time. &productname; involves a reboot manager that according to a passed configuration schedules rebooting of your cluster. The reboot manager is a daemon that is controlled by using the <command>rebootmgrctl</command> and configuration is stored in the <filename>/etc/rebootmgr.conf</filename>, an example follows:
+    Even though we do not recommend that, you can disable transactional updates by issuing the command:    
+   </para>
+   <screen>systemctl --now disable transactional-update.timer</screen>
+   <para>
+    And also the automatic reboot can be disabled, just use any of the commands:
+   </para>
+   <screen>systemctl --now disable rebootmgr</screen>
+   <para>
+    or
+   </para>
+   <screen>rebootmgrctl off</screen>
+  </sect2>
+ </sect1>
+ 
+ 
+ <sect1 xml:id="reboot.managment">
+   <title>Rebooting the Cluster</title>
+   <para>
+    In production you typically need to carefully shedule rebooting of your cluster as you may need to reboot during a specific time period and usually you do not want to reboot all nodes at the same time. &productname; involves a reboot manager that according to a passed configuration schedules rebooting of your cluster. The reboot manager is a daemon that is controlled by using the <command>rebootmgrctl</command> and configuration is stored in the <filename>/etc/rebootmgr.conf</filename>. The file is not overwritten after reboot. An example configuration follows:
    </para>
    <screen>[rebootmgr]
 window-start=03:30
@@ -59,7 +104,7 @@ lock-group=default</screen>
     <itemizedlist>
      <listitem>
       <para>
-       <emphasis role="bold"><literal>instantly</literal></emphasis> - when a signal is received, services will be rebooted without any log or without waiting for a maintenance window.
+       <emphasis role="bold"><literal>instantly</literal></emphasis> - when a signal is received, services will be rebooted without any lock or without waiting for a maintenance window.
       </para>
      </listitem>
      <listitem>
@@ -69,7 +114,17 @@ lock-group=default</screen>
      </listitem>
      <listitem>
       <para>
-       <emphasis role="bold"><literal>etcd-lock</literal></emphasis>
+       <emphasis role="bold"><literal>etcd-lock</literal></emphasis> - before rebooting, machines specified in the <literal>lock-group</literal> are locked. If you configured the maintenance window, the lock is created within the configured window. For more details about lock group, refer to <xref linkend="reboot.managment.locks"/>.
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       <emphasis role="bold"><literal>best-effort</literal></emphasis> - the default value of the reboot strategy. If etcd is running, the <literal>etcd-lock</literal> reboot strategy is used. If etcd is not running, but you configured the maintenance window, the <literal>maint-window</literal> reboot strategy will be used. If there is no etcd and no maintenance window configured, the <literal>instantly</literal> reboot strategy will be used.
+      </para>      
+     </listitem>
+     <listitem>
+      <para>
+       <emphasis role="bold"><literal>off</literal></emphasis> - the <literal>rebootmg</literal> still runs, but all signals to reboot are ignored.
       </para>
      </listitem>
     </imtezedlist>
@@ -78,15 +133,95 @@ lock-group=default</screen>
  </varlistentry>
 </variablelist>
 
-   <para>
-    In production you usually need to reboot your cluster without all nodes being down at the same time. To make sure that the whole cluster do not reboot at once, create groups of machines that can reboot at the same time. The groups are configured and managed by using <literal>etcd</literal>. For example you can create a group &ndash; called <emphasis>etcd_group</emphasis>, add all nodes you need and specify that only one etcd server may be rebooted at the same time. And then you can create another group &ndash; called workers, where you allow more nodes to be rebooted at the same time.
-   </para>   
+ <sect2 xml:id="reboot.managment.locks">
+  <title>Locking by Using etcd</title>
+  <para>
+   Typically you need to avoid rebooting of all cluster nodes at the same. Thus you can use groups of nodes and configure the behaviour if a reboot signal arrives. For example, you can define two groups of nodes&mdash;one that groups nodes running etcd instances called <emphasis>etcd</emphasis> and one for other nodes called <emphasis>workers</emphasis>. In the <emphasis>etcd</emphasis> group you configure that only one node in this group can be rebooted at the same time. In the <emphasis>workers</emphasis> group you configure that a higher number of nodes can be rebooted at the same time.  
+  </para>
+  <para>
+   In the directory <filename>rebootmg/locks/&lt;group name&gt;</filename> there are two variables:
+  </para>
+  <variablelist>
+   <varlistentry>
+    <term><literal>mutex</literal></term>
+    <listitem>
+     <para>
+      defaults to 0.  You can set the value to 1 by using <literal>atomic_compare_and_swap</literal> to ensure that only one machine has write access at one time.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term><literal>data</literal></term>
+    <listitem>
+     <para>
+      contains a JSON structure with the following data:
+     </para>
+     <screen>{
+“max”:3,
+“holders”:[
+“3cb8c701b4d3474d99a7e88b31dd3439”,
+“71c8efe539b280af2fe09b3b5771345e”
+]
+}</screen>
+ <para>
+  <literal>max</literal> defines the count of nodes within the group that can be rebooted at the same time.
+ </para>
+ <para>
+  <literal>holders</literal> is a comma separated list of unique ID of machines. Values are obtained from the <filename>/etc/machine-id</filename> file.
+ </para>
+    </listitem>
+   </varlistentry>
+  </variablelist>
+  
+  <para>
+   A typical workflow of a client that tries to reboot is the following:
+  </para>
+  <orderedlist>
+   <listitem>
+    <para>
+     A check is performed if there are free locks. If not, the client checks the <literal>data</literal> variable until it changes.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     The client gets the <literal>mutex</literal>
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     ID of the client is added to the <literal>holders</literal> list.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+    The <literal>mutex</literal> is released. 
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     The node reboots.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     On boot, the client checks if it holds the <literal>mutex</literal>. If yes, the client ID is removed from the <literal>holders</literal> list and the <literal>mutex</literal> is released. 
+    </para>
+   </listitem>
+  </orderedlist>
+ </sect2>
+ </sect1>
+    
   </sect2>
- </sect1>
+ <sect1 xml:id="commands.cluster.managment">
+  <title>Commands for Cluster Management</title>
+  <para>
+   
+  </para>
+  
+ </sect1> 
  
- <sect1 xml:id="transactional.updates">
-  <title>Handling Transactional Updates</title>
- </sect1>
+ 
+ 
  <sect1 xml:id="node.managment">
   <title>Node Managment</title>
  </sect1>
