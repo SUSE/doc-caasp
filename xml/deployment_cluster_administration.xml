@@ -44,7 +44,7 @@
    </listitem>
   </itemizedlist>
   <para>
-   Transactional updates are managed by the <filename>transactional-update</filename>, which is called once a day. The script checks if any update is available. If there is an update to be applied, a new snapshot of the root file system is created and the system is updated by using <command>zypper up</command>. All RPMS released to this point are applied. The snapshot is then marked as active and will be used after the next reboot of the system. The script can reboot the cluster itself or it can instruct the <literal>rebootmgr</literal> to schedule the reboot according to the configured policies (for details refer to <xref linkend="reboot.managment"/>.
+   Transactional updates are managed by the <command>transactional-update</command> script, which is called once a day. The script checks if any update is available. If there is an update to be applied, a new snapshot of the root file system is created and the system is updated by using <command>zypper up</command>. All RPMS released to this point are applied. The snapshot is then marked as active and will be used after the next reboot of the system. The script can reboot the cluster itself or it can instruct the <literal>rebootmgr</literal> to schedule the reboot according to the configured policies (for details refer to <xref linkend="reboot.managment"/>).
   </para>
   
   <sect2 xml:id="transactional.updates.disabling">
@@ -64,6 +64,20 @@
   </sect2>
  </sect1>
  
+ <sect1 xml:id="ptf.handling">
+  <title>Handling Program Temporary Fixes</title>
+  <para>
+   Program temporary fixes (PTFs) are available in the &productname; environment. You install them by using the <command>transactional-update</command> script. Typically you invoke the installation of PTFs by running:
+  </para>
+  <screen>transactional_update reboot ptf install</screen>
+  <para>
+   The command installs PTF RPMs. The <literal>reboor<literal> option then schedules a reboot after the installation. PTFs are activate only after rebooting of your system.
+  </para>
+  <para>
+   In case you need to remove the installed PTFs, use the following command:
+  </para>
+  <screen>transactional_update reboot ptf remove</screen>
+ </sect1>
  
  <sect1 xml:id="reboot.managment">
    <title>Rebooting the Cluster</title>
