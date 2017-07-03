@@ -93,7 +93,7 @@ lock-group=default</screen>
 <para>
  The meaning of the options is the following:
 </para>
-<variablelist>
+<variablelist xml:id="reboot.managment.strategies">
  <varlistentry>
   <term><literal>window-start</literal></term>
   <listitem>
@@ -225,19 +225,88 @@ lock-group=default</screen>
  </sect2>
  </sect1>
     
-  </sect2>
- <sect1 xml:id="commands.cluster.managment">
+  <sect1 xml:id="commands.cluster.managment">
   <title>Commands for Cluster Management</title>
   <para>
-   
-  </para>
-  
+   TBD
+  </para>  
+  <sect2 xml:id="commands.cluster.managment.rebootmgctl">
+   <title>The <command>rebootmgrctl</command> Command</title>
+   <para>
+    The <command>rebootmgrctl</command> is a tool that enables you to control and configure the behaviour of the reboot manager daemon. To schedule a reboot of your cluster, run the following command:
+   </para>
+   <screen>rebootmgrctl reboot</screen>
+   <para>
+    You can specify two options: <replaceable>fast</replaceable> and <replaceable>now</replaceable>. The <replaceable>fast</replaceable> option requests a lock from <literal>etcd</literal> but the configured maintenance window will be ignored. The <replaceable>now</replaceable> option forces immediate reboot without any lock from <literal>etcd</literal>.
+   </para>
+   <para>
+    To view a status of the reboot manager daemon, run the command:
+   </para>
+   <screen>rebootmgrctl status</screen>
+   <para>
+   The command outputs the current status and current data structure stored in <literal>etcd</literal>. The status is a number from 0 to 3, where each has the following meaning:
+   </para>
+   <itemizedlist>
+    <listitem>
+     <para>
+      <emphasis role="bold">0</emphasis> - no reboot has been requested.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      <emphasis role="bold">1</emphasis> - a reboot has been requested.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      <emphasis role="bold">2</emphasis> - a reboot has been requested, the manager is waiting for the maintenance window.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      <emphasis role="bold">3</emphasis> - a reboot has been requested, the manager is waiting for the <literal>etcd</literal> lock.
+     </para>
+    </listitem>
+   </itemizedlist>
+   <para>
+    To set or change particular reboot strategy, run the following:
+   </para>
+   <screen>rebootmgrctl set-strategy <replaceable></replaceable></screen>
+   <para>
+   For possible strategies refer to <xref linkend="reboot.managment.strategies"/>.
+   </para>
+   <para>
+   If you need to view the currently used reboot strategy, run the command:
+   </para>
+   <screen>rebootmgrctl get-strategy</screen>
+   <para>
+   The <command>rebootmgrctl</command> enables you to set a group of machines that belongs to one group and are allowed to reboot at the same time. If you need your machine to a particular <literal>etcd</literal> lock group, use the following command:
+   </para>
+   <screen>rebootmgrctl set-group <replaceable>etcd-lock-group</replaceable></screen>
+   <para>
+    After you define a group, you can set the maximum count of machines in that group that are allowed to reboot at the same time. Use the command:
+   </para>
+   <screen>rebootmgrctl set-max <replaceable>-group group_name</replaceable> count</screen>
+   <para>
+    If you do not use the <literal>group</literal> option, the local default group will be used. 
+   </para>
+  </sect2>
  </sect1> 
  
  
  
  <sect1 xml:id="node.managment">
   <title>Node Managment</title>
+  <para>
+   TBD
+  </para>
+  
+  <sect2 xml:id="node.managment.removing">
+   <title>Removing Nodes</title>
+   <para>
+    As each node in the cluster runs also an instance of <literal>etcd</literal>, &productname; has to ensure that removing of several nodes does not break the <literal>etcd</literal> cluster. In case you you have for example three nodes in the <literal>etcd</literal> and you delete two of them, &productname; deletes one node, recovers the cluster and only if the recovery is successful, the next node can be removed. If a node runs just an <literal>etcd-proxy</literal>, there is nothing special that has to be done, as deleting any amount of <literal>etcd-proxy</literal> can not break the <literal>etcd</literal> cluster. 
+   </para>
+  </sect2>
  </sect1>
   
 </chapter>
