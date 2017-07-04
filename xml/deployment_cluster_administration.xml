@@ -286,10 +286,66 @@ lock-group=default</screen>
    <para>
     After you define a group, you can set the maximum count of machines in that group that are allowed to reboot at the same time. Use the command:
    </para>
-   <screen>rebootmgrctl set-max <replaceable>-group group_name</replaceable> count</screen>
+   <screen>rebootmgrctl set-max <replaceable>-group group_name</replaceable> <replaceable>count</replaceable></screen>
    <para>
     If you do not use the <literal>group</literal> option, the local default group will be used. 
    </para>
+   <para>
+    If you need to lock a machine manually, you can use the command:
+   </para>
+   <screen>rebootmgrctl lock <replaceable>-group group_name</replaceable> <replaceable>machine_id</replaceable></screen>
+   <para>
+    If you do not specify any group, the local default group name will be used. The <replaceable>machine-id</replaceable> is a network wide unique ID, usually the default ID from <filename>/etc/machine-id</filename>.
+   </para>
+   <para>
+   To unlock a particular machine, use the command:
+   </para>
+   <screen>rebootmgrctl unlock <replaceable>-group group_name</replaceable> <replaceable>machine_id</replaceable></screen>
+  </sect2>
+  
+  <sect2 xml:id="commands.cluster.managment.issue-generator">
+   <title>The <command>issue-generator</command> Command</title>
+   <para>
+    The <command>issue-generator</command> creates a volatile temporary <filename>/run/issue</filename> file. The file <filename>/etc/issue</filename> should be a symlink to the temporary <filename>/run/issue</filename>.
+   </para>
+   <para>
+    You can use the command to prefix all directories and files with a specified prefix (path in this case):
+   </para>
+   <screen>issue-generator --prefix <replaceable>path</replaceable></screen>
+   
+   <para>
+   By using the command you can also create or delete files in the network configuration, for example:
+   </para>
+   <screen>issue-generator network <replaceable>remove</replaceable> <replaceable>interface</replaceable></screen>
+   <para>
+   The command removes file <filename>/run/issue.d/70-<replaceable>interface</replaceable>.conf<filename>. The file contains the name of the <replaceable>interface</replaceable> and escape codes for <command>agentty</command>.
+   </para>
+   <para>
+    You can use the command to add or delete <filename>/run/issue.d/60-ssh_host_keys.conf</filename> that contains fingerprints of the public SSH keys of the host:
+   </para>
+   <screen>issue-generator ssh <replaceable>add|remove</replaceable></screen>
+   
+   <note>
+    <title>The Command without Arguments</title>
+    <para>
+     If you run the command without any argument, all input files will be applied.
+    </para>
+   </note>
+   
+  </sect2>
+  
+  <sect2 xml:id="commands.cluster.managment.transactional-update">
+   <title>The <command>transactional-update</command> Command</title>
+   <para>
+    The <command>transactional-update</command> enables you to install or remove updates of your system in an atomic way. The updates are applied all or none of them if any package cannot be installed. Before the update is applied, a snapshot of the system is created in order to restore the previous state in case of a failure. 
+   </para>
+   <para>
+    If the current root file system is identical to the active root file system (after applying updates and reboot), run cleanup of all old snapshots.
+   </para>
+  </sect2>
+  
+  <sect2 xml:id="commands.cluster.managment.create_autoyast_profile">
+   <title>The <command>create_autoyast_profile</command> Command</title>
   </sect2>
  </sect1> 
  
