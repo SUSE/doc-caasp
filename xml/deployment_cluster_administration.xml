@@ -73,6 +73,12 @@
   <para>
    The command installs PTF RPMs. The <literal>reboor<literal> option then schedules a reboot after the installation. PTFs are activate only after rebooting of your system.
   </para>
+  <note>
+   <title>Reboot Required</title>
+   <para>
+    If you install or remove PTFs and you call the <command>transactional-update</command> to update the system before reboot, the applied changes by PTFs are lost and need to be done again after reboot.
+   </para>
+  </note>
   <para>
    In case you need to remove the installed PTFs, use the following command:
   </para>
@@ -340,8 +346,86 @@ lock-group=default</screen>
     The <command>transactional-update</command> enables you to install or remove updates of your system in an atomic way. The updates are applied all or none of them if any package cannot be installed. Before the update is applied, a snapshot of the system is created in order to restore the previous state in case of a failure. 
    </para>
    <para>
-    If the current root file system is identical to the active root file system (after applying updates and reboot), run cleanup of all old snapshots.
+    If the current root file system is identical to the active root file system (after applying updates and reboot), run cleanup of all old snapshots:
    </para>
+   <screen>transactional-update cleanup</screen>
+   <para>
+   Other options of the command are the following:
+   </para>
+   <variablelist>
+    <varlistentry>
+     <term><literal>up</literal></term>
+     <listitem>
+      <para>
+       If there are new updates available, a new snapshot is created and <command>zypper up</command> is used to update the snapshot. The snapshot is activated afterwards and is used as the new root filesystem after reboot.
+      </para>
+      <screen>transactional-update up</screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>dup</literal></term>
+     <listitem>
+      <para>
+       If there are new updates available, a new snapshot is created and <command>zypper dup –no-allow-vendor-change</command> is used to update the snapshot. The snapshot is activated afterwards and is used as the new root filesystem after reboot.
+      </para>
+      <screen>transactional-update dup</screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>patch</literal></term>
+     <listitem>
+      <para>
+       If there are new updates available, a new snapshot is created and <command>zypper patch</command> is used to update the snapshot. The snapshot is activated afterwards and is used as the new root filesystem after reboot.
+      </para>
+      <screen>transactional-update patch</screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>ptf install</literal></term>
+     <listitem>
+      <para>
+       The command installs the speficied RPMs:
+      </para>
+      <screen>transactional-update ptf install <replaceable>rpm ... rpm</replaceable></screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>ptf remove</literal></term>
+     <listitem>
+      <para>
+       The command removes the speficied RPMs from the system:
+      </para>
+      <screen>transactional-update ptf remove <replaceable>rpm ... rpm</replaceable></screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>reboot</literal></term>
+     <listitem>
+      <para>
+       If the reboot manager is running, <command>transactional-update</command> informs the reboot manager daemon that the system must be rebooted according to the configured reboot strategy. If the reboot manager daemon is not running, <command>systemctl reboot</command> is called instead.
+      </para>
+      <screen>transactional-update reboot</screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>rollback</literal></term>
+     <listitem>
+      <para>
+       The command sets the default subvolume. On systems with read-write filesystem <command>snapper rollback</command> is called. On a read-only filesystem and without any argument, the current system is set to a new default root filesystem. If you specify a number, that snapshot is used as the default root filesystem. On a read-only filesystem, no additional snapshots are created.
+      </para>
+      <screen>transactional-update rollback <replaceable>snapshot_number</replaceable></screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>--help</literal></term>
+     <listitem>
+      <para>
+       The option outputs possible options and subcommands.
+      </para>
+      <screen>transactional-update --help</screen>
+     </listitem>
+    </varlistentry>
+   </variablelist>
   </sect2>
   
   <sect2 xml:id="commands.cluster.managment.create_autoyast_profile">
