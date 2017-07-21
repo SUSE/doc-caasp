@@ -80,7 +80,7 @@
   </para>
   <screen>transactional_update reboot ptf install</screen>
   <para>
-   The command installs PTF RPMs. The <literal>reboot<literal> option then schedules a reboot after the installation. PTFs are activate only after rebooting of your system.
+   The command installs PTF RPMs. The <literal>reboot</literal> option then schedules a reboot after the installation. PTFs are activate only after rebooting of your system.
   </para>
   <note>
    <title>Reboot Required</title>
@@ -118,7 +118,7 @@ lock-group=default</screen>
   </listitem>
  </varlistentry>
  <varlistentry>
-  <entry><literal>window-duration</literal></entry>
+  <term><literal>window-duration</literal></term>
   <listitem>
    <para>
     configures duration of the maintenance window when the system can be rebooted. Use the format <emphasis>XXhYYm</emphasis>
@@ -156,7 +156,7 @@ lock-group=default</screen>
        <emphasis role="bold"><literal>off</literal></emphasis> - the <literal>rebootmg</literal> still runs, but all signals to reboot are ignored.
       </para>
      </listitem>
-    </imtezedlist>
+    </itemizedlist>
    </para>
   </listitem>
  </varlistentry>
@@ -333,7 +333,7 @@ lock-group=default</screen>
    </para>
    <screen>issue-generator network <replaceable>remove</replaceable> <replaceable>interface</replaceable></screen>
    <para>
-   The command removes file <filename>/run/issue.d/70-<replaceable>interface</replaceable>.conf<filename>. The file contains the name of the <replaceable>interface</replaceable> and escape codes for <command>agentty</command>.
+   The command removes file <filename>/run/issue.d/70-<replaceable>interface</replaceable>.conf</filename>. The file contains the name of the <replaceable>interface</replaceable> and escape codes for <command>agentty</command>.
    </para>
    <para>
     You can use the command to add or delete <filename>/run/issue.d/60-ssh_host_keys.conf</filename> that contains fingerprints of the public SSH keys of the host:
