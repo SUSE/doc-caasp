@@ -91,6 +91,13 @@
        A DNS server to resolve host names. Please make sure you have reliable
        DNS resolution at all times, especially in combination with DHCP.
       </para>
+      <important>
+       <title>Unique Host Names</title>
+       <para>
+        Host names must be unique. It is recommended to let the DHCP server
+        provide not only IP addresses but also host names of the cluster nodes.
+       </para>
+      </important>
      </listitem>
     </itemizedlist>
    </sect3>
@@ -395,9 +402,9 @@
          your product.
         </para>
         <para>
-         By default, the installer will generate a unique host name. To set a
-         custom name, enter host and domain in the
-         <guimenu>Hostname/DNS</guimenu> tab.
+         By default, the installer requests a host name from the DHCP server.
+         If you set a custom name in the <guimenu>Hostname/DNS</guimenu> tab,
+         make sure the it is unique.
         </para>
         <para>
          For more information on configuring network connections, refer to
@@ -639,7 +646,8 @@
         </term>
         <listitem>
          <para>
-          The host name for the node, if not provided by DHCP.
+          The host name for the node, if not provided by DHCP. If you manually
+          specify a host name, make sure it is unique.
          </para>
         </listitem>
        </varlistentry>
