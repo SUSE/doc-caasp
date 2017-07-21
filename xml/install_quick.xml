@@ -411,11 +411,35 @@
         <para>
          Kdump saves the memory image (<quote>core dump</quote>) to the file
          system in case the kernel crashes. This enables you to find the cause
-         of the crash by debugging the dump file. Kdump is preconfigured but
-         disabled by default. See
+         of the crash by debugging the dump file. See
          <link xlink:href="https://www.suse.com/documentation/sles-12/book_sle_tuning/data/cha_tuning_kdump_basic.html"/>
          for more information.
         </para>
+        <warning>
+         <title>Kdump with large amounts of RAM</title>
+         <para>
+          If you have a system with large amounts of RAM or a small harddrive,
+          core dumps may not be able to fit on the disk. If the installer warns
+          you about this, there are two options:
+         </para>
+         <orderedlist>
+          <listitem>
+           <para>
+            Enter the <guimenu>Expert Partitioner</guimenu> and increase the
+            size of the root partition so that it can accommodate the size of
+            the core dump. In this case, you will need to decrease the size of
+            the data partition accordingly. Remember to keep all other
+            parameters of the partitioning (e.g. the root filesystem, mount
+            point of data partition) when doing these changes.
+           </para>
+          </listitem>
+          <listitem>
+           <para>
+            Disable kdump completely.
+           </para>
+          </listitem>
+         </orderedlist>
+        </warning>
        </listitem>
       </varlistentry>
       <varlistentry>
