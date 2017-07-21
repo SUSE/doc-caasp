@@ -19,7 +19,7 @@
  <sect1 xml:id="transactional.updates">
   <title>Handling Transactional Updates</title>
   <para>
-   For security and stability reasons, the operating system and application should always be up-to-date. While with a single machine you can keep the system up-to-date quite easily by running several commands, in large-scaled cluster the update process become a real burden. Thus transactional automatic updates have been introduced. Transactional updates can be characterized as follows:
+   For security and stability reasons, the operating system and application should always be up-to-date. While with a single machine you can keep the system up-to-date quite easily by running several commands, in a large-scaled cluster the update process can become a real burden. Thus transactional automatic updates have been introduced. Transactional updates can be characterized as follows:
   </para>
   <itemizedlist>
    <listitem>
@@ -44,8 +44,17 @@
    </listitem>
   </itemizedlist>
   <para>
-   Transactional updates are managed by the <command>transactional-update</command> script, which is called once a day. The script checks if any update is available. If there is an update to be applied, a new snapshot of the root file system is created and the system is updated by using <command>zypper up</command>. All RPMS released to this point are applied. The snapshot is then marked as active and will be used after the next reboot of the system. The script can reboot the cluster itself or it can instruct the <literal>rebootmgr</literal> to schedule the reboot according to the configured policies (for details refer to <xref linkend="reboot.managment"/>).
+   Transactional updates are managed by the <command>transactional-update</command> script, which is called once a day. The script checks if any update is available. If there is an update to be applied, a new snapshot of the root file system is created and the system is updated by using <command>zypper up</command>. All RPMS released to this point are applied. The snapshot is then marked as active and will be used after the next reboot of the system. The script can reboot the cluster itself or it can instruct the <literal>rebootmgr</literal> to schedule the reboot according to the configured policies (for details refer to <xref linkend="reboot.managment"/>). Ensure that the cluster is rebooted as soon as possible after the update installation is complete, otherwise all changes will be lost.
   </para>
+  <note>
+   <title>General Notes to the Updates Installation</title>
+   <para>
+    Only RPMs that are part of the snapshot of the root filesystem can be updated. If RPMs contains files that are not part of the snapshot, the update can fail or it can break the system.
+   </para>
+   <para>
+    RPMs that require a licence to be accepted cannot be updated.
+   </para>
+  </note>
   
   <sect2 xml:id="transactional.updates.disabling">
    <title>Disabling Transactional Updates</title>
@@ -71,7 +80,7 @@
   </para>
   <screen>transactional_update reboot ptf install</screen>
   <para>
-   The command installs PTF RPMs. The <literal>reboor<literal> option then schedules a reboot after the installation. PTFs are activate only after rebooting of your system.
+   The command installs PTF RPMs. The <literal>reboot<literal> option then schedules a reboot after the installation. PTFs are activate only after rebooting of your system.
   </para>
   <note>
    <title>Reboot Required</title>
@@ -430,6 +439,56 @@ lock-group=default</screen>
   
   <sect2 xml:id="commands.cluster.managment.create_autoyast_profile">
    <title>The <command>create_autoyast_profile</command> Command</title>
+   <para>
+   The <command>create_autoyast_profile</command> command creates an autoyast profile for fully automatic installation of &productname;. You can use the following options when ivoking the command:
+   </para>
+   <variablelist>
+    <varlistentry>
+     <term><literal>-o|--output</literal></term>
+     <listitem>
+      <para>
+       Specify to which file the command should save the created profile.
+      </para>
+      <screen>create_autoyast_profile -o <replaceable>filename</replaceable></screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>--salt-master</literal></term>
+     <listitem>
+      <para>
+       Specify the host name of the &smaster;.
+      </para>
+      <screen>create_autoyast_profile --salt-master <replaceable>saltmaster</replaceable></screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>--smt-url</literal></term>
+     <listitem>
+      <para>
+       Specify the URL of the SMT server.
+      </para>
+      <screen>create_autoyast_profile --smt-url <replaceable>saltmaster</replaceable></screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>--regcode</literal></term>
+     <listitem>
+      <para>
+       Specify the registration code for &productname;.
+      </para>
+      <screen>create_autoyast_profile --regcode <replaceable>405XAbs593</replaceable></screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>--reg-email</literal></term>
+     <listitem>
+      <para>
+       Specify an email address for registration.
+      </para>
+      <screen>create_autoyast_profile --reg-email <replaceable>address@exampl.com</replaceable></screen>
+     </listitem>
+    </varlistentry>
+   </variablelist>
   </sect2>
  </sect1> 
  
