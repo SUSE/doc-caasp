@@ -502,6 +502,52 @@ lock-group=default</screen>
   
   <sect2 xml:id="node.managment.adding">
    <title>Adding Nodes</title>
+   <para>
+    You may need to add additional &kworker;s to your cluster. The following steps guides you through that procedure:  
+   </para>
+   <procedure>
+    <title>Adding Nodes to Existing Cluster</title>
+    <step>
+     <para>
+      Prepare the node as described in <xref linkend="sec.caasp.installquick.node"/>
+     </para>
+    </step>
+    <step>
+     <para>
+      Open  &dashboard; in your browser and login.
+     </para>
+    </step>
+    <step>
+     <para>
+     You should see the newly added node as a node to be accepted in <guimenu>Pending Nodes</guimenu>. Accept the node.
+     </para>
+     <mediaobject>
+      <imageobject>
+       <imagedata fileref="velum_pending_nodes.png" format="PNG"/>
+      </imageobject>
+     </mediaobject>
+    </step>
+    <step>
+     <para>
+      In the <guimenu>Summary</guimenu> you can see the <guimenu>New</guimenu> that appears next to <guimenu>New nodes</guimenu>. Click the <guimenu>New</guimenu> button.
+     </para>
+     <mediaobject>
+      <imageobject>
+       <imagedata fileref="velum_unassigned_nodes.png" format="PNG"/>
+      </imageobject>
+     </mediaobject>
+    </step>
+    <step>
+     <para>
+      Select the node to be added and click <guimenu>Add nodes</guimenu>.
+     </para>
+    </step>
+    <step>
+     <para>
+      The node has been added to your cluster.
+     </para>
+    </step>
+   </procedure>
   </sect2>
   
   <sect2 xml:id="node.managment.removing">
@@ -510,6 +556,11 @@ lock-group=default</screen>
     As each node in the cluster runs also an instance of <literal>etcd</literal>, &productname; has to ensure that removing of several nodes does not break the <literal>etcd</literal> cluster. In case you you have for example three nodes in the <literal>etcd</literal> and you delete two of them, &productname; deletes one node, recovers the cluster and only if the recovery is successful, the next node can be removed. If a node runs just an <literal>etcd-proxy</literal>, there is nothing special that has to be done, as deleting any amount of <literal>etcd-proxy</literal> can not break the <literal>etcd</literal> cluster. 
    </para>
   </sect2>
+ </sect1>
+ 
+ <sect1 xml:id="cluster.monitoring">
+  <title>Cluster Monitoring</title>
+  There are three basic ways how you can monitor your cluster.
  </sect1>
   
 </chapter>
