@@ -560,7 +560,62 @@ lock-group=default</screen>
  
  <sect1 xml:id="cluster.monitoring">
   <title>Cluster Monitoring</title>
-  There are three basic ways how you can monitor your cluster.
+  <para>
+  There are three basic ways how you can monitor your cluster:
+  </para>
+  <itemizedlist>
+   <listitem>
+    <para>
+     by directly accessing the <emphasis>cAdvisor</emphasis> on <literal>http://&lt;worker_node_address&gt;:4194/containers/</literal>. The <emphasis>cAdvisor</emphasis> runs on worker nodes by default.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+    By using <emphasis>Heapster</emphasis>, for details refer to <xref linkend="cluster.monitoring.heapster"/>.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     By using <emphasis>Grafana</emphasis>, for details refer to <xref linkend="cluster.monitoring.grafana"/>.
+    </para>
+   </listitem>
+  </itemizedlist>
+  
+  <sect2 xml:id="cluster.monitoring.heapster">
+   <title>Monitoring with Heapster</title>
+   <para>
+   <emphasis>Heapster</emphasis> is a tool that collects and interprets various signals from your cluster. <emphasis>Heapster</emphasis> communicates directly with the <emphasis>cAdvisor</emphasis>. The signals from the cluster are then exported using REST endpoints.
+   </para>
+   <para>
+   To deploy <emphasis>Heapster</emphasis>, run the following command:
+   </para>
+   <screen>kubectl apply -f https://raw.githubusercontent.com/rssfed23/caas-tips/master/heapster.yaml</screen>
+   <para>
+    <emphasis>Heapster</emphasis> can store data in <emphasis>InfluxDB</emphasis>, which can be then used by other tools.
+   </para>
+  </sect2>
+  
+  <sect2 xml:id="cluster.monitoring.grafana">
+   <title>Monitoring with Grafana</title>
+   <para>
+    <emphasis>Grafana</emphasis> is an analytics platform that processes data stored in <emphasis>InfluxDB</emphasis> and displays the data graphically. You can deploy <emphasis>Grafana</emphasis> by running the following commands:
+   </para>
+   <screen>kubectl apply -f https://raw.githubusercontent.com/rssfed23/caas-tips/master/heapster.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/influxdb.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-config/influxdb/grafana-deployment.yaml
+wget https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-config/influxdb/grafana-service.yaml</screen>
+<para>
+Then open the file <filename>grafana-service.yaml</filename>:
+</para>
+<screen>vi grafana-service.yaml</screen>  
+<para>
+In the file uncomment the line with the <literal>NodePort</literal> type.
+</para>
+<para>
+To finish the <emphasis>Grafana</emphasis> installation, apply the configuration by running:
+</para>
+<screen>kubectl apply -f grafana-service.yaml</screen>
+  </sect2>
  </sect1>
   
 </chapter>
