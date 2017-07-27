@@ -46,6 +46,7 @@
   <para>
    Transactional updates are managed by the <command>transactional-update</command> script, which is called once a day. The script checks if any update is available. If there is an update to be applied, a new snapshot of the root file system is created and the system is updated by using <command>zypper up</command>. All RPMS released to this point are applied. The snapshot is then marked as active and will be used after the next reboot of the system. The script can reboot the cluster itself or it can instruct the <literal>rebootmgr</literal> to schedule the reboot according to the configured policies (for details refer to <xref linkend="reboot.managment"/>). Ensure that the cluster is rebooted as soon as possible after the update installation is complete, otherwise all changes will be lost.
   </para>
+  
   <note>
    <title>General Notes to the Updates Installation</title>
    <para>
@@ -55,6 +56,64 @@
     RPMs that require a licence to be accepted cannot be updated.
    </para>
   </note>
+  
+  <sect2 xml:id="transactional.updates.installation">
+   <title>Manual Installation of Updates</title>
+   <para>
+    &dashboard; displays when nodes in your cluster run outdated software and enables you to update your cluster directly. Follow the next procedure to update your cluster.
+   </para>
+   
+   <procedure>
+    <title>Updating the Cluster with &dashboard;</title>
+    <step>
+     <para>
+      Login to &dashboard;.
+     </para>
+    </step>
+    <step>
+     <para>
+      If required, click <guimenu>UPDATE ADMIN NODE<guimenu> to start the update.
+     </para>
+     <mediaobject>
+      <imageobject>
+       <imagedata fileref="velum_updating.png" format="PNG"/>
+      </imageobject>
+     </mediaobject>
+    </step>
+    <step>
+     <para>
+      confirm the update by clicking <guimenu>Reboot to update</guimenu>.
+     </para>
+     <mediaobject>
+      <imageobject>
+       <imagedata fileref="velum_reboot_and_update.png" format="PNG"/>
+      </imageobject>
+     </mediaobject>     
+    </step>
+    <step>
+     <para>
+      Now you have to wait until the &admin_node; reboots and &dashboard; is available again and you can login again.
+     </para>
+    </step>
+    <step>
+     <para>
+      Click the <guimenu>update all nodes</guimenu> to update &kmaster; and &kworker;s.
+     </para>
+     <mediaobject>
+      <imageobject>
+       <imagedata fileref="velum_update_nodes.png" format="PNG"/>
+      </imageobject>
+     </mediaobject>
+    </step>
+    <step>
+     <para>
+      Reboot your cluster nodes.
+     </para>
+    </step>
+   </procedure> 
+  
+  
+  </sect2>
   
   <sect2 xml:id="transactional.updates.disabling">
    <title>Disabling Transactional Updates</title>
@@ -243,7 +302,7 @@ lock-group=default</screen>
   <sect1 xml:id="commands.cluster.managment">
   <title>Commands for Cluster Management</title>
   <para>
-   TBD
+   &productname; comes with several built-in commands taht enables you to manage your cluster.
   </para>  
   <sect2 xml:id="commands.cluster.managment.rebootmgctl">
    <title>The <command>rebootmgrctl</command> Command</title>

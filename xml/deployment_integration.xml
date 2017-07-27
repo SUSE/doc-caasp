@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<chapter version="5.0" xml:id="integration"
+  xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xlink="http://www.w3.org/1999/xlink">
+  <info>
+  <title>&productname; Integration with SES</title>
+  <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
+   <dm:bugtracker></dm:bugtracker>
+   <dm:translation>yes</dm:translation>
+  </dm:docmanager>
+ </info>
+ 
+ <para>
+ &productname; can use &suse;'s another product as storage for containers&mdash;&suse; Enterprise Storage (further called SES). This chapter gives details how to integrate these two products in several possible ways.
+ </para>
+ 
+ <sect1 xml:id="integration.prerequisites">
+  <title>Prerequisites</title>
+  <para>
+   Before you start the integration process, you need to ensure the folowing:
+  </para>
+  <itemizedlist>
+   <listitem>
+    <para>
+     &productname; can access the SES cluster.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+    &productname; can communicate with the SES nodes&mdash;master, monitoring nodes, OSD nodes and the metadata server in case you need a shared filesystem. For more details regarding SES refer to <link xlink:href="https://www.suse.com/documentation/ses-4/book_storage_admin/data/book_storage_admin.html">SES documentation</link>.
+    </para>
+   </listitem>
+  </itemizedlist>
+ </sect1>
+ 
+ <sect1 xml:id="integration.mounting.fixed.object">
+  <title>Mounting a Named Object Storage to a Container</title>
+  <para>
+   The procedure below describes steps to take when you need to mount a fixed name storage volume to a particular container.
+  </para>
+  <procedure>
+   <title>Mounting Storage to a Container</title>
+   <step>
+    <para>
+     On the &kmaster; apply the configuration that includes Ceph secret by using the <command>kubectl apply</command>
+    </para>
+    <screen><command>kubectl apply -f - &lt;&lt; *EOF*</command>
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ceph-secret
+type: "kubernetes.io/rbd" 
+data:
+  key: "<replaceable>the Ceph secret key</replaceable>"
+*EOF*</screen>
+ <para>
+ The Ceph secret key is stored on the SES master node in the file <filename>/etc/ceph/ceph.client.admin.keyring</filename> &ndash; use the <literal>key<literal> value.
+
+ </para>
+   </step>
+   <step>
+    <para>
+    Create an image in the SES cluster. On the master node, run the following command:
+    </para>
+    <screen>rbd create -s <replaceable>1G</replaceable> <replaceable>yourvolume</replaceable></screen>
+    <para>
+     Where <replaceable>1G</replaceable> is the size of the image and <replaceable>yourvolume</replaceable> is the name of the image.
+    </para>
+   </step>
+   <step>
+    <para>
+     Create a pod that uses the image. On the &kmaster; run the following:
+    </para>
+    <screen><command>kubectl apply -f - &lt;&lt; *EOF*</command>
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox-rbd
+  labels:
+    app: busybox-rbd
+spec:
+  containers:
+  - name: busybox-rbd-container
+    image: busybox
+    command: ['sh', '-c', 'echo The app is running! &amp;&amp; sleep 3600']
+    volumeMounts:
+    - mountPath: /mnt/rbdvol
+      name: rbdvol
+  volumes:
+  - name: rbdvol
+    rbd:
+     - monitors:
+      - [monitor1 ip:port]
+      - [monitor2 ip:port]
+      - [monitor3 ip:port]
+      - [monitor4 ip:port]
+     pool: rbd
+     image: yourvolume
+     user: admin
+     secretRef:
+       name: ceph-secret
+     fsType: ext4
+     readOnly: false
+*EOF*</screen>
+   </step>
+   <step>
+    <para>
+     Verify that the pod exists and its status:
+    </para>
+    <screen>kubectl get po</screen>
+   </step>
+   <step>
+    <para>
+     Once the pod is running, check the mounted volume:
+    </para>
+    <screen><command>kubectl exec -it busybox-rbd -- df -k</command>
+
+...
+/dev/rbd1               999320      1284    929224   0% /mnt/rbdvol
+...</screen>
+    
+   </step>
+  </procedure>
+ </sect1>
+ </chapter>
