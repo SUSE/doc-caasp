@@ -8,23 +8,25 @@
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink">
-  <info>
+ <info>
   <title>&productname; Integration with SES</title>
   <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
    <dm:bugtracker></dm:bugtracker>
    <dm:translation>yes</dm:translation>
   </dm:docmanager>
  </info>
- 
  <para>
- &productname; can use &suse;'s another product as storage for containers&mdash;&suse; Enterprise Storage (further called SES). This chapter gives details how to integrate these two products in several possible ways.
+  &productname; can use &suse;'s another product as storage for
+  containers&mdash;&suse; Enterprise Storage (further called SES). This chapter
+  gives details how to integrate these two products in several ways.
  </para>
- 
  <sect1 xml:id="integration.prerequisites">
   <title>Prerequisites</title>
+
   <para>
-   Before you start the integration process, you need to ensure the folowing:
+   Before you start the integration process, you need to ensure the following:
   </para>
+
   <itemizedlist>
    <listitem>
     <para>
@@ -33,24 +35,31 @@
    </listitem>
    <listitem>
     <para>
-    &productname; can communicate with the SES nodes&mdash;master, monitoring nodes, OSD nodes and the metadata server in case you need a shared filesystem. For more details regarding SES refer to <link xlink:href="https://www.suse.com/documentation/ses-4/book_storage_admin/data/book_storage_admin.html">SES documentation</link>.
+     &productname; can communicate with the SES nodes&mdash;master, monitoring
+     nodes, OSD nodes and the meta data server in case you need a shared
+     file system. For more details regarding SES refer to
+     <link xlink:href="https://www.suse.com/documentation/ses-4/book_storage_admin/data/book_storage_admin.html">SES
+     documentation</link>.
     </para>
    </listitem>
   </itemizedlist>
  </sect1>
- 
  <sect1 xml:id="integration.mounting.fixed.object">
   <title>Mounting a Named Object Storage to a Container</title>
+
   <para>
-   The procedure below describes steps to take when you need to mount a fixed name storage volume to a particular container.
+   The procedure below describes steps to take when you need to mount a fixed
+   name storage volume to a particular container.
   </para>
+
   <procedure>
    <title>Mounting Storage to a Container</title>
    <step>
     <para>
-     On the &kmaster; apply the configuration that includes Ceph secret by using the <command>kubectl apply</command>
+     On the &kmaster; apply the configuration that includes Ceph secret by
+     using the <command>kubectl apply</command>
     </para>
-    <screen><command>kubectl apply -f - &lt;&lt; *EOF*</command>
+<screen><command>kubectl apply -f - &lt;&lt; *EOF*</command>
 apiVersion: v1
 kind: Secret
 metadata:
@@ -59,25 +68,28 @@ type: "kubernetes.io/rbd"
 data:
   key: "<replaceable>the Ceph secret key</replaceable>"
 *EOF*</screen>
- <para>
- The Ceph secret key is stored on the SES master node in the file <filename>/etc/ceph/ceph.client.admin.keyring</filename> &ndash; use the <literal>key</literal> value.
-
- </para>
+    <para>
+     The Ceph secret key is stored on the SES master node in the file
+     <filename>/etc/ceph/ceph.client.admin.keyring</filename> &ndash; use the
+     <literal>key</literal> value.
+    </para>
    </step>
    <step>
     <para>
-    Create an image in the SES cluster. On the master node, run the following command:
+     Create an image in the SES cluster. On the master node, run the following
+     command:
     </para>
-    <screen>rbd create -s <replaceable>1G</replaceable> <replaceable>yourvolume</replaceable></screen>
+<screen>rbd create -s <replaceable>1G</replaceable> <replaceable>yourvolume</replaceable></screen>
     <para>
-     Where <replaceable>1G</replaceable> is the size of the image and <replaceable>yourvolume</replaceable> is the name of the image.
+     Where <replaceable>1G</replaceable> is the size of the image and
+     <replaceable>yourvolume</replaceable> is the name of the image.
     </para>
    </step>
    <step>
     <para>
      Create a pod that uses the image. On the &kmaster; run the following:
     </para>
-    <screen>kubectl apply -f - &lt;&lt; *EOF*
+<screen>kubectl apply -f - &lt;&lt; *EOF*
 apiVersion: v1
 kind: Pod
 metadata:
@@ -113,47 +125,51 @@ spec:
     <para>
      Verify that the pod exists and its status:
     </para>
-    <screen>kubectl get po</screen>
+<screen>kubectl get po</screen>
    </step>
    <step>
     <para>
      Once the pod is running, check the mounted volume:
     </para>
-    <screen><command>kubectl exec -it busybox-rbd -- df -k</command>
+<screen><command>kubectl exec -it busybox-rbd -- df -k</command>
 
 ...
 /dev/rbd1               999320      1284    929224   0% /mnt/rbdvol
 ...</screen>
-    
    </step>
   </procedure>
+
   <para>
    In case you need to delete the pod, run the following command on &kmaster;:
   </para>
-  <screen>kubectl delete pod <replaceable>busybox-rbd</replaceable></screen>
+
+<screen>kubectl delete pod <replaceable>busybox-rbd</replaceable></screen>
  </sect1>
- 
  <sect1 xml:id="integration.pods.persistent.volumes">
   <title>Creating Pods with Persistent Volumes</title>
+
   <para>
-  The following procedure describes how to attach a pod to a persistent SES volume.
+   The following procedure describes how to attach a pod to a persistent SES
+   volume.
   </para>
+
   <procedure>
    <title>Creating a Pod with Persistent Volume and Persistent Volume Claims</title>
    <step>
     <para>
-    Create a volume on the SES cluster:
+     Create a volume on the SES cluster:
     </para>
-    <screen>rbd create -s <replaceable>1G</replaceable> <replaceable>yourvolume</replaceable></screen>
+<screen>rbd create -s <replaceable>1G</replaceable> <replaceable>yourvolume</replaceable></screen>
     <para>
-     Where <replaceable>1G</replaceable> is the size of the image and <replaceable>yourvolume</replaceable> is the name of the image.
-</para>
+     Where <replaceable>1G</replaceable> is the size of the image and
+     <replaceable>yourvolume</replaceable> is the name of the image.
+    </para>
    </step>
    <step>
     <para>
-    Create the persistent volume on the &kmaster;:
+     Create the persistent volume on the &kmaster;:
     </para>
-    <screen>kubectl apply -f - &lt;&lt; *EOF*
+<screen>kubectl apply -f - &lt;&lt; *EOF*
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -183,7 +199,7 @@ spec:
     <para>
      Create a persistent volume claim on the &kmaster;:
     </para>
-    <screen>kubectl apply -f - &lt;&lt; *EOF*
+<screen>kubectl apply -f - &lt;&lt; *EOF*
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
@@ -195,23 +211,23 @@ spec:
     requests:
       storage: 1Gi
 *EOF*</screen>
-<note>
- <title>Listing Volumes</title>
- <para>
- This persistent volume claim does not explicitly list the volume.
-Persistent volume claims work by picking any volume that meets the
-criteria from a pool. In this case we specified any volume with a size
-of 1G or larger. When the claim is removed the recycling policy will be
-followed. 
- </para>
-</note>
-
+    <note>
+     <title>Listing Volumes</title>
+     <para>
+      This persistent volume claim does not explicitly list the volume.
+      Persistent volume claims work by picking any volume that meets the
+      criteria from a pool. In this case we specified any volume with a size of
+      1G or larger. When the claim is removed the recycling policy will be
+      followed.
+     </para>
+    </note>
    </step>
    <step>
     <para>
-    Create a pod that uses the persistent volume claim. On the &kmaster; run the following:
+     Create a pod that uses the persistent volume claim. On the &kmaster; run
+     the following:
     </para>
-    <screen>kubectl apply -f - &lt;&lt;*EOF*
+<screen>kubectl apply -f - &lt;&lt;*EOF*
 apiVersion: v1
 kind: Pod
 metadata:
@@ -236,32 +252,38 @@ spec:
     <para>
      Verify that the pod exists and its status. On the &kmaster; run:
     </para>
-    <screen>kubectl get po</screen>
+<screen>kubectl get po</screen>
    </step>
    <step>
     <para>
-    Once pod is running, check the volume by running on the &kmaster;:
+     Once pod is running, check the volume by running on the &kmaster;:
     </para>
-    <screen><command>kubectl exec -it busybox-rbd -- df -k</command>
+<screen><command>kubectl exec -it busybox-rbd -- df -k</command>
 
 ...
 /dev/rbd3               999320      1284    929224   0% /mnt/rbdvol
 ...</screen>
    </step>
   </procedure>
+
   <para>
-  In case you need to delete the pod, run the following command on the &kmaster;:
+   In case you need to delete the pod, run the following command on the
+   &kmaster;:
   </para>
-  <screen>kubectl delete pod busybox-rbd</screen>
-<para>
-And when the command finishes, run
-</para>
+
+<screen>kubectl delete pod busybox-rbd</screen>
+
+  <para>
+   And when the command finishes, run
+  </para>
+
 <screen>kubectl delete persistentvolume yourpv</screen>
-<note>
- <title>Deleting a Pod</title>
- <para>
- When you delete the pod, the persistent volume claim is deleted as well.
- </para>
-</note>
+
+  <note>
+   <title>Deleting a Pod</title>
+   <para>
+    When you delete the pod, the persistent volume claim is deleted as well.
+   </para>
+  </note>
  </sect1>
- </chapter>
+</chapter>

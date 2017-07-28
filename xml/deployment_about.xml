@@ -51,7 +51,7 @@
   </listitem>
   <listitem>
    <para>
-    Subvolumes for data sharing are read-write.
+    Sub volumes for data sharing are read-write.
    </para>
   </listitem>
   <listitem>
@@ -137,11 +137,11 @@
    &salt; is used to manage deployment and administration of the cluster. The
    <literal>&salt;-api</literal> is used to distribute commands from
    &dashboard; to the <literal>salt-master</literal> daemon. The
-   <literal>salt-master</literal> daemon stores events in the
-   <emphasis>Maria DB</emphasis> (the database is also used to store &dashboard;
-   data). The <literal>salt-minion</literal> daemon on the &admin_node; is used
-   to generate required certificates and on the &sminion;s the daemons
-   communicate with the &admin_node;.
+   <literal>salt-master</literal> daemon stores events in the <emphasis>Maria
+   DB</emphasis> (the database is also used to store &dashboard; data). The
+   <literal>salt-minion</literal> daemon on the &admin_node; is used to
+   generate required certificates and on the &sminion;s the daemons communicate
+   with the &admin_node;.
   </para>
 
   <para>
@@ -149,11 +149,10 @@
    container is assigned an IP address that is used for communication with
    other containers on the same host machine. Containers might need to have a
    unique IP address exposed for network communication, thus flannel networking
-   is used. Flannel gives each host an IP subnet from which the container
-   engine can allocate IP addresses for containers. The mapping of IP
-   addresses is stored by using <literal>etcd</literal>. The
-   <literal>flanneld</literal> is used to manage routing of packets and mapping
-   of IP addresses.
+   is used. Flannel gives each host an IP sub net from which the container
+   engine can allocate IP addresses for containers. The mapping of IP addresses
+   is stored by using <literal>etcd</literal>. The <literal>flanneld</literal>
+   is used to manage routing of packets and mapping of IP addresses.
   </para>
 
   <para>
