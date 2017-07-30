@@ -97,21 +97,25 @@
       If required, click <guimenu>UPDATE ADMIN NODE</guimenu> to start the
       update.
      </para>
-     <mediaobject>
-      <imageobject>
-       <imagedata fileref="velum_updating.png" format="PNG"/>
-      </imageobject>
-     </mediaobject>
+     <informalfigure>
+      <mediaobject>
+       <imageobject>
+        <imagedata fileref="velum_updating.png" format="PNG"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
     </step>
     <step>
      <para>
       Confirm the update by clicking <guimenu>Reboot to update</guimenu>.
      </para>
-     <mediaobject>
-      <imageobject>
-       <imagedata fileref="velum_reboot_and_update.png" format="PNG"/>
-      </imageobject>
-     </mediaobject>
+     <informalfigure>
+      <mediaobject>
+       <imageobject>
+        <imagedata fileref="velum_reboot_and_update.png" format="PNG"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
     </step>
     <step>
      <para>
@@ -124,11 +128,13 @@
       Click the <guimenu>update all nodes</guimenu> to update &kmaster; and
       &kworker;s.
      </para>
-     <mediaobject>
-      <imageobject>
-       <imagedata fileref="velum_update_nodes.png" format="PNG"/>
-      </imageobject>
-     </mediaobject>
+     <informalfigure>
+      <mediaobject>
+       <imageobject>
+        <imagedata fileref="velum_update_nodes.png" format="PNG"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
     </step>
    </procedure>
   </sect2>
@@ -236,50 +242,50 @@ lock-group=default</screen>
     <listitem>
      <para>
       defines a strategy of rebooting. You can use any of the following values:
-      <itemizedlist>
-       <listitem>
-        <para>
-         <emphasis role="bold"><literal>instantly</literal></emphasis> - when a
-         signal is received, services will be rebooted without any lock or
-         without waiting for a maintenance window.
-        </para>
-       </listitem>
-       <listitem>
-        <para>
-         <emphasis role="bold"><literal>maint-window</literal></emphasis> - the
-         cluster reboots only within the set maintenance window. If you do not
-         configure the maintenance window, the cluster reboots immediately.
-        </para>
-       </listitem>
-       <listitem>
-        <para>
-         <emphasis role="bold"><literal>etcd-lock</literal></emphasis> - before
-         rebooting, machines specified in the <literal>lock-group</literal> are
-         locked. If you configured the maintenance window, the lock is created
-         within the configured window. For more details about lock group, refer
-         to <xref linkend="reboot.managment.locks"/>.
-        </para>
-       </listitem>
-       <listitem>
-        <para>
-         <emphasis role="bold"><literal>best-effort</literal></emphasis> - the
-         default value of the reboot strategy. If etcd is running, the
-         <literal>etcd-lock</literal> reboot strategy is used. If etcd is not
-         running, but you configured the maintenance window, the
-         <literal>maint-window</literal> reboot strategy will be used. If there
-         is no etcd and no maintenance window configured, the
-         <literal>instantly</literal> reboot strategy will be used.
-        </para>
-       </listitem>
-       <listitem>
-        <para>
-         <emphasis role="bold"><literal>off</literal></emphasis> - the
-         <literal>rebootmg</literal> still runs, but all signals to reboot are
-         ignored.
-        </para>
-       </listitem>
-      </itemizedlist>
      </para>
+     <itemizedlist>
+      <listitem>
+       <para>
+        <emphasis role="bold"><literal>instantly</literal></emphasis> - when a
+        signal is received, services will be rebooted without any lock or
+        without waiting for a maintenance window.
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        <emphasis role="bold"><literal>maint-window</literal></emphasis> - the
+        cluster reboots only within the set maintenance window. If you do not
+        configure the maintenance window, the cluster reboots immediately.
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        <emphasis role="bold"><literal>etcd-lock</literal></emphasis> - before
+        rebooting, machines specified in the <literal>lock-group</literal> are
+        locked. If you configured the maintenance window, the lock is created
+        within the configured window. For more details about lock group, refer
+        to <xref linkend="reboot.managment.locks"/>.
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        <emphasis role="bold"><literal>best-effort</literal></emphasis> - the
+        default value of the reboot strategy. If etcd is running, the
+        <literal>etcd-lock</literal> reboot strategy is used. If etcd is not
+        running, but you configured the maintenance window, the
+        <literal>maint-window</literal> reboot strategy will be used. If there
+        is no etcd and no maintenance window configured, the
+        <literal>instantly</literal> reboot strategy will be used.
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        <emphasis role="bold"><literal>off</literal></emphasis> - the
+        <literal>rebootmg</literal> still runs, but all signals to reboot are
+        ignored.
+       </para>
+      </listitem>
+     </itemizedlist>
     </listitem>
    </varlistentry>
   </variablelist>
@@ -730,11 +736,13 @@ lock-group=default</screen>
       You should see the newly added node as a node to be accepted in
       <guimenu>Pending Nodes</guimenu>. Accept the node.
      </para>
-     <mediaobject>
-      <imageobject>
-       <imagedata fileref="velum_pending_nodes.png" format="PNG"/>
-      </imageobject>
-     </mediaobject>
+     <informalfigure>
+      <mediaobject>
+       <imageobject>
+        <imagedata fileref="velum_pending_nodes.png" format="PNG"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
     </step>
     <step>
      <para>
@@ -742,11 +750,13 @@ lock-group=default</screen>
       that appears next to <guimenu>New nodes</guimenu>. Click the
       <guimenu>New</guimenu> button.
      </para>
-     <mediaobject>
-      <imageobject>
-       <imagedata fileref="velum_unassigned_nodes.png" format="PNG" width="60%"/>
-      </imageobject>
-     </mediaobject>
+     <informalfigure>
+      <mediaobject>
+       <imageobject>
+        <imagedata fileref="velum_unassigned_nodes.png" format="PNG" width="60%"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
     </step>
     <step>
      <para>
