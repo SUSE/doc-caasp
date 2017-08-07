@@ -56,7 +56,8 @@
     <itemizedlist mark="bullet" spacing="normal">
      <listitem>
       <para>
-       Any AMD64/Intel* EM64T processor (quad-core processors are recommended). 32-bit processors are not supported.
+       Any AMD64/Intel* EM64T processor (quad-core processors are recommended).
+       32-bit processors are not supported.
       </para>
      </listitem>
      <listitem>
@@ -66,7 +67,8 @@
      </listitem>
      <listitem>
       <para>
-       40 GB available disk space (or more depending on the count and size of container images you intend to run). 
+       40 GB available disk space (or more depending on the count and size of
+       container images you intend to run).
       </para>
      </listitem>
     </itemizedlist>
@@ -169,16 +171,15 @@
       Configure the following mandatory settings on the <guimenu>Installation
       Overview</guimenu> screen.
      </para>
-
      <note>
       <title>Help and Release Notes</title>
       <para>
        From this point on, a brief help document and the Release Notes can be
        viewed from any screen during the installation process by selecting
-       <guimenu>Help</guimenu> or <guimenu>Release Notes</guimenu> respectively.
+       <guimenu>Help</guimenu> or <guimenu>Release Notes</guimenu>
+       respectively.
       </para>
      </note>
-
      <variablelist>
       <varlistentry>
        <term>
@@ -186,8 +187,9 @@
        </term>
        <listitem>
         <para>
-         The <guimenu>Keyboard Layout</guimenu> is initialized with the language
-         settings you have chosen on the boot screen. Change it here, if necessary.
+         The <guimenu>Keyboard Layout</guimenu> is initialized with the
+         language settings you have chosen on the boot screen. Change it here,
+         if necessary.
         </para>
        </listitem>
       </varlistentry>
@@ -201,9 +203,7 @@
          &rootuser; user) and confirm it.
         </para>
         <warning>
-         <title>
-          Do not forget the &rootuser; Password
-         </title>
+         <title>Do not forget the &rootuser; Password</title>
          <para>
           You should never forget the &rootuser; password! After you entered it
           here, the password cannot be retrieved. See
@@ -251,7 +251,8 @@
           </term>
           <listitem>
            <para>
-            A cluster node running containers or the container orchestration framework.
+            A cluster node running containers or the container orchestration
+            framework.
            </para>
           </listitem>
          </varlistentry>
@@ -261,7 +262,8 @@
           </term>
           <listitem>
            <para>
-            A plain node that can be used for testing and debugging purposes in your cluster, but it is not usually needed.
+            A plain node that can be used for testing and debugging purposes in
+            your cluster, but it is not usually needed.
            </para>
           </listitem>
          </varlistentry>
@@ -274,18 +276,18 @@
        </term>
        <listitem>
         <para>
-         Enter host names or IP addresses of one or more
-         <guimenu>NTP Servers</guimenu> for the node, separated by whitespaces or
-         colons. While a single server is sufficient, nodes should use at least
-         three for optimal precision and reliability.
+         Enter host names or IP addresses of one or more <guimenu>NTP
+         Servers</guimenu> for the node, separated by white spaces or colons.
+         While a single server is sufficient, nodes should use at least three
+         for optimal precision and reliability.
         </para>
-        <para>For more information about <literal>NTP</literal>, refer to
+        <para>
+         For more information about <literal>NTP</literal>, refer to
          <link xlink:href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_netz_xntp.html"/>
         </para>
        </listitem>
       </varlistentry>
      </variablelist>
-
      <informalfigure>
       <mediaobject>
        <imageobject role="fo">
@@ -296,7 +298,6 @@
        </imageobject>
       </mediaobject>
      </informalfigure>
-
      <para>
       Optionally, you can customize the following settings. If you do not make
       any changes, defaults are used. A brief summary of the settings is
@@ -315,7 +316,7 @@
         <variablelist>
          <varlistentry>
           <term>
-           Select a harddisk
+           Select a hard disk
           </term>
           <listitem>
            <para>
@@ -334,28 +335,25 @@
             .
            </para>
            <warning>
-            <title>
-             For Experts only
-            </title>
+            <title>For Experts only</title>
             <para>
              As the name suggests, the <guimenu>Expert Partitioner</guimenu> is
              for experts only. Custom partitioning schemes that do not meet the
              requirements of &productname; are not supported.
             </para>
             <itemizedlist>
-             <title>
-              Requirements for custom partitioning schemes
-             </title>
+             <title>Requirements for custom partitioning schemes</title>
              <listitem>
               <para>
-               &productname; exclusively supports the file system types &btrfs; 
+               &productname; exclusively supports the file system types &btrfs;
                and OverlayFS. A read-only &btrfs; file system is used for the
                root file system which enables transactional updates.
               </para>
              </listitem>
              <listitem>
               <para>
-               For snapshots, partitions must have a capacity of at least 11 GB.
+               For snapshots, partitions must have a capacity of at least 11
+               GB.
               </para>
              </listitem>
              <listitem>
@@ -398,7 +396,7 @@
          If the network could not be configured automatically while starting
          the installation system, you have to manually configure the
          <guimenu>Network Settings</guimenu>. Please make sure at least one
-         network interface is connected to the internet in order to register
+         network interface is connected to the Internet in order to register
          your product.
         </para>
         <para>
@@ -412,14 +410,12 @@
          .
         </para>
         <important>
-         <title>
-          Reliable Networking
-         </title>
+         <title>Reliable Networking</title>
          <para>
           Please make sure all nodes are on the same network and can
           communicate without interruptions. If you are using host names to
-          specify nodes, please make sure you have reliable DNS resolution
-          at all times, especially in combination with DHCP.
+          specify nodes, please make sure you have reliable DNS resolution at
+          all times, especially in combination with DHCP.
          </para>
         </important>
        </listitem>
@@ -439,7 +435,7 @@
         <warning>
          <title>Kdump with large amounts of RAM</title>
          <para>
-          If you have a system with large amounts of RAM or a small harddrive,
+          If you have a system with large amounts of RAM or a small hard drive,
           core dumps may not be able to fit on the disk. If the installer warns
           you about this, there are two options:
          </para>
@@ -450,7 +446,7 @@
             size of the root partition so that it can accommodate the size of
             the core dump. In this case, you will need to decrease the size of
             the data partition accordingly. Remember to keep all other
-            parameters of the partitioning (e.g. the root filesystem, mount
+            parameters of the partitioning (e.g. the root file system, mount
             point of data partition) when doing these changes.
            </para>
           </listitem>
@@ -547,8 +543,9 @@
      <para>
       After the &admin_node; has finished booting and you see the login prompt,
       point a web browser to
-      <uri>https://<replaceable>caasp-admin.&exampledomain;</replaceable></uri>,
-      where <literal>caasp-admin.&exampledomain;</literal> is the hostname or
+      <uri>https://<replaceable>caasp-admin.&exampledomain;</replaceable>
+      </uri>
+      , where <literal>caasp-admin.&exampledomain;</literal> is the host name or
       IP address of the &admin_node;. The IP address is shown above the login
       prompt.
      </para>
@@ -593,7 +590,7 @@
        <term>Dashboard Location</term>
        <listitem>
         <para>
-         Hostname or IP of the node running this web interface.
+         Host name or IP of the node running this web interface.
         </para>
        </listitem>
       </varlistentry>
@@ -618,7 +615,7 @@
          processes running on the cluster nodes.
         </para>
        </listitem>
-       </varlistentry>
+      </varlistentry>
      </variablelist>
      <informalfigure>
       <mediaobject>
@@ -646,26 +643,26 @@
     recommended.
    </para>
    <para>
-    You can start the setup via PXE. For the full procedure, refer to the
-    &sle; 12 Deployment Guide:
+    You can start the setup via PXE. For the full procedure, refer to the &sle;
+    12 Deployment Guide:
     <link xlink:href=
     "https://www.suse.com/documentation/sles-12/singlehtml/book_sle_deployment/book_sle_deployment.html#cha.deployment.prep_boot"
     />.
    </para>
    <para>
-    You can directly use the <literal>initrd</literal> and <literal>linux</literal>
-    files from your install media, or install the package
-    <package>tftpboot-installation-CAASP-1.0</package> on the TFTP server.
-    The package provides the required <literal>initrd</literal> and <literal>linux</literal>
-    files in the <filename>/srv/tftpboot/</filename> directory. You need to modify
-    the paths used in the &sle; 12 Deployment Guide to correctly point to the
-    files provided by the package.
+    You can directly use the <literal>initrd</literal> and
+    <literal>linux</literal> files from your install media, or install the
+    package <package>tftpboot-installation-CAASP-1.0</package> on the TFTP
+    server. The package provides the required <literal>initrd</literal> and
+    <literal>linux</literal> files in the <filename>/srv/tftpboot/</filename>
+    directory. You need to modify the paths used in the &sle; 12 Deployment
+    Guide to correctly point to the files provided by the package.
    </para>
    <para>
-    Before you can set up a cluster node, you have to install and bootstrap a
+    Before you can set up a cluster node, you have to install and bootstrap an
     &admin_node; to run the administration dashboard. Refer to
-    <xref linkend="sec.caasp.installquick.admin"/> for information
-    on how to install the controller node.
+    <xref linkend="sec.caasp.installquick.admin"/> for information on how to
+    install the controller node.
    </para>
    <sect3 xml:id="sec.caasp.installquick.node.manual">
     <title>Manual Installation</title>
@@ -679,18 +676,16 @@
      <step>
       <para>
        In step 3, select <literal>Cluster Node</literal> as <guimenu>System
-       Role</guimenu> and enter the host name or IP address of the 
+       Role</guimenu> and enter the host name or IP address of the
        <guimenu>Administration Node</guimenu>.
       </para>
       <important>
-       <title>
-        Reliable Networking
-       </title>
+       <title>Reliable Networking</title>
        <para>
-        Please make sure all nodes are on the same network and can
-        communicate without interruptions. If you are using host names to
-        specify nodes, please make sure you have reliable DNS resolution
-        at all times, especially in combination with DHCP.
+        Please make sure all nodes are on the same network and can communicate
+        without interruptions. If you are using host names to specify nodes,
+        please make sure you have reliable DNS resolution at all times,
+        especially in combination with DHCP.
        </para>
       </important>
      </step>
@@ -698,9 +693,9 @@
       <para>
        After you have finalized the system configuration on the
        <guimenu>Installation Overview</guimenu> screen, click
-       <guimenu>Install</guimenu>. Up to this point no changes have been made to
-       your system. After you click <guimenu>Install</guimenu> a second time,
-       the installation process starts.
+       <guimenu>Install</guimenu>. Up to this point no changes have been made
+       to your system. After you click <guimenu>Install</guimenu> a second
+       time, the installation process starts.
       </para>
       <para>
        After a reboot, the worker should show up in the dashboard and can be
@@ -757,7 +752,7 @@
         </term>
         <listitem>
          <para>
-          Network configration. If you are using dhcp, you can simply enter
+          Network configuration. If you are using dhcp, you can simply enter
           <literal>dhcp</literal>. For manual configurations, refer to
           <link xlink:href="https://www.suse.com/documentation/sles-12/book_autoyast/data/ay_adv_network.html"></link>.
          </para>
@@ -775,7 +770,7 @@
         </listitem>
        </varlistentry>
       </variablelist>
-      <para> 
+      <para>
        Press <keycap function="enter"/>. This boots the system and loads the
        &productname; installer.
       </para>
@@ -795,8 +790,8 @@
    <title>Bootstrapping the Cluster</title>
    <para>
     To complete the installation of your &productname; cluster, it is necessary
-    to bootstrap at least three additional nodes; those will be the
-    Kubernetes Master and Workers.
+    to bootstrap at least three additional nodes; those will be the Kubernetes
+    Master and Workers.
     <!-- cwickert 2017-07-23: FIXME We are already past AutoYaST -->
     <!-- This process leverages &ay; and is (almost) fully automated. -->
    </para>
@@ -804,18 +799,19 @@
     <step>
      <para>
       Point a web browser to
-      <uri>https://<replaceable>caasp-admin.&exampledomain;</replaceable></uri>
+      <uri>https://<replaceable>caasp-admin.&exampledomain;</replaceable>
+      </uri>
       to open the dashboard, where
-      <literal>caasp-admin.&exampledomain;</literal> is the hostname or IP
+      <literal>caasp-admin.&exampledomain;</literal> is the host name or IP
       address of the &admin_node;.
      </para>
     </step>
     <step>
      <para>
       The dashboard lists all cluster nodes registered at the &admin_node;.
-      Newly installed nodes are be listed as <guimenu>Pending
-       Nodes</guimenu>. You can accept individual nodes or all by
-      clicking <guimenu>Accept All Nodes</guimenu>.
+      Newly installed nodes are be listed as <guimenu>Pending Nodes</guimenu>.
+      You can accept individual nodes or all by clicking <guimenu>Accept All
+      Nodes</guimenu>.
      </para>
      <informalfigure>
       <mediaobject>
@@ -830,8 +826,8 @@
      <para>
       Use the check box in the first column to select the nodes you want to add
       to your cluster. In the last column, select the one that should become
-      Kubernetes Master. All other nodes will be set to the Worker role once you
-      click <guimenu>Bootstrap cluster</guimenu>.
+      Kubernetes Master. All other nodes will be set to the Worker role once
+      you click <guimenu>Bootstrap cluster</guimenu>.
       <!-- cwickert 2017-07-23: FIXME explain relation of internal and external names -->
       <!-- Make sure the <guimenu>Hostname</guimenu> of the master matches the
       name configured as <guimenu>External Kubernetes API server FQDN</guimenu>
