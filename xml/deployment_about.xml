@@ -19,21 +19,21 @@
  <para>
   &suse;&reg; CaaS (Container as a Service) Platform is a platform designed for
   fast deployment of container-based applications. You can deploy &productname;
-  on you physical machines or use it on virtual machines. After deployment, it
+  on your physical machines or use it on virtual machines. After deployment, it
   is ready to run out of the box. It provides high scalability of your
   cluster&mdash;from 10 to 1000 nodes.
  </para>
  <para>
   &productname; was designed to simplify transformation of applications into
   container-based applications. Creating clouds with container-based
-  applications is much easier as you get rid off problems with compatibility
+  applications is much easier as you get rid of problems with compatibility
   and dependencies. To enable as fast application deployment as possible, it is
-  recommended to use container orchestration framework, e.g. &kube;.
+  recommended to use a container orchestration framework, e.g. &kube;.
  </para>
  <para>
   While &productname; inherits benefits of &sle; and uses tools and
   technologies well-known to system administrators&mdash;like
-  <literal>cloud-init</literal>, Kubernetes or Salt&mdash;the main innovation
+  <literal>cloud-init</literal>, Kubernetes, or Salt&mdash;the main innovation
   (compared to &sls;) comes with <emphasis role="bold">transactional
   updates</emphasis>. A transactional update is an update that can be installed
   when the system is running without any down time. The transaction update can
@@ -78,7 +78,7 @@
    </listitem>
    <listitem>
     <para>
-     &node; - is a &sminion; that can have a following role:
+     &node; - is a &sminion; that can have one of the following roles:
     </para>
     <itemizedlist>
      <listitem>
@@ -130,17 +130,16 @@
   <para>
    To run the whole cluster, &productname; uses various technologies like
    &salt;, flannel network, <literal>etcd</literal> cluster, controller,
-   scheduler, <literal>kubelet</literal>, container engines and an API Server.
+   scheduler, <literal>kubelet</literal>, container engines, and an API Server.
   </para>
 
   <para>
    &salt; is used to manage deployment and administration of the cluster. The
    <literal>&salt;-api</literal> is used to distribute commands from
    &dashboard; to the <literal>salt-master</literal> daemon. The
-   <literal>salt-master</literal> daemon stores events in the <emphasis>Maria
-   DB</emphasis> (the database is also used to store &dashboard; data). The
+   <literal>salt-master</literal> daemon stores events in <emphasis>MariaDB</emphasis> (the database is also used to store &dashboard; data). The
    <literal>salt-minion</literal> daemon on the &admin_node; is used to
-   generate required certificates and on the &sminion;s the daemons communicate
+   generate required certificates, and on the &sminion;s the daemons communicate
    with the &admin_node;.
   </para>
 
@@ -161,7 +160,7 @@
    on the &admin_node; is used to bootstrap instances of
    <literal>etcd</literal> running on other nodes and is not part of the
    <literal>etcd</literal> cluster on other nodes. The <literal>etcd</literal>
-   on the &kmaster; stores events from the API Server. The
+   instance on the &kmaster; stores events from the API Server. The
    <literal>etcd</literal> instance on &kworker;s runs as a proxy that forwards
    clients to the <literal>etcd</literal> on the &kmaster;.
   </para>
@@ -220,16 +219,16 @@
   <sect2 xml:id="administration_dashboard">
    <title>The Administration Node</title>
    <para>
-    The &admin_node; is intended to manage deployment of the cluster and runs
+    The &admin_node; is intended to manage deployment of the cluster and run
     applications required for a proper function of the cluster. The
     &admin_node; runs the administration dashboard called &dashboard;, the
-    <emphasis>salt-api</emphasis>, the Maria DB database, the <literal>etcd
+    <emphasis>salt-api</emphasis>, the MariaDB database, the <literal>etcd
     discovery</literal> server, the <literal>salt-master</literal> and
-    <literal>salt-minion</literal>. The dashboard, database and daemons all run
+    <literal>salt-minion</literal>. The dashboard, database, and daemons all run
     in separate containers.
    </para>
    <para>
-    The dashboard is a web application that enables you to manage, monitor and
+    The dashboard is a web application that enables you to manage, monitor, and
     deploy the cluster. The dashboard manages the cluster by using the
     <emphasis>salt-api</emphasis> to interact with the underlying &salt;
     technology.
