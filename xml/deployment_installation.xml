@@ -635,11 +635,28 @@
     You can directly use the <literal>initrd</literal> and
     <literal>linux</literal> files from your install media, or install the
     package <package>tftpboot-installation-CAASP-1.0</package> on the TFTP
-    server. The package provides the required <literal>initrd</literal> and
+    server. You may use the &admin_node; as your TFTP server. &productname; uses 
+    a read-only Btrfs file system with an OverlayFS, so you must use the 
+    <command>transactional-update</command> script to install the package:
+    <screen>
+transactional-update pkg install tftpboot-installation-CAASP-1.0-x86_64
+    </screen>
+    The package provides the required <literal>initrd</literal> and
     <literal>linux</literal> files in the <filename>/srv/tftpboot/</filename>
-    directory. You need to modify the paths used in the &sle; 12 Deployment
-    Guide to correctly point to the files provided by the package.
+    directory. 
+    (See <xref linkend="commands.cluster.managment.transactional-update"/> to 
+    learn how to manage packages and patches on the &admin_node;.) 
+    <!-- cschroder 27 Sept. 2017, I don't believe this is needed:
+    You need to modify the paths used in the &sle; 12 Deployment
+    Guide to correctly point to the files provided by the package.-->
    </para>
+   <para>After the package installation is completed, reboot to apply the 
+       changes, using the <command>rebootmgrctl</command> command 
+       (see <xref linkend="commands.cluster.managment.rebootmgctl"/>.
+       <screen>
+rebootmgrctl reboot now
+</screen>
+</para>
    <para>
     Before you can set up a cluster node, you have to install and bootstrap an
     &admin_node; to run the administration dashboard. Refer to
