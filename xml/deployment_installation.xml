@@ -650,6 +650,13 @@ transactional-update pkg install tftpboot-installation-CAASP-1.0-x86_64
     You need to modify the paths used in the &sle; 12 Deployment
     Guide to correctly point to the files provided by the package.-->
    </para>
+   <para>After the package installation is completed, reboot to apply the 
+       changes, using the <command>rebootmgrctl</command> command 
+       (see <xref linkend="commands.cluster.managment.rebootmgctl"/>.
+       <screen>
+rebootmgrctl reboot now
+</screen>
+</para>
    <para>
     Before you can set up a cluster node, you have to install and bootstrap an
     &admin_node; to run the administration dashboard. Refer to
