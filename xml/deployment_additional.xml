@@ -9,7 +9,7 @@
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink">
  <info>
-  <title>Installing Additional Software</title>
+  <title>Installing Software</title>
   <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
    <dm:bugtracker></dm:bugtracker>
    <dm:translation>yes</dm:translation>
@@ -18,14 +18,50 @@
  <para>
   After you deploy your cluster you may want to install and use other software
   that is not shipped with &productname; by default. This chapter gives you
-  detailed instructions how to deploy e.g. the &kube; dashboard or how to set
+  detailed instructions how to deploy, for example,  the &kube; dashboard and how to set
   up &kube; DNS for service discovery.
  </para>
+
+<sect1 xml:id="installing.helm">
+  <title>Deploying &helm; and &tiller;</title>
+<para>
+&helm; charts provide a standard way to deploy &kube; applications. While
+the &helm;'s server-side component is not preinstalled on &productname;, it is possible to
+install it by enabling the appropriate option in the Velum graphical
+interface. When the <guimenu>Install &tiller;</guimenu> option is enabled,
+&tiller; is installed as a container on a &productname; 2 cluster from the
+installation media.
+</para>
+
+<para>
+Once &tiller; is installed on &productname; 2 cluster, the &helm;
+client can be used to interact with &tiller; and the cluster. To initialize the
+&helm; client (which automatically discovers &tiller; in the cluster), run the
+<command>helm init --client-only</command> command. After that, you
+can use the &helm; client as described in the official documentation at <link
+xlink:href="https://docs.helm.sh/using_helm/#using-helm" />.
+</para>
+
+  <note>
+   <title>&helm; and &tiller; are Optional</title>
+    <para>
+      Both &helm; and &tiller; are optional, unless you plan to run run a
+      &suse; Cloud Application Platform.
+    </para>
+  </note>
+
+<para>
+&tiller; that ships with &productname; is supported by &suse;. While &suse;
+does not provide support for third-party &helm; charts, you can easily use them
+if necessary.
+</para>
+</sect1>
+
  <sect1 xml:id="installing.kube.dashboard">
   <title>Installing &kube; Dashboard</title>
 
   <important>
-   <title>Technological Preview</title>
+   <title>Technology Preview</title>
    <para>
     Even though you can install and use the &kube; dashboard, &productname;
     currently fully supports only &dashboard;.
