@@ -16,7 +16,7 @@
   </dm:docmanager>
  </info>
  <para>
-  After you deploy your cluster, you may want to deploy additional software
+  Once your cluster is ready, you may want to deploy additional software
   that is not installed on &productname; by default. This chapter provides
   instructions on how to install and configure various tools and services.
  </para>
@@ -25,8 +25,8 @@
   <title>Deploying &helm; and &tiller;</title>
 <para>
 &helm; charts provide a standard way to deploy &kube; applications. While
-&tiller; (the &helm;'s server-side component) is not preinstalled on &productname;, it is possible to
-install it by enabling the appropriate option in the Velum graphical
+&tiller; (the &helm;'s server-side component) is not installed on &productname;
+by default, it can be installed by enabling the appropriate option in the Velum graphical
 interface. When the <guimenu>Install &tiller;</guimenu> option is enabled,
 &tiller; is installed as a container on a &productname; 2 cluster from the
 installation media.
@@ -36,15 +36,15 @@ installation media.
 Once &tiller; is installed on &productname; 2 cluster, the &helm;
 client can be used to interact with &tiller; and the cluster. To initialize the
 &helm; client (which automatically discovers &tiller; in the cluster), run the
-<command>helm init --client-only</command> command. After that, you
-can use the &helm; client as described in the official documentation at <link
+<command>helm init --client-only</command> command. You
+can then use the &helm; client as described in the official documentation at <link
 xlink:href="https://docs.helm.sh/using_helm/#using-helm" />.
 </para>
 
   <note>
    <title>&helm; and &tiller; are Optional</title>
     <para>
-      Both &helm; and &tiller; are optional, unless you plan to run run a
+      Both &helm; and &tiller; are optional, unless you plan to run a
       &suse; Cloud Application Platform.
     </para>
   </note>
