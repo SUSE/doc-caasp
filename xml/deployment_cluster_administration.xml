@@ -15,6 +15,241 @@
    <dm:translation>yes</dm:translation>
   </dm:docmanager>
  </info>
+
+ <sect1 xml:id="auth">
+  <title>Authentication and Authorization</title>
+  <para>
+   Role-based access control (RBAC) adds the ability to perform authentication
+   and authorization of activities performed against a &kube; cluster.
+   Authentication is concerned with the <quote>who</quote> and authorization is
+   concerned with the <quote>what</quote>.
+  </para>
+  <para>User information is stored in
+   <phrase role="productname">OpenLDAP</phrase> running in a container on your
+   &productname; &admin_node;. You use standard LDAP administration tools for
+   managing these users.
+  </para>
+
+  <sect2 xml:id="auth.login">
+   <title>Logging in</title>
+   <para>
+    Starting in &productname; 2, downloading the &kubeconfig; file from
+    &dashboard; is not enough to use &kubectl;. The downloaded &kubeconfig;
+    file is just a template used for locating your &productname; cluster and
+    does not contain any authentication information.
+   </para>
+   <para>
+    To login to a RBAC-enabled &productname; cluster, you have to use the
+    &productname; command line interface <phrase
+     role="productname">CaaSP CLI</phrase>. It is available through the package
+    management and the from the &obs;. Install the RPM for your distribution:
+   </para>
+   <screen>&prompt.user;&sudo; <command>zypper</command> <option>in caasp-cli</option></screen>
+   <para>
+    If you have downloaded a &kubeconfig; template from &dashboard;,
+    &caasp-cli; can read the root CA certificate from the template and you can
+    login with:
+   </para>
+   <screen>&prompt.user;&caasp-cli; login <option>-s=<replaceable>CaaS_Platform_MASTER_URL</replaceable>-u=<replaceable>USERNAME</replaceable> -p=<replaceable>PASSWORD</replaceable></option></screen>
+   <para>
+    Your <varname>CaaS_Platform_Master_URL</varname> URL is based on the fully
+    qualified domain name (FQDN) specified in &dashboard; during bootstrap. If
+    your FQDN is <systemitem
+     class="fqdomainname">caas-master.example.org</systemitem>, your URL would
+    be <uri>https://caas-master.example.org:6443</uri>.
+   </para>
+   <para>
+    If you have not downloaded the &kubeconfig; template, you will need to specify
+    the root CA certificate on the command line:
+   </para>
+   <screen>&prompt.user;&caasp-cli; <option>login -s=<replaceable>CaaSP_MASTER_URL</replaceable> -r=<replaceable>ROOT_CA_FILE</replaceable> -u=<replaceable>USERNAME</replaceable> -p=<replaceable>PASSWORD</replaceable></option></screen>
+   <para>
+    This will write or update your &kubeconfig; file, which defaults to
+    <filename>$HOME/.kube/config</filename>.
+   </para>
+   <para>
+    After authenticating, you can use &kubectl; as usual.
+   </para>
+
+   <sect3 xml:id="auth.login.kubeconfig">
+    <title>The KUBECONFIG variable</title>
+    <para>
+     &kubectl; uses an environment variable named <varname>KUBECONFIG</varname>
+     to locate your &kubeconfig; file. If this variable is not specified, it
+     defaults to <filename>$HOME/.kube/config</filename>. &caasp-cli; uses this
+     variable to locate your &kubeconfig; in the same manner.
+    </para>
+   </sect3>
+   <sect3 xml:id="auth.login.rootca">
+    <title>Obtaining the root CA certificate</title>
+    <para>
+     You can obtain the root CA certificate from any node in your cluster via SCP:
+    </para>
+    <screen>&prompt.user;<command>scp <replaceable>NODE</replaceable>:/etc/pki/trust/anchors/SUSE_CaaSP_CA.crt .</command></screen>
+    <para>
+     This is the root CA certificate you should either trust on your machine, or
+     provide to &caasp-cli;.
+    </para>
+   </sect3>
+
+  </sect2>
+
+  <sect2 xml:id="auth.users">
+   <title>Managing Users and Groups</title>
+   <para>
+    By default, when you create the first user in &dashboard; during bootstrap of
+    your cluster, that user is granted <literal>Cluster Administrator</literal>
+    privileges within &kube;. You can add additional users with these rights by
+    adding new entries into the LDAP directory.
+   </para>
+   <sect3 xml:id="auth.user.ldap-rootpw">
+    <title>Obtaining the OpenLDAP Password</title>
+    <para>
+     Before performing any administrative tasks on the <phrase
+      role="productname">OpenLDAP</phrase> instance, you will need to retrieve
+     your <phrase role="productname">OpenLDAP</phrase> administrator account
+     password. To do this, <command>ssh</command> into your &admin_node; and
+     run:
+    </para>
+    <screen>&prompt.user;<command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>openldap</option> | <command>awk</command> <option>'{print $1}')</option> <command>cat</command> /var/lib/misc/infra-secrets/openldap-password</screen>
+   </sect3>
+
+   <sect3 xml:id="auth.users.add">
+    <title>Adding New Users</title>
+    <para>
+     To add a new user, create a LDIF file like this:
+    </para>
+    <screen>
+     <![CDATA[
+dn: uid=<userid>,ou=People,dc=infra,dc=caasp,dc=local
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: top
+uid: <userid>
+userPassword: <password hash>
+givenname: <first name>
+cn: <full name>
+sn: <surname>
+mail: <email address>
+     ]]>
+    </screen>
+    <para>
+     To generate the password hash, install the <package>openldap2</package>
+     package:
+    </para>
+    <screen>&prompt.user;&sudo;<command>zypper</command> <option>install</option> <package>openldap2</package></screen>
+    <para>
+     Then generate the password hash:
+    </para>
+    <screen>&prompt.user;<command>/usr/sbin/slappasswd</command></screen>
+    <para>
+     Make sure to replace all the parameters in the template above, indicated
+     as &lt;....&gt;. The mail attribute value is used as the login to
+     &dashboard; and &kube;.
+    </para>
+    <para>
+     Populate your OpenLDAP server with this LDIF file:
+    </para>
+    <screen>&prompt.user;<command>ldapadd</command> -H ldap://&lt;ADMIN NODE IP&gt;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w &lt;LDAP ADMIN PASSWORD&gt; -f &lt;LDIF FILE&gt;</screen>
+    <para>
+     To add this new user to the existing Administrators group, create a new LDIF
+     file like this:
+    </para>
+    <screen>
+     <![CDATA[
+dn: cn=Administrators,ou=Groups,dc=infra,dc=caasp,dc=local
+changetype: modify
+add: uniqueMember
+uniqueMember: uid=<userid>,ou=People,dc=infra,dc=caasp,dc=local
+     ]]>
+    </screen>
+    <para>
+     Make sure to replace all the parameters in the template above, indicated
+     as &lt;....&gt;. Populate your <phrase
+      role="productname">OpenLDAP</phrase> server with the LDIF file:
+    </para>
+    <screen>&prompt.user;<command>ldapadd</command> -H ldap://&lt;ADMIN NODE IP&gt;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w &lt;LDAP ADMIN PASSWORD&gt; -f &lt;LDIF FILE&gt;</screen>
+   </sect3>
+
+   <sect3 xml:id="auto.group">
+    <title>Adding New Groups</title>
+    <para>
+     Say you have users that you want to grant access to manage a single
+     namespace in Kubernetes. To do this, first create your users as mentioned
+     in <xref linkend="auth.users.add"/>. Then create a new group:
+    </para>
+    <screen>
+     <![CDATA[
+dn: cn=<group name>,ou=Groups,dc=infra,dc=caasp,dc=local
+objectclass: top
+objectclass: groupOfUniqueNames
+cn: <group name>
+uniqueMember: uid=<member1>,ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=<member2>,ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=<member3>,ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=<member4>,ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=<member5>,ou=People,dc=infra,dc=caasp,dc=local
+     ]]>
+    </screen>
+    <para>
+     Make sure to replace all the parameters in the template above, indicated
+     as &lt;....&gt;. Repeat the uniqueMember attribute for every member of
+     this group. Populate your <phrase role="productname">OpenLDAP</phrase>
+     server with the LDIF file:
+    </para>
+    <screen>&prompt.user;<command>ldapadd</command> -H ldap://&lt;ADMIN NODE IP&gt;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w &lt;LDAP ADMIN PASSWORD&gt; -f &lt;LDIF FILE&gt;</screen>
+    <para>
+     Next, create a role binding to allow this new LDAP group access in &kube;.
+     Create a Kubernetes deployment descriptor like this:
+    </para>
+    <screen>
+     <![CDATA[
+     ---
+# Define the Role's permissions in Kubernetes
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: <group name>
+  namespace: <applicable namespace>
+rules:
+- apiGroups: [""]
+  resources: [""]
+  resourceNames: [""]
+  verbs: [""]
+---
+# Map a LDAP group to this Kubernetes role
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: <group name>
+  namespace: <applicable namespace>
+subjects:
+- kind: Group
+  name: <name of LDAP group>
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: <group name>
+  namespace: <applicable namespace>
+  apiGroup: rbac.authorization.k8s.io
+     ]]>
+    </screen>
+    <para>
+     Add this role and binding to Kubernetes:
+    </para>
+    <screen>&prompt.user;kubectl apply -f &lt;DEPLOYMENT DESCRIPTOR FILE&gt;</screen>
+   </sect3>
+   <sect3>
+    <title>Further information</title>
+    <para>For more details on authorization in &kube;, refer to <link
+     xlink:href="https://kubernetes.io/docs/admin/authorization/rbac/"></link>
+    </para>
+   </sect3>
+
+
+ </sect2>
+
+ </sect1>
  <sect1 xml:id="transactional.updates">
   <title>Handling Transactional Updates</title>
 
