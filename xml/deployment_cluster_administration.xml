@@ -30,67 +30,39 @@
    managing these users.
   </para>
 
-  <sect2 xml:id="auth.login">
-   <title>Logging in</title>
+  <sect2 xml:id="auth.kubeconfig">
+   <title>Authentication</title>
    <para>
-    Starting in &productname; 2, downloading the &kubeconfig; file from
-    &dashboard; is not enough to use &kubectl;. The downloaded &kubeconfig;
-    file is just a template used for locating your &productname; cluster and
-    does not contain any authentication information.
-   </para>
-   <para>
-    To login to a RBAC-enabled &productname; cluster, you have to use the
-    &productname; command line interface <phrase
-     role="productname">CaaSP CLI</phrase>. It is available through the package
-    management and the from the &obs;. Install the RPM for your distribution:
-   </para>
-   <screen>&prompt.user;&sudo; <command>zypper</command> <option>in caasp-cli</option></screen>
-   <para>
-    If you have downloaded a &kubeconfig; template from &dashboard;,
-    &caasp-cli; can read the root CA certificate from the template and you can
-    login with:
-   </para>
-   <screen>&prompt.user;&caasp-cli; login <option>-s=<replaceable>CaaS_Platform_MASTER_URL</replaceable>-u=<replaceable>USERNAME</replaceable> -p=<replaceable>PASSWORD</replaceable></option></screen>
-   <para>
-    Your <varname>CaaS_Platform_Master_URL</varname> URL is based on the fully
-    qualified domain name (FQDN) specified in &dashboard; during bootstrap. If
-    your FQDN is <systemitem
-     class="fqdomainname">caas-master.example.org</systemitem>, your URL would
-    be <uri>https://caas-master.example.org:6443</uri>.
-   </para>
-   <para>
-    If you have not downloaded the &kubeconfig; template, you will need to specify
-    the root CA certificate on the command line:
-   </para>
-   <screen>&prompt.user;&caasp-cli; <option>login -s=<replaceable>CaaSP_MASTER_URL</replaceable> -r=<replaceable>ROOT_CA_FILE</replaceable> -u=<replaceable>USERNAME</replaceable> -p=<replaceable>PASSWORD</replaceable></option></screen>
-   <para>
-    This will write or update your &kubeconfig; file, which defaults to
+    Starting in &productname; 2, &kubectl; needs to authenticate against the
+    &kube; &kmaster;. The necessary authentication information is included in
+    the &kubeconfig; file available from &dashboard;. Click the
+    <literal>kubectl config</literal> button and authenticate with your user
+    name and password. Download the file from &dashboard; and save it as 
     <filename>$HOME/.kube/config</filename>.
    </para>
-   <para>
-    After authenticating, you can use &kubectl; as usual.
-   </para>
-
-   <sect3 xml:id="auth.login.kubeconfig">
+   <tip xml:id="auth.login.kubeconfig">
     <title>The KUBECONFIG variable</title>
     <para>
      &kubectl; uses an environment variable named <varname>KUBECONFIG</varname>
      to locate your &kubeconfig; file. If this variable is not specified, it
-     defaults to <filename>$HOME/.kube/config</filename>. &caasp-cli; uses this
-     variable to locate your &kubeconfig; in the same manner.
+     defaults to <filename>$HOME/.kube/config</filename>. To use a different
+     location, run
     </para>
-   </sect3>
-   <sect3 xml:id="auth.login.rootca">
+    <screen>&prompt.user;export <varname>KUBECONFIG</varname> <filename><replaceable>/path/to/kube/config/file</replaceable></filename></screen>
+   </tip>
+
+   <note xml:id="auth.login.rootca">
     <title>Obtaining the root CA certificate</title>
     <para>
      You can obtain the root CA certificate from any node in your cluster via SCP:
     </para>
     <screen>&prompt.user;<command>scp <replaceable>NODE</replaceable>:/etc/pki/trust/anchors/SUSE_CaaSP_CA.crt .</command></screen>
     <para>
-     This is the root CA certificate you should either trust on your machine, or
-     provide to &caasp-cli;.
+     To trust this is the root CA certificate on your machine, place it in
+     <filename>/etc/pki/trust/anchors/</filename> and call the
+     <command>update-ca-certificates</command> script.
     </para>
-   </sect3>
+   </note>
 
   </sect2>
 
