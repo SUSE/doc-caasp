@@ -100,24 +100,4 @@ if necessary.
    </step>
   </procedure>
  </sect1>
- <sect1 xml:id="installing.dns">
-  <title>Installing &kube; DNS</title>
-
-  <para>
-   &kube; DNS is required if you intend to use DNS for service discovery
-   in your &kube; cluster. &kube; DNS is not deployed automatically
-   upon cluster provisioning and needs to be installed manually. In order to
-   install &kube; DNS, run the following command:
-  </para>
-
-  <screen>kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/kubedns/dns.yaml</screen>
-
-  <para>
-   After &kube; DNS has been installed, you will be able to resolve pods
-   and services using their names from within the &kube; cluster. To
-   construct the fully qualified domain name for a pod or service, use
-   '.cluster.local' as the cluster domain suffix.
-  </para>
-
- </sect1>
 </chapter>
