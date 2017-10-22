@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<chapter version="5.0" xml:id="cha.deploy.upgrade"
+  xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xlink="http://www.w3.org/1999/xlink">
+ <info>
+  <title>Upgrading &productname;</title>
+  <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
+   <dm:bugtracker></dm:bugtracker>
+   <dm:translation>yes</dm:translation>
+  </dm:docmanager>
+ </info>
+ <para>
+  As &productname; is constantly developed and improved, new versions get
+  released. You are strongly advised to upgrade to a supported release. These
+  upgrades may involve manual intervention.
+ </para>
+
+ <sect1 xml:id="deploy.upgrade.caasp1">
+  <title>Upgrading from &productname; 1</title>
+  <para>
+   &productname; 2 comes with &kube; 1.7, wich uses <literal>etcd</literal>
+   version 3 as default storage backend. Therefor, after upgrading from
+   &productname; 1 to version 2 or higher, you have to orchestrate the
+   migration between <literal>etcd</literal> 2 and 3.
+  </para>
+  <para>
+   The orchestration will shutdown all <literal>etcd</literal> and
+   <literal>kube-api</literal> services, perform the <literal>etcd</literal>
+   migration steps, set the <quote>etcd_version = etcd3</quote> pillar value,
+   and start <literal>etc</literal> and <literal>kube-api</literal> back up.
+  </para>
+
+  <important>
+   <title>Service Window Required</title>
+   <para>
+    This migration can take a several minutes, during which
+    <literal>etcd</literal> and <literal>kube-api</literal> services are
+    unavailable. Please make sure to plan a service window.
+   </para>
+  </important>
+  
+  <procedure>
+   <title>Migrating from etcd version 2 to 3</title>
+   <step>
+    <para>
+     Connect to the &admin_node; using SSH.
+    </para>
+   </step>
+   <step>
+    <para>
+     Run the command:
+    </para>
+    <screen><command>docker</command> <option>exec -ti</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>salt-master</option> | <command>cut</command> <option>-d" " -f1</option>) \
+      <command>salt-run</command> <option>state.orchestrate orch.etcd-migrate</option></screen>
+   </step>
+  </procedure>
+  <para>
+   After the command successfully finished, all services will be available
+   again.
+  </para>
+ </sect1>
+</chapter>
