@@ -21,48 +21,85 @@
   upgrades may involve manual intervention.
  </para>
 
- <sect1 xml:id="deploy.upgrade.caasp1">
+ <sect1 xml:id="sect.deploy.upgrade.caasp1">
   <title>Upgrading from &productname; 1</title>
   <para>
-   &productname; 2 comes with &kube; 1.7, wich uses <literal>etcd</literal>
-   version 3 as default storage backend. Therefor, after upgrading from
-   &productname; 1 to version 2 or higher, you have to orchestrate the
-   migration between <literal>etcd</literal> 2 and 3.
+   The following sections contain the necessary steps to upgrade from
+   &productname; 1 to 2 or later. <!-- Not that for later versions of
+   &productname;, additional steps may be necesssary. These are described in
+   their own version-specific sections. -->
   </para>
-  <para>
-   The orchestration will shutdown all <literal>etcd</literal> and
-   <literal>kube-api</literal> services, perform the <literal>etcd</literal>
-   migration steps, set the <quote>etcd_version = etcd3</quote> pillar value,
-   and start <literal>etc</literal> and <literal>kube-api</literal> back up.
-  </para>
-
-  <important>
-   <title>Service Window Required</title>
+  <sect2 xml:id="sect.deploy.upgrade.caasp1.users">
+   <title>Migrating Users</title>
    <para>
-    This migration can take a several minutes, during which
-    <literal>etcd</literal> and <literal>kube-api</literal> services are
-    unavailable. Please make sure to plan a service window.
+    &productname; 2 comes with Role-based access control (RBAC), which stores
+    user information in <phrase role="productname">OpenLDAP</phrase>. Therefor,
+    after upgrading from &productname; 1 to version 2 or higher, you have to
+    migrate existing &dashboard; users to <phrase
+     role="productname">OpenLDAP</phrase> users.
    </para>
-  </important>
-  
-  <procedure>
-   <title>Migrating from etcd version 2 to 3</title>
-   <step>
+   <para>For more information about RBAC and user management, refer to <xref linkend="auth"/>.</para>
+   <procedure xml:id="proc.deploy.upgrade.caasp1.users">
+    <title>Migrating users from version 1 to 2</title>
+    <step>
+     <para>
+      Connect to the &admin_node; using SSH.
+     </para>
+    </step>
+    <step>
+     <para>
+      Run the command:
+     </para>
+     <screen><command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>dashboard</option> | <command>awk</command> <option>'{print $1}')</option> \
+      <command>entrypoint.sh</command> <option>bundle exec rake velum:migrate_users</option></screen>
+    </step>
+   </procedure>
+   <para>After running this command, existing user accounts will be available
+    for logging into &dashboard; again.</para>
+  </sect2>
+  <sect2 xml:id="sect.deploy.upgrade.caasp1.etcd">
+   <title>Upgrading etcd</title>
+   <para>
+    &productname; 2 comes with &kube; 1.7, wich uses <literal>etcd</literal>
+    version 3 as default storage backend. Therefor, after upgrading from
+    &productname; 1 to version 2 or higher, you have to orchestrate the
+    migration between <literal>etcd</literal> 2 and 3.
+   </para>
+   <para>
+    The orchestration will shutdown all <literal>etcd</literal> and
+    <literal>kube-api</literal> services, perform the <literal>etcd</literal>
+    migration steps, set the <quote>etcd_version = etcd3</quote> pillar value,
+    and start <literal>etc</literal> and <literal>kube-api</literal> back up.
+   </para>
+
+   <important>
+    <title>Service Window Required</title>
     <para>
-     Connect to the &admin_node; using SSH.
+     This migration can take a several minutes, during which
+     <literal>etcd</literal> and <literal>kube-api</literal> services are
+     unavailable. Please make sure to plan a service window.
     </para>
-   </step>
-   <step>
-    <para>
-     Run the command:
-    </para>
-    <screen><command>docker</command> <option>exec -ti</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>salt-master</option> | <command>cut</command> <option>-d" " -f1</option>) \
-      <command>salt-run</command> <option>state.orchestrate orch.etcd-migrate</option></screen>
-   </step>
-  </procedure>
-  <para>
-   After the command successfully finished, all services will be available
-   again.
-  </para>
+   </important>
+
+   <procedure xml:id="proc.deploy.upgrade.caasp1.etcd">
+    <title>Migrating from etcd version 2 to 3</title>
+    <step>
+     <para>
+      Connect to the &admin_node; using SSH.
+     </para>
+    </step>
+    <step>
+     <para>
+      Run the command:
+     </para>
+     <screen><command>docker</command> <option>exec -ti</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>salt-master</option> | <command>cut</command> <option>-d" " -f1</option>) \
+       <command>salt-run</command> <option>state.orchestrate orch.etcd-migrate</option></screen>
+    </step>
+   </procedure>
+   <para>
+    After the command successfully finished, all services will be available
+    again.
+   </para>
+  </sect2>
  </sect1>
 </chapter>
