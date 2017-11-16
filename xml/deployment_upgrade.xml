@@ -50,7 +50,7 @@
      <para>
       Run the command:
      </para>
-     <screen><command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>dashboard</option> | <command>awk</command> <option>'{print $1}')</option> \
+     <screen>&prompt.root;<command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>dashboard</option> | <command>awk</command> <option>'{print $1}')</option> \
       <command>entrypoint.sh</command> <option>bundle exec rake velum:migrate_users</option></screen>
     </step>
    </procedure>
@@ -92,7 +92,7 @@
      <para>
       Run the command:
      </para>
-     <screen><command>docker</command> <option>exec -ti</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>salt-master</option> | <command>cut</command> <option>-d" " -f1</option>) \
+     <screen>&prompt.root;<command>docker</command> <option>exec -ti</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>salt-master</option> | <command>cut</command> <option>-d" " -f1</option>) \
        <command>salt-run</command> <option>state.orchestrate orch.etcd-migrate</option></screen>
     </step>
    </procedure>

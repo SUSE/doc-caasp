@@ -48,7 +48,7 @@
      defaults to <filename>$HOME/.kube/config</filename>. To use a different
      location, run
     </para>
-    <screen>&prompt.user;export KUBECONFIG <replaceable>/path/to/kube/config/file</replaceable></screen>
+    <screen>&prompt.user;<command>export</command> <option>KUBECONFIG <replaceable>/path/to/kube/config/file</replaceable></option></screen>
    </tip>
 
    <note xml:id="auth.login.rootca">
@@ -83,7 +83,7 @@
      password. To do this, <command>ssh</command> into your &admin_node; and
      run:
     </para>
-    <screen>&prompt.user;<command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>openldap</option> | <command>awk</command> <option>'{print $1}')</option> <command>cat</command> /var/lib/misc/infra-secrets/openldap-password</screen>
+    <screen>&prompt.user;<command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>openldap</option> | <command>awk</command> <option>'{print $1}')</option> <command>cat</command> <option>/var/lib/misc/infra-secrets/openldap-password</option></screen>
    </sect3>
 
    <sect3 xml:id="auth.users.add">
@@ -109,11 +109,11 @@ mail: <email address>
      To generate the password hash, install the <package>openldap2</package>
      package:
     </para>
-    <screen>&prompt.user;&sudo; <command>zypper</command> <option>install openldap2</option></screen>
+    <screen>&prompt.root; <command>zypper</command> <option>install openldap2</option></screen>
     <para>
      Then generate the password hash:
     </para>
-    <screen>&prompt.user;<command>/usr/sbin/slappasswd</command></screen>
+    <screen>&prompt.root;<command>/usr/sbin/slappasswd</command></screen>
     <para>
      Make sure to replace all the parameters in the template above, indicated
      as &lt;....&gt;. The mail attribute value is used as the login to
@@ -122,7 +122,7 @@ mail: <email address>
     <para>
      Populate your OpenLDAP server with this LDIF file:
     </para>
-    <screen>&prompt.user;<command>ldapadd</command> -H ldap://&lt;ADMIN NODE IP&gt;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w &lt;LDAP ADMIN PASSWORD&gt; -f &lt;LDIF FILE&gt;</screen>
+    <screen>&prompt.root;<command>ldapadd</command> -H ldap://&lt;ADMIN NODE IP&gt;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w &lt;LDAP ADMIN PASSWORD&gt; -f &lt;LDIF FILE&gt;</screen>
     <para>
      To add this new user to the existing Administrators group, create a new LDIF
      file like this:
@@ -140,7 +140,7 @@ uniqueMember: uid=<userid>,ou=People,dc=infra,dc=caasp,dc=local
      as &lt;....&gt;. Populate your <phrase
       role="productname">OpenLDAP</phrase> server with the LDIF file:
     </para>
-    <screen>&prompt.user;<command>ldapadd</command> -H ldap://&lt;ADMIN NODE IP&gt;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w &lt;LDAP ADMIN PASSWORD&gt; -f &lt;LDIF FILE&gt;</screen>
+    <screen>&prompt.root;<command>ldapadd</command> -H ldap://&lt;ADMIN NODE IP&gt;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w &lt;LDAP ADMIN PASSWORD&gt; -f &lt;LDIF FILE&gt;</screen>
    </sect3>
 
    <sect3 xml:id="auto.group">
@@ -169,7 +169,7 @@ uniqueMember: uid=<member5>,ou=People,dc=infra,dc=caasp,dc=local
      this group. Populate your <phrase role="productname">OpenLDAP</phrase>
      server with the LDIF file:
     </para>
-    <screen>&prompt.user;<command>ldapadd</command> -H ldap://&lt;ADMIN NODE IP&gt;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w &lt;LDAP ADMIN PASSWORD&gt; -f &lt;LDIF FILE&gt;</screen>
+    <screen>&prompt.root;<command>ldapadd</command> -H ldap://&lt;ADMIN NODE IP&gt;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w &lt;LDAP ADMIN PASSWORD&gt; -f &lt;LDIF FILE&gt;</screen>
     <para>
      Next, create a role binding to allow this new LDAP group access in &kube;.
      Create a Kubernetes deployment descriptor like this:
@@ -209,7 +209,7 @@ roleRef:
     <para>
      Add this role and binding to Kubernetes:
     </para>
-    <screen>&prompt.user;kubectl apply -f &lt;DEPLOYMENT DESCRIPTOR FILE&gt;</screen>
+    <screen>&prompt.root;kubectl apply -f &lt;DEPLOYMENT DESCRIPTOR FILE&gt;</screen>
    </sect3>
    <sect3>
     <title>Further information</title>
