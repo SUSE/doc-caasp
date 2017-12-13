@@ -338,11 +338,12 @@ ssh_authorized_keys:
    </sect3>
    <sect3 xml:id="user-data.config.keyboard.hostname">
     <title>Setting Host name</title>
-    <para>
-     You can set a particular host name for the machine:
-    </para>
-<screen>hostname: myhost
-fqdn: myhost.example.com</screen>
+    <para>You can set either a host name or, preferably, a fully-qualified domain name for the machine:</para>
+    <screen>hostname: myhost</screen>
+    <para>or</para> 
+    <screen>fqdn: myhost.example.com</screen>
+    <para>The option <literal>preserve_hostname</literal> specifies whether any existing host name should be retained or not. Enter <literal>true</literal> or <literal>false</literal> as required:</para>
+    <screen>preserve_hostname: true</screen>
    </sect3>
    <sect3 xml:id="user-data.config.nameserver">
     <title>Configuring Name server</title>
