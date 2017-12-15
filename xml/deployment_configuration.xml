@@ -129,7 +129,9 @@
     <filename>cloud.cfg</filename>, but you have to configure network first,
     e.g. by using local configuration files. The url is specified during boot
     time and must be in the format:
-    <literal>cloud-init-url=http://<replaceable>hostname.domain</replaceable>/cloud.cfg</literal>.
+    <literal>
+     cloud-init-url=http://<replaceable>hostname.domain</replaceable>/cloud.cfg
+    </literal>.
     The content of the passed url is copied to
     <filename>/etc/cloud/cloud.cfg.d/91_kernel_cmdline_url.cfg</filename> and
     it is not overwritten even though the url changes.
@@ -338,11 +340,18 @@ ssh_authorized_keys:
    </sect3>
    <sect3 xml:id="user-data.config.keyboard.hostname">
     <title>Setting Host name</title>
-    <para>You can set either a host name or, preferably, a fully-qualified domain name for the machine:</para>
+    <para>
+     You can set either a host name or, preferably, a fully-qualified domain 
+     name for the machine:
+    </para>
     <screen>hostname: myhost</screen>
     <para>or</para> 
     <screen>fqdn: myhost.example.com</screen>
-    <para>The option <literal>preserve_hostname</literal> specifies whether any existing host name should be retained or not. Enter <literal>true</literal> or <literal>false</literal> as required:</para>
+    <para>
+     The option <literal>preserve_hostname</literal> specifies whether any 
+     existing host name should be retained or not. Enter <literal>true</literal>
+     or <literal>false</literal> as required:
+    </para>
     <screen>preserve_hostname: true</screen>
    </sect3>
    <sect3 xml:id="user-data.config.nameserver">
