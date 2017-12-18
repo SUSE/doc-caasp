@@ -4,61 +4,93 @@
   <!ENTITY % entities SYSTEM "entity-decl.ent">
     %entities;
 ]>
-<chapter version="5.0" xml:id="administration" xmlns="http://docbook.org/ns/docbook"
- xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink">
- <info><title>Cluster Administration</title>
+<chapter version="5.0" xml:id="administration"
+  xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xlink="http://www.w3.org/1999/xlink">
+ <info>
+  <title>Cluster Administration</title>
   <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
-   <dm:bugtracker/>
+   <dm:bugtracker></dm:bugtracker>
    <dm:translation>yes</dm:translation>
   </dm:docmanager>
  </info>
+
  <sect1 xml:id="auth">
   <title>Authentication and Authorization</title>
-  <para> Role-based access control (RBAC) adds the ability to perform authentication and
-   authorization of activities performed against a &kube; cluster. Authentication is concerned with
-   the <quote>who</quote> and authorization is concerned with the <quote>what</quote>. </para>
-  <para>User information is stored in <phrase role="productname">OpenLDAP</phrase> running in a
-   container on your &productname; &admin_node;. You use standard LDAP administration tools for
-   managing these users. </para>
+  <para>
+   Role-based access control (RBAC) adds the ability to perform authentication
+   and authorization of activities performed against a &kube; cluster.
+   Authentication is concerned with the <quote>who</quote> and authorization is
+   concerned with the <quote>what</quote>.
+  </para>
+  <para>User information is stored in
+   <phrase role="productname">OpenLDAP</phrase> running in a container on your
+   &productname; &admin_node;. You use standard LDAP administration tools for
+   managing these users.
+  </para>
+
   <sect2 xml:id="auth.kubeconfig">
    <title>Authentication</title>
-   <para> Starting in &productname; 2, &kubectl; needs to authenticate against the &kube; &kmaster;.
-    The necessary authentication information is included in the &kubeconfig; file available from
-    &dashboard;. Click the <literal>kubectl config</literal> button and authenticate with your user
-    name and password. Download the file from &dashboard; and save it as
-     <filename>$HOME/.kube/config</filename>. </para>
+   <para>
+    Starting in &productname; 2, &kubectl; needs to authenticate against the
+    &kube; &kmaster;. The necessary authentication information is included in
+    the &kubeconfig; file available from &dashboard;. Click the
+    <literal>kubectl config</literal> button and authenticate with your user
+    name and password. Download the file from &dashboard; and save it as 
+    <filename>$HOME/.kube/config</filename>.
+   </para>
    <tip xml:id="auth.login.kubeconfig">
     <title>The KUBECONFIG variable</title>
-    <para> &kubectl; uses an environment variable named <varname>KUBECONFIG</varname> to locate your
-     &kubeconfig; file. If this variable is not specified, it defaults to
-      <filename>$HOME/.kube/config</filename>. To use a different location, run </para>
+    <para>
+     &kubectl; uses an environment variable named <varname>KUBECONFIG</varname>
+     to locate your &kubeconfig; file. If this variable is not specified, it
+     defaults to <filename>$HOME/.kube/config</filename>. To use a different
+     location, run
+    </para>
     <screen>&prompt.user;<command>export</command> <option>KUBECONFIG <replaceable>/path/to/kube/config/file</replaceable></option></screen>
    </tip>
+
    <note xml:id="auth.login.rootca">
     <title>Obtaining the root CA certificate</title>
-    <para> You can obtain the root CA certificate from any node in your cluster via SCP: </para>
+    <para>
+     You can obtain the root CA certificate from any node in your cluster via SCP:
+    </para>
     <screen>&prompt.user;<command>scp <replaceable>NODE</replaceable>:/etc/pki/trust/anchors/SUSE_CaaSP_CA.crt .</command></screen>
-    <para> To trust this is the root CA certificate on your machine, place it in
-      <filename>/etc/pki/trust/anchors/</filename> and call the
-      <command>update-ca-certificates</command> script. </para>
+    <para>
+     To trust this is the root CA certificate on your machine, place it in
+     <filename>/etc/pki/trust/anchors/</filename> and call the
+     <command>update-ca-certificates</command> script.
+    </para>
    </note>
+
   </sect2>
+
   <sect2 xml:id="auth.users">
    <title>Managing Users and Groups</title>
-   <para> By default, when you create the first user in &dashboard; during bootstrap of your
-    cluster, that user is granted <literal>Cluster Administrator</literal> privileges within &kube;.
-    You can add additional users with these rights by adding new entries into the LDAP directory. </para>
+   <para>
+    By default, when you create the first user in &dashboard; during bootstrap of
+    your cluster, that user is granted <literal>Cluster Administrator</literal>
+    privileges within &kube;. You can add additional users with these rights by
+    adding new entries into the LDAP directory.
+   </para>
    <sect3 xml:id="auth.user.ldap-rootpw">
     <title>Obtaining the OpenLDAP Password</title>
-    <para> Before performing any administrative tasks on the <phrase role="productname"
-      >OpenLDAP</phrase> instance, you will need to retrieve your <phrase role="productname"
-      >OpenLDAP</phrase> administrator account password. To do this, <command>ssh</command> into
-     your &admin_node; and run: </para>
+    <para>
+     Before performing any administrative tasks on the <phrase
+      role="productname">OpenLDAP</phrase> instance, you will need to retrieve
+     your <phrase role="productname">OpenLDAP</phrase> administrator account
+     password. To do this, <command>ssh</command> into your &admin_node; and
+     run:
+    </para>
     <screen>&prompt.user;<command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>openldap</option> | <command>awk</command> <option>'{print $1}')</option> <command>cat</command> <option>/var/lib/misc/infra-secrets/openldap-password</option></screen>
    </sect3>
+
    <sect3 xml:id="auth.users.add">
     <title>Adding New Users</title>
-    <para> To add a new user, create a LDIF file like this: </para>
+    <para>
+     To add a new user, create a LDIF file like this:
+    </para>
     <screen>
      <![CDATA[
 dn: uid=<userid>,ou=People,dc=infra,dc=caasp,dc=local
@@ -73,18 +105,28 @@ sn: <surname>
 mail: <email address>
      ]]>
     </screen>
-    <para> To generate the password hash, on a different computer running a standard edition of SUSE
-     Linux, install the <package>openldap2</package> package: </para>
-    <screen>&prompt.root; <command>zypper</command> <option>install openldap2</option></screen>
-    <para> Then generate the password hash: </para>
+    <para>
+     To generate the password hash, on a separate machine, install the 
+     <package>openldap2</package> package:
+    </para>
+    <screen>
+     &prompt.root; <command>zypper</command> <option>install openldap2</option>
+    </screen>
+    <para>Then generate the password hash: </para>
     <screen>&prompt.root;<command>/usr/sbin/slappasswd</command></screen>
-    <para> Make sure to replace all the parameters in the template above, indicated as &lt;....&gt;.
-     The mail attribute value is used as the login to &dashboard; and &kube;. </para>
-    <para> Transfer the resulting LDIF file to your CaaSP server, and populate your OpenLDAP server
-     with this file: </para>
+    <para>
+     Make sure to replace all the parameters in the template above, indicated as &lt;....&gt;.
+     The mail attribute value is used as the login to &dashboard; and &kube;.
+    </para>
+    <para>
+     Transfer the resulting LDIF file to your CaaSP server, and populate your 
+     OpenLDAP server with this file:
+    </para>
     <screen>&prompt.root;<command>ldapadd</command> -H ldap://&lt;ADMIN NODE IP&gt;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w &lt;LDAP ADMIN PASSWORD&gt; -f &lt;LDIF FILE&gt;</screen>
-    <para> To add this new user to the existing Administrators group, create a new LDIF file like
-     this: </para>
+    <para>
+     To add this new user to the existing Administrators group, create a 
+     new LDIF file like this:
+    </para>
     <screen>
      <![CDATA[
 dn: cn=Administrators,ou=Groups,dc=infra,dc=caasp,dc=local
@@ -93,15 +135,21 @@ add: uniqueMember
 uniqueMember: uid=<userid>,ou=People,dc=infra,dc=caasp,dc=local
      ]]>
     </screen>
-    <para> Make sure to replace all the parameters in the template above, indicated as &lt;....&gt;.
-     Populate your <phrase role="productname">OpenLDAP</phrase> server with the LDIF file: </para>
+    <para>
+     Make sure to replace all the parameters in the template above, indicated
+     as &lt;....&gt;. Populate your <phrase
+      role="productname">OpenLDAP</phrase> server with the LDIF file:
+    </para>
     <screen>&prompt.root;<command>ldapadd</command> -H ldap://&lt;ADMIN NODE IP&gt;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w &lt;LDAP ADMIN PASSWORD&gt; -f &lt;LDIF FILE&gt;</screen>
    </sect3>
+
    <sect3 xml:id="auto.group">
     <title>Adding New Groups</title>
-    <para> Say you have users that you want to grant access to manage a single namespace in
-     Kubernetes. To do this, first create your users as mentioned in <xref linkend="auth.users.add"
-     />. Then create a new group: </para>
+    <para>
+     Say you have users that you want to grant access to manage a single
+     namespace in Kubernetes. To do this, first create your users as mentioned
+     in <xref linkend="auth.users.add"/>. Then create a new group:
+    </para>
     <screen>
      <![CDATA[
 dn: cn=<group name>,ou=Groups,dc=infra,dc=caasp,dc=local
@@ -115,12 +163,17 @@ uniqueMember: uid=<member4>,ou=People,dc=infra,dc=caasp,dc=local
 uniqueMember: uid=<member5>,ou=People,dc=infra,dc=caasp,dc=local
      ]]>
     </screen>
-    <para> Make sure to replace all the parameters in the template above, indicated as &lt;....&gt;.
-     Repeat the uniqueMember attribute for every member of this group. Populate your <phrase
-      role="productname">OpenLDAP</phrase> server with the LDIF file: </para>
+    <para>
+     Make sure to replace all the parameters in the template above, indicated
+     as &lt;....&gt;. Repeat the uniqueMember attribute for every member of
+     this group. Populate your <phrase role="productname">OpenLDAP</phrase>
+     server with the LDIF file:
+    </para>
     <screen>&prompt.root;<command>ldapadd</command> -H ldap://&lt;ADMIN NODE IP&gt;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w &lt;LDAP ADMIN PASSWORD&gt; -f &lt;LDIF FILE&gt;</screen>
-    <para> Next, create a role binding to allow this new LDAP group access in &kube;. Create a
-     Kubernetes deployment descriptor like this: </para>
+    <para>
+     Next, create a role binding to allow this new LDAP group access in &kube;.
+     Create a Kubernetes deployment descriptor like this:
+    </para>
     <screen>
      <![CDATA[
      ---
@@ -153,66 +206,104 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
      ]]>
     </screen>
-    <para> Add this role and binding to Kubernetes: </para>
+    <para>
+     Add this role and binding to Kubernetes:
+    </para>
     <screen>&prompt.root;kubectl apply -f &lt;DEPLOYMENT DESCRIPTOR FILE&gt;</screen>
    </sect3>
    <sect3>
     <title>Further information</title>
     <para>For more details on authorization in &kube;, refer to <link
-      xlink:href="https://kubernetes.io/docs/admin/authorization/rbac/"/>
+     xlink:href="https://kubernetes.io/docs/admin/authorization/rbac/"></link>
     </para>
    </sect3>
-  </sect2>
+
+
+ </sect2>
+
  </sect1>
  <sect1 xml:id="transactional.updates">
   <title>Handling Transactional Updates</title>
-  <para> For security and stability reasons, the operating system and application should always be
-   up-to-date. While with a single machine you can keep the system up-to-date quite easily by
-   running several commands, in a large-scaled cluster the update process can become a real burden.
-   Thus transactional automatic updates have been introduced. Transactional updates can be
-   characterized as follows: </para>
+
+  <para>
+   For security and stability reasons, the operating system and application
+   should always be up-to-date. While with a single machine you can keep the
+   system up-to-date quite easily by running several commands, in a
+   large-scaled cluster the update process can become a real burden. Thus
+   transactional automatic updates have been introduced. Transactional updates
+   can be characterized as follows:
+  </para>
+
   <itemizedlist>
    <listitem>
-    <para> they are atomic. </para>
+    <para>
+     they are atomic.
+    </para>
    </listitem>
    <listitem>
-    <para> They do not influence the running system. </para>
+    <para>
+     They do not influence the running system.
+    </para>
    </listitem>
    <listitem>
-    <para> They can be rolled back. </para>
+    <para>
+     They can be rolled back.
+    </para>
    </listitem>
    <listitem>
-    <para> The system needs to be rebooted to activate the changes. </para>
+    <para>
+     The system needs to be rebooted to activate the changes.
+    </para>
    </listitem>
   </itemizedlist>
-  <para> Transactional updates are managed by the <command>transactional-update</command> script,
-   which is called once a day. The script checks if any update is available. If there is an update
-   to be applied, a new snapshot of the root file system is created and the system is updated by
-   using <command>zypper up</command>. All RPMS released to this point are applied. The snapshot is
-   then marked as active and will be used after the next reboot of the system. The script can reboot
-   the cluster itself or it can instruct the <literal>rebootmgr</literal> to schedule the reboot
-   according to the configured policies (for details refer to <xref linkend="reboot.managment"/>).
-   Ensure that the cluster is rebooted as soon as possible after the update installation is
-   complete, otherwise all changes will be lost. </para>
+
+  <para>
+   Transactional updates are managed by the
+   <command>transactional-update</command> script, which is called once a day.
+   The script checks if any update is available. If there is an update to be
+   applied, a new snapshot of the root file system is created and the system is
+   updated by using <command>zypper up</command>. All RPMS released to this
+   point are applied. The snapshot is then marked as active and will be used
+   after the next reboot of the system. The script can reboot the cluster
+   itself or it can instruct the <literal>rebootmgr</literal> to schedule the
+   reboot according to the configured policies (for details refer to
+   <xref linkend="reboot.managment"/>). Ensure that the cluster is rebooted as
+   soon as possible after the update installation is complete, otherwise all
+   changes will be lost.
+  </para>
+
   <note>
    <title>General Notes to the Updates Installation</title>
-   <para> Only RPMs that are part of the snapshot of the root file system can be updated. If RPMs
-    contains files that are not part of the snapshot, the update can fail or it can break the
-    system. </para>
-   <para> RPMs that require a license to be accepted cannot be updated. </para>
+   <para>
+    Only RPMs that are part of the snapshot of the root file system can be
+    updated. If RPMs contains files that are not part of the snapshot, the
+    update can fail or it can break the system.
+   </para>
+   <para>
+    RPMs that require a license to be accepted cannot be updated.
+   </para>
   </note>
+
   <sect2 xml:id="transactional.updates.installation">
    <title>Manual Installation of Updates</title>
-   <para> After the <command>transactional-update</command> script, has run on all nodes,
-    &dashboard; displays when nodes in your cluster run outdated software. &dashboard; then enables
-    you to update your cluster directly. Follow the next procedure to update your cluster. </para>
+   <para>
+    After the <command>transactional-update</command> script, has run on all
+    nodes, &dashboard; displays when nodes in your cluster run outdated
+    software. &dashboard; then enables you to update your cluster directly.
+    Follow the next procedure to update your cluster.
+   </para>
    <procedure>
     <title>Updating the Cluster with &dashboard;</title>
     <step>
-     <para> Login to &dashboard;. </para>
+     <para>
+      Login to &dashboard;.
+     </para>
     </step>
     <step>
-     <para> If required, click <guimenu>UPDATE ADMIN NODE</guimenu> to start the update. </para>
+     <para>
+      If required, click <guimenu>UPDATE ADMIN NODE</guimenu> to start the
+      update.
+     </para>
      <informalfigure>
       <mediaobject>
        <imageobject>
@@ -222,7 +313,9 @@ roleRef:
      </informalfigure>
     </step>
     <step>
-     <para> Confirm the update by clicking <guimenu>Reboot to update</guimenu>. </para>
+     <para>
+      Confirm the update by clicking <guimenu>Reboot to update</guimenu>.
+     </para>
      <informalfigure>
       <mediaobject>
        <imageobject>
@@ -232,11 +325,16 @@ roleRef:
      </informalfigure>
     </step>
     <step>
-     <para> Now you have to wait until the &admin_node; reboots and &dashboard; is available again.
+     <para>
+      Now you have to wait until the &admin_node; reboots and &dashboard; is
+      available again.
      </para>
     </step>
     <step>
-     <para> Click the <guimenu>update all nodes</guimenu> to update &kmaster; and &kworker;s. </para>
+     <para>
+      Click the <guimenu>update all nodes</guimenu> to update &kmaster; and
+      &kworker;s.
+     </para>
      <informalfigure>
       <mediaobject>
        <imageobject>
@@ -247,55 +345,91 @@ roleRef:
     </step>
    </procedure>
   </sect2>
+
   <sect2 xml:id="transactional.updates.disabling">
    <title>Disabling Transactional Updates</title>
-   <para> Even though we do not recommend that, you can disable transactional updates by issuing the
-    command: </para>
-   <screen>systemctl --now disable transactional-update.timer</screen>
-   <para> And also the automatic reboot can be disabled, just use any of the commands: </para>
-   <screen>systemctl --now disable rebootmgr</screen>
-   <para> or </para>
-   <screen>rebootmgrctl set-strategy off</screen>
+   <para>
+    Even though we do not recommend that, you can disable transactional updates
+    by issuing the command:
+   </para>
+<screen>systemctl --now disable transactional-update.timer</screen>
+   <para>
+    And also the automatic reboot can be disabled, just use any of the
+    commands:
+   </para>
+<screen>systemctl --now disable rebootmgr</screen>
+   <para>
+    or
+   </para>
+<screen>rebootmgrctl set-strategy off</screen>
   </sect2>
  </sect1>
  <sect1 xml:id="ptf.handling">
   <title>Handling Program Temporary Fixes</title>
-  <para> Program temporary fixes (PTFs) are available in the &productname; environment. You install
-   them by using the <command>transactional-update</command> script. Typically you invoke the
-   installation of PTFs by running: </para>
-  <screen>transactional-update reboot ptf install</screen>
-  <para> The command installs PTF RPMs. The <literal>reboot</literal> option then schedules a reboot
-   after the installation. PTFs are activate only after rebooting of your system. </para>
+
+  <para>
+   Program temporary fixes (PTFs) are available in the &productname;
+   environment. You install them by using the
+   <command>transactional-update</command> script. Typically you invoke the
+   installation of PTFs by running:
+  </para>
+
+<screen>transactional-update reboot ptf install</screen>
+
+  <para>
+   The command installs PTF RPMs. The <literal>reboot</literal> option then
+   schedules a reboot after the installation. PTFs are activate only after
+   rebooting of your system.
+  </para>
+
   <note>
    <title>Reboot Required</title>
-   <para> If you install or remove PTFs and you call the <command>transactional-update</command> to
-    update the system before reboot, the applied changes by PTFs are lost and need to be done again
-    after reboot. </para>
+   <para>
+    If you install or remove PTFs and you call the
+    <command>transactional-update</command> to update the system before reboot,
+    the applied changes by PTFs are lost and need to be done again after
+    reboot.
+   </para>
   </note>
-  <para> In case you need to remove the installed PTFs, use the following command: </para>
-  <screen>transactional-update reboot ptf remove</screen>
+
+  <para>
+   In case you need to remove the installed PTFs, use the following command:
+  </para>
+
+<screen>transactional-update reboot ptf remove</screen>
  </sect1>
  <sect1 xml:id="reboot.managment">
   <title>Rebooting the Cluster</title>
-  <para> In production you typically need to carefully schedule rebooting of your cluster as you may
-   need to reboot during a specific time period and usually you do not want to reboot all nodes at
-   the same time. &productname; involves a reboot manager that according to a passed configuration
-   schedules rebooting of your cluster. The reboot manager is a daemon that is controlled by using
-   the <command>rebootmgrctl</command> and configuration is stored in the
-    <filename>/etc/rebootmgr.conf</filename>. The file is not overwritten after reboot. An example
-   configuration follows: </para>
-  <screen>[rebootmgr]
+
+  <para>
+   In production you typically need to carefully schedule rebooting of your
+   cluster as you may need to reboot during a specific time period and usually
+   you do not want to reboot all nodes at the same time. &productname; involves
+   a reboot manager that according to a passed configuration schedules
+   rebooting of your cluster. The reboot manager is a daemon that is controlled
+   by using the <command>rebootmgrctl</command> and configuration is stored in
+   the <filename>/etc/rebootmgr.conf</filename>. The file is not overwritten
+   after reboot. An example configuration follows:
+  </para>
+
+<screen>[rebootmgr]
 window-start=03:30
 window-duration=1h20m
 strategy=best-effort
 lock-group=default</screen>
-  <para> The meaning of the options is the following: </para>
+
+  <para>
+   The meaning of the options is the following:
+  </para>
+
   <variablelist xml:id="reboot.managment.strategies">
    <varlistentry>
     <term><literal>window-start</literal>
     </term>
     <listitem>
-     <para> configures the beginning of the reboot window in the format: <emphasis>HH:MM</emphasis>
+     <para>
+      configures the beginning of the reboot window in the format:
+      <emphasis>HH:MM</emphasis>
      </para>
     </listitem>
    </varlistentry>
@@ -303,8 +437,9 @@ lock-group=default</screen>
     <term><literal>window-duration</literal>
     </term>
     <listitem>
-     <para> configures duration of the maintenance window when the system can be rebooted. Use the
-      format <emphasis>XXhYYm</emphasis>
+     <para>
+      configures duration of the maintenance window when the system can be
+      rebooted. Use the format <emphasis>XXhYYm</emphasis>
      </para>
     </listitem>
    </varlistentry>
@@ -312,72 +447,93 @@ lock-group=default</screen>
     <term><literal>strategy</literal>
     </term>
     <listitem>
-     <para> defines a strategy of rebooting. You can use any of the following values: </para>
+     <para>
+      defines a strategy of rebooting. You can use any of the following values:
+     </para>
      <itemizedlist>
       <listitem>
        <para>
-        <emphasis role="bold"><literal>instantly</literal></emphasis> - when a signal is received,
-        services will be rebooted without any lock or without waiting for a maintenance window.
+        <emphasis role="bold"><literal>instantly</literal></emphasis> - when a
+        signal is received, services will be rebooted without any lock or
+        without waiting for a maintenance window.
        </para>
       </listitem>
       <listitem>
        <para>
-        <emphasis role="bold"><literal>maint-window</literal></emphasis> - the cluster reboots only
-        within the set maintenance window. If you do not configure the maintenance window, the
-        cluster reboots immediately. </para>
+        <emphasis role="bold"><literal>maint-window</literal></emphasis> - the
+        cluster reboots only within the set maintenance window. If you do not
+        configure the maintenance window, the cluster reboots immediately.
+       </para>
       </listitem>
       <listitem>
        <para>
-        <emphasis role="bold"><literal>etcd-lock</literal></emphasis> - before rebooting, machines
-        specified in the <literal>lock-group</literal> are locked. If you configured the maintenance
-        window, the lock is created within the configured window. For more details about lock group,
-        refer to <xref linkend="reboot.managment.locks"/>. </para>
+        <emphasis role="bold"><literal>etcd-lock</literal></emphasis> - before
+        rebooting, machines specified in the <literal>lock-group</literal> are
+        locked. If you configured the maintenance window, the lock is created
+        within the configured window. For more details about lock group, refer
+        to <xref linkend="reboot.managment.locks"/>.
+       </para>
       </listitem>
       <listitem>
        <para>
-        <emphasis role="bold"><literal>best-effort</literal></emphasis> - the default value of the
-        reboot strategy. If etcd is running, the <literal>etcd-lock</literal> reboot strategy is
-        used. If etcd is not running, but you configured the maintenance window, the
-         <literal>maint-window</literal> reboot strategy will be used. If there is no etcd and no
-        maintenance window configured, the <literal>instantly</literal> reboot strategy will be
-        used. </para>
+        <emphasis role="bold"><literal>best-effort</literal></emphasis> - the
+        default value of the reboot strategy. If etcd is running, the
+        <literal>etcd-lock</literal> reboot strategy is used. If etcd is not
+        running, but you configured the maintenance window, the
+        <literal>maint-window</literal> reboot strategy will be used. If there
+        is no etcd and no maintenance window configured, the
+        <literal>instantly</literal> reboot strategy will be used.
+       </para>
       </listitem>
       <listitem>
        <para>
-        <emphasis role="bold"><literal>off</literal></emphasis> - the <literal>rebootmg</literal>
-        still runs, but all signals to reboot are ignored. </para>
+        <emphasis role="bold"><literal>off</literal></emphasis> - the
+        <literal>rebootmg</literal> still runs, but all signals to reboot are
+        ignored.
+       </para>
       </listitem>
      </itemizedlist>
     </listitem>
    </varlistentry>
   </variablelist>
+
   <sect2 xml:id="reboot.managment.locks">
    <title>Locking by Using etcd</title>
-   <para> Typically you need to avoid rebooting of all cluster nodes at the same time. Thus you can
-    use groups of nodes and configure the behaviour if a reboot signal arrives. For example, you can
-    define two groups of nodes&mdash;one that groups nodes running etcd instances called
-     <emphasis>etcd</emphasis> and one for other nodes called <emphasis>workers</emphasis>. In the
-     <emphasis>etcd</emphasis> group you configure that only one node in this group can be rebooted
-    at the same time. In the <emphasis>workers</emphasis> group you configure that a higher number
-    of nodes can be rebooted at the same time. </para>
-   <para> In the directory <filename>rebootmg/locks/&lt;group name&gt;</filename> there are two
-    variables: </para>
+   <para>
+    Typically you need to avoid rebooting of all cluster nodes at the same
+    time. Thus you can use groups of nodes and configure the behaviour if a
+    reboot signal arrives. For example, you can define two groups of
+    nodes&mdash;one that groups nodes running etcd instances called
+    <emphasis>etcd</emphasis> and one for other nodes called
+    <emphasis>workers</emphasis>. In the <emphasis>etcd</emphasis> group you
+    configure that only one node in this group can be rebooted at the same
+    time. In the <emphasis>workers</emphasis> group you configure that a higher
+    number of nodes can be rebooted at the same time.
+   </para>
+   <para>
+    In the directory <filename>rebootmg/locks/&lt;group name&gt;</filename>
+    there are two variables:
+   </para>
    <variablelist>
     <varlistentry>
      <term><literal>mutex</literal>
      </term>
      <listitem>
-      <para> defaults to 0. You can set the value to 1 by using
-        <literal>atomic_compare_and_swap</literal> to ensure that only one machine has write access
-       at one time. </para>
+      <para>
+       defaults to 0. You can set the value to 1 by using
+       <literal>atomic_compare_and_swap</literal> to ensure that only one
+       machine has write access at one time.
+      </para>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>data</literal>
      </term>
      <listitem>
-      <para> contains a JSON structure with the following data: </para>
-      <screen>{
+      <para>
+       contains a JSON structure with the following data:
+      </para>
+<screen>{
 “max”:3,
 “holders”:[
 “3cb8c701b4d3474d99a7e88b31dd3439”,
@@ -385,260 +541,369 @@ lock-group=default</screen>
 ]
 }</screen>
       <para>
-       <literal>max</literal> defines the count of nodes within the group that can be rebooted at
-       the same time. </para>
+       <literal>max</literal> defines the count of nodes within the group that
+       can be rebooted at the same time.
+      </para>
       <para>
-       <literal>holders</literal> is a comma separated list of unique ID of machines. Values are
-       obtained from the <filename>/etc/machine-id</filename> file. </para>
+       <literal>holders</literal> is a comma separated list of unique ID of
+       machines. Values are obtained from the
+       <filename>/etc/machine-id</filename> file.
+      </para>
      </listitem>
     </varlistentry>
    </variablelist>
-   <para> A typical workflow of a client that tries to reboot is the following: </para>
+   <para>
+    A typical workflow of a client that tries to reboot is the following:
+   </para>
    <orderedlist>
     <listitem>
-     <para> A check is performed if there are free locks. If not, the client checks the
-       <literal>data</literal> variable until it changes. </para>
-    </listitem>
-    <listitem>
-     <para> The client gets the <literal>mutex</literal>
+     <para>
+      A check is performed if there are free locks. If not, the client checks
+      the <literal>data</literal> variable until it changes.
      </para>
     </listitem>
     <listitem>
-     <para> ID of the client is added to the <literal>holders</literal> list. </para>
+     <para>
+      The client gets the <literal>mutex</literal>
+     </para>
     </listitem>
     <listitem>
-     <para> The <literal>mutex</literal> is released. </para>
+     <para>
+      ID of the client is added to the <literal>holders</literal> list.
+     </para>
     </listitem>
     <listitem>
-     <para> The node reboots. </para>
+     <para>
+      The <literal>mutex</literal> is released.
+     </para>
     </listitem>
     <listitem>
-     <para> On boot, the client checks if it holds the <literal>mutex</literal>. If yes, the client
-      ID is removed from the <literal>holders</literal> list and the <literal>mutex</literal> is
-      released. </para>
+     <para>
+      The node reboots.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      On boot, the client checks if it holds the <literal>mutex</literal>. If
+      yes, the client ID is removed from the <literal>holders</literal> list
+      and the <literal>mutex</literal> is released.
+     </para>
     </listitem>
    </orderedlist>
   </sect2>
  </sect1>
  <sect1 xml:id="commands.cluster.managment">
   <title>Commands for Cluster Management</title>
-  <para> &productname; comes with several built-in commands that enable you to manage your cluster. </para>
+
+  <para>
+   &productname; comes with several built-in commands that enable you to manage
+   your cluster.
+  </para>
+
   <sect2 xml:id="commands.cluster.managment.rebootmgctl">
    <title>The <command>rebootmgrctl</command> Command</title>
-   <para> The <command>rebootmgrctl</command> is a tool that enables you to control and configure
-    the behaviour of the reboot manager daemon. To schedule a reboot of your cluster, run the
-    following command: </para>
-   <screen>rebootmgrctl reboot</screen>
-   <para> You can specify two options: <replaceable>fast</replaceable> and
-     <replaceable>now</replaceable>. The <replaceable>fast</replaceable> option requests a lock from
-     <literal>etcd</literal> but the configured maintenance window will be ignored. The
-     <replaceable>now</replaceable> option forces immediate reboot without any lock from
-     <literal>etcd</literal>. </para>
-   <para> To view a status of the reboot manager daemon, run the command: </para>
-   <screen>rebootmgrctl status</screen>
-   <para> The command outputs the current status and current data structure stored in
-     <literal>etcd</literal>. The status is a number from 0 to 3, where each has the following
-    meaning: </para>
+   <para>
+    The <command>rebootmgrctl</command> is a tool that enables you to control
+    and configure the behaviour of the reboot manager daemon. To schedule a
+    reboot of your cluster, run the following command:
+   </para>
+<screen>rebootmgrctl reboot</screen>
+   <para>
+    You can specify two options: <replaceable>fast</replaceable> and
+    <replaceable>now</replaceable>. The <replaceable>fast</replaceable> option
+    requests a lock from <literal>etcd</literal> but the configured maintenance
+    window will be ignored. The <replaceable>now</replaceable> option forces
+    immediate reboot without any lock from <literal>etcd</literal>.
+   </para>
+   <para>
+    To view a status of the reboot manager daemon, run the command:
+   </para>
+<screen>rebootmgrctl status</screen>
+   <para>
+    The command outputs the current status and current data structure stored in
+    <literal>etcd</literal>. The status is a number from 0 to 3, where each has
+    the following meaning:
+   </para>
    <itemizedlist>
     <listitem>
      <para>
-      <emphasis role="bold">0</emphasis> - no reboot has been requested. </para>
+      <emphasis role="bold">0</emphasis> - no reboot has been requested.
+     </para>
     </listitem>
     <listitem>
      <para>
-      <emphasis role="bold">1</emphasis> - a reboot has been requested. </para>
+      <emphasis role="bold">1</emphasis> - a reboot has been requested.
+     </para>
     </listitem>
     <listitem>
      <para>
-      <emphasis role="bold">2</emphasis> - a reboot has been requested, the manager is waiting for
-      the maintenance window. </para>
+      <emphasis role="bold">2</emphasis> - a reboot has been requested, the
+      manager is waiting for the maintenance window.
+     </para>
     </listitem>
     <listitem>
      <para>
-      <emphasis role="bold">3</emphasis> - a reboot has been requested, the manager is waiting for
-      the <literal>etcd</literal> lock. </para>
+      <emphasis role="bold">3</emphasis> - a reboot has been requested, the
+      manager is waiting for the <literal>etcd</literal> lock.
+     </para>
     </listitem>
    </itemizedlist>
-   <para> To set or change particular reboot strategy, run the following: </para>
-   <screen>rebootmgrctl set-strategy <replaceable/></screen>
-   <para> For possible strategies refer to <xref linkend="reboot.managment"/>. </para>
-   <para> If you need to view the currently used reboot strategy, run the command: </para>
-   <screen>rebootmgrctl get-strategy</screen>
-   <para> The <command>rebootmgrctl</command> enables you to set a group of machines that belongs to
-    one group and are allowed to reboot at the same time. If you need your machine to a particular
-     <literal>etcd</literal> lock group, use the following command: </para>
-   <screen>rebootmgrctl set-group <replaceable>etcd-lock-group</replaceable></screen>
-   <para> After you define a group, you can set the maximum count of machines in that group that are
-    allowed to reboot at the same time. Use the command: </para>
-   <screen>rebootmgrctl set-max <replaceable>-group group_name</replaceable> <replaceable>count</replaceable></screen>
-   <para> If you do not use the <literal>group</literal> option, the local default group will be
-    used. </para>
-   <para> If you need to lock a machine manually, you can use the command: </para>
-   <screen>rebootmgrctl lock <replaceable>-group group_name</replaceable> <replaceable>machine_id</replaceable></screen>
-   <para> If you do not specify any group, the local default group name will be used. The
-     <replaceable>machine-id</replaceable> is a network wide unique ID, usually the default ID from
-     <filename>/etc/machine-id</filename>. </para>
-   <para> To unlock a particular machine, use the command: </para>
-   <screen>rebootmgrctl unlock <replaceable>-group group_name</replaceable> <replaceable>machine_id</replaceable></screen>
+   <para>
+    To set or change particular reboot strategy, run the following:
+   </para>
+<screen>rebootmgrctl set-strategy <replaceable></replaceable></screen>
+   <para>
+    For possible strategies refer to <xref linkend="reboot.managment"/>.
+   </para>
+   <para>
+    If you need to view the currently used reboot strategy, run the command:
+   </para>
+<screen>rebootmgrctl get-strategy</screen>
+   <para>
+    The <command>rebootmgrctl</command> enables you to set a group of machines
+    that belongs to one group and are allowed to reboot at the same time. If
+    you need your machine to a particular <literal>etcd</literal> lock group,
+    use the following command:
+   </para>
+<screen>rebootmgrctl set-group <replaceable>etcd-lock-group</replaceable></screen>
+   <para>
+    After you define a group, you can set the maximum count of machines in that
+    group that are allowed to reboot at the same time. Use the command:
+   </para>
+<screen>rebootmgrctl set-max <replaceable>-group group_name</replaceable> <replaceable>count</replaceable></screen>
+   <para>
+    If you do not use the <literal>group</literal> option, the local default
+    group will be used.
+   </para>
+   <para>
+    If you need to lock a machine manually, you can use the command:
+   </para>
+<screen>rebootmgrctl lock <replaceable>-group group_name</replaceable> <replaceable>machine_id</replaceable></screen>
+   <para>
+    If you do not specify any group, the local default group name will be used.
+    The <replaceable>machine-id</replaceable> is a network wide unique ID,
+    usually the default ID from <filename>/etc/machine-id</filename>.
+   </para>
+   <para>
+    To unlock a particular machine, use the command:
+   </para>
+<screen>rebootmgrctl unlock <replaceable>-group group_name</replaceable> <replaceable>machine_id</replaceable></screen>
   </sect2>
+
   <sect2 xml:id="commands.cluster.managment.issue-generator">
    <title>The <command>issue-generator</command> Command</title>
-   <para> The <command>issue-generator</command> creates a volatile temporary
-     <filename>/run/issue</filename> file. The file <filename>/etc/issue</filename> should be a
-    symbolic link to the temporary <filename>/run/issue</filename>. </para>
-   <para> You can use the command to prefix all directories and files with a specified prefix (path
-    in this case): </para>
-   <screen>issue-generator --prefix <replaceable>path</replaceable></screen>
-   <para> By using the command you can also create or delete files in the network configuration, for
-    example: </para>
-   <screen>issue-generator network <replaceable>remove</replaceable> <replaceable>interface</replaceable></screen>
-   <para> The command removes file
-     <filename>/run/issue.d/70-<replaceable>interface</replaceable>.conf</filename>. The file
-    contains the name of the <replaceable>interface</replaceable> and escape codes for
-     <command>agentty</command>. </para>
-   <para> You can use the command to add or delete
-     <filename>/run/issue.d/60-ssh_host_keys.conf</filename> that contains fingerprints of the
-    public SSH keys of the host: </para>
-   <screen>issue-generator ssh <replaceable>add|remove</replaceable></screen>
+   <para>
+    The <command>issue-generator</command> creates a volatile temporary
+    <filename>/run/issue</filename> file. The file
+    <filename>/etc/issue</filename> should be a symbolic link to the temporary
+    <filename>/run/issue</filename>.
+   </para>
+   <para>
+    You can use the command to prefix all directories and files with a
+    specified prefix (path in this case):
+   </para>
+<screen>issue-generator --prefix <replaceable>path</replaceable></screen>
+   <para>
+    By using the command you can also create or delete files in the network
+    configuration, for example:
+   </para>
+<screen>issue-generator network <replaceable>remove</replaceable> <replaceable>interface</replaceable></screen>
+   <para>
+    The command removes file
+    <filename>/run/issue.d/70-<replaceable>interface</replaceable>.conf</filename>.
+    The file contains the name of the <replaceable>interface</replaceable> and
+    escape codes for <command>agentty</command>.
+   </para>
+   <para>
+    You can use the command to add or delete
+    <filename>/run/issue.d/60-ssh_host_keys.conf</filename> that contains
+    fingerprints of the public SSH keys of the host:
+   </para>
+<screen>issue-generator ssh <replaceable>add|remove</replaceable></screen>
    <note>
     <title>The Command without Arguments</title>
-    <para> If you run the command without any argument, all input files will be applied. </para>
+    <para>
+     If you run the command without any argument, all input files will be
+     applied.
+    </para>
    </note>
   </sect2>
+
   <sect2 xml:id="commands.cluster.managment.transactional-update">
    <title>The <command>transactional-update</command> Command</title>
-   <para> The <command>transactional-update</command> enables you to install or remove updates of
-    your system in an atomic way. The updates are applied all or none of them if any package cannot
-    be installed. Before the update is applied, a snapshot of the system is created in order to
-    restore the previous state in case of a failure. </para>
-   <para> If the current root file system is identical to the active root file system (after
-    applying updates and reboot), run cleanup of all old snapshots: </para>
-   <screen>transactional-update cleanup</screen>
-   <para> Other options of the command are the following: </para>
+   <para>
+    The <command>transactional-update</command> enables you to install or
+    remove updates of your system in an atomic way. The updates are applied all
+    or none of them if any package cannot be installed. Before the update is
+    applied, a snapshot of the system is created in order to restore the
+    previous state in case of a failure.
+   </para>
+   <para>
+    If the current root file system is identical to the active root file system
+    (after applying updates and reboot), run cleanup of all old snapshots:
+   </para>
+<screen>transactional-update cleanup</screen>
+   <para>
+    Other options of the command are the following:
+   </para>
    <variablelist>
     <varlistentry>
      <term><literal>up</literal>
      </term>
      <listitem>
-      <para> If there are new updates available, a new snapshot is created and <command>zypper
-        up</command> is used to update the snapshot. The snapshot is activated afterwards and is
-       used as the new root file system after reboot. </para>
-      <screen>transactional-update up</screen>
+      <para>
+       If there are new updates available, a new snapshot is created and
+       <command>zypper up</command> is used to update the snapshot. The
+       snapshot is activated afterwards and is used as the new root file system
+       after reboot.
+      </para>
+<screen>transactional-update up</screen>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>dup</literal>
      </term>
      <listitem>
-      <para> If there are new updates available, a new snapshot is created and <command>zypper dup
-        –no-allow-vendor-change</command> is used to update the snapshot. The snapshot is activated
-       afterwards and is used as the new root file system after reboot. </para>
-      <screen>transactional-update dup</screen>
+      <para>
+       If there are new updates available, a new snapshot is created and
+       <command>zypper dup –no-allow-vendor-change</command> is used to
+       update the snapshot. The snapshot is activated afterwards and is used as
+       the new root file system after reboot.
+      </para>
+<screen>transactional-update dup</screen>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>patch</literal>
      </term>
      <listitem>
-      <para> If there are new updates available, a new snapshot is created and <command>zypper
-        patch</command> is used to update the snapshot. The snapshot is activated afterwards and is
-       used as the new root file system after reboot. </para>
-      <screen>transactional-update patch</screen>
+      <para>
+       If there are new updates available, a new snapshot is created and
+       <command>zypper patch</command> is used to update the snapshot. The
+       snapshot is activated afterwards and is used as the new root file system
+       after reboot.
+      </para>
+<screen>transactional-update patch</screen>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>ptf install</literal>
      </term>
      <listitem>
-      <para> The command installs the specified RPMs: </para>
-      <screen>transactional-update ptf install <replaceable>rpm ... rpm</replaceable></screen>
+      <para>
+       The command installs the specified RPMs:
+      </para>
+<screen>transactional-update ptf install <replaceable>rpm ... rpm</replaceable></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>ptf remove</literal>
      </term>
      <listitem>
-      <para> The command removes the specified RPMs from the system: </para>
-      <screen>transactional-update ptf remove <replaceable>rpm ... rpm</replaceable></screen>
+      <para>
+       The command removes the specified RPMs from the system:
+      </para>
+<screen>transactional-update ptf remove <replaceable>rpm ... rpm</replaceable></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>reboot</literal>
      </term>
      <listitem>
-      <para> If the reboot manager is running, <command>transactional-update</command> informs the
-       reboot manager daemon that the system must be rebooted according to the configured reboot
-       strategy. If the reboot manager daemon is not running, <command>systemctl reboot</command> is
-       called instead. </para>
-      <screen>transactional-update reboot</screen>
+      <para>
+       If the reboot manager is running,
+       <command>transactional-update</command> informs the reboot manager
+       daemon that the system must be rebooted according to the configured
+       reboot strategy. If the reboot manager daemon is not running,
+       <command>systemctl reboot</command> is called instead.
+      </para>
+<screen>transactional-update reboot</screen>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>rollback</literal>
      </term>
      <listitem>
-      <para> The command sets the default sub volume. On systems with read-write file system
-        <command>snapper rollback</command> is called. On a read-only file system and without any
-       argument, the current system is set to a new default root file system. If you specify a
-       number, that snapshot is used as the default root file system. On a read-only file system, no
-       additional snapshots are created. </para>
-      <screen>transactional-update rollback <replaceable>snapshot_number</replaceable></screen>
+      <para>
+       The command sets the default sub volume. On systems with read-write
+       file system <command>snapper rollback</command> is called. On a read-only
+       file system and without any argument, the current system is set to a new
+       default root file system. If you specify a number, that snapshot is used
+       as the default root file system. On a read-only file system, no additional
+       snapshots are created.
+      </para>
+<screen>transactional-update rollback <replaceable>snapshot_number</replaceable></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>--help</literal>
      </term>
      <listitem>
-      <para> The option outputs possible options and subcommands. </para>
-      <screen>transactional-update --help</screen>
+      <para>
+       The option outputs possible options and subcommands.
+      </para>
+<screen>transactional-update --help</screen>
      </listitem>
     </varlistentry>
    </variablelist>
   </sect2>
+
   <sect2 xml:id="commands.cluster.managment.create_autoyast_profile">
    <title>The <command>create_autoyast_profile</command> Command</title>
-   <para> The <command>create_autoyast_profile</command> command creates an autoyast profile for
-    fully automatic installation of &productname;. You can use the following options when invoking
-    the command: </para>
+   <para>
+    The <command>create_autoyast_profile</command> command creates an autoyast
+    profile for fully automatic installation of &productname;. You can use the
+    following options when invoking the command:
+   </para>
    <variablelist>
     <varlistentry>
      <term><literal>-o|--output</literal>
      </term>
      <listitem>
-      <para> Specify to which file the command should save the created profile. </para>
-      <screen>create_autoyast_profile -o <replaceable>filename</replaceable></screen>
+      <para>
+       Specify to which file the command should save the created profile.
+      </para>
+<screen>create_autoyast_profile -o <replaceable>filename</replaceable></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>--salt-master</literal>
      </term>
      <listitem>
-      <para> Specify the host name of the &smaster;. </para>
-      <screen>create_autoyast_profile --salt-master <replaceable>saltmaster</replaceable></screen>
+      <para>
+       Specify the host name of the &smaster;.
+      </para>
+<screen>create_autoyast_profile --salt-master <replaceable>saltmaster</replaceable></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>--smt-url</literal>
      </term>
      <listitem>
-      <para> Specify the URL of the SMT server. </para>
-      <screen>create_autoyast_profile --smt-url <replaceable>saltmaster</replaceable></screen>
+      <para>
+       Specify the URL of the SMT server.
+      </para>
+<screen>create_autoyast_profile --smt-url <replaceable>saltmaster</replaceable></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>--regcode</literal>
      </term>
      <listitem>
-      <para> Specify the registration code for &productname;. </para>
-      <screen>create_autoyast_profile --regcode <replaceable>405XAbs593</replaceable></screen>
+      <para>
+       Specify the registration code for &productname;.
+      </para>
+<screen>create_autoyast_profile --regcode <replaceable>405XAbs593</replaceable></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>--reg-email</literal>
      </term>
      <listitem>
-      <para> Specify an e-mail address for registration. </para>
-      <screen>create_autoyast_profile --reg-email <replaceable>address@exampl.com</replaceable></screen>
+      <para>
+       Specify an e-mail address for registration.
+      </para>
+<screen>create_autoyast_profile --reg-email <replaceable>address@exampl.com</replaceable></screen>
      </listitem>
     </varlistentry>
    </variablelist>
@@ -646,26 +911,38 @@ lock-group=default</screen>
  </sect1>
  <sect1 xml:id="node.managment">
   <title>Node Management</title>
-  <para> After you complete the deployment and you bootstrap the cluster, you may need to perform
-   additional changes to the cluster. By using &dashboard; you can add additional nodes to the
-   cluster. You can also delete some nodes, but in that case make sure that you do not break the
-   cluster. </para>
+
+  <para>
+   After you complete the deployment and you bootstrap the cluster, you may
+   need to perform additional changes to the cluster. By using &dashboard; you
+   can add additional nodes to the cluster. You can also delete some nodes, but
+   in that case make sure that you do not break the cluster.
+  </para>
+
   <sect2 xml:id="node.managment.adding">
    <title>Adding Nodes</title>
-   <para> You may need to add additional &kworker;s to your cluster. The following steps guides you
-    through that procedure: </para>
+   <para>
+    You may need to add additional &kworker;s to your cluster. The following
+    steps guides you through that procedure:
+   </para>
    <procedure>
     <title>Adding Nodes to Existing Cluster</title>
     <step>
-     <para> Prepare the node as described in <xref linkend="sec.caasp.installquick.node"/>
+     <para>
+      Prepare the node as described in
+      <xref linkend="sec.caasp.installquick.node"/>
      </para>
     </step>
     <step>
-     <para> Open &dashboard; in your browser and login. </para>
+     <para>
+      Open &dashboard; in your browser and login.
+     </para>
     </step>
     <step>
-     <para> You should see the newly added node as a node to be accepted in <guimenu>Pending
-       Nodes</guimenu>. Accept the node. </para>
+     <para>
+      You should see the newly added node as a node to be accepted in
+      <guimenu>Pending Nodes</guimenu>. Accept the node.
+     </para>
      <informalfigure>
       <mediaobject>
        <imageobject>
@@ -675,8 +952,11 @@ lock-group=default</screen>
      </informalfigure>
     </step>
     <step>
-     <para> In the <guimenu>Summary</guimenu> you can see the <guimenu>New</guimenu> that appears
-      next to <guimenu>New nodes</guimenu>. Click the <guimenu>New</guimenu> button. </para>
+     <para>
+      In the <guimenu>Summary</guimenu> you can see the <guimenu>New</guimenu>
+      that appears next to <guimenu>New nodes</guimenu>. Click the
+      <guimenu>New</guimenu> button.
+     </para>
      <informalfigure>
       <mediaobject>
        <imageobject>
@@ -686,72 +966,105 @@ lock-group=default</screen>
      </informalfigure>
     </step>
     <step>
-     <para> Select the node to be added and click <guimenu>Add nodes</guimenu>. </para>
+     <para>
+      Select the node to be added and click <guimenu>Add nodes</guimenu>.
+     </para>
     </step>
     <step>
-     <para> The node has been added to your cluster. </para>
+     <para>
+      The node has been added to your cluster.
+     </para>
     </step>
    </procedure>
   </sect2>
+
   <sect2 xml:id="node.managment.removing">
    <title>Removing Nodes</title>
-   <para> As each node in the cluster runs also an instance of <literal>etcd</literal>,
-    &productname; has to ensure that removing of several nodes does not break the
-     <literal>etcd</literal> cluster. In case you have for example three nodes in the
-     <literal>etcd</literal> and you delete two of them, &productname; deletes one node, recovers
-    the cluster and only if the recovery is successful, the next node can be removed. If a node runs
-    just an <literal>etcd-proxy</literal>, there is nothing special that has to be done, as deleting
-    any amount of <literal>etcd-proxy</literal> can not break the <literal>etcd</literal> cluster.
+   <para>
+    As each node in the cluster runs also an instance of
+    <literal>etcd</literal>, &productname; has to ensure that removing of
+    several nodes does not break the <literal>etcd</literal> cluster. In case
+    you have for example three nodes in the <literal>etcd</literal> and you
+    delete two of them, &productname; deletes one node, recovers the cluster
+    and only if the recovery is successful, the next node can be removed. If a
+    node runs just an <literal>etcd-proxy</literal>, there is nothing special
+    that has to be done, as deleting any amount of
+    <literal>etcd-proxy</literal> can not break the <literal>etcd</literal>
+    cluster.
    </para>
   </sect2>
  </sect1>
  <sect1 xml:id="cluster.monitoring">
   <title>Cluster Monitoring</title>
-  <para> There are three basic ways how you can monitor your cluster: </para>
+
+  <para>
+   There are three basic ways how you can monitor your cluster:
+  </para>
+
   <itemizedlist>
    <listitem>
-    <para> by directly accessing the <emphasis>cAdvisor</emphasis> on
-      <literal>http://&lt;worker_node_address&gt;:4194/containers/</literal>. The
-      <emphasis>cAdvisor</emphasis> runs on worker nodes by default. </para>
+    <para>
+     by directly accessing the <emphasis>cAdvisor</emphasis> on
+     <literal>http://&lt;worker_node_address&gt;:4194/containers/</literal>.
+     The <emphasis>cAdvisor</emphasis> runs on worker nodes by default.
+    </para>
    </listitem>
    <listitem>
-    <para> By using <emphasis>Heapster</emphasis>, for details refer to <xref
-      linkend="cluster.monitoring.heapster"/>. </para>
+    <para>
+     By using <emphasis>Heapster</emphasis>, for details refer to
+     <xref linkend="cluster.monitoring.heapster"/>.
+    </para>
    </listitem>
    <listitem>
-    <para> By using <emphasis>Grafana</emphasis>, for details refer to <xref
-      linkend="cluster.monitoring.grafana"/>. </para>
+    <para>
+     By using <emphasis>Grafana</emphasis>, for details refer to
+     <xref linkend="cluster.monitoring.grafana"/>.
+    </para>
    </listitem>
   </itemizedlist>
+
   <sect2 xml:id="cluster.monitoring.heapster">
    <title>Monitoring with Heapster</title>
    <para>
-    <emphasis>Heapster</emphasis> is a tool that collects and interprets various signals from your
-    cluster. <emphasis>Heapster</emphasis> communicates directly with the
-     <emphasis>cAdvisor</emphasis>. The signals from the cluster are then exported using REST
-    endpoints. </para>
-   <para> To deploy <emphasis>Heapster</emphasis>, run the following command: </para>
-   <screen>kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/heapster/heapster.yaml</screen>
+    <emphasis>Heapster</emphasis> is a tool that collects and interprets
+    various signals from your cluster. <emphasis>Heapster</emphasis>
+    communicates directly with the <emphasis>cAdvisor</emphasis>. The signals
+    from the cluster are then exported using REST endpoints.
+   </para>
    <para>
-    <emphasis>Heapster</emphasis> can store data in <emphasis>InfluxDB</emphasis>, which can be then
-    used by other tools. </para>
+    To deploy <emphasis>Heapster</emphasis>, run the following command:
+   </para>
+<screen>kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/heapster/heapster.yaml</screen>
+   <para>
+    <emphasis>Heapster</emphasis> can store data in
+    <emphasis>InfluxDB</emphasis>, which can be then used by other tools.
+   </para>
   </sect2>
+
   <sect2 xml:id="cluster.monitoring.grafana">
    <title>Monitoring with Grafana</title>
    <para>
-    <emphasis>Grafana</emphasis> is an analytics platform that processes data stored in
-     <emphasis>InfluxDB</emphasis> and displays the data graphically. You can deploy
-     <emphasis>Grafana</emphasis> by running the following commands: </para>
-   <screen>kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/heapster/heapster.yaml
+    <emphasis>Grafana</emphasis> is an analytics platform that processes data
+    stored in <emphasis>InfluxDB</emphasis> and displays the data graphically.
+    You can deploy <emphasis>Grafana</emphasis> by running the following
+    commands:
+   </para>
+<screen>kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/heapster/heapster.yaml
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/influxdb.yaml
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-config/influxdb/grafana-deployment.yaml
 wget https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-config/influxdb/grafana-service.yaml</screen>
-   <para> Then open the file <filename>grafana-service.yaml</filename>: </para>
-   <screen>vi grafana-service.yaml</screen>
-   <para> In the file uncomment the line with the <literal>NodePort</literal> type. </para>
-   <para> To finish the <emphasis>Grafana</emphasis> installation, apply the configuration by
-    running: </para>
-   <screen>kubectl apply -f grafana-service.yaml</screen>
+   <para>
+    Then open the file <filename>grafana-service.yaml</filename>:
+   </para>
+<screen>vi grafana-service.yaml</screen>
+   <para>
+    In the file uncomment the line with the <literal>NodePort</literal> type.
+   </para>
+   <para>
+    To finish the <emphasis>Grafana</emphasis> installation, apply the
+    configuration by running:
+   </para>
+<screen>kubectl apply -f grafana-service.yaml</screen>
   </sect2>
  </sect1>
 </chapter>
