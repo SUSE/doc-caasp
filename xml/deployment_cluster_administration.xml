@@ -48,7 +48,7 @@
      defaults to <filename>$HOME/.kube/config</filename>. To use a different
      location, run
     </para>
-    <screen>&prompt.user;<command>export</command> <option>KUBECONFIG <replaceable>/path/to/kube/config/file</replaceable></option></screen>
+    <screen>&prompt.user;<command>export</command> <option>KUBECONFIG=<replaceable>/path/to/kube/config/file</replaceable></option></screen>
    </tip>
 
    <note xml:id="auth.login.rootca">
@@ -374,7 +374,7 @@ roleRef:
    installation of PTFs by running:
   </para>
 
-<screen>transactional-update reboot ptf install</screen>
+<screen>transactional-update reboot ptf install <replaceable>rpm ... rpm</replaceable></screen>
 
   <para>
    The command installs PTF RPMs. The <literal>reboot</literal> option then
@@ -396,7 +396,7 @@ roleRef:
    In case you need to remove the installed PTFs, use the following command:
   </para>
 
-<screen>transactional-update reboot ptf remove</screen>
+<screen>transactional-update reboot ptf remove <replaceable>rpm ... rpm</replaceable></screen>
  </sect1>
  <sect1 xml:id="reboot.managment">
   <title>Rebooting the Cluster</title>
