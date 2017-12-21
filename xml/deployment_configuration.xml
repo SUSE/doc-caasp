@@ -131,8 +131,7 @@
     time and must be in the format:
     <literal>
      cloud-init-url=http://<replaceable>hostname.domain</replaceable>/cloud.cfg
-    </literal>.
-    The content of the passed url is copied to
+    </literal>. The content of the passed url is copied to
     <filename>/etc/cloud/cloud.cfg.d/91_kernel_cmdline_url.cfg</filename> and
     it is not overwritten even though the url changes.
    </para>
@@ -331,12 +330,12 @@ ssh_authorized_keys:
           repos:
             - id: opensuse-oss
               name: os-oss
-              baseurl: http://my.example.com/CAASP/repo/SUSE-CAASP-&productnumber;-CUSTOM/
+              baseurl: http://my.example.com/repo/SUSE-CAASP-&productnumber;-CUSTOM/
               enabled: 1
               autorefresh: 1
             - id: opensuse-oss-update
               name: os-oss-up
-              baseurl: http://my.example.com/CAASP/repo/SUSE-CAASP-&productnumber;-CUSTOM/update
+              baseurl: http://my.example.com/repo/SUSE-CAASP-&productnumber;-CUSTOM/update
                       # any setting per
                       # https://en.opensuse.org/openSUSE:Standards_RepoInfo
                       # enable and autorefresh are on by default
