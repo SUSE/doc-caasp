@@ -61,7 +61,7 @@
    <title>Upgrading etcd</title>
    <para>
     &productname; 2 comes with &kube; 1.7, which uses <literal>etcd</literal>
-    version 3 as default storage backend. Therefor, after upgrading from
+    version 3 as default storage backend. Therefore, after upgrading from
     &productname; 1 to version 2 or higher, you have to orchestrate the
     migration between <literal>etcd</literal> 2 and 3.
    </para>
@@ -69,7 +69,7 @@
     The orchestration will shutdown all <literal>etcd</literal> and
     <literal>kube-api</literal> services, perform the <literal>etcd</literal>
     migration steps, set the <quote>etcd_version = etcd3</quote> pillar value,
-    and start <literal>etc</literal> and <literal>kube-api</literal> back up.
+    and restart <literal>etcd</literal> and <literal>kube-api</literal>.
    </para>
 
    <important>
