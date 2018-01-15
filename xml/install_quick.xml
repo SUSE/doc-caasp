@@ -103,369 +103,113 @@
       </important>
      </listitem>
      <listitem>
-      <para>
-       Ports
-      </para>
-      <para>
-       In a &productname; cluster, internal TCP/IP ports are managed using
+     <para>
+       In a &productname; cluster, internal TCP/IP ports are managed using 
        <literal>iptables</literal> controlled by <literal>Salt</literal> and so
-       need not be manually configured.
-      </para>
-      <para>
-       However, for reference and for environments where there are existing
+       need not be manually configured. However, for reference and for environments where there are existing
        security policies, the following are the standard ports in use.
       </para>
-      <table xml:id="tab.security-and-bug-fixes">
+      <table xml:id="tab.caasp.installquick.ports">
        <title>Node types and open ports</title>
        <tgroup cols="6">
-        <colspec colname="c1"/>
-        <colspec colname="c2"/>
-        <colspec colname="c3"/>
-        <colspec colname="c4"/>
-        <colspec colname="c5"/>
-        <colspec colname="c6"/>
         <thead>
          <row>
-          <entry>
-           <para>
-            Node
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Port
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Internal / External
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Open after orchestration
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Description
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Notes
-           </para>
-          </entry>
+          <entry><para> Node </para></entry>
+          <entry><para> Port </para></entry>
+          <entry><para> Internal / External </para></entry>
+          <entry><para> Open after orchestration </para></entry>
+          <entry><para> Description </para></entry>
+          <entry><para> Notes </para></entry>
          </row>
         </thead>
         <tbody>
          <row>
-          <entry>
-           <para>
-            All machines
-           </para>
-          </entry>
-          <entry>
-           <para>
-            22
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Internal
-           </para>
-          </entry>
-          <entry>
-           <para>
-            No
-           </para>
-          </entry>
-          <entry>
-           <para>
-            ssh
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Useful but not essential
-           </para>
-          </entry>
+          <entry><para> All machines </para></entry>
+          <entry><para> 22 </para></entry>
+          <entry><para> Internal </para></entry>
+          <entry><para> No </para></entry>
+          <entry><para> ssh </para></entry>
+          <entry><para> Useful but not essential </para></entry>
          </row>
          <row>
-          <entry>
-           <para>
-            Admin
-           </para>
-          </entry>
-          <entry>
-           <para>
-            80
-           </para>
-          </entry>
-          <entry>
-           <para>
-            External
-           </para>
-          </entry>
-          <entry> No </entry>
-          <entry>
-           <para>
-            HTTP
-           </para>
-          </entry>
-          <entry>
-           <para></para>
-          </entry>
+          <entry><para> Admin </para></entry>
+          <entry><para> 80 </para></entry>
+          <entry><para> External </para></entry>
+          <entry><para> No </para></entry>
+          <entry><para> HTTP </para></entry>
+          <entry><para></para></entry>
          </row>
          <row>
-          <entry>
-           <para>
-            Admin
-           </para>
-          </entry>
-          <entry>
-           <para>
-            443
-           </para>
-          </entry>
-          <entry>
-           <para>
-            External
-           </para>
-          </entry>
-          <entry>
-           <para>
-            No
-           </para>
-          </entry>
-          <entry>
-           <para>
-            HTTPS
-           </para>
-          </entry>
-          <entry>
-           <para></para>
-          </entry>
+          <entry><para> Admin </para></entry>
+          <entry><para> 443 </para></entry>
+          <entry><para> External </para></entry>
+          <entry><para> No </para></entry>
+          <entry><para> HTTPS </para></entry>
+          <entry><para></para></entry>
          </row>
          <row>
-          <entry>
-           <para>
-            Admin
-           </para>
-          </entry>
-          <entry>
-           <para>
-            2379
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Internal
-           </para>
-          </entry>
-          <entry>
-           <para>
-            No
-           </para>
-          </entry>
-          <entry>
-           <para>
-            etcd discovery
-           </para>
-          </entry>
-          <entry>
-           <para></para>
-          </entry>
+          <entry><para> Admin </para></entry>
+          <entry><para> 2379 </para></entry>
+          <entry><para> Internal </para></entry>
+          <entry><para> No </para></entry>
+          <entry><para> etcd discovery </para></entry>
+          <entry><para></para></entry>
          </row>
          <row>
-          <entry>
-           <para>
-            Admin
-           </para>
-          </entry>
-          <entry>
-           <para>
-            4505 - 4506
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Internal
-           </para>
-          </entry>
-          <entry>
-           <para>
-            No
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Salt
-           </para>
-          </entry>
-          <entry>
-           <para></para>
-          </entry>
+          <entry><para> Admin </para></entry>
+          <entry><para> 4505 - 4506 </para></entry>
+          <entry><para> Internal </para></entry>
+          <entry><para> No </para></entry>
+          <entry><para> Salt </para></entry>
+          <entry><para></para></entry>
          </row>
          <row>
-          <entry> Masters </entry>
-          <entry>
-           <para>
-            2380
-           </para>
-          </entry>
-          <entry> Internal </entry>
-          <entry>
-           <para>
-            Yes
-           </para>
-          </entry>
-          <entry>
-           <para>
-            etcd control
-           </para>
-          </entry>
-          <entry> For peer-to-peer etcd traffic </entry>
+          <entry><para> Masters </para></entry>
+          <entry><para> 2380 </para></entry>
+          <entry><para> Internal </para></entry>
+          <entry><para> Yes </para></entry>
+          <entry><para> etcd control </para></entry>
+          <entry><para> For peer-to-peer etcd traffic </para></entry>
          </row>
          <row>
-          <entry> Masters </entry>
-          <entry>
-           <para>
-            4789
-           </para>
-          </entry>
-          <entry> Internal </entry>
-          <entry>
-           <para>
-            No
-           </para>
-          </entry>
-          <entry>
-           <para>
-            VXLAN traffic
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Used by Flannel
-           </para>
-          </entry>
+          <entry><para> Masters </para></entry>
+          <entry><para> 4789 </para></entry>
+          <entry><para> Internal </para></entry>
+          <entry><para> No </para></entry>
+          <entry><para> VXLAN traffic </para></entry>
+          <entry><para> Used by Flannel </para></entry>
          </row>
          <row>
-          <entry> Masters </entry>
-          <entry>
-           <para>
-            6443
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Both
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Yes
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Kubernetes API server
-           </para>
-          </entry>
-          <entry>
-           <para></para>
-          </entry>
+          <entry><para> Masters </para></entry>
+          <entry><para> 6443 </para></entry>
+          <entry><para> Both </para></entry>
+          <entry><para> Yes </para></entry>
+          <entry><para> &kube; API server </para></entry>
+          <entry><para></para></entry>
          </row>
          <row>
-          <entry>
-           <para>
-            Workers
-           </para>
-          </entry>
-          <entry>
-           <para>
-            2380
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Internal
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Yes
-           </para>
-          </entry>
-          <entry>
-           <para>
-            etcd control
-           </para>
-          </entry>
-          <entry>
-           <para>
-            For peer-to-peer etcd traffic
-           </para>
-          </entry>
+          <entry><para> Workers </para></entry>
+          <entry><para> 2380 </para></entry>
+          <entry><para> Internal </para></entry>
+          <entry><para> Yes </para></entry>
+          <entry><para> etcd control </para></entry>
+          <entry><para> For peer-to-peer etcd traffic </para></entry>
          </row>
          <row>
-          <entry>
-           <para>
-            Workers
-           </para>
-          </entry>
-          <entry>
-           <para>
-            4789
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Internal
-           </para>
-          </entry>
-          <entry>
-           <para>
-            No
-           </para>
-          </entry>
-          <entry>
-           <para>
-            VXLAN traffic
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Used by Flannel
-           </para>
-          </entry>
+          <entry><para> Workers </para></entry>
+          <entry><para> 4789 </para></entry>
+          <entry><para> Internal </para></entry>
+          <entry><para> No </para></entry>
+          <entry><para> VXLAN traffic </para></entry>
+          <entry><para> Used by Flannel </para></entry>
          </row>
          <row>
-          <entry>
-           <para>
-            Workers
-           </para>
-          </entry>
-          <entry>
-           <para>
-            10250
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Internal
-           </para>
-          </entry>
-          <entry>
-           <para>
-            No
-           </para>
-          </entry>
-          <entry> Kubelet </entry>
-          <entry>
-           <para></para>
-          </entry>
+          <entry><para> Workers </para></entry>
+          <entry><para> 10250 </para></entry>
+          <entry><para> Internal </para></entry>
+          <entry><para> No </para></entry>
+          <entry><para> Kubelet </para></entry>
+          <entry><para></para></entry>
          </row>
         </tbody>
        </tgroup>
