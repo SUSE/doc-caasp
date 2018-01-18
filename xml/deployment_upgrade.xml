@@ -182,5 +182,40 @@
     </step>
    </procedure>
   </sect2>
+  <sect2 xml:id="sect.deploy.upgrade.caasp1.sa">
+   <title>Generating the the sa.key File on the CA</title>
+   <para>
+    <!-- cwickert 2018-01-18: TODO Explain what we are doing here -->
+   </para>
+   <procedure>
+    <title>Generate the sa.key file on the CA</title>
+    <step>
+     <para>
+      Connect to the &admin_node; using SSH.
+     </para>
+    </step>
+    <step>
+     <para>
+      Run the command:
+     </para>
+<screen>&prompt.root;<command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>salt-master</option> | <command>awk</command> <option>'{print $1}')</option> \
+    <command>bash</command></screen>
+     <para>
+      This will give you a shell in the &salt; master container.
+     </para>
+    </step>
+    <step>
+     <para>
+      From that console execute the following command:
+     </para>
+<screen>$ salt "ca" state.apply kubernetes-common.generate-serviceaccount-key</screen>
+    </step>
+    <step>
+     <para>
+      Exit the &salt; master container by pressing Ctrl+D.
+     </para>
+    </step>
+   </procedure>
+  </sect2>
  </sect1>
 </chapter>
