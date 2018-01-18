@@ -48,7 +48,7 @@
   </step>
  </procedure>
 
- <sect1 xml:id="sect.deploy.upgrade.caasp1">
+ <sect1 xml:id="sec.deploy.upgrade.caasp1">
   <title>Upgrading from &productname; 1</title>
   <para>
    The following sections contain the necessary steps to upgrade from
@@ -56,7 +56,7 @@
    &productname;, additional steps may be necesssary. These are described in
    their own version-specific sections. -->
   </para>
-  <sect2 xml:id="sect.deploy.upgrade.caasp1.users">
+  <sect2 xml:id="sec.deploy.upgrade.caasp1.users">
    <title>Migrating Users</title>
    <para>
     &productname; 2 comes with Role-Based Access Control (RBAC), which stores
@@ -66,7 +66,7 @@
      role="productname">OpenLDAP</phrase> users.
    </para>
    <para>For more information about RBAC and user management, refer to <xref linkend="auth"/>.</para>
-   <procedure xml:id="proc.deploy.upgrade.caasp1.users">
+   <procedure xml:id="pro.deploy.upgrade.caasp1.users">
     <title>Migrating users from version 1 to 2</title>
     <step>
      <para>
@@ -84,7 +84,7 @@
    <para>After running this command, existing user accounts will be available
     for logging into &dashboard; again.</para>
   </sect2>
-  <sect2 xml:id="sect.deploy.upgrade.caasp1.etcd">
+  <sect2 xml:id="sec.deploy.upgrade.caasp1.etcd">
    <title>Upgrading etcd</title>
    <para>
     &productname; 2 comes with &kube; 1.7, which uses <literal>etcd</literal>
@@ -108,7 +108,7 @@
     </para>
    </important>
 
-   <procedure xml:id="proc.deploy.upgrade.caasp1.etcd">
+   <procedure xml:id="pro.deploy.upgrade.caasp1.etcd">
     <title>Migrating from etcd version 2 to 3</title>
     <step>
      <para>
@@ -135,7 +135,7 @@
     for some new options introduced in &productname; 2 which were not present
     in version 1.
    </para>
-   <procedure xml:id="proc.deploy.upgrade.caasp1.settings">
+   <procedure xml:id="pro.deploy.upgrade.caasp1.settings">
     <title>Add new settings introduced in &productname; 2</title>
     <step>
      <para>
@@ -182,12 +182,12 @@
     </step>
    </procedure>
   </sect2>
-  <sect2 xml:id="sect.deploy.upgrade.caasp1.sa">
+  <sect2 xml:id="sec.deploy.upgrade.caasp1.ca">
    <title>Generating the the sa.key File on the CA</title>
    <para>
     <!-- cwickert 2018-01-18: TODO Explain what we are doing here -->
    </para>
-   <procedure>
+   <procedure xml:id="pro.deploy.upgrade.caasp1.ca">
     <title>Generate the sa.key file on the CA</title>
     <step>
      <para>
