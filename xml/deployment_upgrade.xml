@@ -77,8 +77,8 @@
      <para>
       Run the command:
      </para>
-     <screen>&prompt.root;<command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>dashboard</option> | <command>awk</command> <option>'{print $1}')</option> \
-      <command>entrypoint.sh</command> <option>bundle exec rake velum:migrate_users</option></screen>
+<screen>&prompt.root;<command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>dashboard</option> | <command>awk</command> <option>'{print $1}')</option> \
+    <command>entrypoint.sh</command> <option>bundle exec rake velum:migrate_users</option></screen>
     </step>
    </procedure>
    <para>After running this command, existing user accounts will be available
@@ -119,14 +119,68 @@
      <para>
       Run the command:
      </para>
-     <screen>&prompt.root;<command>docker</command> <option>exec -ti</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>salt-master</option> | <command>cut</command> <option>-d" " -f1</option>) \
-       <command>salt-run</command> <option>state.orchestrate orch.etcd-migrate</option></screen>
+<screen>&prompt.root;<command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>salt-master</option> | <command>cut</command> <option>-d" " -f1</option>) \
+    <command>salt-run</command> <option>state.orchestrate orch.etcd-migrate</option></screen>
     </step>
    </procedure>
    <para>
     After the command successfully finished, all services will be available
     again.
    </para>
+  </sect2>
+  <sect2>
+   <title>Adding new settings</title>
+   <para>
+    Run the following commands to ensure that default values are set correctly
+    for some new options introduced in &productname; 2 which were not present
+    in version 1.
+   </para>
+   <procedure xml:id="proc.deploy.upgrade.caasp1.settings">
+    <title>Add new settings introduced in &productname; 2</title>
+    <step>
+     <para>
+      Connect to the &admin_node; using SSH.
+     </para>
+    </step>
+    <step>
+     <para>
+      Run the command:
+     </para>
+<screen>&prompt.root;<command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>dashboard</option> | <command>awk</command> <option>'{print $1}')</option> \
+    <command>bash</command></screen>
+    </step>
+    <step>
+     <para>
+      Now set <literal>dashboard_external_fqdn</literal> to the FQDN of the
+      &admin_node; host:
+     </para>
+<screen><command>entrypoint.sh</command> <option>bundle exec rails runner \
+    'Pillar.create(pillar: "dashboard_external_fqdn", value: "<replaceable>FQDN</replaceable>")'</option></screen>
+     <para>
+      Note well: <literal>FQDN</literal>FQDN corresponds to the Fully
+      Qualified Domain Name of your &admin_node; host.
+     </para>
+    </step>
+    <step>
+     <para>
+      While you have the console session open, create the LDAP related pillars:
+     </para>
+<screen>$ entrypoint.sh bundle exec rails runner \
+'Velum::LDAP.ldap_pillar_settings!({}).each {|key, value| Pillar.create(pillar: Pillar.all_pillars[key.to_sym], value: value)}'</screen>
+    </step>
+    <step>
+     <para>
+      If you intend to use Helm on your CaaSP Cluster, you also need to enable
+      Tiller (Helm's server component). From the save console used before,
+      execute the following command:
+     </para>
+<screen>$ entrypoint.sh bundle exec rails runner \
+    'Pillar.create(pillar: "addons:tiller", value: "true")'</screen>
+    </step>
+    <step>
+     <para>Exit the &dashboard; container by pressing Ctrl+D.</para>
+    </step>
+   </procedure>
   </sect2>
  </sect1>
 </chapter>
