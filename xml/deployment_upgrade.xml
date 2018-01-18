@@ -144,26 +144,26 @@
     </step>
     <step>
      <para>
-      Run the command:
+      Open a shell in the &dashboard; container:
      </para>
 <screen>&prompt.root;<command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>dashboard</option> | <command>awk</command> <option>'{print $1}')</option> \
     <command>bash</command></screen>
     </step>
     <step>
      <para>
-      Now set <literal>dashboard_external_fqdn</literal> to the FQDN of the
-      &admin_node; host:
+      Now set <literal>dashboard_external_fqdn</literal> to the Fully Qualified
+      Domain Name (FQDN) of the &admin_node;:
      </para>
 <screen><command>entrypoint.sh</command> <option>bundle exec rails runner \
     'Pillar.create(pillar: "dashboard_external_fqdn", value: "<replaceable>FQDN</replaceable>")'</option></screen>
      <para>
-      Note well: <literal>FQDN</literal>FQDN corresponds to the Fully
-      Qualified Domain Name of your &admin_node; host.
+      Replace <literal>FQDN</literal> with the Fully Qualified Domain Name of
+      your &admin_node;.
      </para>
     </step>
     <step>
      <para>
-      While you have the console session open, create the LDAP related pillars:
+      Create the LDAP related pillars:
      </para>
 <screen>$ entrypoint.sh bundle exec rails runner \
     'Velum::LDAP.ldap_pillar_settings!({}).each \
@@ -173,21 +173,26 @@
     <step>
      <para>
       If you intend to use Helm on your CaaSP Cluster, you also need to enable
-      Tiller (Helm's server component). From the save console used before,
-      execute the following command:
+      Tiller (Helm's server component). Execute the following command in open
+      shell:
      </para>
 <screen>$ entrypoint.sh bundle exec rails runner \
     'Pillar.create(pillar: "addons:tiller", value: "true")'</screen>
     </step>
     <step>
-     <para>Exit the &dashboard; container by pressing Ctrl+D.</para>
+     <para>
+      Type <command>exit</command> or press <keycombo action="simul">
+       <keycap function="control"/><keycap>D</keycap></keycombo> to exit the
+      &dashboard; container.
+     </para>
     </step>
    </procedure>
   </sect2>
   <sect2 xml:id="sec.deploy.upgrade.caasp1.ca">
-   <title>Generating the the sa.key File on the CA</title>
+   <title>Generating the Service Account Keysa.key File on the CA</title>
    <para>
     <!-- cwickert 2018-01-18: TODO Explain what we are doing here -->
+    <!-- To generate the service account key file sa.key -->
    </para>
    <procedure xml:id="pro.deploy.upgrade.caasp1.ca">
     <title>Generate the sa.key file on the CA</title>
@@ -198,13 +203,10 @@
     </step>
     <step>
      <para>
-      Run the command:
+      Open a shell in the &salt; master container with:
      </para>
 <screen>&prompt.root;<command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>salt-master</option> | <command>awk</command> <option>'{print $1}')</option> \
     <command>bash</command></screen>
-     <para>
-      This will give you a shell in the &salt; master container.
-     </para>
     </step>
     <step>
      <para>
@@ -214,7 +216,9 @@
     </step>
     <step>
      <para>
-      Exit the &salt; master container by pressing Ctrl+D.
+      Type <command>exit</command> or press <keycombo action="simul">
+       <keycap function="control"/><keycap>D</keycap></keycombo> to exit the
+      &salt; master container.
      </para>
     </step>
    </procedure>
