@@ -166,7 +166,9 @@
       While you have the console session open, create the LDAP related pillars:
      </para>
 <screen>$ entrypoint.sh bundle exec rails runner \
-'Velum::LDAP.ldap_pillar_settings!({}).each {|key, value| Pillar.create(pillar: Pillar.all_pillars[key.to_sym], value: value)}'</screen>
+    'Velum::LDAP.ldap_pillar_settings!({}).each \
+    {|key, value| Pillar.create(pillar: Pillar.all_pillars[key.to_sym], \
+    value: value)}'</screen>
     </step>
     <step>
      <para>
