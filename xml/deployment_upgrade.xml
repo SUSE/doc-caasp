@@ -20,6 +20,33 @@
   released. You are strongly advised to upgrade to a supported release. These
   upgrades may involve manual intervention.
  </para>
+ <important>
+  <title>Service Window Required</title>
+  <para>
+   Upgrades may take take some time, during which services may be degraded in
+   pervormance or completely unavailable. Please make sure to plan a service
+   window.
+  </para>
+ </important>
+ <procedure xml:id="pro.deploy.upgrade.procedure">
+  <title>General Upgrade Procedure</title>
+  <step>
+   <para>
+    Upgrade the &admin_node;.
+   </para>
+  </step>
+  <step>
+   <para>
+    Manually perform additional upgrade steps of the &admin_node;. These steps
+    are version-specific and described in the following chapters.
+   </para>
+  </step>
+  <step>
+   <para>
+    Upgrade the cluster nodes through &dashboard;.
+   </para>
+  </step>
+ </procedure>
 
  <sect1 xml:id="sect.deploy.upgrade.caasp1">
   <title>Upgrading from &productname; 1</title>
