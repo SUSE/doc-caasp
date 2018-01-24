@@ -101,7 +101,99 @@
        </para>
       </important>
      </listitem>
+     <listitem>
+      <para> Ports </para>
+      <para> In a &productname; cluster, internal TCP/IP ports are managed using
+       iptables controlled by Salt and so need not be manually configured.
+       However, for reference and for environments where there are existing
+       security policies, the following are the standard ports in use.</para>
+      <note>
+       <title>SSH</title>
+       <para>SSH is not strictly necessary on all nodes.</para>
+      </note>
+      <itemizedlist>
+       <listitem>
+        <para>Internal</para>
+        <itemizedlist>
+         <listitem>
+          <para>On all machines</para>
+          <itemizedlist>
+           <listitem>
+            <para>22 (ssh)</para>
+           </listitem>
+          </itemizedlist>
+         </listitem>
+         <listitem>
+          <para>On the admin node:</para>
+          <itemizedlist>
+           <listitem>
+            <para>4505-4506 (Salt)</para>
+           </listitem>
+           <listitem>
+            <para>2379 (etcd discovery)</para>
+           </listitem>
+          </itemizedlist>
+         </listitem>
+         <listitem>
+          <para>On masters and workers:</para>
+          <itemizedlist>
+           <listitem>
+            <para>4789 (VXLAN traffic, used by Flannel)</para>
+           </listitem>
+           <listitem>
+            <para>2380 (for peer-to-peer etcd traffic)</para>
+           </listitem>
+          </itemizedlist>
+         </listitem>
+         <listitem>
+          <para>On masters:</para>
+          <itemizedlist>
+           <listitem>
+            <para>6443 (Kubernetes API server from Kubernetes minions)</para>
+           </listitem>
+          </itemizedlist>
+         </listitem>
+         <listitem>
+          <para>On workers:</para>
+          <itemizedlist>
+           <listitem>
+            <para>10250 (Kubelet)</para>
+           </listitem>
+          </itemizedlist>
+         </listitem>
+        </itemizedlist>
+       </listitem>
+       <listitem>
+        <para>External</para>
+        <para> Once the entire &kube; cluster has been created and orchestrated,
+         the following are the standard external TCP/IP ports.</para>
+        <itemizedlist>
+         <listitem>
+          <para>On the admin node:</para>
+          <itemizedlist>
+           <listitem>
+            <para>80 (HTTP)</para>
+           </listitem>
+           <listitem>
+            <para>443 (HTTPS)</para>
+           </listitem>
+          </itemizedlist>
+         </listitem>
+         <listitem>
+          <para>On masters</para>
+          <itemizedlist>
+           <listitem>
+            <para>6443 (Kubernetes API server)</para>
+           </listitem>
+          </itemizedlist>
+         </listitem>
+        </itemizedlist>
+       </listitem>
+      </itemizedlist>
+     </listitem>
     </itemizedlist>
+    <para>When some additional ingress mechanism is used, additional ports would
+     also be open.</para>
    </sect3>
    <sect3 xml:id="sec.caasp.installquick.limits">
     <title>Limitations</title>
