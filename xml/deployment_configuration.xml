@@ -324,9 +324,113 @@ ssh_authorized_keys:
      You can add a custom software repository to your system by using the
      <literal>zypp_repos</literal> option:
     </para>
-<screen>zypp_repos:
-  "Update Repo":
-      baseurl: http://my.example.com/CAASP/repo/SUSE-CAASP-1.0-CUSTOM/</screen>
+<screen>
+zypper:
+  repos:
+    - id: opensuse-oss
+      name: os-oss
+      baseurl: http://my.example.com/repo/SUSE-CAASP-&productnumber;-CUSTOM/
+      enabled: 1
+      autorefresh: 1
+    - id: opensuse-oss-update
+      name: os-oss-up
+      baseurl: http://my.example.com/repo/SUSE-CAASP-&productnumber;-CUSTOM/update
+</screen>
+    <para>The options available are:</para>
+    <variablelist>
+     <varlistentry>
+      <term><literal>id</literal></term>
+      <listitem>
+       <para>
+        The local unique ID of the repository, also known as its alias.
+        (Mandatory.)
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><literal>name</literal></term>
+      <listitem>
+       <para>
+        A more descriptive string describing the repository, used in the UI.
+        (Mandatory.)
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><literal>baseurl</literal></term>
+      <listitem>
+       <para>
+        URL to the directory where the repository's <literal>repodata</literal>
+        directory lives. (Mandatory.)
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><literal>type</literal></term>
+      <listitem>
+       <para>
+        Zypper is able to work with three types of repository:
+        <literal>yast2</literal> and <literal>rpm-md</literal> (yum)
+        repositories, as well as <literal>plaindir</literal> - plain
+        directories containing <literal>.rpm</literal> files.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><literal>path</literal></term>
+      <listitem>
+       <para>
+        This is relative to the <literal>baseurl</literal>; the default is
+        <literal>/</literal>.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><literal>gpgcheck</literal></term>
+      <listitem>
+       <para>
+        Defines whether the source signatures should be checked using GPG.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><literal>gpgkey</literal></term>
+      <listitem>
+       <para>
+        Defines the URL for a GPG key.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><literal>enabled</literal></term>
+      <listitem>
+       <para>
+        Defaults to <literal>1</literal> (on). Set to <literal>0</literal> to
+        disable the repository: it will be known and listed, but not used.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><literal>autorefresh</literal>
+      </term>
+      <listitem>
+       <para>
+        Defaults to <literal>1</literal> (on). When on, the local package cache
+        will be updated to the remote version whenever package management
+        actions are performed.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><literal>priority</literal></term>
+      <listitem>
+       <para>
+        Defines a source priority, from <literal>1</literal> (lowest) to
+        <literal>200</literal> (highest). The default is <literal>99</literal>.
+       </para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
    </sect3>
    <sect3 xml:id="user-data.config.setting.timezone">
     <title>Setting Timezone</title>
@@ -342,17 +446,17 @@ ssh_authorized_keys:
      You can set either a host name or, preferably, a fully-qualified domain
      name for the machine:
     </para>
-    <screen>hostname: myhost</screen>
+<screen>hostname: myhost</screen>
     <para>
-	 or
-	</para>
-    <screen>fqdn: myhost.example.com</screen>
+     or
+    </para>
+<screen>fqdn: myhost.example.com</screen>
     <para>
      The option <literal>preserve_hostname</literal> specifies whether any
-     existing host name should be retained or not. Enter <literal>true</literal>
-     or <literal>false</literal> as required:
+     existing host name should be retained or not. Enter
+     <literal>true</literal> or <literal>false</literal> as required:
     </para>
-    <screen>preserve_hostname: true</screen>
+<screen>preserve_hostname: true</screen>
    </sect3>
    <sect3 xml:id="user-data.config.nameserver">
     <title>Configuring Name server</title>
