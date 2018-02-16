@@ -83,7 +83,8 @@
      password. To do this, <command>ssh</command> into your &admin_node; and
      run:
     </para>
-    <screen>&prompt.user;<command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>openldap</option> | <command>awk</command> <option>'{print $1}')</option> <command>cat</command> <option>/var/lib/misc/infra-secrets/openldap-password</option></screen>
+<screen>&prompt.user;<command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>openldap</option> | <command>awk</command> <option>'{print $1}')</option> \
+    <command>cat</command> <option>/var/lib/misc/infra-secrets/openldap-password</option></screen>
    </sect3>
 
    <sect3 xml:id="auth.users.add">
