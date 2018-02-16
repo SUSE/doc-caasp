@@ -92,56 +92,87 @@
     <para>
      To add a new user, create a LDIF file like this:
     </para>
-    <screen>
-     <![CDATA[
-dn: uid=<userid>,ou=People,dc=infra,dc=caasp,dc=local
+<screen>
+dn: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.add.dn"/>,ou=People,dc=infra,dc=caasp,dc=local
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: top
-uid: <userid>
-userPassword: <password hash>
-givenname: <first name>
-cn: <full name>
-sn: <surname>
-mail: <email address>
-     ]]>
-    </screen>
+uid: <replaceable>userid</replaceable> <co xml:id="co.auth.users.add.uid"/>
+userPassword: <replaceable>password hash</replaceable> <co xml:id="co.auth.users.add.password"/>
+givenname: <replaceable>first name</replaceable> <co xml:id="co.auth.users.add.firstname"/>
+sn: <replaceable>surname</replaceable> <co xml:id="co.auth.users.add.surname"/>
+cn: <replaceable>full name</replaceable> <co xml:id="co.auth.users.add.fullname"/>
+mail: <replaceable>email address</replaceable> <co xml:id="co.auth.users.add.email"/>
+</screen>
     <para>
-     To generate the password hash, install the <package>openldap2</package>
-     package:
+     Make sure to replace all the parameters indicated <replaceable>like
+      this</replaceable> in the template above as follows:
     </para>
-    <screen>&prompt.root; <command>zypper</command> <option>install openldap2</option></screen>
-    <para>
-     Then generate the password hash:
-    </para>
-    <screen>&prompt.root;<command>/usr/sbin/slappasswd</command></screen>
-    <para>
-     Make sure to replace all the parameters in the template above, indicated
-     as &lt;....&gt;. The mail attribute value is used as the login to
-     &dashboard; and &kube;.
-    </para>
+    <calloutlist>
+     <callout arearefs="co.auth.users.add.dn co.auth.users.add.uid">
+      <para>
+       User ID (UID) of the new user. Needs to be unique.
+      </para>
+     </callout>
+     <callout arearefs="co.auth.users.add.password">
+      <para>
+       The user's hashed password. To generate the password hash, install the
+       <package>openldap2</package> package:
+      </para>
+       <screen>&prompt.root; <command>zypper</command> <option>install openldap2</option></screen>
+       <para>
+        Then generate the password hash:
+       </para>
+       <screen>&prompt.root;<command>/usr/sbin/slappasswd</command></screen>
+     </callout>
+     <callout arearefs="co.auth.users.add.firstname">
+      <para>
+       The user's first name
+      </para>
+     </callout>
+     <callout arearefs="co.auth.users.add.surname">
+      <para>
+       The user's last name
+      </para>
+     </callout>
+     <callout arearefs="co.auth.users.add.fullname">
+      <para>
+       The user's full name
+      </para>
+     </callout>
+     <callout arearefs="co.auth.users.add.email">
+      <para>The user's e-mail address. It is used as the login name to
+       &dashboard; and &kube;.</para>
+     </callout>
+    </calloutlist>
     <para>
      Populate your OpenLDAP server with this LDIF file:
     </para>
-    <screen>&prompt.root;<command>ldapadd</command> -H ldap://&lt;ADMIN NODE IP&gt;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w &lt;LDAP ADMIN PASSWORD&gt; -f &lt;LDIF FILE&gt;</screen>
+    <screen>&prompt.root;<command>ldapadd</command> -H ldap://<replaceable>ADMIN NODE IP</replaceable>;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP ADMIN PASSWORD</replaceable> -f <replaceable>LDIF FILE</replaceable></screen>
     <para>
      To add this new user to the existing Administrators group, create a new LDIF
      file like this:
     </para>
     <screen>
-     <![CDATA[
 dn: cn=Administrators,ou=Groups,dc=infra,dc=caasp,dc=local
 changetype: modify
 add: uniqueMember
-uniqueMember: uid=<userid>,ou=People,dc=infra,dc=caasp,dc=local
-     ]]>
+uniqueMember: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.add.admin"/>,ou=People,dc=infra,dc=caasp,dc=local
     </screen>
     <para>
-     Make sure to replace all the parameters in the template above, indicated
-     as &lt;....&gt;. Populate your <phrase
-      role="productname">OpenLDAP</phrase> server with the LDIF file:
+     Make sure to replace all the parameters indicated <replaceable>like
+      this</replaceable> in the template above as follows:
     </para>
-    <screen>&prompt.root;<command>ldapadd</command> -H ldap://&lt;ADMIN NODE IP&gt;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w &lt;LDAP ADMIN PASSWORD&gt; -f &lt;LDIF FILE&gt;</screen>
+    <calloutlist>
+     <callout arearefs="co.auth.users.add.admin">
+      <para>The user ID (UID) of the user</para>
+     </callout>
+    </calloutlist>
+    <para>
+     Populate your <phrase role="productname">OpenLDAP</phrase> server with the
+     LDIF file:
+    </para>
+    <screen>&prompt.root;<command>ldapadd</command> -H ldap://<replaceable>ADMIN NODE IP</replaceable>:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP ADMIN PASSWORD</replaceable> -f <replaceable>LDIF FILE</replaceable></screen>
    </sect3>
 
    <sect3 xml:id="auth.group">
@@ -152,65 +183,86 @@ uniqueMember: uid=<userid>,ou=People,dc=infra,dc=caasp,dc=local
      in <xref linkend="auth.users.add"/>. Then create a new group:
     </para>
     <screen>
-     <![CDATA[
-dn: cn=<group name>,ou=Groups,dc=infra,dc=caasp,dc=local
+dn: cn=<replaceable>group name;</replaceable><co xml:id="co.auth.group.dn"/>,ou=Groups,dc=infra,dc=caasp,dc=local
 objectclass: top
 objectclass: groupOfUniqueNames
-cn: <group name>
-uniqueMember: uid=<member1>,ou=People,dc=infra,dc=caasp,dc=local
-uniqueMember: uid=<member2>,ou=People,dc=infra,dc=caasp,dc=local
-uniqueMember: uid=<member3>,ou=People,dc=infra,dc=caasp,dc=local
-uniqueMember: uid=<member4>,ou=People,dc=infra,dc=caasp,dc=local
-uniqueMember: uid=<member5>,ou=People,dc=infra,dc=caasp,dc=local
-     ]]>
+cn: <replaceable>group name</replaceable><co xml:id="co.auth.group.cn"/>
+uniqueMember: uid=<replaceable>member1</replaceable>,<co xml:id="co.auth.group.member1"/>ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=<replaceable>member2</replaceable>,<co xml:id="co.auth.group.member2"/>ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=<replaceable>member3</replaceable>,<co xml:id="co.auth.group.member3"/>ou=People,dc=infra,dc=caasp,dc=local
     </screen>
     <para>
-     Make sure to replace all the parameters in the template above, indicated
-     as &lt;....&gt;. Repeat the uniqueMember attribute for every member of
-     this group. Populate your <phrase role="productname">OpenLDAP</phrase>
-     server with the LDIF file:
+     Make sure to replace all the parameters indicated <replaceable>like
+      this</replaceable> in the template above as follows:
     </para>
-    <screen>&prompt.root;<command>ldapadd</command> -H ldap://&lt;ADMIN NODE IP&gt;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w &lt;LDAP ADMIN PASSWORD&gt; -f &lt;LDIF FILE&gt;</screen>
+    <calloutlist>
+     <callout arearefs="co.auth.group.dn co.auth.group.cn">
+      <para>
+       The group's name.
+      </para>
+     </callout>
+     <callout arearefs="co.auth.group.member1 co.auth.group.member2 co.auth.group.member3">
+      <para>
+       Members of the group. Repeat the <literal>uniqueMember</literal>
+       attribute for every member of this group.
+      </para>
+     </callout>
+    </calloutlist>
+    <para>
+     Populate your <phrase role="productname">OpenLDAP</phrase> server with the
+     LDIF file:
+    </para>
+    <screen>&prompt.root;<command>ldapadd</command> -H ldap://<replaceable>ADMIN NODE IP</replaceable>:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP ADMIN PASSWORD</replaceable> -f <replaceable>LDIF FILE</replaceable></screen>
     <para>
      Next, create a role binding to allow this new LDAP group access in &kube;.
      Create a Kubernetes deployment descriptor like this:
     </para>
     <screen>
-     <![CDATA[
-     ---
 # Define the Role's permissions in Kubernetes
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: <group name>
-  namespace: <applicable namespace>
+  name: <replaceable>group name</replaceable><co xml:id="co.auth.group.role-name1"/>
+  namespace: <replaceable>applicable namespace</replaceable><co xml:id="co.auth.group.role-namespace1"/>
 rules:
 - apiGroups: [""]
   resources: [""]
   resourceNames: [""]
   verbs: [""]
 ---
-# Map a LDAP group to this Kubernetes role
+# Map an LDAP group to this Kubernetes role
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: <group name>
-  namespace: <applicable namespace>
+  name: <replaceable>group name</replaceable><co xml:id="co.auth.group.role-name2"/>
+  namespace: <replaceable>applicable namespace</replaceable><co xml:id="co.auth.group.role-namespace2"/>
 subjects:
 - kind: Group
-  name: <name of LDAP group>
+  name: <replaceable>name of LDAP group</replaceable>
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: Role
-  name: <group name>
-  namespace: <applicable namespace>
+  name: <replaceable>group name</replaceable><co xml:id="co.auth.group.role-name3"/>
+  namespace: <replaceable>applicable namespace</replaceable><co xml:id="co.auth.group.role-namespace3"/>
   apiGroup: rbac.authorization.k8s.io
-     ]]>
     </screen>
+    <calloutlist>
+     <callout arearefs="co.auth.group.role-name1 co.auth.group.role-name2 co.auth.group.role-name3">
+      <para>
+       Name of the new group.
+      </para>
+     </callout>
+     <callout arearefs="co.auth.group.role-namespace1 co.auth.group.role-namespace2 co.auth.group.role-namespace3">
+      <para>
+       Namespace the new group should be allowed to access. Use
+        <literal>default</literal> for &kube;' default namespace.
+      </para>
+     </callout>
+    </calloutlist>
     <para>
      Add this role and binding to Kubernetes:
     </para>
-    <screen>&prompt.root;kubectl apply -f &lt;DEPLOYMENT DESCRIPTOR FILE&gt;</screen>
+    <screen>&prompt.root;kubectl apply -f <replaceable>DEPLOYMENT DESCRIPTOR FILE</replaceable></screen>
    </sect3>
    <sect3>
     <title>Further information</title>
