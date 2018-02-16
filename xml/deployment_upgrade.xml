@@ -48,7 +48,7 @@
   </step>
  </procedure>
 
- <sect1 xml:id="sect.deploy.upgrade.caasp1">
+ <sect1 xml:id="sec.deploy.upgrade.caasp1">
   <title>Upgrading from &productname; 1</title>
   <para>
    The following sections contain the necessary steps to upgrade from
@@ -56,7 +56,7 @@
    &productname;, additional steps may be necesssary. These are described in
    their own version-specific sections. -->
   </para>
-  <sect2 xml:id="sect.deploy.upgrade.caasp1.users">
+  <sect2 xml:id="sec.deploy.upgrade.caasp1.users">
    <title>Migrating Users</title>
    <para>
     &productname; 2 comes with Role-Based Access Control (RBAC), which stores
@@ -66,8 +66,8 @@
      role="productname">OpenLDAP</phrase> users.
    </para>
    <para>For more information about RBAC and user management, refer to <xref linkend="auth"/>.</para>
-   <procedure xml:id="proc.deploy.upgrade.caasp1.users">
-    <title>Migrating users from version 1 to 2</title>
+   <procedure xml:id="pro.deploy.upgrade.caasp1.users">
+    <title>Migrate users from version 1 to 2</title>
     <step>
      <para>
       Connect to the &admin_node; using SSH.
@@ -75,28 +75,35 @@
     </step>
     <step>
      <para>
-      Run the command:
+      Open a shell in the &dashboard; container:
      </para>
-     <screen>&prompt.root;<command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>dashboard</option> | <command>awk</command> <option>'{print $1}')</option> \
-      <command>entrypoint.sh</command> <option>bundle exec rake velum:migrate_users</option></screen>
+<screen>&prompt.root;<command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>dashboard</option> | <command>awk</command> <option>'{print $1}')</option> <command>bash</command></screen>
+    </step>
+    <step>
+     <para>
+      Inside the container, execute the following command:
+     </para>
+<screen>&prompt.bash;<command>entrypoint.sh</command> <option>bundle exec rake velum:migrate_users</option></screen>
+     <para>Once the command successfully finished, existing user accounts will
+      be available for logging into &dashboard; again.
+     </para>
+    </step>
+    <step>
+     <para>
+      Type <command>exit</command> or press <keycombo action="simul">
+       <keycap function="control"/><keycap>D</keycap></keycombo> to exit the
+      &dashboard; container.
+     </para>
     </step>
    </procedure>
-   <para>After running this command, existing user accounts will be available
-    for logging into &dashboard; again.</para>
   </sect2>
-  <sect2 xml:id="sect.deploy.upgrade.caasp1.etcd">
+  <sect2 xml:id="sec.deploy.upgrade.caasp1.etcd">
    <title>Upgrading etcd</title>
    <para>
     &productname; 2 comes with &kube; 1.7, which uses <literal>etcd</literal>
     version 3 as default storage backend. Therefore, after upgrading from
     &productname; 1 to version 2 or higher, you have to orchestrate the
     migration between <literal>etcd</literal> 2 and 3.
-   </para>
-   <para>
-    The orchestration will shutdown all <literal>etcd</literal> and
-    <literal>kube-api</literal> services, perform the <literal>etcd</literal>
-    migration steps, set the <quote>etcd_version = etcd3</quote> pillar value,
-    and restart <literal>etcd</literal> and <literal>kube-api</literal>.
    </para>
 
    <important>
@@ -108,8 +115,8 @@
     </para>
    </important>
 
-   <procedure xml:id="proc.deploy.upgrade.caasp1.etcd">
-    <title>Migrating from etcd version 2 to 3</title>
+   <procedure xml:id="pro.deploy.upgrade.caasp1.etcd">
+    <title>Migrate from etcd version 2 to 3</title>
     <step>
      <para>
       Connect to the &admin_node; using SSH.
@@ -117,16 +124,132 @@
     </step>
     <step>
      <para>
-      Run the command:
+      Open a shell in the &smaster; container:
      </para>
-     <screen>&prompt.root;<command>docker</command> <option>exec -ti</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>salt-master</option> | <command>cut</command> <option>-d" " -f1</option>) \
-       <command>salt-run</command> <option>state.orchestrate orch.etcd-migrate</option></screen>
+<screen>&prompt.root;<command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>salt-master</option> | <command>awk</command> <option>'{print $1}')</option> <command>bash</command></screen>
+    </step>
+    <step>
+     <para>
+      Inside the container, execute the following command:
+     </para>
+<screen>&prompt.bash;<command>salt-run</command> <option>state.orchestrate orch.etcd-migrate</option></screen>
+     <para>
+      The orchestration will shutdown all <literal>etcd</literal> and
+      <literal>kube-api</literal> services, perform the <literal>etcd</literal>
+      migration steps, set the <quote>etcd_version = etcd3</quote> pillar value,
+      and restart <literal>etcd</literal> and <literal>kube-api</literal>.
+     </para>
+     <para>
+      After the command successfully finished, all services will be available
+      again.
+     </para>
+    </step>
+    <step>
+     <para>
+      Type <command>exit</command> or press <keycombo action="simul">
+       <keycap function="control"/><keycap>D</keycap></keycombo> to exit the
+      &smaster; container.
+     </para>
     </step>
    </procedure>
+  </sect2>
+  
+  <sect2 xml:id="sec.deploy.upgrade.caasp1.new-settings">
+   <title>Adding new settings</title>
    <para>
-    After the command successfully finished, all services will be available
-    again.
+    Run the following commands to ensure that default values are set correctly
+    for some new options introduced in &productname; 2 which were not present
+    in version 1.
    </para>
+   <procedure xml:id="pro.deploy.upgrade.caasp1.new-settings">
+    <title>Add new settings introduced in &productname; 2</title>
+    <step>
+     <para>
+      Connect to the &admin_node; using SSH.
+     </para>
+    </step>
+    <step>
+     <para>
+      Open a shell in the &dashboard; container:
+     </para>
+<screen>&prompt.root;<command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>dashboard</option> | <command>awk</command> <option>'{print $1}')</option> <command>bash</command></screen>
+    </step>
+    <step>
+     <para>
+      Set <literal>dashboard_external_fqdn</literal> to the Fully Qualified
+      Domain Name (FQDN) of the &admin_node;:
+     </para>
+<screen>&prompt.bash;<command>entrypoint.sh</command> <option>bundle exec rails runner \
+    'Pillar.create(pillar: "dashboard_external_fqdn", value: "<replaceable>FQDN</replaceable>")'</option></screen>
+     <para>
+      Replace <literal>FQDN</literal> with the Fully Qualified Domain Name of
+      your &admin_node;.
+     </para>
+    </step>
+    <step>
+     <para>
+      Create the LDAP related pillars:
+     </para>
+<screen>&prompt.bash;<command>entrypoint.sh</command> <option>bundle exec rails runner \
+    'Velum::LDAP.ldap_pillar_settings!({}).each \
+    {|key, value| Pillar.create(pillar: Pillar.all_pillars[key.to_sym], \
+    value: value)}'</option></screen>
+    </step>
+    <step>
+     <para>
+      If you intend to use Helm on your CaaSP Cluster, you also need to enable
+      Tiller (Helm's server component). Execute the following command in open
+      shell:
+     </para>
+<screen>&prompt.bash;<command>entrypoint.sh</command> <option>bundle exec rails runner \
+    'Pillar.create(pillar: "addons:tiller", value: "true")'</option></screen>
+    </step>
+    <step>
+     <para>
+      Type <command>exit</command> or press <keycombo action="simul">
+       <keycap function="control"/><keycap>D</keycap></keycombo> to exit the
+      &dashboard; container.
+     </para>
+    </step>
+   </procedure>
+  </sect2>
+  <sect2 xml:id="sec.deploy.upgrade.caasp1.service-account">
+   <title>Generating the Service Account Key File on the CA</title>
+   <para>
+    &kube; distinguishes between user and service accounts. While user accounts 
+    are for humans, service accounts are for processes, which run in pods.
+   </para>
+   <para>
+    In order to use service acconunts, you have to generate the service account
+    key <filename>sa.key</filename> file on the Certificate Auuthority (CA).
+   </para>
+   <procedure xml:id="pro.deploy.upgrade.caasp1.service-account">
+    <title>Generate the Service Account Key File <filename>sa.key</filename> on the CA.</title>
+    <step>
+     <para>
+      Connect to the &admin_node; using SSH.
+     </para>
+    </step>
+    <step>
+     <para>
+      Open a shell in the &smaster; container with:
+     </para>
+<screen>&prompt.root;<command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>salt-master</option> | <command>awk</command> <option>'{print $1}')</option> <command>bash</command></screen>
+    </step>
+    <step>
+     <para>
+      Inside the container, execute the following command:
+     </para>
+<screen>&prompt.bash;<command>salt</command> <option>"ca" state.apply kubernetes-common.generate-serviceaccount-key</option></screen>
+    </step>
+    <step>
+     <para>
+      Type <command>exit</command> or press <keycombo action="simul">
+       <keycap function="control"/><keycap>D</keycap></keycombo> to exit the
+      &smaster; container.
+     </para>
+    </step>
+   </procedure>
   </sect2>
  </sect1>
 </chapter>
