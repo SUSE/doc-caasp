@@ -298,7 +298,7 @@ roleRef:
   <itemizedlist>
    <listitem>
     <para>
-     they are atomic.
+     They are atomic.
     </para>
    </listitem>
    <listitem>
@@ -323,7 +323,7 @@ roleRef:
    <command>transactional-update</command> script, which is called once a day.
    The script checks if any update is available. If there is an update to be
    applied, a new snapshot of the root file system is created and the system is
-   updated by using <command>zypper up</command>. All RPMS released to this
+   updated by using <command>zypper up</command>. All updates released to this
    point are applied. The snapshot is then marked as active and will be used
    after the next reboot of the system. The script can reboot the cluster
    itself or it can instruct the <literal>rebootmgr</literal> to schedule the
@@ -336,9 +336,9 @@ roleRef:
   <note>
    <title>General Notes to the Updates Installation</title>
    <para>
-    Only RPMs that are part of the snapshot of the root file system can be
-    updated. If RPMs contains files that are not part of the snapshot, the
-    update can fail or it can break the system.
+    Only packages that are part of the snapshot of the root file system can be
+    updated. If packages contain files that are not part of the snapshot, the
+    update could fail or break the system.
    </para>
    <para>
     RPMs that require a license to be accepted cannot be updated.
@@ -348,8 +348,8 @@ roleRef:
   <sect2 xml:id="transactional.updates.installation">
    <title>Manual Installation of Updates</title>
    <para>
-    After the <command>transactional-update</command> script, has run on all
-    nodes, &dashboard; displays when nodes in your cluster run outdated
+    After the <command>transactional-update</command> script has run on all
+    nodes, &dashboard; displays any nodes in your cluster running outdated
     software. &dashboard; then enables you to update your cluster directly.
     Follow the next procedure to update your cluster.
    </para>
@@ -393,7 +393,7 @@ roleRef:
     </step>
     <step>
      <para>
-      Click the <guimenu>update all nodes</guimenu> to update &kmaster; and
+      Click <guimenu>update all nodes</guimenu> to update &kmaster; and
       &kworker;s.
      </para>
      <informalfigure>
@@ -410,19 +410,19 @@ roleRef:
   <sect2 xml:id="transactional.updates.disabling">
    <title>Disabling Transactional Updates</title>
    <para>
-    Even though we do not recommend that, you can disable transactional updates
+    Even though it is not recommended, you can disable transactional updates
     by issuing the command:
    </para>
-<screen>systemctl --now disable transactional-update.timer</screen>
+<screen><command>systemctl</command> <option>--now disable transactional-update.timer</option></screen>
    <para>
-    And also the automatic reboot can be disabled, just use any of the
+    Automatic reboot can also be disabled; use either of the
     commands:
    </para>
-<screen>systemctl --now disable rebootmgr</screen>
+<screen><command>systemctl --now disable rebootmgr</command></screen>
    <para>
     or
    </para>
-<screen>rebootmgrctl set-strategy off</screen>
+<screen><command>rebootmgrctl</command> <option>set-strategy off</option></screen>
   </sect2>
  </sect1>
  <sect1 xml:id="ptf.handling">
@@ -435,7 +435,7 @@ roleRef:
    installation of PTFs by running:
   </para>
 
-<screen>transactional-update reboot ptf install <replaceable>rpm ... rpm</replaceable></screen>
+<screen><command>transactional-update</command> <option>reboot ptf install <replaceable>rpm &hellip; rpm</replaceable></option></screen>
 
   <para>
    The command installs PTF RPMs. The <literal>reboot</literal> option then
@@ -457,7 +457,7 @@ roleRef:
    In case you need to remove the installed PTFs, use the following command:
   </para>
 
-<screen>transactional-update reboot ptf remove <replaceable>rpm ... rpm</replaceable></screen>
+<screen><command>transactional-update</command> <option>reboot ptf remove <replaceable>rpm &hellip; rpm</replaceable></option></screen>
  </sect1>
  <sect1 xml:id="reboot.managment">
   <title>Rebooting the Cluster</title>
