@@ -83,7 +83,9 @@
      password. To do this, <command>ssh</command> into your &admin_node; and
      run:
     </para>
-    <screen>&prompt.user;<command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>openldap</option> | <command>awk</command> <option>'{print $1}')</option> <command>cat</command> <option>/var/lib/misc/infra-secrets/openldap-password</option></screen>
+    <screen>
+&prompt.user;<command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>openldap</option> | <command>awk</command> <option>'{print $1}')</option> <command>cat</command> <option>/var/lib/misc/infra-secrets/openldap-password</option>
+    </screen>
    </sect3>
 
    <sect3 xml:id="auth.users.add">
@@ -92,55 +94,56 @@
      To add a new user, create a LDIF file like this:
     </para>
     <screen>
-     <![CDATA[
-dn: uid=<userid>,ou=People,dc=infra,dc=caasp,dc=local
+dn: uid=<replaceable>userid</replaceable>,ou=People,dc=infra,dc=caasp,dc=local
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: top
-uid: <userid>
-userPassword: <password hash>
-givenname: <first name>
-cn: <full name>
-sn: <surname>
-mail: <email address>
-     ]]>
+uid: <replaceable>userid</replaceable>
+userPassword: <replaceable>password hash</replaceable>
+givenname: <replaceable>first name</replaceable>
+cn: <replaceable>full name</replaceable>
+sn: <replaceable>surname</replaceable>
+mail: <replaceable>email address</replaceable>
     </screen>
     <para>
      To generate the password hash, on a separate machine, install the 
      <package>openldap2</package> package:
     </para>
     <screen>
-     &prompt.root; <command>zypper</command> <option>install openldap2</option>
+&prompt.root; <command>zypper</command> <option>install openldap2</option>
     </screen>
     <para>Then generate the password hash: </para>
     <screen>&prompt.root;<command>/usr/sbin/slappasswd</command></screen>
     <para>
-     Make sure to replace all the parameters in the template above, indicated as &lt;....&gt;.
-     The mail attribute value is used as the login to &dashboard; and &kube;.
+     Make sure to replace all the parameters indicated <replaceable>like this</replaceable>
+     in the template above. The mail attribute value is used as the login to
+     &dashboard; and &kube;.
     </para>
     <para>
-     Transfer the resulting LDIF file to your CaaSP server, and populate your 
+     Transfer the resulting LDIF file to your &productname; server and populate your 
      OpenLDAP server with this file:
     </para>
-    <screen>&prompt.root;<command>ldapadd</command> -H ldap://&lt;ADMIN NODE IP&gt;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w &lt;LDAP ADMIN PASSWORD&gt; -f &lt;LDIF FILE&gt;</screen>
+    <screen>
+&prompt.root;<command>ldapadd</command> -H ldap://<replaceable>ADMIN NODE IP</replaceable>:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP ADMIN PASSWORD</replaceable> -f <replaceable>LDIF FILE</replaceable>
+    </screen>
     <para>
      To add this new user to the existing Administrators group, create a 
      new LDIF file like this:
     </para>
     <screen>
-     <![CDATA[
 dn: cn=Administrators,ou=Groups,dc=infra,dc=caasp,dc=local
 changetype: modify
 add: uniqueMember
-uniqueMember: uid=<userid>,ou=People,dc=infra,dc=caasp,dc=local
-     ]]>
+uniqueMember: uid=<replaceable>userid</replaceable>,ou=People,dc=infra,dc=caasp,dc=local
     </screen>
     <para>
      Make sure to replace all the parameters in the template above, indicated
-     as &lt;....&gt;. Populate your <phrase
+     <replaceable>like this</replaceable>. Populate your <phrase
       role="productname">OpenLDAP</phrase> server with the LDIF file:
     </para>
-    <screen>&prompt.root;<command>ldapadd</command> -H ldap://&lt;ADMIN NODE IP&gt;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w &lt;LDAP ADMIN PASSWORD&gt; -f &lt;LDIF FILE&gt;</screen>
+    <screen>
+&prompt.root;<command>ldapadd</command> -H ldap://<replaceable>ADMIN NODE IP</replaceable>:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP ADMIN PASSWORD</replaceable> -f <replaceable>LDIF FILE</replaceable>
+</screen>
    </sect3>
 
    <sect3 xml:id="auto.group">
@@ -151,38 +154,37 @@ uniqueMember: uid=<userid>,ou=People,dc=infra,dc=caasp,dc=local
      in <xref linkend="auth.users.add"/>. Then create a new group:
     </para>
     <screen>
-     <![CDATA[
-dn: cn=<group name>,ou=Groups,dc=infra,dc=caasp,dc=local
+dn: cn=<replaceable>group name</replaceable>,ou=Groups,dc=infra,dc=caasp,dc=local
 objectclass: top
 objectclass: groupOfUniqueNames
-cn: <group name>
-uniqueMember: uid=<member1>,ou=People,dc=infra,dc=caasp,dc=local
-uniqueMember: uid=<member2>,ou=People,dc=infra,dc=caasp,dc=local
-uniqueMember: uid=<member3>,ou=People,dc=infra,dc=caasp,dc=local
-uniqueMember: uid=<member4>,ou=People,dc=infra,dc=caasp,dc=local
-uniqueMember: uid=<member5>,ou=People,dc=infra,dc=caasp,dc=local
-     ]]>
+cn: <replaceable>group name</replaceable>
+uniqueMember: uid=<replaceable>member1</replaceable>,ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=<replaceable>member2</replaceable>,ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=<replaceable>member3</replaceable>,ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=<replaceable>member4</replaceable>,ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=<replaceable>member5</replaceable>,ou=People,dc=infra,dc=caasp,dc=local
     </screen>
     <para>
      Make sure to replace all the parameters in the template above, indicated
-     as &lt;....&gt;. Repeat the uniqueMember attribute for every member of
+     <replaceable>like this</replaceable>. Repeat the uniqueMember attribute for every member of
      this group. Populate your <phrase role="productname">OpenLDAP</phrase>
      server with the LDIF file:
     </para>
-    <screen>&prompt.root;<command>ldapadd</command> -H ldap://&lt;ADMIN NODE IP&gt;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w &lt;LDAP ADMIN PASSWORD&gt; -f &lt;LDIF FILE&gt;</screen>
+    <screen>
+&prompt.root;<command>ldapadd</command> -H ldap://<replaceable>ADMIN NODE IP</replaceable>:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP ADMIN PASSWORD</replaceable> -f <replaceable>LDIF FILE</replaceable>
+</screen>
     <para>
      Next, create a role binding to allow this new LDAP group access in &kube;.
      Create a Kubernetes deployment descriptor like this:
     </para>
     <screen>
-     <![CDATA[
      ---
 # Define the Role's permissions in Kubernetes
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: <group name>
-  namespace: <applicable namespace>
+  name: <replaceable>group name</replaceable>
+  namespace: <replaceable>applicable namespace</replaceable>
 rules:
 - apiGroups: [""]
   resources: [""]
@@ -193,23 +195,22 @@ rules:
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: <group name>
-  namespace: <applicable namespace>
+  name: <replaceable>group name</replaceable>
+  namespace: <replaceable>applicable namespace</replaceable>
 subjects:
 - kind: Group
-  name: <name of LDAP group>
+  name: <replaceable>name of LDAP group</replaceable>
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: Role
-  name: <group name>
-  namespace: <applicable namespace>
+  name: <replaceable>group name</replaceable>
+  namespace: <replaceable>applicable namespace</replaceable>
   apiGroup: rbac.authorization.k8s.io
-     ]]>
     </screen>
     <para>
      Add this role and binding to Kubernetes:
     </para>
-    <screen>&prompt.root;kubectl apply -f &lt;DEPLOYMENT DESCRIPTOR FILE&gt;</screen>
+    <screen>&prompt.root;kubectl apply -f <replaceable>DEPLOYMENT DESCRIPTOR FILE</replaceable></screen>
    </sect3>
    <sect3>
     <title>Further information</title>
@@ -262,7 +263,7 @@ roleRef:
    <command>transactional-update</command> script, which is called once a day.
    The script checks if any update is available. If there is an update to be
    applied, a new snapshot of the root file system is created and the system is
-   updated by using <command>zypper up</command>. All RPMS released to this
+   updated by using <command>zypper up</command>. All RPMs released to this
    point are applied. The snapshot is then marked as active and will be used
    after the next reboot of the system. The script can reboot the cluster
    itself or it can instruct the <literal>rebootmgr</literal> to schedule the
@@ -277,7 +278,7 @@ roleRef:
    <para>
     Only RPMs that are part of the snapshot of the root file system can be
     updated. If RPMs contains files that are not part of the snapshot, the
-    update can fail or it can break the system.
+    update could fail or break the system.
    </para>
    <para>
     RPMs that require a license to be accepted cannot be updated.
@@ -287,8 +288,8 @@ roleRef:
   <sect2 xml:id="transactional.updates.installation">
    <title>Manual Installation of Updates</title>
    <para>
-    After the <command>transactional-update</command> script, has run on all
-    nodes, &dashboard; displays when nodes in your cluster run outdated
+    After the <command>transactional-update</command> script has run on all
+    nodes, &dashboard; displays any nodes in your cluster running outdated
     software. &dashboard; then enables you to update your cluster directly.
     Follow the next procedure to update your cluster.
    </para>
@@ -332,7 +333,7 @@ roleRef:
     </step>
     <step>
      <para>
-      Click the <guimenu>update all nodes</guimenu> to update &kmaster; and
+      Click <guimenu>update all nodes</guimenu> to update the &kmaster; and
       &kworker;s.
      </para>
      <informalfigure>
@@ -349,12 +350,12 @@ roleRef:
   <sect2 xml:id="transactional.updates.disabling">
    <title>Disabling Transactional Updates</title>
    <para>
-    Even though we do not recommend that, you can disable transactional updates
+    Even though we do not recommend it, you can disable transactional updates
     by issuing the command:
    </para>
 <screen>systemctl --now disable transactional-update.timer</screen>
    <para>
-    And also the automatic reboot can be disabled, just use any of the
+    Automatic reboot can also be disabled; use either of the
     commands:
    </para>
 <screen>systemctl --now disable rebootmgr</screen>
@@ -511,7 +512,7 @@ lock-group=default</screen>
     number of nodes can be rebooted at the same time.
    </para>
    <para>
-    In the directory <filename>rebootmg/locks/&lt;group name&gt;</filename>
+    In the directory <filename>rebootmg/locks/<replaceable>group name</replaceable></filename>
     there are two variables:
    </para>
    <variablelist>
@@ -651,7 +652,7 @@ lock-group=default</screen>
    <para>
     To set or change particular reboot strategy, run the following:
    </para>
-<screen>rebootmgrctl set-strategy <replaceable></replaceable></screen>
+<screen>rebootmgrctl set-strategy <replaceable>strategy</replaceable></screen>
    <para>
     For possible strategies refer to <xref linkend="reboot.managment"/>.
    </para>
@@ -1005,7 +1006,7 @@ lock-group=default</screen>
    <listitem>
     <para>
      by directly accessing the <emphasis>cAdvisor</emphasis> on
-     <literal>http://&lt;worker_node_address&gt;:4194/containers/</literal>.
+     <literal>http://<replaceable>worker_node_address</replaceable>:4194/containers/</literal>.
      The <emphasis>cAdvisor</emphasis> runs on worker nodes by default.
     </para>
    </listitem>
