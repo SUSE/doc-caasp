@@ -218,48 +218,59 @@ uniqueMember: uid=<replaceable>member3</replaceable>,<co xml:id="co.auth.group.m
      Create a Kubernetes deployment descriptor like this:
     </para>
     <screen>
-# Define the Role's permissions in Kubernetes
+# Define a Role and it's permissions in &kube;
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: <replaceable>group name</replaceable><co xml:id="co.auth.group.role-name1"/>
-  namespace: <replaceable>applicable namespace</replaceable><co xml:id="co.auth.group.role-namespace1"/>
+  name: <replaceable>role name</replaceable><co xml:id="co.auth.group.role-name"/>
+  namespace: <replaceable>applicable namespace</replaceable><co xml:id="co.auth.group.role-namespace"/>
+# This set of rules amounts to "allow all"
 rules:
 - apiGroups: [""]
   resources: [""]
   resourceNames: [""]
   verbs: [""]
 ---
-# Map an LDAP group to this Kubernetes role
+# Map an LDAP group to this &kube; role
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: <replaceable>group name</replaceable><co xml:id="co.auth.group.role-name2"/>
-  namespace: <replaceable>applicable namespace</replaceable><co xml:id="co.auth.group.role-namespace2"/>
+  name: <replaceable>role binding name</replaceable><co xml:id="co.auth.group.role-binding-name"/>
+  namespace: <replaceable>applicable namespace</replaceable><co xml:id="co.auth.group.role-binding-namespace"/>
 subjects:
 - kind: Group
-  name: <replaceable>name of LDAP group</replaceable>
+  name: <replaceable>LDAP group name</replaceable><co xml:id="co.auth.group.ldap-group-name"/>
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: Role
-  name: <replaceable>group name</replaceable><co xml:id="co.auth.group.role-name3"/>
+  name: <replaceable>role name</replaceable><co xml:id="co.auth.group.roleref-name"/>
   apiGroup: rbac.authorization.k8s.io
     </screen>
     <calloutlist>
-     <callout arearefs="co.auth.group.role-name1 co.auth.group.role-name2 co.auth.group.role-name3">
+     <callout arearefs="co.auth.group.role-name co.auth.group.roleref-name">
       <para>
-       Name of the new group.
+       Name of the new role in &kube;
       </para>
      </callout>
-     <callout arearefs="co.auth.group.role-namespace1 co.auth.group.role-namespace2">
+     <callout arearefs="co.auth.group.role-namespace co.auth.group.role-binding-namespace">
       <para>
        Namespace the new group should be allowed to access. Use
         <literal>default</literal> for &kube;' default namespace.
       </para>
      </callout>
+     <callout arearefs="co.auth.group.role-binding-name">
+      <para>
+       Name of the role binding in &kube;
+      </para>
+     </callout>
+     <callout arearefs="co.auth.group.ldap-group-name">
+      <para>
+       Name of the corresponding group in LDAP
+      </para>
+     </callout>
     </calloutlist>
     <para>
-     Add this role and binding to Kubernetes:
+     Add this role and binding to &kube;:
     </para>
     <screen>&prompt.root;kubectl apply -f <replaceable>DEPLOYMENT DESCRIPTOR FILE</replaceable></screen>
    </sect3>
