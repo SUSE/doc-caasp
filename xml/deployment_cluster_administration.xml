@@ -24,11 +24,6 @@
    Authentication is concerned with the <quote>who</quote> and authorization is
    concerned with the <quote>what</quote>.
   </para>
-  <para>User information is stored in
-   <phrase role="productname">OpenLDAP</phrase> running in a container on your
-   &productname; &admin_node;. You use standard LDAP administration tools for
-   managing these users.
-  </para>
 
   <sect2 xml:id="auth.kubeconfig">
    <title>Authentication</title>
@@ -68,11 +63,13 @@
 
   <sect2 xml:id="auth.users">
    <title>Managing Users and Groups</title>
-   <para>
-    By default, when you create the first user in &dashboard; during bootstrap of
-    your cluster, that user is granted <literal>Cluster Administrator</literal>
-    privileges within &kube;. You can add additional users with these rights by
-    adding new entries into the LDAP directory.
+   <para>User information is stored in
+    <phrase role="productname">OpenLDAP</phrase> running in a container on your
+    &productname; &admin_node;. You can use standard LDAP administration tools
+    for managing these users remotely. To do so, install the
+    <package>openldap2</package> package on a computer in your network and make
+    sure that computer can connect to the &admin_node; on port 389. For further
+    information, refer to <xref linkend="sec.caasp.installquick.netreqs"/>.
    </para>
    <sect3 xml:id="auth.user.ldap-rootpw">
     <title>Obtaining the OpenLDAP Password</title>
@@ -89,6 +86,12 @@
 
    <sect3 xml:id="auth.users.add">
     <title>Adding New Users</title>
+    <para>
+     By default, when you create the first user in &dashboard; during bootstrap of
+     your cluster, that user is granted <literal>Cluster Administrator</literal>
+     privileges within &kube;. You can add additional users with these rights by
+     adding new entries into the LDAP directory.
+    </para>
     <para>
      To add a new user, create a LDIF file like this:
     </para>
@@ -116,14 +119,9 @@ mail: <replaceable>email address</replaceable> <co xml:id="co.auth.users.add.ema
      </callout>
      <callout arearefs="co.auth.users.add.password">
       <para>
-       The user's hashed password. To generate the password hash, install the
-       <package>openldap2</package> package:
+       The user's hashed password. Use <command>/usr/sbin/slappasswd</command>
+       to generate the hash.
       </para>
-       <screen>&prompt.root; <command>zypper</command> <option>install openldap2</option></screen>
-       <para>
-        Then generate the password hash:
-       </para>
-       <screen>&prompt.root;<command>/usr/sbin/slappasswd</command></screen>
      </callout>
      <callout arearefs="co.auth.users.add.firstname">
       <para>
