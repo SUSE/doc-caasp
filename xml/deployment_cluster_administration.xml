@@ -24,11 +24,6 @@
    Authentication is concerned with the <quote>who</quote> and authorization is
    concerned with the <quote>what</quote>.
   </para>
-  <para>User information is stored in
-   <phrase role="productname">OpenLDAP</phrase> running in a container on your
-   &productname; &admin_node;. You use standard LDAP administration tools for
-   managing these users.
-  </para>
 
   <sect2 xml:id="auth.kubeconfig">
    <title>Authentication</title>
@@ -68,11 +63,13 @@
 
   <sect2 xml:id="auth.users">
    <title>Managing Users and Groups</title>
-   <para>
-    By default, when you create the first user in &dashboard; during bootstrap of
-    your cluster, that user is granted <literal>Cluster Administrator</literal>
-    privileges within &kube;. You can add additional users with these rights by
-    adding new entries into the LDAP directory.
+   <para>User information is stored in
+    <phrase role="productname">OpenLDAP</phrase> running in a container on your
+    &productname; &admin_node;. You can use standard LDAP administration tools
+    for managing these users remotely. To do so, install the
+    <package>openldap2</package> package on a computer in your network and make
+    sure that computer can connect to the &admin_node; on port 389. For further
+    information, refer to <xref linkend="sec.caasp.installquick.netreqs"/>.
    </para>
    <sect3 xml:id="auth.user.ldap-rootpw">
     <title>Obtaining the OpenLDAP Password</title>
@@ -83,64 +80,97 @@
      password. To do this, <command>ssh</command> into your &admin_node; and
      run:
     </para>
-    <screen>&prompt.user;<command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>openldap</option> | <command>awk</command> <option>'{print $1}')</option> <command>cat</command> <option>/var/lib/misc/infra-secrets/openldap-password</option></screen>
+<screen>&prompt.user;<command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>openldap</option> | <command>awk</command> <option>'{print $1}')</option> \
+    <command>cat</command> <option>/var/lib/misc/infra-secrets/openldap-password</option></screen>
    </sect3>
 
    <sect3 xml:id="auth.users.add">
     <title>Adding New Users</title>
     <para>
+     By default, when you create the first user in &dashboard; during bootstrap of
+     your cluster, that user is granted <literal>Cluster Administrator</literal>
+     privileges within &kube;. You can add additional users with these rights by
+     adding new entries into the LDAP directory.
+    </para>
+    <para>
      To add a new user, create a LDIF file like this:
     </para>
-    <screen>
-     <![CDATA[
-dn: uid=<userid>,ou=People,dc=infra,dc=caasp,dc=local
+<screen>
+dn: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.add.dn"/>,ou=People,dc=infra,dc=caasp,dc=local
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: top
-uid: <userid>
-userPassword: <password hash>
-givenname: <first name>
-cn: <full name>
-sn: <surname>
-mail: <email address>
-     ]]>
-    </screen>
+uid: <replaceable>userid</replaceable> <co xml:id="co.auth.users.add.uid"/>
+userPassword: <replaceable>password hash</replaceable> <co xml:id="co.auth.users.add.password"/>
+givenname: <replaceable>first name</replaceable> <co xml:id="co.auth.users.add.firstname"/>
+sn: <replaceable>surname</replaceable> <co xml:id="co.auth.users.add.surname"/>
+cn: <replaceable>full name</replaceable> <co xml:id="co.auth.users.add.fullname"/>
+mail: <replaceable>email address</replaceable> <co xml:id="co.auth.users.add.email"/>
+</screen>
     <para>
-     To generate the password hash, install the <package>openldap2</package>
-     package:
+     Make sure to replace all the parameters indicated <replaceable>like
+      this</replaceable> in the template above as follows:
     </para>
-    <screen>&prompt.root; <command>zypper</command> <option>install openldap2</option></screen>
-    <para>
-     Then generate the password hash:
-    </para>
-    <screen>&prompt.root;<command>/usr/sbin/slappasswd</command></screen>
-    <para>
-     Make sure to replace all the parameters in the template above, indicated
-     as &lt;....&gt;. The mail attribute value is used as the login to
-     &dashboard; and &kube;.
-    </para>
+    <calloutlist>
+     <callout arearefs="co.auth.users.add.dn co.auth.users.add.uid">
+      <para>
+       User ID (UID) of the new user. Needs to be unique.
+      </para>
+     </callout>
+     <callout arearefs="co.auth.users.add.password">
+      <para>
+       The user's hashed password. Use <command>/usr/sbin/slappasswd</command>
+       to generate the hash.
+      </para>
+     </callout>
+     <callout arearefs="co.auth.users.add.firstname">
+      <para>
+       The user's first name
+      </para>
+     </callout>
+     <callout arearefs="co.auth.users.add.surname">
+      <para>
+       The user's last name
+      </para>
+     </callout>
+     <callout arearefs="co.auth.users.add.fullname">
+      <para>
+       The user's full name
+      </para>
+     </callout>
+     <callout arearefs="co.auth.users.add.email">
+      <para>The user's e-mail address. It is used as the login name to
+       &dashboard; and &kube;.</para>
+     </callout>
+    </calloutlist>
     <para>
      Populate your OpenLDAP server with this LDIF file:
     </para>
-    <screen>&prompt.root;<command>ldapadd</command> -H ldap://&lt;ADMIN NODE IP&gt;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w &lt;LDAP ADMIN PASSWORD&gt; -f &lt;LDIF FILE&gt;</screen>
+    <screen>&prompt.root;<command>ldapadd</command> -H ldap://<replaceable>ADMIN NODE IP</replaceable>;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP ADMIN PASSWORD</replaceable> -f <replaceable>LDIF FILE</replaceable></screen>
     <para>
      To add this new user to the existing Administrators group, create a new LDIF
      file like this:
     </para>
     <screen>
-     <![CDATA[
 dn: cn=Administrators,ou=Groups,dc=infra,dc=caasp,dc=local
 changetype: modify
 add: uniqueMember
-uniqueMember: uid=<userid>,ou=People,dc=infra,dc=caasp,dc=local
-     ]]>
+uniqueMember: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.add.admin"/>,ou=People,dc=infra,dc=caasp,dc=local
     </screen>
     <para>
-     Make sure to replace all the parameters in the template above, indicated
-     as &lt;....&gt;. Populate your <phrase
-      role="productname">OpenLDAP</phrase> server with the LDIF file:
+     Make sure to replace all the parameters indicated <replaceable>like
+      this</replaceable> in the template above as follows:
     </para>
-    <screen>&prompt.root;<command>ldapadd</command> -H ldap://&lt;ADMIN NODE IP&gt;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w &lt;LDAP ADMIN PASSWORD&gt; -f &lt;LDIF FILE&gt;</screen>
+    <calloutlist>
+     <callout arearefs="co.auth.users.add.admin">
+      <para>The user ID (UID) of the user</para>
+     </callout>
+    </calloutlist>
+    <para>
+     Populate your <phrase role="productname">OpenLDAP</phrase> server with the
+     LDIF file:
+    </para>
+    <screen>&prompt.root;<command>ldapadd</command> -H ldap://<replaceable>ADMIN NODE IP</replaceable>:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP ADMIN PASSWORD</replaceable> -f <replaceable>LDIF FILE</replaceable></screen>
    </sect3>
 
    <sect3 xml:id="auth.group">
@@ -151,65 +181,96 @@ uniqueMember: uid=<userid>,ou=People,dc=infra,dc=caasp,dc=local
      in <xref linkend="auth.users.add"/>. Then create a new group:
     </para>
     <screen>
-     <![CDATA[
-dn: cn=<group name>,ou=Groups,dc=infra,dc=caasp,dc=local
+dn: cn=<replaceable>group name;</replaceable><co xml:id="co.auth.group.dn"/>,ou=Groups,dc=infra,dc=caasp,dc=local
 objectclass: top
 objectclass: groupOfUniqueNames
-cn: <group name>
-uniqueMember: uid=<member1>,ou=People,dc=infra,dc=caasp,dc=local
-uniqueMember: uid=<member2>,ou=People,dc=infra,dc=caasp,dc=local
-uniqueMember: uid=<member3>,ou=People,dc=infra,dc=caasp,dc=local
-uniqueMember: uid=<member4>,ou=People,dc=infra,dc=caasp,dc=local
-uniqueMember: uid=<member5>,ou=People,dc=infra,dc=caasp,dc=local
-     ]]>
+cn: <replaceable>group name</replaceable><co xml:id="co.auth.group.cn"/>
+uniqueMember: uid=<replaceable>member1</replaceable>,<co xml:id="co.auth.group.member1"/>ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=<replaceable>member2</replaceable>,<co xml:id="co.auth.group.member2"/>ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=<replaceable>member3</replaceable>,<co xml:id="co.auth.group.member3"/>ou=People,dc=infra,dc=caasp,dc=local
     </screen>
     <para>
-     Make sure to replace all the parameters in the template above, indicated
-     as &lt;....&gt;. Repeat the uniqueMember attribute for every member of
-     this group. Populate your <phrase role="productname">OpenLDAP</phrase>
-     server with the LDIF file:
+     Make sure to replace all the parameters indicated <replaceable>like
+      this</replaceable> in the template above as follows:
     </para>
-    <screen>&prompt.root;<command>ldapadd</command> -H ldap://&lt;ADMIN NODE IP&gt;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w &lt;LDAP ADMIN PASSWORD&gt; -f &lt;LDIF FILE&gt;</screen>
+    <calloutlist>
+     <callout arearefs="co.auth.group.dn co.auth.group.cn">
+      <para>
+       The group's name.
+      </para>
+     </callout>
+     <callout arearefs="co.auth.group.member1 co.auth.group.member2 co.auth.group.member3">
+      <para>
+       Members of the group. Repeat the <literal>uniqueMember</literal>
+       attribute for every member of this group.
+      </para>
+     </callout>
+    </calloutlist>
+    <para>
+     Populate your <phrase role="productname">OpenLDAP</phrase> server with the
+     LDIF file:
+    </para>
+    <screen>&prompt.root;<command>ldapadd</command> -H ldap://<replaceable>ADMIN NODE IP</replaceable>:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP ADMIN PASSWORD</replaceable> -f <replaceable>LDIF FILE</replaceable></screen>
     <para>
      Next, create a role binding to allow this new LDAP group access in &kube;.
      Create a Kubernetes deployment descriptor like this:
     </para>
     <screen>
-     <![CDATA[
-     ---
-# Define the Role's permissions in Kubernetes
+# Define a Role and it's permissions in &kube;
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: <group name>
-  namespace: <applicable namespace>
+  name: <replaceable>role name</replaceable><co xml:id="co.auth.group.role-name"/>
+  namespace: <replaceable>applicable namespace</replaceable><co xml:id="co.auth.group.role-namespace"/>
+# This set of rules amounts to "allow all"
 rules:
 - apiGroups: [""]
   resources: [""]
   resourceNames: [""]
   verbs: [""]
 ---
-# Map a LDAP group to this Kubernetes role
+# Map an LDAP group to this &kube; role
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: <group name>
-  namespace: <applicable namespace>
+  name: <replaceable>role binding name</replaceable><co xml:id="co.auth.group.role-binding-name"/>
+  namespace: <replaceable>applicable namespace</replaceable><co xml:id="co.auth.group.role-binding-namespace"/>
 subjects:
 - kind: Group
-  name: <name of LDAP group>
+  name: <replaceable>LDAP group name</replaceable><co xml:id="co.auth.group.ldap-group-name"/>
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: Role
-  name: <group name>
-  namespace: <applicable namespace>
+  name: <replaceable>role name</replaceable><co xml:id="co.auth.group.roleref-name"/>
   apiGroup: rbac.authorization.k8s.io
-     ]]>
     </screen>
+    <calloutlist>
+     <callout arearefs="co.auth.group.role-name co.auth.group.roleref-name">
+      <para>
+       Name of the new role in &kube;
+      </para>
+     </callout>
+     <callout arearefs="co.auth.group.role-namespace co.auth.group.role-binding-namespace">
+      <para>
+       Namespace the new group should be allowed to access. Use
+        <literal>default</literal> for &kube;' default namespace.
+      </para>
+     </callout>
+     <callout arearefs="co.auth.group.role-binding-name">
+      <para>
+       Name of the role binding in &kube;
+      </para>
+     </callout>
+     <callout arearefs="co.auth.group.ldap-group-name">
+      <para>
+       Name of the corresponding group in LDAP
+      </para>
+     </callout>
+    </calloutlist>
     <para>
-     Add this role and binding to Kubernetes:
+     Add this role and binding to &kube;:
     </para>
-    <screen>&prompt.root;kubectl apply -f &lt;DEPLOYMENT DESCRIPTOR FILE&gt;</screen>
+    <screen>&prompt.root;kubectl apply -f <replaceable>DEPLOYMENT DESCRIPTOR FILE</replaceable></screen>
    </sect3>
    <sect3>
     <title>Further information</title>
@@ -237,7 +298,7 @@ roleRef:
   <itemizedlist>
    <listitem>
     <para>
-     they are atomic.
+     They are atomic.
     </para>
    </listitem>
    <listitem>
@@ -262,7 +323,7 @@ roleRef:
    <command>transactional-update</command> script, which is called once a day.
    The script checks if any update is available. If there is an update to be
    applied, a new snapshot of the root file system is created and the system is
-   updated by using <command>zypper up</command>. All RPMS released to this
+   updated by using <command>zypper up</command>. All updates released to this
    point are applied. The snapshot is then marked as active and will be used
    after the next reboot of the system. The script can reboot the cluster
    itself or it can instruct the <literal>rebootmgr</literal> to schedule the
@@ -275,9 +336,9 @@ roleRef:
   <note>
    <title>General Notes to the Updates Installation</title>
    <para>
-    Only RPMs that are part of the snapshot of the root file system can be
-    updated. If RPMs contains files that are not part of the snapshot, the
-    update can fail or it can break the system.
+    Only packages that are part of the snapshot of the root file system can be
+    updated. If packages contain files that are not part of the snapshot, the
+    update could fail or break the system.
    </para>
    <para>
     RPMs that require a license to be accepted cannot be updated.
@@ -287,8 +348,8 @@ roleRef:
   <sect2 xml:id="transactional.updates.installation">
    <title>Manual Installation of Updates</title>
    <para>
-    After the <command>transactional-update</command> script, has run on all
-    nodes, &dashboard; displays when nodes in your cluster run outdated
+    After the <command>transactional-update</command> script has run on all
+    nodes, &dashboard; displays any nodes in your cluster running outdated
     software. &dashboard; then enables you to update your cluster directly.
     Follow the next procedure to update your cluster.
    </para>
@@ -332,7 +393,7 @@ roleRef:
     </step>
     <step>
      <para>
-      Click the <guimenu>update all nodes</guimenu> to update &kmaster; and
+      Click <guimenu>update all nodes</guimenu> to update &kmaster; and
       &kworker;s.
      </para>
      <informalfigure>
@@ -349,19 +410,19 @@ roleRef:
   <sect2 xml:id="transactional.updates.disabling">
    <title>Disabling Transactional Updates</title>
    <para>
-    Even though we do not recommend that, you can disable transactional updates
+    Even though it is not recommended, you can disable transactional updates
     by issuing the command:
    </para>
-<screen>systemctl --now disable transactional-update.timer</screen>
+<screen><command>systemctl</command> <option>--now disable transactional-update.timer</option></screen>
    <para>
-    And also the automatic reboot can be disabled, just use any of the
+    Automatic reboot can also be disabled; use either of the
     commands:
    </para>
-<screen>systemctl --now disable rebootmgr</screen>
+<screen><command>systemctl --now disable rebootmgr</command></screen>
    <para>
     or
    </para>
-<screen>rebootmgrctl set-strategy off</screen>
+<screen><command>rebootmgrctl</command> <option>set-strategy off</option></screen>
   </sect2>
  </sect1>
  <sect1 xml:id="ptf.handling">
@@ -374,7 +435,7 @@ roleRef:
    installation of PTFs by running:
   </para>
 
-<screen>transactional-update reboot ptf install <replaceable>rpm ... rpm</replaceable></screen>
+<screen><command>transactional-update</command> <option>reboot ptf install <replaceable>rpm &hellip; rpm</replaceable></option></screen>
 
   <para>
    The command installs PTF RPMs. The <literal>reboot</literal> option then
@@ -396,7 +457,7 @@ roleRef:
    In case you need to remove the installed PTFs, use the following command:
   </para>
 
-<screen>transactional-update reboot ptf remove <replaceable>rpm ... rpm</replaceable></screen>
+<screen><command>transactional-update</command> <option>reboot ptf remove <replaceable>rpm &hellip; rpm</replaceable></option></screen>
  </sect1>
  <sect1 xml:id="reboot.managment">
   <title>Rebooting the Cluster</title>
@@ -511,7 +572,7 @@ lock-group=default</screen>
     number of nodes can be rebooted at the same time.
    </para>
    <para>
-    In the directory <filename>rebootmg/locks/&lt;group name&gt;</filename>
+    In the directory <filename>rebootmg/locks/<replaceable>group name</replaceable></filename>
     there are two variables:
    </para>
    <variablelist>
@@ -1005,7 +1066,7 @@ lock-group=default</screen>
    <listitem>
     <para>
      by directly accessing the <emphasis>cAdvisor</emphasis> on
-     <literal>http://&lt;worker_node_address&gt;:4194/containers/</literal>.
+     <literal>http://<replaceable>WORKER NODE ADDRESS</replaceable>;:4194/containers/</literal>.
      The <emphasis>cAdvisor</emphasis> runs on worker nodes by default.
     </para>
    </listitem>
