@@ -323,7 +323,7 @@ roleRef:
    <command>transactional-update</command> script, which is called once a day.
    The script checks if any update is available. If there is an update to be
    applied, a new snapshot of the root file system is created and the system is
-   updated by using <command>zypper up</command>. All updates released to this
+   updated by using <command>zypper dup</command>. All updates released to this
    point are applied. The snapshot is then marked as active and will be used
    after the next reboot of the system. The script can reboot the cluster
    itself or it can instruct the <literal>rebootmgr</literal> to schedule the
@@ -814,7 +814,7 @@ lock-group=default</screen>
      <listitem>
       <para>
        If there are new updates available, a new snapshot is created and
-       <command>zypper up</command> is used to update the snapshot. The
+       <command>zypper dup</command> is used to update the snapshot. The
        snapshot is activated afterwards and is used as the new root file system
        after reboot.
       </para>
