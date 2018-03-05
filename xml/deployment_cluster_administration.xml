@@ -173,6 +173,40 @@ uniqueMember: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.add
     <screen>&prompt.root;<command>ldapadd</command> -H ldap://<replaceable>ADMIN NODE IP</replaceable>:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP ADMIN PASSWORD</replaceable> -f <replaceable>LDIF FILE</replaceable></screen>
    </sect3>
 
+   <sect3 xml:id="auth.users.change-pw">
+    <title>Changing a User's Password</title>
+    <para>
+     To change a user's password, create a LDIF file like this:
+    </para>
+    <screen>
+     dn: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.change-pw.dn"/>,ou=People,dc=infra,dc=caasp,dc=local
+     changetype: modify
+     modify: userPassword
+     userPassword: <replaceable>password hash</replaceable> <co xml:id="co.auth.users.change-pw.password"/>
+    </screen>
+    <para>
+     Make sure to replace all the parameters indicated <replaceable>like
+      this</replaceable> in the template above as follows:
+    </para>
+    <calloutlist>
+     <callout arearefs="co.auth.users.change-pw.dn">
+      <para>
+       User ID (UID) of the user.
+      </para>
+     </callout>
+     <callout arearefs="co.auth.users.change-pw.password">
+      <para>
+       The user's new hashed password. Use
+       <command>/usr/sbin/slappasswd</command> to generate the hash.
+      </para>
+     </callout>
+    </calloutlist>
+    <para>
+     Populate your OpenLDAP server with this LDIF file:
+    </para>
+    <screen>&prompt.root;<command>ldapadd</command> -H ldap://<replaceable>ADMIN NODE IP</replaceable>;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP ADMIN PASSWORD</replaceable> -f <replaceable>LDIF FILE</replaceable></screen>
+   </sect3>
+
    <sect3 xml:id="auth.group">
     <title>Adding New Groups</title>
     <para>
