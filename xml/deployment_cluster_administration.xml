@@ -215,7 +215,7 @@ uniqueMember: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.add
      in <xref linkend="auth.users.add"/>. Then create a new group:
     </para>
     <screen>
-dn: cn=<replaceable>group name;</replaceable><co xml:id="co.auth.group.dn"/>,ou=Groups,dc=infra,dc=caasp,dc=local
+dn: cn=<replaceable>group name</replaceable><co xml:id="co.auth.group.dn"/>,ou=Groups,dc=infra,dc=caasp,dc=local
 objectclass: top
 objectclass: groupOfUniqueNames
 cn: <replaceable>group name</replaceable><co xml:id="co.auth.group.cn"/>
@@ -250,7 +250,7 @@ uniqueMember: uid=<replaceable>member3</replaceable>,<co xml:id="co.auth.group.m
      Create a Kubernetes deployment descriptor like this:
     </para>
     <screen>
-# Define a Role and it's permissions in &kube;
+# Define a Role and its permissions in &kube;
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
