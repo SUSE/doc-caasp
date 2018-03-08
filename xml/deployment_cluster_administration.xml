@@ -51,7 +51,7 @@
     <para>
      You can obtain the root CA certificate from any node in your cluster via SCP:
     </para>
-    <screen>&prompt.user;<command>scp <replaceable>NODE</replaceable>:/etc/pki/trust/anchors/SUSE_CaaSP_CA.crt .</command></screen>
+    <screen>&prompt.user;<command>scp</command> <option><replaceable>NODE</replaceable>:/etc/pki/trust/anchors/SUSE_CaaSP_CA.crt .</option></screen>
     <para>
      To trust this is the root CA certificate on your machine, place it in
      <filename>/etc/pki/trust/anchors/</filename> and call the
@@ -307,7 +307,7 @@ roleRef:
     <para>
      Add this role and binding to &kube;:
     </para>
-    <screen>&prompt.root;kubectl apply -f <replaceable>DEPLOYMENT DESCRIPTOR FILE</replaceable></screen>
+    <screen>&prompt.root;<command>kubectl</command> <option>apply -f <replaceable>DEPLOYMENT DESCRIPTOR FILE</replaceable></option></screen>
    </sect3>
    <sect3>
     <title>Further information</title>
