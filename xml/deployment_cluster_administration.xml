@@ -77,11 +77,14 @@
      Before performing any administrative tasks on the <phrase
       role="productname">OpenLDAP</phrase> instance, you will need to retrieve
      your <phrase role="productname">OpenLDAP</phrase> administrator account
-     password. To do this, <command>ssh</command> into your &admin_node; and
-     run:
+     password. To do this, run:
     </para>
-<screen>&prompt.user;<command>docker</command> <option>exec -it</option> $(<command>docker</command> <option>ps</option> | <command>grep</command> <option>openldap</option> | <command>awk</command> <option>'{print $1}')</option> \
+    <screen>&prompt.user;<command>ssh</command> <option>root@<replaceable>caasp-admin.example.com</replaceable></option> \
     <command>cat</command> <option>/var/lib/misc/infra-secrets/openldap-password</option></screen>
+    <para>Make sure to replace
+     <replaceable>caasp-admin.example.com</replaceable> with the FQDN or IP of
+     your &admin_node;.
+    </para>
    </sect3>
 
    <sect3 xml:id="auth.users.add">
