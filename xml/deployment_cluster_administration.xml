@@ -99,11 +99,11 @@
      To add a new user, create a LDIF file like this:
     </para>
 <screen>
-dn: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.add.dn"/>,ou=People,dc=infra,dc=caasp,dc=local
+dn: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.add.uid"/>,ou=People,dc=infra,dc=caasp,dc=local
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: top
-uid: <replaceable>userid</replaceable> <co xml:id="co.auth.users.add.uid"/>
+uid: <replaceable>userid</replaceable> <xref linkend="co.auth.users.add.uid" xrefstyle="select:label nopage"/>
 userPassword: <replaceable>password hash</replaceable> <co xml:id="co.auth.users.add.password"/>
 givenname: <replaceable>first name</replaceable> <co xml:id="co.auth.users.add.firstname"/>
 sn: <replaceable>surname</replaceable> <co xml:id="co.auth.users.add.surname"/>
@@ -115,7 +115,7 @@ mail: <replaceable>email address</replaceable> <co xml:id="co.auth.users.add.ema
       this</replaceable> in the template above as follows:
     </para>
     <calloutlist>
-     <callout arearefs="co.auth.users.add.dn co.auth.users.add.uid">
+     <callout arearefs="co.auth.users.add.uid">
       <para>
        User ID (UID) of the new user. Needs to be unique.
       </para>
@@ -182,7 +182,7 @@ uniqueMember: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.add
      To change a user's password, create a LDIF file like this:
     </para>
     <screen>
-     dn: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.change-pw.dn"/>,ou=People,dc=infra,dc=caasp,dc=local
+     dn: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.change-pw.uid"/>,ou=People,dc=infra,dc=caasp,dc=local
      changetype: modify
      modify: userPassword
      userPassword: <replaceable>password hash</replaceable> <co xml:id="co.auth.users.change-pw.password"/>
@@ -192,7 +192,7 @@ uniqueMember: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.add
       this</replaceable> in the template above as follows:
     </para>
     <calloutlist>
-     <callout arearefs="co.auth.users.change-pw.dn">
+     <callout arearefs="co.auth.users.change-pw.uid">
       <para>
        User ID (UID) of the user.
       </para>
@@ -218,25 +218,25 @@ uniqueMember: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.add
      in <xref linkend="auth.users.add"/>. Then create a new group:
     </para>
     <screen>
-dn: cn=<replaceable>group name</replaceable><co xml:id="co.auth.group.dn"/>,ou=Groups,dc=infra,dc=caasp,dc=local
+dn: cn=<replaceable>group name</replaceable><co xml:id="co.auth.group.cn"/>,ou=Groups,dc=infra,dc=caasp,dc=local
 objectclass: top
 objectclass: groupOfUniqueNames
-cn: <replaceable>group name</replaceable><co xml:id="co.auth.group.cn"/>
-uniqueMember: uid=<replaceable>member1</replaceable>,<co xml:id="co.auth.group.member1"/>ou=People,dc=infra,dc=caasp,dc=local
-uniqueMember: uid=<replaceable>member2</replaceable>,<co xml:id="co.auth.group.member2"/>ou=People,dc=infra,dc=caasp,dc=local
-uniqueMember: uid=<replaceable>member3</replaceable>,<co xml:id="co.auth.group.member3"/>ou=People,dc=infra,dc=caasp,dc=local
+cn: <replaceable>group name</replaceable><xref linkend="co.auth.group.cn" xrefstyle="select:label nopage"/>
+uniqueMember: uid=<replaceable>member1</replaceable>,<co xml:id="co.auth.group.member"/>ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=<replaceable>member2</replaceable>,<xref linkend="co.auth.group.member" xrefstyle="select:label nopage"/>ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=<replaceable>member3</replaceable>,<xref linkend="co.auth.group.member" xrefstyle="select:label nopage"/>ou=People,dc=infra,dc=caasp,dc=local
     </screen>
     <para>
      Make sure to replace all the parameters indicated <replaceable>like
       this</replaceable> in the template above as follows:
     </para>
     <calloutlist>
-     <callout arearefs="co.auth.group.dn co.auth.group.cn">
+     <callout arearefs="co.auth.group.cn">
       <para>
        The group's name.
       </para>
      </callout>
-     <callout arearefs="co.auth.group.member1 co.auth.group.member2 co.auth.group.member3">
+     <callout arearefs="co.auth.group.member">
       <para>
        Members of the group. Repeat the <literal>uniqueMember</literal>
        attribute for every member of this group.
@@ -271,23 +271,23 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
   name: <replaceable>role binding name</replaceable><co xml:id="co.auth.group.role-binding-name"/>
-  namespace: <replaceable>applicable namespace</replaceable><co xml:id="co.auth.group.role-binding-namespace"/>
+  namespace: <replaceable>applicable namespace</replaceable><xref linkend="co.auth.group.role-namespace" xrefstyle="select:label nopage"/>
 subjects:
 - kind: Group
   name: <replaceable>LDAP group name</replaceable><co xml:id="co.auth.group.ldap-group-name"/>
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: Role
-  name: <replaceable>role name</replaceable><co xml:id="co.auth.group.roleref-name"/>
+  name: <replaceable>role name</replaceable><xref linkend="co.auth.group.role-name" xrefstyle="select:label nopage"/>
   apiGroup: rbac.authorization.k8s.io
     </screen>
     <calloutlist>
-     <callout arearefs="co.auth.group.role-name co.auth.group.roleref-name">
+     <callout arearefs="co.auth.group.role-name">
       <para>
        Name of the new role in &kube;
       </para>
      </callout>
-     <callout arearefs="co.auth.group.role-namespace co.auth.group.role-binding-namespace">
+     <callout arearefs="co.auth.group.role-namespace">
       <para>
        Namespace the new group should be allowed to access. Use
         <literal>default</literal> for &kube;' default namespace.
