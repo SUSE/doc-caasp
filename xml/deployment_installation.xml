@@ -55,6 +55,22 @@
      </listitem>
     </itemizedlist>
    </sect3>
+   <sect3 xml:id="sec.caasp.installquick.clusreqs">
+    <title>Cluster Size Requirements</title>
+    <para>
+     &productname; only functions in a clustered configuration. It  requires a
+     group of physical or virtual machines in order to operate. The minimum
+     supported cluster size is four nodes: one &admin_node;, one &kmaster;,
+     and two &kworker;s.
+     </para>
+     <note>
+      <title>Test and Proof-of-Concept Clusters</title>
+      <para>
+       It is possible to provision a three-node cluster with only a single 
+       &kworker;, but this is not a supported configuration for deployment.
+      </para>
+      </note>
+   </sect3>
    <sect3 xml:id="sec.caasp.installquick.netreqs">
     <title>Network Requirements</title>
     <itemizedlist mark="bullet" spacing="normal">
@@ -954,7 +970,7 @@
        <listitem>
         <para>
          Fully qualified domain name (FQDN) used to reach the cluster from the
-         outside. In a simple, single master deployment this will be the FQDN
+         outside. In a simple, single-master deployment this will be the FQDN
          of the node you are about to select as master.
         </para>
        </listitem>
