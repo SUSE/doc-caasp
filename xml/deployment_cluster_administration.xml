@@ -29,7 +29,7 @@
    <title>Authentication</title>
    <para>
     Starting in &productname; 2, &kubectl; needs to authenticate against the
-    &kube; &kmaster;. The necessary authentication information is included in
+    &kube; &master_node;. The necessary authentication information is included in
     the &kubeconfig; file available from &dashboard;. Click the
     <literal>kubectl config</literal> button and authenticate with your user
     name and password. Download the file from &dashboard; and save it as 
@@ -427,8 +427,8 @@ roleRef:
     </step>
     <step>
      <para>
-      Click <guimenu>update all nodes</guimenu> to update &kmaster; and
-      &kworker;s.
+      Click <guimenu>update all nodes</guimenu> to update &master_node; and
+      &worker_node;s.
      </para>
      <informalfigure>
       <mediaobject>
@@ -720,7 +720,7 @@ roleRef:
   <sect2 xml:id="node.managment.adding">
    <title>Adding Nodes</title>
    <para>
-    You may need to add additional &kworker;s to your cluster. The following
+    You may need to add additional &worker_node;s to your cluster. The following
     steps guides you through that procedure:
    </para>
    <procedure>

@@ -56,7 +56,7 @@
    <title>Mounting Storage to a Container</title>
    <step>
     <para>
-     On the &kmaster; apply the configuration that includes Ceph secret by
+     On the &master_node; apply the configuration that includes Ceph secret by
      using the <command>kubectl apply</command>
     </para>
 <screen><command>kubectl apply -f - &lt;&lt; *EOF*</command>
@@ -87,7 +87,7 @@ data:
    </step>
    <step>
     <para>
-     Create a pod that uses the image. On the &kmaster; run the following:
+     Create a pod that uses the image. On the &master_node; run the following:
     </para>
 <screen>kubectl apply -f - &lt;&lt; *EOF*
 apiVersion: v1
@@ -140,7 +140,7 @@ spec:
   </procedure>
 
   <para>
-   In case you need to delete the pod, run the following command on &kmaster;:
+   In case you need to delete the pod, run the following command on &master_node;:
   </para>
 
 <screen>kubectl delete pod <replaceable>busybox-rbd</replaceable></screen>
@@ -167,7 +167,7 @@ spec:
    </step>
    <step>
     <para>
-     Create the persistent volume on the &kmaster;:
+     Create the persistent volume on the &master_node;:
     </para>
 <screen>kubectl apply -f - &lt;&lt; *EOF*
 apiVersion: v1
@@ -197,7 +197,7 @@ spec:
    </step>
    <step>
     <para>
-     Create a persistent volume claim on the &kmaster;:
+     Create a persistent volume claim on the &master_node;:
     </para>
 <screen>kubectl apply -f - &lt;&lt; *EOF*
 kind: PersistentVolumeClaim
@@ -224,7 +224,7 @@ spec:
    </step>
    <step>
     <para>
-     Create a pod that uses the persistent volume claim. On the &kmaster; run
+     Create a pod that uses the persistent volume claim. On the &master_node; run
      the following:
     </para>
 <screen>kubectl apply -f - &lt;&lt;*EOF*
@@ -250,13 +250,13 @@ spec:
    </step>
    <step>
     <para>
-     Verify that the pod exists and its status. On the &kmaster; run:
+     Verify that the pod exists and its status. On the &master_node; run:
     </para>
 <screen>kubectl get po</screen>
    </step>
    <step>
     <para>
-     Once pod is running, check the volume by running on the &kmaster;:
+     Once pod is running, check the volume by running on the &master_node;:
     </para>
 <screen><command>kubectl exec -it busybox-rbd -- df -k</command>
 
@@ -268,7 +268,7 @@ spec:
 
   <para>
    In case you need to delete the pod, run the following command on the
-   &kmaster;:
+   &master_node;:
   </para>
 
 <screen>kubectl delete pod busybox-rbd</screen>
