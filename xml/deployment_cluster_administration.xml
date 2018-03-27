@@ -708,92 +708,65 @@ roleRef:
   </sect2>
  </sect1>
  <sect1 xml:id="node.managment">
-  <title>Node Management</title>
+  <title>Adding Nodes</title>
 
   <para>
    After you complete the deployment and you bootstrap the cluster, you may
    need to perform additional changes to the cluster. By using &dashboard; you
-   can add additional nodes to the cluster. You can also delete some nodes, but
-   in that case make sure that you do not break the cluster.
+   can add additional &worker_node;s to your cluster. The following steps
+   guides you through that procedure:
   </para>
-
-  <sect2 xml:id="node.managment.adding">
-   <title>Adding Nodes</title>
-   <para>
-    You may need to add additional &worker_node;s to your cluster. The following
-    steps guides you through that procedure:
-   </para>
-   <procedure>
-    <title>Adding Nodes to Existing Cluster</title>
-    <step>
-     <para>
-      Prepare the node as described in
-      <xref linkend="sec.caasp.installquick.node"/>
-     </para>
-    </step>
-    <step>
-     <para>
-      Open &dashboard; in your browser and login.
-     </para>
-    </step>
-    <step>
-     <para>
-      You should see the newly added node as a node to be accepted in
-      <guimenu>Pending Nodes</guimenu>. Accept the node.
-     </para>
-     <informalfigure>
-      <mediaobject>
-       <imageobject>
-        <imagedata fileref="velum_pending_nodes.png" format="PNG"/>
-       </imageobject>
-      </mediaobject>
-     </informalfigure>
-    </step>
-    <step>
-     <para>
-      In the <guimenu>Summary</guimenu> you can see the <guimenu>New</guimenu>
-      that appears next to <guimenu>New nodes</guimenu>. Click the
-      <guimenu>New</guimenu> button.
-     </para>
-     <informalfigure>
-      <mediaobject>
-       <imageobject>
-        <imagedata fileref="velum_unassigned_nodes.png" format="PNG" width="60%"/>
-       </imageobject>
-      </mediaobject>
-     </informalfigure>
-    </step>
-    <step>
-     <para>
-      Select the node to be added and click <guimenu>Add nodes</guimenu>.
-     </para>
-    </step>
-    <step>
-     <para>
-      The node has been added to your cluster.
-     </para>
-    </step>
-   </procedure>
-  </sect2>
-<!-- cwickert 2018-03-28: FIXME: Add this back for CaaS 3 when node removal is
-     finally supported. -->
-<!--
-  <sect2 xml:id="node.managment.removing">
-   <title>Removing Nodes</title>
-   <para>
-    As each node in the cluster runs also an instance of
-    <literal>etcd</literal>, &productname; has to ensure that removing of
-    several nodes does not break the <literal>etcd</literal> cluster. In case
-    you have for example three nodes in the <literal>etcd</literal> and you
-    delete two of them, &productname; deletes one node, recovers the cluster
-    and only if the recovery is successful, the next node can be removed. If a
-    node runs just an <literal>etcd-proxy</literal>, there is nothing special
-    that has to be done, as deleting any amount of
-    <literal>etcd-proxy</literal> can not break the <literal>etcd</literal>
-    cluster.
-   </para>
-  </sect2>
--->
+  <procedure>
+   <title>Adding Nodes to Existing Cluster</title>
+   <step>
+    <para>
+     Prepare the node as described in
+     <xref linkend="sec.caasp.installquick.node"/>
+    </para>
+   </step>
+   <step>
+    <para>
+     Open &dashboard; in your browser and login.
+    </para>
+   </step>
+   <step>
+    <para>
+     You should see the newly added node as a node to be accepted in
+     <guimenu>Pending Nodes</guimenu>. Accept the node.
+    </para>
+    <informalfigure>
+     <mediaobject>
+      <imageobject>
+       <imagedata fileref="velum_pending_nodes.png" format="PNG"/>
+      </imageobject>
+     </mediaobject>
+    </informalfigure>
+   </step>
+   <step>
+    <para>
+     In the <guimenu>Summary</guimenu> you can see the <guimenu>New</guimenu>
+     that appears next to <guimenu>New nodes</guimenu>. Click the
+     <guimenu>New</guimenu> button.
+    </para>
+    <informalfigure>
+     <mediaobject>
+      <imageobject>
+       <imagedata fileref="velum_unassigned_nodes.png" format="PNG" width="60%"/>
+      </imageobject>
+     </mediaobject>
+    </informalfigure>
+   </step>
+   <step>
+    <para>
+     Select the node to be added and click <guimenu>Add nodes</guimenu>.
+    </para>
+   </step>
+   <step>
+    <para>
+     The node has been added to your cluster.
+    </para>
+   </step>
+  </procedure>
  </sect1>
  <sect1 xml:id="cluster.monitoring">
   <title>Cluster Monitoring</title>
