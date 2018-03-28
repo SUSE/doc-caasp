@@ -1,4 +1,4 @@
- <?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE preface
 [
   <!ENTITY % entities SYSTEM "entity-decl.ent">
@@ -18,7 +18,12 @@
  </info>
  
  <para>
-  &productname; is typically configured in two stages, at first during the installation process and after installation you can configure your cluster by using <literal>cloud-init</literal>. The first stage configuration of &productname; comes as much preconfigured as possible. The second stage is typically used for large scales clusters, if you have just several machine, <literal>cloud-init</literal> is not necessary.
+  &productname; is typically configured in two stages, at first during the
+  installation process and after installation you can configure your cluster by 
+  using <literal>cloud-init</literal>. The first stage configuration of 
+  &productname; comes as preconfigured as possible. The second stage is 
+  typically used for large-scale clusters. If you have just a few nodes, 
+  <literal>cloud-init</literal> is not necessary.
  </para>
  <para>
   Each configuration stage is described in the following sections.
@@ -38,27 +43,35 @@
  </sect1>
  
  <sect1 xml:id="cloud-init.configuration">
-  <title><literal>cloud-init<literal> Configuration</title>
+  <title><literal>cloud-init</literal> Configuration</title>
   <para>
-   <literal>cloud-init</literal> is used after the installation is complete. You then define a set of configuration files that will be applied during the boot phase.
+   <literal>cloud-init</literal> is used after the installation is complete. You
+   then define a set of configuration files that will be applied during the boot 
+   phase.
   </para>
   <para>
-   The <literal>cloud-init</literal> configuration can be loaded from different sources: 
+   The <literal>cloud-init</literal> configuration can be loaded from different
+   sources: 
   </para>
   <itemizedlist>
    <listitem>
     <para>
-     <literal>LocalDisk</literal> &ndash; <literal>cloud-init</literal> reads configuration from a local directory: <filename>/cloud-init-config</filename>
+     <literal>LocalDisk</literal> &ndash; <literal>cloud-init</literal> reads
+     its configuration from a local directory: <filename>/cloud-init-config</filename>
     </para>
    </listitem>
    <listitem>
     <para>
-     <literal>NoCloud</literal> &ndash; <literal>cloud-init</literal> reads configuration from a local directory or from a remote location.
+     <literal>NoCloud</literal> &ndash; <literal>cloud-init</literal> reads its 
+     configuration from a local directory or from a remote location.
     </para>
    </listitem>
   </itemizedlist>
   <para>
-   <literal>cloud-init</literal> uses the following required configuration files: <filename>meta-data</filename>, <filename>user-data</filename>, and an optional file: <filename>vendor-data</filename>. Each file is described in the following sections.
+   <literal>cloud-init</literal> uses the following required configuration 
+   files: <filename>meta-data</filename>, <filename>user-data</filename>, and an 
+   optional file: <filename>vendor-data</filename>. Each file is described in 
+   the following sections.
   </para>
   
   <sect2 xml:id="meta-data.config.file">
