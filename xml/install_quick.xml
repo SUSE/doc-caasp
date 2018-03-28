@@ -417,7 +417,11 @@
   </sect2>
   <sect2 xml:id="sec.caasp.quickstart.bootstrap">
    <title>Bootstrapping the Cluster</title>
-   <para> To complete the installation of your &productname; cluster, it is necessary to bootstrap at least three additional nodes; those will be the Kubernetes Master and Workers. <!-- cwickert 2017-07-23: FIXME We are already past AutoYaST -->
+   <para>
+    To complete the installation of your &productname; cluster, it is necessary
+    to bootstrap at least three additional nodes; those will be the &kube;
+    master and workers.
+    <!-- cwickert 2017-07-23: FIXME We are already past AutoYaST -->
     <!-- This process leverages &ay; and is (almost) fully automated. -->
    </para>
    <procedure xml:id="pro.caasp.quickstart.bootstrap">
@@ -437,7 +441,12 @@
        </imageobject>
       </mediaobject>
      </informalfigure>
-     <para> Use the check box in the first column to select the nodes you want to add to your cluster. In the last column, select the one that should become Kubernetes Master. All other nodes will be set to the Worker role once you click <guimenu>Bootstrap cluster</guimenu>. <!-- cwickert 2017-07-23: FIXME explain relation of internal and external names -->
+     <para>
+      Use the check box in the first column to select the nodes you want to add
+      to your cluster. In the last column, select the one that should become
+      &kube; master. All other nodes will be set to the worker role once you
+      click <guimenu>Bootstrap cluster</guimenu>.
+      <!-- cwickert 2017-07-23: FIXME explain relation of internal and external names -->
       <!-- Make sure the <guimenu>Hostname</guimenu> of the master matches the
       name configured as <guimenu>External Kubernetes API server FQDN</guimenu>
       in <xref linkend="sec.caasp.quickstart.conf"/>. If necessary, go
