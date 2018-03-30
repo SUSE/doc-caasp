@@ -62,29 +62,24 @@ if necessary.
   <important>
    <title>Technology Preview</title>
    <para>
-    Even though you can install and use the &kube; dashboard, &productname;
+    Even though you can install and use the community &kube; dashboard, &productname;
     currently fully supports only &dashboard;.
    </para>
   </important>
 
-  <para>
-   Install the &kube; dashboard. 
-  </para>
-
-  <note>
-   <title>Requirements</title>
-    <para>
-      Heapster version 1.3.0 or later must be installed to the cluster.  
-      helm instructions to install the upstream version are included in this section. 
-    </para>
-  </note>
-
-  <note>
-   <title>Tool versions</title>
-    <para>
-      helm version 2.7.2+ and kubectl version 1.8.0+ recommended
-    </para>
-  </note>
+<itemizedlist>
+<title>Requirements</title>
+<listitem>
+<para>
+Heapster version 1.3.0 or later needs to be installed on the cluster
+</para>
+</listitem>
+<listitem>
+<para>
+Helm version 2.7.2+ and kubectl version 1.8.0+ recommended
+</para>
+</listitem>
+</itemizedlist>
 
   <procedure>
    <title>Installation of &kube; Dashboard</title>
@@ -100,28 +95,29 @@ helm install --namespace=kube-system --name=kubernetes-dashboard stable/kubernet
    </step>
    <step>
     <para>
-      SSH into any cluster node. 
+      Connect to any cluster node using SSH.
     </para>
    </step>
    <step>
     <para>
       Visit <literal>http://127.0.0.1:8081/</literal> in your browser. 
-      You should be greeted with a Welcome page. There is one Configure dialog with 2 options, <literal>kubeconfig</literal> and <literal>token</literal> authentication. 
+      You will be greeted with by a welcome page containing a dialog to configure authentication.
     </para>
    </step>
    <step>
     <para>
-      Select <literal>token</literal> authentication. To retrieve your token refer to the value in your kubeconfig file by running the command:
+      Select <guimenu>token</guimenu> authentication. To retrieve your token refer to the value in your kubeconfig file by running the command:
     </para>
     <screen>
-grep "id-token" kubeconfig  | awk '{print $2}'
+grep "id-token" /path/to/kubeconfig  | awk '{print $2}'
     </screen>
    </step>
+   <step>
+    <para>
+      On login cluster resources and basic metrics are populated.
+    </para>
+   </step>
   </procedure>
-
-  <para>
-  On login cluster resources and basic metrics are populated. 
-  </para>
 
   <procedure>
    <title>Exposing the Dashboard</title>
@@ -131,7 +127,7 @@ grep "id-token" kubeconfig  | awk '{print $2}'
    </step>
    <step>
     <para>
-      Visit <literal>https://WORKER_NODE_ADDRESS:NODE_PORT</literal> in your browser.
+      Now you may visit the dashboard at <literal>https://<replaceable>WORKER_NODE_ADDRESS</replaceable>:<replaceable>NODE_PORT</replaceable></literal> in your browser from outside of your cluster.
     </para>
    </step>
   </procedure>
