@@ -20,7 +20,7 @@
   that is not installed on &productname; by default. This chapter provides
   instructions on how to install and configure &helm;, the &kube; package 
   manager, and then how to install the &kube; Dashboard. If you intend to 
-  deploy &suse; &cap; on &productname;, &helm; is required.
+  deploy &scf; on &productname;, &helm; is required.
  </para>
 
 <sect1 xml:id="installing.helm">
@@ -47,7 +47,7 @@ time. (See <xref linkend="sec.caasp.installquick.conf"/>.)
 <para>
    If the log gets overwritten and loses this information, the following command 
    queries the <command>rpm</command> package manager inside the container. This
-   works only on &productname;/&cap; installations:
+   works only on &productname;/&scf; installations:
 </para>
 <screen>
 &prompt.user;kubectl exec -it $(kubectl get pods -n kube-system | awk '/tiller/{print$1}') -n kube-system -- rpm -q helm
