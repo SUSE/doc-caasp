@@ -17,10 +17,9 @@
   </dm:docmanager>
  </info>
  <para>
-  &productname; is a minimalistic operating system designed to make it simple to
-  build and run &kube; clusters. &productname; allows for the provisioning, 
-  management and scaling of container-based applications. It is optimized for 
-  large, clustered deployments.
+  &productname; is based on &suse; <link xlink:href="https://en.opensuse.org/Kubic:MicroOS">&mos;</link>,
+  a special, minimalistic edition of &sle; 12 SP3, specially optimised for 
+  building and running &kube; clusters.
  </para>
  <para>
   &kube; is an orchestration framework that is used to to optimize the use of 
@@ -28,7 +27,13 @@
   operations of pods of containers across multiple nodes in a cluster.
  </para>
  <para>
-  &productname; enables you the following:
+ &mos; also offers a mechanism for safe, automatic operating system updates, 
+ which can be rolled back if required. &productname; allows for the
+ provisioning, management and scaling of container-based applications across
+ large clustered deployments.
+ </para>
+ <para>
+  &productname; offers the following capabilities:
  </para>
  <itemizedlist>
   <listitem>
@@ -43,13 +48,31 @@
   </listitem>
   <listitem>
    <para>
-    roll out new features
+    rolling out new features
    </para>
   </listitem>
   <listitem>
    <para>
-    optimization of hardware by using only the required resources.
+    optimization of hardware usage by using only the required resources.
    </para>
   </listitem>
  </itemizedlist>
+ <para>
+  A &productname; cluster consists of four or more nodes running &mos;. Each node
+  can host multiple pods of <link xlink:href="https://www.docker.com/">Docker</link>
+  or <link xlink:href="https://www.opencontainers.org/">OCI</link> containers,
+  which communicate over the <link xlink:href="https://github.com/containernetworking/cni">Container Network Interface</link>
+  (CNI). The virtual network is managed by <link xlink:href="https://www.projectcalico.org/">Calico</link> 
+  and secured using <link xlink:href="https://github.com/cilium/cilium">Cilium</link>.
+ </para>
+ <para>
+  &productname; provides a web-based dashboard for managing the entire cluster
+  based on <link xlink:href="https://github.com/kubic-project/velum">Velum</link>.
+  Individual nodes are provisioned using <link xlink:href="https://cloud-init.io/">cloud-init</link>
+  and managed by <link xlink:href="https://saltstack.com/">Salt</link>.
+  Configuration data is shared using <link xlink:href="https://coreos.com/etcd/">etcd</link>,
+  while the container registry is managed by <link xlink:href="http://port.us.org/">Portus</link>. 
+  User authentication is handled by <link xlink:href="https://github.com/coreos/dex">Dex</link>.
+ </para>
+
 </preface>
