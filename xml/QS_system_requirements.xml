@@ -25,20 +25,12 @@
 
   <para>
    &productname; only functions in a clustered configuration. It requires a
-   group of at least four physical or virtual machines. This will yield a
-   cluster with one &admin_node;, one &master_node;, and two &worker_node;s.
+   group of at least four connected physical or virtual machines. 
   </para>
-
   <para>
-   All clusters must contain a single &admin_node;, at least one &master_node;
-   and at least two &worker_node;s.
+   The minimum supported cluster size is four nodes: a single &admin_node;, one 
+   &master_node;, and two &worker_node;s.
   </para>
-
-  <para>
-   For improved performance and reliability, an odd number of &master_node;s
-   and any number of &worker_node;s up may be added.
-  </para>
-
   <note>
    <title>Test and Proof-of-Concept Clusters</title>
    <para>
@@ -46,6 +38,12 @@
     &worker_node;, but this is not a supported configuration for deployment.
    </para>
   </note>
+  <para>
+   For improved performance and reliability, multiple &master_node;s are
+   supported, but there must always be an odd number. Any number of
+   &worker_node;s may be added up to the maximum supported cluster size.
+  </para>
+
  </sect1>
  <sect1 xml:id="sec.caasp.quickstart.hwreqs">
   <title>Minimum Hardware Requirements</title>
@@ -103,39 +101,57 @@
    </listitem>
    <listitem>
     <para>
-     The &admin_node; must have a valid fully-qualified domain name (FQDN),
-     which must be visible and accessible from a separate machine with a web
-     browser in order to complete the installation.
+     The &admin_node; must have a valid fully-qualified domain name (FQDN).
     </para>
    </listitem>
    <listitem>
     <para>
-     The FQDN is required during installation and cannot subsequently be added
-     or changed. For test purposes, the IP address of the &admin_node; can be
-     substituted for a FQDN, but this is not supported for production
-     deployment.
+     The FQDN for the admin node is required during installation and it cannot 
+     subsequently be added or changed.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     Via a web browser, the &admin_node; must be visible and accessible from a
+     separate machine on your organization's network in order to complete the
+     installation.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     All nodes must be able to resolve the names of the admin node and the names
+     of all worker nodes. It is not necessary for worker nodes to have names
+     that can be resolved from other machines. 
     </para>
    </listitem>
   </itemizedlist>
+  <note>
+   <title>Admin nodes without a FQDN</title>
+   <para>
+    For test purposes, the IP address of the &admin_node; can be substituted for
+    a FQDN, but this is not supported for production deployment.
+   </para>
+  </note>
+  
  </sect1>
  <sect1 xml:id="sec.caasp.quickstart.limits">
   <title>Limitations</title>
-
   <itemizedlist mark="bullet" spacing="normal">
-   <listitem>
 <!-- cwickert 2017-09-18: Caas 1 supports up to 25 nodes, CaaS 2 up to 50,
        see https://bugzilla.suse.com/show_bug.cgi?id=1055049
-       FIXME: Check again for CaaS 3. -->
+       FIXME: Check again for CaaS 3.
     <para>
      &productname; &productnumber; supports up to 50 nodes per cluster.
     </para>
    </listitem>
    <listitem>
+-->
 <!-- cwickert 2017-04-06: FIXME - check if still applies
        https://bugzilla.suse.com/show_bug.cgi?id=1029317 
        jahalackova: that's still valid for 1.0.
        lproven 2018-03-27: and for 3
-      -->
+-->
+   <listitem>
     <para>
      &productname; &productnumber; does not support remote installations with
      <literal>Virtual Network Computing (VNC).</literal>.

@@ -13,9 +13,9 @@
  xmlns:xi="http://www.w3.org/2001/XInclude"
  xmlns:xlink="http://www.w3.org/1999/xlink">
 <?suse-quickstart color="suse"?>
- <title>&instquick;</title>
+ <title>Initial installation</title>
  <para>
-  This document gives a quick overview on how to run through a default
+  This chapter gives a quick overview on how to run through a default
   installation of &productname; onto dedicated physical or virtual machines.
  </para>
  <para>
@@ -24,34 +24,33 @@
   supported public-cloud providers.
  </para>
  <para>
-  For these and other employment scenarios, see the &productname; Deployment
-  Guide on <link xlink:href="http://www.suse.com/documentation/"/>.
+  For these and other deployment scenarios, see the &productname; Deployment
+  Guide on <link
+   xlink:href="http://www.suse.com/documentation/"/>.
  </para>
  <sect1 xml:id="sec.caasp.quickstart.admin">
   <title>Installing the Administration Node</title>
-
   <para>
    The following instructions assume that you are installing onto a dedicated
    physical or virtual machine, using either an ISO image or a physical
    removable medium, such as a DVD or bootable USB key. The hard disk should
    not contain any existing partitions.
   </para>
-
   <procedure xml:id="pro.caasp.quickstart.admin">
    <step>
     <para>
-     Insert the &productname; DVD into the drive, then reboot the computer to
-     start the installation program. On machines with a traditional BIOS you
-     will see the graphical boot screen shown below. On machines equipped with
-     UEFI, a slightly different boot screen is used. Secure Boot on UEFI
-     machines is supported.
+     Insert the bootable &productname; installation medium, then reboot the
+     computer to start the installation program. On machines with a traditional
+     BIOS you will see the graphical boot screen shown below. On machines
+     equipped with UEFI, a slightly different boot screen is used. Secure Boot
+     on UEFI machines is supported.
     </para>
     <para>
      Use <keycap>F2</keycap> to change the language for the installer. A
      corresponding keyboard layout is chosen automatically. See
      <link
-       xlink:href="https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_startup.html"
-      />
+      xlink:href="https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_startup.html"
+     />
      for more information about changing boot options.
     </para>
     <informalfigure>
@@ -69,8 +68,8 @@
     <para>
      Select <guimenu>Installation</guimenu> on the boot screen, then press
      <keycap
-       function="enter"
-      />. This boots the system and loads
+      function="enter"
+     />. This boots the system and loads
      the &productname; installer.
     </para>
    </step>
@@ -118,8 +117,8 @@
          You should ensure that you will not lose the &rootuser; password!
          After you entered it here, the password cannot be retrieved. See
          <link
-           xlink:href="https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_user_root.html"
-          />
+          xlink:href="https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_user_root.html"
+         />
          for more information.
         </para>
        </warning>
@@ -136,7 +135,7 @@
       </listitem>
      </varlistentry>
      <varlistentry>
-      <term> System Role </term>
+      <term>System Role </term>
       <listitem>
        <para>
         As this is the first node in the cluser, you must select
@@ -146,19 +145,19 @@
       </listitem>
      </varlistentry>
      <varlistentry>
-      <term> NTP Servers </term>
+      <term>NTP Servers </term>
       <listitem>
        <para>
         Enter host names or IP addresses of one or more <guimenu>NTP
         Servers</guimenu> for the node, separated by white spaces or colons.
-        While a single server is sufficient, clusters should use at least three
-        for optimal precision and reliability.
+        While a single time server is sufficient, clusters should use at least
+        three for optimal precision and reliability.
        </para>
        <para>
         For more information about <literal>NTP</literal>, refer to
         <link
-          xlink:href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_netz_xntp.html"
-         />
+         xlink:href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_netz_xntp.html"
+        />
        </para>
       </listitem>
      </varlistentry>
@@ -188,7 +187,7 @@
        </para>
        <variablelist>
         <varlistentry>
-         <term> Select a hard disk </term>
+         <term>Select a hard disk </term>
          <listitem>
           <para>
            Select a disk to which install &productname; to with the recommended
@@ -203,8 +202,8 @@
           <para>
            Opens the <guimenu>Expert Partitioner</guimenu> described in
            <link
-             xlink:href="https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_yast2_i_y2_part_expert.html"
-            />
+            xlink:href="https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_yast2_i_y2_part_expert.html"
+           />
            .
           </para>
           <warning>
@@ -253,8 +252,8 @@
         This section shows the boot loader configuration. Changing the defaults
         is only recommended if really needed. Refer to
         <link
-          xlink:href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_grub2.html"
-         />
+         xlink:href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_grub2.html"
+        />
         for details.
        </para>
       </listitem>
@@ -277,8 +276,8 @@
        <para>
         For more information on configuring network connections, refer to
         <link
-          xlink:href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/sec_basicnet_yast.html"
-         />
+         xlink:href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/sec_basicnet_yast.html"
+        />
         .
        </para>
        <important>
@@ -300,8 +299,8 @@
         system in case the kernel crashes. This enables you to find the cause
         of the crash by debugging the dump file. See
         <link
-          xlink:href="https://www.suse.com/documentation/sles-12/book_sle_tuning/data/cha_tuning_kdump_basic.html"
-         />
+         xlink:href="https://www.suse.com/documentation/sles-12/book_sle_tuning/data/cha_tuning_kdump_basic.html"
+        />
         for more information.
        </para>
        <warning>
@@ -339,8 +338,8 @@
         Information</guimenu>. In this screen you can also change
         <guimenu>Kernel Settings</guimenu>. See
         <link
-          xlink:href="https://www.suse.com/documentation/sles-12/book_sle_tuning/data/cha_tuning_io.html"
-         />
+         xlink:href="https://www.suse.com/documentation/sles-12/book_sle_tuning/data/cha_tuning_io.html"
+        />
         for more information.
        </para>
       </listitem>
@@ -503,7 +502,7 @@
     <para>
      Click <guimenu>Next</guimenu> to proceed and install some cluster nodes as
      described in <xref
-       linkend="sec.caasp.quickstart.node"/>.
+      linkend="sec.caasp.quickstart.node"/>.
     </para>
    </step>
   </procedure>
@@ -521,8 +520,8 @@
    You can start the setup via PXE. For the full procedure, refer to the &sle;
    12 Deployment Guide:
    <link
-     xlink:href="https://www.suse.com/documentation/sles-12/singlehtml/book_sle_deployment/book_sle_deployment.html#cha.deployment.prep_boot"
-    />.
+    xlink:href="https://www.suse.com/documentation/sles-12/singlehtml/book_sle_deployment/book_sle_deployment.html#cha.deployment.prep_boot"
+   />.
   </para>
 
   <para>
@@ -539,9 +538,9 @@
    Before you can set up a cluster node, you have to install and bootstrap an
    &admin_node; to run the administration dashboard. Refer to
    <xref
-     linkend="sec.caasp.quickstart.admin"
-    /> for information on
-   how to install the &admin_node;.
+    linkend="sec.caasp.quickstart.admin"
+   /> for information on how
+   to install the &admin_node;.
   </para>
 
   <sect2 xml:id="sec.caasp.quickstart.node.manual">
@@ -551,7 +550,7 @@
      <para>
       Follow the steps as described in
       <xref
-        linkend="sec.caasp.quickstart.admin"/>
+       linkend="sec.caasp.quickstart.admin"/>
      </para>
     </step>
     <step>
@@ -591,8 +590,8 @@
    <para>
     Please make sure you have finished the initial configuration described in
     <xref
-      linkend="sec.caasp.quickstart.conf"
-     /> before installing
+     linkend="sec.caasp.quickstart.conf"
+    /> before installing
     cluster nodes with &ay;.
    </para>
    <procedure xml:id="pro.caasp.quickstart.node.ay">
@@ -625,8 +624,8 @@
         <para>
          Path to the &ay; file. For more information, refer to
          <link
-           xlink:href="https://www.suse.com/documentation/sles-12/book_autoyast/data/invoking_autoinst.html#commandline_ay"
-          />
+          xlink:href="https://www.suse.com/documentation/sles-12/book_autoyast/data/invoking_autoinst.html#commandline_ay"
+         />
         </para>
        </listitem>
       </varlistentry>
@@ -637,8 +636,8 @@
          Network configuration. If you are using dhcp, you can simply enter
          <literal>dhcp</literal>. For manual configurations, refer to
          <link
-           xlink:href="https://www.suse.com/documentation/sles-12/book_autoyast/data/ay_adv_network.html"
-          />.
+          xlink:href="https://www.suse.com/documentation/sles-12/book_autoyast/data/ay_adv_network.html"
+         />.
         </para>
        </listitem>
       </varlistentry>
@@ -654,7 +653,7 @@
      </variablelist>
      <para>
       Press <keycap function="enter"
-       />. This boots the system and loads
+      />. This boots the system and loads
       the &productname; installer.
      </para>
     </step>
