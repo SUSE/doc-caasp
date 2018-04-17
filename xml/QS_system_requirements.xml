@@ -28,7 +28,7 @@
    group of at least four connected physical or virtual machines. 
   </para>
   <para>
-   The minimum supported cluster size is four nodes: a single &admin_node;, one 
+   Four nodes is the minimum supported cluster size: a single &admin_node;, one 
    &master_node;, and two &worker_node;s.
   </para>
   <note>
@@ -86,16 +86,20 @@
    </listitem>
    <listitem>
     <para>
+     It is recommended to let the DHCP server provide not only the IP addresses
+     but also the host names of the cluster nodes. 
+    </para>
+   </listitem>
+   <listitem>
+    <para>
      A DNS server to resolve host names. Please make sure you have reliable DNS
      resolution at all times, especially in combination with DHCP.
     </para>
     <important>
      <title>Unique Host Names</title>
      <para>
-      All nodes' host names must be unique. It is recommended to let the DHCP
-      server provide not only the IP addresses but also the host names of the
-      cluster nodes. If two or more nodes have the same hostname, bootstrap of
-      the cluster will fail.
+      All nodes' host names must be unique. If two or more nodes have the same
+      hostname, bootstrap of the cluster will fail.
      </para>
     </important>
    </listitem>
@@ -106,7 +110,7 @@
    </listitem>
    <listitem>
     <para>
-     The FQDN for the admin node is required during installation and it cannot 
+     The FQDN for the &admin_node; is required during installation and it cannot 
      subsequently be added or changed.
     </para>
    </listitem>
@@ -119,14 +123,14 @@
    </listitem>
    <listitem>
     <para>
-     All nodes must be able to resolve the names of the admin node and the names
-     of all worker nodes. It is not necessary for worker nodes to have names
-     that can be resolved from other machines. 
+     All nodes must be able to resolve the name of the &admin_node;. It is not
+     required for &worker_node;s to have resolvable names, although this is not
+     a problem and may aid troubleshooting. 
     </para>
    </listitem>
   </itemizedlist>
   <note>
-   <title>Admin nodes without a FQDN</title>
+   <title>&Admin_node;s without a FQDN</title>
    <para>
     For test purposes, the IP address of the &admin_node; can be substituted for
     a FQDN, but this is not supported for production deployment.
