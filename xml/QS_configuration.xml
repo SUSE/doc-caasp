@@ -4,7 +4,6 @@
   <!ENTITY % entities SYSTEM "entity-decl.ent">
     %entities;
 ]>
-
 <chapter version="5.0" xml:id="configuration"
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -16,72 +15,75 @@
    <dm:translation>yes</dm:translation>
   </dm:docmanager>
  </info>
- 
  <para>
   &productname; is typically configured in two stages, at first during the
-  installation process and after installation you can configure your cluster by 
-  using <literal>cloud-init</literal>. The first stage configuration of 
-  &productname; comes as preconfigured as possible. The second stage is 
-  typically used for large-scale clusters. If you have just a few nodes, 
+  installation process and after installation you can configure your cluster by
+  using <literal>cloud-init</literal>. The first stage configuration of
+  &productname; comes as preconfigured as possible. The second stage is
+  typically used for large-scale clusters. If you have just a few nodes,
   <literal>cloud-init</literal> is not necessary.
  </para>
  <para>
   Each configuration stage is described in the following sections.
  </para>
- 
  <sect1 xml:id="installation.configuration">
   <title>Configuration</title>
- <para>
-  The defaults for the first stage configuration are the following:
- </para>
- <itemizedlist>
-  <listitem>
-   <para>
-   </para>
-  </listitem>
- </itemizedlist>
+
+  <para>
+   The defaults for the first stage configuration are the following:
+  </para>
+
+  <itemizedlist>
+   <listitem>
+    <para></para>
+   </listitem>
+  </itemizedlist>
  </sect1>
- 
  <sect1 xml:id="cloud-init.configuration">
   <title><literal>cloud-init</literal> Configuration</title>
+
   <para>
-   <literal>cloud-init</literal> is used after the installation is complete. You
-   then define a set of configuration files that will be applied during the boot 
-   phase.
+   <literal>cloud-init</literal> is used after the installation is complete.
+   You then define a set of configuration files that will be applied during the
+   boot phase.
   </para>
+
   <para>
    The <literal>cloud-init</literal> configuration can be loaded from different
-   sources: 
+   sources:
   </para>
+
   <itemizedlist>
    <listitem>
     <para>
      <literal>LocalDisk</literal> &ndash; <literal>cloud-init</literal> reads
-     its configuration from a local directory: <filename>/cloud-init-config</filename>
+     its configuration from a local directory:
+     <filename>/cloud-init-config</filename>
     </para>
    </listitem>
    <listitem>
     <para>
-     <literal>NoCloud</literal> &ndash; <literal>cloud-init</literal> reads its 
+     <literal>NoCloud</literal> &ndash; <literal>cloud-init</literal> reads its
      configuration from a local directory or from a remote location.
     </para>
    </listitem>
   </itemizedlist>
+
   <para>
-   <literal>cloud-init</literal> uses the following required configuration 
-   files: <filename>meta-data</filename>, <filename>user-data</filename>, and an 
-   optional file: <filename>vendor-data</filename>. Each file is described in 
-   the following sections.
+   <literal>cloud-init</literal> uses the following required configuration
+   files: <filename>meta-data</filename>, <filename>user-data</filename>, and
+   an optional file: <filename>vendor-data</filename>. Each file is described
+   in the following sections.
   </para>
-  
+
   <sect2 xml:id="meta-data.config.file">
    <title>The <filename>meta-data</filename> Configuration File</title>
   </sect2>
-  
+
   <sect2 xml:id="user-data.config.file">
    <title>The <filename>user-data</filename> Configuration File</title>
   </sect2>
-  
+
   <sect2 xml:id="vendor-data.config.file">
    <title>The <filename>vendor-data</filename> Configuration File</title>
   </sect2>
