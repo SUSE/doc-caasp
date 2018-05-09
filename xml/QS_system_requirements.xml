@@ -24,8 +24,9 @@
   <title>Cluster Size Requirements</title>
 
   <para>
-   &productname; only functions in a clustered configuration. It requires a
-   group of at least four connected physical or virtual machines. 
+   &productname; is a dedicated cluster operating system and only functions in a
+   multi-node configuration. It requires a connected group of at least four
+   physical or virtual machines. 
   </para>
   <para>
    Four nodes is the minimum supported cluster size: a single &admin_node;, one 
@@ -39,9 +40,12 @@
    </para>
   </note>
   <para>
-   For improved performance and reliability, multiple &master_node;s are
-   supported, but there must always be an odd number. Any number of
-   &worker_node;s may be added up to the maximum supported cluster size.
+   For improved performance, multiple &master_node;s are supported, but there
+   must always be an odd number. For cluster reliability, in the event of using
+   multiple master nodes, some form of DNS load-balancing should be used. 
+  </para>
+   <para>Any number of &worker_node;s may be added up to the maximum supported
+    cluster size.
   </para>
 
  </sect1>
@@ -105,20 +109,21 @@
    </listitem>
    <listitem>
     <para>
-     The &admin_node; must have a valid fully-qualified domain name (FQDN).
+     The &admin_node; and &kube; API &master_node; must both have valid
+     fully-qualified domain names (FQDN).
     </para>
    </listitem>
    <listitem>
     <para>
-     The FQDN for the &admin_node; is required during installation and it cannot 
+     Both these FQDNs are required during installation. They cannot  
      subsequently be added or changed.
     </para>
    </listitem>
    <listitem>
     <para>
-     Via a web browser, the &admin_node; must be visible and accessible from a
-     separate machine on your organization's network in order to complete the
-     installation.
+     The &admin_node; must be visible from a separate machine on your
+     organization's network, and accessible via a web browser, in order to
+     complete the  installation.
     </para>
    </listitem>
    <listitem>
