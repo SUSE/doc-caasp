@@ -16,6 +16,7 @@
   </dm:docmanager>
   <title>&productname; System Requirements</title>
  </info>
+
  <para>
   Before you begin the installation, please make sure your system meets all the
   requirements listed below.
@@ -25,7 +26,7 @@
 
   <para>
    &productname; is a dedicated cluster operating system and only functions in a
-   multi-node configuration. It requires a connected group of at least four
+   multi-node configuration. It requires a connected group of four or more
    physical or virtual machines. 
   </para>
   <para>
@@ -61,16 +62,31 @@
    </listitem>
    <listitem>
     <para>
-     8 GB physical RAM per node.
-    </para>
-   </listitem>
-   <listitem>
-    <para>
      40 GB available disk space (or more depending on the count and size of the
      container images you intend to run).
     </para>
    </listitem>
+   <listitem>
+    <para>
+     8 GB physical RAM per node.
+    </para>
+   </listitem>
   </itemizedlist>
+  <note>
+   <title>Swap Partitions</title>
+   <para>
+    A requirement of &kube; means that &productname; &productnumber; does
+    not support swapping to disk. Due to a technical limitation in the
+    installation program, the &admin_node; will have a small swap partition, but
+    this is inactive and not used. Nodes installed using AutoYaST have no swap.
+   </para>
+   <para>
+    Thus, if a node has insufficient physical RAM available, its operation may
+    fail. RAM sizing is thus more important than for typical Linux operating 
+    systems.
+   </para>
+  </note>
+  
  </sect1>
  <sect1 xml:id="sec.caasp.quickstart.netreqs">
   <title>Network Requirements</title>
@@ -78,8 +94,8 @@
   <itemizedlist mark="bullet" spacing="normal">
    <listitem>
     <para>
-     In order to communicate without interruptions, all nodes should to be on
-     the same network.
+     All nodes should to be on the same network. It is important that the nodes
+     can communicate without interruptions. 
     </para>
    </listitem>
    <listitem>
@@ -99,18 +115,12 @@
      A DNS server to resolve host names. Please make sure you have reliable DNS
      resolution at all times, especially in combination with DHCP.
     </para>
-    <important>
-     <title>Unique Host Names</title>
-     <para>
-      All nodes' host names must be unique. If two or more nodes have the same
-      hostname, bootstrap of the cluster will fail.
-     </para>
-    </important>
    </listitem>
    <listitem>
     <para>
-     The &admin_node; and &kube; API &master_node; must both have valid
-     fully-qualified domain names (FQDN).
+     The &admin_node; and &kube; API server; must both have valid
+     fully-qualified domain names (FQDN). If the cluster has a single &master_node;,
+     then this is the &kube; API server.
     </para>
    </listitem>
    <listitem>
@@ -130,18 +140,52 @@
     <para>
      All nodes must be able to resolve the name of the &admin_node;. It is not
      required for &worker_node;s to have resolvable names, although this is not
-     a problem and may aid troubleshooting. 
+     problematic and may aid troubleshooting. 
     </para>
    </listitem>
+   <listitem>
+    <para>
+     For clusters with multiple &master_node;s:
+    </para>
+    <itemizedlist>
+     <listitem>
+      <para>
+       There must be an odd number of &master_node;s.
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       All &master_node;s must be accessible via a single FQDN.
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       If the FQDN only points to a single &master_node; and it is removed,
+       cluster functionality will degrade. For this reason, using round-robin
+       DNS or load-balancing is recommended.
+      </para>
+     </listitem>
+    </itemizedlist>
+   </listitem>
   </itemizedlist>
-  <note>
-   <title>&Admin_node;s without a FQDN</title>
+
+  <important>
+   <title>Unique Host Names</title>
    <para>
-    For test purposes, the IP address of the &admin_node; can be substituted for
-    a FQDN, but this is not supported for production deployment.
+    All nodes' host names must be unique. If two or more nodes have the same
+    host name, bootstrap of the cluster will fail.
+   </para>
+  </important>
+  
+  <note>
+   <title>Clusters without Fully-Qualified Domain Names</title>
+   <para>
+    For test purposes, IP addresses can be substituted for the FQDNs for the
+    &admin_node; and &master_node;, but this is not supported for production 
+    deployment.
    </para>
   </note>
-  
+
  </sect1>
  <sect1 xml:id="sec.caasp.quickstart.limits">
   <title>Limitations</title>
