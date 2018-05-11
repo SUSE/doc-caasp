@@ -19,44 +19,46 @@
  <para>
   &suse;&reg; CaaS (Container as a Service) Platform is a platform designed for
   fast deployment of container-based applications. You can deploy &productname;
-  on your physical machines or use it on virtual machines. After deployment, it
-  is ready to run out of the box and provides high scalability of your cluster.
+  onto physical servers or use it on virtual machines. After deployment, it
+  is ready to run out of the box and provides a highly-scalable cluster.
  </para>
  <para>
-  &productname; was designed to simplify transformation of applications into
-  container-based applications. Creating clouds with container-based
-  applications is much easier as you get rid of problems with compatibility
-  and dependencies. To enable as fast application deployment as possible, it is
-  recommended to use a container orchestration framework, e.g. &kube;.
+  &productname; was designed to simplify the transformation of applications into
+  <emphasis>application containers</emphasis>. Creating clouds with containers
+  is much easier than installing those applications directly onto the underlying
+  operating system, as it eliminates problems with inter-application 
+  compatibility and dependencies. To enable the most rapid application
+  deployment possible, a container orchestration framework, e.g. &kube;, helps
+  considerably.
  </para>
  <para>
   While &productname; inherits benefits of &sle; and uses tools and
-  technologies well-known to system administrators&mdash;like
-  <literal>cloud-init</literal>, Kubernetes, or Salt&mdash;the main innovation
-  (compared to &sls;) comes with <emphasis role="bold">transactional
+  technologies well-known to system administrators&mdash;such as
+  <literal>cloud-init</literal>, Kubernetes, and SaltStack&mdash;the main
+  innovation (compared to &sls;) comes with <emphasis role="bold">transactional
   updates</emphasis>. A transactional update is an update that can be installed
-  when the system is running without any down time. The transaction update can
-  be rolled back, so if the upgrade fails or the update is not compatible with
-  your infrastructure, you can restore the previous state.
+  when the system is running without any down-time. A transaction update can
+  be rolled back, so if the upgdate fails or is not compatible with your
+  infrastructure, you can restore the previous system state.
  </para>
  <para>
-  &productname; uses the &btrfs; file system with the following characteristic:
+  &productname; uses the &btrfs; file system with the following characteristics:
  </para>
  <itemizedlist>
   <listitem>
    <para>
-    The base OS and snapshots are read-only.
+    The root filesystem and its snapshots are read-only.
    </para>
   </listitem>
   <listitem>
    <para>
-    Sub volumes for data sharing are read-write.
+    Sub-volumes for data sharing are read-write.
    </para>
   </listitem>
   <listitem>
    <para>
-    &productname; introduces overlays of <literal>/etc</literal> directories
-    used by <literal>cloud-init</literal> and &salt;
+    &productname; introduces overlays of the <literal>/etc</literal> directories
+    used by <literal>cloud-init</literal> and &salt;.
    </para>
   </listitem>
  </itemizedlist>
@@ -70,24 +72,26 @@
   <itemizedlist>
    <listitem>
     <para>
-     &admin_node; - is a &smaster; that assigns roles to &sminion;s. The node
-     runs the GUI dashboard that manages the whole cluster. For details refer
-     to <xref linkend="administration_dashboard"/>.
+     The <emphasis>&admin_node;</emphasis> is a &smaster; which assigns roles to
+     &sminion;s. This node runs the Velum Web-based dashboard for managing the
+     whole cluster. For details, refer to <xref linkend="administration_dashboard"/>.
     </para>
    </listitem>
    <listitem>
     <para>
-     &cluster_node; - is a &sminion; that can have one of the following roles:
+     Each &cluster_node; is a &sminion; which can have one of the following
+     roles:
     </para>
     <itemizedlist>
      <listitem>
       <para>
-       &kube; master - that manages nodes running containers.
+       &kube; master: <emphasis>&master_node;s</emphasis> manage the worker nodes.
       </para>
      </listitem>
      <listitem>
       <para>
-       &kube; worker - that runs containers.
+       &kube; worker: <emphasis>&worker_node;s</emphasis> run the application
+       containers which are the main workload of the cluster. 
       </para>
      </listitem>
     </itemizedlist>
@@ -102,19 +106,19 @@
   <itemizedlist>
    <listitem>
     <para>
-     a local &smt; server that manages subscriptions for workers and so
-     decreases the traffic to &scc;
+     a local <emphasis>&smt; server</emphasis> that manages subscriptions for
+     workers and so decreases the traffic to the &scc;.
     </para>
    </listitem>
    <listitem>
     <para>
-     a log server that stores logs of cluster nodes.
+     a <emphasis>log server</emphasis> that stores the cluster nodes' logs.
     </para>
    </listitem>
   </itemizedlist>
 
   <para>
-   The following figure illustrates interactions of the nodes.
+   The following figure illustrates the interactions of the nodes.
   </para>
 
   <figure xml:id="caasp.architecture.cluster">
@@ -127,16 +131,18 @@
   </figure>
 
   <para>
-   To run the whole cluster, &productname; uses various technologies like
-   &salt;, flannel network, <literal>etcd</literal> cluster, controller,
-   scheduler, <literal>kubelet</literal>, container engines, and an API Server.
+   To run the whole cluster, &productname; uses various technologies such as
+   &salt;Stack, Flannel networking, the <literal>etcd</literal> distributed key-
+   store database, a controller, a scheduler, <literal>kubelet</literal>,
+   a choice of two container runtime engines, and a &kube; API Server.
   </para>
 
   <para>
    &salt; is used to manage deployment and administration of the cluster. The
    <literal>&salt;-api</literal> is used to distribute commands from
    &dashboard; to the <literal>salt-master</literal> daemon. The
-   <literal>salt-master</literal> daemon stores events in <emphasis>MariaDB</emphasis> (the database is also used to store &dashboard; data). The
+   <literal>salt-master</literal> daemon stores events in <emphasis>MariaDB</emphasis>
+   (the database is also used to store &dashboard; data). The
    <literal>salt-minion</literal> daemon on the &admin_node; is used to
    generate required certificates, and on the &sminion;s the daemons communicate
    with the &admin_node;.
