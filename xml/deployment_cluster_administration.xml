@@ -259,12 +259,11 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
   name: <replaceable>role name</replaceable><co xml:id="co.auth.group.role-name"/>
   namespace: <replaceable>applicable namespace</replaceable><co xml:id="co.auth.group.role-namespace"/>
-# This set of rules amounts to "allow all"
 rules:
-- apiGroups: [""]
-  resources: [""]
-  resourceNames: [""]
-  verbs: [""]
+- apiGroups: [<replaceable>api groups ([""] for core group rbac.authorization.k8s.io)</replaceable>]
+  resources: [<replaceable>&kube; objects/resources e.g. ["configMap"], ["Pod"], etc...</replaceable>]
+  resourceNames: [<replaceable>specific named resources, e.g. ["my-pod", "my-config-map"]</replaceable>]
+  verbs: [<replaceable>functions as seen in kubectl subcommands e.g. ["list", "get", "watch", "update"]</replaceable>]
 ---
 # Map an LDAP group to this &kube; role
 kind: RoleBinding
