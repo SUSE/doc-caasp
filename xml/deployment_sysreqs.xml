@@ -26,8 +26,244 @@
    requirements listed below.
   </para>
 
+  <sect2 xml:id="sec.caasp.installquick.clusreqs">
+   <title>Cluster Requirements</title>
+   <para>
+    &productname; is a cluster operating system. It requires a group of physical
+    or virtual machines in order to operate. The minimum supported cluster size
+    is four nodes: one &admin_node;, one &master_node;, and two &worker_node;s.
+   </para>
+   <note>
+    <title>Test and Proof-of-Concept Clusters</title>
+    <para>
+     For proof-of-concept and test deployments, it is possible to bootstrap a
+     three-node cluster with a single &worker_node;, but this configuration is
+     not supported and should not be used in production.
+    </para>
+   </note>
+   <para>
+    To improve performance and reliability, additional &master_node;s may be
+    added, so long as there is always an odd number of &master_node;s.
+   </para>
+   <para>
+    There is no limit on the number of worker nodes except the maximum cluster
+    size.
+   </para>
+   <para>
+    At this time, &suse; supports clusters of up to 150 nodes.
+   </para>
+  </sect2>
+  
+  <sect2 xml:id="sec.caasp.installquick.env">
+   <title>Supported Environments</title>
+   <para>
+    Regarding deployment scenarios, &suse; supports &productname; running in the
+    following environments:
+   </para>
+   <itemizedlist>
+    <listitem>
+     <para>
+      &productname; only supports x86_64 hardware.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Aside from this, the same platforms as &sle; 12 SP3 are supported.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      On bare metal: any server hardware certified for &sle; Server.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Virtualized&mdash;running under the following hypervisors:
+     </para>
+     <itemizedlist>
+      <listitem>
+       <para>
+        KVM
+       </para>
+       <itemizedlist>
+        <listitem>
+         <para>
+          on &sle; 11 SP4
+         </para>
+        </listitem>
+        <listitem>
+         <para>
+          on &sle; 12 SP1
+         </para>
+        </listitem>
+        <listitem>
+         <para>
+          on &sle; 12 SP2
+         </para>
+        </listitem>
+        <listitem>
+         <para>
+          on &sle; 12 SP3
+         </para>
+        </listitem>
+       </itemizedlist>
+      </listitem>
+      <listitem>
+       <para>
+        Xen
+       </para>
+       <itemizedlist>
+        <listitem>
+         <para>
+          same host platforms as for KVM
+         </para>
+        </listitem>
+        <listitem>
+         <para>
+          full virtualization
+         </para>
+        </listitem>
+        <listitem>
+         <para>
+          paravirtualization
+         </para>
+        </listitem>
+        <listitem>
+         <para>
+          Citrix XenServer 6.5
+         </para>
+        </listitem>
+       </itemizedlist>
+      </listitem>
+      <listitem>
+       <para>
+        VMware
+       </para>
+       <itemizedlist>
+        <listitem>
+         <para>
+          ESX 5.5
+         </para>
+        </listitem>
+        <listitem>
+         <para>
+          ESXi 6.0
+         </para>
+        </listitem>
+        <listitem>
+         <para>
+          ESXi 6.5
+         </para>
+        </listitem>
+       </itemizedlist>
+      </listitem>
+      <listitem>
+       <para>
+        Hyper-V
+       </para>
+       <itemizedlist>
+        <listitem>
+         <para>
+          Windows Server 2008 SP2+
+         </para>
+        </listitem>
+        <listitem>
+         <para>
+          Windows Server 2008 R2 SP1+
+         </para>
+        </listitem>
+        <listitem>
+         <para>
+          Windows Server 2012+
+         </para>
+        </listitem>
+        <listitem>
+         <para>
+          Windows Server 2012 R2+
+         </para>
+        </listitem>
+        <listitem>
+         <para>
+          Windows Server 2016
+         </para>
+        </listitem>
+       </itemizedlist>
+      </listitem>
+      <listitem>
+       <para>
+        Oracle VM 3.3
+       </para>
+      </listitem>
+     </itemizedlist>
+    </listitem>
+    <listitem>
+     <para>
+      Private and Public Cloud Environments
+     </para>
+     <itemizedlist>
+      <listitem>
+       <para>
+        &soc; 7
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        Amazon AWS
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        Microsoft Azure
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        Google Compute Engine
+       </para>
+      </listitem>
+     </itemizedlist>
+    </listitem>
+   </itemizedlist>
+  </sect2>
+  
+  <sect2 xml:id="Intro.Requirements.Storage">
+   <title>Container Data Storage</title>
+   <para>
+    Storage can be provided using:
+   </para>
+   <itemizedlist>
+     <listitem>
+      <para>
+       &ses;.
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       NFS.
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       <command>hostpath</command>.
+      </para>
+      <note>
+       <title><literal>hostpath</literal> Deprecated</title>
+       <para>
+        Storage using <literal>hostpath</literal> is still supported, but use is now
+        discouraged and by default it is disabled by
+        <literal>PodSecurityPolicies</literal>.
+       </para>
+      </note>
+     </listitem>
+    </itemizedlist>
+
+  </sect2>
+  
   <sect2 xml:id="sec.caasp.installquick.hwreqs">
-   <title>Minimum Hardware Requirements</title>
+   <title>Minimum Node Specification</title>
+   <para>
+    Each node in the cluster must meet the following minimum specifications.
+   </para>
    <itemizedlist mark="bullet" spacing="normal">
     <listitem>
      <para>
@@ -37,33 +273,26 @@
     </listitem>
     <listitem>
      <para>
-      8 GB physical RAM per node.
+      Minimum RAM: 8 GB.
+     </para>
+     <para>
+      NOTE: &kube; does not support swap and any existing swap partition will
+      be disabled during installation. Although it may be possible to install
+      &productname; on nodes with less RAM, if the operating system runs out of
+      available memory, the cluster may fail.
      </para>
     </listitem>
     <listitem>
      <para>
-      40 GB available disk space (or more depending on the count and size of
-      container images you intend to run).
+      Minimum disk space: 40 GB (as Btrfs with snapshots) for the root file
+      system.
+     </para>
+     <para>
+      Additional disk space may be required, depending on the count and size of
+      container images you intend to run.
      </para>
     </listitem>
    </itemizedlist>
-  </sect2>
-
-  <sect2 xml:id="sec.caasp.installquick.clusreqs">
-   <title>Cluster Size Requirements</title>
-   <para>
-    &productname; only functions in a clustered configuration. It requires a
-    group of physical or virtual machines in order to operate. The minimum
-    supported cluster size is four nodes: one &admin_node;, one &master_node;,
-    and two &worker_node;s.
-   </para>
-   <note>
-    <title>Test and Proof-of-Concept Clusters</title>
-    <para>
-     It is possible to provision a three-node cluster with only a single
-     &worker_node;, but this is not a supported configuration for deployment.
-    </para>
-   </note>
   </sect2>
 
   <sect2 xml:id="sec.caasp.installquick.netreqs">
@@ -71,7 +300,8 @@
    <itemizedlist mark="bullet" spacing="normal">
     <listitem>
      <para>
-      All nodes should be on the same network.
+      All the nodes on the cluster must be on a the same network and be able to
+      communicate directly with one another.
      </para>
      <important>
       <title>Reliable Networking</title>
@@ -79,6 +309,13 @@
        Please make sure all nodes can communicate without interruptions.
       </para>
      </important>
+    </listitem>
+    <listitem>
+     <para>
+      The admin node and the &kube; API master must have valid Fully-Qualified
+      Domain Names (FQDNs), which can be resolved both by other nodes and from
+      other networks which need to access the cluster.
+     </para>
     </listitem>
     <listitem>
      <para>
@@ -99,6 +336,12 @@
        provide not only IP addresses but also host names of the cluster nodes.
       </para>
      </important>
+    </listitem>
+    <listitem>
+     <para>
+      On the same network, a separate computer with a Web browser is required in
+      order to complete bootstrap of the cluster.
+     </para>
     </listitem>
     <listitem>
      <para>
