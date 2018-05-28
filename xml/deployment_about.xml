@@ -57,8 +57,8 @@
   </listitem>
   <listitem>
    <para>
-    &productname; introduces overlays of the <literal>/etc</literal> directories
-    used by <literal>cloud-init</literal> and &salt;.
+    &productname; introduces overlays for the <literal>/etc</literal>
+    directories used by <literal>cloud-init</literal> and &salt;.
    </para>
   </listitem>
  </itemizedlist>
@@ -99,8 +99,8 @@
   </itemizedlist>
 
   <para>
-   In large-scale clusters, there are other nodes that can help you to manage
-   and run the cluster:
+   In large-scale clusters, there are other types of node that can help you to
+   manage and run the cluster:
   </para>
 
   <itemizedlist>
@@ -112,7 +112,7 @@
    </listitem>
    <listitem>
     <para>
-     a <emphasis>log server</emphasis> that stores the cluster nodes' logs.
+     a <emphasis>log server</emphasis> that stores logs for the other nodes.
     </para>
    </listitem>
   </itemizedlist>
@@ -151,21 +151,21 @@
   <para>
    As there can be several containers running on each host machine, each
    container is assigned an IP address that is used for communication with
-   other containers on the same host machine. Containers might need to have a
-   unique IP address exposed for network communication, thus flannel networking
-   is used. Flannel gives each host an IP sub net from which the container
-   engine can allocate IP addresses for containers. The mapping of IP addresses
-   is stored by using <literal>etcd</literal>. The <literal>flanneld</literal>
-   is used to manage routing of packets and mapping of IP addresses.
+   other containers on the same host. Containers might need to have a
+   unique IP address exposed for network communications, thus Flannel networking
+   is used. Flannel gives each host an IP subnet from which the container
+   engine can allocate IP addresses to containers. The mapping of IP addresses
+   is stored by <literal>etcd</literal>. The <literal>flanneld</literal> daemon
+   manages routing of packets and mapping of IP addresses.
   </para>
 
   <para>
    Within the cluster there are several instances of <literal>etcd</literal>,
-   each with a different purpose. The <literal>etcd discovery</literal> running
-   on the &admin_node; is used to bootstrap instances of
-   <literal>etcd</literal> running on other nodes and is not part of the
-   <literal>etcd</literal> cluster on other nodes. The <literal>etcd</literal>
-   instance on the &master_node; stores events from the API Server. The
+   each with a different purpose. The <literal>etcd discovery</literal> daemon
+   running on the &admin_node; is used to bootstrap instances of
+   <literal>etcd</literal> on other nodes and is not part of the
+   <literal>etcd</literal> cluster on the other nodes. The <literal>etcd</literal>
+   instance on the &master_node; stores events from the &kube; API Server. The
    <literal>etcd</literal> instance on &worker_node;s runs as a proxy that forwards
    clients to the <literal>etcd</literal> on the &master_node;.
   </para>
