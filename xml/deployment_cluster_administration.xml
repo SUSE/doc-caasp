@@ -468,15 +468,6 @@ roleRef:
     by issuing the command:
    </para>
 <screen><command>systemctl</command> <option>--now disable transactional-update.timer</option></screen>
-   <para>
-    Automatic reboot can also be disabled; use either of the
-    commands:
-   </para>
-<screen><command>systemctl --now disable rebootmgr</command></screen>
-   <para>
-    or
-   </para>
-<screen><command>rebootmgrctl</command> <option>set-strategy off</option></screen>
   </sect2>
  </sect1>
  <sect1 xml:id="ptf.handling">
@@ -514,7 +505,7 @@ roleRef:
 <screen><command>transactional-update</command> <option>reboot ptf remove <replaceable>rpm &hellip; rpm</replaceable></option></screen>
  </sect1>
 
- <sect1 xml:id="commands.node.managment">
+ <sect1 xml:id="commands.node.management">
   <title>Commands for Single Node Management</title>
 
   <para>
@@ -522,7 +513,7 @@ roleRef:
    your &cluster_node;s.
   </para>
 
-  <sect2 xml:id="commands.node.managment.issue-generator">
+  <sect2 xml:id="commands.node.management.issue-generator">
    <title>The <command>issue-generator</command> Command</title>
    <para>
     The <command>issue-generator</command> creates a volatile temporary
@@ -561,7 +552,7 @@ roleRef:
    </note>
   </sect2>
 
-  <sect2 xml:id="commands.node.managment.transactional-update">
+  <sect2 xml:id="commands.node.management.transactional-update">
    <title>The <command>transactional-update</command> Command</title>
    <para>
     The <command>transactional-update</command> enables you to install or
@@ -666,7 +657,7 @@ roleRef:
    </variablelist>
   </sect2>
 
-  <sect2 xml:id="commands.node.managment.create_autoyast_profile">
+  <sect2 xml:id="commands.node.management.create_autoyast_profile">
    <title>The <command>create_autoyast_profile</command> Command</title>
    <para>
     The <command>create_autoyast_profile</command> command creates an autoyast
@@ -727,7 +718,7 @@ roleRef:
    </variablelist>
   </sect2>
  </sect1>
- <sect1 xml:id="node.managment">
+ <sect1 xml:id="node.management">
   <title>Adding Nodes</title>
 
   <para>
@@ -736,57 +727,84 @@ roleRef:
    can add additional &worker_node;s to your cluster. The following steps
    guides you through that procedure:
   </para>
-  <procedure>
-   <title>Adding Nodes to Existing Cluster</title>
-   <step>
-    <para>
-     Prepare the node as described in
-     <xref linkend="sec.caasp.installquick.node"/>
-    </para>
-   </step>
-   <step>
-    <para>
-     Open &dashboard; in your browser and login.
-    </para>
-   </step>
-   <step>
-    <para>
-     You should see the newly added node as a node to be accepted in
-     <guimenu>Pending Nodes</guimenu>. Accept the node.
-    </para>
-    <informalfigure>
-     <mediaobject>
-      <imageobject>
-       <imagedata fileref="velum_pending_nodes.png" format="PNG"/>
-      </imageobject>
-     </mediaobject>
-    </informalfigure>
-   </step>
-   <step>
-    <para>
-     In the <guimenu>Summary</guimenu> you can see the <guimenu>New</guimenu>
-     that appears next to <guimenu>New nodes</guimenu>. Click the
-     <guimenu>New</guimenu> button.
-    </para>
-    <informalfigure>
-     <mediaobject>
-      <imageobject>
-       <imagedata fileref="velum_unassigned_nodes.png" format="PNG" width="60%"/>
-      </imageobject>
-     </mediaobject>
-    </informalfigure>
-   </step>
-   <step>
-    <para>
-     Select the node to be added and click <guimenu>Add nodes</guimenu>.
-    </para>
-   </step>
-   <step>
-    <para>
-     The node has been added to your cluster.
-    </para>
-   </step>
-  </procedure>
+
+  <sect2 xml:id="node.management.adding">
+   <title>Adding Nodes</title>
+   <para>
+    You may need to add additional &worker_node;s to your cluster. The following
+    steps guides you through that procedure:
+   </para>
+   <procedure>
+    <title>Adding Nodes to Existing Cluster</title>
+    <step>
+     <para>
+      Prepare the node as described in
+      <xref linkend="sec.caasp.installquick.node"/>
+     </para>
+    </step>
+    <step>
+     <para>
+      Open &dashboard; in your browser and login.
+     </para>
+    </step>
+    <step>
+     <para>
+      You should see the newly added node as a node to be accepted in
+      <guimenu>Pending Nodes</guimenu>. Accept the node.
+     </para>
+     <informalfigure>
+      <mediaobject>
+       <imageobject>
+        <imagedata fileref="velum_pending_nodes.png" format="PNG"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+    </step>
+    <step>
+     <para>
+      In the <guimenu>Summary</guimenu> you can see the <guimenu>New</guimenu>
+      that appears next to <guimenu>New nodes</guimenu>. Click the
+      <guimenu>New</guimenu> button.
+     </para>
+     <informalfigure>
+      <mediaobject>
+       <imageobject>
+        <imagedata fileref="velum_unassigned_nodes.png" format="PNG" width="60%"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+    </step>
+    <step>
+     <para>
+      Select the node to be added and click <guimenu>Add nodes</guimenu>.
+     </para>
+    </step>
+    <step>
+     <para>
+      The node has been added to your cluster.
+     </para>
+    </step>
+   </procedure>
+  </sect2>
+
+  <sect2 xml:id="node.management.removing">
+   <title>Removing Nodes</title>
+   <para>
+    As each node in the cluster runs also an instance of
+    <literal>etcd</literal>, &productname; has to ensure that removing of
+    several nodes does not break the <literal>etcd</literal> cluster. In case
+    you have for example three nodes in the <literal>etcd</literal> and you
+    delete two of them, &productname; deletes one node, recovers the cluster
+    and only if the recovery is successful, the next node can be removed. If a
+    node runs just an <literal>etcd-proxy</literal>, there is nothing special
+    that has to be done, as deleting any amount of
+    <literal>etcd-proxy</literal> can not break the <literal>etcd</literal>
+    cluster.
+   </para>
+   <!-- FIXME cwickert 2018-03-2019: We need to elaborate this for CaaS 3;
+        node removal is finally supported. -->
+  </sect2>
+
  </sect1>
  <sect1 xml:id="cluster.monitoring">
   <title>Cluster Monitoring</title>

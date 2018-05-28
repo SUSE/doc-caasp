@@ -9,7 +9,7 @@
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink">
  <info>
-  <title>Software Installation</title>
+  <title>Software Installation with &helm;</title>
   <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
    <dm:bugtracker></dm:bugtracker>
    <dm:translation>yes</dm:translation>
@@ -18,41 +18,59 @@
  <para>
   Once your cluster is ready, you may want to deploy additional software
   that is not installed on &productname; by default. This chapter provides
-  instructions on how to install and configure various tools and services.
+  instructions on how to install and configure &helm;, the &kube; package 
+  manager, and then how to install the &kube; Dashboard. If you intend to 
+  deploy &scf; on &productname;, &helm; is required.
  </para>
 
 <sect1 xml:id="installing.helm">
   <title>Deploying &helm; and &tiller;</title>
 <para>
-&helm; charts provide a standard way to deploy &kube; applications. While
-&tiller; (the &helm;'s server-side component) is not installed on &productname;
-by default, it can be installed by enabling the appropriate option in the Velum graphical
-interface. When the <guimenu>Install &tiller;</guimenu> option is enabled,
-&tiller; is installed as a container on a &productname; 2 cluster from the
-installation media.
+&helm; has two parts: &helm; is the client and &tiller; is the server component. 
+&helm; runs on your remote workstation that has access to your cluster, and 
+&tiller; is installed as a container on &productname; when you run &dashboard; 
+for the first 
+time. (See <xref linkend="sec.caasp.installquick.conf"/>.)
 </para>
 
+ <para>
+     You should match the &helm; version with the version of &tiller; 
+     that is running on your cluster. The &tiller; binary cannot report its
+     version, and you need the version that is packaged inside the &tiller; 
+     container. Run the following command from your workstation to query the
+     logs:
+ </para>
+ <screen>
+&prompt.user;kubectl logs -l name=tiller --namespace=kube-system | grep "Starting &tiller;"
+  [main] 2018/04/04 16:48:27 Starting &tiller; v2.6.1 (tls=false)
+</screen>
 <para>
-Once &tiller; is installed on &productname; 2 cluster, the &helm;
-client can be used to interact with &tiller; and the cluster. To initialize the
-&helm; client (which automatically discovers &tiller; in the cluster), run the
-<command>helm init --client-only</command> command. You
-can then use the &helm; client as described in the official documentation at <link
-xlink:href="https://docs.helm.sh/using_helm/#using-helm" />.
+   If the log gets overwritten and loses this information, the following command 
+   queries the <command>rpm</command> package manager inside the container. This
+   works only on &productname;/&scf; installations:
 </para>
-
-  <note>
-   <title>&helm; and &tiller; are Optional</title>
-    <para>
-      Both &helm; and &tiller; are optional, unless you plan to run a
-      &suse; Cloud Application Platform.
-    </para>
-  </note>
+<screen>
+&prompt.user;kubectl exec -it $(kubectl get pods -n kube-system | awk '/tiller/{print$1}') -n kube-system -- rpm -q helm
+  helm-2.6.1-1.6.x86_64
+</screen>
 
 <para>
-&tiller; that ships with &productname; is supported by &suse;. While &suse;
-does not provide support for third-party &helm; charts, you can easily use them
-if necessary.
+    If the Linux distribution on your workstation doesn't provide the correct 
+    &helm; version, or you are using some other platform, see the 
+    <link xlink:href="https://docs.helm.sh/using_helm/#quickstart">
+         &helm; Quickstart Guide</link> for installation instructions and basic 
+    usage examples. Download the matching &helm; binary into any directory that 
+    is in your PATH on your workstation, such as your <filename>~/bin</filename> 
+    directory. Then initialize the client only:
+ </para>
+ <screen>
+&prompt.user;helm init --client-only
+ </screen>
+ 
+<para>
+The &tiller; version that ships with &productname; is supported by &suse;. While 
+&suse; does not provide support for third-party &helm; charts, you can easily 
+use them if necessary.
 </para>
 </sect1>
 
@@ -62,42 +80,75 @@ if necessary.
   <important>
    <title>Technology Preview</title>
    <para>
-    Even though you can install and use the &kube; dashboard, &productname;
+    Even though you can install and use the community &kube; dashboard, &productname;
     currently fully supports only &dashboard;.
    </para>
   </important>
 
-  <para>
-   To install the &kube; dashboard, perform the following steps:
-  </para>
+<itemizedlist>
+<title>Requirements</title>
+<listitem>
+<para>
+Heapster version 1.3.0 or later needs to be installed on the cluster
+</para>
+</listitem>
+<listitem>
+<para>
+Helm version 2.7.2+ and kubectl version 1.8.0+ recommended
+</para>
+</listitem>
+</itemizedlist>
 
   <procedure>
    <title>Installation of &kube; Dashboard</title>
    <step>
+     <screen>
+helm install --name heapster-default --namespace=kube-system stable/heapster --version=0.2.7 --set rbac.create=true
+     </screen>
+   </step>
+   <step>
+     <screen>
+helm install --namespace=kube-system --name=kubernetes-dashboard stable/kubernetes-dashboard --version=0.6.1
+     </screen>
+   </step>
+   <step>
     <para>
-     Connect to the &admin_node; using SSH.
+      Connect to any cluster node using SSH.
     </para>
    </step>
    <step>
     <para>
-     Run the command:
+      Visit <literal>http://127.0.0.1:8081/</literal> in your browser. 
+      You will be greeted with by a welcome page containing a dialog to configure authentication.
     </para>
-<screen>kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.6.3/src/deploy/kubernetes-dashboard.yaml</screen>
    </step>
    <step>
     <para>
-     After the previous command finishes, run the following to expose the
-     proxy:
+      Select <guimenu>token</guimenu> authentication. To retrieve your token refer to the value in your kubeconfig file by running the command:
     </para>
-<screen><command>kubectl proxy</command>
-    Starting to serve on 127.0.0.1:8001</screen>
+    <screen>
+grep "id-token" /path/to/kubeconfig  | awk '{print $2}'
+    </screen>
    </step>
    <step>
     <para>
-     In your browser open <emphasis>http://127.0.0.1:8001/api/v1/proxy/namespaces/kube-system/services/kubernetes-dashboard/#!/workload?namespace=default</emphasis>. The
-     &kube; dashboard is running there.
+      On login cluster resources and basic metrics are populated.
     </para>
    </step>
   </procedure>
+
+  <procedure>
+   <title>Exposing the Dashboard</title>
+   <step>
+<screen>helm upgrade kubernetes-dashboard stable/kubernetes-dashboard --set service.type=NodePort
+</screen>
+   </step>
+   <step>
+    <para>
+      Now you may visit the dashboard at <literal>https://<replaceable>WORKER_NODE_ADDRESS</replaceable>:<replaceable>NODE_PORT</replaceable></literal> in your browser from outside of your cluster.
+    </para>
+   </step>
+  </procedure>
+
  </sect1>
 </chapter>
