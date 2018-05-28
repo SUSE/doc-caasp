@@ -88,14 +88,21 @@
    </sect3>
 
    <sect3 xml:id="auth.users.import-cert">
-    <title>Importing the ldap certificate locally</title>
+    <title>Importing the LDAP Certificate Locally</title>
     <para>
-     To be able to perform any ldap queries, you first need to import the generated ldap certificate to your local trusted certificate storage. On the admin, run:
+     To be able to perform any LDAP queries, you first need to import the
+     generated LDAP certificate to your local trusted certificate storage. On
+     the &admin_node;, run:
     </para>
     <screen>&prompt.root;<command>docker</command> exec -it $(docker ps | grep openldap | awk '{print $1}') cat /etc/openldap/pki/ca.crt > ~/ca.pem</screen>
-    <screen>&prompt.root;<command>scp</command> ~/ca.pem root@workstation:/usr/share/pki/trust/anchors/ca-caasp.crt.pem</screen>
+    <screen>&prompt.root;<command>scp</command> ~/ca.pem <replaceable>root@workstation</replaceable>:/usr/share/pki/trust/anchors/ca-caasp.crt.pem</screen>
     <para>
-     On your workstation, from where you wish to run the ldap queries, run:
+     Replace <replaceable>root@workstation</replaceable> with the appropriate
+     username and hostname for the workstation where you wish to run the LDAP
+     queries. 
+    </para>
+    <para>
+     Then, on that workstation, run:
     </para>
     <screen>&prompt.root;<command>update-ca-certificates</command></screen>
    </sect3>
