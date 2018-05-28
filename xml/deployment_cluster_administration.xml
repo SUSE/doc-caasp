@@ -86,6 +86,26 @@
      your &admin_node;.
     </para>
    </sect3>
+   
+   <sect3 xml:id="auth.users.import-cert">
+    <title>Importing the LDAP Certificate Locally</title>
+    <para>
+     To be able to perform any LDAP queries, you first need to import the
+     generated LDAP certificate to your local trusted certificate storage. On
+     the &admin_node;, run:
+    </para>
+    <screen>&prompt.root;<command>docker</command> exec -it $(docker ps | grep openldap | awk '{print $1}') cat /etc/openldap/pki/ca.crt > ~/ca.pem</screen>
+    <screen>&prompt.root;<command>scp</command> ~/ca.pem <replaceable>root@workstation</replaceable>:/usr/share/pki/trust/anchors/ca-caasp.crt.pem</screen>
+    <para>
+     Replace <replaceable>root@workstation</replaceable> with the appropriate
+     username and hostname for the workstation where you wish to run the LDAP
+     queries. 
+    </para>
+    <para>
+     Then, on that workstation, run:
+    </para>
+    <screen>&prompt.root;<command>update-ca-certificates</command></screen>
+   </sect3>
 
    <sect3 xml:id="auth.users.add">
     <title>Adding New Users</title>
@@ -485,7 +505,7 @@ roleRef:
 <screen><command>transactional-update</command> <option>reboot ptf remove <replaceable>rpm &hellip; rpm</replaceable></option></screen>
  </sect1>
 
- <sect1 xml:id="commands.node.managment">
+ <sect1 xml:id="commands.node.management">
   <title>Commands for Single Node Management</title>
 
   <para>
@@ -493,7 +513,7 @@ roleRef:
    your &cluster_node;s.
   </para>
 
-  <sect2 xml:id="commands.node.managment.issue-generator">
+  <sect2 xml:id="commands.node.management.issue-generator">
    <title>The <command>issue-generator</command> Command</title>
    <para>
     The <command>issue-generator</command> creates a volatile temporary
@@ -532,7 +552,7 @@ roleRef:
    </note>
   </sect2>
 
-  <sect2 xml:id="commands.node.managment.transactional-update">
+  <sect2 xml:id="commands.node.management.transactional-update">
    <title>The <command>transactional-update</command> Command</title>
    <para>
     The <command>transactional-update</command> enables you to install or
@@ -637,7 +657,7 @@ roleRef:
    </variablelist>
   </sect2>
 
-  <sect2 xml:id="commands.node.managment.create_autoyast_profile">
+  <sect2 xml:id="commands.node.management.create_autoyast_profile">
    <title>The <command>create_autoyast_profile</command> Command</title>
    <para>
     The <command>create_autoyast_profile</command> command creates an autoyast
@@ -698,17 +718,17 @@ roleRef:
    </variablelist>
   </sect2>
  </sect1>
- <sect1 xml:id="node.managment">
-  <title>Node Management</title>
+ <sect1 xml:id="node.management">
+  <title>Adding Nodes</title>
 
   <para>
    After you complete the deployment and you bootstrap the cluster, you may
    need to perform additional changes to the cluster. By using &dashboard; you
-   can add additional nodes to the cluster. You can also delete some nodes, but
-   in that case make sure that you do not break the cluster.
+   can add additional &worker_node;s to your cluster. The following steps
+   guides you through that procedure:
   </para>
 
-  <sect2 xml:id="node.managment.adding">
+  <sect2 xml:id="node.management.adding">
    <title>Adding Nodes</title>
    <para>
     You may need to add additional &worker_node;s to your cluster. The following
@@ -767,7 +787,7 @@ roleRef:
    </procedure>
   </sect2>
 
-  <sect2 xml:id="node.managment.removing">
+  <sect2 xml:id="node.management.removing">
    <title>Removing Nodes</title>
    <para>
     As each node in the cluster runs also an instance of
@@ -784,6 +804,7 @@ roleRef:
    <!-- FIXME cwickert 2018-03-2019: We need to elaborate this for CaaS 3;
         node removal is finally supported. -->
   </sect2>
+
  </sect1>
  <sect1 xml:id="cluster.monitoring">
   <title>Cluster Monitoring</title>
