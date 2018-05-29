@@ -5,13 +5,13 @@
     %entities;
 ]>
 <chapter version="5.0" xml:id="cluster.deployment"
-  xmlns="http://docbook.org/ns/docbook"
-  xmlns:xi="http://www.w3.org/2001/XInclude"
-  xmlns:xlink="http://www.w3.org/1999/xlink">
+ xmlns="http://docbook.org/ns/docbook"
+ xmlns:xi="http://www.w3.org/2001/XInclude"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
  <info>
   <title>&productname; Cluster Deployment</title>
   <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
-   <dm:bugtracker></dm:bugtracker>
+   <dm:bugtracker/>
    <dm:translation>yes</dm:translation>
   </dm:docmanager>
  </info>
@@ -19,6 +19,7 @@
   This chapter gives an overview on how to run through a default installation
   of &productname; for the &amd64;/&intel64; architecture.
  </para>
+ 
  <sect1 xml:id="sec.caasp.installquick">
   <title>Installing &productname;</title>
 
@@ -27,1143 +28,713 @@
    &productnumber; cluster.
   </para>
 
-  <sect2 xml:id="sec.caasp.installquick.sysreqs">
-   <title>System Requirements</title>
-   <para>
-    Before you begin the installation, please make sure your system meets all
-    requirements listed below.
-   </para>
-   <sect3 xml:id="sec.caasp.installquick.hwreqs">
-    <title>Minimum Hardware Requirements</title>
-    <itemizedlist mark="bullet" spacing="normal">
-     <listitem>
-      <para>
-       Any AMD64/Intel* EM64T processor (quad-core processors are recommended).
-       32-bit processors are not supported.
-      </para>
-     </listitem>
-     <listitem>
-      <para>
-       8 GB physical RAM per node.
-      </para>
-     </listitem>
-     <listitem>
-      <para>
-       40 GB available disk space (or more depending on the count and size of
-       container images you intend to run).
-      </para>
-     </listitem>
-    </itemizedlist>
-   </sect3>
-   <sect3 xml:id="sec.caasp.installquick.clusreqs">
-    <title>Cluster Size Requirements</title>
+  <para>
+   There are two ways to build a cluster, one of which has two variants.
+  </para>
+
+  <itemizedlist>
+   <listitem>
     <para>
-     &productname; only functions in a clustered configuration. It  requires a
-     group of physical or virtual machines in order to operate. The minimum
-     supported cluster size is four nodes: one &admin_node;, one &master_node;,
-     and two &worker_node;s.
-     </para>
-     <note>
-      <title>Test and Proof-of-Concept Clusters</title>
-      <para>
-       It is possible to provision a three-node cluster with only a single 
-       &worker_node;, but this is not a supported configuration for deployment.
-      </para>
-      </note>
-   </sect3>
-   <sect3 xml:id="sec.caasp.installquick.netreqs">
-    <title>Network Requirements</title>
-    <itemizedlist mark="bullet" spacing="normal">
-     <listitem>
-      <para>
-       In order to communicate without interruptions, all nodes should be on the
-       same network.
-      </para>
-     </listitem>
-     <listitem>
-      <para>
-       A DHCP server to dynamically provide IP addresses and host names for the
-       nodes in your cluster (unless you configure all nodes statically).
-      </para>
-     </listitem>
-     <listitem>
-      <para>
-       A DNS server to resolve host names. Please make sure you have reliable
-       DNS resolution at all times, especially in combination with DHCP.
-      </para>
-      <important>
-       <title>Unique Host Names</title>
-       <para>
-        Host names must be unique. It is recommended to let the DHCP server
-        provide not only IP addresses but also host names of the cluster nodes.
-       </para>
-      </important>
-     </listitem>
-     <listitem>
-      <para>
-       In a &productname; cluster, internal TCP/IP ports are managed using
-       <literal>iptables</literal> controlled by <literal>Salt</literal>
-       and so need not be manually configured. However, for reference and
-       for environments where there are existing security policies, the 
-       following are the standard ports in use.
-      </para>
-      <table xml:id="sec.caasp.installquick.ports">
-       <title>Node types and open ports</title>
-       <tgroup cols="6">
-        <thead>
-         <row>
-          <entry>
-           <para>
-            Node
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Port
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Internal / External
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Open after orchestration
-           </para>
-          </entry>
-          <entry>
-           <para>Description
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Notes
-           </para>
-          </entry>
-         </row>
-        </thead>
-        <tbody>
-         <row>
-          <entry>
-           <para>
-            All nodes
-           </para>
-          </entry>
-          <entry>
-           <para>
-            22
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Internal
-           </para>
-          </entry>
-          <entry>
-           <para>
-            No
-           </para>
-          </entry>
-          <entry>
-           <para>
-            ssh
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Useful but not essential
-           </para>
-          </entry>
-         </row>
-         <row>
-          <entry morerows="4" valign="middle">
-           <para>
-            Admin
-           </para>
-          </entry>
-          <entry>
-           <para>
-            80
-           </para>
-          </entry>
-          <entry>
-           <para>
-            External
-           </para>
-          </entry>
-          <entry>
-           <para>
-            No
-           </para>
-          </entry>
-          <entry>
-           <para>
-            HTTP
-           </para>
-          </entry>
-          <entry/>
-         </row>
-         <row>
-          <entry>
-           <para>
-            389
-           </para>
-          </entry>
-          <entry>
-           <para>
-            External
-           </para>
-          </entry>
-          <entry>
-           <para>
-            No
-           </para>
-          </entry>
-          <entry>
-           <para>
-            LDAP
-           </para>
-          </entry>
-          <entry>
-           <para>
-            User management
-           </para>
-          </entry>
-         </row>
-         <row>
-          <entry>
-           <para>
-            443
-           </para>
-          </entry>
-          <entry>
-           <para>
-            External
-           </para>
-          </entry>
-          <entry>
-           <para>
-            No
-           </para>
-          </entry>
-          <entry>
-           <para>
-            HTTPS
-           </para>
-          </entry>
-          <entry/>
-         </row>
-         <row>
-          <entry>
-           <para>
-            2379
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Internal
-           </para>
-          </entry>
-          <entry>
-           <para>
-            No
-           </para>
-          </entry>
-          <entry>
-           <para>
-            <literal>etcd</literal> discovery
-           </para>
-          </entry>
-          <entry/>
-         </row>
-         <row>
-          <entry>
-           <para>
-            4505 - 4506
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Internal
-           </para>
-          </entry>
-          <entry>
-           <para>
-            No
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Salt
-           </para>
-          </entry>
-          <entry/>
-         </row>
-         <row>
-          <entry morerows="2" valign="middle">
-           <para>
-            Masters
-           </para>
-          </entry>
-          <entry>
-           <para>
-            2380
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Internal
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Yes
-           </para>
-          </entry>
-          <entry>
-           <para>
-            <literal>etcd</literal> control
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Peer-to-peer <literal>etcd</literal> traffic
-           </para>
-          </entry>
-         </row>
-         <row>
-          <entry>
-           <para>
-            4789
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Internal
-           </para>
-          </entry>
-          <entry>
-           <para>
-            No
-           </para>
-          </entry>
-          <entry>
-           <para>
-            VXLAN traffic
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Used by Flannel
-           </para>
-          </entry>
-         </row>
-         <row>
-          <entry>
-           <para>
-            6443
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Both
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Yes
-           </para>
-          </entry>
-          <entry>
-           <para>
-            &kube; API server
-           </para>
-          </entry>
-          <entry/>
-         </row>
-         <row>
-          <entry morerows="2" valign="middle">
-           <para>
-            Workers
-           </para>
-          </entry>
-          <entry>
-           <para>
-            2380
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Internal
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Yes
-           </para>
-          </entry>
-          <entry>
-           <para>
-            <literal>etcd</literal> control
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Peer-to-peer <literal>etcd</literal> traffic
-           </para>
-          </entry>
-         </row>
-         <row>
-          <entry>
-           <para>
-            4789
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Internal
-           </para>
-          </entry>
-          <entry>
-           <para>
-            No
-           </para>
-          </entry>
-          <entry>
-           <para>
-            VXLAN traffic
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Used by Flannel
-           </para>
-          </entry>
-         </row>
-         <row>
-          <entry>
-           <para>
-            10250
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Internal
-           </para>
-          </entry>
-          <entry>
-           <para>
-            No
-           </para>
-          </entry>
-          <entry>
-           <para>
-            Kubelet
-           </para>
-          </entry>
-          <entry/>
-         </row>
-        </tbody>
-       </tgroup>
-      </table>
-     </listitem>
-    </itemizedlist>
-    <para>
-     When some additional ingress mechanism is used, additional ports 
-     would also be open.
+     Installing nodes from installation media (for virtual machines, directly
+     from ISO images, or physical media for bare-metal installations).
     </para>
-   </sect3>
-   <sect3 xml:id="sec.caasp.installquick.limits">
-    <title>Limitations</title>
-    <itemizedlist mark="bullet" spacing="normal">
+    <warning>
+     <title>&Admin_Node;</title>
+     <para>
+      You must install the &admin_node; first and configure it using
+      &dashboard; before installing the other nodes in the cluster.
+     </para>
+    </warning>
+    <para>
+     With this method, there are two ways to install the worker nodes:
+    </para>
+    <itemizedlist>
      <listitem>
-<!-- cwickert 2017-04-06: FIXME - check if still applies
-       https://bugzilla.suse.com/show_bug.cgi?id=1029317 
-       jahalackova: that's still valid for 1.0.
-       -->
       <para>
-       &productname; &productnumber; does not support remote installations with
-       <literal>Virtual Network Computing (VNC)</literal>.
+       Individually, choosing the node type during installation. This is only
+       feasible for a small number of workers.
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       Installing the worker nodes using &ay; so that they receive their
+       configuration automatically from the &admin_node;. This is the
+       recommended method for larger clusters, but it is equally suitable for
+       small clusters.
       </para>
      </listitem>
     </itemizedlist>
-   </sect3>
-  </sect2>
+    <para>
+     With both methods, the procedure to install the &admin_node; is identical.
+     Only installation process for the &worker_node;s differs.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     Using preinstalled virtual disk images. &suse; offers
+     <literal>QCOW2</literal> images for clusters hosted on KVM or &xen;
+     hypervisors.
+    </para>
+   </listitem>
+  </itemizedlist>
 
-  <sect2 xml:id="sec.caasp.installquick.admin">
-   <title>Installing the Administration Node</title>
+  <note>
    <para>
-    Use these instructions if there is no existing Linux system on your
-    machine, or if you want to replace an existing Linux system.
-   </para>
-   <procedure xml:id="pro.caasp.installquick.admin">
-    <step>
-     <para>
-      Insert the &productname; DVD into the drive, then reboot the computer to
-      start the installation program. On machines with a traditional BIOS you
-      will see the graphical boot screen shown below. On machines equipped with
-      UEFI, a slightly different boot screen is used. Secure boot on UEFI
-      machines is supported.
-     </para>
-     <para>
-      Use <keycap>F2</keycap> to change the language for the installer. A
-      corresponding keyboard layout is chosen automatically. See
-      <link xlink:href="https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_startup.html"/>
-      for more information about changing boot options.
-     </para>
-     <informalfigure>
-      <mediaobject>
-       <imageobject role="fo">
-        <imagedata fileref="install_boot.png" width="100%"/>
-       </imageobject>
-       <imageobject role="html">
-        <imagedata fileref="install_boot.png" width="100%"/>
-       </imageobject>
-      </mediaobject>
-     </informalfigure>
-    </step>
-    <step>
-     <para>
-      Select <guimenu>Installation</guimenu> on the boot screen, then press
-      <keycap function="enter"/>. This boots the system and loads the
-      &productname; installer.
-     </para>
-    </step>
-    <step>
-<!-- <para>
-      Read the License Agreement. It is presented in the language you have
-      chosen on the boot screen. <guimenu>License Translations</guimenu> are
-      available. You need to accept the agreement by checking <guimenu>I Agree
-      to the License Terms</guimenu> to install &productname;. Proceed with
-      <guimenu>Next</guimenu>.
-      </para>  -->
-     <para>
-      Configure the following mandatory settings on the <guimenu>Installation
-      Overview</guimenu> screen.
-     </para>
-     <note>
-      <title>Help and Release Notes</title>
-      <para>
-       From this point on, a brief help document and the Release Notes can be
-       viewed from any screen during the installation process by selecting
-       <guimenu>Help</guimenu> or <guimenu>Release Notes</guimenu>
-       respectively.
-      </para>
-     </note>
-     <variablelist>
-      <varlistentry>
-       <term>
-        Keyboard Layout
-       </term>
-       <listitem>
-        <para>
-         The <guimenu>Keyboard Layout</guimenu> is initialized with the
-         language settings you have chosen on the boot screen. Change it here,
-         if necessary.
-        </para>
-       </listitem>
-      </varlistentry>
-      <varlistentry>
-       <term>
-        Password for root User
-       </term>
-       <listitem>
-        <para>
-         Type a password for the system administrator account (called the
-         &rootuser; user) and confirm it.
-        </para>
-        <warning>
-         <title>Do not forget the &rootuser; Password</title>
-         <para>
-          You should never forget the &rootuser; password! After you entered it
-          here, the password cannot be retrieved. For more information, see
-          <link xlink:href="https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_user_root.html"/>.
-         </para>
-        </warning>
-       </listitem>
-      </varlistentry>
-      <varlistentry>
-       <term>
-        Registration Code or SMT Server URL
-       </term>
-       <listitem>
-        <para>
-         Enter the <guimenu>Registration Code or SMT Server URL</guimenu>. SMT
-         Server URLs must use <literal>https</literal> or <literal>http</literal>;
-         other protocols are not supported.
-        </para>
-       </listitem>
-      </varlistentry>
-      <varlistentry>
-       <term>
-        System Role
-       </term>
-       <listitem>
-        <para>
-         Select the <guimenu>System Role</guimenu> for your system.
-        </para>
-        <variablelist>
-         <varlistentry>
-          <term>
-           Administration Node (Dashboard)
-          </term>
-          <listitem>
-           <para>
-            The &admin_node; providing the administration dashboard for the
-            cluster.
-           </para>
-          </listitem>
-         </varlistentry>
-         <varlistentry>
-          <term>
-           Cluster Node
-          </term>
-          <listitem>
-           <para>
-            A cluster node running containers or the container orchestration
-            framework.
-           </para>
-          </listitem>
-         </varlistentry>
-         <varlistentry>
-          <term>
-           Plain System
-          </term>
-          <listitem>
-           <para>
-            A plain node that can be used for testing and debugging purposes in
-            your cluster, but it is not usually needed.
-           </para>
-          </listitem>
-         </varlistentry>
-        </variablelist>
-       </listitem>
-      </varlistentry>
-      <varlistentry>
-       <term>
-        NTP Servers
-       </term>
-       <listitem>
-        <para>
-         Enter host names or IP addresses of one or more <guimenu>NTP
-         Servers</guimenu> for the node, separated by white spaces or colons.
-         While a single server is sufficient, nodes should use at least three
-         for optimal precision and reliability.
-        </para>
-        <para>
-         For more information about <literal>NTP</literal>, refer to
-         <link xlink:href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_netz_xntp.html"/>
-        </para>
-       </listitem>
-      </varlistentry>
-     </variablelist>
-     <informalfigure>
-      <mediaobject>
-       <imageobject role="fo">
-        <imagedata fileref="install_overview_admin.png" width="100%"/>
-       </imageobject>
-       <imageobject role="html">
-        <imagedata fileref="install_overview_admin.png" width="100%"/>
-       </imageobject>
-      </mediaobject>
-     </informalfigure>
-     <para>
-      Optionally, you can customize the following settings. If you do not make
-      any changes, defaults are used. A brief summary of the settings is
-      displayed below the respective settings option.
-     </para>
-     <variablelist>
-      <varlistentry>
-       <term>
-        Partitioning
-       </term>
-       <listitem>
-        <para>
-         Review the partition setup proposed by the system and change it if
-         necessary. You have the following options:
-        </para>
-        <variablelist>
-         <varlistentry>
-          <term>
-           Select a hard disk
-          </term>
-          <listitem>
-           <para>
-            Select a disk to which install &productname; to with the
-            recommended partitioning scheme.
-           </para>
-          </listitem>
-         </varlistentry>
-         <varlistentry>
-          <term><guimenu>Custom Partitioning (for Experts)</guimenu>
-          </term>
-          <listitem>
-           <para>
-            Opens the <guimenu>Expert Partitioner</guimenu> described in
-            <link xlink:href="https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_yast2_i_y2_part_expert.html"/>
-            .
-           </para>
-           <warning>
-            <title>For Experts only</title>
-            <para>
-             As the name suggests, the <guimenu>Expert Partitioner</guimenu> is
-             for experts only. Custom partitioning schemes that do not meet the
-             requirements of &productname; are not supported.
-            </para>
-            <itemizedlist>
-             <title>Requirements for custom partitioning schemes</title>
-             <listitem>
-              <para>
-               &productname; exclusively supports the file system types &btrfs;
-               and OverlayFS. A read-only &btrfs; file system is used for the
-               root file system which enables transactional updates.
-              </para>
-             </listitem>
-             <listitem>
-              <para>
-               For snapshots, partitions must have a capacity of at least 11
-               GB.
-              </para>
-             </listitem>
-             <listitem>
-              <para>
-               Depending on the number and size of your containers, you will
-               need sufficient space under the <literal>/var</literal> mount
-               point.
-              </para>
-             </listitem>
-            </itemizedlist>
-           </warning>
-          </listitem>
-         </varlistentry>
-        </variablelist>
-        <para>
-         To accept the proposed setup without any changes, choose
-         <guimenu>Next</guimenu> to proceed.
-        </para>
-       </listitem>
-      </varlistentry>
-      <varlistentry>
-       <term>
-        Booting
-       </term>
-       <listitem>
-        <para>
-         This section shows the boot loader configuration. Changing the
-         defaults is only recommended if really needed. Refer to
-         <link xlink:href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_grub2.html"/>
-         for details.
-        </para>
-       </listitem>
-      </varlistentry>
-      <varlistentry>
-       <term>
-        Network Configuration
-       </term>
-       <listitem>
-        <para>
-         If the network could not be configured automatically while starting
-         the installation system, you have to manually configure the
-         <guimenu>Network Settings</guimenu>. Please make sure at least one
-         network interface is connected to the Internet in order to register
-         your product.
-        </para>
-        <para>
-         By default, the installer requests a host name from the DHCP server.
-         If you set a custom name in the <guimenu>Hostname/DNS</guimenu> tab,
-         make sure the it is unique.
-        </para>
-        <para>
-         For more information on configuring network connections, refer to
-         <link xlink:href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/sec_basicnet_yast.html"/>
-         .
-        </para>
-        <important>
-         <title>Reliable Networking</title>
-         <para>
-          Please make sure all nodes are on the same network and can
-          communicate without interruptions. If you are using host names to
-          specify nodes, please make sure you have reliable DNS resolution at
-          all times, especially in combination with DHCP.
-         </para>
-        </important>
-       </listitem>
-      </varlistentry>
-      <varlistentry>
-       <term>
-        Kdump
-       </term>
-       <listitem>
-        <para>
-         Kdump saves the memory image (<quote>core dump</quote>) to the file
-         system in case the kernel crashes. This enables you to find the cause
-         of the crash by debugging the dump file. See
-         <link xlink:href="https://www.suse.com/documentation/sles-12/book_sle_tuning/data/cha_tuning_kdump_basic.html"/>
-         for more information.
-        </para>
-        <warning>
-         <title>Kdump with large amounts of RAM</title>
-         <para>
-          If you have a system with large amounts of RAM or a small hard drive,
-          core dumps may not be able to fit on the disk. If the installer warns
-          you about this, there are two options:
-         </para>
-         <orderedlist>
-          <listitem>
-           <para>
-            Enter the <guimenu>Expert Partitioner</guimenu> and increase the
-            size of the root partition so that it can accommodate the size of
-            the core dump. In this case, you will need to decrease the size of
-            the data partition accordingly. Remember to keep all other
-            parameters of the partitioning (e.g. the root file system, mount
-            point of data partition) when doing these changes.
-           </para>
-          </listitem>
-          <listitem>
-           <para>
-            Disable kdump completely.
-           </para>
-          </listitem>
-         </orderedlist>
-        </warning>
-       </listitem>
-      </varlistentry>
-      <varlistentry>
-       <term>
-        System Information
-       </term>
-       <listitem>
-        <para>
-         View detailed hardware information by clicking <guimenu>System
-         Information</guimenu>. In this screen you can also change
-         <guimenu>Kernel Settings</guimenu>. See
-         <link xlink:href="https://www.suse.com/documentation/sles-12/book_sle_tuning/data/cha_tuning_io.html"/>
-         for more information.
-        </para>
-       </listitem>
-      </varlistentry>
-     </variablelist>
-     <para>
-      Proceed with <guimenu>Next</guimenu>.
-     </para>
-     <tip>
-      <title>Installing Product Patches at Installation Time</title>
-      <para>
-       If &productname; has been successfully registered at the &scc;, you are
-       asked whether to install the latest available online updates during the
-       installation. If choosing <guimenu>Yes</guimenu>, the system will be
-       installed with the most current packages without having to apply the
-       updates after installation. Activating this option is recommended.
-      </para>
-     </tip>
-    </step>
-    <step>
-     <para>
-      After you have finalized the system configuration on the
-      <guimenu>Installation Overview</guimenu> screen, click
-      <guimenu>Install</guimenu>. Up to this point no changes have been made to
-      your system. After you click <guimenu>Install</guimenu> a second time,
-      the installation process starts.
-     </para>
-     <informalfigure>
-      <mediaobject>
-       <imageobject role="fo">
-        <imagedata fileref="install_confirm.png" width="100%"/>
-       </imageobject>
-       <imageobject role="html">
-        <imagedata fileref="install_confirm.png" width="100%"/>
-       </imageobject>
-      </mediaobject>
-     </informalfigure>
-    </step>
-    <step>
-     <para>
-      During the installation, the progress is shown in detail on the
-      <guimenu>Details</guimenu> tab.
-     </para>
-     <informalfigure>
-      <mediaobject>
-       <imageobject role="fo">
-        <imagedata fileref="install_perform.png" width="100%"/>
-       </imageobject>
-       <imageobject role="html">
-        <imagedata fileref="install_perform.png" width="100%"/>
-       </imageobject>
-      </mediaobject>
-     </informalfigure>
-    </step>
-    <step>
-     <para>
-      After the installation routine has finished, the computer is rebooted
-      into the installed system.
-     </para>
-    </step>
-   </procedure>
-  </sect2>
-
-  <sect2 xml:id="sec.caasp.installquick.conf">
-   <title>Initial Cluster Configuration</title>
-   <para>
-    In order to finalize the configuration of the &admin_node;, a few
-    additional steps are required.
-   </para>
-   <procedure xml:id="pro.caasp.installquick.conf">
-    <step>
-     <para>
-      After the &admin_node; has finished booting and you see the login prompt,
-      point a web browser to
-      <uri>https://<replaceable>caasp-admin.&exampledomain;</replaceable>
-      </uri>
-      , where <literal>caasp-admin.&exampledomain;</literal> is the host name or
-      IP address of the &admin_node;. The IP address is shown above the login
-      prompt.
-     </para>
-<!-- cwickert 2017-07-23 TODO: We don't really need this image, do we? -->
-<!-- <informalfigure>
-      <mediaobject>
-       <imageobject role="fo">
-        <imagedata fileref="velum_login.png" width="100%"/>
-       </imageobject>
-       <imageobject role="html">
-        <imagedata fileref="velum_login.png" width="100%"/>
-       </imageobject>
-      </mediaobject>
-      </informalfigure> -->
-    </step>
-    <step>
-     <para>
-      To create an Administrator account, click <guimenu>Create an
-      account</guimenu> and provide an e-mail address and a password. Confirm
-      the password and click <guimenu>Create Admin</guimenu>. You will be
-      logged into the dashboard automatically.
-     </para>
-     <informalfigure>
-      <mediaobject>
-       <imageobject role="fo">
-        <imagedata fileref="velum_register.png" width="100%"/>
-       </imageobject>
-       <imageobject role="html">
-        <imagedata fileref="velum_register.png" width="100%"/>
-       </imageobject>
-      </mediaobject>
-     </informalfigure>
-    </step>
-    <step>
-     <para>
-      Fill in the values for <guimenu>Dashboard Location</guimenu> and
-      <guimenu>External Kubernetes API server FQDN</guimenu>. If necessary,
-      configure the <guimenu>Proxy Settings</guimenu>.
-     </para>
-     <variablelist>
-      <varlistentry>
-       <term>Dashboard Location</term>
-       <listitem>
-        <para>
-         Host name or IP of the node running this web interface.
-        </para>
-       </listitem>
-      </varlistentry>
-      <varlistentry>
-       <term>External Kubernetes API server FQDN</term>
-       <listitem>
-        <para>
-         Fully qualified domain name (FQDN) used to reach the cluster from the
-         outside. In a simple, single-master deployment this will be the FQDN
-         of the node you are about to select as master.
-        </para>
-       </listitem>
-      </varlistentry>
-<!-- cwickert 2017-07-23 TODO: Another varlist for the individual settings? -->
-      <varlistentry>
-       <term>Install Tiller (Helm's Server Component)</term>
-       <listitem>
-        <para>
-         If you intend to deploy &scf; on &productname;, or any other 
-         software that is installed with &helm; (the &kube; package manager), 
-         check the box to install &tiller;. 
-         (See <xref linkend="installing.helm"/>.)
-        </para>
-       </listitem>
-      </varlistentry>
-      <varlistentry>
-       <term>Proxy Settings</term>
-       <listitem>
-        <para>
-         If enabled, you can set proxy servers for <literal>HTTP</literal> and
-         <literal>HTTPS</literal>. You may also configure exceptions and choose
-         whether to apply the settings only to the container engine or to all
-         processes running on the cluster nodes.
-        </para>
-       </listitem>
-      </varlistentry>
-     </variablelist>
-     <informalfigure>
-      <mediaobject>
-       <imageobject role="fo">
-        <imagedata fileref="velum_install_tiller.png" width="100%"/>
-       </imageobject>
-       <imageobject role="html">
-        <imagedata fileref="velum_install_tiller.png" width="100%"/>
-       </imageobject>
-      </mediaobject>
-     </informalfigure>
-     <para>
-      Click <guimenu>Next</guimenu> to proceed and install some cluster nodes
-      as described in <xref linkend="sec.caasp.installquick.node"/>.
-     </para>
-    </step>
-   </procedure>
-  </sect2>
-
-  <sect2 xml:id="sec.caasp.installquick.node">
-   <title>Installing Cluster Nodes</title>
-   <para>
-    Cluster nodes can be installed manually or with &ay;. Manual installation
-    is only feasible for a small number of workers. For larger numbers, &ay; is
-    recommended.
-   </para>
-   <para>
-    You can start the setup via PXE. For the full procedure, refer to the &sle;
-    12 Deployment Guide:
-    <link xlink:href=
-    "https://www.suse.com/documentation/sles-12/singlehtml/book_sle_deployment/book_sle_deployment.html#cha.deployment.prep_boot"
+    It is possible to start setup using PXE. For the full procedure, refer to
+    the &sle; 12 Deployment Guide:
+    <link
+     xlink:href="https://www.suse.com/documentation/sles-12/singlehtml/book_sle_deployment/book_sle_deployment.html#cha.deployment.prep_boot"
     />.
    </para>
    <para>
     You can directly use the <literal>initrd</literal> and
     <literal>linux</literal> files from your install media, or install the
-    package <package>tftpboot-installation-CAASP-2.0-x86_64</package> on the
-    TFTP server. The package provides the required <literal>initrd</literal> and
+    package <package>tftpboot-installation-CAASP-3.0</package> onto your TFTP
+    server. The package provides the required <literal>initrd</literal> and
     <literal>linux</literal> files in the <filename>/srv/tftpboot/</filename>
-    directory. You need to modify the paths used in the &sle; 12 Deployment
-    Guide to correctly point to the files provided by the package.
+    directory. You will need to modify the paths used in the &sle; 12
+    Deployment Guide to correctly point to the files provided by the package.
    </para>
-   <para>
-    Before you can set up a cluster node, you have to install and bootstrap an
-    &admin_node; to run the administration dashboard. Refer to
-    <xref linkend="sec.caasp.installquick.admin"/> for information on how to
-    install the &admin_node;.
-   </para>
-   <sect3 xml:id="sec.caasp.installquick.node.manual">
-    <title>Manual Installation</title>
-    <procedure xml:id="pro.caasp.installquick.node.manual">
+<!-- Check package name for CaaSP 3 (LGHP, 2018-05-18) -->
+  </note>
+
+  <sect2>
+   <title>Installation from ISO images or media</title>
+   <sect3 xml:id="sec.caasp.installquick.admin">
+    <title>Installing the &Admin_Node;</title>
+    <para>
+     The procedure for installing the &admin_node; is identical whether or not
+     you use &ay; for the rest of the cluster.
+    </para>
+    <procedure xml:id="pro.caasp.installquick.admin">
      <step>
       <para>
-       Follow the steps as described in
-       <xref linkend="sec.caasp.installquick.admin"/>
+       Connect or insert the &productname; installation media, then reboot the
+       computer to start the installation program. On machines with a
+       traditional BIOS, you will see the graphical boot screen shown below.
+       The boot screen on machines equipped with UEFI is slightly different.
       </para>
+      <para>
+       SecureBoot on UEFI machines is supported.
+      </para>
+      <para>
+       Use <keycap>F2</keycap> to change the language for the installer. A
+       corresponding keyboard layout is chosen automatically. See
+       <link
+        xlink:href="https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_startup.html"
+       />
+       for more information about changing boot options.
+      </para>
+      <informalfigure>
+       <mediaobject>
+        <imageobject role="fo">
+         <imagedata fileref="install_boot.png" width="100%"/>
+        </imageobject>
+        <imageobject role="html">
+         <imagedata fileref="install_boot.png" width="100%"/>
+        </imageobject>
+       </mediaobject>
+      </informalfigure>
      </step>
      <step>
       <para>
-       In step 3, select <literal>Cluster Node</literal> as <guimenu>System
-       Role</guimenu> and enter the host name or IP address of the
-       <guimenu>Administration Node</guimenu>.
+       Select <guimenu>Installation</guimenu> on the boot screen, then press
+       <keycap
+        function="enter"
+       />. This boots the system and
+       loads the &productname; installer.
       </para>
-      <important>
-       <title>Reliable Networking</title>
+     </step>
+     <step>
+<!-- <para>
+        Read the License Agreement. It is presented in the language you have
+        chosen on the boot screen. <guimenu>License Translations</guimenu> are
+        available. You need to accept the agreement by checking <guimenu>I Agree
+        to the License Terms</guimenu> to install &productname;. Proceed with
+        <guimenu>Next</guimenu>.
+        </para>  -->
+      <para>
+       Configure the following mandatory settings on the <guimenu>Installation
+       Overview</guimenu> screen.
+      </para>
+      <note>
+       <title>Help and Release Notes</title>
        <para>
-        Please make sure all nodes are on the same network and can communicate
-        without interruptions. If you are using host names to specify nodes,
-        please make sure you have reliable DNS resolution at all times,
-        especially in combination with DHCP.
+        From this point on, a brief help document and the Release Notes can be
+        viewed from any screen during the installation process by selecting
+        <guimenu>Help</guimenu> or <guimenu>Release Notes</guimenu>
+        respectively.
        </para>
-      </important>
+      </note>
+      <variablelist>
+       <varlistentry>
+        <term> Keyboard Layout </term>
+        <listitem>
+         <para>
+          The <guimenu>Keyboard Layout</guimenu> is initialized with the
+          language settings you have chosen on the boot screen. Change it here,
+          if necessary.
+         </para>
+        </listitem>
+       </varlistentry>
+       <varlistentry>
+        <term> Password for &rootuser;
+        </term>
+        <listitem>
+         <para>
+          Type a password for the system administrator account (called the
+          &rootuser; user) and confirm it.
+         </para>
+         <warning>
+          <title>Do not forget the &rootuser; Password</title>
+          <para>
+           You must not lose the &rootuser; password! After you enter it here,
+           the password cannot be retrieved. For more information, see
+           <link
+            xlink:href="https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_user_root.html"
+           />.
+          </para>
+         </warning>
+        </listitem>
+       </varlistentry>
+       <varlistentry>
+        <term> Registration Code or SMT Server URL </term>
+        <listitem>
+         <para>
+          Enter the <guimenu>Registration Code or SMT Server URL</guimenu>. SMT
+          Server URLs must use <literal>https</literal> or
+          <literal>http</literal>; other protocols are not supported.
+         </para>
+        </listitem>
+       </varlistentry>
+       <varlistentry>
+        <term> System Role </term>
+        <listitem>
+         <para>
+          From the <guimenu>System Role</guimenu> menu, choose <guimenu>
+          Administration Node (Dashboard)</guimenu>.
+         </para>
+        </listitem>
+       </varlistentry>
+       <varlistentry>
+        <term> NTP Servers </term>
+        <listitem>
+         <para>
+          Enter the host names or IP addresses of one or more <guimenu>NTP
+          Servers</guimenu> for the node, separated by colons or white space. A
+          single time server is sufficient, but for optimal precision and
+          reliability, nodes should use at least three.
+         </para>
+         <para>
+          For more information about <literal>NTP</literal>, refer to
+          <link
+           xlink:href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_netz_xntp.html"
+          />
+         </para>
+        </listitem>
+       </varlistentry>
+      </variablelist>
+      <informalfigure>
+       <mediaobject>
+        <imageobject role="fo">
+         <imagedata fileref="install_overview_admin.png" width="100%"/>
+        </imageobject>
+        <imageobject role="html">
+         <imagedata fileref="install_overview_admin.png" width="100%"/>
+        </imageobject>
+       </mediaobject>
+      </informalfigure>
+      <para>
+       Optionally, you can customize the following settings. If you do not make
+       any changes, defaults are used. A brief summary of the settings is
+       displayed below the respective settings option.
+      </para>
+      <variablelist>
+       <varlistentry>
+        <term> Partitioning </term>
+        <listitem>
+         <para>
+          Review the partition setup proposed by the system and change it if
+          necessary. You have the following options:
+         </para>
+         <variablelist>
+          <varlistentry>
+           <term> Select a hard disk </term>
+           <listitem>
+            <para>
+             Select a disk on to which to install &productname; with the
+             recommended partitioning scheme.
+            </para>
+           </listitem>
+          </varlistentry>
+          <varlistentry>
+           <term><guimenu>Custom Partitioning (for Experts)</guimenu>
+           </term>
+           <listitem>
+            <para>
+             Opens the <guimenu>Expert Partitioner</guimenu> described in
+             <link
+              xlink:href="https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_yast2_i_y2_part_expert.html"
+             />.
+            </para>
+            <warning>
+             <title>For Experts only</title>
+             <para>
+              As the name suggests, the <guimenu>Expert Partitioner</guimenu>
+              is for experts only. Custom partitioning schemes that do not meet
+              the requirements of &productname; are not supported.
+             </para>
+             <itemizedlist>
+              <title>Requirements for custom partitioning schemes</title>
+              <listitem>
+               <para>
+                &productname; only supports the &btrfs; file system with
+                OverlayFS. A read-only &btrfs; file system is used for the root
+                file system, which enables transactional updates.
+               </para>
+              </listitem>
+              <listitem>
+               <para>
+                For snapshots, partitions must have a capacity of at least 11
+                GB.
+               </para>
+              </listitem>
+              <listitem>
+               <para>
+                Depending on the number and size of your containers, you will
+                need sufficient space under the <literal>/var</literal> mount
+                point.
+               </para>
+              </listitem>
+             </itemizedlist>
+            </warning>
+           </listitem>
+          </varlistentry>
+         </variablelist>
+         <para>
+          To accept the proposed setup without any changes, choose
+          <guimenu>Next</guimenu> to proceed.
+         </para>
+        </listitem>
+       </varlistentry>
+       <varlistentry>
+        <term> Booting </term>
+        <listitem>
+         <para>
+          This section shows the boot loader configuration. Changing the
+          defaults is only recommended if really needed. For details, refer to
+          <link
+           xlink:href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_grub2.html"
+          />.
+         </para>
+        </listitem>
+       </varlistentry>
+       <varlistentry>
+        <term> Network Configuration </term>
+        <listitem>
+         <para>
+          If the network could not be configured automatically while starting
+          the installation system, you must manually configure the
+          <guimenu>Network Settings</guimenu>. Please make sure at least one
+          network interface is connected to the Internet in order to register
+          your product.
+         </para>
+         <para>
+          By default, the installer requests a host name from the DHCP server.
+          If you set a custom name in the <guimenu>Hostname/DNS</guimenu> tab,
+          make sure that it is unique.
+         </para>
+         <para>
+          For more information on configuring network connections, refer to
+          <link
+           xlink:href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/sec_basicnet_yast.html"
+          />
+          .
+         </para>
+        </listitem>
+       </varlistentry>
+       <varlistentry>
+        <term> Kdump </term>
+        <listitem>
+         <para>
+          Kdump saves the memory image (<quote>core dump</quote>) to the file
+          system in case the kernel crashes. This enables you to find the cause
+          of the crash by debugging the dump file. See
+          <link
+           xlink:href="https://www.suse.com/documentation/sles-12/book_sle_tuning/data/cha_tuning_kdump_basic.html"
+          />
+          for more information.
+         </para>
+         <warning>
+          <title>Kdump with large amounts of RAM</title>
+          <para>
+           If you have a system with large amounts of RAM or a small hard
+           drive, core dumps may not be able to fit on the disk. If the
+           installer warns you about this, there are two options:
+          </para>
+          <orderedlist>
+           <listitem>
+            <para>
+             Enter the <guimenu>Expert Partitioner</guimenu> and increase the
+             size of the root partition so that it can accommodate the size of
+             the core dump. In this case, you will need to decrease the size of
+             the data partition accordingly. Remember to keep all other
+             parameters of the partitioning (e.g. the root file system, mount
+             point of data partition) when doing these changes.
+            </para>
+           </listitem>
+           <listitem>
+            <para>
+             Disable kdump completely.
+            </para>
+           </listitem>
+          </orderedlist>
+         </warning>
+        </listitem>
+       </varlistentry>
+       <varlistentry>
+        <term> System Information </term>
+        <listitem>
+         <para>
+          View detailed hardware information by clicking <guimenu>System
+          Information</guimenu>. In this screen you can also change
+          <guimenu>Kernel Settings</guimenu>. See
+          <link
+           xlink:href="https://www.suse.com/documentation/sles-12/book_sle_tuning/data/cha_tuning_io.html"
+          />
+          for more information.
+         </para>
+        </listitem>
+       </varlistentry>
+      </variablelist>
+      <para>
+       Proceed with <guimenu>Next</guimenu>.
+      </para>
+      <tip>
+       <title>Installing Product Patches at Installation Time</title>
+       <para>
+        If &productname; has been successfully registered at the &scc;, you are
+        asked whether to install the latest available online updates during the
+        installation. If you choose <guimenu>Yes</guimenu>, the system will be
+        installed with the most current packages without having to apply the
+        updates after installation. Activating this option is recommended.
+       </para>
+      </tip>
      </step>
      <step>
       <para>
        After you have finalized the system configuration on the
        <guimenu>Installation Overview</guimenu> screen, click
        <guimenu>Install</guimenu>. Up to this point no changes have been made
-       to your system. After you click <guimenu>Install</guimenu> a second
-       time, the installation process starts.
+       to your system.
       </para>
       <para>
-       After a reboot, the worker should show up in the dashboard and can be
-       added to your cluster.
+       Click <guimenu>Install</guimenu> a second time to start the installation
+       process.
+      </para>
+      <informalfigure>
+       <mediaobject>
+        <imageobject role="fo">
+         <imagedata fileref="install_confirm.png" width="100%"/>
+        </imageobject>
+        <imageobject role="html">
+         <imagedata fileref="install_confirm.png" width="100%"/>
+        </imageobject>
+       </mediaobject>
+      </informalfigure>
+     </step>
+     <step>
+      <para>
+       During the installation, the progress is shown in detail on the
+       <guimenu>Details</guimenu> tab.
+      </para>
+      <informalfigure>
+       <mediaobject>
+        <imageobject role="fo">
+         <imagedata fileref="install_perform.png" width="100%"/>
+        </imageobject>
+        <imageobject role="html">
+         <imagedata fileref="install_perform.png" width="100%"/>
+        </imageobject>
+       </mediaobject>
+      </informalfigure>
+     </step>
+     <step>
+      <para>
+       After the installation routine has finished, the computer will reboot
+       into the installed system.
       </para>
      </step>
     </procedure>
    </sect3>
-   <sect3 xml:id="sec.caasp.installquick.node.ay">
-    <title>Installation with &ay;</title>
+   <sect3 xml:id="sec.caasp.installquick.conf">
+    <title>&Admin_Node; Configuration</title>
     <para>
-     Please make sure you have finished the initial configuration described in
-     <xref linkend="sec.caasp.installquick.conf"/> before installing cluster
-     nodes with &ay;.
+     Before installing the other nodes, it is necessary to configure the
+     &admin_node;.
     </para>
-    <procedure xml:id="pro.caasp.installquick.node.ay">
+    <procedure xml:id="pro.caasp.installquick.conf">
      <step>
       <para>
-       Insert the &productname; DVD into the drive, then reboot the computer to
-       start the installation program.
+       After the &admin_node; has finished booting and you see the login
+       prompt, point a web browser to:
       </para>
+      <para>
+       <uri>https://<replaceable>caasp-admin.&exampledomain;</replaceable>
+       </uri>
+      </para>
+      <para>
+       ... where <literal>caasp-admin.&exampledomain;</literal> is the host
+       name or IP address of the &admin_node;. The host name and IP address are
+       both shown on the &admin_node; console, above the login prompt.
+      </para>
+<!-- cwickert 2017-07-23 TODO: We don't really need this image, do we? -->
+<!-- <informalfigure>
+       <mediaobject>
+       <imageobject role="fo">
+       <imagedata fileref="velum_login.png" width="100%"/>
+       </imageobject>
+       <imageobject role="html">
+       <imagedata fileref="velum_login.png" width="100%"/>
+       </imageobject>
+       </mediaobject>
+       </informalfigure> -->
      </step>
      <step>
+      <para>
+       To create an Administrator account, click <guimenu>Create an
+       account</guimenu> and provide an e-mail address and a password. Confirm
+       the password and click <guimenu>Create Admin</guimenu>. You will be
+       logged into the dashboard automatically.
+      </para>
       <informalfigure>
        <mediaobject>
         <imageobject role="fo">
-         <imagedata fileref="install_boot_ay.png" width="100%"/>
+         <imagedata fileref="velum_register.png" width="100%"/>
         </imageobject>
         <imageobject role="html">
-         <imagedata fileref="install_boot_ay.png" width="100%"/>
+         <imagedata fileref="velum_register.png" width="100%"/>
         </imageobject>
        </mediaobject>
       </informalfigure>
+     </step>
+     <step>
       <para>
-       Select <guimenu>Installation</guimenu> on the boot screen. Enter the
-       necessary <guimenu>Boot Options</guimenu> for &ay; and networking,
-       namely:
+       Fill in the values for <guimenu>Dashboard Location</guimenu> and
+       <guimenu>External Kubernetes API server FQDN</guimenu>. If necessary,
+       configure the <guimenu>Proxy Settings</guimenu>.
       </para>
       <variablelist>
        <varlistentry>
-        <term>
-         autoyast
-        </term>
+        <term>Dashboard Location</term>
         <listitem>
          <para>
-          Path to the &ay; file. For more information, refer to
-          <link xlink:href="https://www.suse.com/documentation/sles-12/book_autoyast/data/invoking_autoinst.html#commandline_ay"></link>
+          Host name or IP of the node running this web interface.
          </para>
         </listitem>
        </varlistentry>
        <varlistentry>
-        <term>
-         netsetup
-        </term>
+        <term>External Kubernetes API server FQDN</term>
         <listitem>
          <para>
-          Network configuration. If you are using dhcp, you can simply enter
-          <literal>dhcp</literal>. For manual configurations, refer to
-          <link xlink:href="https://www.suse.com/documentation/sles-12/book_autoyast/data/ay_adv_network.html"></link>.
+          Fully qualified domain name (FQDN) used to reach the cluster from the
+          outside. In a simple, single-master deployment this will be the FQDN
+          of the node you are about to select as master.
+         </para>
+        </listitem>
+       </varlistentry>
+<!-- cwickert 2017-07-23 TODO: Another varlist for the individual settings? -->
+       <varlistentry>
+        <term>Install Tiller (Helm's Server Component)</term>
+        <listitem>
+         <para>
+          If you intend to deploy &scf; on &productname;, or any other software
+          that is installed with &helm; (the &kube; package manager), check the
+          box to install &tiller;.
+<!-- (See <xref linkend="installing.helm"/>.) -->
          </para>
         </listitem>
        </varlistentry>
        <varlistentry>
-        <term>
-         hostname
-        </term>
+        <term>Proxy Settings</term>
         <listitem>
          <para>
-          The host name for the node, if not provided by DHCP. If you manually
-          specify a host name, make sure it is unique.
+          If enabled, you can set proxy servers for <literal>HTTP</literal> and
+          <literal>HTTPS</literal>. You may also configure exceptions and
+          choose whether to apply the settings only to the container engine or
+          to all processes running on the cluster nodes.
          </para>
         </listitem>
        </varlistentry>
       </variablelist>
+      <informalfigure>
+       <mediaobject>
+        <imageobject role="fo">
+         <imagedata fileref="velum_install_tiller.png" width="100%"/>
+        </imageobject>
+        <imageobject role="html">
+         <imagedata fileref="velum_install_tiller.png" width="100%"/>
+        </imageobject>
+       </mediaobject>
+      </informalfigure>
       <para>
-       Press <keycap function="enter"/>. This boots the system and loads the
-       &productname; installer.
-      </para>
-     </step>
-     <step>
-      <para>
-       The rest of the installation will run fully automated. After a reboot,
-       the worker should show up in the dashboard and can be added to your
-       cluster.
+       Click <guimenu>Next</guimenu> to proceed and install some cluster nodes
+       as described in <xref
+        linkend="sec.caasp.installquick.node"/>.
       </para>
      </step>
     </procedure>
+   </sect3>
+   <sect3 xml:id="sec.caasp.installquick.node">
+    <title>Installing &Worker_Node;s</title>
+    <warning>
+     <para>
+      Before you can install the &worker_node;s of your new cluster, you must
+      install and configure the &admin_node;. Ensure that you have completed
+      the steps in <xref
+       linkend="sec.caasp.installquick.admin"/> and
+      <xref
+       linkend="sec.caasp.installquick.conf"/>.
+     </para>
+    </warning>
+    <sect4 xml:id="sec.caasp.installquick.node.manual">
+     <title>Manual Installation</title>
+     <procedure xml:id="pro.caasp.installquick.node.manual">
+      <step>
+       <para>
+        Follow the same procedure as for installing the &admin_node; in
+        <xref
+         linkend="sec.caasp.installquick.admin"
+         />, up
+        until selection of the <guimenu>System Role</guimenu>.
+       </para>
+      </step>
+      <step>
+       <para>
+        Select <literal>Cluster Node</literal> as <guimenu>System
+        Role</guimenu> and enter the host name or IP address of the
+        &admin_node;.
+       </para>
+       <note>
+        <title>Plain System</title>
+        <para>
+         It is also possible to select a third node type, of "plain node".
+         These can be used for testing and debugging purposes, but are not
+         usually needed.
+        </para>
+       </note>
+      </step>
+      <step>
+       <para>
+        After you have finalized the system configuration on the
+        <guimenu>Installation Overview</guimenu> screen, click
+        <guimenu>Install</guimenu>. Up to this point no changes have been made
+        to your system. After you click <guimenu>Install</guimenu> a second
+        time, the installation process starts.
+       </para>
+       <para>
+        After a reboot, the worker should show up in the dashboard and can be
+        added to your cluster.
+       </para>
+       <para>
+        Repeat this procedure at least twice more to add a minimum of three
+        &worker_node;s. This is the minimum supported size for a &productname;
+        cluster.
+       </para>
+      </step>
+     </procedure>
+    </sect4>
+    <sect4 xml:id="sec.caasp.installquick.node.ay">
+     <title>Automatic Installation Using &ay;</title>
+     <para>
+      Before installing &worker_node;s with &ay;, you must have the URL of the
+      &ay; file on the &admin_node;. Generally this will supplied by the
+      dashboard on the &admin_node;.
+     </para>
+     <procedure xml:id="pro.caasp.installquick.node.ay">
+      <step>
+       <para>
+        Insert the &productname; DVD into the drive, then reboot the computer
+        to start the installation program.
+       </para>
+      </step>
+      <step>
+       <informalfigure>
+        <mediaobject>
+         <imageobject role="fo">
+          <imagedata fileref="install_boot_ay.png" width="100%"/>
+         </imageobject>
+         <imageobject role="html">
+          <imagedata fileref="install_boot_ay.png" width="100%"/>
+         </imageobject>
+        </mediaobject>
+       </informalfigure>
+       <para>
+        Select <guimenu>Installation</guimenu> on the boot screen, but
+        <emphasis>do not</emphasis> press <keycap
+         function="enter"/>.
+       </para>
+       <para>
+        Before proceeding to boot the machine, you must enter the necessary
+        <guimenu>Boot Options</guimenu> for &ay; and networking.
+       </para>
+       <para>
+        The most important two are:
+       </para>
+       <variablelist>
+        <varlistentry>
+         <term> autoyast= </term>
+         <listitem>
+          <para>
+           Path to the &ay; file. It is in the form of a URL built from the
+           FQDN of the &admin_node;, followed the path to the &ay; file. For
+           example, <literal>http://admin.example.com/autoyast</literal>
+          </para>
+          <para>
+           For more information, refer to
+           <link
+            xlink:href="https://www.suse.com/documentation/sles-12/book_autoyast/data/invoking_autoinst.html#commandline_ay"
+           />
+          </para>
+         </listitem>
+        </varlistentry>
+        <varlistentry>
+         <term> netsetup= </term>
+         <listitem>
+          <para>
+           Network configuration. If you are using dhcp, you can simply enter
+           <literal>netsetup=dhcp</literal>. For manual configuration, refer to
+           <link
+            xlink:href="https://www.suse.com/documentation/sles-12/book_autoyast/data/ay_adv_network.html"
+           />.
+          </para>
+         </listitem>
+        </varlistentry>
+        <varlistentry>
+         <term> hostname </term>
+         <listitem>
+          <para>
+           The host name for the node, if not provided by DHCP. If you manually
+           specify a host name, make sure it is unique.
+          </para>
+         </listitem>
+        </varlistentry>
+       </variablelist>
+       <para>
+        Press <keycap function="enter"
+        />. This boots the system and
+        loads the &productname; installer.
+       </para>
+      </step>
+      <step>
+       <para>
+        So long as there are no errors, the rest of the installation should
+        complete automatically. After a reboot, the new &worker_node; should
+        show up in the dashboard and can be added to your cluster.
+       </para>
+      </step>
+     </procedure>
+    </sect4>
    </sect3>
   </sect2>
 
