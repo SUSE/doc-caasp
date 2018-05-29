@@ -16,11 +16,11 @@
   </dm:docmanager>
  </info>
  <para>
-  &productname; is typically configured in two stages, at first during the
-  installation process and after installation you can configure your cluster by
-  using <literal>cloud-init</literal>. The first stage configuration of
-  &productname; comes as much preconfigured as possible. The second stage is
-  typically used for large scales clusters, if you have several machines,
+  &productname; is typically configured in two stages: first, during the
+  installation process. After installation, you can configure your cluster
+  using <literal>cloud-init</literal>. The first-stage configuration of
+  &productname; comes as preconfigured as possible. The second stage is
+  typically used for large-scale clusters. If you only have a few machines,
   <literal>cloud-init</literal> is not necessary.
  </para>
  <para>
@@ -59,6 +59,13 @@
       is set to <emphasis>en_US.utf8</emphasis> by default, but can be changed
       by <literal>cloud-init</literal>.
      </para>
+     <note>
+      <para>
+       Note that &productname; does not support the full range of locales that
+       are available in &sle;. Because of this, it is not recommended to change
+       the locale.
+      </para>
+     </note>
     </listitem>
    </varlistentry>
   </variablelist>
@@ -74,9 +81,8 @@
 
   <para>
    The <literal>cloud-init</literal> configuration can be loaded from different
-   data sources. Currently there are preconfigured the following datasources
-   and <literal>cloud-init</literal> searches in them for configuration in the
-   following order:
+   data sources. Currently, the following datasources are preconfigured, and
+   <literal>cloud-init</literal> searches them in the following order:
   </para>
 
   <orderedlist>
@@ -92,7 +98,7 @@
    </listitem>
    <listitem>
     <para>
-     the <literal>OpenStack</literal> datasource - if there is a running
+     the <literal>OpenStack</literal> datasource. If there is a running
      OpenStack service, this datasource will be used. The configuration then
      depends on a particular setup and thus it is not covered by this manual.
     </para>
@@ -100,7 +106,7 @@
   </orderedlist>
 
   <para>
-   More details about the datasources are provided further.
+   More details about the datasources are provided below.
   </para>
 
   <sect2 xml:id="localdisk.datasource">
@@ -139,8 +145,8 @@
   <sect2 xml:id="cloud.config.file">
    <title>The <filename>cloud.cfg</filename> Configuration File</title>
    <para>
-    The <filename>cloud.cfg</filename> is used to define a datasource and
-    locations of other required configuration files. Use the
+    The <filename>cloud.cfg</filename> file is used to define a datasource and
+    the locations of the other required configuration files. Use the
     <literal>#cloud-config</literal> syntax when defining the content.
    </para>
    <para>
@@ -158,10 +164,10 @@
   <sect2 xml:id="meta-data.config.file">
    <title>The <filename>meta-data</filename> Configuration File</title>
    <para>
-    The file <filename>meta-data</filename> is a YAML formatted file that is
-    intended to configure the system items like network, instance ID, etc. The
+    The file <filename>meta-data</filename> is a YAML format file which is
+    intended to configure system items such as network, instance ID, etc. The
     file typically contains the <literal>instance-id</literal> and
-    <literal>network-interfaces</literal> options, each is described further.
+    <literal>network-interfaces</literal> options. Each is described below.
    </para>
    <variablelist>
     <varlistentry>
@@ -170,10 +176,10 @@
      <listitem>
       <para>
        Defines the instance. If you perform any changes to the configuration
-       (either <filename>user-data</filename> or
-       <filename>meta-data</filename>) you have to update this option with
-       another value. Thus the <literal>cloud-init</literal> recognizes if this
-       the first boot of the particular instantiated host.
+       (with either <filename>user-data</filename> or
+       <filename>meta-data</filename>), you must update this option with
+       another value. Thus <literal>cloud-init</literal> can recognize if this
+       the first boot of that particular host instance.
       </para>
 <screen>instance-id: iid-example001</screen>
      </listitem>
@@ -226,9 +232,9 @@
     <para>
      Each <filename>user-data</filename> file must start with
      <literal>#cloud-config</literal> that indicates the
-     <literal>cloud-config</literal> format. In the snippet below you enable
-     the debugging output and you disable passwordless authentication for
-     &rootuser;. You will have to login with the &rootuser; credentials then.
+     <literal>cloud-config</literal> format. The snippet below enables
+     debugging output and disables passwordless authentication for
+     &rootuser;. Thus you must login with the &rootuser; credentials.
     </para>
 <screen>#cloud-config
 debug: True
@@ -239,9 +245,9 @@ disable_root: False</screen>
     <para>
      In the <filename>user-data</filename> you can use the
      <literal>runcmd</literal> statement to run various commands in your
-     system. The <filename>user-data</filename> file can contain only one
-     <literal>runcmd</literal> statement, thus in case you need to run several
-     commands, group them into one statement:
+     system. The <filename>user-data</filename> file can contain only a single
+     <literal>runcmd</literal> statement, so if you must run several commands,
+     group them into one statement:
     </para>
 <screen>runcmd:
     - /usr/bin/systemctl enable --now ntpd</screen>
@@ -254,7 +260,7 @@ disable_root: False</screen>
       <term>Configure keyboard layout</term>
       <listitem>
        <para>
-        configure the German keyboard layout with
+        for example, configure the German keyboard layout with
         <emphasis>nodeadkeys</emphasis>:
        </para>
 <screen>runcmd:
@@ -287,8 +293,8 @@ ssh_authorized_keys:
      deletion of old private and public SSH keys of the host. The default value
      is <literal>true</literal>&mdash;the keys are deleted and new keys are
      generated. We do not recommend using the default value, as there could be
-     a problem reported by <command>ssh</command> that the keys are incorrect
-     or has been changed after the <literal>cloud-init</literal> configuration
+     a problem with <command>ssh</command> reporting that the keys are incorrect
+     or have been changed after the <literal>cloud-init</literal> configuration
      has been changed.
     </para>
     <para>
@@ -453,8 +459,9 @@ zypper:
 <screen>fqdn: myhost.example.com</screen>
     <para>
      The option <literal>preserve_hostname</literal> specifies whether any
-     existing host name should be retained or not. Enter
-     <literal>true</literal> or <literal>false</literal> as required:
+     existing host name (for example, from the kernel command-line) should be
+     retained or not. Enter <literal>true</literal> or <literal>false</literal>
+     as required:
     </para>
 <screen>preserve_hostname: true</screen>
    </sect3>
