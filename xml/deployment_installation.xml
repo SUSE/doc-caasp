@@ -524,12 +524,24 @@
        <guimenu>External Kubernetes API server FQDN</guimenu>. If necessary,
        configure the <guimenu>Proxy Settings</guimenu>.
       </para>
+      <note>
+       <title>
+        Host Name, FQDN or IP Address
+       </title>
+       <para>
+        Generally, FQDNs are preferable to host names.
+       </para>
+       <para>For test deployments, you can use IP addresses instead of names for
+        both the dashboard and API server, but this is not recommended for
+        use in production.
+       </para>
+      </note>
       <variablelist>
        <varlistentry>
         <term>Dashboard Location</term>
         <listitem>
          <para>
-          Host name or IP of the node running this web interface.
+          Name of the node running the &dashboard; dashboard.
          </para>
         </listitem>
        </varlistentry>
@@ -537,13 +549,26 @@
         <term>External Kubernetes API server FQDN</term>
         <listitem>
          <para>
-          Fully qualified domain name (FQDN) used to reach the cluster from the
-          outside. In a simple, single-master deployment this will be the FQDN
-          of the node you are about to select as master.
+          Name used to reach the node running the &kube; API server.
          </para>
-        </listitem>
+         <para>
+          In a simple, single-master deployment this will be the name of the
+          node that you will select as the &master_node; when bootstrapping the
+          cluster.
+         </para>
+        <para>
+          If you are planning a larger cluster with multiple &master_node;s, 
+          they must all be accessible from a single host name. If not, the
+          functionality of &dashboard; will degrade if the original
+          &master_node; is removed. Therefore you should ensure that there is
+          some form of load-balancing, round-robin DNS or reverse proxy on the
+          value that you enter in this field.
+        </para>
+       </listitem>
        </varlistentry>
+       
 <!-- cwickert 2017-07-23 TODO: Another varlist for the individual settings? -->
+       
        <varlistentry>
         <term>Install Tiller (Helm's Server Component)</term>
         <listitem>
@@ -567,6 +592,7 @@
         </listitem>
        </varlistentry>
       </variablelist>
+     
       <informalfigure>
        <mediaobject>
         <imageobject role="fo">
@@ -618,9 +644,9 @@
        <note>
         <title>Plain System</title>
         <para>
-         It is also possible to select a third node type, of "plain node".
-         These can be used for testing and debugging purposes, but are not
-         usually needed.
+         It is also possible to select a third node type, "plain node". These
+         can be used for testing and debugging purposes, but are not usually
+         needed.
         </para>
        </note>
       </step>
@@ -633,13 +659,13 @@
         time, the installation process starts.
        </para>
        <para>
-        After a reboot, the worker should show up in the dashboard and can be
+        After a reboot, the new node should appear in the dashboard and can be
         added to your cluster.
        </para>
        <para>
         Repeat this procedure at least twice more to add a minimum of three
-        &worker_node;s. This is the minimum supported size for a &productname;
-        cluster.
+        nodes: one &master_node; and two &worker_node;s. This is the minimum
+        supported size for a &productname; cluster.
        </para>
       </step>
      </procedure>
@@ -647,9 +673,9 @@
     <sect4 xml:id="sec.caasp.installquick.node.ay">
      <title>Automatic Installation Using &ay;</title>
      <para>
-      Before installing &worker_node;s with &ay;, you must have the URL of the
-      &ay; file on the &admin_node;. Generally this will supplied by the
-      dashboard on the &admin_node;.
+      Before installing &worker_node;s with &ay;, you must obtain the URL that
+      points to the &ay; file on the &admin_node;. Generally, this will supplied
+      by the &dashboard; dashboard on the &admin_node;.
      </para>
      <procedure xml:id="pro.caasp.installquick.node.ay">
       <step>
@@ -715,26 +741,120 @@
          <listitem>
           <para>
            The host name for the node, if not provided by DHCP. If you manually
-           specify a host name, make sure it is unique.
+           specify a host name, make sure that it is unique.
           </para>
          </listitem>
         </varlistentry>
        </variablelist>
        <para>
-        Press <keycap function="enter"
-        />. This boots the system and
-        loads the &productname; installer.
+        Press <keycap function="enter"/>. This boots the system and loads the
+        &productname; installer.
        </para>
       </step>
       <step>
        <para>
         So long as there are no errors, the rest of the installation should
-        complete automatically. After a reboot, the new &worker_node; should
-        show up in the dashboard and can be added to your cluster.
+        complete automatically. After a reboot, the new  node should appear in
+        the dashboard and can be added to your cluster.
        </para>
       </step>
      </procedure>
+     <note>
+      <title>
+       &rootuser; Password
+      </title>
+      <para>
+       When nodes are installed using &ay;, there is no opportunity to specify
+       the password for &rootuser;. However, each node will have <literal>ssh</literal>
+       keys for &rootuser; on the &master_node; pre-installed. Thus it is
+       possible to access the &worker_node;s by <command>ssh</command>ing to
+       them from the &master_node;.
+      </para>
+     </note>
+      
     </sect4>
+   </sect3>
+   
+   <sect3 xml:id="sec.caasp.installquick.qcow2">
+    <title>Installing from Pre-installed Disk Images</title>
+    <para>
+     For building clusters from virtual machines on supported hypervisors, it
+     is not necessary to individually install each node. &suse; offers
+     pre-installed VM disk images in the following formats: 
+    </para>
+    <variablelist>
+     <varlistentry>
+      <term>&kvm; and &xen;</term>
+      <listitem>
+       <para>
+        In QCOW2 format, for &kvm; and for &xen; using full virtualization.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>&xen;</term>
+      <listitem>
+       <para>
+        In QCOW2 format, for &xen; using paravirtualization.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>VMware</term>
+      <listitem>
+       <para>
+        For VMware ESXi, in VMDK format.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       VHD
+      </term>
+      <listitem>
+       <para>For Microsoft Hyper-V.</para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+    <para>
+     When building a cluster from pre-installed disk images, the setup program
+     is never run. Thus, it is not possible to use it to set values such as 
+     time servers, node names, the &rootuser; password for the &admin_node; and
+     so on.
+    </para>
+    <para>
+     Instead, these values must be set using <literal>cloud-init</literal>.
+    </para>
+    <para>
+     Full details of the <literal>cloud-init</literal> metadata files can be
+     found in the Configuration chapter of this manual; for more information,
+     see <xref linkend="cloud-init.configuration"/>.
+    </para>
+    <para> 
+     At a minimum, you must create two separate configuration files for each
+     type of node: one called <literal>meta-data</literal> and one called
+     <literal>user-data</literal>.
+    </para>
+    <para>
+     The two files must be placed into a directory. For the &admin_node;, this
+     must be called <literal>cc-admin</literal>. For the &worker_node;s, this
+     must be called <literal>cc-worker</literal>.
+    </para>
+    <para>
+     Then you must build an ISO image file from the subdirectory containing the
+     configuration files: one for the VM that will be the &admin_node;, and one
+     for those VMs which will be &worker_node;s.
+    </para>
+    <para>
+     Before booting each VM for the first time, you must attach the ISO image 
+     containing the configuration files, in addition to the pre-installed disk
+     image. The pre-installed operating system on the disk image looks for an 
+     attached disk volume with the label <literal>cidata</literal> and will 
+     search it for the configuration files and apply the settings within them.
+    </para>
+    <para>
+     
+    </para>
    </sect3>
   </sect2>
 
