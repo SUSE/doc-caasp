@@ -803,7 +803,7 @@
       <term>VMware</term>
       <listitem>
        <para>
-        For VMware ESXi, in VMDK format.
+        In VMDK format, for VMware ESXi.
        </para>
       </listitem>
      </varlistentry>
@@ -816,45 +816,277 @@
       </listitem>
      </varlistentry>
     </variablelist>
-    <para>
-     When building a cluster from pre-installed disk images, the setup program
-     is never run. Thus, it is not possible to use it to set values such as 
-     time servers, node names, the &rootuser; password for the &admin_node; and
-     so on.
-    </para>
-    <para>
-     Instead, these values must be set using <literal>cloud-init</literal>.
-    </para>
-    <para>
-     Full details of the <literal>cloud-init</literal> metadata files can be
-     found in the Configuration chapter of this manual; for more information,
-     see <xref linkend="cloud-init.configuration"/>.
-    </para>
-    <para> 
-     At a minimum, you must create two separate configuration files for each
-     type of node: one called <literal>meta-data</literal> and one called
-     <literal>user-data</literal>.
-    </para>
-    <para>
-     The two files must be placed into a directory. For the &admin_node;, this
-     must be called <literal>cc-admin</literal>. For the &worker_node;s, this
-     must be called <literal>cc-worker</literal>.
-    </para>
-    <para>
-     Then you must build an ISO image file from the subdirectory containing the
-     configuration files: one for the VM that will be the &admin_node;, and one
-     for those VMs which will be &worker_node;s.
-    </para>
-    <para>
-     Before booting each VM for the first time, you must attach the ISO image 
-     containing the configuration files, in addition to the pre-installed disk
-     image. The pre-installed operating system on the disk image looks for an 
-     attached disk volume with the label <literal>cidata</literal> and will 
-     search it for the configuration files and apply the settings within them.
-    </para>
-    <para>
+    <sect4>
+     <title>Overview</title>
+     <para>
+      When deploying a cluster node from pre-installed disk images, the setup
+      program never runs. Thus, it is not possible to set values such as time
+      servers, node names, the &rootuser; password for the &admin_node; and so
+      on in the normal way.
+     </para>
+     <para>      
+      Instead, these values must be set using <literal>cloud-init</literal> configuration
+      files, which are placed into a specific subdirectory within an ISO image
+      which is attached to the VM as a secondary disk. The pre-installed
+      operating system on the disk image looks for a medium with the
+      volume label <literal>cidata</literal>, searches that volume for the
+      configuration files, and applies the settings within them.
+     </para>
+     <para>
+      Full details of the cloud-init metadata files can be found in the
+      Configuration chapter of this manual; for more information, see
+      <xref linkend="cloud-init.configuration"/>.
+     </para>
+     <para>
+      As with individual node installation, the &admin_node; must be configured
+      separately and differently from the &worker_node;s.
+     </para>
+    </sect4>
+    <sect4>
+     <title>Procedure</title>
+     <para>
+      The process is very similar for all hypervisors. The examples in this
+      manual use &kvm; running on &sle;.
+     </para>
+     <para>      
+      You must build at least two ISO images with configuration information:
+      one for the &admin_node; and one for the &worker_node;s. If you wish to
+      assign specific host names or customize individual &worker_node;s, then
+      you must create separate ISO images for each node containing the
+      customised files.
+     </para>
+     <para>
+      Additionally, you must make a separate copy of the downloaded VM disk
+      image for each VM. We suggest keeping the original download elsewhere and
+      making a fresh copy for each node, naming it appropriately: for example,
+      <literal>caas-admin</literal>, <literal>caas-master</literal>, 
+      <literal>caas-worker1</literal>, <literal>caas-worker2</literal> and so
+      on.
+     </para>
+     <sect5>
+      <title>Configuration Files</title>
+      <para>
+       There are two separate configuration files: <literal>user-data</literal>
+       and <literal>meta-data</literal>. Each node needs both. Thus, you must at
+       a minimum prepare one pair of files for the &admin_node;, and another
+       pair of files for all the &worker_node;s.
+      </para>
+      <para>
+       The two files must be placed into a subdirectory. For the &admin_node;,
+       this must be called <literal>cc-admin</literal>. For the &worker_node;s,
+       this must be called <literal>cc-worker</literal>.
+      </para>
+      <para>
+       So, for instance, if your working directory is called <literal>~/cloud-config</literal>,
+       for the admin node, you need:
+      </para>
+      <screen>~/cloud-config/cc-admin/user-data</screen>
+      <para>
+       and
+      </para>
+      <screen>~/cloud-config/cc-admin/meta-data</screen>
+      <para>
+       For a &worker_node;, you need:
+      </para>
+      <screen>~/cloud-config/cc-worker/user-data</screen>
+      <para>
+       and
+      </para>
+      <screen>~/cloud-config/cc-worker/meta-data</screen>
+      <para>
+       The same <literal>meta-data</literal> file can be used for both node types.
+       Here is an sample <literal>meta-data</literal> file:
+       </para>
+      <screen>
+# File: cloud-config/cc-worker/meta-data
+instance-id: <replaceable>iid-CAAS01</replaceable>
+network-interfaces: |
+  auto <replaceable>eth0</replaceable>
+  iface <replaceable>eth0</replaceable> inet dhcp
+       </screen>
+      <para>
+       The <literal>user-data</literal> file contains settings such as time
+       servers, the &rootuser; password, and the node type.
+      </para>
+      <para>
+       Here is an example <literal>user-data</literal> file for an &admin_node;:
+      </para>
+      <screen>
+# File: cloud-config/cc-admin/user-data
+#cloud-config
+debug: True
+disable_root: False
+ssh_pwauth: True
+chpasswd:
+  list: |
+    root:<replaceable>root</replaceable>
+    expire: False
+ntp:
+  servers:
+    - <replaceable>ntp1.example.com</replaceable>
+    - <replaceable>ntp2.example.com</replaceable>
+runcmd:
+  - /usr/bin/systemctl enable --now ntpd
+suse_caasp:
+  role: <replaceable>admin</replaceable>
+       </screen>
+      <para>
+       Here is an example for a &worker_node;:
+      </para>
+      <screen>
+# File cloud-config/cc-worker/user-data
+#cloud-config
+debug: True
+disable_root: False
+ssh_pwauth: True
+chpasswd:
+  list: |
+    root:<replaceable>root</replaceable>
+    expire: False
+suse_caasp:
+   role: <replaceable>cluster</replaceable>
+   admin_node: <replaceable>caas-admin.example.com</replaceable>
+       </screen>
+     </sect5>
+     <sect5>
+      <title>Preparing an ISO image</title>
+      <para>
+       Once you have edited the configuration files with your desired settings,
+       you must create an ISO image with the volume lable <literal>cidata</literal>
+       containing just the subdirectory for that node type. Use the <command>genisoimage</command>
+       command to do this.
+      </para>
+      <para>
+       To create the ISO image for an admin node:
+      </para>
+      <screen>
+       sudo genisoimage -output <replaceable>cc-admin.img</replaceable> -volid <replaceable>cidata</replaceable> -joliet -rock <replaceable>cc-admin</replaceable>
+      </screen>
+      <para>
+       To create the ISO image for a worker node, use the same command, but 
+       substitute the name of the folder containing the configuration files for
+       a &worker_node; and title the volume <literal>cc-worker</literal>.
+      </para>
+     </sect5>
      
-    </para>
+     <sect5>
+      <title>Procedure to Bring Up an &Admin_Node;</title>
+      <procedure>
+       <step>
+        <para>
+         Make a folder called <literal>cc-admin</literal>.
+        </para>
+       </step>
+       <step>
+        <para>
+         In that folder, prepare <literal>user-data</literal> and <literal>meta-data</literal>
+         files to set the &rootuser; password, node name and so on for the
+         &admin_node;.
+        </para>
+       </step>
+       <step>
+        <para>
+         Create an ISO file called <literal>cc-admin.img</literal> containing
+         these two files:
+        </para>
+        <screen>sudo genisoimage -output cc-admin.img -volid cidata -joliet -rock cc-admin</screen>
+       </step>
+       <step>
+        <para>
+         Create a new VM for the &admin_node;.
+        </para>
+       </step>
+       <step>
+        <para>
+         Attach a copy of the downloaded disk image as its main hard disk.   
+        </para>
+       </step>
+       <step>
+        <para>
+         Attach the <literal>cloud-config</literal> file disk image as a
+         secondary disk.
+       </para>
+       </step>
+       <step>
+        <para>
+         Start the VM.      
+        </para>
+       </step>
+       <step>
+        <para>
+         Configure the new &admin_node; as in step <xref linkend="sec.caasp.installquick.conf"/>.         
+        </para>
+       </step>
+      </procedure>
+     </sect5>
+     
+     <sect5>
+      <title>Procedure to Bring Up a &Worker_Node;</title>
+      <para>
+       The first procedure is to generate the configuration files. Unless
+       you wish to customize the individual &worker_node;s, then you need only
+       do this part once.
+      </para>
+      <procedure>
+       <step>
+        <para>
+         Make a folder called <literal>cc-worker</literal>.
+        </para>
+       </step>
+       <step>
+        <para>
+         In that folder, prepare <literal>user-data</literal> file to set the &rootuser;
+         password, network settings and so on for the &worker_node;. If no
+         changes are necessary, you can copy the <literal>meta-data</literal>
+         file from that used to configure the &admin_node;.
+        </para>
+       </step>
+       <step>
+        <para>
+         Create an ISO file called <literal>cc-worker.img</literal> containing
+         these two files:
+        </para>
+        <screen>sudo genisoimage -output cc-worker.img -volid cidata -joliet -rock cc-worker</screen>
+       </step>
+      </procedure>
+      <para>
+       Once you have a disk image containing the configuration files, it can be
+       reused for multiple &worker_node;s.
+      </para>
+      <para>
+       Then, for each &worker_node;, the following steps must be repeated:
+      </para>
+      <procedure>
+       <step>
+        <para>
+         Create a new VM for the &worker_node;.
+        </para>
+       </step>
+       <step>
+        <para>
+         Attach a copy of the downloaded disk image as its main hard disk.
+        </para>
+       </step>
+       <step>
+        <para>
+         Attach the <literal>cloud-config</literal> file disk image as a
+         secondary disk.
+        </para>
+       </step>
+       <step>
+        <para>
+         Start the VM.      
+        </para>
+       </step>
+      </procedure>
+      <para>
+       Once you have brought up as many &worker_node;s as you need, proceed to
+       bootstap the cluster using the &dashboard; dashboard.
+      </para>
+     </sect5>
+     
+    </sect4>
+ 
    </sect3>
   </sect2>
 
