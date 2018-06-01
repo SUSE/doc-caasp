@@ -8,703 +8,435 @@
  xmlns="http://docbook.org/ns/docbook"
  xmlns:xi="http://www.w3.org/2001/XInclude"
  xmlns:xlink="http://www.w3.org/1999/xlink">
- <info>
-  <title>&productname; System Requirements</title>
+ <info><title>&productname; System Requirements</title>
   <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
    <dm:bugtracker/>
    <dm:translation>yes</dm:translation>
   </dm:docmanager>
  </info>
- <para>
-  This chapter specifies the requirements to install and operate &productname;.
-   </para>
+ <para> This chapter specifies the requirements to install and operate &productname;. </para>
  <sect1 xml:id="sec.caasp.installquick.sysreqs">
   <title>System Requirements</title>
-
-  <para>
-   Before you begin the installation, please make sure your system meets all
-   requirements listed below.
-  </para>
-
+  <para> Before you begin the installation, please make sure your system meets all requirements listed below. </para>
   <sect2 xml:id="sec.caasp.installquick.clusreqs">
    <title>Cluster Requirements</title>
    <para>
-    &productname; is a cluster operating system. It requires a group of physical
-    or virtual machines in order to operate. The minimum supported cluster size
-    is four nodes: one &admin_node;, one &master_node;, and two &worker_node;s.
-   </para>
+    &productname; is a cluster operating system. It requires a group of physical or virtual machines in order to operate. The minimum supported cluster size is four nodes: one &admin_node;, one &master_node;, and two &worker_node;s. </para>
    <note>
     <title>Test and Proof-of-Concept Clusters</title>
-    <para>
-     For proof-of-concept and test deployments, it is possible to bootstrap a
-     three-node cluster with a single &worker_node;, but this configuration is
-     not supported and should not be used in production.
-    </para>
+    <para> For proof-of-concept and test deployments, it is possible to bootstrap a three-node cluster with a single &worker_node;, but this configuration is not supported and should not be used in production. </para>
    </note>
-   <para>
-    To improve performance and reliability, additional &master_node;s may be
-    added, so long as there is always an odd number of &master_node;s.
-   </para>
-   <para>
-    There is no limit on the number of worker nodes except the maximum cluster
-    size.
-   </para>
-   <para>
-    At this time, &suse; supports clusters of up to 150 nodes.
-   </para>
+   <para> To improve performance and reliability, additional &master_node;s may be added, so long as there is always an odd number of &master_node;s. </para>
+   <para> There is no limit on the number of worker nodes except the maximum cluster size. </para>
+   <para> At this time, &suse; supports clusters of up to 150 nodes. </para>
   </sect2>
-  
   <sect2 xml:id="sec.caasp.installquick.env">
    <title>Supported Environments</title>
-   <para>
-    Regarding deployment scenarios, &suse; supports &productname; running in the
-    following environments:
-   </para>
+   <para> Regarding deployment scenarios, &suse; supports &productname; running in the following environments: </para>
    <itemizedlist>
     <listitem>
-     <para>
-      &productname; only supports x86_64 hardware.
-     </para>
+     <para> &productname; only supports x86_64 hardware. </para>
     </listitem>
     <listitem>
-     <para>
-      Aside from this, the same platforms as &sle; 12 SP3 are supported.
-     </para>
+     <para> Aside from this, the same platforms as &sle; 12 SP3 are supported. </para>
     </listitem>
     <listitem>
-     <para>
-      On bare metal: any server hardware certified for &sle; Server.
-     </para>
+     <para> On bare metal: any server hardware certified for &sle; Server. </para>
     </listitem>
     <listitem>
-     <para>
-      Virtualized&mdash;running under the following hypervisors:
-     </para>
+     <para> Virtualized&mdash;running under the following hypervisors: </para>
      <itemizedlist>
       <listitem>
-       <para>
-        KVM
-       </para>
+       <para> KVM </para>
        <itemizedlist>
         <listitem>
-         <para>
-          on &sle; 11 SP4
-         </para>
+         <para> on &sle; 11 SP4 </para>
         </listitem>
         <listitem>
-         <para>
-          on &sle; 12 SP1
-         </para>
+         <para> on &sle; 12 SP1 </para>
         </listitem>
         <listitem>
-         <para>
-          on &sle; 12 SP2
-         </para>
+         <para> on &sle; 12 SP2 </para>
         </listitem>
         <listitem>
-         <para>
-          on &sle; 12 SP3
-         </para>
+         <para> on &sle; 12 SP3 </para>
         </listitem>
        </itemizedlist>
       </listitem>
       <listitem>
-       <para>
-        Xen
-       </para>
+       <para> Xen </para>
        <itemizedlist>
         <listitem>
-         <para>
-          same host platforms as for KVM
-         </para>
+         <para> same host platforms as for KVM </para>
         </listitem>
         <listitem>
-         <para>
-          full virtualization
-         </para>
+         <para> full virtualization </para>
         </listitem>
         <listitem>
-         <para>
-          paravirtualization
-         </para>
+         <para> paravirtualization </para>
         </listitem>
         <listitem>
-         <para>
-          Citrix XenServer 6.5
-         </para>
+         <para> Citrix XenServer 6.5 </para>
         </listitem>
        </itemizedlist>
       </listitem>
       <listitem>
-       <para>
-        VMware
-       </para>
+       <para> VMware </para>
        <itemizedlist>
         <listitem>
-         <para>
-          ESX 5.5
-         </para>
+         <para> ESX 5.5 </para>
         </listitem>
         <listitem>
-         <para>
-          ESXi 6.0
-         </para>
+         <para> ESXi 6.0 </para>
         </listitem>
         <listitem>
-         <para>
-          ESXi 6.5
-         </para>
+         <para> ESXi 6.5 </para>
         </listitem>
        </itemizedlist>
       </listitem>
       <listitem>
-       <para>
-        Hyper-V
-       </para>
+       <para> Hyper-V </para>
        <itemizedlist>
         <listitem>
-         <para>
-          Windows Server 2008 SP2+
-         </para>
+         <para> Windows Server 2008 SP2+ </para>
         </listitem>
         <listitem>
-         <para>
-          Windows Server 2008 R2 SP1+
-         </para>
+         <para> Windows Server 2008 R2 SP1+ </para>
         </listitem>
         <listitem>
-         <para>
-          Windows Server 2012+
-         </para>
+         <para> Windows Server 2012+ </para>
         </listitem>
         <listitem>
-         <para>
-          Windows Server 2012 R2+
-         </para>
+         <para> Windows Server 2012 R2+ </para>
         </listitem>
         <listitem>
-         <para>
-          Windows Server 2016
-         </para>
+         <para> Windows Server 2016 </para>
         </listitem>
        </itemizedlist>
       </listitem>
       <listitem>
-       <para>
-        Oracle VM 3.3
-       </para>
+       <para> Oracle VM 3.3 </para>
       </listitem>
      </itemizedlist>
     </listitem>
     <listitem>
-     <para>
-      Private and Public Cloud Environments
-     </para>
+     <para> Private and Public Cloud Environments </para>
      <itemizedlist>
       <listitem>
-       <para>
-        &soc; 7
-       </para>
+       <para> &soc; 7 </para>
       </listitem>
       <listitem>
-       <para>
-        Amazon AWS
-       </para>
+       <para> Amazon AWS </para>
       </listitem>
       <listitem>
-       <para>
-        Microsoft Azure
-       </para>
+       <para> Microsoft Azure </para>
       </listitem>
       <listitem>
-       <para>
-        Google Compute Engine
-       </para>
+       <para> Google Compute Engine </para>
       </listitem>
      </itemizedlist>
     </listitem>
    </itemizedlist>
   </sect2>
-  
   <sect2 xml:id="Intro.Requirements.Storage">
    <title>Container Data Storage</title>
-   <para>
-    Storage can be provided using:
-   </para>
+   <para> Storage can be provided using: </para>
    <itemizedlist>
-     <listitem>
-      <para>
-       &ses;.
-      </para>
-     </listitem>
-     <listitem>
-      <para>
-       NFS.
-      </para>
-     </listitem>
-     <listitem>
-      <para>
-       <command>hostpath</command>.
-      </para>
-      <note>
-       <title><literal>hostpath</literal> Storage</title>
-       <para>
-        Storage using <literal>hostpath</literal> is still supported, but by
-        default it is disabled by <literal>PodSecurityPolicies</literal>.
-       </para>
-      </note>
-     </listitem>
-    </itemizedlist>
-
-  </sect2>
-  
-  <sect2 xml:id="sec.caasp.installquick.hwreqs">
-   <title>Minimum Node Specification</title>
-   <para>
-    Each node in the cluster must meet the following minimum specifications.
-   </para>
-   <itemizedlist mark="bullet" spacing="normal">
     <listitem>
-     <para>
-      Any AMD64/Intel* EM64T processor (quad-core processors are recommended).
-      32-bit processors are not supported.
-     </para>
+     <para> &ses;. </para>
+    </listitem>
+    <listitem>
+     <para> NFS. </para>
     </listitem>
     <listitem>
      <para>
-      Minimum RAM: 8 GB.
-     </para>
-     <para>
-      NOTE: &kube; does not support swap and any existing swap partition will
-      be disabled during installation. Although it may be possible to install
-      &productname; on nodes with less RAM, if the operating system runs out of
-      available memory, the cluster may fail.
-     </para>
-    </listitem>
-    <listitem>
-     <para>
-      Minimum disk space: 40 GB (as Btrfs with snapshots) for the root file
-      system.
-     </para>
-     <para>
-      Additional disk space may be required, depending on the count and size of
-      container images you intend to run.
-     </para>
+      <command>hostpath</command>. </para>
+     <note>
+      <title><literal>hostpath</literal> Storage</title>
+      <para> Storage using <literal>hostpath</literal> is still supported, but by default it is disabled by <literal>PodSecurityPolicies</literal>. </para>
+     </note>
     </listitem>
    </itemizedlist>
   </sect2>
-
+  <sect2 xml:id="sec.caasp.installquick.hwreqs">
+   <title>Minimum Node Specification</title>
+   <para> Each node in the cluster must meet the following minimum specifications. </para>
+   <itemizedlist mark="bullet" spacing="normal">
+    <listitem>
+     <para> Any AMD64/Intel* EM64T processor (quad-core processors are recommended). 32-bit processors are not supported. </para>
+    </listitem>
+    <listitem>
+     <para> Minimum RAM: 8 GB. </para>
+    </listitem>
+    <listitem>
+     <para> Minimum disk space: 40 GB (as Btrfs with snapshots) for the root file system. </para>
+     <para> Additional disk space may be required, depending on the count and size of container images you intend to run. </para>
+    </listitem>
+   </itemizedlist>
+   <note>
+    <title>Swap partitions</title>
+    <para>
+     &kube; does not support swap. For technical reasons, an &admin_node; installed from an ISO image will have a small swap partition which will be disabled after installation. Nodes build using &ay; have none. Although it may be possible to install &productname; on machines with less RAM, if the operating system runs out of available memory, the node and therefore the cluster may fail. </para>
+   </note>
+  </sect2>
   <sect2 xml:id="sec.caasp.installquick.netreqs">
    <title>Network Requirements</title>
    <itemizedlist mark="bullet" spacing="normal">
     <listitem>
-     <para>
-      All the nodes on the cluster must be on a the same network and be able to
-      communicate directly with one another.
-     </para>
+     <para> All the nodes on the cluster must be on a the same network and be able to communicate directly with one another. </para>
      <important>
       <title>Reliable Networking</title>
-      <para>
-       Please make sure all nodes can communicate without interruptions.
-      </para>
+      <para> Please make sure all nodes can communicate without interruptions. </para>
      </important>
     </listitem>
     <listitem>
-     <para>
-      The admin node and the &kube; API master must have valid Fully-Qualified
-      Domain Names (FQDNs), which can be resolved both by other nodes and from
-      other networks which need to access the cluster.
-     </para>
+     <para> The admin node and the &kube; API master must have valid Fully-Qualified Domain Names (FQDNs), which can be resolved both by other nodes and from other networks which need to access the cluster. </para>
     </listitem>
     <listitem>
-     <para>
-      A DHCP server to dynamically provide IP addresses and host names for the
-      nodes in your cluster (unless you configure all nodes statically).
-     </para>
+     <para> A DHCP server to dynamically provide IP addresses and host names for the nodes in your cluster (unless you configure all nodes statically). </para>
     </listitem>
     <listitem>
-     <para>
-      A DNS server to resolve host names. If you are using host names to
-      specify nodes, please make sure you have reliable DNS resolution at all
-      times, especially in combination with DHCP.
-     </para>
+     <para> A DNS server to resolve host names. If you are using host names to specify nodes, please make sure you have reliable DNS resolution at all times, especially in combination with DHCP. </para>
      <important>
       <title>Unique Host Names</title>
-      <para>
-       Host names must be unique. It is recommended to let the DHCP server
-       provide not only IP addresses but also host names of the cluster nodes.
-      </para>
+      <para> Host names must be unique. It is recommended to let the DHCP server provide not only IP addresses but also host names of the cluster nodes. </para>
      </important>
     </listitem>
     <listitem>
-     <para>
-      On the same network, a separate computer with a Web browser is required in
-      order to complete bootstrap of the cluster.
-     </para>
+     <para> On the same network, a separate computer with a Web browser is required in order to complete bootstrap of the cluster. </para>
     </listitem>
     <listitem>
-     <para>
-      In a &productname; cluster, internal TCP/IP ports are managed using
-      <literal>iptables</literal> controlled by <literal>Salt</literal> and so
-      need not be manually configured. However, for reference and for
-      environments where there are existing security policies, the following
-      are the standard ports in use.
-     </para>
+     <para> In a &productname; cluster, internal TCP/IP ports are managed using <literal>iptables</literal> controlled by <literal>Salt</literal> and so need not be manually configured. However, for reference and for environments where there are existing security policies, the following are the standard ports in use. </para>
      <table xml:id="sec.caasp.installquick.ports">
       <title>Node types and open ports</title>
       <tgroup cols="6">
        <thead>
         <row>
          <entry>
-          <para>
-           Node
-          </para>
+          <para> Node </para>
          </entry>
          <entry>
-          <para>
-           Port
-          </para>
+          <para> Port </para>
          </entry>
          <entry>
-          <para>
-           Internal / External
-          </para>
+          <para> Internal / External </para>
          </entry>
          <entry>
-          <para>
-           Open after orchestration
-          </para>
+          <para> Open after orchestration </para>
          </entry>
          <entry>
-          <para>
-           Description
-          </para>
+          <para> Description </para>
          </entry>
          <entry>
-          <para>
-           Notes
-          </para>
+          <para> Notes </para>
          </entry>
         </row>
        </thead>
        <tbody>
         <row>
          <entry>
-          <para>
-           All nodes
-          </para>
+          <para> All nodes </para>
          </entry>
          <entry>
-          <para>
-           22
-          </para>
+          <para> 22 </para>
          </entry>
          <entry>
-          <para>
-           Internal
-          </para>
+          <para> Internal </para>
          </entry>
          <entry>
-          <para>
-           No
-          </para>
+          <para> No </para>
          </entry>
          <entry>
-          <para>
-           ssh
-          </para>
+          <para> ssh </para>
          </entry>
          <entry>
-          <para>
-           Useful but not essential
-          </para>
+          <para> Useful but not essential </para>
          </entry>
         </row>
         <row>
          <entry morerows="4" valign="middle">
-          <para>
-           Admin
-          </para>
+          <para> Admin </para>
          </entry>
          <entry>
-          <para>
-           80
-          </para>
+          <para> 80 </para>
          </entry>
          <entry>
-          <para>
-           External
-          </para>
+          <para> External </para>
          </entry>
          <entry>
-          <para>
-           No
-          </para>
+          <para> No </para>
          </entry>
          <entry>
-          <para>
-           HTTP
-          </para>
+          <para> HTTP </para>
          </entry>
          <entry/>
         </row>
         <row>
          <entry>
-          <para>
-           389
-          </para>
+          <para> 389 </para>
          </entry>
          <entry>
-          <para>
-           External
-          </para>
+          <para> External </para>
          </entry>
          <entry>
-          <para>
-           No
-          </para>
+          <para> No </para>
          </entry>
          <entry>
-          <para>
-           LDAP
-          </para>
+          <para> LDAP </para>
          </entry>
          <entry>
-          <para>
-           User management
-          </para>
+          <para> User management </para>
          </entry>
         </row>
         <row>
          <entry>
-          <para>
-           443
-          </para>
+          <para> 443 </para>
          </entry>
          <entry>
-          <para>
-           External
-          </para>
+          <para> External </para>
          </entry>
          <entry>
-          <para>
-           No
-          </para>
+          <para> No </para>
          </entry>
          <entry>
-          <para>
-           HTTPS
-          </para>
+          <para> HTTPS </para>
          </entry>
          <entry/>
         </row>
         <row>
          <entry>
-          <para>
-           2379
-          </para>
+          <para> 2379 </para>
+         </entry>
+         <entry>
+          <para> Internal </para>
+         </entry>
+         <entry>
+          <para> No </para>
          </entry>
          <entry>
           <para>
-           Internal
-          </para>
-         </entry>
-         <entry>
-          <para>
-           No
-          </para>
-         </entry>
-         <entry>
-          <para>
-           <literal>etcd</literal> discovery
-          </para>
+           <literal>etcd</literal> discovery </para>
          </entry>
          <entry/>
         </row>
         <row>
          <entry>
-          <para>
-           4505 - 4506
-          </para>
+          <para> 4505 - 4506 </para>
          </entry>
          <entry>
-          <para>
-           Internal
-          </para>
+          <para> Internal </para>
          </entry>
          <entry>
-          <para>
-           No
-          </para>
+          <para> No </para>
          </entry>
          <entry>
-          <para>
-           Salt
-          </para>
+          <para> Salt </para>
          </entry>
          <entry/>
         </row>
         <row>
          <entry morerows="2" valign="middle">
-          <para>
-           Masters
-          </para>
+          <para> Masters </para>
+         </entry>
+         <entry>
+          <para> 2380 </para>
+         </entry>
+         <entry>
+          <para> Internal </para>
+         </entry>
+         <entry>
+          <para> Yes </para>
          </entry>
          <entry>
           <para>
-           2380
-          </para>
+           <literal>etcd</literal> control </para>
          </entry>
          <entry>
-          <para>
-           Internal
-          </para>
-         </entry>
-         <entry>
-          <para>
-           Yes
-          </para>
-         </entry>
-         <entry>
-          <para>
-           <literal>etcd</literal> control
-          </para>
-         </entry>
-         <entry>
-          <para>
-           Peer-to-peer <literal>etcd</literal> traffic
-          </para>
+          <para> Peer-to-peer <literal>etcd</literal> traffic </para>
          </entry>
         </row>
         <row>
          <entry>
-          <para>
-           4789
-          </para>
+          <para> 4789 </para>
          </entry>
          <entry>
-          <para>
-           Internal
-          </para>
+          <para> Internal </para>
          </entry>
          <entry>
-          <para>
-           No
-          </para>
+          <para> No </para>
          </entry>
          <entry>
-          <para>
-           VXLAN traffic
-          </para>
+          <para> VXLAN traffic </para>
          </entry>
          <entry>
-          <para>
-           Used by Flannel
-          </para>
+          <para> Used by Flannel </para>
          </entry>
         </row>
         <row>
          <entry>
-          <para>
-           6443
-          </para>
+          <para> 6443 </para>
          </entry>
          <entry>
-          <para>
-           Both
-          </para>
+          <para> Both </para>
          </entry>
          <entry>
-          <para>
-           Yes
-          </para>
+          <para> Yes </para>
          </entry>
          <entry>
-          <para>
-           &kube; API server
-          </para>
+          <para> &kube; API server </para>
          </entry>
          <entry/>
         </row>
         <row>
          <entry morerows="2" valign="middle">
-          <para>
-           Workers
-          </para>
+          <para> Workers </para>
+         </entry>
+         <entry>
+          <para> 2380 </para>
+         </entry>
+         <entry>
+          <para> Internal </para>
+         </entry>
+         <entry>
+          <para> Yes </para>
          </entry>
          <entry>
           <para>
-           2380
-          </para>
+           <literal>etcd</literal> control </para>
          </entry>
          <entry>
-          <para>
-           Internal
-          </para>
-         </entry>
-         <entry>
-          <para>
-           Yes
-          </para>
-         </entry>
-         <entry>
-          <para>
-           <literal>etcd</literal> control
-          </para>
-         </entry>
-         <entry>
-          <para>
-           Peer-to-peer <literal>etcd</literal> traffic
-          </para>
+          <para> Peer-to-peer <literal>etcd</literal> traffic </para>
          </entry>
         </row>
         <row>
          <entry>
-          <para>
-           4789
-          </para>
+          <para> 4789 </para>
          </entry>
          <entry>
-          <para>
-           Internal
-          </para>
+          <para> Internal </para>
          </entry>
          <entry>
-          <para>
-           No
-          </para>
+          <para> No </para>
          </entry>
          <entry>
-          <para>
-           VXLAN traffic
-          </para>
+          <para> VXLAN traffic </para>
          </entry>
          <entry>
-          <para>
-           Used by Flannel
-          </para>
+          <para> Used by Flannel </para>
          </entry>
         </row>
         <row>
          <entry>
-          <para>
-           10250
-          </para>
+          <para> 10250 </para>
          </entry>
          <entry>
-          <para>
-           Internal
-          </para>
+          <para> Internal </para>
          </entry>
          <entry>
-          <para>
-           No
-          </para>
+          <para> No </para>
          </entry>
          <entry>
-          <para>
-           Kubelet
-          </para>
+          <para> Kubelet </para>
          </entry>
          <entry/>
         </row>
@@ -713,34 +445,24 @@
      </table>
     </listitem>
    </itemizedlist>
-   <para>
-    When some additional ingress mechanism is used, additional ports would also
-    be open.
-   </para>
+   <para> When some additional ingress mechanism is used, additional ports would also be open. </para>
   </sect2>
-
   <sect2 xml:id="sec.caasp.installquick.limits">
    <title>Limitations</title>
    <itemizedlist mark="bullet" spacing="normal">
     <listitem>
-<!-- cwickert 2017-04-06: FIXME - check if still applies
+     <!-- cwickert 2017-04-06: FIXME - check if still applies
        https://bugzilla.suse.com/show_bug.cgi?id=1029317 
        jahalackova: that's still valid for 1.0.
        -->
-     <para>
-      &productname; &productnumber; does not support remote installations with
-      <literal>Virtual Network Computing (VNC)</literal>.
-     </para>
+     <para> &productname;
+       &productnumber; does not support remote installations with <literal>Virtual Network Computing (VNC)</literal>. </para>
     </listitem>
     <listitem>
      <para>
-      &productname; is a dedicated cluster operating system and does not
-      support dual-booting with other operating systems. Ensure that all drives
-      in all cluster nodes are empty and contain no other operating systems
-      before beginning installation.
-     </para>
+      &productname; is a dedicated cluster operating system and does not support dual-booting with other operating systems. Ensure that all drives in all cluster nodes are empty and contain no other operating systems before beginning installation. </para>
     </listitem>
    </itemizedlist>
   </sect2>
  </sect1>
- </chapter>
+</chapter>

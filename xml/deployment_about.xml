@@ -133,20 +133,19 @@
 
   <para>
    To run the whole cluster, &productname; uses various technologies such as
-   &salt;, Flannel networking, the <literal>etcd</literal> distributed key-
-   store database, a controller, a scheduler, <literal>kubelet</literal>,
-   a choice of two container runtime engines, and a &kube; API Server.
+   &salt;, Flannel networking, the <literal>etcd</literal> distributed key-store
+   database, a controller, a scheduler, <literal>kubelet</literal>, a choice of
+   two container runtime engines, and a &kube; API Server.
   </para>
 
   <para>
-   &salt; is used to manage deployment and administration of the cluster. The
+   &salt; is used to manage deployment and administration of the cluster. 
    <literal>&salt;-api</literal> is used to distribute commands from
    &dashboard; to the <literal>salt-master</literal> daemon. The
-   <literal>salt-master</literal> daemon stores events in <emphasis>MariaDB</emphasis>
-   (the database is also used to store &dashboard; data). The
-   <literal>salt-minion</literal> daemon on the &admin_node; is used to
-   generate required certificates, and on the &sminion;s the daemons communicate
-   with the &admin_node;.
+   <literal>salt-master</literal> daemon stores events in <emphasis>MariaDB</emphasis>,
+   which is also used to store &dashboard; data. The <literal>salt-minion</literal>
+   daemon on the &admin_node; is used to generate required certificates, and on
+   the &sminion;s the daemons communicate with the &admin_node;.
   </para>
 
   <para>
