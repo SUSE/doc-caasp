@@ -524,12 +524,24 @@
        <guimenu>External Kubernetes API server FQDN</guimenu>. If necessary,
        configure the <guimenu>Proxy Settings</guimenu>.
       </para>
+      <note>
+       <title>
+        Host Name, FQDN or IP Address
+       </title>
+       <para>
+        Generally, FQDNs are preferable to host names.
+       </para>
+       <para>For test deployments, you can use IP addresses instead of names for
+        both the dashboard and API server, but this is not recommended for
+        use in production.
+       </para>
+      </note>
       <variablelist>
        <varlistentry>
         <term>Dashboard Location</term>
         <listitem>
          <para>
-          Host name or IP of the node running this web interface.
+          Name of the node running the &dashboard; dashboard.
          </para>
         </listitem>
        </varlistentry>
@@ -537,13 +549,26 @@
         <term>External Kubernetes API server FQDN</term>
         <listitem>
          <para>
-          Fully qualified domain name (FQDN) used to reach the cluster from the
-          outside. In a simple, single-master deployment this will be the FQDN
-          of the node you are about to select as master.
+          Name used to reach the node running the &kube; API server.
          </para>
-        </listitem>
+         <para>
+          In a simple, single-master deployment this will be the name of the
+          node that you will select as the &master_node; when bootstrapping the
+          cluster.
+         </para>
+        <para>
+          If you are planning a larger cluster with multiple &master_node;s, 
+          they must all be accessible from a single host name. If not, the
+          functionality of &dashboard; will degrade if the original
+          &master_node; is removed. Therefore you should ensure that there is
+          some form of load-balancing, round-robin DNS or reverse proxy on the
+          value that you enter in this field.
+        </para>
+       </listitem>
        </varlistentry>
+       
 <!-- cwickert 2017-07-23 TODO: Another varlist for the individual settings? -->
+       
        <varlistentry>
         <term>Install Tiller (Helm's Server Component)</term>
         <listitem>
@@ -567,6 +592,7 @@
         </listitem>
        </varlistentry>
       </variablelist>
+     
       <informalfigure>
        <mediaobject>
         <imageobject role="fo">
@@ -618,9 +644,9 @@
        <note>
         <title>Plain System</title>
         <para>
-         It is also possible to select a third node type, of "plain node".
-         These can be used for testing and debugging purposes, but are not
-         usually needed.
+         It is also possible to select a third node type, "plain node". These
+         can be used for testing and debugging purposes, but are not usually
+         needed.
         </para>
        </note>
       </step>
@@ -633,13 +659,13 @@
         time, the installation process starts.
        </para>
        <para>
-        After a reboot, the worker should show up in the dashboard and can be
+        After a reboot, the new node should appear in the dashboard and can be
         added to your cluster.
        </para>
        <para>
         Repeat this procedure at least twice more to add a minimum of three
-        &worker_node;s. This is the minimum supported size for a &productname;
-        cluster.
+        nodes: one &master_node; and two &worker_node;s. This is the minimum
+        supported size for a &productname; cluster.
        </para>
       </step>
      </procedure>
@@ -647,9 +673,9 @@
     <sect4 xml:id="sec.caasp.installquick.node.ay">
      <title>Automatic Installation Using &ay;</title>
      <para>
-      Before installing &worker_node;s with &ay;, you must have the URL of the
-      &ay; file on the &admin_node;. Generally this will supplied by the
-      dashboard on the &admin_node;.
+      Before installing &worker_node;s with &ay;, you must obtain the URL that
+      points to the &ay; file on the &admin_node;. Generally, this will supplied
+      by the &dashboard; dashboard on the &admin_node;.
      </para>
      <procedure xml:id="pro.caasp.installquick.node.ay">
       <step>
@@ -715,26 +741,352 @@
          <listitem>
           <para>
            The host name for the node, if not provided by DHCP. If you manually
-           specify a host name, make sure it is unique.
+           specify a host name, make sure that it is unique.
           </para>
          </listitem>
         </varlistentry>
        </variablelist>
        <para>
-        Press <keycap function="enter"
-        />. This boots the system and
-        loads the &productname; installer.
+        Press <keycap function="enter"/>. This boots the system and loads the
+        &productname; installer.
        </para>
       </step>
       <step>
        <para>
         So long as there are no errors, the rest of the installation should
-        complete automatically. After a reboot, the new &worker_node; should
-        show up in the dashboard and can be added to your cluster.
+        complete automatically. After a reboot, the new  node should appear in
+        the dashboard and can be added to your cluster.
        </para>
       </step>
      </procedure>
+     <note>
+      <title>
+       &rootuser; Password
+      </title>
+      <para>
+       When nodes are installed using &ay;, there is no opportunity to specify
+       the password for &rootuser;. However, each node will have <literal>ssh</literal>
+       keys for &rootuser; on the &master_node; pre-installed. Thus it is
+       possible to access the &worker_node;s by <command>ssh</command>ing to
+       them from the &master_node;.
+      </para>
+     </note>
+      
     </sect4>
+   </sect3>
+   
+   <sect3 xml:id="sec.caasp.installquick.qcow2">
+    <title>Installing from Pre-installed Disk Images</title>
+    <para>
+     For building clusters from virtual machines on supported hypervisors, it
+     is not necessary to individually install each node. &suse; offers
+     pre-installed VM disk images in the following formats: 
+    </para>
+    <variablelist>
+     <varlistentry>
+      <term>&kvm; and &xen;</term>
+      <listitem>
+       <para>
+        In QCOW2 format, for &kvm; and for &xen; using full virtualization.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>&xen;</term>
+      <listitem>
+       <para>
+        In QCOW2 format, for &xen; using paravirtualization.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>VMware</term>
+      <listitem>
+       <para>
+        In VMDK format, for VMware ESXi.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       VHD
+      </term>
+      <listitem>
+       <para>For Microsoft Hyper-V.</para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+    <sect4>
+     <title>Overview</title>
+     <para>
+      When deploying a cluster node from pre-installed disk images, the setup
+      program never runs. Thus, it is not possible to set values such as time
+      servers, node names, the &rootuser; password for the &admin_node; and so
+      on in the normal way.
+     </para>
+     <para>      
+      Instead, these values must be set using <literal>cloud-init</literal> configuration
+      files, which are placed into a specific subdirectory within an ISO image
+      which is attached to the VM as a secondary disk. The pre-installed
+      operating system on the disk image looks for a medium with the
+      volume label <literal>cidata</literal>, searches that volume for the
+      configuration files, and applies the settings within them.
+     </para>
+     <para>
+      Full details of the cloud-init metadata files can be found in the
+      Configuration chapter of this manual; for more information, see
+      <xref linkend="cloud-init.configuration"/>.
+     </para>
+     <para>
+      As with individual node installation, the &admin_node; must be configured
+      separately and differently from the &worker_node;s.
+     </para>
+    </sect4>
+    <sect4>
+     <title>Procedure</title>
+     <para>
+      The process is very similar for all hypervisors. The examples in this
+      manual use &kvm; running on &sle;.
+     </para>
+     <para>      
+      You must build at least two ISO images with configuration information:
+      one for the &admin_node; and one for the &worker_node;s. If you wish to
+      assign specific host names or customize individual &worker_node;s, then
+      you must create separate ISO images for each node containing the
+      customised files.
+     </para>
+     <para>
+      Additionally, you must make a separate copy of the downloaded VM disk
+      image for each VM. We suggest keeping the original download elsewhere and
+      making a fresh copy for each node, naming it appropriately: for example,
+      <literal>caas-admin</literal>, <literal>caas-master</literal>, 
+      <literal>caas-worker1</literal>, <literal>caas-worker2</literal> and so
+      on.
+     </para>
+     <sect5>
+      <title>Configuration Files</title>
+      <para>
+       There are two separate configuration files: <literal>user-data</literal>
+       and <literal>meta-data</literal>. Each node needs both. Thus, you must at
+       a minimum prepare one pair of files for the &admin_node;, and another
+       pair of files for all the &worker_node;s.
+      </para>
+      <para>
+       The two files must be placed into a subdirectory. For the &admin_node;,
+       this must be called <literal>cc-admin</literal>. For the &worker_node;s,
+       this must be called <literal>cc-worker</literal>.
+      </para>
+      <para>
+       So, for instance, if your working directory is called <literal>~/cloud-config</literal>,
+       for the admin node, you need:
+      </para>
+      <screen>~/cloud-config/cc-admin/user-data</screen>
+      <para>
+       and
+      </para>
+      <screen>~/cloud-config/cc-admin/meta-data</screen>
+      <para>
+       For a &worker_node;, you need:
+      </para>
+      <screen>~/cloud-config/cc-worker/user-data</screen>
+      <para>
+       and
+      </para>
+      <screen>~/cloud-config/cc-worker/meta-data</screen>
+      <para>
+       The same <literal>meta-data</literal> file can be used for both node types.
+       Here is an sample <literal>meta-data</literal> file:
+       </para>
+      <screen>
+# File: cloud-config/cc-worker/meta-data
+instance-id: <replaceable>iid-CAAS01</replaceable>
+network-interfaces: |
+  auto <replaceable>eth0</replaceable>
+  iface <replaceable>eth0</replaceable> inet dhcp
+       </screen>
+      <para>
+       The <literal>user-data</literal> file contains settings such as time
+       servers, the &rootuser; password, and the node type.
+      </para>
+      <para>
+       Here is an example <literal>user-data</literal> file for an &admin_node;:
+      </para>
+      <screen>
+# File: cloud-config/cc-admin/user-data
+#cloud-config
+debug: True
+disable_root: False
+ssh_pwauth: True
+chpasswd:
+  list: |
+    root:<replaceable>root</replaceable>
+    expire: False
+ntp:
+  servers:
+    - <replaceable>ntp1.example.com</replaceable>
+    - <replaceable>ntp2.example.com</replaceable>
+runcmd:
+  - /usr/bin/systemctl enable --now ntpd
+suse_caasp:
+  role: <replaceable>admin</replaceable>
+       </screen>
+      <para>
+       Here is an example for a &worker_node;:
+      </para>
+      <screen>
+# File cloud-config/cc-worker/user-data
+#cloud-config
+debug: True
+disable_root: False
+ssh_pwauth: True
+chpasswd:
+  list: |
+    root:<replaceable>root</replaceable>
+    expire: False
+suse_caasp:
+   role: <replaceable>cluster</replaceable>
+   admin_node: <replaceable>caas-admin.example.com</replaceable>
+       </screen>
+     </sect5>
+     <sect5>
+      <title>Preparing an ISO image</title>
+      <para>
+       Once you have edited the configuration files with your desired settings,
+       you must create an ISO image with the volume lable <literal>cidata</literal>
+       containing just the subdirectory for that node type. Use the <command>genisoimage</command>
+       command to do this.
+      </para>
+      <para>
+       To create the ISO image for an admin node:
+      </para>
+      <screen>
+       sudo genisoimage -output <replaceable>cc-admin.img</replaceable> -volid <replaceable>cidata</replaceable> -joliet -rock <replaceable>cc-admin</replaceable>
+      </screen>
+      <para>
+       To create the ISO image for a worker node, use the same command, but 
+       substitute the name of the folder containing the configuration files for
+       a &worker_node; and title the volume <literal>cc-worker</literal>.
+      </para>
+     </sect5>
+     
+     <sect5>
+      <title>Procedure to Bring Up an &Admin_Node;</title>
+      <procedure>
+       <step>
+        <para>
+         Make a folder called <literal>cc-admin</literal>.
+        </para>
+       </step>
+       <step>
+        <para>
+         In that folder, prepare <literal>user-data</literal> and <literal>meta-data</literal>
+         files to set the &rootuser; password, node name and so on for the
+         &admin_node;.
+        </para>
+       </step>
+       <step>
+        <para>
+         Create an ISO file called <literal>cc-admin.img</literal> containing
+         these two files:
+        </para>
+        <screen>sudo genisoimage -output cc-admin.img -volid cidata -joliet -rock cc-admin</screen>
+       </step>
+       <step>
+        <para>
+         Create a new VM for the &admin_node;.
+        </para>
+       </step>
+       <step>
+        <para>
+         Attach a copy of the downloaded disk image as its main hard disk.   
+        </para>
+       </step>
+       <step>
+        <para>
+         Attach the <literal>cloud-config</literal> file disk image as a
+         secondary disk.
+       </para>
+       </step>
+       <step>
+        <para>
+         Start the VM.      
+        </para>
+       </step>
+       <step>
+        <para>
+         Configure the new &admin_node; as in step <xref linkend="sec.caasp.installquick.conf"/>.         
+        </para>
+       </step>
+      </procedure>
+     </sect5>
+     
+     <sect5>
+      <title>Procedure to Bring Up a &Worker_Node;</title>
+      <para>
+       The first procedure is to generate the configuration files. Unless
+       you wish to customize the individual &worker_node;s, then you need only
+       do this part once.
+      </para>
+      <procedure>
+       <step>
+        <para>
+         Make a folder called <literal>cc-worker</literal>.
+        </para>
+       </step>
+       <step>
+        <para>
+         In that folder, prepare <literal>user-data</literal> file to set the &rootuser;
+         password, network settings and so on for the &worker_node;. If no
+         changes are necessary, you can copy the <literal>meta-data</literal>
+         file from that used to configure the &admin_node;.
+        </para>
+       </step>
+       <step>
+        <para>
+         Create an ISO file called <literal>cc-worker.img</literal> containing
+         these two files:
+        </para>
+        <screen>sudo genisoimage -output cc-worker.img -volid cidata -joliet -rock cc-worker</screen>
+       </step>
+      </procedure>
+      <para>
+       Once you have a disk image containing the configuration files, it can be
+       reused for multiple &worker_node;s.
+      </para>
+      <para>
+       Then, for each &worker_node;, the following steps must be repeated:
+      </para>
+      <procedure>
+       <step>
+        <para>
+         Create a new VM for the &worker_node;.
+        </para>
+       </step>
+       <step>
+        <para>
+         Attach a copy of the downloaded disk image as its main hard disk.
+        </para>
+       </step>
+       <step>
+        <para>
+         Attach the <literal>cloud-config</literal> file disk image as a
+         secondary disk.
+        </para>
+       </step>
+       <step>
+        <para>
+         Start the VM.      
+        </para>
+       </step>
+      </procedure>
+      <para>
+       Once you have brought up as many &worker_node;s as you need, proceed to
+       bootstap the cluster using the &dashboard; dashboard.
+      </para>
+     </sect5>
+     
+    </sect4>
+ 
    </sect3>
   </sect2>
 
