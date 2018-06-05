@@ -41,7 +41,7 @@
     <warning>
      <title>&Admin_Node;</title>
      <para>
-      You must install the &admin_node; first and configure it using
+      You need to install the &admin_node; first and configure it using
       &dashboard; before installing the other nodes in the cluster.
      </para>
     </warning>
@@ -87,11 +87,11 @@
     />.
    </para>
    <para>
-    You can directly use the <literal>initrd</literal> and
-    <literal>linux</literal> files from your install media, or install the
+    You can directly use the <filename>initrd</filename> and
+    <filename>linux</filename> files from your install media, or install the
     package <package>tftpboot-installation-CAASP-3.0</package> onto your TFTP
-    server. The package provides the required <literal>initrd</literal> and
-    <literal>linux</literal> files in the <filename>/srv/tftpboot/</filename>
+    server. The package provides the required <filename>initrd</filename> and
+    <filename>linux</filename> files in the <filename>/srv/tftpboot/</filename>
     directory. You will need to modify the paths used in the &sle; 12
     Deployment Guide to correctly point to the files provided by the package.
    </para>
@@ -202,7 +202,7 @@
         <listitem>
          <para>
           Enter the <guimenu>Registration Code or SMT Server URL</guimenu>. SMT
-          Server URLs must use <literal>https</literal> or
+          Server URLs should use <literal>https</literal> or
           <literal>http</literal>; other protocols are not supported.
          </para>
         </listitem>
@@ -295,14 +295,14 @@
               </listitem>
               <listitem>
                <para>
-                For snapshots, partitions must have a capacity of at least 11
+                For snapshots, partitions should have a capacity of at least 11
                 GB.
                </para>
               </listitem>
               <listitem>
                <para>
                 Depending on the number and size of your containers, you will
-                need sufficient space under the <literal>/var</literal> mount
+                need sufficient space under the <filename>/var</filename> mount
                 point.
                </para>
               </listitem>
@@ -334,7 +334,7 @@
         <listitem>
          <para>
           If the network could not be configured automatically while starting
-          the installation system, you must manually configure the
+          the installation system, you should manually configure the
           <guimenu>Network Settings</guimenu>. Please make sure at least one
           network interface is connected to the Internet in order to register
           your product.
@@ -615,7 +615,7 @@
     <title>Installing &Worker_Node;s</title>
     <warning>
      <para>
-      Before you can install the &worker_node;s of your new cluster, you must
+      Before you can install the &worker_node;s of your new cluster, you need to
       install and configure the &admin_node;. Ensure that you have completed
       the steps in <xref
        linkend="sec.caasp.installquick.admin"/> and
@@ -673,9 +673,9 @@
     <sect4 xml:id="sec.caasp.installquick.node.ay">
      <title>Automatic Installation Using &ay;</title>
      <para>
-      Before installing &worker_node;s with &ay;, you must obtain the URL that
-      points to the &ay; file on the &admin_node;. Generally, this will supplied
-      by the &dashboard; dashboard on the &admin_node;.
+      Before installing &worker_node;s with &ay;, you need to obtain the URL
+      that points to the &ay; file on the &admin_node;. Generally, this will be
+      supplied by the &dashboard; dashboard on the &admin_node;.
      </para>
      <procedure xml:id="pro.caasp.installquick.node.ay">
       <step>
@@ -701,7 +701,7 @@
          function="enter"/>.
        </para>
        <para>
-        Before proceeding to boot the machine, you must enter the necessary
+        Before proceeding to boot the machine, you should enter the necessary
         <guimenu>Boot Options</guimenu> for &ay; and networking.
        </para>
        <para>
@@ -765,10 +765,10 @@
       </title>
       <para>
        When nodes are installed using &ay;, there is no opportunity to specify
-       the password for &rootuser;. However, each node will have <literal>ssh</literal>
+       the password for &rootuser;. However, each node will have <command>ssh</command>
        keys for &rootuser; on the &master_node; pre-installed. Thus it is
-       possible to access the &worker_node;s by <command>ssh</command>ing to
-       them from the &master_node;.
+       possible to access the &worker_node;s by opening an <command>ssh</command>
+       session from the &master_node;.
       </para>
      </note>
       
@@ -825,9 +825,9 @@
       on in the normal way.
      </para>
      <para>      
-      Instead, these values must be set using <literal>cloud-init</literal> configuration
-      files, which are placed into a specific subdirectory within an ISO image
-      which is attached to the VM as a secondary disk. The pre-installed
+      Instead, you need to set these values using <literal>cloud-init</literal> configuration
+      files. You should place these into a specific subdirectory, then make an
+      ISO image. Attach this to the VM as a secondary disk. The pre-installed
       operating system on the disk image looks for a medium with the
       volume label <literal>cidata</literal>, searches that volume for the
       configuration files, and applies the settings within them.
@@ -838,8 +838,8 @@
       <xref linkend="cloud-init.configuration"/>.
      </para>
      <para>
-      As with individual node installation, the &admin_node; must be configured
-      separately and differently from the &worker_node;s.
+      As with individual node installation, the &admin_node; needs to be
+      configured separately and differently from the &worker_node;s.
      </para>
     </sect4>
     <sect4>
@@ -849,14 +849,13 @@
       manual use &kvm; running on &sle;.
      </para>
      <para>      
-      You must build at least two ISO images with configuration information:
+      You need to build at least two ISO images with configuration information:
       one for the &admin_node; and one for the &worker_node;s. If you wish to
       assign specific host names or customize individual &worker_node;s, then
-      you must create separate ISO images for each node containing the
-      customised files.
+      you should create separate ISO images for each node.
      </para>
      <para>
-      Additionally, you must make a separate copy of the downloaded VM disk
+      Additionally, you need to make a separate copy of the downloaded VM disk
       image for each VM. We suggest keeping the original download elsewhere and
       making a fresh copy for each node, naming it appropriately: for example,
       <literal>caas-admin</literal>, <literal>caas-master</literal>, 
@@ -866,19 +865,19 @@
      <sect5>
       <title>Configuration Files</title>
       <para>
-       There are two separate configuration files: <literal>user-data</literal>
-       and <literal>meta-data</literal>. Each node needs both. Thus, you must at
-       a minimum prepare one pair of files for the &admin_node;, and another
+       There are two separate configuration files: <filename>user-data</filename>
+       and <filename>meta-data</filename>. Each node needs both. Thus, you need to
+       prepare at a minimum one pair of files for the &admin_node;, and another
        pair of files for all the &worker_node;s.
       </para>
       <para>
-       The two files must be placed into a subdirectory. For the &admin_node;,
-       this must be called <literal>cc-admin</literal>. For the &worker_node;s,
-       this must be called <literal>cc-worker</literal>.
+       Place the files into subdirectories named <filename>cc-admin</filename>
+       for the &admin_node; and <filename>cc-worker</filename> for the
+       &worker_node;s.
       </para>
       <para>
-       So, for instance, if your working directory is called <literal>~/cloud-config</literal>,
-       for the admin node, you need:
+       So, for instance, if your working directory is <filename>~/cloud-config</filename>,
+       then for the admin node, you need:
       </para>
       <screen>~/cloud-config/cc-admin/user-data</screen>
       <para>
@@ -894,8 +893,8 @@
       </para>
       <screen>~/cloud-config/cc-worker/meta-data</screen>
       <para>
-       The same <literal>meta-data</literal> file can be used for both node types.
-       Here is an sample <literal>meta-data</literal> file:
+       The same <filename>meta-data</filename> file can be used for both node types.
+       Here is an sample <filename>meta-data</filename> file:
        </para>
       <screen>
 # File: cloud-config/cc-worker/meta-data
@@ -905,11 +904,11 @@ network-interfaces: |
   iface <replaceable>eth0</replaceable> inet dhcp
        </screen>
       <para>
-       The <literal>user-data</literal> file contains settings such as time
+       The <filename>user-data</filename> file contains settings such as time
        servers, the &rootuser; password, and the node type.
       </para>
       <para>
-       Here is an example <literal>user-data</literal> file for an &admin_node;:
+       Here is an example <filename>user-data</filename> file for an &admin_node;:
       </para>
       <screen>
 # File: cloud-config/cc-admin/user-data
@@ -952,15 +951,15 @@ suse_caasp:
       <title>Preparing an ISO image</title>
       <para>
        Once you have edited the configuration files with your desired settings,
-       you must create an ISO image with the volume lable <literal>cidata</literal>
-       containing just the subdirectory for that node type. Use the <command>genisoimage</command>
-       command to do this.
+       you need to create an ISO image with the volume label <literal>cidata</literal>
+       containing only the subdirectory for that node type. Use <command>genisoimage</command>
+       to do this.
       </para>
       <para>
        To create the ISO image for an admin node:
       </para>
       <screen>
-       sudo genisoimage -output <replaceable>cc-admin.img</replaceable> -volid <replaceable>cidata</replaceable> -joliet -rock <replaceable>cc-admin</replaceable>
+&prompt.user; sudo genisoimage -output <replaceable>cc-admin.img</replaceable> -volid <replaceable>cidata</replaceable> -joliet -rock <replaceable>cc-admin</replaceable>
       </screen>
       <para>
        To create the ISO image for a worker node, use the same command, but 
@@ -974,22 +973,24 @@ suse_caasp:
       <procedure>
        <step>
         <para>
-         Make a folder called <literal>cc-admin</literal>.
+         Make a folder called <filename>cc-admin</filename>.
         </para>
        </step>
        <step>
         <para>
-         In that folder, prepare <literal>user-data</literal> and <literal>meta-data</literal>
+         In that folder, prepare <filename>user-data</filename> and <filename>meta-data</filename>
          files to set the &rootuser; password, node name and so on for the
          &admin_node;.
         </para>
        </step>
        <step>
         <para>
-         Create an ISO file called <literal>cc-admin.img</literal> containing
+         Create an ISO file called <filename>cc-admin.img</filename> containing
          these two files:
         </para>
-        <screen>sudo genisoimage -output cc-admin.img -volid cidata -joliet -rock cc-admin</screen>
+        <screen>
+&prompt.user; sudo genisoimage -output cc-admin.img -volid cidata -joliet -rock cc-admin
+        </screen>
        </step>
        <step>
         <para>
@@ -1003,8 +1004,7 @@ suse_caasp:
        </step>
        <step>
         <para>
-         Attach the <literal>cloud-config</literal> file disk image as a
-         secondary disk.
+         Attach the <filename>cc-admin.img</filename> disk image as a secondary disk.
        </para>
        </step>
        <step>
@@ -1030,23 +1030,25 @@ suse_caasp:
       <procedure>
        <step>
         <para>
-         Make a folder called <literal>cc-worker</literal>.
+         Make a folder called <filename>cc-worker</filename>.
         </para>
        </step>
        <step>
         <para>
-         In that folder, prepare <literal>user-data</literal> file to set the &rootuser;
+         In that folder, prepare a <filename>user-data</filename> file to set the &rootuser;
          password, network settings and so on for the &worker_node;. If no
-         changes are necessary, you can copy the <literal>meta-data</literal>
+         changes are necessary, you can copy the <filename>meta-data</filename>
          file from that used to configure the &admin_node;.
         </para>
        </step>
        <step>
         <para>
-         Create an ISO file called <literal>cc-worker.img</literal> containing
+         Create an ISO file called <filename>cc-worker.img</filename> containing
          these two files:
         </para>
-        <screen>sudo genisoimage -output cc-worker.img -volid cidata -joliet -rock cc-worker</screen>
+        <screen>
+&prompt.user; sudo genisoimage -output cc-worker.img -volid cidata -joliet -rock cc-worker
+        </screen>
        </step>
       </procedure>
       <para>
@@ -1054,7 +1056,7 @@ suse_caasp:
        reused for multiple &worker_node;s.
       </para>
       <para>
-       Then, for each &worker_node;, the following steps must be repeated:
+       Then, repeat the following steps for each &worker_node;:
       </para>
       <procedure>
        <step>
@@ -1069,7 +1071,7 @@ suse_caasp:
        </step>
        <step>
         <para>
-         Attach the <literal>cloud-config</literal> file disk image as a
+         Attach the <filename>cc-worker.img</filename> disk image as a
          secondary disk.
         </para>
        </step>
@@ -1143,7 +1145,7 @@ suse_caasp:
      <para>
       Please wait while the cluster is bootstrapped. Once finished, the status
       indicator icon of the nodes changes accordingly and you can download the
-      <command>kubectl</command> configuration file.
+      <command>kubectl</command> file.
      </para>
      <informalfigure>
       <mediaobject>
