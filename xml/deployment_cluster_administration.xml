@@ -280,10 +280,10 @@ metadata:
   namespace: <replaceable>applicable namespace</replaceable><co xml:id="co.auth.group.role-namespace"/>
 # This set of rules amounts to "allow all"
 rules:
-- apiGroups: [""]
-  resources: [""]
-  resourceNames: [""]
-  verbs: [""]
+- apiGroups: [""]<co xml:id="co.auth.group.apigroup"/>
+  resources: ["<replaceable>configMap</replaceable>"]<co xml:id="co.auth.group.object"/>
+  resourceNames: ["<replaceable>my-pod"</replaceable>"]<co xml:id="co.auth.group.resnames"/>
+  verbs: ["<replaceable>list</replaceable>"]<co xml:id="co.auth.group.function"/>
 ---
 # Map an LDAP group to this &kube; role
 kind: RoleBinding
@@ -309,7 +309,27 @@ roleRef:
      <callout arearefs="co.auth.group.role-namespace">
       <para>
        Namespace the new group should be allowed to access. Use
-        <literal>default</literal> for &kube;' default namespace.
+        <literal>default</literal> for &kube;' default namespace
+      </para>
+     </callout>
+     <callout arearefs="co.auth.group.apigroup">
+      <para>
+       &kube; API groups &mdash; use "" for the core group <literal>rbac.authorization.k8s.io</literal>
+      </para>
+     </callout>
+     <callout arearefs="co.auth.group.object">
+      <para>
+       &kube; objects/resources e.g. <literal>"configMap"</literal>, <literal>"Pod"</literal>, etc.
+      </para>
+     </callout>
+     <callout arearefs="co.auth.group.resnames">
+      <para>
+       specific named resources, e.g. <literal>"my-pod"</literal>, <literal>"my-config-map"</literal>
+      </para>
+     </callout>
+     <callout arearefs="co.auth.group.function">
+      <para>
+       Functions as seen in <literal>kubectl</literal> subcommands, e.g. "list", "get", "watch", "update"
       </para>
      </callout>
      <callout arearefs="co.auth.group.role-binding-name">
@@ -334,8 +354,6 @@ roleRef:
      xlink:href="https://kubernetes.io/docs/admin/authorization/rbac/"></link>
     </para>
    </sect3>
-
-
  </sect2>
 
  </sect1>
