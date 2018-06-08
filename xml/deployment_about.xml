@@ -34,12 +34,13 @@
  <para>
   While &productname; inherits benefits of &sle; and uses tools and
   technologies well-known to system administrators&mdash;such as
-  <literal>cloud-init</literal>, Kubernetes, and SaltStack&mdash;the main
+  <literal>cloud-init</literal>, Kubernetes, and Salt&mdash;the main
   innovation (compared to &sls;) comes with <emphasis role="bold">transactional
   updates</emphasis>. A transactional update is an update that can be installed
   when the system is running without any down-time. A transaction update can
-  be rolled back, so if the upgdate fails or is not compatible with your
+  be rolled back, so if the update fails or is not compatible with your
   infrastructure, you can restore the previous system state.
+
  </para>
  <para>
   &productname; uses the &btrfs; file system with the following characteristics:
@@ -73,7 +74,7 @@
    <listitem>
     <para>
      The <emphasis>&admin_node;</emphasis> is a &smaster; which assigns roles to
-     &sminion;s. This node runs the Velum Web-based dashboard for managing the
+     &sminion;s. This node runs the &dash; Web-based dashboard for managing the
      whole cluster. For details, refer to <xref linkend="administration_dashboard"/>.
     </para>
    </listitem>
@@ -85,12 +86,12 @@
     <itemizedlist>
      <listitem>
       <para>
-       &kube; master: <emphasis>&master_node;s</emphasis> manage the worker nodes.
+       &kube; master: <emphasis>&master_node;s</emphasis> which manage the worker nodes.
       </para>
      </listitem>
      <listitem>
       <para>
-       &kube; worker: <emphasis>&worker_node;s</emphasis> run the application
+       &kube; worker: <emphasis>&worker_node;s</emphasis> which run the application
        containers which are the main workload of the cluster. 
       </para>
      </listitem>
@@ -99,8 +100,8 @@
   </itemizedlist>
 
   <para>
-   In large-scale clusters, there are other nodes that can help you to manage
-   and run the cluster:
+   In large-scale clusters, there are other types of node that can help you to
+   manage and run the cluster:
   </para>
 
   <itemizedlist>
@@ -175,7 +176,7 @@
    </itemizedlist>
 
   <para>
-   &salt; is used to manage deployment and administration of the cluster. The
+   &salt; is used to manage deployment and administration of the cluster. 
    <literal>&salt;-api</literal> is used to distribute commands from
    &dashboard; to the <literal>salt-master</literal> daemon. The
    <literal>salt-master</literal> daemon stores events in <emphasis>MariaDB</emphasis>,
@@ -187,21 +188,21 @@
   <para>
    As there can be several containers running on each host machine, each
    container is assigned an IP address that is used for communication with
-   other containers on the same host machine. Containers might need to have a
-   unique IP address exposed for network communication, thus flannel networking
-   is used. Flannel gives each host an IP sub net from which the container
-   engine can allocate IP addresses for containers. The mapping of IP addresses
-   is stored by using <literal>etcd</literal>. The <literal>flanneld</literal>
-   is used to manage routing of packets and mapping of IP addresses.
+   other containers on the same host. Containers might need to have a
+   unique IP address exposed for network communications, thus Flannel networking
+   is used. Flannel gives each host an IP subnet from which the container
+   engine can allocate IP addresses to containers. The mapping of IP addresses
+   is stored by <literal>etcd</literal>. The <literal>flanneld</literal> daemon
+   manages routing of packets and mapping of IP addresses.
   </para>
 
   <para>
    Within the cluster there are several instances of <literal>etcd</literal>,
-   each with a different purpose. The <literal>etcd discovery</literal> running
-   on the &admin_node; is used to bootstrap instances of
-   <literal>etcd</literal> running on other nodes and is not part of the
-   <literal>etcd</literal> cluster on other nodes. The <literal>etcd</literal>
-   instance on the &master_node; stores events from the API Server. The
+   each with a different purpose. The <literal>etcd discovery</literal> daemon
+   running on the &admin_node; is used to bootstrap instances of
+   <literal>etcd</literal> on other nodes and is not part of the
+   <literal>etcd</literal> cluster on the other nodes. The <literal>etcd</literal>
+   instance on the &master_node; stores events from the &kube; API Server. The
    <literal>etcd</literal> instance on &worker_node;s runs as a proxy that forwards
    clients to the <literal>etcd</literal> on the &master_node;.
   </para>
@@ -229,8 +230,8 @@
     </term>
     <listitem>
      <para>
-      This daemon exposes a REST API used to manage pods. The API server performs
-      authentication and authorization.
+      This daemon exposes a REST API used to manage pods. The API server
+      performs authentication and authorization.
      </para>
     </listitem>      
    </varlistentry>

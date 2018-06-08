@@ -17,7 +17,7 @@
  </info>
  <para>
   This chapter specifies the requirements to install and operate &productname;.
-   </para>
+ </para>
  <sect1 xml:id="sec.caasp.installquick.sysreqs">
   <title>System Requirements</title>
 
@@ -29,9 +29,10 @@
   <sect2 xml:id="sec.caasp.installquick.clusreqs">
    <title>Cluster Requirements</title>
    <para>
-    &productname; is a cluster operating system. It requires a group of physical
-    or virtual machines in order to operate. The minimum supported cluster size
-    is four nodes: one &admin_node;, one &master_node;, and two &worker_node;s.
+    &productname; is a cluster operating system. It requires a group of
+    physical or virtual machines in order to operate. The minimum supported
+    cluster size is four nodes: one &admin_node;, one &master_node;, and two
+    &worker_node;s.
    </para>
    <note>
     <title>Test and Proof-of-Concept Clusters</title>
@@ -52,12 +53,12 @@
     Currently, &suse; supports clusters of up to 150 nodes.
    </para>
   </sect2>
-  
+
   <sect2 xml:id="sec.caasp.installquick.env">
    <title>Supported Environments</title>
    <para>
-    Regarding deployment scenarios, &suse; supports &productname; running in the
-    following environments:
+    Regarding deployment scenarios, &suse; supports &productname; running in
+    the following environments:
    </para>
    <itemizedlist>
     <listitem>
@@ -243,39 +244,38 @@
     </listitem>
    </itemizedlist>
   </sect2>
-  
+
   <sect2 xml:id="Intro.Requirements.Storage">
    <title>Container Data Storage</title>
    <para>
     Storage can be provided using:
    </para>
    <itemizedlist>
-     <listitem>
+    <listitem>
+     <para>
+      &ses;.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      NFS.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      <command>hostpath</command>.
+     </para>
+     <note>
+      <title><literal>hostpath</literal> Storage</title>
       <para>
-       &ses;.
+       Storage using <literal>hostpath</literal> is still supported, but by
+       default it is disabled by <literal>PodSecurityPolicies</literal>.
       </para>
-     </listitem>
-     <listitem>
-      <para>
-       NFS.
-      </para>
-     </listitem>
-     <listitem>
-      <para>
-       <command>hostpath</command>.
-      </para>
-      <note>
-       <title><literal>hostpath</literal> Deprecated</title>
-       <para>
-        Storage using <literal>hostpath</literal> is still supported, but by
-        default it is disabled by <literal>PodSecurityPolicies</literal>.
-       </para>
-      </note>
-     </listitem>
-    </itemizedlist>
-
+     </note>
+    </listitem>
+   </itemizedlist>
   </sect2>
-  
+
   <sect2 xml:id="sec.caasp.installquick.hwreqs">
    <title>Minimum Node Specification</title>
    <para>
@@ -292,12 +292,6 @@
      <para>
       Minimum RAM: 8 GB.
      </para>
-     <para>
-      NOTE: &kube; does not support swap and any existing swap partition will
-      be disabled during installation. Although it may be possible to install
-      &productname; on nodes with less RAM, if the operating system runs out of
-      available memory, the cluster may fail.
-     </para>
     </listitem>
     <listitem>
      <para>
@@ -310,6 +304,17 @@
      </para>
     </listitem>
    </itemizedlist>
+   <note>
+    <title>Swap partitions</title>
+    <para>
+     &kube; does not support swap. For technical reasons, an &admin_node;
+     installed from an ISO image will have a small swap partition which will be
+     disabled after installation. Nodes build using &ay; have none. Although it
+     may be possible to install &productname; on machines with less RAM, if the
+     operating system runs out of available memory, the node and therefore the
+     cluster may fail.
+    </para>
+   </note>
   </sect2>
 
   <sect2 xml:id="sec.caasp.installquick.netreqs">
@@ -356,8 +361,8 @@
     </listitem>
     <listitem>
      <para>
-      On the same network, a separate computer with a Web browser is required in
-      order to complete bootstrap of the cluster.
+      On the same network, a separate computer with a Web browser is required
+      in order to complete bootstrap of the cluster.
      </para>
     </listitem>
     <listitem>
@@ -761,4 +766,4 @@
    </itemizedlist>
   </sect2>
  </sect1>
- </chapter>
+</chapter>
