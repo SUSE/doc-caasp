@@ -133,10 +133,47 @@
 
   <para>
    To run the whole cluster, &productname; uses various technologies such as
-   &salt;, Flannel networking, the <literal>etcd</literal> distributed key-store
-   database, a controller, a scheduler, <literal>kubelet</literal>, a choice of
-   two container runtime engines, and a &kube; API Server.
+   &salt;, Flannel networking, the <literal>etcd</literal> distributed key-
+   store database, a controller, a scheduler, <literal>kubelet</literal>, a
+   &kube; API Server, and a choice of two container runtime engines, Docker or
+   CRI-O.
   </para>
+  <itemizedlist>
+   <listitem>
+    <formalpara>
+     <title>Docker</title>
+     <para>
+      This is the leading open-source format for application containers. It is
+      fully supported by &suse;.
+     </para>
+    </formalpara>
+    <para>
+     For more information, see <link xlink:href="https://www.docker.com/"/>.
+    </para>
+   </listitem>
+   <listitem>
+    <formalpara>
+     <title>CRI-O</title>
+     <para>
+      Designed specifically for &kube;, CRI-O is an implementation of CRI, the
+      Container Runtime Interface. A lightweight alternative to Docker or Moby,
+      it supports Open Container Initiative (OCI) images.
+     </para>
+    </formalpara>
+    <para>
+     For more information, see <link xlink:href="http://cri-o.io/"/>.
+    </para>
+    
+    <note>
+     <title>Container Engine Support Status</title>
+     <para>
+      CRI-O is included as an <emphasis>unsupported technology
+       preview</emphasis>, to allow customers to evaluate the new technology.
+      It is <emphasis>not</emphasis> supported for use in production deployments.
+     </para>
+    </note>
+   </listitem>
+   </itemizedlist>
 
   <para>
    &salt; is used to manage deployment and administration of the cluster. 
@@ -144,8 +181,8 @@
    &dashboard; to the <literal>salt-master</literal> daemon. The
    <literal>salt-master</literal> daemon stores events in <emphasis>MariaDB</emphasis>,
    which is also used to store &dashboard; data. The <literal>salt-minion</literal>
-   daemon on the &admin_node; is used to generate required certificates, and on
-   the &sminion;s the daemons communicate with the &admin_node;.
+   daemon on the &admin_node; generates the required certificates, and
+   &sminion;s on the &worker_node;s communicate with the &admin_node;.
   </para>
 
   <para>

@@ -16,68 +16,60 @@
   </dm:docmanager>
  </info>
  <para>
-  This chapter gives an overview on how to run through a default installation
-  of &productname; for the &amd64;/&intel64; architecture.
+  This chapter details the various procedures you can use to build a new &productname; 
+  &productnumber; cluster.
  </para>
  
- <sect1 xml:id="sec.caasp.installquick">
-  <title>Installing &productname;</title>
-
-  <para>
-   Use the following procedures to set up a new &productnamereg;
-   &productnumber; cluster.
-  </para>
-
-  <para>
-   There are two ways to build a cluster, one of which has two variants.
-  </para>
-
-  <itemizedlist>
-   <listitem>
+ <para>
+  There are two ways to build a cluster, one of which has two variants.
+ </para>
+ 
+ <itemizedlist>
+  <listitem>
+   <para>
+    Installing nodes from installation media (for virtual machines, directly
+    from ISO images, or physical media for bare-metal installations).
+   </para>
+   <warning>
+    <title>&Admin_Node;</title>
     <para>
-     Installing nodes from installation media (for virtual machines, directly
-     from ISO images, or physical media for bare-metal installations).
+     You must install the &admin_node; first and configure it using
+     &dashboard; before installing the other nodes in the cluster.
     </para>
-    <warning>
-     <title>&Admin_Node;</title>
+   </warning>
+   <para>
+    With this method, there are two ways to install the worker nodes:
+   </para>
+   <itemizedlist>
+    <listitem>
      <para>
-      You need to install the &admin_node; first and configure it using
-      &dashboard; before installing the other nodes in the cluster.
+      Individually, choosing the node type during installation. This is only
+      feasible for a small number of workers.
      </para>
-    </warning>
-    <para>
-     With this method, there are two ways to install the worker nodes:
-    </para>
-    <itemizedlist>
-     <listitem>
-      <para>
-       Individually, choosing the node type during installation. This is only
-       feasible for a small number of workers.
-      </para>
-     </listitem>
-     <listitem>
-      <para>
-       Installing the worker nodes using &ay; so that they receive their
-       configuration automatically from the &admin_node;. This is the
-       recommended method for larger clusters, but it is equally suitable for
-       small clusters.
-      </para>
-     </listitem>
-    </itemizedlist>
-    <para>
-     With both methods, the procedure to install the &admin_node; is identical.
-     Only installation process for the &worker_node;s differs.
-    </para>
-   </listitem>
-   <listitem>
-    <para>
+    </listitem>
+    <listitem>
+     <para>
+      Installing the worker nodes using &ay; so that they receive their
+      configuration automatically from the &admin_node;. This is the
+      recommended method for larger clusters, but it is equally suitable for
+      small clusters.
+     </para>
+    </listitem>
+   </itemizedlist>
+   <para>
+    With both methods, the procedure to install the &admin_node; is identical.
+    Only installation process for the &worker_node;s differs.
+   </para>
+  </listitem>
+  <listitem>
+   <para>
      Using preinstalled virtual disk images. &suse; offers
      <literal>QCOW2</literal> images for clusters hosted on KVM or &xen;
      hypervisors.
     </para>
    </listitem>
   </itemizedlist>
-
+  
   <note>
    <para>
     It is possible to start setup using PXE. For the full procedure, refer to
@@ -95,12 +87,12 @@
     directory. You will need to modify the paths used in the &sle; 12
     Deployment Guide to correctly point to the files provided by the package.
    </para>
-<!-- Check package name for CaaSP 3 (LGHP, 2018-05-18) -->
+   <!-- Check package name for CaaSP 3 (LGHP, 2018-05-18) -->
   </note>
 
-  <sect2>
+  <sect1>
    <title>Installation from ISO images or media</title>
-   <sect3 xml:id="sec.caasp.installquick.admin">
+   <sect2 xml:id="sec.caasp.installquick.admin">
     <title>Installing the &Admin_Node;</title>
     <para>
      The procedure for installing the &admin_node; is identical whether or not
@@ -115,7 +107,7 @@
        The boot screen on machines equipped with UEFI is slightly different.
       </para>
       <para>
-       SecureBoot on UEFI machines is supported.
+       SecureBoot on UEFI machines <emphasis>is</emphasis> supported.
       </para>
       <para>
        Use <keycap>F2</keycap> to change the language for the installer. A
@@ -466,8 +458,8 @@
       </para>
      </step>
     </procedure>
-   </sect3>
-   <sect3 xml:id="sec.caasp.installquick.conf">
+   </sect2>
+   <sect2 xml:id="sec.caasp.installquick.conf">
     <title>&Admin_Node; Configuration</title>
     <para>
      Before installing the other nodes, it is necessary to configure the
@@ -610,8 +602,8 @@
       </para>
      </step>
     </procedure>
-   </sect3>
-   <sect3 xml:id="sec.caasp.installquick.node">
+   </sect2>
+   <sect2 xml:id="sec.caasp.installquick.node">
     <title>Installing &Worker_Node;s</title>
     <warning>
      <para>
@@ -623,7 +615,7 @@
        linkend="sec.caasp.installquick.conf"/>.
      </para>
     </warning>
-    <sect4 xml:id="sec.caasp.installquick.node.manual">
+    <sect3 xml:id="sec.caasp.installquick.node.manual">
      <title>Manual Installation</title>
      <procedure xml:id="pro.caasp.installquick.node.manual">
       <step>
@@ -669,8 +661,8 @@
        </para>
       </step>
      </procedure>
-    </sect4>
-    <sect4 xml:id="sec.caasp.installquick.node.ay">
+    </sect3>
+    <sect3 xml:id="sec.caasp.installquick.node.ay">
      <title>Automatic Installation Using &ay;</title>
      <para>
       Before installing &worker_node;s with &ay;, you need to obtain the URL
@@ -759,7 +751,8 @@
        </para>
       </step>
      </procedure>
-     <note>
+
+      <note>
       <title>
        &rootuser; Password
       </title>
@@ -1092,7 +1085,7 @@ suse_caasp:
    </sect3>
   </sect2>
 
-  <sect2 xml:id="sec.caasp.installquick.bootstrap">
+  <sect1 xml:id="sec.caasp.installquick.bootstrap">
    <title>Bootstrapping the Cluster</title>
    <para>
     To complete the installation of your &productname; cluster, it is necessary
@@ -1159,6 +1152,5 @@ suse_caasp:
      </informalfigure>
     </step>
    </procedure>
-  </sect2>
- </sect1>
+  </sect1>
 </chapter>

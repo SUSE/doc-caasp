@@ -37,9 +37,8 @@
    <note>
     <title>Test and Proof-of-Concept Clusters</title>
     <para>
-     For proof-of-concept and test deployments, it is possible to bootstrap a
-     three-node cluster with a single &worker_node;, but this configuration is
-     not supported and should not be used in production.
+     It is possible to provision a three-node cluster with only a single
+     &worker_node;, but this is not a supported configuration for deployment.
     </para>
    </note>
    <para>
@@ -51,7 +50,7 @@
     size.
    </para>
    <para>
-    At this time, &suse; supports clusters of up to 150 nodes.
+    Currently, &suse; supports clusters of up to 150 nodes.
    </para>
   </sect2>
 
@@ -153,7 +152,7 @@
         </listitem>
         <listitem>
          <para>
-          ESXi 6.5
+          ESXi 6.5+
          </para>
         </listitem>
        </itemizedlist>
@@ -196,6 +195,25 @@
        </para>
       </listitem>
      </itemizedlist>
+     <para>
+      When building a cluster from hypervisor VMs, &suse; recommends building
+      nodes from pre-installed disk images, rather than installing new instances
+      from an ISO image. 
+     </para>
+     <para>
+      The pre-installed VM images come with the relevant hypervisor's guest
+      tools pre-installed (where this is applicable). It is possible to install
+      these manually, but due to the read-only root filesystem, this is not a
+      trivial task.
+     </para>
+     <note>
+      <title>&vmware; Memory Ballooning</title>
+      <para>
+       If installing &productname; on &vmware; you must disable &vmware;'s
+       memory ballooning feature. VMware has instructions on how to do this
+       here: <link xlink:href="https://kb.vmware.com/s/article/1002586"></link>
+      </para>
+     </note>
     </listitem>
     <listitem>
      <para>
