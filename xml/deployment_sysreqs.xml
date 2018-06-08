@@ -36,9 +36,8 @@
    <note>
     <title>Test and Proof-of-Concept Clusters</title>
     <para>
-     For proof-of-concept and test deployments, it is possible to bootstrap a
-     three-node cluster with a single &worker_node;, but this configuration is
-     not supported and should not be used in production.
+     It is possible to provision a three-node cluster with only a single
+     &worker_node;, but this is not a supported configuration for deployment.
     </para>
    </note>
    <para>
@@ -50,7 +49,7 @@
     size.
    </para>
    <para>
-    At this time, &suse; supports clusters of up to 150 nodes.
+    Currently, &suse; supports clusters of up to 150 nodes.
    </para>
   </sect2>
   
@@ -195,7 +194,6 @@
        </para>
       </listitem>
      </itemizedlist>
-<!--
      <para>
       When building a cluster from hypervisor VMs, &suse; recommends building
       nodes from pre-installed disk images, rather than installing new instances
@@ -215,7 +213,6 @@
        here: <link xlink:href="https://kb.vmware.com/s/article/1002586"></link>
       </para>
      </note>
--->
     </listitem>
     <listitem>
      <para>
@@ -270,9 +267,8 @@
       <note>
        <title><literal>hostpath</literal> Deprecated</title>
        <para>
-        Storage using <literal>hostpath</literal> is still supported, but use is now
-        discouraged and by default it is disabled by
-        <literal>PodSecurityPolicies</literal>.
+        Storage using <literal>hostpath</literal> is still supported, but by
+        default it is disabled by <literal>PodSecurityPolicies</literal>.
        </para>
       </note>
      </listitem>
