@@ -913,7 +913,9 @@ suse_caasp:
   role: <replaceable>admin</replaceable>
        </screen>
       <para>
-       Here is an example for a &worker_node;:
+       Here is an example for a &worker_node;. Rather than providing the &rootuser;
+       password in clear text, you can use a hash instead; this example is
+       hashed with SHA-256. 
       </para>
       <screen>
 # File cloud-config/cc-worker/user-data
@@ -924,7 +926,7 @@ ssh_deletekeys: False
 ssh_pwauth: True
 chpasswd:
   list: |
-    root:<replaceable>MyPassword</replaceable>
+  root:<replaceable>$5$eriogqzq$Dg7PxHsKGzziuEGkZgkLvacjuEFeljJ.rLf.hZqKQLA</replaceable>
     expire: False
 suse_caasp:
    role: <replaceable>cluster</replaceable>
