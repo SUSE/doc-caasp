@@ -861,21 +861,19 @@
       </para>
       <para>
        So, for instance, if your working directory is <filename>~/cloud-config</filename>,
-       then for the admin node, you need:
+       then for the admin node, you need these two files:
       </para>
-      <screen>~/cloud-config/cc-admin/user-data</screen>
-      <para>
-       and
-      </para>
-      <screen>~/cloud-config/cc-admin/meta-data</screen>
+      <screen>
+~/cloud-config/cc-admin/user-data
+~/cloud-config/cc-admin/meta-data
+      </screen>
       <para>
        For a &worker_node;, you need:
       </para>
-      <screen>~/cloud-config/cc-worker/user-data</screen>
-      <para>
-       and
-      </para>
-      <screen>~/cloud-config/cc-worker/meta-data</screen>
+      <screen>
+~/cloud-config/cc-worker/user-data
+~/cloud-config/cc-worker/meta-data
+      </screen>
       <para>
        The same <filename>meta-data</filename> file can be used for both node types.
        Here is an sample <filename>meta-data</filename> file:
@@ -899,10 +897,11 @@ network-interfaces: |
 #cloud-config
 debug: True
 disable_root: False
+ssh_deletekeys: False
 ssh_pwauth: True
 chpasswd:
   list: |
-    root:<replaceable>root</replaceable>
+    root:<replaceable>MyPassword</replaceable>
     expire: False
 ntp:
   servers:
@@ -921,10 +920,11 @@ suse_caasp:
 #cloud-config
 debug: True
 disable_root: False
+ssh_deletekeys: False
 ssh_pwauth: True
 chpasswd:
   list: |
-    root:<replaceable>root</replaceable>
+    root:<replaceable>MyPassword</replaceable>
     expire: False
 suse_caasp:
    role: <replaceable>cluster</replaceable>
@@ -936,20 +936,28 @@ suse_caasp:
       <para>
        Once you have edited the configuration files with your desired settings,
        you need to create an ISO image with the volume label <literal>cidata</literal>
-       containing only the subdirectory for that node type. Use <command>genisoimage</command>
-       to do this.
+       containing only the subdirectory for that node type.
       </para>
       <para>
-       To create the ISO image for an admin node:
+       On &sle; 12 or &opensuse; 42, use <command>genisoimage</command> to do this.
+       On &sle; or &opensuse; 15, use <command>mkisofs</command>. The parameters
+       are the same for both commands.
+      </para>
+      <para>
+       For example, to create the ISO image for an admin node on a computer
+       running &opensuse; 42:
       </para>
       <screen>
 &prompt.user; sudo genisoimage -output <replaceable>cc-admin.img</replaceable> -volid <replaceable>cidata</replaceable> -joliet -rock <replaceable>cc-admin</replaceable>
       </screen>
       <para>
-       To create the ISO image for a worker node, use the same command, but 
-       substitute the name of the folder containing the configuration files for
-       a &worker_node; and title the volume <literal>cc-worker</literal>.
+       To create the ISO image for a worker node on a computer running &opensuse;
+       15, substituting the name of the folder containing the configuration
+       files for a &worker_node; and titling the volume <literal>cc-worker</literal>:
       </para>
+      <screen>
+&prompt.user; sudo mkisofs -output <replaceable>cc-worker.img</replaceable> -volid <replaceable>cidata</replaceable> -joliet -rock <replaceable>cc-worker</replaceable>
+      </screen>
      </sect3>
      
      <sect3>
