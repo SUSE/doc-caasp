@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE appendix
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<appendix xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:id="app.kvm">
+ <title>Appendix</title>
+ <info>
+      <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
+        <dm:bugtracker>
+          </dm:bugtracker>
+      </dm:docmanager>
+    </info>
+    <para/>
+ <sect1 xml:id="deployment.appendix">
+  <title>Installing an &Admin_Node; using &ay;</title>
+  
+  <para/>
+
+  <para>
+   To assist with automating the installation of &productname; clusters as much
+   as possible, it is possible to automatically install the &admin_node; with
+   &ay;, similarly to the process used for &worker_node;s.
+  </para>
+  <para>
+   Be aware, though, that this requires considerable customisation of the
+   <literal>autoyast.xml</literal> file.
+  </para>
+  <para>
+   Here is a sample <literal>autoyast.xml</literal> file for an &admin_node;.
+  </para>
+  <screen>
+<xi:include href="autoyast_example_adminnode.xml" parse="text"/>
+  </screen>
+  
+  <para/>
+  
+  <para>
+   Copy the above and paste it into a file named <literal>autoyast.xml</literal>
+   and edit it as appropriate for your configuration. After you have prepared
+   the file, you will need to put it on a Web server that is accessible to the
+   &productname; cluster.
+  </para>
+  <para>
+   After this, install the admin node by following the same procedure as for a
+   &worker_node; in <xref linkend="sec.caasp.installquick.node.ay"/>.
+  </para>
+  <para>
+   For more information about using and customizing &ay;, refer to 
+   <link xlink:href="https://www.suse.com/documentation/sles-12/book_autoyast/data/invoking_autoinst.html#commandline_ay"/>.
+  </para>
+ </sect1>
+</appendix>
