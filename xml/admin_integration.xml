@@ -16,9 +16,9 @@
   </dm:docmanager>
  </info>
  <para>
-  &productname; can use &suse;'s another product as storage for
-  containers&mdash;&suse; Enterprise Storage (further called SES). This chapter
-  gives details how to integrate these two products in several ways.
+  &productname; can use another &suse; product as storage for
+  containers&mdash;&ses; (henceforth called SES). This chapter gives details on
+  several ways to integrate these two products.
  </para>
  <sect1 xml:id="integration.prerequisites">
   <title>Prerequisites</title>
@@ -30,14 +30,14 @@
   <itemizedlist>
    <listitem>
     <para>
-     &productname; can access the SES cluster.
+     The &productname; cluster can access the SES cluster.
     </para>
    </listitem>
    <listitem>
     <para>
-     &productname; can communicate with the SES nodes&mdash;master, monitoring
-     nodes, OSD nodes and the meta data server in case you need a shared
-     file system. For more details regarding SES refer to
+     That &productname; can communicate with the SES nodes&mdash;master,
+     monitoring nodes, OSD nodes and the metadata server, in case you need a
+     shared file system. For more details regarding SES refer to
      <link xlink:href="https://www.suse.com/documentation/ses-4/book_storage_admin/data/book_storage_admin.html">SES
      documentation</link>.
     </para>
@@ -56,8 +56,8 @@
    <title>Mounting Storage to a Container</title>
    <step>
     <para>
-     On the &master_node; apply the configuration that includes Ceph secret by
-     using the <command>kubectl apply</command>
+     On the &master_node; apply the configuration that includes the Ceph secret
+     by using the <command>kubectl apply</command>:
     </para>
 <screen><command>kubectl apply -f - &lt;&lt; *EOF*</command>
 apiVersion: v1
