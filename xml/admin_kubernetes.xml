@@ -18,11 +18,49 @@
  
  <sect1 xml:id="installing.kubectl">
   <title>Installing kubectl</title>
+  <tip>
+    If you are using an operating system other than &sle; or &opensuse; please consult the <link xlink:href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">installation instructions</link> from the &kube; project.
+  </tip>
+  <para>
+    &kube; requires the use of <command>kubectl</command> for many tasks.
+    You can perform most of these actions while logged in to an SSH session on the master node of your &productname; cluster.
+  </para>
+  <para>
+    One key exception is the use of <command>kubectl proxy</command> this requires kubectl to be installed on your local machine to act as a proxy between the local workstation and the remote cluster.
+  </para>
+  
+  <para>
+  <screen>
+  apiVersion: v1
+  clusters:
+  - cluster:
+      certificate-authority: /etc/pki/trust/anchors/SUSE_CaaSP_CA.crt
+      server: https://<replaceable>$caasp_master</replaceable>:6443
+    name: default-cluster
+  contexts:
+  - context:
+      cluster: default-cluster
+      user: cluster-admin
+    name: default-system
+  current-context: default-system
+  kind: Config
+  preferences: {}
+  users:
+  - name: cluster-admin
+    user:
+      client-certificate: /etc/pki/kubectl-client-cert.crt
+      client-key: /etc/pki/kubectl-client-cert.key
+  </screen>
+</para>
+  
+  <para>
+    
+  </para>
  </sect1>
  
  <sect1 xml:if="configuring.kubectl">
   <title>Configuring kubectl</title>
- </sect2> 
+</sect1> 
 
  <sect1 xml:id="installing.kube.dashboard">
   <title>Installing &kube; Dashboard</title>
