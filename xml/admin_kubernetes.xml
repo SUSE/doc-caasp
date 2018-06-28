@@ -28,41 +28,17 @@
     You can perform most of these actions while logged in to an SSH session on the master node of your &productname; cluster.
   </para>
   <para>
-    One key exception is the use of <command>kubectl proxy</command> this requires kubectl to be installed on your local machine to act as a proxy between the local workstation and the remote cluster.
+    One key exception is the use of <command>kubectl proxy</command> this requires <command>kubectl</command> to be installed on your local machine to act as a proxy between the local workstation and the remote cluster.
   </para>
   
   <para>
-  <screen>
-  apiVersion: v1
-  clusters:
-  - cluster:
-      certificate-authority: /etc/pki/trust/anchors/SUSE_CaaSP_CA.crt
-      server: https://$caasp_master:6443
-    name: default-cluster
-  contexts:
-  - context:
-      cluster: default-cluster
-      user: cluster-admin
-    name: default-system
-  current-context: default-system
-  kind: Config
-  preferences: {}
-  users:
-  - name: cluster-admin
-    user:
-      client-certificate: /etc/pki/kubectl-client-cert.crt
-      client-key: /etc/pki/kubectl-client-cert.key
-  </screen>
+    To use kubectl to connect to a local machine you must do <xref linkend="auth.kubeconfig">Authentication against the &kube; master node</xref>
 </para>
   
   <para>
     
   </para>
  </sect1>
- 
- <sect1 xml:id="configuring.kubectl">
-  <title>Configuring kubectl</title>
-</sect1> 
 
  <sect1 xml:id="installing.kube.dashboard">
   <title>Installing &kube; Dashboard</title>
