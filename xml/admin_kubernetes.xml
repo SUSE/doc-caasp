@@ -19,7 +19,9 @@
  <sect1 xml:id="installing.kubectl">
   <title>Installing kubectl</title>
   <tip>
+    <para>
     If you are using an operating system other than &sle; or &opensuse; please consult the <link xlink:href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">installation instructions</link> from the &kube; project.
+    </para>
   </tip>
   <para>
     &kube; requires the use of <command>kubectl</command> for many tasks.
@@ -35,7 +37,7 @@
   clusters:
   - cluster:
       certificate-authority: /etc/pki/trust/anchors/SUSE_CaaSP_CA.crt
-      server: https://<replaceable>$caasp_master</replaceable>:6443
+      server: https://$caasp_master:6443
     name: default-cluster
   contexts:
   - context:
@@ -58,7 +60,7 @@
   </para>
  </sect1>
  
- <sect1 xml:if="configuring.kubectl">
+ <sect1 xml:id="configuring.kubectl">
   <title>Configuring kubectl</title>
 </sect1> 
 
