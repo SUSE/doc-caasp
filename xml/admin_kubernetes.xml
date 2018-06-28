@@ -36,15 +36,16 @@
   <para>
    One key exception is the use of <command>kubectl proxy</command> this requires <command>kubectl</command> to be installed on your local machine to act as a proxy between the local workstation and the remote cluster.
   </para>
-  <itemizedlist>
-   <listitem>
+  <procedure>
+   <step>
     <para>
      Go to <link xref="https://build.opensuse.org/repositories/Virtualization:containers">the <filename>Virtualization:containers</filename> repository</link> and find the version of &sle;/&opensuse; you are using.
     </para>
-   </listitem>
-   <listitem>
+   </step>
+   <step>
     <para>
       Click the "Go to download repository" underneath your version.
+     </para>
       <informalfigure>
        <mediaobject>
         <imageobject role="fo">
@@ -55,42 +56,43 @@
         </imageobject>
        </mediaobject>
       </informalfigure>
-    </para>
-   </listitem>
-   <listitem>
+   </step>
+   <step>
     <para>
      Copy the URL to the repository from the URL bar of your browser. This is the location you will add as repository information in zypper.
     </para>
-   </listitem>
-   <listitem>
+   </step>
+   <step>
      <para>
       Open a terminal on your local machine add a repository to zypper:
-       <screen>
-        <command>
-        zypper ar https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ 
-        </command>
-       </screen>
-       You will have to trust the key signature for the repository to continue.
      </para>
-   </listitem>  
-   <listitem>
+      <screen>
+       <command>
+       zypper ar https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ 
+       </command>
+      </screen>
+      <para>
+       You will have to trust the key signature for the repository to continue.
+      </para>
+   </step>  
+   <step>
     <para>
      Refresh the repository information:
-     <screen><command>zypper ref</command></screen>
     </para>
-   </listitem>
-   <listitem>
+    <screen><command>zypper ref</command></screen>
+   </step>
+   <step>
     <para>
      Install the <filename>kubernetes-client</filename> package:
-     <screen><command>zypper in kubernetes-client</command></screen>
     </para>
-   </listitem>
-   <listitem>
+    <screen><command>zypper in kubernetes-client</command></screen>
+   </step>
+   <step>
     <para>
      Verify that <command>kubectl</command> was installed and is configured correctly:
     </para>
-     <screen>
-      <command>kubectl get nodes</command>
+    <screen>
+     <command>kubectl get nodes</command>
 NAME                  STATUS    ROLES     AGE       VERSION
 caasp3-master     Ready     master    1d        v1.9.8
 caasp3-worker-1   Ready     &lt;none&gt;    1d        v1.9.8
@@ -98,9 +100,11 @@ caasp3-worker-2   Ready     &lt;none&gt;    1d        v1.9.8
 caasp3-worker-3   Ready     &lt;none&gt;    1d        v1.9.8
 caasp3-worker-4   Ready     &lt;none&gt;    1d        v1.9.8
      </screen>
+     <para>
      You should see the list of nodes known to &productname;.
-   </listitem>
- </itemizedlist>
+    </para>
+   </step>
+ </procedure>
 
  </sect1>
 
