@@ -73,5 +73,55 @@
   </para>
  </sect1>
  
+ <sect1 xml:id="installing.heapster">
+  <title>Installing heapster</title>
+  <important>
+   <para>
+    By default, <literal>tiller</literal> will be installed and you only need to initialize data for it. Use the <literal>--client-only</literal> parameter.
+   </para>
+  </important>
+    <procedure>
+     <title>Installation of heapster</title>
+     <para>
+      By default, the chart repository for helm will not be known to the system. You must perform <command>helm init</command> to initialize the necessary repository files and then refresh the information using <command>helm repo update</command>. 
+      
+      After that, you can install <literal>heapster</literal> from the &kube; helm charts repository.
+     </para>
+     <step>
+     <para>
+      (On CaaSP Admin Node) Initialize helm repo data.
+      <screen>
+<command>helm init </command><option>--client-only</option>
+Creating /root/.helm/repository
+Creating /root/.helm/repository/cache
+Creating /root/.helm/repository/local
+Creating /root/.helm/plugins
+Creating /root/.helm/starters
+Creating /root/.helm/repository/repositories.yaml
+Adding stable repo with URL: https://kubernetes-charts.storage.googleapis.com
+Adding local repo with URL: http://127.0.0.1:8879/charts
+$HELM_HOME has been configured at /root/.helm.
+Not installing Tiller due to 'client-only' flag having been set
+Happy Helming!
+      </screen>
+     </para>
+   </step>
+     <step>
+      <para>Install <literal>heapster</literal> from stable/heapster &kube; charts repository</para>
+      <screen>
+helm install --name heapster-default --namespace=kube-system stable/heapster --version=0.2.7 --set rbac.create=true
+      </screen>
+     </step>
+     <step>
+      <para>
+       Verify that <literal>heapster</literal> was deployed successfully.
+      </para>
+      <screen>
+<command>helm list | grep heapster</command>
+heapster-default	1       	Fri Jun 29 10:48:45 2018	DEPLOYED	heapster-0.2.7	kube-system
+      </screen>
+     </step>
+    </procedure>
+ </sect1>
 
 </chapter>
