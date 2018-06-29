@@ -16,81 +16,90 @@
   </dm:docmanager>
  </info>
  <para>
-  Once your cluster is ready, you may want to deploy additional software
-  that is not installed on &productname; by default. This chapter provides
-  instructions on how to install and configure &helm;, the &kube; package 
-  manager, and then how to install the &kube; Dashboard. If you intend to 
+  Once your cluster is ready, you may want to deploy additional software that
+  is not installed on &productname; by default. This chapter provides
+  instructions on how to install and configure &helm;, the &kube; package
+  manager, and then how to install the &kube; Dashboard. If you intend to
   deploy &scf; on &productname;, &helm; is required.
  </para>
- 
  <sect1 xml:id="installing.helm">
   <title>Deploying &helm; and &tiller;</title>
+
   <para>
-   &helm; has two parts: &helm; is the client and &tiller; is the server component. 
-   &helm; runs on your remote workstation that has access to your cluster, and 
-   &tiller; is installed as a container on &productname; when you run &dashboard; 
-   for the first time. (See <xref linkend="sec.caasp.installquick.conf"/>.)
+   &helm; has two parts: &helm; is the client and &tiller; is the server
+   component. &helm; runs on your remote workstation that has access to your
+   cluster, and &tiller; is installed as a container on &productname; when you
+   run &dashboard; for the first time. (See
+   <xref linkend="sec.caasp.installquick.conf"/>.)
   </para>
-  
+
   <para>
-   You should match the &helm; version with the version of &tiller; 
-   that is running on your cluster. The &tiller; binary cannot report its
-   version, and you need the version that is packaged inside the &tiller; 
-   container. Run the following command from your workstation to query the
-   logs:
+   You should match the &helm; version with the version of &tiller; that is
+   running on your cluster. The &tiller; binary cannot report its version, and
+   you need the version that is packaged inside the &tiller; container. Run the
+   following command from your workstation to query the logs:
   </para>
-  <screen>
+
+<screen>
    &prompt.user; kubectl logs -l name=tiller --namespace=kube-system | grep "Starting &tiller;"
    [main] 2018/04/04 16:48:27 Starting &tiller; v2.6.1 (tls=false)
   </screen>
+
   <para>
-   If the log gets overwritten and loses this information, the following command 
-   queries the <command>rpm</command> package manager inside the container. This
-   works only on &productname;/&scf; installations:
+   If the log gets overwritten and loses this information, the following
+   command queries the <command>rpm</command> package manager inside the
+   container. This works only on &productname;/&scf; installations:
   </para>
-  <screen>
+
+<screen>
    &prompt.user; kubectl exec -it $(kubectl get pods -n kube-system | awk '/tiller/{print$1}') -n kube-system -- rpm -q helm
    helm-2.6.1-1.6.x86_64
   </screen>
-  
+
   <para>
-   If the Linux distribution on your workstation doesn't provide the correct 
-   &helm; version, or you are using some other platform, see the 
-   <link xlink:href="https://docs.helm.sh/using_helm/#quickstart"> &helm; Quickstart Guide</link>
-   for installation instructions and basic usage examples. Download the matching
-   &helm; binary into any directory that is in your PATH on your workstation,
-   such as your <filename>~/bin</filename> directory. Then initialize just the
-   client part:
+   If the Linux distribution on your workstation doesn't provide the correct
+   &helm; version, or you are using some other platform, see the
+   <link xlink:href="https://docs.helm.sh/using_helm/#quickstart"> &helm;
+   Quickstart Guide</link> for installation instructions and basic usage
+   examples. Download the matching &helm; binary into any directory that is in
+   your PATH on your workstation, such as your <filename>~/bin</filename>
+   directory. Then initialize just the client part:
   </para>
-  <screen>
+
+<screen>
    &prompt.user;helm init --client-only
   </screen>
-  
+
   <para>
-   The &tiller; version that ships with &productname; is supported by &suse;. While 
-   &suse; does not provide support for third-party &helm; charts, you can easily 
-   use them if necessary.
+   The &tiller; version that ships with &productname; is supported by &suse;.
+   While &suse; does not provide support for third-party &helm; charts, you can
+   easily use them if necessary.
   </para>
  </sect1>
- 
  <sect1 xml:id="installing.heapster">
   <title>Installing heapster</title>
+
   <important>
    <para>
-    By default, <literal>tiller</literal> will be installed and you only need to initialize data for it. Use the <literal>--client-only</literal> parameter.
+    By default, <literal>tiller</literal> will be installed and you only need
+    to initialize data for it. Use the <literal>--client-only</literal>
+    parameter.
    </para>
   </important>
-    <procedure>
-     <title>Installation of heapster</title>
-     <para>
-      By default, the chart repository for helm will not be known to the system. You must perform <command>helm init</command> to initialize the necessary repository files and then refresh the information using <command>helm repo update</command>. 
-      
-      After that, you can install <literal>heapster</literal> from the &kube; helm charts repository.
-     </para>
-     <step>
-     <para>
-      (On CaaSP Admin Node) Initialize helm repo data.
-      <screen>
+
+  <procedure>
+   <title>Installation of heapster</title>
+   <para>
+    By default, the chart repository for helm will not be known to the system.
+    You must perform <command>helm init</command> to initialize the necessary
+    repository files and then refresh the information using <command>helm repo
+    update</command>. After that, you can install <literal>heapster</literal>
+    from the &kube; helm charts repository.
+   </para>
+   <step>
+    <para>
+     (On CaaSP Admin Node) Initialize helm repo data.
+<screen>
 <command>helm init </command><option>--client-only</option>
 Creating /root/.helm/repository
 Creating /root/.helm/repository/cache
@@ -104,24 +113,26 @@ $HELM_HOME has been configured at /root/.helm.
 Not installing Tiller due to 'client-only' flag having been set
 Happy Helming!
       </screen>
-     </para>
+    </para>
    </step>
-     <step>
-      <para>Install <literal>heapster</literal> from stable/heapster &kube; charts repository</para>
-      <screen>
+   <step>
+    <para>
+     Install <literal>heapster</literal> from stable/heapster &kube; charts
+     repository
+    </para>
+<screen>
 helm install --name heapster-default --namespace=kube-system stable/heapster --version=0.2.7 --set rbac.create=true
       </screen>
-     </step>
-     <step>
-      <para>
-       Verify that <literal>heapster</literal> was deployed successfully.
-      </para>
-      <screen>
+   </step>
+   <step>
+    <para>
+     Verify that <literal>heapster</literal> was deployed successfully.
+    </para>
+<screen>
 <command>helm list | grep heapster</command>
 heapster-default	1       	Fri Jun 29 10:48:45 2018	DEPLOYED	heapster-0.2.7	kube-system
       </screen>
-     </step>
-    </procedure>
+   </step>
+  </procedure>
  </sect1>
-
 </chapter>

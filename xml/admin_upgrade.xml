@@ -47,25 +47,31 @@
    </para>
   </step>
  </procedure>
-
  <sect1 xml:id="sec.deploy.upgrade.caasp1">
   <title>Upgrading from &productname; 1</title>
+
   <para>
    The following sections contain the necessary steps to upgrade from
-   &productname; 1 to 2 or later. <!-- Note that for later versions of
+   &productname; 1 to 2 or later.
+<!-- Note that for later versions of
    &productname;, additional steps may be necesssary. These are described in
    their own version-specific sections. -->
   </para>
+
   <sect2 xml:id="sec.deploy.upgrade.caasp1.users">
    <title>Migrating Users</title>
    <para>
     &productname; 2 comes with Role-Based Access Control (RBAC), which stores
-    user information in <phrase role="productname">OpenLDAP</phrase>. Therefore,
-    after upgrading from &productname; 1 to version 2 or higher, you have to
-    migrate existing &dashboard; users to <phrase
+    user information in <phrase role="productname">OpenLDAP</phrase>.
+    Therefore, after upgrading from &productname; 1 to version 2 or higher, you
+    have to migrate existing &dashboard; users to
+    <phrase
      role="productname">OpenLDAP</phrase> users.
    </para>
-   <para>For more information about RBAC and user management, refer to <xref linkend="auth"/>.</para>
+   <para>
+    For more information about RBAC and user management, refer to
+    <xref linkend="auth"/>.
+   </para>
    <procedure xml:id="pro.deploy.upgrade.caasp1.users">
     <title>Migrate users from version 1 to 2</title>
     <step>
@@ -84,19 +90,21 @@
       Inside the container, execute the following command:
      </para>
 <screen>&prompt.bash;<command>entrypoint.sh</command> <option>bundle exec rake velum:migrate_users</option></screen>
-     <para>Once the command successfully finishes, existing user accounts will
-      be available for logging into &dashboard; again.
+     <para>
+      Once the command successfully finishes, existing user accounts will be
+      available for logging into &dashboard; again.
      </para>
     </step>
     <step>
      <para>
       Type <command>exit</command> or press <keycombo>
-       <keycap function="control"/><keycap>D</keycap></keycombo> to exit the
+      <keycap function="control"/><keycap>D</keycap></keycombo> to exit the
       &dashboard; container.
      </para>
     </step>
    </procedure>
   </sect2>
+
   <sect2 xml:id="sec.deploy.upgrade.caasp1.etcd">
    <title>Upgrading etcd</title>
    <para>
@@ -105,17 +113,16 @@
     &productname; 1 to version 2 or higher, you have to orchestrate the
     migration between <literal>etcd</literal> 2 and 3.
    </para>
-
    <important>
     <title>Service Window Required</title>
     <para>
      This migration can take a several minutes, during which
-     <systemitem class="service">etcd</systemitem> and <systemitem
-      class="service">kube-api</systemitem> services are unavailable. Please
-     make sure to plan a service window.
+     <systemitem class="service">etcd</systemitem> and
+     <systemitem
+      class="service">kube-api</systemitem> services are
+     unavailable. Please make sure to plan a service window.
     </para>
    </important>
-
    <procedure xml:id="pro.deploy.upgrade.caasp1.etcd">
     <title>Migrate from etcd version 2 to 3</title>
     <step>
@@ -135,12 +142,15 @@
      </para>
 <screen>&prompt.bash;<command>salt-run</command> <option>state.orchestrate orch.etcd-migrate</option></screen>
      <para>
-      The orchestration will shutdown all <systemitem
-       class="service">etcd</systemitem> and <systemitem
-       class="service">kube-apiserver</systemitem> services, perform the
-      <systemitem class="service">etcd</systemitem> migration steps, set the
-      <quote>etcd_version = etcd3</quote> pillar value, and restart
-      <systemitem class="service">etcd</systemitem> and <systemitem
+      The orchestration will shutdown all
+      <systemitem
+       class="service">etcd</systemitem> and
+      <systemitem
+       class="service">kube-apiserver</systemitem> services,
+      perform the <systemitem class="service">etcd</systemitem> migration
+      steps, set the <quote>etcd_version = etcd3</quote> pillar value, and
+      restart <systemitem class="service">etcd</systemitem> and
+      <systemitem
        class="service">kube-api</systemitem> services.
      </para>
      <para>
@@ -151,13 +161,13 @@
     <step>
      <para>
       Type <command>exit</command> or press <keycombo>
-       <keycap function="control"/><keycap>D</keycap></keycombo> to exit the
+      <keycap function="control"/><keycap>D</keycap></keycombo> to exit the
       &smaster; container.
      </para>
     </step>
    </procedure>
   </sect2>
-  
+
   <sect2 xml:id="sec.deploy.upgrade.caasp1.new-settings">
    <title>Adding new settings</title>
    <para>
@@ -211,16 +221,17 @@
     <step>
      <para>
       Type <command>exit</command> or press <keycombo>
-       <keycap function="control"/><keycap>D</keycap></keycombo> to exit the
+      <keycap function="control"/><keycap>D</keycap></keycombo> to exit the
       &dashboard; container.
      </para>
     </step>
    </procedure>
   </sect2>
+
   <sect2 xml:id="sec.deploy.upgrade.caasp1.service-account">
    <title>Generating the Service Account Key File on the CA</title>
    <para>
-    &kube; distinguishes between user and service accounts. While user accounts 
+    &kube; distinguishes between user and service accounts. While user accounts
     are for humans, service accounts are for processes, which run in pods.
    </para>
    <para>
@@ -249,7 +260,7 @@
     <step>
      <para>
       Type <command>exit</command> or press <keycombo>
-       <keycap function="control"/><keycap>D</keycap></keycombo> to exit the
+      <keycap function="control"/><keycap>D</keycap></keycombo> to exit the
       &smaster; container.
      </para>
     </step>
