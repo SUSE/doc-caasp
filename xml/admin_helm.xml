@@ -73,87 +73,61 @@
   </para>
  </sect1>
  
- <sect1 xml:id="installing.kube.dashboard">
-  <title>Installing &kube; Dashboard</title>
-  
+ <sect1 xml:id="installing.heapster">
+  <title>Installing heapster</title>
   <important>
-   <title>Technology Preview</title>
    <para>
-    Even though you can install and use the community &kube; dashboard,
-    &productname; currently fully supports only &dashboard;.
+    By default, <literal>tiller</literal> will be installed and you only need to
+     initialize data for it. Use the <literal>--client-only</literal> parameter.
    </para>
   </important>
-  
-  <itemizedlist>
-   <title>Requirements</title>
-   <listitem>
-    <para>
-     You need to have Heapster version 1.3.0 or later installed on the cluster.
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     &suse; recommends Helm version 2.7.2+ and <literal>kubectl</literal> version 1.8.0+.
-    </para>
-   </listitem>
-  </itemizedlist>
-  
-  <procedure>
-   <title>Installation of &kube; Dashboard</title>
-   <step>
-    <screen>
+    <procedure>
+     <title>Installation of heapster</title>
+     <para>
+      By default, the chart repository for helm will not be known to the system.
+      You must perform <command>helm init</command> to initialize the necessary 
+      repository files and then refresh the information using <command>helm repo 
+      update</command>. 
+      
+      After that, you can install <literal>heapster</literal> from the &kube; 
+      helm charts repository.
+     </para>
+     <step>
+     <para>
+      (On CaaSP Admin Node) Initialize helm repo data.
+      <screen>
+<command>helm init </command><option>--client-only</option>
+Creating /root/.helm/repository
+Creating /root/.helm/repository/cache
+Creating /root/.helm/repository/local
+Creating /root/.helm/plugins
+Creating /root/.helm/starters
+Creating /root/.helm/repository/repositories.yaml
+Adding stable repo with URL: https://kubernetes-charts.storage.googleapis.com
+Adding local repo with URL: http://127.0.0.1:8879/charts
+$HELM_HOME has been configured at /root/.helm.
+Not installing Tiller due to 'client-only' flag having been set
+Happy Helming!
+      </screen>
+     </para>
+   </step>
+     <step>
+      <para>Install <literal>heapster</literal> from stable/heapster &kube; 
+      charts repository</para>
+      <screen>
 helm install --name heapster-default --namespace=kube-system stable/heapster --version=0.2.7 --set rbac.create=true
-    </screen>
-   </step>
-   <step>
-    <screen>
-helm install --namespace=kube-system --name=kubernetes-dashboard stable/kubernetes-dashboard --version=0.6.1
-    </screen>
-   </step>
-   <step>
-    <para>
-     Connect to any cluster node using SSH.
-    </para>
-   </step>
-   <step>
-    <para>
-     Visit <literal>http://127.0.0.1:8081/</literal> in your browser. You will
-     be greeted with by a welcome page containing a dialog to configure
-     authentication.
-    </para>
-   </step>
-   <step>
-    <para>
-     Select <guimenu>token</guimenu> authentication. To retrieve your token,
-     refer to the value in your <literal>kubeconfig</literal> file by running
-     the command:
-    </para>
-    <screen>
-grep "id-token" /path/to/kubeconfig  | awk '{print $2}'
-    </screen>
-   </step>
-   <step>
-    <para>
-     On login, cluster resources and basic metrics are populated.
-    </para>
-   </step>
-  </procedure>
-  
-  <procedure>
-   <title>Exposing the Dashboard</title>
-   <step>
-    <screen>
-helm upgrade kubernetes-dashboard stable/kubernetes-dashboard --set service.type=NodePort
-    </screen>
-   </step>
-   <step>
-    <para>
-     Now you may visit the dashboard at
-     <literal>https://<replaceable>WORKER_NODE_ADDRESS</replaceable>:<replaceable>NODE_PORT</replaceable></literal>
-     in your browser from outside of your cluster.
-    </para>
-   </step>
-  </procedure>
-  
+      </screen>
+     </step>
+     <step>
+      <para>
+       Verify that <literal>heapster</literal> was deployed successfully.
+      </para>
+      <screen>
+<command>helm list | grep heapster</command>
+heapster-default	1       	Fri Jun 29 10:48:45 2018	DEPLOYED	heapster-0.2.7	kube-system
+      </screen>
+     </step>
+    </procedure>
  </sect1>
+
 </chapter>

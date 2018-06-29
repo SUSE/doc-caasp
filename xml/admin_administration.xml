@@ -54,9 +54,9 @@
   <para>
    Transactional updates are managed by the
    <command>transactional-update</command> script, which is called once a day.
-   The script checks if any update is available. If there is an update to be
+   The script checks if any updates are available. If there are any updates to be
    applied, a new snapshot of the root file system is created and the system is
-   updated by using <command>zypper dup</command>. All updates released to this
+   updated using the <command>zypper dup</command>. All updates released to this
    point are applied. The snapshot is then marked as active and will be used
    after the next reboot of the system. Ensure that the cluster is rebooted as
    soon as possible after the update installation is complete, otherwise all
@@ -143,7 +143,8 @@
     Even though it is not recommended, you can disable transactional updates
     by issuing the command:
    </para>
-<screen><command>systemctl</command> <option>--now disable transactional-update.timer</option></screen>
+<screen><command>systemctl</command> <option>--now disable 
+transactional-update.timer</option></screen>
   </sect2>
  </sect1>
  <sect1 xml:id="ptf.handling">
@@ -156,7 +157,8 @@
    installation of PTFs by running:
   </para>
 
-<screen><command>transactional-update</command> <option>reboot ptf install <replaceable>rpm &hellip; rpm</replaceable></option></screen>
+<screen><command>transactional-update</command> <option>reboot ptf install 
+<replaceable>rpm &hellip; rpm</replaceable></option></screen>
 
   <para>
    The command installs PTF RPMs. The <literal>reboot</literal> option then
@@ -178,7 +180,8 @@
    In case you need to remove the installed PTFs, use the following command:
   </para>
 
-<screen><command>transactional-update</command> <option>reboot ptf remove <replaceable>rpm &hellip; rpm</replaceable></option></screen>
+<screen><command>transactional-update</command> <option>reboot ptf remove 
+<replaceable>rpm &hellip; rpm</replaceable></option></screen>
  </sect1>
 
  <sect1 xml:id="commands.node.managment">
@@ -206,12 +209,13 @@
     By using the command you can also create or delete files in the network
     configuration, for example:
    </para>
-<screen>issue-generator network <replaceable>remove</replaceable> <replaceable>interface</replaceable></screen>
+<screen>issue-generator network <replaceable>remove</replaceable> <replaceable>
+interface</replaceable></screen>
    <para>
     The command removes file
-    <filename>/run/issue.d/70-<replaceable>interface</replaceable>.conf</filename>.
-    The file contains the name of the <replaceable>interface</replaceable> and
-    escape codes for <command>agentty</command>.
+    <filename>/run/issue.d/70-<replaceable>interface</replaceable>.conf
+   </filename>. The file contains the name of the <replaceable>interface
+   </replaceable> and escape codes for <command>agentty</command>.
    </para>
    <para>
     You can use the command to add or delete
@@ -292,7 +296,8 @@
       <para>
        The command installs the specified RPMs:
       </para>
-<screen>transactional-update ptf install <replaceable>rpm ... rpm</replaceable></screen>
+<screen>transactional-update ptf install <replaceable>rpm ... rpm</replaceable>
+</screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -302,7 +307,8 @@
       <para>
        The command removes the specified RPMs from the system:
       </para>
-<screen>transactional-update ptf remove <replaceable>rpm ... rpm</replaceable></screen>
+<screen>transactional-update ptf remove <replaceable>rpm ... rpm</replaceable>
+</screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -317,7 +323,8 @@
        as the default root file system. On a read-only file system, no additional
        snapshots are created.
       </para>
-<screen>transactional-update rollback <replaceable>snapshot_number</replaceable></screen>
+<screen>transactional-update rollback <replaceable>snapshot_number</replaceable>
+</screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -358,7 +365,8 @@
       <para>
        Specify the host name of the &smaster;.
       </para>
-<screen>create_autoyast_profile --salt-master <replaceable>saltmaster</replaceable></screen>
+<screen>create_autoyast_profile --salt-master <replaceable>saltmaster
+</replaceable></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -368,7 +376,8 @@
       <para>
        Specify the URL of the SMT server.
       </para>
-<screen>create_autoyast_profile --smt-url <replaceable>saltmaster</replaceable></screen>
+<screen>create_autoyast_profile --smt-url <replaceable>saltmaster
+</replaceable></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -378,7 +387,8 @@
       <para>
        Specify the registration code for &productname;.
       </para>
-<screen>create_autoyast_profile --regcode <replaceable>405XAbs593</replaceable></screen>
+<screen>create_autoyast_profile --regcode <replaceable>405XAbs593
+</replaceable></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -388,7 +398,8 @@
       <para>
        Specify an e-mail address for registration.
       </para>
-<screen>create_autoyast_profile --reg-email <replaceable>address@exampl.com</replaceable></screen>
+<screen>create_autoyast_profile --reg-email <replaceable>address@exampl.com
+</replaceable></screen>
      </listitem>
     </varlistentry>
    </variablelist>
@@ -445,7 +456,8 @@
      <informalfigure>
       <mediaobject>
        <imageobject>
-        <imagedata fileref="velum_unassigned_nodes.png" format="PNG" width="60%"/>
+        <imagedata fileref="velum_unassigned_nodes.png" format="PNG" width="60%"
+         />
        </imageobject>
       </mediaobject>
      </informalfigure>
@@ -492,7 +504,8 @@
    <listitem>
     <para>
      by directly accessing the <emphasis>cAdvisor</emphasis> on
-     <literal>http://<replaceable>WORKER NODE ADDRESS</replaceable>;:4194/containers/</literal>.
+     <literal>http://<replaceable>WORKER NODE ADDRESS</replaceable>
+     ;:4194/containers/</literal>.
      The <emphasis>cAdvisor</emphasis> runs on worker nodes by default.
     </para>
    </listitem>
@@ -521,7 +534,8 @@
    <para>
     To deploy <emphasis>Heapster</emphasis>, run the following command:
    </para>
-<screen>kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/heapster/heapster.yaml</screen>
+<screen>kubectl apply -f 
+ https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/heapster/heapster.yaml</screen>
    <para>
     <emphasis>Heapster</emphasis> can store data in
     <emphasis>InfluxDB</emphasis>, which can be then used by other tools.
