@@ -156,8 +156,7 @@
     Even though it is not recommended, you can disable transactional updates
     by issuing the command:
    </para>
-<screen><command>systemctl</command> <option>--now disable
-transactional-update.timer</option></screen>
+<screen>&prompt.sudo;<command>systemctl --now disable transactional-update.timer</command></screen>
   </sect2>
  </sect1>
  <sect1 xml:id="ptf.handling">
@@ -170,8 +169,7 @@ transactional-update.timer</option></screen>
    installation of PTFs by running:
   </para>
 
-<screen><command>transactional-update</command> <option>reboot ptf install
-<replaceable>rpm &hellip; rpm</replaceable></option></screen>
+<screen>&prompt.sudo;<command>transactional-update reboot ptf install <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
 
   <para>
    The command installs PTF RPMs. The <literal>reboot</literal> option then
@@ -193,8 +191,7 @@ transactional-update.timer</option></screen>
    In case you need to remove the installed PTFs, use the following command:
   </para>
 
-<screen><command>transactional-update</command> <option>reboot ptf remove
-<replaceable>rpm &hellip; rpm</replaceable></option></screen>
+<screen>&prompt.sudo;<command>transactional-update reboot ptf remove <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
  </sect1>
 
  <sect1 xml:id="commands.node.managment">
@@ -217,13 +214,12 @@ transactional-update.timer</option></screen>
     You can use the command to prefix all directories and files with a
     specified prefix (path in this case):
    </para>
-<screen>issue-generator --prefix <replaceable>path</replaceable></screen>
+<screen>&prompt.user;<command>issue-generator --prefix <replaceable>PATH</replaceable></command></screen>
    <para>
     By using the command you can also create or delete files in the network
     configuration, for example:
    </para>
-<screen>issue-generator network <replaceable>remove</replaceable> <replaceable>
-interface</replaceable></screen>
+<screen>&prompt.user;<command>issue-generator network <replaceable>REMOVE</replaceable> <replaceable>INTERFACE</replaceable></command></screen>
    <para>
     The command removes file
     <filename>/run/issue.d/70-<replaceable>interface</replaceable>.conf
@@ -235,7 +231,7 @@ interface</replaceable></screen>
     <filename>/run/issue.d/60-ssh_host_keys.conf</filename> that contains
     fingerprints of the public SSH keys of the host:
    </para>
-<screen>issue-generator ssh <replaceable>add|remove</replaceable></screen>
+<screen>&prompt.user;<command>issue-generator ssh <replaceable>ADD|REMOVE</replaceable></command></screen>
    <note>
     <title>The Command without Arguments</title>
     <para>
@@ -258,7 +254,7 @@ interface</replaceable></screen>
     If the current root file system is identical to the active root file system
     (after applying updates and reboot), run cleanup of all old snapshots:
    </para>
-<screen>transactional-update cleanup</screen>
+<screen>&prompt.sudo;<command>transactional-update cleanup</command></screen>
    <para>
     Other options of the command are the following:
    </para>
@@ -273,7 +269,7 @@ interface</replaceable></screen>
        snapshot is activated afterwards and is used as the new root file system
        after reboot.
       </para>
-<screen>transactional-update up</screen>
+<screen>&prompt.sudo;<command>transactional-update up</command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -286,7 +282,7 @@ interface</replaceable></screen>
        update the snapshot. The snapshot is activated afterwards and is used as
        the new root file system after reboot.
       </para>
-<screen>transactional-update dup</screen>
+<screen>&prompt.sudo;<command>transactional-update dup</command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -299,7 +295,7 @@ interface</replaceable></screen>
        snapshot is activated afterwards and is used as the new root file system
        after reboot.
       </para>
-<screen>transactional-update patch</screen>
+<screen>&prompt.sudo;<command>transactional-update patch</command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -309,8 +305,7 @@ interface</replaceable></screen>
       <para>
        The command installs the specified RPMs:
       </para>
-<screen>transactional-update ptf install <replaceable>rpm ... rpm</replaceable>
-</screen>
+<screen>&prompt.sudo;<command>transactional-update ptf install <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -320,8 +315,8 @@ interface</replaceable></screen>
       <para>
        The command removes the specified RPMs from the system:
       </para>
-<screen>transactional-update ptf remove <replaceable>rpm ... rpm</replaceable>
-</screen>
+<screen>&prompt.sudo;<command>transactional-update ptf remove <replaceable>RPM1
+RPM2 &hellip;</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -336,8 +331,7 @@ interface</replaceable></screen>
        as the default root file system. On a read-only file system, no additional
        snapshots are created.
       </para>
-<screen>transactional-update rollback <replaceable>snapshot_number</replaceable>
-</screen>
+<screen>&prompt.sudo;<command>transactional-update rollback <replaceable>SNAPSHOT_NUMBER</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -347,7 +341,7 @@ interface</replaceable></screen>
       <para>
        The option outputs possible options and subcommands.
       </para>
-<screen>transactional-update --help</screen>
+<screen>&prompt.sudo;<command>transactional-update --help</command></screen>
      </listitem>
     </varlistentry>
    </variablelist>
@@ -368,7 +362,7 @@ interface</replaceable></screen>
       <para>
        Specify to which file the command should save the created profile.
       </para>
-<screen>create_autoyast_profile -o <replaceable>filename</replaceable></screen>
+<screen>&prompt.sudo;<command>create_autoyast_profile -o <replaceable>FILENAME</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -378,8 +372,7 @@ interface</replaceable></screen>
       <para>
        Specify the host name of the &smaster;.
       </para>
-<screen>create_autoyast_profile --salt-master <replaceable>saltmaster
-</replaceable></screen>
+<screen>&prompt.sudo;<command>create_autoyast_profile --salt-master <replaceable>SALTMASTER</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -389,8 +382,7 @@ interface</replaceable></screen>
       <para>
        Specify the URL of the SMT server.
       </para>
-<screen>create_autoyast_profile --smt-url <replaceable>saltmaster
-</replaceable></screen>
+<screen>&prompt.sudo;<command>create_autoyast_profile --smt-url <replaceable>SALTMASTER</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -400,8 +392,7 @@ interface</replaceable></screen>
       <para>
        Specify the registration code for &productname;.
       </para>
-<screen>create_autoyast_profile --regcode <replaceable>405XAbs593
-</replaceable></screen>
+<screen>&prompt.sudo;<command>create_autoyast_profile --regcode <replaceable>RIGISTRATION_CODE</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -411,8 +402,7 @@ interface</replaceable></screen>
       <para>
        Specify an e-mail address for registration.
       </para>
-<screen>create_autoyast_profile --reg-email <replaceable>address@exampl.com
-</replaceable></screen>
+      <screen>&prompt.sudo;<command>create_autoyast_profile --reg-email <replaceable>E-MAIL_ADRESS</replaceable></command></screen>
      </listitem>
     </varlistentry>
    </variablelist>
@@ -554,8 +544,8 @@ interface</replaceable></screen>
    <para>
     To deploy <emphasis>Heapster</emphasis>, run the following command:
    </para>
-<screen>kubectl apply -f
- https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/heapster/heapster.yaml</screen>
+   <screen>&prompt.user;<command>kubectl apply -f \
+ https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/heapster/heapster.yaml</command></screen>
    <para>
     <emphasis>Heapster</emphasis> can store data in
     <emphasis>InfluxDB</emphasis>, which can be then used by other tools.
@@ -570,14 +560,17 @@ interface</replaceable></screen>
     You can deploy <emphasis>Grafana</emphasis> by running the following
     commands:
    </para>
-<screen>kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/heapster/heapster.yaml
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/influxdb.yaml
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-config/influxdb/grafana-deployment.yaml
-wget https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-config/influxdb/grafana-service.yaml</screen>
+   <screen>&prompt.user;<command>kubectl apply -f \
+https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/heapster/heapster.yaml</command>
+&prompt.user;<command>kubectl apply -f \
+https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/influxdb.yaml</command>
+&prompt.user;<command>kubectl apply -f \
+https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-config/influxdb/grafana-deployment.yaml</command>
+&prompt.user;<command>wget https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-config/influxdb/grafana-service.yaml</command></screen>
    <para>
     Then open the file <filename>grafana-service.yaml</filename>:
    </para>
-<screen>vi grafana-service.yaml</screen>
+<screen>&prompt.user;<command>vi grafana-service.yaml</command></screen>
    <para>
     In the file uncomment the line with the <literal>NodePort</literal> type.
    </para>
@@ -585,7 +578,7 @@ wget https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/ku
     To finish the <emphasis>Grafana</emphasis> installation, apply the
     configuration by running:
    </para>
-<screen>kubectl apply -f grafana-service.yaml</screen>
+<screen>&prompt.user;<command>kubectl apply -f grafana-service.yaml</command></screen>
   </sect2>
  </sect1>
 </chapter>

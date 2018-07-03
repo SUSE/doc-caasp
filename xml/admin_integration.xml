@@ -59,14 +59,14 @@
      On the &master_node; apply the configuration that includes Ceph secret by
      using the <command>kubectl apply</command>
     </para>
-<screen><command>kubectl apply -f - &lt;&lt; *EOF*</command>
+<screen>&prompt.user;<command>kubectl apply -f - &lt;&lt; *EOF*</command>
 apiVersion: v1
 kind: Secret
 metadata:
   name: ceph-secret
-type: "kubernetes.io/rbd" 
+type: "kubernetes.io/rbd"
 data:
-  key: "<replaceable>the Ceph secret key</replaceable>"
+  key: "<replaceable>CEPH_SECRET_KEY</replaceable>"
 *EOF*</screen>
     <para>
      The Ceph secret key is stored on the SES master node in the file
@@ -79,7 +79,7 @@ data:
      Create an image in the SES cluster. On the master node, run the following
      command:
     </para>
-<screen>rbd create -s <replaceable>1G</replaceable> <replaceable>yourvolume</replaceable></screen>
+<screen>&prompt.user;<command>rbd create -s <replaceable>1G</replaceable> <replaceable>YOUR_VOLUME</replaceable></command></screen>
     <para>
      Where <replaceable>1G</replaceable> is the size of the image and
      <replaceable>yourvolume</replaceable> is the name of the image.
@@ -89,7 +89,7 @@ data:
     <para>
      Create a pod that uses the image. On the &master_node; run the following:
     </para>
-<screen>kubectl apply -f - &lt;&lt; *EOF*
+<screen>&prompt.user;<command>kubectl apply -f - &lt;&lt; *EOF*</command>
 apiVersion: v1
 kind: Pod
 metadata:
@@ -125,14 +125,13 @@ spec:
     <para>
      Verify that the pod exists and its status:
     </para>
-<screen>kubectl get po</screen>
+<screen>&prompt.user;<command>kubectl get po</command></screen>
    </step>
    <step>
     <para>
      Once the pod is running, check the mounted volume:
     </para>
-<screen><command>kubectl exec -it busybox-rbd -- df -k</command>
-
+<screen>&prompt.user;<command>kubectl exec -it busybox-rbd -- df -k</command>
 ...
 /dev/rbd1               999320      1284    929224   0% /mnt/rbdvol
 ...</screen>
@@ -143,7 +142,7 @@ spec:
    In case you need to delete the pod, run the following command on &master_node;:
   </para>
 
-<screen>kubectl delete pod <replaceable>busybox-rbd</replaceable></screen>
+<screen>&prompt.user;<command>kubectl delete pod <replaceable>BUSYBOX-RBD</replaceable></command></screen>
  </sect1>
  <sect1 xml:id="integration.pods.persistent.volumes">
   <title>Creating Pods with Persistent Volumes</title>
@@ -159,7 +158,7 @@ spec:
     <para>
      Create a volume on the SES cluster:
     </para>
-<screen>rbd create -s <replaceable>1G</replaceable> <replaceable>yourvolume</replaceable></screen>
+<screen>&prompt.user;<command>rbd create -s <replaceable>1G</replaceable> <replaceable>YOUR_VOLUME</replaceable></command></screen>
     <para>
      Where <replaceable>1G</replaceable> is the size of the image and
      <replaceable>yourvolume</replaceable> is the name of the image.
@@ -169,7 +168,7 @@ spec:
     <para>
      Create the persistent volume on the &master_node;:
     </para>
-<screen>kubectl apply -f - &lt;&lt; *EOF*
+<screen>&prompt.user;<command>kubectl apply -f - &lt;&lt; *EOF*</command>
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -186,20 +185,19 @@ spec:
     - [monitor3 ip:port]
     - [monitor4 ip:port]
     pool: rbd
-    image: <replaceable>yourvolume</replaceable>
+    image: <replaceable>YOUR_VOLUME</replaceable>
     user: admin
     secretRef:
       name: ceph-secret
     fsType: ext4
     readOnly: false
-*EOF*
-</screen>
+*EOF*</screen>
    </step>
    <step>
     <para>
      Create a persistent volume claim on the &master_node;:
     </para>
-<screen>kubectl apply -f - &lt;&lt; *EOF*
+<screen>&prompt.user;<command>kubectl apply -f - &lt;&lt; *EOF*</command>
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
@@ -227,7 +225,7 @@ spec:
      Create a pod that uses the persistent volume claim. On the &master_node; run
      the following:
     </para>
-<screen>kubectl apply -f - &lt;&lt;*EOF*
+<screen>&prompt.user;<command>kubectl apply -f - &lt;&lt;*EOF*</command>
 apiVersion: v1
 kind: Pod
 metadata:
@@ -252,13 +250,13 @@ spec:
     <para>
      Verify that the pod exists and its status. On the &master_node; run:
     </para>
-<screen>kubectl get po</screen>
+<screen>&prompt.user;<command>kubectl get po</command></screen>
    </step>
    <step>
     <para>
      Once pod is running, check the volume by running on the &master_node;:
     </para>
-<screen><command>kubectl exec -it busybox-rbd -- df -k</command>
+<screen>&prompt.user;<command>kubectl exec -it busybox-rbd -- df -k</command>
 
 ...
 /dev/rbd3               999320      1284    929224   0% /mnt/rbdvol
@@ -271,13 +269,13 @@ spec:
    &master_node;:
   </para>
 
-<screen>kubectl delete pod busybox-rbd</screen>
+<screen>&prompt.user;<command>kubectl delete pod busybox-rbd</command></screen>
 
   <para>
    And when the command finishes, run
   </para>
 
-<screen>kubectl delete persistentvolume yourpv</screen>
+<screen>&prompt.user;<command>kubectl delete persistentvolume yourpv</command></screen>
 
   <note>
    <title>Deleting a Pod</title>

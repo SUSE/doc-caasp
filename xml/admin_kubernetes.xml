@@ -69,9 +69,8 @@
      <para>
       Open a terminal on your local machine add a repository to zypper:
      </para>
-      <screen>
-<command>zypper ar https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/</command>
-      </screen>
+     <screen>&prompt.sudo;<command>zypper ar -f \
+https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/</command></screen>
       <para>
        You will have to trust the key signature for the repository to continue.
       </para>
@@ -80,13 +79,13 @@
     <para>
      Refresh the repository information:
     </para>
-    <screen><command>zypper ref</command></screen>
+    <screen>&prompt.sudo;<command>zypper ref</command></screen>
    </step>
    <step>
     <para>
      Install the <filename>kubernetes-client</filename> package:
     </para>
-    <screen><command>zypper in kubernetes-client</command></screen>
+    <screen>&prompt.sudo;<command>zypper in kubernetes-client</command></screen>
    </step>
    <step>
     <para>
@@ -107,15 +106,13 @@
     <para>
      Verify that <literal>kubectl</literal> was installed and is configured correctly:
     </para>
-    <screen>
-<command>kubectl get nodes</command>
+    <screen>&prompt.user;<command>kubectl get nodes</command>
 NAME                  STATUS    ROLES     AGE       VERSION
 caasp3-master     Ready     master    1d        v1.9.8
 caasp3-worker-1   Ready     &lt;none&gt;    1d        v1.9.8
 caasp3-worker-2   Ready     &lt;none&gt;    1d        v1.9.8
 caasp3-worker-3   Ready     &lt;none&gt;    1d        v1.9.8
-caasp3-worker-4   Ready     &lt;none&gt;    1d        v1.9.8
-     </screen>
+caasp3-worker-4   Ready     &lt;none&gt;    1d        v1.9.8</screen>
      <para>
      You should see the list of nodes known to &productname;.
     </para>
@@ -142,10 +139,8 @@ caasp3-worker-4   Ready     &lt;none&gt;    1d        v1.9.8
      You need to have Heapster version 1.3.0 or later installed on the cluster.
      To verify it is installed run:
     </para>
-    <screen>
-<command>kubectl get pods</command> <option>--all-namespaces=true</option> <command>| grep heapster</command>
-kube-system   heapster-default-heapster-659d4f8787-6vtkq   2/2       Running   0          2m
-    </screen>
+    <screen>&prompt.sudo;<command>kubectl get pods --all-namespaces=true | grep heapster</command>
+kube-system  heapster-default-heapster-659d4f8787-6vtkq  2/2  Running  0  2m</screen>
     <para>If you DO NOT get an output like above, you must install heapster first. See <xref linkend="installing.heapster" />
     </para>
    </listitem>
@@ -167,25 +162,22 @@ kube-system   heapster-default-heapster-659d4f8787-6vtkq   2/2       Running   0
     <para>
      Apply the <literal><link xlink:href="https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml">kubernetes-dashboard</link></literal> manifest from the &kube; GitHub project. This will automatically create the necessary services and RBAC settings to use the dashboard.
     </para>
-    <screen>
-<command>kubectl apply</command> <option>-f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml</option>
+    <screen>&prompt.user;<command>kubectl apply -f \
+https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml</command>
 secret "kubernetes-dashboard-certs" created
 serviceaccount "kubernetes-dashboard" created
 role.rbac.authorization.k8s.io "kubernetes-dashboard-minimal" created
 rolebinding.rbac.authorization.k8s.io "kubernetes-dashboard-minimal" created
 deployment.apps "kubernetes-dashboard" k8s_dashboard_login
-service "kubernetes-dashboard" created
-    </screen>
+service "kubernetes-dashboard" created</screen>
    </step>
 
    <step>
     <para>
      Run the <literal>kubectl proxy</literal> to establish a connection to the cluster.
     </para>
-    <screen>
-<command>kubectl proxy</command>
-Starting to serve on 127.0.0.1:8001
-    </screen>
+    <screen>&prompt.user;<command>kubectl proxy</command>
+Starting to serve on 127.0.0.1:8001</screen>
    </step>
    <step>
     <para>
@@ -206,12 +198,11 @@ Starting to serve on 127.0.0.1:8001
    </step>
    <step>
     <para>
-     Retrieve the access token for your &productname; Admin user.
+     Retrieve the access token for your &productname; Admin user (the output in
+     the following example has been shortened)..
     </para>
-    <screen>
-<command>kubectl config view | grep id-token | awk '{ print $2 }'</command>
-eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJhZG1pbi11c2VyLXRva2VuLTZnbDZsIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImFkbWluLXVzZXIiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiJiMTZhZmJhOS1kZmVjLTExZTctYmJiOS05MDFiMGU1MzI1MTYiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6a3ViZS1zeXN0ZW06YWRtaW4tdXNlciJ9.M70CU3lbu3PP4OjhFms8PVL5pQKj-jj4RNSLA4YmQfTXpPUuxqXjiTf094_Rzr0fgN_IVX6gC4fiNUL5ynx9KU-lkPfk0HnX8scxfJNzypL039mpGt0bbe1IXKSIRaq_9VW59Xz-yBUhycYcKPO9RM2Qa1Ax29nqNVko4vLn1_1wPqJ6XSq3GYI8anTzV8Fku4jasUwjrws6Cn6_sPEGmL54sq5R4Z5afUtv-mItTmqZZdxnkRqcJLlg2Y8WbCPogErbsaCDJoABQ7ppaqHetwfM_0yMun6ABOQbIwwl8pspJhpplKwyo700OSpvTT9zlBsu-b35lzXGBRHzv5g_RA
-    </screen>
+    <screen>&prompt.user;<command>kubectl config view | grep id-token | awk '{ print $2 }'</command>
+eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3[...]</screen>
    </step>
    <step>
     <para>

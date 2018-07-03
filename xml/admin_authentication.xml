@@ -30,7 +30,7 @@
     &kube; &master_node;. The necessary authentication information is included in
     the &kubeconfig; file available from &dashboard;. Click the
     <literal>kubectl config</literal> button and authenticate with your user
-    name and password. Download the file from &dashboard; and save it as 
+    name and password. Download the file from &dashboard; and save it as
     <filename>$HOME/.kube/config</filename>.
    </para>
    <tip xml:id="auth.login.kubeconfig">
@@ -41,7 +41,7 @@
      defaults to <filename>$HOME/.kube/config</filename>. To use a different
      location, run
     </para>
-    <screen>&prompt.user;<command>export</command> <option>KUBECONFIG=<replaceable>/path/to/kube/config/file</replaceable></option></screen>
+    <screen>&prompt.user;<command>export KUBECONFIG=<replaceable>/PATH/TO/KUBE/CONFIG/FILE</replaceable></command></screen>
    </tip>
 
    <note xml:id="auth.login.rootca">
@@ -49,7 +49,7 @@
     <para>
      You can obtain the root CA certificate from any node in your cluster via SCP:
     </para>
-    <screen>&prompt.user;<command>scp</command> <option><replaceable>NODE</replaceable>:/etc/pki/trust/anchors/SUSE_CaaSP_CA.crt .</option></screen>
+    <screen>&prompt.user;<command>scp <replaceable>NODE</replaceable>:/etc/pki/trust/anchors/SUSE_CaaSP_CA.crt .</command></screen>
     <para>
      To trust this root CA certificate on your machine, place it in
      <filename>/etc/pki/trust/anchors/</filename> and call the
@@ -77,10 +77,10 @@
      your <phrase role="productname">OpenLDAP</phrase> administrator account
      password. To do this, run:
     </para>
-    <screen>&prompt.user;<command>ssh</command> <option>root@<replaceable>caasp-admin.example.com</replaceable></option> \
-    <command>cat</command> <option>/var/lib/misc/infra-secrets/openldap-password</option></screen>
+    <screen>&prompt.user;<command>ssh root@<replaceable>CAASP-ADMIN.example.com</replaceable> \
+    cat /var/lib/misc/infra-secrets/openldap-password</command></screen>
     <para>Make sure to replace
-     <replaceable>caasp-admin.example.com</replaceable> with the FQDN or IP of
+     <replaceable>CAASP-ADMIN.example.com</replaceable> with the FQDN or IP of
      your &admin_node;.
     </para>
    </sect2>
@@ -92,12 +92,13 @@
      generated LDAP certificate to your local trusted certificate storage. On
      the &admin_node;, run:
     </para>
-    <screen>&prompt.root;<command>docker</command> exec -it $(docker ps | grep openldap | awk '{print $1}') cat /etc/openldap/pki/ca.crt > ~/ca.pem</screen>
-    <screen>&prompt.root;<command>scp</command> ~/ca.pem <replaceable>root@workstation</replaceable>:/usr/share/pki/trust/anchors/ca-caasp.crt.pem</screen>
+    <screen>&prompt.root;<command>docker exec -it $(docker ps | grep openldap | \
+awk '{print $1}') cat /etc/openldap/pki/ca.crt > ~/ca.pem</command>
+&prompt.root;<command>scp ~/ca.pem <replaceable>root@WORKSTATION</replaceable>:/usr/share/pki/trust/anchors/ca-caasp.crt.pem</command></screen>
     <para>
-     Replace <replaceable>root@workstation</replaceable> with the appropriate
+     Replace <replaceable>root@WORKSTATION</replaceable> with the appropriate
      username and hostname for the workstation where you wish to run the LDAP
-     queries. 
+     queries.
     </para>
     <para>
      Then, on that workstation, run:
@@ -117,18 +118,16 @@
     </para>
     <example xml:id="ex.auth.users.add">
      <title>LDIF File For a New User</title>
-     <screen>
-dn: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.add.uid"/>,ou=People,dc=infra,dc=caasp,dc=local
+     <screen>dn: uid=<replaceable>USERID</replaceable><co xml:id="co.auth.users.add.uid"/>,ou=People,dc=infra,dc=caasp,dc=local
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: top
-uid: <replaceable>userid</replaceable> <xref linkend="co.auth.users.add.uid" xrefstyle="select:label nopage"/>
-userPassword: <replaceable>password hash</replaceable> <co xml:id="co.auth.users.add.password"/>
-givenname: <replaceable>first name</replaceable> <co xml:id="co.auth.users.add.firstname"/>
-sn: <replaceable>surname</replaceable> <co xml:id="co.auth.users.add.surname"/>
-cn: <replaceable>full name</replaceable> <co xml:id="co.auth.users.add.fullname"/>
-mail: <replaceable>email address</replaceable> <co xml:id="co.auth.users.add.email"/>
-     </screen>
+uid: <replaceable>USERID</replaceable> <xref linkend="co.auth.users.add.uid" xrefstyle="select:label nopage"/>
+userPassword: <replaceable>PASSWORD_HASH</replaceable> <co xml:id="co.auth.users.add.password"/>
+givenname: <replaceable>FIRST_NAME</replaceable> <co xml:id="co.auth.users.add.firstname"/>
+sn: <replaceable>SURNAME</replaceable> <co xml:id="co.auth.users.add.surname"/>
+cn: <replaceable>FULL_NAME</replaceable> <co xml:id="co.auth.users.add.fullname"/>
+mail: <replaceable>E-MAIL_ADDRESS</replaceable> <co xml:id="co.auth.users.add.email"/></screen>
      <para>
       Make sure to replace all the parameters indicated <replaceable>like
        this</replaceable> in the template above as follows:
@@ -169,19 +168,18 @@ mail: <replaceable>email address</replaceable> <co xml:id="co.auth.users.add.ema
     <para>
      Populate your OpenLDAP server with this LDIF file:
     </para>
-    <screen>&prompt.root;<command>ldapadd</command> -H ldap://<replaceable>ADMIN NODE IP</replaceable>;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP ADMIN PASSWORD</replaceable> -f <replaceable>LDIF FILE</replaceable></screen>
+    <screen>&prompt.root;<command>ldapadd -H ldap://<replaceable>ADMIN_NODE_IP</replaceable>;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local \
+-w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f <replaceable>LDIF_FILE</replaceable></command></screen>
     <para>
      To add this new user to the existing Administrators group, create a new LDIF
      file like this:
     </para>
     <example xml:id="ex.auth.users.add.admin">
      <title>LDIF File to Add a User to the 'Administrators' Group</title>
-     <screen>
-dn: cn=Administrators,ou=Groups,dc=infra,dc=caasp,dc=local
+     <screen>dn: cn=Administrators,ou=Groups,dc=infra,dc=caasp,dc=local
 changetype: modify
 add: uniqueMember
-uniqueMember: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.add.admin"/>,ou=People,dc=infra,dc=caasp,dc=local
-      </screen>
+uniqueMember: uid=<replaceable>USERID</replaceable><co xml:id="co.auth.users.add.admin"/>,ou=People,dc=infra,dc=caasp,dc=local</screen>
       <para>
        Make sure to replace all the parameters indicated <replaceable>like
         this</replaceable> in the template above as follows:
@@ -196,7 +194,8 @@ uniqueMember: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.add
       Populate your <phrase role="productname">OpenLDAP</phrase> server with the
       LDIF file:
      </para>
-     <screen>&prompt.root;<command>ldapadd</command> -H ldap://<replaceable>ADMIN NODE IP</replaceable>:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP ADMIN PASSWORD</replaceable> -f <replaceable>LDIF FILE</replaceable></screen>
+     <screen>&prompt.root;<command>ldapadd -H ldap://<replaceable>ADMIN_NODE_IP</replaceable>:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local \
+-w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f <replaceable>LDIF_FILE</replaceable></command></screen>
     </sect2>
 
     <sect2 xml:id="auth.users.change-pw">
@@ -206,12 +205,10 @@ uniqueMember: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.add
      </para>
      <example xml:id="ex.auth.users.change-pw">
       <title>LDIF File to Change a User's Password</title>
-     <screen>
-dn: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.change-pw.uid"/>,ou=People,dc=infra,dc=caasp,dc=local
+     <screen>dn: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.change-pw.uid"/>,ou=People,dc=infra,dc=caasp,dc=local
 changetype: modify
 modify: userPassword
-userPassword: <replaceable>password hash</replaceable><co xml:id="co.auth.users.change-pw.password"/>
-     </screen>
+userPassword: <replaceable>password hash</replaceable><co xml:id="co.auth.users.change-pw.password"/></screen>
      <para>
       Make sure to replace all the parameters indicated <replaceable>like
        this</replaceable> in the template above as follows:
@@ -233,7 +230,8 @@ userPassword: <replaceable>password hash</replaceable><co xml:id="co.auth.users.
     <para>
      Populate your OpenLDAP server with this LDIF file:
     </para>
-    <screen>&prompt.root;<command>ldapadd</command> -H ldap://<replaceable>ADMIN NODE IP</replaceable>;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP ADMIN PASSWORD</replaceable> -f <replaceable>LDIF FILE</replaceable></screen>
+    <screen>&prompt.root;<command>ldapadd -H ldap://<replaceable>ADMIN_NODE_IP</replaceable>;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local \
+-w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f <replaceable>LDIF_FILE</replaceable></command></screen>
    </sect2>
 
    <sect2 xml:id="auth.group">
@@ -276,42 +274,41 @@ uniqueMember: uid=<replaceable>member3</replaceable>,<xref linkend="co.auth.grou
      Populate your <phrase role="productname">OpenLDAP</phrase> server with the
      LDIF file:
     </para>
-    <screen>&prompt.root;<command>ldapadd</command> -H ldap://<replaceable>ADMIN NODE IP</replaceable>:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP ADMIN PASSWORD</replaceable> -f <replaceable>LDIF FILE</replaceable></screen>
+    <screen>&prompt.root;<command>ldapadd -H ldap://<replaceable>ADMIN_NODE_IP</replaceable>:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local \
+-w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f <replaceable>LDIF_FILE</replaceable></command></screen>
     <para>
      Next, create a role binding to allow this new LDAP group access in &kube;.
      Create a Kubernetes deployment descriptor like this:
     </para>
     <example xml:id="ex.auth.group.role">
      <title>Kubernetes Role Binding Deployment Descriptor</title>
-     <screen>
-# Define a Role and its permissions in &kube;
+     <screen># Define a Role and its permissions in &kube;
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: <replaceable>role name</replaceable><co xml:id="co.auth.group.role-name"/>
-  namespace: <replaceable>applicable namespace</replaceable><co xml:id="co.auth.group.role-namespace"/>
+  name: <replaceable>ROLE_NAME</replaceable><co xml:id="co.auth.group.role-name"/>
+  namespace: <replaceable>APPLICABLE_NAMESPACE</replaceable><co xml:id="co.auth.group.role-namespace"/>
 # This set of rules amounts to "allow all"
 rules:
 - apiGroups: [""]<co xml:id="co.auth.group.apigroup"/>
-  resources: ["<replaceable>configMap</replaceable>"]<co xml:id="co.auth.group.object"/>
-  resourceNames: ["<replaceable>my-pod"</replaceable>"]<co xml:id="co.auth.group.resnames"/>
-  verbs: ["<replaceable>list</replaceable>"]<co xml:id="co.auth.group.function"/>
+  resources: ["<replaceable>CONFIGMAP</replaceable>"]<co xml:id="co.auth.group.object"/>
+  resourceNames: ["<replaceable>MY-POD</replaceable>"]<co xml:id="co.auth.group.resnames"/>
+  verbs: ["<replaceable>LIST</replaceable>"]<co xml:id="co.auth.group.function"/>
 ---
 # Map an LDAP group to this &kube; role
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: <replaceable>role binding name</replaceable><co xml:id="co.auth.group.role-binding-name"/>
-  namespace: <replaceable>applicable namespace</replaceable><xref linkend="co.auth.group.role-namespace" xrefstyle="select:label nopage"/>
+  name: <replaceable>ROLE_BINDING_NAME</replaceable><co xml:id="co.auth.group.role-binding-name"/>
+  namespace: <replaceable>APPLICABLE_NAMESPACE</replaceable><xref linkend="co.auth.group.role-namespace" xrefstyle="select:label nopage"/>
 subjects:
 - kind: Group
-  name: <replaceable>LDAP group name</replaceable><co xml:id="co.auth.group.ldap-group-name"/>
+  name: <replaceable>LDAP_GROUP_NAME</replaceable><co xml:id="co.auth.group.ldap-group-name"/>
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: Role
-  name: <replaceable>role name</replaceable><xref linkend="co.auth.group.role-name" xrefstyle="select:label nopage"/>
-  apiGroup: rbac.authorization.k8s.io
-     </screen>
+  name: <replaceable>ROLE_NAME</replaceable><xref linkend="co.auth.group.role-name" xrefstyle="select:label nopage"/>
+  apiGroup: rbac.authorization.k8s.io</screen>
      <calloutlist>
       <callout arearefs="co.auth.group.role-name">
        <para>
@@ -359,7 +356,7 @@ roleRef:
     <para>
      Add this role and binding to &kube;:
     </para>
-    <screen>&prompt.root;<command>kubectl</command> <option>apply -f <replaceable>DEPLOYMENT DESCRIPTOR FILE</replaceable></option></screen>
+    <screen>&prompt.root;<command>kubectl apply -f <replaceable>DEPLOYMENT_DESCRIPTOR_FILE</replaceable></command></screen>
    </sect2>
    <sect2>
     <title>Further information</title>
@@ -367,6 +364,6 @@ roleRef:
      xlink:href="https://kubernetes.io/docs/admin/authorization/rbac/"></link>
     </para>
    </sect2>
- 
+
  </sect1>
 </chapter>
