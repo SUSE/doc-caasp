@@ -97,8 +97,11 @@
      </para>
      <informalfigure>
       <mediaobject>
-       <imageobject>
-        <imagedata fileref="velum_updating.png" format="PNG"/>
+       <imageobject role="fo">
+        <imagedata fileref="velum_updating.png" width="100%" format="png"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="velum_updating.png" width="100%" format="png"/>
        </imageobject>
       </mediaobject>
      </informalfigure>
@@ -109,8 +112,13 @@
      </para>
      <informalfigure>
       <mediaobject>
-       <imageobject>
-        <imagedata fileref="velum_reboot_and_update.png" format="PNG"/>
+       <imageobject role="fo">
+        <imagedata fileref="velum_reboot_and_update.png" width="100%"
+                   format="png"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="velum_reboot_and_update.png" width="100%"
+                   format="png"/>
        </imageobject>
       </mediaobject>
      </informalfigure>
@@ -128,8 +136,13 @@
      </para>
      <informalfigure>
       <mediaobject>
-       <imageobject>
-        <imagedata fileref="velum_update_nodes.png" format="PNG"/>
+       <imageobject role="fo">
+        <imagedata fileref="velum_update_nodes.png" width="100%"
+                   format="png"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="velum_update_nodes.png" width="100%"
+                   format="png"/>
        </imageobject>
       </mediaobject>
      </informalfigure>
@@ -143,7 +156,7 @@
     Even though it is not recommended, you can disable transactional updates
     by issuing the command:
    </para>
-<screen><command>systemctl</command> <option>--now disable 
+<screen><command>systemctl</command> <option>--now disable
 transactional-update.timer</option></screen>
   </sect2>
  </sect1>
@@ -157,7 +170,7 @@ transactional-update.timer</option></screen>
    installation of PTFs by running:
   </para>
 
-<screen><command>transactional-update</command> <option>reboot ptf install 
+<screen><command>transactional-update</command> <option>reboot ptf install
 <replaceable>rpm &hellip; rpm</replaceable></option></screen>
 
   <para>
@@ -180,7 +193,7 @@ transactional-update.timer</option></screen>
    In case you need to remove the installed PTFs, use the following command:
   </para>
 
-<screen><command>transactional-update</command> <option>reboot ptf remove 
+<screen><command>transactional-update</command> <option>reboot ptf remove
 <replaceable>rpm &hellip; rpm</replaceable></option></screen>
  </sect1>
 
@@ -441,10 +454,13 @@ interface</replaceable></screen>
      </para>
      <informalfigure>
       <mediaobject>
-       <imageobject>
-        <imagedata fileref="velum_pending_nodes.png" format="PNG"/>
+       <imageobject role="fo">
+        <imagedata fileref="velum_pending_nodes.png" width="100%" format="png"/>
        </imageobject>
-      </mediaobject>
+       <imageobject role="html">
+        <imagedata fileref="velum_pending_nodes.png" width="100%" format="png"/>
+       </imageobject>
+     </mediaobject>
      </informalfigure>
     </step>
     <step>
@@ -455,9 +471,13 @@ interface</replaceable></screen>
      </para>
      <informalfigure>
       <mediaobject>
-       <imageobject>
-        <imagedata fileref="velum_unassigned_nodes.png" format="PNG" width="60%"
-         />
+       <imageobject role="fo">
+        <imagedata fileref="velum_unassigned_nodes.png" width="100%"
+                   format="png"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="velum_unassigned_nodes.png" width="100%"
+                   format="png"/>
        </imageobject>
       </mediaobject>
      </informalfigure>
@@ -534,7 +554,7 @@ interface</replaceable></screen>
    <para>
     To deploy <emphasis>Heapster</emphasis>, run the following command:
    </para>
-<screen>kubectl apply -f 
+<screen>kubectl apply -f
  https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/heapster/heapster.yaml</screen>
    <para>
     <emphasis>Heapster</emphasis> can store data in
