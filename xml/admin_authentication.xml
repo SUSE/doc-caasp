@@ -167,7 +167,7 @@ mail: <replaceable>E-MAIL_ADDRESS</replaceable> <co xml:id="co.auth.users.add.em
     <para>
      Populate your OpenLDAP server with this LDIF file:
     </para>
-    <screen>&prompt.root;<command>ldapadd -H ldap://<replaceable>ADMIN_NODE_IP</replaceable>;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local \
+    <screen>&prompt.root;<command>ldapadd -H ldap://<replaceable>ADMIN_NODE_IP</replaceable>:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local \
 -w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f <replaceable>LDIF_FILE</replaceable></command></screen>
     <para>
      To add this new user to the existing Administrators group, create a new LDIF
@@ -229,7 +229,7 @@ userPassword: <replaceable>password hash</replaceable><co xml:id="co.auth.users.
     <para>
      Populate your OpenLDAP server with this LDIF file:
     </para>
-    <screen>&prompt.root;<command>ldapadd -H ldap://<replaceable>ADMIN_NODE_IP</replaceable>;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local \
+    <screen>&prompt.root;<command>ldapadd -H ldap://<replaceable>ADMIN_NODE_IP</replaceable>:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local \
 -w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f <replaceable>LDIF_FILE</replaceable></command></screen>
    </sect2>
 
