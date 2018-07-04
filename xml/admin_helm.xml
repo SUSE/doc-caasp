@@ -39,7 +39,7 @@
    container. Run the following command from your workstation to query the
    logs:
   </para>
-  <screen>&prompt.user;<command>kubectl logs -l name=tiller --namespace=kube-system | grep "Starting &tiller;"</command>
+  <screen>&prompt.root;<command>kubectl logs -l name=tiller --namespace=kube-system | grep "Starting &tiller;"</command>
 [main] 2018/04/04 16:48:27 Starting &tiller; v2.6.1 (tls=false)
   </screen>
   <para>
@@ -47,7 +47,7 @@
    queries the <command>rpm</command> package manager inside the container. This
    works only on &productname;/&scf; installations:
   </para>
-  <screen>&prompt.user;<command>kubectl exec -it $(kubectl get pods -n kube-system | awk '/tiller/{print$1}') \
+  <screen>&prompt.root;<command>kubectl exec -it $(kubectl get pods -n kube-system | awk '/tiller/{print$1}') \
 -n kube-system -- rpm -q helm</command>
 helm-2.6.1-1.6.x86_64
   </screen>
@@ -93,7 +93,7 @@ helm-2.6.1-1.6.x86_64
      <para>
       (On CaaSP Admin Node) Initialize helm repo data.
      </para>
-     <screen>&prompt.user;<command>helm init --client-only</command>
+     <screen>&prompt.root;<command>helm init --client-only</command>
 Creating /root/.helm/repository
 Creating /root/.helm/repository/cache
 Creating /root/.helm/repository/local
@@ -109,14 +109,14 @@ Happy Helming!</screen>
      <step>
       <para>Install <literal>heapster</literal> from stable/heapster &kube;
       charts repository</para>
-      <screen>&prompt.user;<command>helm install --name heapster-default --namespace=kube-system stable/heapster \
+      <screen>&prompt.root;<command>helm install --name heapster-default --namespace=kube-system stable/heapster \
 --version=0.2.7 --set rbac.create=true</command></screen>
      </step>
      <step>
       <para>
        Verify that <literal>heapster</literal> was deployed successfully.
       </para>
-      <screen>&prompt.user;<command>helm list | grep heapster</command>
+      <screen>&prompt.root;<command>helm list | grep heapster</command>
 heapster-default  1  Fri Jun 29 10:48:45 2018  DEPLOYED  heapster-0.2.7  kube-system</screen>
      </step>
     </procedure>

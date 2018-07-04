@@ -156,7 +156,7 @@
     Even though it is not recommended, you can disable transactional updates
     by issuing the command:
    </para>
-<screen>&prompt.sudo;<command>systemctl --now disable transactional-update.timer</command></screen>
+<screen>&prompt.root;<command>systemctl --now disable transactional-update.timer</command></screen>
   </sect2>
  </sect1>
  <sect1 xml:id="ptf.handling">
@@ -169,7 +169,7 @@
    installation of PTFs by running:
   </para>
 
-<screen>&prompt.sudo;<command>transactional-update reboot ptf install <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
+<screen>&prompt.root;<command>transactional-update reboot ptf install <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
 
   <para>
    The command installs PTF RPMs. The <literal>reboot</literal> option then
@@ -191,7 +191,7 @@
    In case you need to remove the installed PTFs, use the following command:
   </para>
 
-<screen>&prompt.sudo;<command>transactional-update reboot ptf remove <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
+<screen>&prompt.root;<command>transactional-update reboot ptf remove <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
  </sect1>
 
  <sect1 xml:id="commands.node.managment">
@@ -212,26 +212,26 @@
    </para>
    <para>
     You can use the command to prefix all directories and files with a
-    specified prefix (path in this case):
+    specified prefix (PATH in this example):
    </para>
-<screen>&prompt.user;<command>issue-generator --prefix <replaceable>PATH</replaceable></command></screen>
+<screen>&prompt.root;<command>issue-generator --prefix <replaceable>PATH</replaceable></command></screen>
    <para>
     By using the command you can also create or delete files in the network
     configuration, for example:
    </para>
-<screen>&prompt.user;<command>issue-generator network <replaceable>REMOVE</replaceable> <replaceable>INTERFACE</replaceable></command></screen>
+<screen>&prompt.root;<command>issue-generator network <replaceable>remove</replaceable> <replaceable>INTERFACE</replaceable></command></screen>
    <para>
     The command removes file
-    <filename>/run/issue.d/70-<replaceable>interface</replaceable>.conf
-   </filename>. The file contains the name of the <replaceable>interface
-   </replaceable> and escape codes for <command>agentty</command>.
+    <filename>/run/issue.d/70-<replaceable>INTERFACE</replaceable>.conf
+    </filename>. The file contains the name of the and escape codes for
+    <command>agentty</command>.
    </para>
    <para>
     You can use the command to add or delete
     <filename>/run/issue.d/60-ssh_host_keys.conf</filename> that contains
     fingerprints of the public SSH keys of the host:
    </para>
-<screen>&prompt.user;<command>issue-generator ssh <replaceable>ADD|REMOVE</replaceable></command></screen>
+<screen>&prompt.root;<command>issue-generator ssh <replaceable>add|remove</replaceable></command></screen>
    <note>
     <title>The Command without Arguments</title>
     <para>
@@ -254,7 +254,7 @@
     If the current root file system is identical to the active root file system
     (after applying updates and reboot), run cleanup of all old snapshots:
    </para>
-<screen>&prompt.sudo;<command>transactional-update cleanup</command></screen>
+<screen>&prompt.root;<command>transactional-update cleanup</command></screen>
    <para>
     Other options of the command are the following:
    </para>
@@ -269,7 +269,7 @@
        snapshot is activated afterwards and is used as the new root file system
        after reboot.
       </para>
-<screen>&prompt.sudo;<command>transactional-update up</command></screen>
+<screen>&prompt.root;<command>transactional-update up</command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -282,7 +282,7 @@
        update the snapshot. The snapshot is activated afterwards and is used as
        the new root file system after reboot.
       </para>
-<screen>&prompt.sudo;<command>transactional-update dup</command></screen>
+<screen>&prompt.root;<command>transactional-update dup</command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -295,7 +295,7 @@
        snapshot is activated afterwards and is used as the new root file system
        after reboot.
       </para>
-<screen>&prompt.sudo;<command>transactional-update patch</command></screen>
+<screen>&prompt.root;<command>transactional-update patch</command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -305,7 +305,7 @@
       <para>
        The command installs the specified RPMs:
       </para>
-<screen>&prompt.sudo;<command>transactional-update ptf install <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
+<screen>&prompt.root;<command>transactional-update ptf install <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -315,8 +315,7 @@
       <para>
        The command removes the specified RPMs from the system:
       </para>
-<screen>&prompt.sudo;<command>transactional-update ptf remove <replaceable>RPM1
-RPM2 &hellip;</replaceable></command></screen>
+<screen>&prompt.root;<command>transactional-update ptf remove <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -331,7 +330,7 @@ RPM2 &hellip;</replaceable></command></screen>
        as the default root file system. On a read-only file system, no additional
        snapshots are created.
       </para>
-<screen>&prompt.sudo;<command>transactional-update rollback <replaceable>SNAPSHOT_NUMBER</replaceable></command></screen>
+<screen>&prompt.root;<command>transactional-update rollback <replaceable>SNAPSHOT_NUMBER</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -341,7 +340,7 @@ RPM2 &hellip;</replaceable></command></screen>
       <para>
        The option outputs possible options and subcommands.
       </para>
-<screen>&prompt.sudo;<command>transactional-update --help</command></screen>
+<screen>&prompt.root;<command>transactional-update --help</command></screen>
      </listitem>
     </varlistentry>
    </variablelist>
@@ -362,7 +361,7 @@ RPM2 &hellip;</replaceable></command></screen>
       <para>
        Specify to which file the command should save the created profile.
       </para>
-<screen>&prompt.sudo;<command>create_autoyast_profile -o <replaceable>FILENAME</replaceable></command></screen>
+<screen>&prompt.root;<command>create_autoyast_profile -o <replaceable>FILENAME</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -372,7 +371,7 @@ RPM2 &hellip;</replaceable></command></screen>
       <para>
        Specify the host name of the &smaster;.
       </para>
-<screen>&prompt.sudo;<command>create_autoyast_profile --salt-master <replaceable>SALTMASTER</replaceable></command></screen>
+<screen>&prompt.root;<command>create_autoyast_profile --salt-master <replaceable>SALTMASTER</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -382,7 +381,7 @@ RPM2 &hellip;</replaceable></command></screen>
       <para>
        Specify the URL of the SMT server.
       </para>
-<screen>&prompt.sudo;<command>create_autoyast_profile --smt-url <replaceable>SALTMASTER</replaceable></command></screen>
+<screen>&prompt.root;<command>create_autoyast_profile --smt-url <replaceable>SALTMASTER</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -392,7 +391,7 @@ RPM2 &hellip;</replaceable></command></screen>
       <para>
        Specify the registration code for &productname;.
       </para>
-<screen>&prompt.sudo;<command>create_autoyast_profile --regcode <replaceable>RIGISTRATION_CODE</replaceable></command></screen>
+<screen>&prompt.root;<command>create_autoyast_profile --regcode <replaceable>RIGISTRATION_CODE</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -402,7 +401,7 @@ RPM2 &hellip;</replaceable></command></screen>
       <para>
        Specify an e-mail address for registration.
       </para>
-      <screen>&prompt.sudo;<command>create_autoyast_profile --reg-email <replaceable>E-MAIL_ADRESS</replaceable></command></screen>
+      <screen>&prompt.root;<command>create_autoyast_profile --reg-email <replaceable>E-MAIL_ADRESS</replaceable></command></screen>
      </listitem>
     </varlistentry>
    </variablelist>
@@ -578,7 +577,7 @@ https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-co
     To finish the <emphasis>Grafana</emphasis> installation, apply the
     configuration by running:
    </para>
-<screen>&prompt.user;<command>kubectl apply -f grafana-service.yaml</command></screen>
+<screen>&prompt.root;<command>kubectl apply -f grafana-service.yaml</command></screen>
   </sect2>
  </sect1>
 </chapter>

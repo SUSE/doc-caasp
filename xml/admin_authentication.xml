@@ -77,10 +77,10 @@
      your <phrase role="productname">OpenLDAP</phrase> administrator account
      password. To do this, run:
     </para>
-    <screen>&prompt.user;<command>ssh root@<replaceable>CAASP-ADMIN.example.com</replaceable> \
+    <screen>&prompt.user;<command>ssh root@<replaceable>caasp.admin.example.com</replaceable> \
     cat /var/lib/misc/infra-secrets/openldap-password</command></screen>
     <para>Make sure to replace
-     <replaceable>CAASP-ADMIN.example.com</replaceable> with the FQDN or IP of
+     <replaceable>caasp-admin.example.com</replaceable> with the FQDN or IP of
      your &admin_node;.
     </para>
    </sect2>
@@ -94,11 +94,10 @@
     </para>
     <screen>&prompt.root;<command>docker exec -it $(docker ps | grep openldap | \
 awk '{print $1}') cat /etc/openldap/pki/ca.crt > ~/ca.pem</command>
-&prompt.root;<command>scp ~/ca.pem <replaceable>root@WORKSTATION</replaceable>:/usr/share/pki/trust/anchors/ca-caasp.crt.pem</command></screen>
+&prompt.root;<command>scp ~/ca.pem root@<replaceable>WORKSTATION</replaceable>:/usr/share/pki/trust/anchors/ca-caasp.crt.pem</command></screen>
     <para>
-     Replace <replaceable>root@WORKSTATION</replaceable> with the appropriate
-     username and hostname for the workstation where you wish to run the LDAP
-     queries.
+     Replace <replaceable>WORKSTATION</replaceable> with the appropriate
+     hostname for the workstation where you wish to run the LDAP queries.
     </para>
     <para>
      Then, on that workstation, run:
@@ -129,8 +128,8 @@ sn: <replaceable>SURNAME</replaceable> <co xml:id="co.auth.users.add.surname"/>
 cn: <replaceable>FULL_NAME</replaceable> <co xml:id="co.auth.users.add.fullname"/>
 mail: <replaceable>E-MAIL_ADDRESS</replaceable> <co xml:id="co.auth.users.add.email"/></screen>
      <para>
-      Make sure to replace all the parameters indicated <replaceable>like
-       this</replaceable> in the template above as follows:
+      Make sure to replace all the parameters indicated <replaceable>LIKE
+       THIS</replaceable> in the template above as follows:
      </para>
      <calloutlist>
       <callout arearefs="co.auth.users.add.uid">
@@ -181,8 +180,8 @@ changetype: modify
 add: uniqueMember
 uniqueMember: uid=<replaceable>USERID</replaceable><co xml:id="co.auth.users.add.admin"/>,ou=People,dc=infra,dc=caasp,dc=local</screen>
       <para>
-       Make sure to replace all the parameters indicated <replaceable>like
-        this</replaceable> in the template above as follows:
+       Make sure to replace all the parameters indicated <replaceable>LIKE
+        THIS</replaceable> in the template above as follows:
       </para>
       <calloutlist>
        <callout arearefs="co.auth.users.add.admin">
@@ -210,8 +209,8 @@ changetype: modify
 modify: userPassword
 userPassword: <replaceable>password hash</replaceable><co xml:id="co.auth.users.change-pw.password"/></screen>
      <para>
-      Make sure to replace all the parameters indicated <replaceable>like
-       this</replaceable> in the template above as follows:
+      Make sure to replace all the parameters indicated <replaceable>LIKE
+       THIS</replaceable> in the template above as follows:
      </para>
      <calloutlist>
       <callout arearefs="co.auth.users.change-pw.uid">
@@ -253,8 +252,8 @@ uniqueMember: uid=<replaceable>member2</replaceable>,<xref linkend="co.auth.grou
 uniqueMember: uid=<replaceable>member3</replaceable>,<xref linkend="co.auth.group.member" xrefstyle="select:label nopage"/>ou=People,dc=infra,dc=caasp,dc=local
      </screen>
      <para>
-      Make sure to replace all the parameters indicated <replaceable>like
-       this</replaceable> in the template above as follows:
+      Make sure to replace all the parameters indicated <replaceable>LIKE
+       THIS</replaceable> in the template above as follows:
      </para>
      <calloutlist>
       <callout arearefs="co.auth.group.cn">
@@ -356,7 +355,7 @@ roleRef:
     <para>
      Add this role and binding to &kube;:
     </para>
-    <screen>&prompt.root;<command>kubectl apply -f <replaceable>DEPLOYMENT_DESCRIPTOR_FILE</replaceable></command></screen>
+    <screen>&prompt.user;<command>kubectl apply -f <replaceable>DEPLOYMENT_DESCRIPTOR_FILE</replaceable></command></screen>
    </sect2>
    <sect2>
     <title>Further information</title>
