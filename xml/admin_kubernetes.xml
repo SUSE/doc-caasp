@@ -4,7 +4,7 @@
 <!ENTITY % entities SYSTEM "entity-decl.ent">
 %entities;
 ]>
-<chapter version="5.0" xml:id="accessing.kubernetes"
+<chapter version="5.0" xml:id="cha.admin.kubernetes"
  xmlns="http://docbook.org/ns/docbook"
  xmlns:xi="http://www.w3.org/2001/XInclude"
  xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -16,7 +16,7 @@
   </dm:docmanager>
  </info>
 
- <sect1 xml:id="installing.kubectl">
+ <sect1 xml:id="sec.admin.kubernetes.install-kubectl">
   <title>Installing kubectl</title>
   <tip>
    <title>Installing kubectl on non-SUSE OS</title>
@@ -89,7 +89,7 @@ https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3
    </step>
    <step>
     <para>
-     To use kubectl to connect to a local machine you must perform <xref linkend="auth.kubeconfig" /> against the &kube; master node. Download the <filename>.kubeconfig</filename> file from &dashboard; and place it in <filename>˜/.kube/config</filename>.
+     To use kubectl to connect to a local machine you must perform <xref linkend="sec.admin.auth.kubeconfig" /> against the &kube; master node. Download the <filename>.kubeconfig</filename> file from &dashboard; and place it in <filename>˜/.kube/config</filename>.
     </para>
     <informalfigure>
      <mediaobject>
@@ -121,7 +121,7 @@ caasp3-worker-4   Ready     &lt;none&gt;    1d        v1.9.8</screen>
 
  </sect1>
 
- <sect1 xml:id="installing.kube.dashboard">
+ <sect1 xml:id="sec.admin.kubernetes.kube-dashboard">
   <title>Installing &kube; Dashboard</title>
 
   <important>
@@ -143,8 +143,9 @@ caasp3-worker-4   Ready     &lt;none&gt;    1d        v1.9.8</screen>
 kube-system  heapster-default-heapster-659d4f8787-6vtkq  2/2  Running  0  2m</screen>
     <para>
      If you <emphasis>do not</emphasis> get an output like above, you must
-     install heapster first. Refer to <xref linkend="installing.heapster"/> for
-     installation instructions.
+     install heapster first. Refer to
+     <xref linkend="sec.admin.helm.installing-heapster"/> for installation
+     instructions.
     </para>
    </listitem>
    <listitem>
@@ -154,7 +155,7 @@ kube-system  heapster-default-heapster-659d4f8787-6vtkq  2/2  Running  0  2m</sc
    </listitem>
    <listitem>
      <para>
-       <literal>kubectl</literal> needs to be installed on the local machine and configured to talk to the remote &kube; API (CaaSP Master node). See <xref linkend="installing.kubectl" />
+      <literal>kubectl</literal> needs to be installed on the local machine and configured to talk to the remote &kube; API (CaaSP Master node). See <xref linkend="sec.admin.kubernetes.install-kubectl" />
      </para>
    </listitem>
   </itemizedlist>

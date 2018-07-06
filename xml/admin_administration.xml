@@ -4,7 +4,7 @@
   <!ENTITY % entities SYSTEM "entity-decl.ent">
     %entities;
 ]>
-<chapter version="5.0" xml:id="administration"
+<chapter version="5.0" xml:id="cha.admin"
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -16,7 +16,7 @@
   </dm:docmanager>
  </info>
 
- <sect1 xml:id="transactional.updates">
+ <sect1 xml:id="sec.admin.transactional-updates">
   <title>Handling Transactional Updates</title>
 
   <para>
@@ -75,7 +75,7 @@
    </para>
   </note>
 
-  <sect2 xml:id="transactional.updates.installation">
+  <sect2 xml:id="sec.admin.transactional-updates.installation">
    <title>Manual Installation of Updates</title>
    <para>
     After the <command>transactional-update</command> script has run on all
@@ -150,7 +150,7 @@
    </procedure>
   </sect2>
 
-  <sect2 xml:id="transactional.updates.disabling">
+  <sect2 xml:id="sec.admin.transactional-updates.disabling">
    <title>Disabling Transactional Updates</title>
    <para>
     Even though it is not recommended, you can disable transactional updates
@@ -159,7 +159,7 @@
 <screen>&prompt.root;<command>systemctl --now disable transactional-update.timer</command></screen>
   </sect2>
  </sect1>
- <sect1 xml:id="ptf.handling">
+ <sect1 xml:id="sec.admin.ptf-handling">
   <title>Handling Program Temporary Fixes</title>
 
   <para>
@@ -194,7 +194,7 @@
 <screen>&prompt.root;<command>transactional-update reboot ptf remove <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
  </sect1>
 
- <sect1 xml:id="commands.node.managment">
+ <sect1 xml:id="sec.admin.single-node-managment">
   <title>Commands for Single Node Management</title>
 
   <para>
@@ -202,7 +202,7 @@
    your &cluster_node;s.
   </para>
 
-  <sect2 xml:id="commands.node.managment.issue-generator">
+  <sect2 xml:id="sec.admin.single-node-managment.issue-generator">
    <title>The <command>issue-generator</command> Command</title>
    <para>
     The <command>issue-generator</command> creates a volatile temporary
@@ -241,7 +241,7 @@
    </note>
   </sect2>
 
-  <sect2 xml:id="commands.node.managment.transactional-update">
+  <sect2 xml:id="sec.admin.single-node-managment.transactional-update">
    <title>The <command>transactional-update</command> Command</title>
    <para>
     The <command>transactional-update</command> enables you to install or
@@ -346,7 +346,7 @@
    </variablelist>
   </sect2>
 
-  <sect2 xml:id="commands.node.managment.create_autoyast_profile">
+  <sect2 xml:id="sec.admin.single-node-managment.create_autoyast_profile">
    <title>The <command>create_autoyast_profile</command> Command</title>
    <para>
     The <command>create_autoyast_profile</command> command creates an autoyast
@@ -407,7 +407,7 @@
    </variablelist>
   </sect2>
  </sect1>
- <sect1 xml:id="node.managment">
+ <sect1 xml:id="sec.admin.node-managment">
   <title>Node Management</title>
 
   <para>
@@ -417,7 +417,7 @@
    in that case make sure that you do not break the cluster.
   </para>
 
-  <sect2 xml:id="node.managment.adding">
+  <sect2 xml:id="sec.admin.node-managment.adding">
    <title>Adding Nodes</title>
    <para>
     You may need to add additional &worker_node;s to your cluster. The following
@@ -428,7 +428,7 @@
     <step>
      <para>
       Prepare the node as described in
-      <xref linkend="sec.caasp.installquick.node"/>
+      <xref linkend="sec.caasp.install.node"/>
      </para>
     </step>
     <step>
@@ -484,7 +484,7 @@
    </procedure>
   </sect2>
 
-  <sect2 xml:id="node.managment.removing">
+  <sect2 xml:id="sec.admin.node-managment.removing">
    <title>Removing Nodes</title>
    <para>
     As each node in the cluster runs also an instance of
@@ -502,7 +502,7 @@
         node removal is finally supported. -->
   </sect2>
  </sect1>
- <sect1 xml:id="cluster.monitoring">
+ <sect1 xml:id="sec.admin.cluster-monitoring">
   <title>Cluster Monitoring</title>
 
   <para>
@@ -521,18 +521,18 @@
    <listitem>
     <para>
      By using <emphasis>Heapster</emphasis>, for details refer to
-     <xref linkend="cluster.monitoring.heapster"/>.
+     <xref linkend="sec.admin.cluster-monitoring.heapster"/>.
     </para>
    </listitem>
    <listitem>
     <para>
      By using <emphasis>Grafana</emphasis>, for details refer to
-     <xref linkend="cluster.monitoring.grafana"/>.
+     <xref linkend="sec.admin.cluster-monitoring.grafana"/>.
     </para>
    </listitem>
   </itemizedlist>
 
-  <sect2 xml:id="cluster.monitoring.heapster">
+  <sect2 xml:id="sec.admin.cluster-monitoring.heapster">
    <title>Monitoring with Heapster</title>
    <para>
     <emphasis>Heapster</emphasis> is a tool that collects and interprets
@@ -551,7 +551,7 @@
    </para>
   </sect2>
 
-  <sect2 xml:id="cluster.monitoring.grafana">
+  <sect2 xml:id="sec.admin.cluster-monitoring.grafana">
    <title>Monitoring with Grafana</title>
    <para>
     <emphasis>Grafana</emphasis> is an analytics platform that processes data
