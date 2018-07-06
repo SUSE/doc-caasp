@@ -7,23 +7,33 @@
   <!ENTITY % entities SYSTEM "entity-decl.ent">
     %entities;
 ]>
-<book version="5.1" xml:lang="en" xml:id="book.caasp.quickstart"
+<book version="5.1" xml:lang="en" xml:id="book.caasp.admin"
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink">
  <info>
-  <title>&deploy;</title><productname>&productname;</productname>
+  <title>&admin;</title><productname>&productname;</productname>
   <productnumber>&productnumber;</productnumber><date>
 <?dbtimestamp format="B d, Y"?></date>
   <xi:include href="common_copyright_gfdl.xml"/>
-  <xi:include href="authors.xml"/>
+  <xi:include href="common_authors.xml"/>
+  <abstract>
+   <para>
+    Information on administration of a &productnamereg; cluster. Discusses
+    authorization, updating clusters and individual nodes, monitoring, use of 
+    Helm and Tiller, the &kube; dashboard, and integration with &ses;.
+   </para>
+  </abstract>
   <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
    <dm:translation>no</dm:translation>
   </dm:docmanager>
  </info>
-
- <xi:include href="install_quick.xml"/>
-
+ <xi:include href="admin_authentication.xml"/>
+ <xi:include href="admin_administration.xml"/>
+ <xi:include href="admin_kubernetes.xml"/>
+ <xi:include href="admin_helm.xml"/>
+ <xi:include href="admin_integration.xml"/>
+ <xi:include href="admin_upgrade.xml"></xi:include>
 <!-- ===================================================================== -->
 <!-- Appendix                                                              -->
 <!-- ===================================================================== -->

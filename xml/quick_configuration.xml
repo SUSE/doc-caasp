@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE preface
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<chapter version="5.0" xml:id="configuration"
+  xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xlink="http://www.w3.org/1999/xlink">
+ <info>
+  <title>Configuration</title>
+  <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
+   <dm:bugtracker></dm:bugtracker>
+   <dm:translation>yes</dm:translation>
+  </dm:docmanager>
+ </info>
+ <para>
+  &productname; is typically configured in two stages: first, during the
+  installation process, and subsequently, using <literal>cloud-init</literal>.
+  During the initial installation, &productname; comes as preconfigured as
+  possible. 
+ </para>
+ <sect1 xml:id="installation.configuration">
+  <title>Deployment Scenarios Requiring Second-stage Configuration</title>
+  <para>
+   Second-stage configuration is typically used for large-scale clusters built
+   using pre-installed virtual machine disk images. Because these images are
+   pre-installed, the installation program does not run, and so it is not
+   possible to choose options interactively. Therefore, they must be specified
+   in configuration files.
+  </para>
+  <para> 
+   For smaller clusters of just a few nodes, <literal>cloud-init</literal> is 
+   generally not necessary, and so it is not described here in the &instquick;
+   Guide. For information on using <literal>cloud-init</literal>, refer to the 
+   Configuration chapter in the &deploy;. 
+  </para>
+  <para>
+   The following section describes the default values for the system
+   configuration. If you require different settings than these, follow the 
+   &deploy; to build your cluster. 
+  </para>
+ </sect1>
+ <sect1 xml:id="installation.defaults">
+  <title>Defaults</title>
+
+  <para>
+   The following are the defaults for the first stage of configuration:
+  </para>
+
+  <variablelist>
+   <varlistentry>
+    <term>timezone</term>
+    <listitem>
+     <para>
+      This is set to <emphasis>UTC</emphasis> by default. It is not recommended
+      to change this, but it is possible using <literal>cloud-init</literal>; 
+      see the &deploy;.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>keyboard</term>
+    <listitem>
+     <para>
+      This is set to <emphasis>us</emphasis> by default. If desired, choose an 
+      alternative layout from the list on the first screen of the installation
+      program.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>locale</term>
+    <listitem>
+     <para>
+      is set to <emphasis>en_US.utf8</emphasis> by default, but can be changed
+      by <literal>cloud-init</literal>.
+     </para>
+    </listitem>
+   </varlistentry>
+  </variablelist>
+  
+ </sect1>
+ </chapter>

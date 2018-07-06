@@ -19,44 +19,47 @@
  <para>
   &suse;&reg; CaaS (Container as a Service) Platform is a platform designed for
   fast deployment of container-based applications. You can deploy &productname;
-  on your physical machines or use it on virtual machines. After deployment, it
-  is ready to run out of the box and provides high scalability of your cluster.
+  onto physical servers or use it on virtual machines. After deployment, it
+  is ready to run out of the box and provides a highly-scalable cluster.
  </para>
  <para>
-  &productname; was designed to simplify transformation of applications into
-  container-based applications. Creating clouds with container-based
-  applications is much easier as you get rid of problems with compatibility
-  and dependencies. To enable as fast application deployment as possible, it is
-  recommended to use a container orchestration framework, e.g. &kube;.
+  &productname; was designed to simplify the transformation of applications into
+  <emphasis>application containers</emphasis>. Creating clouds with containers
+  is much easier than installing those applications directly onto the underlying
+  operating system, as it eliminates problems with inter-application 
+  compatibility and dependencies. To enable the most rapid application
+  deployment possible, a container orchestration framework, e.g. &kube;, helps
+  considerably.
  </para>
  <para>
   While &productname; inherits benefits of &sle; and uses tools and
-  technologies well-known to system administrators&mdash;like
-  <literal>cloud-init</literal>, Kubernetes, or Salt&mdash;the main innovation
-  (compared to &sls;) comes with <emphasis role="bold">transactional
+  technologies well-known to system administrators&mdash;such as
+  <literal>cloud-init</literal>, Kubernetes, and Salt&mdash;the main
+  innovation (compared to &sls;) comes with <emphasis role="bold">transactional
   updates</emphasis>. A transactional update is an update that can be installed
-  when the system is running without any down time. The transaction update can
-  be rolled back, so if the upgrade fails or the update is not compatible with
-  your infrastructure, you can restore the previous state.
+  when the system is running without any down-time. A transaction update can
+  be rolled back, so if the update fails or is not compatible with your
+  infrastructure, you can restore the previous system state.
+
  </para>
  <para>
-  &productname; uses the &btrfs; file system with the following characteristic:
+  &productname; uses the &btrfs; file system with the following characteristics:
  </para>
  <itemizedlist>
   <listitem>
    <para>
-    The base OS and snapshots are read-only.
+    The root filesystem and its snapshots are read-only.
    </para>
   </listitem>
   <listitem>
    <para>
-    Sub volumes for data sharing are read-write.
+    Sub-volumes for data sharing are read-write.
    </para>
   </listitem>
   <listitem>
    <para>
-    &productname; introduces overlays of <literal>/etc</literal> directories
-    used by <literal>cloud-init</literal> and &salt;
+    &productname; introduces overlays of the <literal>/etc</literal> directories
+    used by <literal>cloud-init</literal> and &salt;.
    </para>
   </listitem>
  </itemizedlist>
@@ -70,24 +73,26 @@
   <itemizedlist>
    <listitem>
     <para>
-     &admin_node; - is a &smaster; that assigns roles to &sminion;s. The node
-     runs the GUI dashboard that manages the whole cluster. For details refer
-     to <xref linkend="administration_dashboard"/>.
+     The <emphasis>&admin_node;</emphasis> is a &smaster; which assigns roles to
+     &sminion;s. This node runs the &dash; Web-based dashboard for managing the
+     whole cluster. For details, refer to <xref linkend="administration_dashboard"/>.
     </para>
    </listitem>
    <listitem>
     <para>
-     &cluster_node; - is a &sminion; that can have one of the following roles:
+     Each &cluster_node; is a &sminion; which can have one of the following
+     roles:
     </para>
     <itemizedlist>
      <listitem>
       <para>
-       &kube; master - that manages nodes running containers.
+       &kube; master: <emphasis>&master_node;s</emphasis> which manage the worker nodes.
       </para>
      </listitem>
      <listitem>
       <para>
-       &kube; worker - that runs containers.
+       &kube; worker: <emphasis>&worker_node;s</emphasis> which run the application
+       containers which are the main workload of the cluster. 
       </para>
      </listitem>
     </itemizedlist>
@@ -95,71 +100,109 @@
   </itemizedlist>
 
   <para>
-   In large-scale clusters, there are other nodes that can help you to manage
-   and run the cluster:
+   In large-scale clusters, there are other types of node that can help you to
+   manage and run the cluster:
   </para>
 
   <itemizedlist>
    <listitem>
     <para>
-     a local &smt; server that manages subscriptions for workers and so
-     decreases the traffic to &scc;
+     a local <emphasis>&smt; server</emphasis> that manages subscriptions for
+     workers and so decreases the traffic to the &scc;.
     </para>
    </listitem>
    <listitem>
     <para>
-     a log server that stores logs of cluster nodes.
+     a <emphasis>log server</emphasis> that stores the cluster nodes' logs.
     </para>
    </listitem>
   </itemizedlist>
 
   <para>
-   The following figure illustrates interactions of the nodes.
+   The following figure illustrates the interactions of the nodes.
   </para>
 
   <figure xml:id="caasp.architecture.cluster">
    <title>&productname; Nodes Architecture</title>
    <mediaobject>
     <imageobject>
-     <imagedata fileref="caasp_generic_scheme.svg" format="SVG" width="100%"/>
+     <imagedata fileref="caasp_generic_scheme.png" width="100%"/>
     </imageobject>
    </mediaobject>
   </figure>
 
   <para>
-   To run the whole cluster, &productname; uses various technologies like
-   &salt;, flannel network, <literal>etcd</literal> cluster, controller,
-   scheduler, <literal>kubelet</literal>, container engines, and an API Server.
+   To run the whole cluster, &productname; uses various technologies such as
+   &salt;, Flannel networking, the <literal>etcd</literal> distributed key-
+   store database, a controller, a scheduler, <literal>kubelet</literal>, a
+   &kube; API Server, and a choice of two container runtime engines, Docker or
+   CRI-O.
   </para>
+  <itemizedlist>
+   <listitem>
+    <formalpara>
+     <title>Docker</title>
+     <para>
+      This is the leading open-source format for application containers. It is
+      fully supported by &suse;.
+     </para>
+    </formalpara>
+    <para>
+     For more information, see <link xlink:href="https://www.docker.com/"/>.
+    </para>
+   </listitem>
+   <listitem>
+    <formalpara>
+     <title>CRI-O</title>
+     <para>
+      Designed specifically for &kube;, CRI-O is an implementation of CRI, the
+      Container Runtime Interface. A lightweight alternative to Docker or Moby,
+      it supports Open Container Initiative (OCI) images.
+     </para>
+    </formalpara>
+    <para>
+     For more information, see <link xlink:href="http://cri-o.io/"/>.
+    </para>
+    
+    <note>
+     <title>Container Engine Support Status</title>
+     <para>
+      CRI-O is included as an <emphasis>unsupported technology
+       preview</emphasis>, to allow customers to evaluate the new technology.
+      It is <emphasis>not</emphasis> supported for use in production deployments.
+     </para>
+    </note>
+   </listitem>
+   </itemizedlist>
 
   <para>
-   &salt; is used to manage deployment and administration of the cluster. The
+   &salt; is used to manage deployment and administration of the cluster. 
    <literal>&salt;-api</literal> is used to distribute commands from
    &dashboard; to the <literal>salt-master</literal> daemon. The
-   <literal>salt-master</literal> daemon stores events in <emphasis>MariaDB</emphasis> (the database is also used to store &dashboard; data). The
-   <literal>salt-minion</literal> daemon on the &admin_node; is used to
-   generate required certificates, and on the &sminion;s the daemons communicate
-   with the &admin_node;.
+   <literal>salt-master</literal> daemon stores events in <emphasis>MariaDB</emphasis>,
+   which is also used to store &dashboard; data. The <literal>salt-minion</literal>
+   daemon on the &admin_node; generates the required certificates, and
+   &sminion;s on the &worker_node;s communicate with the &admin_node;.
   </para>
 
   <para>
    As there can be several containers running on each host machine, each
    container is assigned an IP address that is used for communication with
-   other containers on the same host machine. Containers might need to have a
-   unique IP address exposed for network communication, thus flannel networking
-   is used. Flannel gives each host an IP sub net from which the container
-   engine can allocate IP addresses for containers. The mapping of IP addresses
-   is stored by using <literal>etcd</literal>. The <literal>flanneld</literal>
-   is used to manage routing of packets and mapping of IP addresses.
+   other containers on the same host. Containers might need to have a
+   unique IP address exposed for network communications, thus Flannel networking
+   is used. Flannel gives each host an IP subnet from which the container
+   engine can allocate IP addresses to containers. The mapping of IP addresses
+   is stored by <literal>etcd</literal>. The <literal>flanneld</literal> daemon
+   manages routing of packets and mapping of IP addresses.
   </para>
 
   <para>
    Within the cluster there are several instances of <literal>etcd</literal>,
-   each with a different purpose. The <literal>etcd discovery</literal> running
-   on the &admin_node; is used to bootstrap instances of
-   <literal>etcd</literal> running on other nodes and is not part of the
-   <literal>etcd</literal> cluster on other nodes. The <literal>etcd</literal>
-   instance on the &master_node; stores events from the API Server. The
+   each with a different purpose. The <literal>etcd discovery</literal> daemon
+   running on the &admin_node; is used to bootstrap instances of
+   <literal>etcd</literal> on other nodes and is not part of the
+   <literal>etcd</literal> cluster on the other nodes. The <literal>etcd</literal>
+   instance on the &master_node; stores events from the &kube; API Server. The
    <literal>etcd</literal> instance on &worker_node;s runs as a proxy that forwards
    clients to the <literal>etcd</literal> on the &master_node;.
   </para>
@@ -169,37 +212,62 @@
    and daemons are used by &kube;:
   </para>
 
-  <itemizedlist>
-   <listitem>
-    <para>
-     <literal>kubelet</literal> - is a node agent that ensures that all
-     containers in a pod are running and healthy.
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     <literal>kube-apiserver</literal> - exposes an REST API used to manage
-     pods. The API server performs authentication and authorization.
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     <emphasis>scheduler</emphasis>
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     a set of <emphasis>controllers</emphasis> for handling pod replication,
-     deployment, etc.
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     <literal>kube-proxy</literal> - runs on each node and is used do
-     distribute load and reach services.
-    </para>
-   </listitem>
-  </itemizedlist>
+  <variablelist>
+   <varlistentry>
+    <term>
+     kubelet
+    </term>
+    <listitem>
+     <para>
+      An agent that runs on each node to monitor and control all the containers
+      in a pod, ensuring that they are running and healthy.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     kube-apiserver 
+    </term>
+    <listitem>
+     <para>
+      This daemon exposes a REST API used to manage pods. The API server
+      performs authentication and authorization.
+     </para>
+    </listitem>      
+   </varlistentry>
+   <varlistentry>
+    <term>
+     scheduler
+    </term>
+    <listitem>
+     <para>
+      The scheduler assigns pods onto nodes. It does not run them itself; that
+      is <literal>kubelet</literal>'s job.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     controllers
+    </term>
+    <listitem>
+     <para>
+      These monitor the shared state of the cluster through the <literal>apiserver</literal>
+      and handle pod replication, deployment, etc.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     kube-proxy
+    </term>
+    <listitem>
+     <para>
+      This runs on each node and is used to distribute loads and reach services.
+     </para>
+    </listitem>
+   </varlistentry>
+  </variablelist>
 
   <para>
    Now let's focus on a more detailed view of the cluster that involves also
@@ -210,7 +278,7 @@
    <title>Services on nodes</title>
    <mediaobject>
     <imageobject>
-     <imagedata fileref="caasp_nodes_architecture.svg" format="SVG" width="90%"/>
+     <imagedata fileref="caasp_nodes_architecture.png" width="90%"/>
     </imageobject>
    </mediaobject>
   </figure>
@@ -218,26 +286,68 @@
   <sect2 xml:id="administration_dashboard">
    <title>The Administration Node</title>
    <para>
-    The &admin_node; is intended to manage deployment of the cluster and run
-    applications required for a proper function of the cluster. The
-    &admin_node; runs the administration dashboard called &dashboard;, the
-    <emphasis>salt-api</emphasis>, the MariaDB database, the <literal>etcd
-    discovery</literal> server, the <literal>salt-master</literal> and
-    <literal>salt-minion</literal>. The dashboard, database, and daemons all run
-    in separate containers.
+    The &admin_node; manages the cluster and runs several applications required
+    for proper functioning of the cluster. Because it is integral to the 
+    operation of &productname;, the &admin_node; must have a fully-qualified 
+    domain name (FQDN) which can be resolved from outside the cluster.  
    </para>
    <para>
-    The dashboard is a web application that enables you to manage, monitor, and
-    deploy the cluster. The dashboard manages the cluster by using the
+    The &admin_node; runs &dashboard;, the administration dashboard; the MariaDB
+    database; the <literal>etcd discovery</literal> server,
+    <emphasis>salt-api</emphasis>, <literal>salt-master</literal> and <literal>salt-minion</literal>. The
+    dashboard, database, and daemons all run in separate containers.
+   </para>
+   <para>
+    &dashboard; is a Web application that enables you to deploy, manage, and
+    monitor the cluster. The dashboard manages the cluster using 
     <emphasis>salt-api</emphasis> to interact with the underlying &salt;
     technology.
    </para>
    <para>
-    The containers on the &admin_node; are managed by
-    <literal>kubelet</literal> as a static pod. Bear in mind that this
-    <literal>kubelet</literal> does not manage the cluster nodes. Each cluster
-    node has its own running instance of <literal>kubelet</literal>.
+    The containers on the &admin_node; are managed by <literal>kubelet</literal>
+    as a static pod. Bear in mind that this <literal>kubelet</literal> does not
+    manage the cluster nodes. Each cluster node has its own running instance of
+    <literal>kubelet</literal>.
    </para>
   </sect2>
+  
+  <sect2 xml:id="master_node">
+   <title>Master Nodes</title>
+   <para>
+    &productname; &master_node;s monitor and control the &worker_node;s. They
+    make global decisions about the cluster, such as starting and scheduling 
+    pods of containers on the &worker_node;s. They run <emphasis>kube-apiserver</emphasis>
+    but do not host application containers.
+   </para>
+   <para>
+    Each cluster must have at least one &master_node;. For larger clusters, more
+    &master_node;s can be added, but there must always be an odd number. 
+   </para>
+   <para>
+    Like the &admin_node;, the &master_node; must have a resolvable FQDN. For
+    &dashboard; to function correctly, it must always be able to resolve the 
+    IP address of a &master_node;, so if there are multiple &master_node;s, they
+    must all share the same FQDN, meaning that load-balancing should be
+    configured.
+   </para>
+  </sect2>
+  <sect2 xml:id="worker_node">
+   <title>Worker Nodes</title>
+   <para>
+    The &worker_node;s are the machines in the cluster which host application
+    containers. Each runs its own instance of <emphasis>kubelet</emphasis> which
+    controls the pods on that machine. Earlier versions of &kube; referred to
+    &worker_node;s as "minions".
+   </para>
+   <para>
+    Each &worker_node; runs a container runtime engine (either <literal>Docker</literal>
+    or <literal>cri-o</literal>) and an instance of <literal>kube-proxy</literal>.
+   </para>
+   <para>
+    The &worker_node;s do not require individual FQDNs, although it may help in
+    troubleshooting network problems. 
+   </para>
+  </sect2>
+  
  </sect1>
 </chapter>
