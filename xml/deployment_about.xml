@@ -5,7 +5,7 @@
     %entities;
 ]>
 <!-- Converted by suse-upgrade version 1.1 -->
-<chapter version="5.0" xml:id="deployment.about"
+<chapter version="5.0" xml:id="cha.deploy.about"
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -63,7 +63,7 @@
    </para>
   </listitem>
  </itemizedlist>
- <sect1 xml:id="caasp.architecture">
+ <sect1 xml:id="sec.deploy.architecture">
   <title>&productname; Architecture</title>
 
   <para>
@@ -75,7 +75,8 @@
     <para>
      The <emphasis>&admin_node;</emphasis> is a &smaster; which assigns roles to
      &sminion;s. This node runs the &dash; Web-based dashboard for managing the
-     whole cluster. For details, refer to <xref linkend="administration_dashboard"/>.
+     whole cluster. For details, refer to
+     <xref linkend="sec.deploy.architecture.administration-node"/>.
     </para>
    </listitem>
    <listitem>
@@ -122,7 +123,7 @@
    The following figure illustrates the interactions of the nodes.
   </para>
 
-  <figure xml:id="caasp.architecture.cluster">
+  <figure xml:id="fig.deploy.architecture.cluster">
    <title>&productname; Nodes Architecture</title>
    <mediaobject>
     <imageobject>
@@ -274,7 +275,7 @@
    services running on each node type.
   </para>
 
-  <figure xml:id="caasp.architecture.services">
+  <figure xml:id="fig.deploy.architecture.services">
    <title>Services on nodes</title>
    <mediaobject>
     <imageobject>
@@ -283,7 +284,7 @@
    </mediaobject>
   </figure>
 
-  <sect2 xml:id="administration_dashboard">
+  <sect2 xml:id="sec.deploy.architecture.administration-node">
    <title>The Administration Node</title>
    <para>
     The &admin_node; manages the cluster and runs several applications required
@@ -311,7 +312,7 @@
    </para>
   </sect2>
   
-  <sect2 xml:id="master_node">
+  <sect2 xml:id="sec.deploy.architecture.master-nodes">
    <title>Master Nodes</title>
    <para>
     &productname; &master_node;s monitor and control the &worker_node;s. They
@@ -331,7 +332,7 @@
     configured.
    </para>
   </sect2>
-  <sect2 xml:id="worker_node">
+  <sect2 xml:id="sec.deploy.architecture.worker_node">
    <title>Worker Nodes</title>
    <para>
     The &worker_node;s are the machines in the cluster which host application
