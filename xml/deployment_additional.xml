@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<chapter version="5.0" xml:id="installing.additional.features"
+  xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xlink="http://www.w3.org/1999/xlink">
+ <info>
+  <title>Software Installation</title>
+  <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
+   <dm:bugtracker></dm:bugtracker>
+   <dm:translation>yes</dm:translation>
+  </dm:docmanager>
+ </info>
+ <para>
+  Once your cluster is ready, you may want to deploy additional software
+  that is not installed on &productname; by default. This chapter provides
+  instructions on how to install and configure various tools and services.
+ </para>
+
+<sect1 xml:id="installing.helm">
+  <title>Deploying &helm; and &tiller;</title>
+<para>
+&helm; charts provide a standard way to deploy &kube; applications. While
+&tiller; (the &helm;'s server-side component) is not installed on &productname;
+by default, it can be installed by enabling the appropriate option in the Velum graphical
+interface. When the <guimenu>Install &tiller;</guimenu> option is enabled,
+&tiller; is installed as a container on a &productname; 2 cluster from the
+installation media.
+</para>
+
+<para>
+Once &tiller; is installed on &productname; 2 cluster, the &helm;
+client can be used to interact with &tiller; and the cluster. To initialize the
+&helm; client (which automatically discovers &tiller; in the cluster), run the
+<command>helm init --client-only</command> command. You
+can then use the &helm; client as described in the official documentation at <link
+xlink:href="https://docs.helm.sh/using_helm/#using-helm" />.
+</para>
+
+  <note>
+   <title>&helm; and &tiller; are Optional</title>
+    <para>
+      Both &helm; and &tiller; are optional, unless you plan to run a
+      &suse; Cloud Application Platform.
+    </para>
+  </note>
+
+<para>
+&tiller; that ships with &productname; is supported by &suse;. While &suse;
+does not provide support for third-party &helm; charts, you can easily use them
+if necessary.
+</para>
+</sect1>
+
+ <sect1 xml:id="installing.kube.dashboard">
+  <title>Installing &kube; Dashboard</title>
+
+  <important>
+   <title>Technology Preview</title>
+   <para>
+    Even though you can install and use the &kube; dashboard, &productname;
+    currently fully supports only &dashboard;.
+   </para>
+  </important>
+
+  <para>
+   To install the &kube; dashboard, perform the following steps:
+  </para>
+
+  <procedure>
+   <title>Installation of &kube; Dashboard</title>
+   <step>
+    <para>
+     Connect to the &admin_node; using SSH.
+    </para>
+   </step>
+   <step>
+    <para>
+     Run the command:
+    </para>
+<screen>kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.6.3/src/deploy/kubernetes-dashboard.yaml</screen>
+   </step>
+   <step>
+    <para>
+     After the previous command finishes, run the following to expose the
+     proxy:
+    </para>
+<screen><command>kubectl proxy</command>
+    Starting to serve on 127.0.0.1:8001</screen>
+   </step>
+   <step>
+    <para>
+     In your browser open <emphasis>http://127.0.0.1:8001/api/v1/proxy/namespaces/kube-system/services/kubernetes-dashboard/#!/workload?namespace=default</emphasis>. The
+     &kube; dashboard is running there.
+    </para>
+   </step>
+  </procedure>
+ </sect1>
+</chapter>

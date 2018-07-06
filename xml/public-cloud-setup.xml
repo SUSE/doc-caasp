@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE chapter
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<chapter version="5.0" xml:id="public.cloud"
+xmlns="http://docbook.org/ns/docbook"
+xmlns:xi="http://www.w3.org/2001/XInclude"
+xmlns:xlink="http://www.w3.org/1999/xlink">
+  <info>
+    <title>Public Cloud Setup</title>
+    <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
+      <dm:bugtracker></dm:bugtracker>
+      <dm:translation>yes</dm:translation>
+    </dm:docmanager>
+  </info>
+  <para>For detailed information about the product please refer to
+  the https://www.suse.com/documentation/suse-caasp-2
+  &amp;productname; documentation.</para>
+  <para>The &amp;productname; images published by SUSE in selected
+  Public Cloud environments are provided as Bring Your Own
+  Subscription (BYOS) images. &amp;productname; instances need to
+  be registered with the SUSE Customer Center (SCC) in order to
+  receive bugfix and security updates. Images labeled with the
+  <emphasis role="bold">cluster</emphasis> designation in the name
+  are not intended to be started directly; they are deployed by the
+  Administrative node. Administrative node images contain the
+  <emphasis role="bold">admin</emphasis> designation in the image
+  name.</para>
+  <sect1 xml:id="instance-requirements">
+    <title>Instance Requirements</title>
+    <para>In Amazon EC2, the adminstrative instance must be
+    launched with an IAM role that allows full access to the EC2
+    API. In Microsoft Azure, all security credentials will be
+    collected during setup. In Google Compute Engine, the instance
+    must be launched with an IAM role including
+    <emphasis role="literal">Compute Admin</emphasis> and
+    <emphasis role="literal">Service Account
+    Actor</emphasis> scopes.</para>
+    <para>Select an instance size for the Administrative node that
+    meets the system requirements as documented in the
+    &amp;productname; documentation.
+    <variablelist>
+      <varlistentry>
+        <term>Memory</term>
+        <listitem>
+          <para>Minimal main memory: 8GB</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>Volume Size</term>
+        <listitem>
+          <para>Root volume size should be at least 40GB and is
+          dependent on the size and number of different containers
+          running in the cluster. The default root volume size of
+          the images is smaller than 40GB in some Public Cloud
+          frameworks; you must resize the root volume to meet your
+          needs upon instance launch.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist></para>
+  </sect1>
+  <sect1 xml:id="network-considerations">
+    <title>Network Considerations</title>
+    <para>&amp;productname; expects that DNS resolution is
+    functional. In general, Public Cloud providers provide a DNS
+    service that works with internal host names. You can also set
+    up your own DNS resolution; please refer to the documentation
+    of the Public Cloud provider of your choice to configure your
+    own DNS service.</para>
+    <para>It is recommended that &amp;productname; is setup to run
+    in two subnets in one network segment, also referred to as VPC
+    or VNET. The Administrative node should run in a subnet that is
+    not accessible to the outside world and should be connected to
+    your network via VPN or other means. Consider a security
+    group/firewall that only allows ingress traffic on ports 22
+    (SSH) and 443 (https) for the Administrative node from outside
+    the VPC. All nodes must have access to the Internet through
+    some route in order to connect to SCC and receive updates, or
+    be otherwise configured to receive updates (e.g. via an SMT
+    server).</para>
+    <para>Depending on the applications running in your cluster you
+    may consider exposing the subnet for the cluster nodes to the
+    outside world. Use a security group/firewall that only allows
+    incoming traffic on ports served by your workload(s). For
+    example, a containerized application providing the backend for
+    REST based services with content served over https should only
+    allow ingress traffic on port 443.</para>
+    <para>Traffic between the two subnets should be allowed to flow
+    freely. &amp;productname; uses the following ports:</para>
+    <para>
+      <emphasis role="bold">Administrative node</emphasis>
+      <itemizedlist>
+        <listitem>
+          <para>ssh: 22</para>
+        </listitem>
+        <listitem>
+          <para>http: 80 (Redirects to 443, https)</para>
+        </listitem>
+        <listitem>
+          <para>ntp: 123 (In cases where the service provider has a
+          time service the admin node image is configured to use
+          the ntp service provided by the framework. Cluster nodes
+          always point back to the admin node)</para>
+        </listitem>
+        <listitem>
+          <para>slapd: 389</para>
+        </listitem>
+        <listitem>
+          <para>https: 443</para>
+        </listitem>
+        <listitem>
+          <para>etcd: 2379</para>
+        </listitem>
+        <listitem>
+          <para>etcd: 2380</para>
+        </listitem>
+        <listitem>
+          <para>salt master: 4505</para>
+        </listitem>
+        <listitem>
+          <para>salt master: 4506</para>
+        </listitem>
+      </itemizedlist>
+      <emphasis role="bold">Master node role</emphasis>
+      <itemizedlist>
+        <listitem>
+          <para>ssh: 22</para>
+        </listitem>
+        <listitem>
+          <para>etcd: 2379</para>
+        </listitem>
+        <listitem>
+          <para>etcd: 2380</para>
+        </listitem>
+        <listitem>
+          <para>kubelet: 4198</para>
+        </listitem>
+        <listitem>
+          <para>haproxy: 6443</para>
+        </listitem>
+        <listitem>
+          <para>haproxy: 6444</para>
+        </listitem>
+        <listitem>
+          <para>flanneld: 8285 (UDP)</para>
+        </listitem>
+        <listitem>
+          <para>kubelet: 10250</para>
+        </listitem>
+        <listitem>
+          <para>kube-scheduler: 10251</para>
+        </listitem>
+        <listitem>
+          <para>kube-controller-manager: 10252</para>
+        </listitem>
+        <listitem>
+          <para>kubelet: 10255</para>
+        </listitem>
+        <listitem>
+          <para>kube-proxy: 10256</para>
+        </listitem>
+        <listitem>
+          <para>kube-proxy: 32000</para>
+        </listitem>
+      </itemizedlist>
+      <emphasis role="bold">Worker node role</emphasis>
+      <itemizedlist>
+        <listitem>
+          <para>ssh: 22</para>
+        </listitem>
+        <listitem>
+          <para>etcd: 2379</para>
+        </listitem>
+        <listitem>
+          <para>etcd: 2380</para>
+        </listitem>
+        <listitem>
+          <para>kubelet: 4194</para>
+        </listitem>
+        <listitem>
+          <para>flanneld: 8285 (UDP)</para>
+        </listitem>
+        <listitem>
+          <para>kubelet: 10250</para>
+        </listitem>
+        <listitem>
+          <para>kubelet: 10255</para>
+        </listitem>
+        <listitem>
+          <para>kube-proxy: 10256</para>
+        </listitem>
+        <listitem>
+          <para>kube-proxy: 32000</para>
+        </listitem>
+      </itemizedlist>
+    </para>
+  </sect1>
+  <sect1 xml:id="setup">
+    <title>Setup</title>
+    <para>&amp;productname; requires a chain of trust and therefore
+    none of the administrative services are running when an
+    instance is launched. The cluster administrator needs to ssh
+    into the instance and run the
+    <literal>caasp-admin-setup</literal> executable as the
+    <literal>root</literal>user.</para>
+    <para>By default the
+    <literal>caasp-admin-setup</literal> executable operates in
+    <emphasis role="italic">wizard</emphasis> mode, walking you
+    through the necessary steps. During this process your SCC
+    credentials will be requested. Registration with SCC can be
+    skipped. If this step is skipped during setup the admin node
+    and the cluster nodes will not receive any updates. While
+    registration to SCC can be performed after the initial setup
+    with
+    <literal>SUSEConnect</literal>, performing the registration
+    during setup has the advantage that cluster nodes will
+    automatically be registered with SCC as well. If you prefer not
+    to run the
+    <emphasis role="italic">wizard</emphasis>, use
+    <literal>caasp-admin-setup --help</literal> to obtain a list of
+    the available command line arguments.</para>
+    <para>Once the
+    <literal>caasp-admin-setup</literal> process is complete all
+    &amp;productname; containers will be launched on the admin node
+    instance. Use your web browser to access the Velum dashboard
+    via
+    <literal>https</literal>. If you did not provide your own
+    certificate, a certificate was generated for you and the
+    fingerprint was written to the terminal in which
+    <literal>caasp-admin-setup</literal> was executed. You can
+    compare this fingerprint in your browser to establish the chain
+    of trust.</para>
+    <para>Microsoft Azure does not provide a time protocol service.
+    Please refer to
+    <link xlink:href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_netz_xntp.html">
+    SUSE Linux Enterprise Server documentation</link> for more
+    information about NTP configuration. No manual NTP
+    configuration is required on the cluster nodes, they
+    synchronize time with the admininstration node.</para>
+    <sect2>
+      <title>caasp-admin-setup detail</title>
+      <para>The general purpose of
+      <literal>caasp-admin-setup</literal> is to collect all
+      information needed to successfully start the
+      &amp;productname; containers.</para>
+      <para>When
+      <literal>caasp-admin-setup</literal> is executed it determines
+      which cluster node image to use according to the cloud
+      framework. For this operation to succeed outgoing traffic on
+      port 443 to the Internet must be permitted. The code will
+      access the
+      <literal>Public Cloud Information Tracker</literal> service
+      operated by SUSE. This service provides information about all
+      images ever released to the Public Cloud by SUSE. The latest
+      available cluster node image for this version of
+      &amp;productname; will be used. This initial outreach and
+      image filtering introduces a small startup delay before the
+      command line options are processed or the wizard mode
+      starts.</para>
+      <sect3>
+        <title>Providing SSL certificate and key</title>
+        <para>You may choose to supply your own SSL certificate and
+        key for initial access the dashboard, with the
+        <literal>--ssl-crt</literal> and
+        <literal>--ssl-key</literal> options or by answering the
+        question
+        <literal>Would you like to use your own certificate from a
+        known (public or self signed) Certificate
+        Authority?</literal> with
+        <literal>y</literal>.</para>
+        <para>In order to use your own SSL certificate and key you
+        must upload the files to the admin node into a location of
+        your choice. This location is then provided to the setup
+        code. For example, if your certificate is called
+        <emphasis role="italic">my-velum.crt</emphasis> and you
+        uploaded it to
+        <emphasis role="italic">/tmp</emphasis> then the
+        <literal>caasp-admin-setup</literal> code expects
+        <emphasis role="italic">/tmp/my-velum.crt</emphasis> as the
+        location for the SSL certificate. The same concept applies
+        to the SSL key. The certificate and key will be placed in
+        the appropriate locations on the admin node.</para>
+      </sect3>
+      <sect3>
+        <title>Velum Administrator credentials</title>
+        <para>Velum is the name of the administrative dashboard web
+        interface. The setup code will ask for an e-mail address
+        and a password if not supplied with the
+        <literal>--admin-email</literal> and
+        <literal>--admin-password</literal> arguments. These are the
+        administrative credentials to log into the Velum dashboard.
+        The e-mail used does not have to be an e-mail associated
+        with your SCC account. Please do not forget the values you
+        enter, as they cannot be recovered.</para>
+      </sect3>
+      <sect3>
+        <title>Registering with SCC</title>
+        <para>The setup code will ask for an e-mail address and the
+        registration code. Use your SCC credentials that provide
+        access to the &amp;productname; product in SCC. The admin
+        node and all cluster nodes will get registered to SCC. The
+        registration process requires access to the Internet on
+        port 443. Alternatively you may use the
+        <literal>--reg-email</literal> and
+        <literal>--reg-code</literal> arguments. Registration with
+        SCC is optional. However, without registration the system
+        will not receive any updates unless specifically setup to
+        receive updates via a different route such as a private SMT
+        server. Registration after the initial setup also requires
+        an explcit registration of each node in the cluster.</para>
+        <para>When all information is collected, accept your
+        selections/input with
+        <literal>y</literal> to complete the initial setup.</para>
+      </sect3>
+    </sect2>
+  </sect1>
+  <sect1 xml:id="bootstrapping">
+    <title>Bootstrapping a Cluster</title>
+    <para>To finalize the configuration and bootstrap the cluster,
+    log into Velum using your admininstrative e-mail address and
+    password. This will take you to the
+    <emphasis role="bold">Initial CaaS Platform
+    Configuration</emphasis> page. The field
+    <emphasis role="bold">Internal Dashboard
+    FQDN/IP</emphasis>should be preset with the internal IP address
+    of your administrative host. You may also choose to install
+    Helm or change the configuration of the overlay network.
+    Clicking
+    <emphasis role="bold">Next</emphasis> will take you to the cloud
+    framework specific configuration page.</para>
+    <sect2>
+      <title>Configuration</title>
+      <para>Within a Public Cloud environment, bootstrapping a
+      &amp;productname; cluster is performed in an automated
+      manner. You must simply choose the instance type best suited
+      to your intended workloads, size the cluster, and specify a
+      few configuration details. The instances will be created, and
+      automatically joined to the cluster, skipping the
+      <emphasis role="italic">pending</emphasis> state. At this
+      point you can continue with the standard setup
+      procedure.</para>
+      <para>In &amp;productname; version 2.1, cluster size has a
+      minimum of three nodes and a maximum of 50 nodes.</para>
+      <sect3>
+        <title>Amazon Web Services EC2</title>
+        <para>You may select from one of the predefined instance
+        types, hand selected for general container workloads, or
+        choose
+        <emphasis role="italic">Other types...</emphasis> and enter
+        any
+        <emphasis role="italic">instance type</emphasis>, as
+        defined at
+        <link xlink:href="https://aws.amazon.com/ec2/instance-types/">
+        https://aws.amazon.com/ec2/instance-types/</link></para>
+        <para>Two configuration options are required in EC2:</para>
+        <variablelist>
+          <varlistentry>
+            <term>Subnet ID</term>
+            <listitem>
+              <para>The
+              <emphasis role="italic">subnet</emphasis> within which
+              cluster nodes will be attached to the network, in the
+              form
+              <literal>subnet-xxxxxxxx</literal>.</para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>Security Group ID</term>
+            <listitem>
+              <para>The
+              <emphasis role="italic">security
+              group</emphasis> defining network access rules for the
+              cluster nodes, in the form
+              <literal>sg-xxxxxxxx</literal>.</para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+        <para>The defaults used for those two options are preset to
+        the subnet ID of the administration host and the security
+        group ID that was automatically created by
+        <literal>caasp-admin-setup</literal>. You may choose to
+        place the cluster nodes in a different subnet and you can
+        also use a custom security group, but please bear in mind
+        that traffic must be allowed between the individual cluster
+        nodes and also between the admininstration node and the
+        cluster nodes.</para>
+        <para>See the
+        <link xlink:href="https://aws.amazon.com/documentation/vpc/">
+        Amazon Virtual Private Cloud Documentation</link>for more
+        information.</para>
+      </sect3>
+      <sect3>
+        <title>Microsoft Azure</title>
+        <para>You need to configure credentials for access to the
+        Azure framework so instances can be created, as well as
+        parameters for the cluster node instances themselves. The
+        credentials refer to authentication via a service
+        principal. See
+        <link xlink:href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal">
+        https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal</link> for
+        more information on how you can create a service
+        principal.</para>
+        <variablelist>
+          <varlistentry>
+            <term>Subscription ID</term>
+            <listitem>
+              <para>The subscription ID of your Azure
+              account.</para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>Tenant ID</term>
+            <listitem>
+              <para>The tenant ID of your service principal, also
+              known as the Active Directory ID.</para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>Application ID</term>
+            <listitem>
+              <para>The application ID of your service
+              principal.</para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>Client Secret</term>
+            <listitem>
+              <para>The key value or password of your service
+              principal.</para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+        <para>Below the
+        <emphasis role="bold">Service Principal
+        Authentication</emphasis> box you will find the
+        <emphasis role="bold">Instance
+        Type</emphasis> configuration. You may select from one of
+        the predefined instance types, hand selected for general
+        container workloads, or choose
+        <emphasis role="italic">Other types...</emphasis> and enter
+        any
+        <emphasis role="italic">size</emphasis>, as defined at
+        <link xlink:href="https://docs.microsoft.com/en-us/azure/virtual-machines/linux/sizes/">
+        https://docs.microsoft.com/en-us/azure/virtual-machines/linux/sizes/</link>Set
+        the
+        <emphasis role="bold">Cluster size</emphasis> using the
+        slider.</para>
+        <para>The parameters in
+        <emphasis role="bold">Resource Scopes</emphasis> define
+        attributes of the cluster instances, as required for Azure
+        Resource Manager:</para>
+        <variablelist>
+          <varlistentry>
+            <term>Resource Group</term>
+            <listitem>
+              <para>The Resource Group in which all cluster nodes
+              will be created.</para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>Storage Account</term>
+            <listitem>
+              <para>The Storage Account that will be used for
+              storing the cluster node OS disks. See
+              <link xlink:href="https://docs.microsoft.com/en-us/azure/storage/common/storage-create-storage-account">
+              https://docs.microsoft.com/en-us/azure/storage/common/storage-create-storage-account</link>for
+              more information about Azure Storage Accounts.</para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>Network</term>
+            <listitem>
+              <para>The virtual network the cluster nodes will be
+              connected to.</para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>Subnet</term>
+            <listitem>
+              <para>A subnet in the previously defined virtual
+              network. See
+              <link xlink:href="https://docs.microsoft.com/en-us/azure/virtual-network/">
+              https://docs.microsoft.com/en-us/azure/virtual-network/</link> for
+              more information about Azure Virtual Networks.</para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+      </sect3>
+      <sect3>
+        <title>Google Compute Engine</title>
+        <para>You may select from one of the predefined instance
+        types, hand selected for general container workloads, or
+        choose
+        <emphasis role="italic">Other types...</emphasis> and enter
+        any
+        <emphasis role="italic">machine type</emphasis>, as defined
+        at
+        <link xlink:href="https://cloud.google.com/compute/docs/machine-types">
+        https://cloud.google.com/compute/docs/machine-types</link></para>
+        <para>Two configuration options are required in GCE:</para>
+        <variablelist>
+          <varlistentry>
+            <term>Network</term>
+            <listitem>
+              <para>The name of the virtual network the cluster
+              nodes will run within.</para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>Subnet</term>
+            <listitem>
+              <para>If you created a custom network, you must
+              specify the name of the subnet within which the
+              cluster nodes will run.</para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+        <para>See the
+        <link xlink:href="https://cloud.google.com/vpc/docs/vpc">
+        GCE Network Documentation</link> for more
+        information.</para>
+      </sect3>
+    </sect2>
+    <sect2>
+      <title>Perform the Bootstrap</title>
+      <para>Clicking
+      <emphasis role="bold">Next</emphasis> on the framework
+      specific page will start creating the cluster node instances
+      and take you to the discovery page. Once the instances are up
+      and running, they will appear in the list of
+      <emphasis role="bold">Nodes Found</emphasis>. Assign each
+      node a role (worker or master) and click
+      <emphasis role="bold">Next</emphasis> to get to the bootstrap
+      page.</para>
+      <para>On the bootstrap page, there are two more configuration
+      fields. One is labeled
+      <emphasis role="bold">External Kubernetes API
+      FQDN</emphasis>. This is the FQDN of one of the master nodes,
+      and it must be resolvable via DNS and reachable from your
+      network. This name will be used in the configuration for
+      <literal>kubectl</literal>. Kubectl is the command line tool
+      that allows you to control the kubernetes cluster.</para>
+      <para>The other configuration field is labeled
+      <emphasis role="bold">External Dashboard FQDN</emphasis>.
+      This is the FQDN of your administration host, and it must be
+      resolvable via DNS and reachable from your network. When done
+      configuring, click
+      <emphasis role="bold">Bootstrap cluster</emphasis>. The
+      bootstrap process will take a few minutes. When finished,
+      your cluster is be ready.</para>
+    </sect2>
+  </sect1>
+  <sect1 xml:id="operating">
+    <title>Operating the Cluster</title>
+    <para>Kubectl uses a configuration file,
+    <literal>kubecfg</literal>, that defines parameters to access a
+    kubernetes cluster. This configuration file can be generated on
+    the admin node. Click
+    <emphasis role="bold">kubectl config</emphasis> to see
+    instructions on how to generate the
+    <literal>kubeconfig</literal> sfile.</para>
+  </sect1>
+</chapter>
