@@ -5,66 +5,40 @@
     %entities;
 ]>
 <chapter version="5.0" xml:id="configuration"
-  xmlns="http://docbook.org/ns/docbook"
-  xmlns:xi="http://www.w3.org/2001/XInclude"
-  xmlns:xlink="http://www.w3.org/1999/xlink">
- <info>
-  <title>Configuration</title>
+ xmlns="http://docbook.org/ns/docbook"
+ xmlns:xi="http://www.w3.org/2001/XInclude"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <info><title>Configuration</title>
   <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
-   <dm:bugtracker></dm:bugtracker>
+   <dm:bugtracker/>
    <dm:translation>yes</dm:translation>
   </dm:docmanager>
  </info>
  <para>
-  &productname; is typically configured in two stages: first, during the
-  installation process. After installation, you can configure your cluster
-  using <literal>cloud-init</literal>. The first-stage configuration of
-  &productname; comes as preconfigured as possible. The second stage is
-  typically used for large-scale clusters. If you only have a few machines,
-  <literal>cloud-init</literal> is not necessary.
- </para>
- <para>
-  Each configuration stage is described in the following sections.
- </para>
+   &productname; is typically configured in two stages: first, during the installation process. After installation, you can configure your cluster using <literal>cloud-init</literal>. The first-stage configuration of &productname; comes as preconfigured as possible. The second stage is typically used for large-scale clusters. If you only have a few machines, <literal>cloud-init</literal> is not necessary. </para>
+ <para> Each configuration stage is described in the following sections. </para>
  <sect1 xml:id="installation.configuration">
   <title>Configuration</title>
-
-  <para>
-   The defaults for the first stage configuration are the following:
-  </para>
-
+  <para> The defaults for the first stage configuration are the following: </para>
   <variablelist>
    <varlistentry>
     <term>timezone</term>
     <listitem>
-     <para>
-      is set to <emphasis>UTC</emphasis> by default, but can be changed by
-      <literal>cloud-init</literal>.
-     </para>
+     <para> is set to <emphasis>UTC</emphasis> by default, but can be changed by <literal>cloud-init</literal>. </para>
     </listitem>
    </varlistentry>
    <varlistentry>
     <term>keyboard</term>
     <listitem>
-     <para>
-      is set to <emphasis>us</emphasis> by default, but can be changed during
-      the installation process.
-     </para>
+     <para> is set to <emphasis>us</emphasis> by default, but can be changed during the installation process. </para>
     </listitem>
    </varlistentry>
    <varlistentry>
     <term>locale</term>
     <listitem>
-     <para>
-      is set to <emphasis>en_US.utf8</emphasis> by default, but can be changed
-      by <literal>cloud-init</literal>.
-     </para>
+     <para> is set to <emphasis>en_US.utf8</emphasis> by default, but can be changed by <literal>cloud-init</literal>. </para>
      <note>
-      <para>
-       Note that &productname; does not support the full range of locales that
-       are available in &sle;. Because of this, it is not recommended to change
-       the locale.
-      </para>
+      <para> Note that &productname; does not support the full range of locales that are available in &sle;. Because of this, it is not recommended to change the locale. </para>
      </note>
     </listitem>
    </varlistentry>
@@ -72,87 +46,35 @@
  </sect1>
  <sect1 xml:id="cloud-init.configuration">
   <title><literal>cloud-init</literal> Configuration</title>
-
   <para>
-   <literal>cloud-init</literal> is used after the installation is complete.
-   You then define a set of configuration files that will be applied during the
-   boot phase.
-  </para>
-
-  <para>
-   The <literal>cloud-init</literal> configuration can be loaded from different
-   data sources. Currently, the following datasources are preconfigured, and
-   <literal>cloud-init</literal> searches them in the following order:
-  </para>
-
+   <literal>cloud-init</literal> is used after the installation is complete. You then define a set of configuration files that will be applied during the boot phase. </para>
+  <para> The <literal>cloud-init</literal> configuration can be loaded from different data sources. Currently, the following datasources are preconfigured, and <literal>cloud-init</literal> searches them in the following order: </para>
   <orderedlist>
    <listitem>
-    <para>
-     the <literal>LocalDisk</literal> datasource
-    </para>
+    <para> the <literal>LocalDisk</literal> datasource </para>
    </listitem>
    <listitem>
-    <para>
-     the <literal>NoCloud</literal> datasource
-    </para>
+    <para> the <literal>NoCloud</literal> datasource </para>
    </listitem>
    <listitem>
-    <para>
-     the <literal>OpenStack</literal> datasource. If there is a running
-     OpenStack service, this datasource will be used. The configuration then
-     depends on a particular setup and thus it is not covered by this manual.
-    </para>
+    <para> the <literal>OpenStack</literal> datasource. If there is a running OpenStack service, this datasource will be used. The configuration then depends on a particular setup and thus it is not covered by this manual. </para>
    </listitem>
   </orderedlist>
-
-  <para>
-   More details about the datasources are provided below.
-  </para>
-
+  <para> More details about the datasources are provided below. </para>
   <sect2 xml:id="localdisk.datasource">
    <title>The <literal>LocalDisk</literal> Datasource</title>
-   <para>
-    The <literal>cloud-init</literal> searches for the configuration files:
-    <filename>meta-data</filename>, <filename>user-data</filename> and
-    optionally <filename>vendor-data</filename> in the local directory:
-    <filename>/cloud-init-config</filename>.
-   </para>
+   <para> The <literal>cloud-init</literal> searches for the configuration files: <filename>meta-data</filename>, <filename>user-data</filename> and optionally <filename>vendor-data</filename> in the local directory: <filename>/cloud-init-config</filename>. </para>
   </sect2>
-
   <sect2 xml:id="nocloud.datasource">
    <title>The <literal>NoCloud</literal> Datasource</title>
-   <para>
-    The <literal>NoCloud</literal> datasource enables you to read the
-    <literal>cloud-init</literal> configuration without running a network
-    service. <literal>cloud-init</literal> searches for the configuration files
-    <filename>meta-data</filename>, <filename>user-data</filename> in the root
-    directory of a local file system formatted as <literal>vfat</literal> or
-    <literal>iso9660</literal> with a label <literal>cidata</literal>.
-    Typically it is an unpartitioned USB stick or disk or a DVD iso.
-   </para>
-   <para>
-    Alternatively you can specify a remote location of the
-    <filename>cloud.cfg</filename>, but you have to configure network first,
-    e.g. by using local configuration files. The url is specified during boot
-    time and must be in the format:
-    <literal>cloud-init-url=http://<replaceable>hostname.domain</replaceable>/cloud.cfg</literal>.
-    The content of the passed url is copied to
-    <filename>/etc/cloud/cloud.cfg.d/91_kernel_cmdline_url.cfg</filename> and
-    it is not overwritten even though the url changes.
-   </para>
+   <para> The <literal>NoCloud</literal> datasource enables you to read the <literal>cloud-init</literal> configuration without running a network service. <literal>cloud-init</literal> searches for the configuration files <filename>meta-data</filename>, <filename>user-data</filename> in the root directory of a local file system formatted as <literal>vfat</literal> or <literal>iso9660</literal> with a label <literal>cidata</literal>. Typically it is an unpartitioned USB stick or disk or a DVD iso. </para>
+   <para> Alternatively you can specify a remote location of the <filename>cloud.cfg</filename>, but you have to configure network first, e.g. by using local configuration files. The url is specified during boot time and must be in the format: <literal>cloud-init-url=http://<replaceable>hostname.domain</replaceable>/cloud.cfg</literal>. The content of the passed url is copied to <filename>/etc/cloud/cloud.cfg.d/91_kernel_cmdline_url.cfg</filename> and it is not overwritten even though the url changes. </para>
   </sect2>
-
   <sect2 xml:id="cloud.config.file">
    <title>The <filename>cloud.cfg</filename> Configuration File</title>
-   <para>
-    The <filename>cloud.cfg</filename> file is used to define a datasource and
-    the locations of the other required configuration files. Use the
-    <literal>#cloud-config</literal> syntax when defining the content.
-   </para>
-   <para>
-    An example with <literal>NoCloud</literal> datasource follows:
-   </para>
-<screen>#cloud-config
+   <para> The <filename>cloud.cfg</filename> file is used to define a datasource and the locations of the other required configuration files. Use the <literal>#cloud-config</literal> syntax when defining the content. </para>
+   <para> An example with <literal>NoCloud</literal> datasource follows: </para>
+   <screen>#cloud-config
     datasource:
      NoCloud:
      # default seedfrom is None
@@ -160,54 +82,35 @@
      #    &lt;url&gt;user-data and &lt;url&gt;meta-data
      # seedfrom: http://my.example.com/&lt;path&gt;/</screen>
   </sect2>
-
   <sect2 xml:id="meta-data.config.file">
    <title>The <filename>meta-data</filename> Configuration File</title>
-   <para>
-    The file <filename>meta-data</filename> is a YAML format file which is
-    intended to configure system items such as network, instance ID, etc. The
-    file typically contains the <literal>instance-id</literal> and
-    <literal>network-interfaces</literal> options. Each is described below.
-   </para>
+   <para> The file <filename>meta-data</filename> is a YAML format file which is intended to configure system items such as network, instance ID, etc. The file typically contains the <literal>instance-id</literal> and <literal>network-interfaces</literal> options. Each is described below. </para>
    <variablelist>
     <varlistentry>
      <term><literal>instance-id</literal>
      </term>
      <listitem>
-      <para>
-       Defines the instance. If you perform any changes to the configuration
-       (with either <filename>user-data</filename> or
-       <filename>meta-data</filename>), you must update this option with
-       another value. Thus <literal>cloud-init</literal> can recognize if this
-       the first boot of that particular host instance.
-      </para>
-<screen>instance-id: iid-example001</screen>
+      <para> Defines the instance. If you perform any changes to the configuration (with either <filename>user-data</filename> or <filename>meta-data</filename>), you must update this option with another value. Thus <literal>cloud-init</literal> can recognize if this the first boot of that particular host instance. </para>
+      <screen>instance-id: iid-example001</screen>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>network-interfaces</literal>
      </term>
      <listitem>
-      <para>
-       Here you can define the following options:
-      </para>
+      <para> Here you can define the following options: </para>
       <itemizedlist>
        <listitem>
         <para>
-         <literal>auto</literal> to start the network in that configuration
-         automatically during the boot phase.
-        </para>
+         <literal>auto</literal> to start the network in that configuration automatically during the boot phase. </para>
        </listitem>
        <listitem>
         <para>
-         <literal>iface</literal> that defines the configured interfaces.
-        </para>
+         <literal>iface</literal> that defines the configured interfaces. </para>
        </listitem>
       </itemizedlist>
-      <para>
-       A static network configuration then could look as follows:
-      </para>
-<screen>network-interfaces: |
+      <para> A static network configuration then could look as follows: </para>
+      <screen>network-interfaces: |
   auto eth0
   iface eth0 inet static
   address 192.168.1.10
@@ -219,118 +122,66 @@
     </varlistentry>
    </variablelist>
   </sect2>
-
   <sect2 xml:id="user-data.config.file">
    <title>The <filename>user-data</filename> Configuration File</title>
-   <para>
-    The configuration file <filename>user-data</filename> is a YAML file used
-    to configure users, SSH keys, time zone, etc. Each part of the file is
-    described in following sections.
-   </para>
+   <para> The configuration file <filename>user-data</filename> is a YAML file used to configure users, SSH keys, time zone, etc. Each part of the file is described in following sections. </para>
    <sect3 xml:id="user-data.config.header">
     <title><filename>user-data</filename> Header</title>
-    <para>
-     Each <filename>user-data</filename> file must start with
-     <literal>#cloud-config</literal> that indicates the
-     <literal>cloud-config</literal> format. The snippet below enables
-     debugging output and disables passwordless authentication for
-     &rootuser;. Thus you must login with the &rootuser; credentials.
-    </para>
-<screen>#cloud-config
+    <para> Each <filename>user-data</filename> file must start with the line <literal>#cloud-config</literal>. This indicates the <literal>cloud-config</literal> format. The snippet below enables debugging output and disables passwordless authentication for &rootuser;. Thus you must login with &rootuser;'s credentials. </para>
+    <screen>#cloud-config
 debug: True
 disable_root: False</screen>
    </sect3>
    <sect3 xml:id="user-data.config.runcmd.statements">
     <title><literal>runcmd</literal> Statements</title>
-    <para>
-     In the <filename>user-data</filename> you can use the
-     <literal>runcmd</literal> statement to run various commands in your
-     system. The <filename>user-data</filename> file can contain only a single
-     <literal>runcmd</literal> statement, so if you must run several commands,
-     group them into one statement:
-    </para>
-<screen>runcmd:
+    <para> In the <filename>user-data</filename> you can use the <literal>runcmd</literal> statement to run various commands in your system. The <filename>user-data</filename> file can contain only a single <literal>runcmd</literal> statement, so if you must run several commands, group them into one statement: </para>
+    <screen>runcmd:
     - /usr/bin/systemctl enable --now ntpd</screen>
-    <para>
-     By using the <literal>runcmd</literal> statement, you can perform the
-     following in your system:
-    </para>
+    <para> By using the <literal>runcmd</literal> statement, you can perform the following in your system: </para>
     <variablelist>
      <varlistentry>
       <term>Configure keyboard layout</term>
       <listitem>
-       <para>
-        for example, configure the German keyboard layout with
-        <emphasis>nodeadkeys</emphasis>:
-       </para>
-<screen>runcmd:
+       <para> for example, configure the German keyboard layout with <emphasis>nodeadkeys</emphasis>: </para>
+       <screen>runcmd:
   - /usr/bin/localectl set-keymap de-latin1-nodeadkeys</screen>
       </listitem>
      </varlistentry>
      <varlistentry>
       <term>Start services</term>
       <listitem>
-       <para>
-        for example, start the NTP server as described in
-        <xref linkend="user-data.config.ntp.server"/>.
-       </para>
+       <para> for example, start the NTP server as described in <xref
+         linkend="user-data.config.ntp.server"/>. </para>
       </listitem>
      </varlistentry>
     </variablelist>
    </sect3>
    <sect3 xml:id="user-data.config.authorized_keys">
     <title>SSH Keys Management</title>
-    <para>
-     You can configure the behaviour of adding SSH keys to the
-     <filename>authorized_keys</filename> and the SSH login pattern.
-    </para>
-<screen>ssh_deletekeys: False
+    <para> You can configure the behaviour of adding SSH keys to the <filename>authorized_keys</filename> and the SSH login pattern. </para>
+    <screen>ssh_deletekeys: False
 ssh_pwauth: True
 ssh_authorized_keys:
   - ssh-rsa XXXKEY mail@example.com</screen>
-    <para>
-     The option <literal>ssh_deletekeys</literal> disables/enables automatic
-     deletion of old private and public SSH keys of the host. The default value
-     is <literal>true</literal>&mdash;the keys are deleted and new keys are
-     generated. We do not recommend using the default value, as there could be
-     a problem with <command>ssh</command> reporting that the keys are incorrect
-     or have been changed after the <literal>cloud-init</literal> configuration
-     has been changed.
-    </para>
-    <para>
-     The option <literal>ssh_pwauth: true</literal> allows you to login by
-     using SSH with a password, if the password is set.
-    </para>
-    <para>
-     The option <literal>ssh_authorized_keys</literal> defines whether the SSH
-     key will be added to the <filename>authorized_keys</filename> file of the
-     user. If <emphasis role="bold">not</emphasis> specified otherwise, the
-     default user is &rootuser;.
-    </para>
+    <para> The option <literal>ssh_deletekeys</literal> disables/enables automatic deletion of old private and public SSH keys of the host. The default value is <literal>true</literal>&mdash;the keys are deleted and new keys are generated. We do not recommend using the default value, as there could be a problem with <command>ssh</command> reporting that the keys are incorrect or have been changed after the <literal>cloud-init</literal> configuration has been changed. </para>
+    <para> The option <literal>ssh_pwauth: true</literal> allows you to login by using SSH with a password, if the password is set. </para>
+    <para> The option <literal>ssh_authorized_keys</literal> defines whether the SSH key will be added to the <filename>authorized_keys</filename> file of the user. If <emphasis
+      role="bold"
+     >not</emphasis> specified otherwise, the default user is &rootuser;. </para>
    </sect3>
    <sect3 xml:id="user-data.config.setting.password">
     <title>Setting Password</title>
-    <para>
-     The <filename>user-data</filename> file enables you to set default
-     passwords by using the <literal>chpasswd</literal> option:
-    </para>
-<screen>chpasswd:
+    <para> The <filename>user-data</filename> file enables you to set default passwords by using the <literal>chpasswd</literal> option: </para>
+    <screen>chpasswd:
   list: |
     root:linux
   expire: True</screen>
-    <para>
-     In the example above you set a <emphasis>linux</emphasis> password for
-     &rootuser;. The <literal>expire</literal> option defines whether the user
-     will be prompted to change the default password at the first login.
-    </para>
+    <para> In the example above you set a <emphasis>linux</emphasis> password for &rootuser;. The <literal>expire</literal> option defines whether the user will be prompted to change the default password at the first login. </para>
    </sect3>
    <sect3 xml:id="user-data.config.adding.custom.repository">
     <title>Adding Custom Repository</title>
-    <para>
-     You can add a custom software repository to your system by using the
-     <literal>zypp_repos</literal> option:
-    </para>
-<screen>
+    <para> You can add a custom software repository to your system by using the <literal>zypp_repos</literal> option: </para>
+    <screen>
 zypper:
   repos:
     - id: opensuse-oss
@@ -347,131 +198,84 @@ zypper:
      <varlistentry>
       <term><literal>id</literal></term>
       <listitem>
-       <para>
-        The local unique ID of the repository, also known as its alias.
-        (Mandatory.)
-       </para>
+       <para> The local unique ID of the repository, also known as its alias. (Mandatory.) </para>
       </listitem>
      </varlistentry>
      <varlistentry>
       <term><literal>name</literal></term>
       <listitem>
-       <para>
-        A more descriptive string describing the repository, used in the UI.
-        (Mandatory.)
-       </para>
+       <para> A more descriptive string describing the repository, used in the UI. (Mandatory.) </para>
       </listitem>
      </varlistentry>
      <varlistentry>
       <term><literal>baseurl</literal></term>
       <listitem>
-       <para>
-        URL to the directory where the repository's <literal>repodata</literal>
-        directory lives. (Mandatory.)
-       </para>
+       <para> URL to the directory where the repository's <literal>repodata</literal> directory lives. (Mandatory.) </para>
       </listitem>
      </varlistentry>
      <varlistentry>
       <term><literal>type</literal></term>
       <listitem>
-       <para>
-        Zypper is able to work with three types of repository:
-        <literal>yast2</literal> and <literal>rpm-md</literal> (yum)
-        repositories, as well as <literal>plaindir</literal> - plain
-        directories containing <literal>.rpm</literal> files.
-       </para>
+       <para> Zypper is able to work with three types of repository: <literal>yast2</literal> and <literal>rpm-md</literal> (yum) repositories, as well as <literal>plaindir</literal> - plain directories containing <literal>.rpm</literal> files. </para>
       </listitem>
      </varlistentry>
      <varlistentry>
       <term><literal>path</literal></term>
       <listitem>
-       <para>
-        This is relative to the <literal>baseurl</literal>; the default is
-        <literal>/</literal>.
-       </para>
+       <para> This is relative to the <literal>baseurl</literal>; the default is <literal>/</literal>. </para>
       </listitem>
      </varlistentry>
      <varlistentry>
       <term><literal>gpgcheck</literal></term>
       <listitem>
-       <para>
-        Defines whether the source signatures should be checked using GPG.
-       </para>
+       <para> Defines whether the source signatures should be checked using GPG. </para>
       </listitem>
      </varlistentry>
      <varlistentry>
       <term><literal>gpgkey</literal></term>
       <listitem>
-       <para>
-        Defines the URL for a GPG key.
-       </para>
+       <para> Defines the URL for a GPG key. </para>
       </listitem>
      </varlistentry>
      <varlistentry>
       <term><literal>enabled</literal></term>
       <listitem>
-       <para>
-        Defaults to <literal>1</literal> (on). Set to <literal>0</literal> to
-        disable the repository: it will be known and listed, but not used.
-       </para>
+       <para> Defaults to <literal>1</literal> (on). Set to <literal>0</literal> to disable the repository: it will be known and listed, but not used. </para>
       </listitem>
      </varlistentry>
      <varlistentry>
       <term><literal>autorefresh</literal>
       </term>
       <listitem>
-       <para>
-        Defaults to <literal>1</literal> (on). When on, the local package cache
-        will be updated to the remote version whenever package management
-        actions are performed.
-       </para>
+       <para> Defaults to <literal>1</literal> (on). When on, the local package cache will be updated to the remote version whenever package management actions are performed. </para>
       </listitem>
      </varlistentry>
      <varlistentry>
       <term><literal>priority</literal></term>
       <listitem>
-       <para>
-        Defines a source priority, from <literal>1</literal> (lowest) to
-        <literal>200</literal> (highest). The default is <literal>99</literal>.
-       </para>
+       <para> Defines a source priority, from <literal>1</literal> (lowest) to <literal>200</literal> (highest). The default is <literal>99</literal>. </para>
       </listitem>
      </varlistentry>
     </variablelist>
    </sect3>
    <sect3 xml:id="user-data.config.setting.timezone">
     <title>Setting Timezone</title>
-    <para>
-     You can set a default timezone. Bear in mind that the configured value
-     must exist in <filename>/usr/share/zoneinfo</filename>:
-    </para>
-<screen>timezone: Europe/Berlin</screen>
+    <para> You can set a default timezone. Bear in mind that the configured value must exist in <filename>/usr/share/zoneinfo</filename>: </para>
+    <screen>timezone: Europe/Berlin</screen>
    </sect3>
    <sect3 xml:id="user-data.config.keyboard.hostname">
     <title>Setting Host name</title>
-    <para>
-     You can set either a host name or, preferably, a fully-qualified domain
-     name for the machine:
-    </para>
-<screen>hostname: myhost</screen>
-    <para>
-     or
-    </para>
-<screen>fqdn: myhost.example.com</screen>
-    <para>
-     The option <literal>preserve_hostname</literal> specifies whether any
-     existing host name (for example, from the kernel command-line) should be
-     retained or not. Enter <literal>true</literal> or <literal>false</literal>
-     as required:
-    </para>
-<screen>preserve_hostname: true</screen>
+    <para> You can set either a host name or, preferably, a fully-qualified domain name for the machine: </para>
+    <screen>hostname: myhost</screen>
+    <para> or </para>
+    <screen>fqdn: myhost.example.com</screen>
+    <para> The option <literal>preserve_hostname</literal> specifies whether any existing host name (for example, from the kernel command-line) should be retained or not. Enter <literal>true</literal> or <literal>false</literal> as required: </para>
+    <screen>preserve_hostname: true</screen>
    </sect3>
    <sect3 xml:id="user-data.config.nameserver">
     <title>Configuring Name server</title>
-    <para>
-     You can configure the server to manage the
-     <filename>resolv.conf</filename> file and thus set values of the file:
-    </para>
-<screen>manage_resolv_conf: true
+    <para> You can configure the server to manage the <filename>resolv.conf</filename> file and thus set values of the file: </para>
+    <screen>manage_resolv_conf: true
 resolv_conf:
   nameservers: ['8.8.4.4', '8.8.8.8']
   searchdomains:
@@ -484,12 +288,8 @@ resolv_conf:
    </sect3>
    <sect3 xml:id="user-data.config.ntp.server">
     <title>NTP Server Configuration</title>
-    <para>
-     You can also configure the NTP server. The following snippet configures
-     three NTP servers during the first boot and the NTP service is enabled and
-     started:
-    </para>
-<screen>ntp:
+    <para> You can also configure the NTP server. The following snippet configures three NTP servers during the first boot and the NTP service is enabled and started: </para>
+    <screen>ntp:
   servers:
     - ntp1.example.com
     - ntp2.example.com
@@ -499,11 +299,8 @@ runcmd:
    </sect3>
    <sect3 xml:id="user-data.config.salt.minion">
     <title>&sminion; Configuration</title>
-    <para>
-     You can use the file to set the &sminion; and its communication with the
-     &smaster;.
-    </para>
-<screen>salt_minion:
+    <para> You can use the file to set the &sminion; and its communication with the &smaster;. </para>
+    <screen>salt_minion:
   conf:
     master: saltmaster.example.com
 
@@ -519,49 +316,22 @@ runcmd:
    </sect3>
    <sect3 xml:id="caasp.roles.assigment">
     <title>Assigning Roles to the Cluster Nodes</title>
-    <para>
-     You need to specify which node of your cluster will be used as the
-     &admin_node; and which nodes will be used as regular cluster nodes.
-    </para>
-    <para>
-     To assign the &admin_node; role to the cluster node, add the following to
-     the configuration file:
-    </para>
-<screen>suse_caasp:
+    <para> You need to specify which node of your cluster will be used as the &admin_node; and which nodes will be used as regular cluster nodes. </para>
+    <para> To assign the &admin_node; role to the cluster node, add the following to the configuration file: </para>
+    <screen>suse_caasp:
   role: admin</screen>
-    <para>
-     If the cluster node is assigned the &admin_node;, all required containers
-     are imported and started. Bear in mind, that an NTP server must be
-     configured on that machine.
-    </para>
-    <para>
-     To other cluster nodes you assign the role <literal>cluster</literal>. The
-     machine will register itself as &sminion; on the &admin_node; and
-     configure a timesync service with &admin_node; as a reference. You do not
-     have to install any NTP server, but if you need to use one, you need to
-     disable the <command>systemd-timesyncd</command> first. An example of the
-     <literal>cluster</literal> role assignment follows:
-    </para>
-<screen>suse_caasp:
+    <para> If the cluster node is assigned the &admin_node;, all required containers are imported and started. Bear in mind, that an NTP server must be configured on that machine. </para>
+    <para> To other cluster nodes you assign the role <literal>cluster</literal>. The machine will register itself as &sminion; on the &admin_node; and configure a timesync service with &admin_node; as a reference. You do not have to install any NTP server, but if you need to use one, you need to disable the <command>systemd-timesyncd</command> first. An example of the <literal>cluster</literal> role assignment follows: </para>
+    <screen>suse_caasp:
   role: cluster
   admin_node: admin.example.com</screen>
-    <para>
-     where the <literal>admin.example.com</literal> is the host name of the
-     &admin_node;.
-    </para>
+    <para> where the <literal>admin.example.com</literal> is the host name of the &admin_node;. </para>
    </sect3>
   </sect2>
-
   <sect2 xml:id="vendor-data.config.file">
    <title>The <filename>vendor-data</filename> Configuration File</title>
-   <para>
-    The <filename>vendor-data</filename> is an optional configuration file that
-    typically stores data related to the cloud you use. The data are provided
-    by the entity that launches the cloud instance.
-   </para>
-   <para>
-    The format is the same as used for <filename>user-data</filename>.
-   </para>
+   <para> The <filename>vendor-data</filename> is an optional configuration file that typically stores data related to the cloud you use. The data are provided by the entity that launches the cloud instance. </para>
+   <para> The format is the same as used for <filename>user-data</filename>. </para>
   </sect2>
  </sect1>
 </chapter>
