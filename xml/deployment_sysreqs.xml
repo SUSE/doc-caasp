@@ -27,12 +27,15 @@
   </para>
 
   <sect2 xml:id="sec.caasp.installquick.clusreqs">
-   <title>Cluster Requirements</title>
+   <title>Cluster Size Requirements</title>
    <para>
-    &productname; is a cluster operating system. It requires a group of
-    physical or virtual machines in order to operate. The minimum supported
-    cluster size is four nodes: one &admin_node;, one &master_node;, and two
-    &worker_node;s.
+    &productname; is a dedicated cluster operating system and only functions in a
+    multi-node configuration. It requires a connected group of four or more
+    physical or virtual machines. 
+   </para>
+   <para>
+    The minimum supported cluster size is four nodes: a single &admin_node;, one 
+    &master_node;, and two &worker_node;s.
    </para>
    <note>
     <title>Test and Proof-of-Concept Clusters</title>
@@ -42,15 +45,13 @@
     </para>
    </note>
    <para>
-    To improve performance and reliability, additional &master_node;s may be
-    added, so long as there is always an odd number of &master_node;s.
+    For improved performance, multiple &master_node;s are supported, but there
+    must always be an odd number. For cluster reliability, when using multiple
+    master nodes, some form of DNS load-balancing should be used. 
    </para>
-   <para>
-    There is no limit on the number of worker nodes except the maximum cluster
-    size.
-   </para>
-   <para>
-    Currently, &suse; supports clusters of up to 150 nodes.
+   <para>Any number of &worker_node;s may be added up to the maximum cluster
+    size. For the current maximum supported number of nodes, please refer to
+    the Release Notes on <link xlink:href="https://www.suse.com/releasenotes/"/>.
    </para>
   </sect2>
 

@@ -23,14 +23,13 @@
  </para>
  <sect1 xml:id="sec.caasp.installquick.clusreqs">
   <title>Cluster Size Requirements</title>
-
   <para>
    &productname; is a dedicated cluster operating system and only functions in a
    multi-node configuration. It requires a connected group of four or more
    physical or virtual machines. 
   </para>
   <para>
-   Four nodes is the minimum supported cluster size: a single &admin_node;, one 
+   The minimum supported cluster size is four nodes: a single &admin_node;, one 
    &master_node;, and two &worker_node;s.
   </para>
   <note>
@@ -42,14 +41,15 @@
   </note>
   <para>
    For improved performance, multiple &master_node;s are supported, but there
-   must always be an odd number. For cluster reliability, in the event of using
-   multiple master nodes, some form of DNS load-balancing should be used. 
+   must always be an odd number. For cluster reliability, when using multiple
+   master nodes, some form of DNS load-balancing should be used. 
   </para>
-   <para>Any number of &worker_node;s may be added up to the maximum supported
-    cluster size.
+  <para>Any number of &worker_node;s may be added up to the maximum cluster
+   size. For the current maximum supported number of nodes, please refer to
+   the Release Notes on <link xlink:href="https://www.suse.com/releasenotes/"/>.
   </para>
-
  </sect1>
+ 
  <sect1 xml:id="sec.caasp.installquick.hwreqs">
   <title>Minimum Hardware Requirements</title>
 
