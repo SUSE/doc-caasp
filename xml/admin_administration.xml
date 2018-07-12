@@ -231,33 +231,19 @@
     regardless of which of the directories they reside in.
    </para>
    <para>
-    You can use the command to prefix all directories and files with a
-    specified prefix (PATH in this example):
-   </para>
-   <screen>
-&prompt.root;<command>issue-generator --prefix <replaceable>PATH</replaceable></command>
-   </screen>
-   <para>
-    By using the command you can also create or delete files in the network
-    configuration, for example:
-   </para>
-<screen>&prompt.root;<command>issue-generator network <replaceable>remove</replaceable> <replaceable>INTERFACE</replaceable></command></screen>
-   <para>
-    The command removes file
-    <filename>/run/issue.d/70-<replaceable>INTERFACE</replaceable>.conf
-    </filename>. The file contains the name of the and escape codes for
-    <command>agetty</command>.
-   </para>
-   <para>
-    You can use the command to add or delete
-    <filename>/run/issue.d/60-ssh_host_keys.conf</filename> that contains
-    fingerprints of the public SSH keys of the host:
-   </para>
-<screen>&prompt.root;<command>issue-generator ssh <replaceable>add|remove</replaceable></command></screen>
-   <para>
-    If you run the command without any argument, all input files will be
+    If you run the command without any arguments, all the input files will be
     applied.
    </para>
+   <para>
+    Which network interfaces are shown can be configured in the file 
+    <filename>/etc/sysconfig/issue-generator</filename>.
+   </para>
+   <para>
+    To disable the display of ssh keys, use the following command:
+   </para>
+   <screen>
+&prompt.root;<command>systemctl disable issue-add-ssh-keys.service</command>
+    </screen>
   </sect2>
 
   <sect2 xml:id="commands.node.managment.transactional-update">
