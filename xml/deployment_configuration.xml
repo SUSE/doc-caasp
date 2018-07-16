@@ -489,16 +489,14 @@ resolv_conf:
      three NTP servers during the first boot and the NTP service is enabled and
      started:
     </para>
-    <screen>
-ntp:
+    <screen>ntp:
   enabled: true
   servers:
     - ntp1.example.com
     - ntp2.example.com
     - ntp3.example.com
 runcmd:
-  - /usr/bin/systemctl enable --now ntpd
-    </screen>
+  - /usr/bin/systemctl enable --now ntpd</screen>
    </sect3>
    <sect3 xml:id="user-data.config.salt.minion">
     <title>&sminion; Configuration</title>
@@ -506,8 +504,7 @@ runcmd:
      You can use the file to set the &sminion; and its communication with the
      &smaster;.
     </para>
-    <screen>
-salt_minion:
+    <screen>salt_minion:
   conf:
     master: saltmaster.example.com
 
@@ -519,8 +516,7 @@ salt_minion:
   private_key: |
     -----BEGIN RSA PRIVATE KEY-----
     XXX
-   -----END RSA PRIVATE KEY-----
-    </screen>
+   -----END RSA PRIVATE KEY-----</screen>
    </sect3>
    <sect3 xml:id="caasp.roles.assigment">
     <title>Assigning Roles to the Cluster Nodes</title>
