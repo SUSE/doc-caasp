@@ -319,10 +319,35 @@ ssh_authorized_keys:
     root:linux
   expire: True</screen>
     <para>
-     In the example above you set a <emphasis>linux</emphasis> password for
-     &rootuser;. The <literal>expire</literal> option defines whether the user
-     will be prompted to change the default password at the first login.
+     In the example above you set the password for &rootuser; to be "<emphasis>linux</emphasis>".
+     The <literal>expire</literal> option defines whether the user will be
+     prompted to change the default password at the first login.
     </para>
+    <para>
+     For additional security, password hashes may be used instead of plain text.
+     The format is as follows:
+    </para>
+    <screen>username:$X$salt$hash</screen>
+    <para>
+     The value "X" in $X$ can be any of <literal>1</literal>, <literal>2a</literal>,
+     <literal>2y</literal>, <literal>5</literal>, or <literal>6</literal>.
+     For more information, see the <literal>HASHING METHODS</literal> section in
+     the output of the command <command>man 3 crypt</command>.
+    </para>
+    <para>
+     For example, you can generate a safe hash with the following command:
+    </para>
+    <screen>mkpasswd --method=SHA-512 --rounds=4096</screen>
+    <para>
+     This command would create an SHA-512 password hash with 4096 salt rounds, 
+     using <literal>stdin</literal> as input.
+    </para>
+    <para>
+     This could be specified in the file using <literal>$6$</literal>, as follows:
+    </para>
+    <screen>
+root:$6$j212wezy$7H/1LT4f9/N3wpgNunhsIqtMj62OKiS3nyNwuizouQc3u7MbYCarYeAHWYPYb2FT.lbioDm2RrkJPb9BZMN1O/
+    </screen>
    </sect3>
    <sect3 xml:id="user-data.config.adding.custom.repository">
     <title>Adding Custom Repository</title>
