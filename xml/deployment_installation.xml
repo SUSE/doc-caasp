@@ -882,19 +882,13 @@
        
        <step>
         <para>
-         Click on <guimenu>Launch Stack</guimenu>.
-        </para>
-       </step>
-       
-       <step>
-        <para>
-         You need to provide the stack templates at this stage.
-         Either upload the files, provide the URL to the raw files directly 
-         (only applies to stack template), or copy and paste the contents into the 
-         <literal>Direct Input</literal> fields.
+         Click on <guimenu>Launch Stack</guimenu> and provide the stack 
+         templates. Either upload the files, provide the URL to the raw files 
+         directly (only applies to stack template), or copy and paste the 
+         contents into the <guimenu>Direct Input</guimenu> fields.
         </para>
         <warning>
-         <title>Replace the default <replaceable>root_password</replaceable></title>
+         <title>Replace the default <literal>root_password</literal></title>
           <para>
            Do not use the <filename>caasp-environment.yaml</filename> directly
            from the GitHub repository.
@@ -905,13 +899,6 @@
             This will become the password for the &rootuser; account on all 
             nodes in the stack.
            </para>
-         <screen>
----
-parameters:
-root_password: <replaceable>linux</replaceable>
-admin_flavor: m1.large
-&hellip;
-         </screen>
        </warning>
 
         <informalfigure>
@@ -938,7 +925,8 @@ admin_flavor: m1.large
         </para>
         <variablelist>
          <varlistentry>
-          <term><literal>Stack Name</literal>
+          <term>
+           <literal>Stack Name</literal>
           </term>
           <listitem>
            <para>
@@ -947,7 +935,8 @@ admin_flavor: m1.large
           </listitem>
          </varlistentry>
          <varlistentry>
-          <term><literal>Password</literal>
+          <term>
+           <literal>Password</literal>
           </term>
           <listitem>
            <para>
@@ -956,7 +945,8 @@ admin_flavor: m1.large
           </listitem>
          </varlistentry>
          <varlistentry>
-          <term><literal>Image</literal>
+          <term>
+           <literal>Image</literal>
           </term>
           <listitem>
            <para>
@@ -965,7 +955,8 @@ admin_flavor: m1.large
           </listitem>
          </varlistentry>
          <varlistentry>
-          <term><literal>root_password</literal>
+          <term>
+           <literal>root_password</literal>
           </term>
           <listitem>
            <para>
@@ -974,7 +965,9 @@ admin_flavor: m1.large
           </listitem>
          </varlistentry>
          <varlistentry>
-          <term><literal>admin</literal>/master/worker_flavor</term>
+          <term>
+           <literal>admin</literal>/master/worker_flavor
+          </term>
           <listitem>
            <para>
             Select the machine flavor for your nodes
@@ -982,7 +975,8 @@ admin_flavor: m1.large
           </listitem>
          </varlistentry>
          <varlistentry>
-          <term><literal>worker_count</literal>
+          <term>
+           <literal>worker_count</literal>
           </term>
           <listitem>
            <para>
@@ -991,7 +985,8 @@ admin_flavor: m1.large
           </listitem>
          </varlistentry>
          <varlistentry>
-          <term><literal>external_net</literal>
+          <term>
+           <literal>external_net</literal>
           </term>
           <listitem>
            <para>
@@ -1000,7 +995,8 @@ admin_flavor: m1.large
           </listitem>
          </varlistentry>
          <varlistentry>
-          <term><literal>internal_net_cidr</literal>
+          <term>
+           <literal>internal_net_cidr</literal>
           </term>
           <listitem>
            <para>
@@ -1009,11 +1005,12 @@ admin_flavor: m1.large
           </listitem>
          </varlistentry>
          <varlistentry>
-          <term><literal>dns_nameserver</literal>
+          <term>
+           <literal>dns_nameserver</literal>
           </term>
           <listitem>
            <para>
-            Internal nameserver for the cluster
+            Internal name server for the cluster
            </para>
           </listitem>
          </varlistentry>
@@ -1039,7 +1036,7 @@ admin_flavor: m1.large
        <step>
         <para>
          After the cluster has been started and the cluster overview shows 
-         <literal>Create Complete</literal>, you need to find the external IP 
+         <guimenu>Create Complete</guimenu>, you need to find the external IP 
          address for the admin node of your cluster (here: 
          <literal>10.86.1.72</literal>). Now visit that IP address in your browser. 
          You should see the &dashboard; login page and can continue with 
@@ -1065,9 +1062,9 @@ admin_flavor: m1.large
        <title>Using the &ostack; CLI</title>
        <note>
         <para>
-         You need to have access to the &ostack; command-line 
-         tools. You can either access those via <literal>ssh</literal> on your 
-         &soc; admin server or 
+         You need to have access to the &ostack; command-line tools. You can 
+         either access those via <literal>ssh</literal> on your &soc; admin 
+         server or 
          <link xlink:href="https://docs.openstack.org/newton/user-guide/common/cli-install-openstack-command-line-clients.html">
          install a local <command>openstack</command> client</link>.
         </para>
@@ -1102,24 +1099,17 @@ admin_flavor: m1.large
          </step>
          <step>
           <warning>
-           <title>Replace the default <replaceable>root_password</replaceable></title>
+           <title>Replace the default <literal>root_password</literal></title>
             <para>
              Do not use the <filename>caasp-environment.yaml</filename> directly
              from the GitHub repository.
             </para>
-             <para>
-              You must make sure to replace the value for 
-              <literal>root_password</literal> with a secure password.
-              This will become the password for the &rootuser; account on all 
-              nodes in the stack.
-             </para>
-           <screen>
----
-parameters:
-  root_password: <replaceable>linux</replaceable>
-  admin_flavor: m1.large
-&hellip;
-           </screen>
+            <para>
+             You must make sure to replace the value for 
+             <literal>root_password</literal> with a secure password.
+             This will become the password for the &rootuser; account on all 
+             nodes in the stack.
+            </para>
          </warning>
           <para>
            Download the <filename>caasp-stack.yaml</filename> and 
@@ -1141,12 +1131,8 @@ parameters:
           of your &productname; cluster (here: <literal>10.81.1.51</literal>).
          </para>
           <screen>
-&prompt.user;<command>openstack server list --name "admin"</command>
-+--------------------------------------+--------------------+--------+----------------------------------------------------+---------+----------+
-| ID                                   | Name               | Status | Networks                                           | Image   | Flavor   |
-+--------------------------------------+--------------------+--------+----------------------------------------------------+---------+----------+
-| 7969fa8c-6b55-419b-9586-90c612b5c95a | caasp3-stack-admin | ACTIVE | caasp3-stack-caasp-int-net=172.24.0.9, 10.81.1.51  | CaaSP-3 | m1.large |
-+--------------------------------------+--------------------+--------+----------------------------------------------------+---------+----------+
+&prompt.user;<command>openstack server list --name "admin" | awk 'FNR > 3 {print $4 $5 $8}'</command>
+caasp3-stack-admin|10.81.1.51
          </screen>
         </step>
         <step>
