@@ -194,7 +194,7 @@
 <screen>&prompt.root;<command>transactional-update reboot ptf remove <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
  </sect1>
 
- <sect1 xml:id="commands.node.managment">
+ <sect1 xml:id="commands.node.management">
   <title>Commands for Single Node Management</title>
 
   <para>
@@ -202,7 +202,7 @@
    your &cluster_node;s.
   </para>
 
-  <sect2 xml:id="commands.node.managment.issue-generator">
+  <sect2 xml:id="commands.node.management.issue-generator">
    <title>The <command>issue-generator</command> Command</title>
    <para>
     The <command>issue-generator</command> creates a volatile temporary
@@ -241,7 +241,7 @@
    </note>
   </sect2>
 
-  <sect2 xml:id="commands.node.managment.transactional-update">
+  <sect2 xml:id="commands.node.management.transactional-update">
    <title>The <command>transactional-update</command> Command</title>
    <para>
     The <command>transactional-update</command> enables you to install or
@@ -346,7 +346,7 @@
    </variablelist>
   </sect2>
 
-  <sect2 xml:id="commands.node.managment.create_autoyast_profile">
+  <sect2 xml:id="commands.node.management.create_autoyast_profile">
    <title>The <command>create_autoyast_profile</command> Command</title>
    <para>
     The <command>create_autoyast_profile</command> command creates an autoyast
@@ -407,9 +407,9 @@
    </variablelist>
   </sect2>
  </sect1>
- <sect1 xml:id="node.managment">
+ 
+ <sect1 xml:id="node.management">
   <title>Node Management</title>
-
   <para>
    After you complete the deployment and you bootstrap the cluster, you may
    need to perform additional changes to the cluster. By using &dashboard; you
@@ -417,7 +417,7 @@
    in that case make sure that you do not break the cluster.
   </para>
 
-  <sect2 xml:id="node.managment.adding">
+  <sect2 xml:id="node.management.adding">
    <title>Adding Nodes</title>
    <para>
     You may need to add additional &worker_node;s to your cluster. The following
@@ -439,12 +439,12 @@
     <step>
      <para>
       You should see the newly added node as a node to be accepted in
-      <guimenu>Pending Nodes</guimenu>. Accept the node.
+      <guimenu>Pending Nodes</guimenu>. Click on <guimenu>Accept Node</guimenu>.
      </para>
      <informalfigure>
       <mediaobject>
        <imageobject role="fo">
-        <imagedata fileref="velum_pending_nodes.png" width="100%" format="png"/>
+        <imagedata fileref="velum_pending_nodes.png" format="PNG" width="100%"/>
        </imageobject>
        <imageobject role="html">
         <imagedata fileref="velum_pending_nodes.png" width="100%" format="png"/>
@@ -484,24 +484,157 @@
    </procedure>
   </sect2>
 
-  <sect2 xml:id="node.managment.removing">
+  <sect2 xml:id="node.management.removing">
    <title>Removing Nodes</title>
-   <para>
-    As each node in the cluster runs also an instance of
-    <literal>etcd</literal>, &productname; has to ensure that removing of
-    several nodes does not break the <literal>etcd</literal> cluster. In case
-    you have for example three nodes in the <literal>etcd</literal> and you
-    delete two of them, &productname; deletes one node, recovers the cluster
-    and only if the recovery is successful, the next node can be removed. If a
-    node runs just an <literal>etcd-proxy</literal>, there is nothing special
-    that has to be done, as deleting any amount of
-    <literal>etcd-proxy</literal> can not break the <literal>etcd</literal>
-    cluster.
+   <warning>
+    <para>
+     If you attempt to remove more nodes than are required for the minimum cluster
+     size (3 nodes: 1 master, 2 workers) &dashboard; will display a warning.
+     Your cluster will be disfunctional until you add the minimum amount of nodes
+     again.
+    </para>
+   </warning>
+   <note>
+    <para>
+     As each node in the cluster runs also an instance of
+     <literal>etcd</literal>, &productname; has to ensure that removing of
+     several nodes does not break the <literal>etcd</literal> cluster. In case
+     you have, for example, three nodes in the <literal>etcd</literal> and you
+     delete two of them, &productname; deletes one node, recovers the cluster
+     and only if the recovery is successful, allows the next node to be removed.
+     If a node runs just an <literal>etcd-proxy</literal>, there is nothing special
+     that has to be done, as deleting any amount of
+     <literal>etcd-proxy</literal> can not break the <literal>etcd</literal>
+     cluster.
+    </para>
+   </note>
+   <note>
+    <para>
+     If you have only one master node configured, &dashboard; will not allow you
+     to remove it. You must first add a second master node as a replacement.
+    </para>
+   </note>
+   
+   <procedure>
+    <step>
+     <para>
+      Log-in to &dashboard; on your &productname; Admin node.
+      Then, click <guimenu>Remove</guimenu> next to the node you wish to remove.
+      A dialog will ask you to confirm the removal.
+     </para>
+     <informalfigure>
+      <mediaobject>
+       <imageobject>
+        <imagedata fileref="velum_status.png" format="PNG" width="100%"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+    </step>
+    <step>
+     <para>
+    The cluster will then attempt to remove the node in a controlled manner.
+    Progress is indicated by a spinning icon and the words <literal>Pending removal</literal>
+    in the location where the <guimenu>Remove</guimenu>-button was displayed before. 
+     </para>
+     <informalfigure>
+      <mediaobject>
+       <imageobject>
+        <imagedata fileref="velum_pending_removal.png" format="PNG" width="100%"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+     <para>
+      This should conclude the regular removal process. If the node is successfully 
+      removed, it will disappear from the list after a few moments.
+     </para>
+    </step>
+    <step>
+     <para>
+      In some cases nodes can not be removed in a controlled manner and must be
+      forced out of the cluster. A typical scenario is a machine instance was 
+      removed externally or has no connectivity. In such cases, the removal will
+      fail. You then get the option to <guimenu>Force remove</guimenu>. A dialog
+      will ask you to confirm the removal.
+     </para>
+     <informalfigure>
+      <mediaobject>
+       <imageobject>
+        <imagedata fileref="velum_failed_removal.png" format="PNG" width="100%"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+     <para>
+      Additionally, a large warning dialog will ask you to confirm the forced
+      removal. Click <guimenu>Proceed with forcible removal</guimenu> if you 
+      are sure you wish to force the node out of the cluster.
+     </para>
+     <informalfigure>
+      <mediaobject>
+       <imageobject>
+        <imagedata fileref="velum_force_removal.png" format="PNG" width="100%"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+    </step>
+   </procedure>
+  </sect2>
+
+  <sect2 xml:id="node.management.removing.unassigned">
+  <!-- FIXME mnapp 2018-07-03, replace terminology and screenshots once 
+  bsc#1100113 has been resolved -->
+  
+   <title>Removing unassigned nodes</title>
+   <para>You might run into the situation where you have (accidentally) added
+    new nodes to a cluster but did not wish to bootstrap them. They are now
+    registered against the cluster and show up in "Unassigned nodes".
+    You might have already configured the machine to register with another cluster
+    and want to clean out this entry from the "Unassigned Nodes" view.
+    
+    You must perform the following steps:
    </para>
-   <!-- FIXME cwickert 2018-03-2019: We need to elaborate this for CaaS 3;
-        node removal is finally supported. -->
+   <procedure>
+   <step>
+    <para>
+     Find the "Unassigned nodes" line in the overview and click on <guimenu>(new)</guimenu> 
+     next to the count number. You will be shown the "Unassigned Nodes" view 
+     where all the unassigned nodes are listed. Make sure that you first assign 
+     all roles to nodes that you wish to keep and proceed with bootstrapping. 
+     Once the list only show the nodes you are sure to remove copy the ID of the 
+     node you wish to drop.
+    </para>
+    <informalfigure>
+     <mediaobject>
+      <imageobject>
+       <imagedata fileref="velum_unassigned_nodes.png" format="PNG" width="100%"/>
+      </imageobject>
+     </mediaobject>
+    </informalfigure>
+   </step>
+   <step>
+    <para>
+   Log into the Admin node of you cluster via SSH.
+    </para>
+   </step>
+   <step>
+    <para>
+     Run the following command and replace <replaceable>$ID_FROM_UNASSIGNED_QUEUE</replaceable>
+     with the node ID that you copied from the "Unassigned nodes" view in &dashboard;.
+    </para>
+    <warning>
+     <para>
+      Make absolutely sure that the node ID you have copied is the one of the node
+       you wish to drop. This command is <literal>irreversible</literal> and will remove the 
+       specified node from the cluster without confirmation.
+      </para>
+     </warning>
+    <screen>&prompt.root;<command>docker exec -it $(docker ps | grep "velum-dashboard" | awk '{print $1}') \
+entrypoint.sh bundle exec rails runner 'puts Minion.find_by(minion_id: "<replaceable>$ID_FROM_UNASSIGNED_QUEUE</replaceable>").destroy'</command>
+    </screen>
+   </step>
+  </procedure>
   </sect2>
  </sect1>
+  
  <sect1 xml:id="cluster.monitoring">
   <title>Cluster Monitoring</title>
 
