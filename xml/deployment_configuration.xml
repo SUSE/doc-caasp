@@ -109,85 +109,6 @@
    More details about the datasources are provided below.
   </para>
   
-  <note>
-   <title>Using cloud-init ISO images for local VM</title>
-   <para>
-    You can use a local ISO image generated from cloud-init data to help 
-    configuring a cluster that is not hosted in the cloud.
-   </para>
-   <para>
-    You need the tool <command>genisoimage</command> to produce the images. 
-    Install it with
-   </para>
-<screen>
-    # How to generate cloud-config for VMX images
-    1. Generate cloud-config for admin node
-    2. Start VM with cc-admin.img attached as secondary disk / usb
-    3. Generate cloud-config for worker node (modify admin_node via step 1)
-    4. Start VM with cc-worker.img attached as secondary disk / usb
-    5. Access admin dashboard on admin node and bootstrap cluster
-
-    ```bash
-    # To generate cloud-config ISO (attach them as USB disk to KVM VMs before first boot)
-    sudo mkisofs -output cc-worker.img -volid cidata -joliet -rock cc-worker
-    sudo mkisofs -output cc-admin.img -volid cidata -joliet -rock cc-admin
-    ```
-
-    ```
-    ./cloud-config] → tree
-    ├── cc-admin
-    │   ├── meta-data
-    │   └── user-data
-    ├── cc-admin.img
-    ├── cc-worker
-    │   ├── meta-data
-    │   └── user-data
-    ├── cc-worker.img
-    ```
-
-    ```yaml
-    # File: cloud-config/cc-*/meta-data (same for admin and cluster nodes)
-    instance-id: iid-CASP01
-    network-interfaces: |
-      auto eth0
-      iface eth0 inet dhcp
-    ```
-    ```yaml
-    # File: cloud-config/cc-admin/user-data (admin node)
-    #cloud-config
-    debug: True
-    disable_root: False
-    ssh_pwauth: True
-    chpasswd:
-      list: |
-        root:root
-      expire: False
-    ntp:
-      servers:
-        - ntp1.suse.cz
-        - ntp2.suse.cz
-    runcmd:
-      - /usr/bin/systemctl enable --now ntpd
-    suse_caasp:
-      role: admin
-    ```
-    ```yaml
-    # File cloud-config/cc-worker/user-data (worker nodes)
-    #cloud-config
-    debug: True
-    disable_root: False
-    ssh_pwauth: True
-    chpasswd:
-      list: |
-        root:root
-      expire: False
-    suse_caasp:
-      role: cluster
-      admin_node: dhcp14.qa.suse.cz
-    ```
-</screen>
-</note>
-
   <sect2 xml:id="localdisk.datasource">
    <title>The <literal>LocalDisk</literal> Datasource</title>
    <para>
@@ -204,8 +125,9 @@
     The <literal>NoCloud</literal> datasource enables you to read the
     <literal>cloud-init</literal> configuration without running a network
     service. <literal>cloud-init</literal> searches for the configuration files
-    <filename>meta-data</filename>, <filename>user-data</filename> in the root
-    directory of a local file system formatted as <literal>vfat</literal> or
+    <filename>meta-data</filename>, <filename>user-data</filename>, and 
+    (optional) <filename>vendor-data</filename> in the root directory of a local 
+    file system formatted as <literal>vfat</literal> or
     <literal>iso9660</literal> with a label <literal>cidata</literal>.
     Typically it is an unpartitioned USB stick or disk or a DVD iso.
    </para>
@@ -219,6 +141,130 @@
     <filename>/etc/cloud/cloud.cfg.d/91_kernel_cmdline_url.cfg</filename> and
     it is not overwritten even though the url changes.
    </para>
+   
+   <sect3 xml:id="nocloud.datasource.images">
+    <title>Generating cloud-init images for <literal>NoCloud</literal> datasource</title>
+    <note>
+     <title><command>mkisofs</command> dependecy</title>
+     <para>
+      You need the tool <command>mkisofs</command> to produce the images. 
+      It should be preinstalled &opensuse; Leap and Tumbleweed installations.
+      For other operating systems, please refer to the specific instructions for 
+      the respective distribution.
+     </para>
+     <para>
+      If <command>mkisofs</command> is not available, you can use the nearly 
+      identical <command>genisoimage</command>.
+     </para>
+    </note>
+
+    <para>
+     You can use a local ISO image generated from cloud-init data to help 
+     configuring a cluster that is not hosted in the cloud.
+    </para>
+
+    <para>
+     You will need to create two image files. One that is used to initialize the
+     admin node and one that is used to initialize all worker nodes (and thus the
+     master node). You need to provide a <filename>meta-data</filename> and 
+     <filename>user-data</filename> file per node type.
+    </para>
+       
+    <procedure>
+     <title>Generate cloud-init ISO files</title>
+     <step>
+      <para>
+       Create two directories: <filename>cc-admin</filename> and 
+       <filename>cc-worker</filename>.
+      </para>
+     </step>
+     <step>
+      <para>
+       Create your configuration files as described in:
+      </para>
+       <itemizedlist>
+        <listitem>
+         <para>
+          <xref linkend="meta-data.config.file" />
+         </para>
+        </listitem>
+        
+        <listitem>
+         <para>
+          <xref linkend="user-data.config.file"/>
+         </para>
+        </listitem>
+        
+        <listitem>
+         <para>
+          <xref linkend="vendor-data.config.file"/> (Optional)
+         </para>
+        </listitem>
+       </itemizedlist>
+       <para>
+        The result should be three or more files:
+       </para>
+       <itemizedlist>
+        <listitem>
+         <para>
+          <filename>cc-admin/meta-data</filename> (This file will be reused across 
+          all nodes)
+         </para>
+        </listitem>
+        
+        <listitem>
+         <para>
+          <filename>cc-admin/user-data</filename>
+         </para>
+        </listitem>
+        
+        <listitem>
+         <para>
+          <filename>cc-admin/vendor-data</filename> (Optional)
+         </para>
+        </listitem>
+        
+        <listitem>
+         <para>
+          <filename>cc-worker/user-data</filename>
+         </para>
+        </listitem>
+        
+        <listitem>
+         <para>
+          <filename>cc-worker/vendor-data</filename> (Optional)
+         </para>
+        </listitem>
+       </itemizedlist>
+      </step>
+      
+      <step>
+        <para>
+         Copy <filename>cc-admin/meta-data</filename> to 
+         <filename>cc-worker/</filename>. 
+       </para>
+     </step>
+     <step>
+      <para>
+       Finally, you need to package the respective configurations into two ISO 
+       files. The result of the following commands will be two <literal>iso9660</literal>
+       ISO files with the volume label <literal>cidata</literal> and additional
+      <literal>joliet</literal> metadata.
+      </para>
+      <screen>
+&prompt.user;<command>sudo mkisofs -output cc-admin.img -volid cidata -joliet -rock cc-admin</command> &amp;&amp;
+<command>sudo mkisofs -output cc-worker.img -volid cidata -joliet -rock cc-worker</command>
+      </screen>
+       <para>
+        The files will be called <filename>cc-admin.img</filename> and 
+        <filename>cc-worker.img</filename>. You need to attach these files to 
+        your respective VM as a block device before boot.
+      </para>
+
+     </step>
+    </procedure>
+ 
+   </sect3>
   </sect2>
 
   <sect2 xml:id="cloud.config.file">
@@ -298,7 +344,7 @@
     </varlistentry>
    </variablelist>
   </sect2>
-
+  
   <sect2 xml:id="user-data.config.file">
    <title>The <filename>user-data</filename> Configuration File</title>
    <para>
@@ -656,7 +702,7 @@ runcmd:
     </para>
    </sect3>
   </sect2>
-
+  
   <sect2 xml:id="vendor-data.config.file">
    <title>The <filename>vendor-data</filename> Configuration File</title>
    <para>
@@ -668,5 +714,6 @@ runcmd:
     The format is the same as used for <filename>user-data</filename>.
    </para>
   </sect2>
+
  </sect1>
 </chapter>
