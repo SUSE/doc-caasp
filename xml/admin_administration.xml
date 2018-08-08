@@ -8,7 +8,8 @@
  xmlns="http://docbook.org/ns/docbook"
  xmlns:xi="http://www.w3.org/2001/XInclude"
  xmlns:xlink="http://www.w3.org/1999/xlink">
- <info><title>Cluster Administration</title>
+ <info>
+  <title>Cluster Administration</title>
   <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
    <dm:bugtracker/>
    <dm:translation>yes</dm:translation>
@@ -16,37 +17,83 @@
  </info>
  <sect1 xml:id="transactional.updates">
   <title>Handling Transactional Updates</title>
-  <para> For security and stability reasons, the operating system and application should always be up-to-date. While with a single machine you can keep the system up-to-date quite easily by running several commands, in a large-scaled cluster the update process can become a real burden. Thus transactional automatic updates have been introduced. Transactional updates can be characterized as follows: </para>
+
+  <para>
+   For security and stability reasons, the operating system and application
+   should always be up-to-date. While with a single machine you can keep the
+   system up-to-date quite easily by running several commands, in a
+   large-scaled cluster the update process can become a real burden. Thus
+   transactional automatic updates have been introduced. Transactional updates
+   can be characterized as follows:
+  </para>
+
   <itemizedlist>
    <listitem>
-    <para> They are atomic. </para>
+    <para>
+     They are atomic.
+    </para>
    </listitem>
    <listitem>
-    <para> They do not influence the running system. </para>
+    <para>
+     They do not influence the running system.
+    </para>
    </listitem>
    <listitem>
-    <para> They can be rolled back. </para>
+    <para>
+     They can be rolled back.
+    </para>
    </listitem>
    <listitem>
-    <para> The system needs to be rebooted to activate the changes. </para>
+    <para>
+     The system needs to be rebooted to activate the changes.
+    </para>
    </listitem>
   </itemizedlist>
-  <para> Transactional updates are managed by the <command>transactional-update</command> script, which is called once a day. The script checks if any updates are available. If there are any updates to be applied, a new snapshot of the root file system is created and the system is updated using the <command>zypper dup</command>. All updates released to this point are applied. The snapshot is then marked as active and will be used after the next reboot of the system. Ensure that the cluster is rebooted as soon as possible after the update installation is complete, otherwise all changes will be lost. </para>
+
+  <para>
+   Transactional updates are managed by the
+   <command>transactional-update</command> script, which is called once a day.
+   The script checks if any updates are available. If there are any updates to
+   be applied, a new snapshot of the root file system is created and the system
+   is updated using the <command>zypper dup</command>. All updates released to
+   this point are applied. The snapshot is then marked as active and will be
+   used after the next reboot of the system. Ensure that the cluster is
+   rebooted as soon as possible after the update installation is complete,
+   otherwise all changes will be lost.
+  </para>
+
   <note>
    <title>General Notes to the Updates Installation</title>
-   <para> Only packages that are part of the snapshot of the root file system can be updated. If packages contain files that are not part of the snapshot, the update could fail or break the system. </para>
-   <para> RPMs that require a license to be accepted cannot be updated. </para>
+   <para>
+    Only packages that are part of the snapshot of the root file system can be
+    updated. If packages contain files that are not part of the snapshot, the
+    update could fail or break the system.
+   </para>
+   <para>
+    RPMs that require a license to be accepted cannot be updated.
+   </para>
   </note>
+
   <sect2 xml:id="transactional.updates.installation">
    <title>Manual Installation of Updates</title>
-   <para> After the <command>transactional-update</command> script has run on all nodes, &dashboard; displays any nodes in your cluster running outdated software. &dashboard; then enables you to update your cluster directly. Follow the next procedure to update your cluster. </para>
+   <para>
+    After the <command>transactional-update</command> script has run on all
+    nodes, &dashboard; displays any nodes in your cluster running outdated
+    software. &dashboard; then enables you to update your cluster directly.
+    Follow the next procedure to update your cluster.
+   </para>
    <procedure>
     <title>Updating the Cluster with &dashboard;</title>
     <step>
-     <para> Login to &dashboard;. </para>
+     <para>
+      Login to &dashboard;.
+     </para>
     </step>
     <step>
-     <para> If required, click <guimenu>UPDATE ADMIN NODE</guimenu> to start the update. </para>
+     <para>
+      If required, click <guimenu>UPDATE ADMIN NODE</guimenu> to start the
+      update.
+     </para>
      <informalfigure>
       <mediaobject>
        <imageobject role="fo">
@@ -59,7 +106,9 @@
      </informalfigure>
     </step>
     <step>
-     <para> Confirm the update by clicking <guimenu>Reboot to update</guimenu>. </para>
+     <para>
+      Confirm the update by clicking <guimenu>Reboot to update</guimenu>.
+     </para>
      <informalfigure>
       <mediaobject>
        <imageobject role="fo">
@@ -74,10 +123,16 @@
      </informalfigure>
     </step>
     <step>
-     <para> Now you have to wait until the &admin_node; reboots and &dashboard; is available again. </para>
+     <para>
+      Now you have to wait until the &admin_node; reboots and &dashboard; is
+      available again.
+     </para>
     </step>
     <step>
-     <para> Click <guimenu>update all nodes</guimenu> to update &master_node; and &worker_node;s. </para>
+     <para>
+      Click <guimenu>update all nodes</guimenu> to update &master_node; and
+      &worker_node;s.
+     </para>
      <informalfigure>
       <mediaobject>
        <imageobject role="fo">
@@ -91,150 +146,262 @@
     </step>
    </procedure>
   </sect2>
+
   <sect2 xml:id="transactional.updates.disabling">
    <title>Disabling Transactional Updates</title>
-   <para> Even though it is not recommended, you can disable transactional updates by issuing the command: </para>
-   <screen>&prompt.root;<command>systemctl --now disable transactional-update.timer</command></screen>
+   <para>
+    Even though it is not recommended, you can disable transactional updates by
+    issuing the command:
+   </para>
+<screen>&prompt.root;<command>systemctl --now disable transactional-update.timer</command></screen>
   </sect2>
  </sect1>
  <sect1 xml:id="ptf.handling">
   <title>Handling Program Temporary Fixes</title>
-  <para> Program temporary fixes (PTFs) are available in the &productname; environment. You install them by using the <command>transactional-update</command> script. Typically you invoke the installation of PTFs by running: </para>
-  <screen>&prompt.root;<command>transactional-update reboot ptf install <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
-  <para> The command installs PTF RPMs. The <literal>reboot</literal> option then schedules a reboot after the installation. PTFs are activate only after rebooting of your system. </para>
+
+  <para>
+   Program temporary fixes (PTFs) are available in the &productname;
+   environment. You install them by using the
+   <command>transactional-update</command> script. Typically you invoke the
+   installation of PTFs by running:
+  </para>
+
+<screen>&prompt.root;<command>transactional-update reboot ptf install <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
+
+  <para>
+   The command installs PTF RPMs. The <literal>reboot</literal> option then
+   schedules a reboot after the installation. PTFs are activate only after
+   rebooting of your system.
+  </para>
+
   <note>
    <title>Reboot Required</title>
-   <para> If you install or remove PTFs and you call the <command>transactional-update</command> to update the system before reboot, the applied changes by PTFs are lost and need to be done again after reboot. </para>
+   <para>
+    If you install or remove PTFs and you call the
+    <command>transactional-update</command> to update the system before reboot,
+    the applied changes by PTFs are lost and need to be done again after
+    reboot.
+   </para>
   </note>
-  <para> In case you need to remove the installed PTFs, use the following command: </para>
-  <screen>&prompt.root;<command>transactional-update reboot ptf remove <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
+
+  <para>
+   In case you need to remove the installed PTFs, use the following command:
+  </para>
+
+<screen>&prompt.root;<command>transactional-update reboot ptf remove <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
  </sect1>
  <sect1 xml:id="commands.node.managment">
   <title>Commands for Single Node Management</title>
+
   <para>
-   &productname; comes with several built-in commands that enable you to manage your &cluster_node;s. </para>
+   &productname; comes with several built-in commands that enable you to manage
+   your &cluster_node;s.
+  </para>
+
   <sect2 xml:id="commands.node.managment.issue-generator">
    <title>The <command>issue-generator</command> Command</title>
-   <para> On &suse;
-     &mos;, <filename>/etc/issue</filename> is generated by <command>issue-generator</command>. </para>
-   <para>This allows &mos; to display a dynamic message above the login prompt, which is generated from the contents of several different files. </para>
-   <para> Files in <filename>/etc/issue.d</filename> override files with the same name in <filename>/usr/lib/issue.d</filename> and <filename>/run/issue.d</filename>. Files in <filename>/run/issue.d</filename> override files with the same name in <filename>/usr/lib/issue.d</filename>. </para>
-   <para> Packages should install their configuration files in <filename>/usr/lib/issue.d</filename>. Files in <filename>/etc/issue.d</filename> are reserved for the local administrator, who may use this logic to override the files installed by vendor packages. </para>
-   <para> All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. </para>
-   <para> If you run the command without any arguments, all the input files will be applied. </para>
-   <para> Which network interfaces are shown can be configured in the file <filename>/etc/sysconfig/issue-generator</filename>. </para>
-   <para> To disable the display of ssh keys, use the following command: </para>
-   <screen>
+   <para>
+    On &suse; &mos;, <filename>/etc/issue</filename> is generated by
+    <command>issue-generator</command>.
+   </para>
+   <para>
+    This allows &mos; to display a dynamic message above the login prompt,
+    which is generated from the contents of several different files.
+   </para>
+   <para>
+    Files in <filename>/etc/issue.d</filename> override files with the same
+    name in <filename>/usr/lib/issue.d</filename> and
+    <filename>/run/issue.d</filename>. Files in
+    <filename>/run/issue.d</filename> override files with the same name in
+    <filename>/usr/lib/issue.d</filename>.
+   </para>
+   <para>
+    Packages should install their configuration files in
+    <filename>/usr/lib/issue.d</filename>. Files in
+    <filename>/etc/issue.d</filename> are reserved for the local administrator,
+    who may use this logic to override the files installed by vendor packages.
+   </para>
+   <para>
+    All configuration files are sorted by their filename in lexicographic
+    order, regardless of which of the directories they reside in.
+   </para>
+   <para>
+    If you run the command without any arguments, all the input files will be
+    applied.
+   </para>
+   <para>
+    Which network interfaces are shown can be configured in the file
+    <filename>/etc/sysconfig/issue-generator</filename>.
+   </para>
+   <para>
+    To disable the display of ssh keys, use the following command:
+   </para>
+<screen>
 &prompt.root;<command>systemctl disable issue-add-ssh-keys.service</command>
     </screen>
   </sect2>
+
   <sect2 xml:id="commands.node.managment.transactional-update">
    <title>The <command>transactional-update</command> Command</title>
-   <para> The <command>transactional-update</command> enables you to install or remove updates of your system in an atomic way. The updates are applied all or none of them if any package cannot be installed. Before the update is applied, a snapshot of the system is created in order to restore the previous state in case of a failure. </para>
-   <para> If the current root file system is identical to the active root file system (after applying updates and reboot), run cleanup of all old snapshots: </para>
-   <screen>&prompt.root;<command>transactional-update cleanup</command></screen>
-   <para> Other options of the command are the following: </para>
+   <para>
+    The <command>transactional-update</command> enables you to install or
+    remove updates of your system in an atomic way. The updates are applied all
+    or none of them if any package cannot be installed. Before the update is
+    applied, a snapshot of the system is created in order to restore the
+    previous state in case of a failure.
+   </para>
+   <para>
+    If the current root file system is identical to the active root file system
+    (after applying updates and reboot), run cleanup of all old snapshots:
+   </para>
+<screen>&prompt.root;<command>transactional-update cleanup</command></screen>
+   <para>
+    Other options of the command are the following:
+   </para>
    <variablelist>
     <varlistentry>
      <term><literal>up</literal>
      </term>
      <listitem>
-      <para> If there are new updates available, a new snapshot is created and <command>zypper up</command> is used to update the snapshot. The snapshot is activated afterwards and is used as the new root file system after reboot. </para>
-      <screen>&prompt.root;<command>transactional-update up</command></screen>
+      <para>
+       If there are new updates available, a new snapshot is created and
+       <command>zypper up</command> is used to update the snapshot. The
+       snapshot is activated afterwards and is used as the new root file system
+       after reboot.
+      </para>
+<screen>&prompt.root;<command>transactional-update up</command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>dup</literal>
      </term>
      <listitem>
-      <para> If there are new updates available, a new snapshot is created and <command>zypper dup –no-allow-vendor-change</command> is used to update the snapshot. The snapshot is activated afterwards and is used as the new root file system after reboot. </para>
-      <screen>&prompt.root;<command>transactional-update dup</command></screen>
+      <para>
+       If there are new updates available, a new snapshot is created and
+       <command>zypper dup –no-allow-vendor-change</command> is used to
+       update the snapshot. The snapshot is activated afterwards and is used as
+       the new root file system after reboot.
+      </para>
+<screen>&prompt.root;<command>transactional-update dup</command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>patch</literal>
      </term>
      <listitem>
-      <para> If there are new updates available, a new snapshot is created and <command>zypper patch</command> is used to update the snapshot. The snapshot is activated afterwards and is used as the new root file system after reboot. </para>
-      <screen>&prompt.root;<command>transactional-update patch</command></screen>
+      <para>
+       If there are new updates available, a new snapshot is created and
+       <command>zypper patch</command> is used to update the snapshot. The
+       snapshot is activated afterwards and is used as the new root file system
+       after reboot.
+      </para>
+<screen>&prompt.root;<command>transactional-update patch</command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>ptf install</literal>
      </term>
      <listitem>
-      <para> The command installs the specified RPMs: </para>
-      <screen>&prompt.root;<command>transactional-update ptf install <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
+      <para>
+       The command installs the specified RPMs:
+      </para>
+<screen>&prompt.root;<command>transactional-update ptf install <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>ptf remove</literal>
      </term>
      <listitem>
-      <para> The command removes the specified RPMs from the system: </para>
-      <screen>&prompt.root;<command>transactional-update ptf remove <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
+      <para>
+       The command removes the specified RPMs from the system:
+      </para>
+<screen>&prompt.root;<command>transactional-update ptf remove <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>rollback</literal>
      </term>
      <listitem>
-      <para> The command sets the default sub volume. On systems with read-write file system <command>snapper rollback</command> is called. On a read-only file system and without any argument, the current system is set to a new default root file system. If you specify a number, that snapshot is used as the default root file system. On a read-only file system, no additional snapshots are created. </para>
-      <screen>&prompt.root;<command>transactional-update rollback <replaceable>SNAPSHOT_NUMBER</replaceable></command></screen>
+      <para>
+       The command sets the default sub volume. On systems with read-write file
+       system <command>snapper rollback</command> is called. On a read-only
+       file system and without any argument, the current system is set to a new
+       default root file system. If you specify a number, that snapshot is used
+       as the default root file system. On a read-only file system, no
+       additional snapshots are created.
+      </para>
+<screen>&prompt.root;<command>transactional-update rollback <replaceable>SNAPSHOT_NUMBER</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>--help</literal>
      </term>
      <listitem>
-      <para> The option outputs possible options and subcommands. </para>
-      <screen>&prompt.root;<command>transactional-update --help</command></screen>
+      <para>
+       The option outputs possible options and subcommands.
+      </para>
+<screen>&prompt.root;<command>transactional-update --help</command></screen>
      </listitem>
     </varlistentry>
    </variablelist>
   </sect2>
+
   <sect2 xml:id="commands.node.managment.create_autoyast_profile">
    <title>The <command>create_autoyast_profile</command> Command</title>
-   <para> The <command>create_autoyast_profile</command> command creates an autoyast profile for fully automatic installation of &productname;. You can use the following options when invoking the command: </para>
+   <para>
+    The <command>create_autoyast_profile</command> command creates an autoyast
+    profile for fully automatic installation of &productname;. You can use the
+    following options when invoking the command:
+   </para>
    <variablelist>
     <varlistentry>
      <term><literal>-o|--output</literal>
      </term>
      <listitem>
-      <para> Specify to which file the command should save the created profile. </para>
-      <screen>&prompt.root;<command>create_autoyast_profile -o <replaceable>FILENAME</replaceable></command></screen>
+      <para>
+       Specify to which file the command should save the created profile.
+      </para>
+<screen>&prompt.root;<command>create_autoyast_profile -o <replaceable>FILENAME</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>--salt-master</literal>
      </term>
      <listitem>
-      <para> Specify the host name of the &smaster;. </para>
-      <screen>&prompt.root;<command>create_autoyast_profile --salt-master <replaceable>SALTMASTER</replaceable></command></screen>
+      <para>
+       Specify the host name of the &smaster;.
+      </para>
+<screen>&prompt.root;<command>create_autoyast_profile --salt-master <replaceable>SALTMASTER</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>--smt-url</literal>
      </term>
      <listitem>
-      <para> Specify the URL of the SMT server. </para>
-      <screen>&prompt.root;<command>create_autoyast_profile --smt-url <replaceable>SALTMASTER</replaceable></command></screen>
+      <para>
+       Specify the URL of the SMT server.
+      </para>
+<screen>&prompt.root;<command>create_autoyast_profile --smt-url <replaceable>SALTMASTER</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>--regcode</literal>
      </term>
      <listitem>
-      <para> Specify the registration code for &productname;. </para>
-      <screen>&prompt.root;<command>create_autoyast_profile --regcode <replaceable>RIGISTRATION_CODE</replaceable></command></screen>
+      <para>
+       Specify the registration code for &productname;.
+      </para>
+<screen>&prompt.root;<command>create_autoyast_profile --regcode <replaceable>RIGISTRATION_CODE</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>--reg-email</literal>
      </term>
      <listitem>
-      <para> Specify an e-mail address for registration. </para>
-      <screen>&prompt.root;<command>create_autoyast_profile --reg-email <replaceable>E-MAIL_ADRESS</replaceable></command></screen>
+      <para>
+       Specify an e-mail address for registration.
+      </para>
+<screen>&prompt.root;<command>create_autoyast_profile --reg-email <replaceable>E-MAIL_ADRESS</replaceable></command></screen>
      </listitem>
     </varlistentry>
    </variablelist>
@@ -242,22 +409,39 @@
  </sect1>
  <sect1 xml:id="node.managment">
   <title>Node Management</title>
-  <para> After you complete the deployment and you bootstrap the cluster, you may need to perform additional changes to the cluster. By using &dashboard; you can add additional nodes to the cluster. You can also delete some nodes, but in that case make sure that you do not break the cluster. </para>
+
+  <para>
+   After you complete the deployment and you bootstrap the cluster, you may
+   need to perform additional changes to the cluster. By using &dashboard; you
+   can add additional nodes to the cluster. You can also delete some nodes, but
+   in that case make sure that you do not break the cluster.
+  </para>
+
   <sect2 xml:id="node.managment.adding">
    <title>Adding Nodes</title>
-   <para> You may need to add additional &worker_node;s to your cluster. The following steps guides you through that procedure: </para>
+   <para>
+    You may need to add additional &worker_node;s to your cluster. The
+    following steps guides you through that procedure:
+   </para>
    <procedure>
     <title>Adding Nodes to Existing Cluster</title>
     <step>
-     <para> Prepare the node as described in <xref
+     <para>
+      Prepare the node as described in
+      <xref
        linkend="sec.caasp.installquick.node"/>
      </para>
     </step>
     <step>
-     <para> Open &dashboard; in your browser and login. </para>
+     <para>
+      Open &dashboard; in your browser and login.
+     </para>
     </step>
     <step>
-     <para> You should see the newly added node as a node to be accepted in <guimenu>Pending Nodes</guimenu>. Accept the node. </para>
+     <para>
+      You should see the newly added node as a node to be accepted in
+      <guimenu>Pending Nodes</guimenu>. Accept the node.
+     </para>
      <informalfigure>
       <mediaobject>
        <imageobject role="fo">
@@ -272,7 +456,11 @@
      </informalfigure>
     </step>
     <step>
-     <para> In the <guimenu>Summary</guimenu> you can see the <guimenu>New</guimenu> that appears next to <guimenu>New nodes</guimenu>. Click the <guimenu>New</guimenu> button. </para>
+     <para>
+      In the <guimenu>Summary</guimenu> you can see the <guimenu>New</guimenu>
+      that appears next to <guimenu>New nodes</guimenu>. Click the
+      <guimenu>New</guimenu> button.
+     </para>
      <informalfigure>
       <mediaobject>
        <imageobject role="fo">
@@ -287,62 +475,114 @@
      </informalfigure>
     </step>
     <step>
-     <para> Select the node to be added and click <guimenu>Add nodes</guimenu>. </para>
+     <para>
+      Select the node to be added and click <guimenu>Add nodes</guimenu>.
+     </para>
     </step>
     <step>
-     <para> The node has been added to your cluster. </para>
+     <para>
+      The node has been added to your cluster.
+     </para>
     </step>
    </procedure>
   </sect2>
+
   <sect2 xml:id="node.managment.removing">
    <title>Removing Nodes</title>
-   <para> As each node in the cluster runs also an instance of <literal>etcd</literal>, &productname; has to ensure that removing of several nodes does not break the <literal>etcd</literal> cluster. In case you have for example three nodes in the <literal>etcd</literal> and you delete two of them, &productname; deletes one node, recovers the cluster and only if the recovery is successful, the next node can be removed. If a node runs just an <literal>etcd-proxy</literal>, there is nothing special that has to be done, as deleting any amount of <literal>etcd-proxy</literal> can not break the <literal>etcd</literal> cluster. </para>
-   <!-- FIXME cwickert 2018-03-2019: We need to elaborate this for CaaS 3;
+   <para>
+    As each node in the cluster runs also an instance of
+    <literal>etcd</literal>, &productname; has to ensure that removing of
+    several nodes does not break the <literal>etcd</literal> cluster. In case
+    you have for example three nodes in the <literal>etcd</literal> and you
+    delete two of them, &productname; deletes one node, recovers the cluster
+    and only if the recovery is successful, the next node can be removed. If a
+    node runs just an <literal>etcd-proxy</literal>, there is nothing special
+    that has to be done, as deleting any amount of
+    <literal>etcd-proxy</literal> can not break the <literal>etcd</literal>
+    cluster.
+   </para>
+<!-- FIXME cwickert 2018-03-2019: We need to elaborate this for CaaS 3;
         node removal is finally supported. -->
   </sect2>
  </sect1>
  <sect1 xml:id="cluster.monitoring">
   <title>Cluster Monitoring</title>
-  <para> There are three basic ways how you can monitor your cluster: </para>
+
+  <para>
+   There are three basic ways how you can monitor your cluster:
+  </para>
+
   <itemizedlist>
    <listitem>
-    <para> by directly accessing the <emphasis>cAdvisor</emphasis> on <literal>http://<replaceable>WORKER NODE ADDRESS</replaceable> ;:4194/containers/</literal>. The <emphasis>cAdvisor</emphasis> runs on worker nodes by default. </para>
+    <para>
+     by directly accessing the <emphasis>cAdvisor</emphasis> on
+     <literal>http://<replaceable>WORKER NODE ADDRESS</replaceable>
+     ;:4194/containers/</literal>. The <emphasis>cAdvisor</emphasis> runs on
+     worker nodes by default.
+    </para>
    </listitem>
    <listitem>
-    <para> By using <emphasis>Heapster</emphasis>, for details refer to <xref
-      linkend="cluster.monitoring.heapster"/>. </para>
+    <para>
+     By using <emphasis>Heapster</emphasis>, for details refer to
+     <xref
+      linkend="cluster.monitoring.heapster"/>.
+    </para>
    </listitem>
    <listitem>
-    <para> By using <emphasis>Grafana</emphasis>, for details refer to <xref
-      linkend="cluster.monitoring.grafana"/>. </para>
+    <para>
+     By using <emphasis>Grafana</emphasis>, for details refer to
+     <xref
+      linkend="cluster.monitoring.grafana"/>.
+    </para>
    </listitem>
   </itemizedlist>
+
   <sect2 xml:id="cluster.monitoring.heapster">
    <title>Monitoring with Heapster</title>
    <para>
-    <emphasis>Heapster</emphasis> is a tool that collects and interprets various signals from your cluster. <emphasis>Heapster</emphasis> communicates directly with the <emphasis>cAdvisor</emphasis>. The signals from the cluster are then exported using REST endpoints. </para>
-   <para> To deploy <emphasis>Heapster</emphasis>, run the following command: </para>
-   <screen>&prompt.user;<command>kubectl apply -f \
+    <emphasis>Heapster</emphasis> is a tool that collects and interprets
+    various signals from your cluster. <emphasis>Heapster</emphasis>
+    communicates directly with the <emphasis>cAdvisor</emphasis>. The signals
+    from the cluster are then exported using REST endpoints.
+   </para>
+   <para>
+    To deploy <emphasis>Heapster</emphasis>, run the following command:
+   </para>
+<screen>&prompt.user;<command>kubectl apply -f \
  https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/heapster/heapster.yaml</command></screen>
    <para>
-    <emphasis>Heapster</emphasis> can store data in <emphasis>InfluxDB</emphasis>, which can be then used by other tools. </para>
+    <emphasis>Heapster</emphasis> can store data in
+    <emphasis>InfluxDB</emphasis>, which can be then used by other tools.
+   </para>
   </sect2>
+
   <sect2 xml:id="cluster.monitoring.grafana">
    <title>Monitoring with Grafana</title>
    <para>
-    <emphasis>Grafana</emphasis> is an analytics platform that processes data stored in <emphasis>InfluxDB</emphasis> and displays the data graphically. You can deploy <emphasis>Grafana</emphasis> by running the following commands: </para>
-   <screen>&prompt.user;<command>kubectl apply -f \
+    <emphasis>Grafana</emphasis> is an analytics platform that processes data
+    stored in <emphasis>InfluxDB</emphasis> and displays the data graphically.
+    You can deploy <emphasis>Grafana</emphasis> by running the following
+    commands:
+   </para>
+<screen>&prompt.user;<command>kubectl apply -f \
 https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/heapster/heapster.yaml</command>
 &prompt.user;<command>kubectl apply -f \
 https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/influxdb.yaml</command>
 &prompt.user;<command>kubectl apply -f \
 https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-config/influxdb/grafana-deployment.yaml</command>
 &prompt.user;<command>curl https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-config/influxdb/grafana-service.yaml -o grafana-service.yaml</command></screen>
-   <para> Then open the file <filename>grafana-service.yaml</filename>: </para>
-   <screen>&prompt.user;<command>vi grafana-service.yaml</command></screen>
-   <para> In the file uncomment the line with the <literal>NodePort</literal> type. </para>
-   <para> To finish the <emphasis>Grafana</emphasis> installation, apply the configuration by running: </para>
-   <screen>&prompt.root;<command>kubectl apply -f grafana-service.yaml</command></screen>
+   <para>
+    Then open the file <filename>grafana-service.yaml</filename>:
+   </para>
+<screen>&prompt.user;<command>vi grafana-service.yaml</command></screen>
+   <para>
+    In the file uncomment the line with the <literal>NodePort</literal> type.
+   </para>
+   <para>
+    To finish the <emphasis>Grafana</emphasis> installation, apply the
+    configuration by running:
+   </para>
+<screen>&prompt.root;<command>kubectl apply -f grafana-service.yaml</command></screen>
   </sect2>
  </sect1>
 </chapter>
