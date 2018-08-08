@@ -17,27 +17,139 @@
   </dm:docmanager>
  </info>
  <para>
-  &suse;&reg; CaaS (Container as a Service) Platform is a &kube;-based
-  container management solution designed to simplify the deployment, management,
-  and scaling of container-based applications and services.
- </para>
- <para> 
-  &productname; consists of an integrated software stack on top of &suse; &mos;.
-  &suse; &mos; is a minimalist operating system based on &sle; 12 SP3, dedicated
-  to hosting containers. &suse; &mos; OS inherits the benefits of &sle; in the
-  form of a smaller, simpler, and more robust operating system, optimized for
-  large, clustered deployments. It also features an atomic, transactional update
-  mechanism, making the system more resilient against software-update-related
-  problems.
- </para>
+ &suse; &productname; is a Cloud-Native Computing Foundation (CNCF) certified
+ &kube; distribution on top of &suse; &mos;.
+ &suse; &mos; is a minimalist operating system based on &sle; 12 SP3, dedicated
+ to hosting containers. &suse; &mos; OS inherits the benefits of &sle; in the
+ form of a smaller, simpler, and more robust operating system, optimized for
+ large, clustered deployments. It also features an atomic, transactional update
+ mechanism, making the system more resilient against software-update-related
+ problems.
+</para>
+ 
  <para>
-  &suse; &productname; turns four or more dedicated machines into a complete, 
-  managed &kube; cluster. Each node can host multiple pods of containers, and
-  the entire system is managed from a web-based dashboard.
- </para>
- <para>
-  For more information, including a list of the various components which make up
-  &productname; please refer to the Release Notes on <link
-   xlink:href="https://www.suse.com/releasenotes/"/>.
- </para>
+ &productname; automates the orchestration and management of
+ containerized applications and services with powerful &kube; capabilities,
+ including:
+</para>
+<itemizedlist>
+ <listitem>
+  <para>
+   Workload scheduling places containers according to their needs while
+   improving resource utilization. 
+  </para>
+ </listitem>
+ <listitem>
+  <para>
+   Service discovery and load balancing provides an IP address for your
+   services, and distributes load behind the scenes.
+  </para>
+ </listitem>
+ <listitem>
+  <para>
+   Application scaling up and down accommodates changing loads.
+  </para>
+ </listitem>
+ <listitem>
+  <para>
+   Non-disruptive rollout/rollback of new applications and updates enables
+   frequent changes without downtime.
+  </para>
+ </listitem>
+ <listitem>
+  <para>
+   Health monitoring and management supports application self-healing and
+   ensures application availability.
+  </para>
+ </listitem>
+</itemizedlist>
+<para>
+ In addition, &productname; simplifies the platform operator’s experience, with
+ everything you need to get up and running quickly, and to manage the
+ environment effectively in production. It provides:
+</para>
+<itemizedlist>
+ <listitem>
+  <para>
+   A complete container execution environment, including a purpose-built
+   container host operating system (&suse; &mos;), container runtime, and
+   container image registries.
+  </para>
+ </listitem>
+ <listitem>
+  <para>
+   Enhanced datacenter integration features that enable you to plug &kube;
+   into new or existing infrastructure, systems, and processes.    
+  </para>
+ </listitem>
+ <listitem>
+  <para>
+   Application ecosystem support with &sle; container base images, and access
+   to tools and services offered by &suse; Ready for CaaS Platform partners and
+   the &kube; community.
+  </para>
+ </listitem>
+ <listitem>
+  <para>
+   End-to-End security, implemented holistically across the full stack.
+  </para>
+ </listitem>
+ <listitem>
+  <para>
+   Advanced platform management that simplifies platform installation,
+   configuration, re-configuration, monitoring, maintenance, updates,
+   and recovery.
+  </para>
+ </listitem>
+ <listitem>
+  <para>
+   Enterprise hardening including comprehensive interoperability testing,
+   support for thousands of platforms, and world-class platform maintenance and
+   technical support.
+  </para>
+ </listitem>
+</itemizedlist>
+
+<para>
+ You can deploy &productname; onto physical servers or use it on virtual
+ machines. After deployment, it is immediately ready to run and provides a
+ highly-scalable cluster.
+</para>
+<para>
+ While &productname; inherits benefits of &sle; and uses tools and
+ technologies well-known to system administrators such as
+ <literal>cloud-init</literal> and Salt, the main innovation (compared to
+ &sls;) comes with <emphasis role="bold">transactional updates</emphasis>. A
+ transactional update is an update that can be installed when the system is
+ running without any down-time. A transactional update can be rolled back, so
+ if the update fails or is not compatible with your infrastructure, you can
+ restore the previous system state.
+</para>
+<para>
+ &productname; uses the &btrfs; file system with the following characteristics:
+</para>
+<itemizedlist>
+ <listitem>
+  <para>
+   The root filesystem and its snapshots are read-only.
+  </para>
+ </listitem>
+ <listitem>
+  <para>
+   Sub-volumes for data sharing are read-write.
+  </para>
+ </listitem>
+ <listitem>
+  <para>
+   &productname; introduces overlays of the <literal>/etc</literal> directories
+   used by <literal>cloud-init</literal> and &salt;.
+  </para>
+ </listitem>
+</itemizedlist>
+
+<para>
+ For more information, including a list of the various components which make up
+ &productname; please refer to the Release Notes on <link
+  xlink:href="https://www.suse.com/releasenotes/"/>.
+</para>
 </preface>
