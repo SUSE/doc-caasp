@@ -502,9 +502,8 @@
      </step>
      <step>
       <para>
-       Fill in the values for <guimenu>Dashboard Location</guimenu> and
-       <guimenu>External Kubernetes API server FQDN</guimenu>. If necessary,
-       configure the <guimenu>Proxy Settings</guimenu>.
+       Fill in the values <guimenu>Internal Dashboard Location</guimenu>. 
+       If necessary, configure the other settings.
       </para>
       <note>
        <title>
@@ -520,10 +519,11 @@
       </note>
       <variablelist>
        <varlistentry>
-        <term>Dashboard Location</term>
+        <term>Internal Dashboard Location</term>
         <listitem>
          <para>
-          Name of the node running the &dashboard; dashboard.
+          FQDN or IP of the node running the &dashboard; dashboard (reachable
+          from inside the cluster).
          </para>
         </listitem>
        </varlistentry>
@@ -533,19 +533,21 @@
          <para>
           Name used to reach the node running the &kube; API server.
          </para>
-         <para>
-          In a simple, single-master deployment this will be the name of the
-          node that you will select as the &master_node; when bootstrapping the
-          cluster.
-         </para>
-        <para>
-          If you are planning a larger cluster with multiple &master_node;s, 
-          they must all be accessible from a single host name. If not, the
-          functionality of &dashboard; will degrade if the original
-          &master_node; is removed. Therefore you should ensure that there is
-          some form of load-balancing or reverse proxy on the value that
-          you enter in this field.
-        </para>
+         <note>
+          <para>
+           In a simple, single-master deployment this will be the name of the
+           node that you will select as the &master_node; when bootstrapping the
+           cluster.
+          </para>
+          <para>
+            If you are planning a larger cluster with multiple &master_node;s, 
+            they must all be accessible from a single host name. If not, the
+            functionality of &dashboard; will degrade if the original
+            &master_node; is removed. Therefore you should ensure that there is
+            some form of load-balancing or reverse proxy on the value that
+            you enter in this field.
+          </para>
+         </note>
        </listitem>
        </varlistentry>
        
@@ -554,6 +556,18 @@
        <varlistentry>
         <term>Install Tiller (Helm's Server Component)</term>
         <listitem>
+         
+         <informalfigure>
+          <mediaobject>
+           <imageobject role="fo">
+            <imagedata fileref="velum_install_tiller.png" width="100%"/>
+           </imageobject>
+           <imageobject role="html">
+            <imagedata fileref="velum_install_tiller.png" width="100%"/>
+           </imageobject>
+          </mediaobject>
+         </informalfigure>
+         
          <para>
           If you intend to deploy &scf; on &productname;, or any other software
           that is installed with &helm; (the &kube; package manager), check the
@@ -562,6 +576,40 @@
          </para>
         </listitem>
        </varlistentry>
+       
+       <varlistentry>
+        <term>Overlay network settings</term>
+        <listitem>
+         <warning>
+          <title>Adjust overlay network to avoid collision with existing services</title>
+          <para>
+           The overlay network settings have to be verified and adjusted so that
+           they do not collide with any services / addresses in the infrastructure 
+           that potentially need to be reached from any node or 
+           service running within the &productname; cluster.
+          </para>
+          
+          <para>
+           For example, an oracle database is running on <literal>172.16.4.5</literal> 
+           in the existing infrastructure and a pod in the cluster needs to 
+           contact that database. Then, the defaults be adjusted to provide a 
+           different overlay network. Another example would be an NFS server or 
+           a SES/Ceph cluster running anywhere in the network 
+           <literal>172.16.0.0/13</literal> and where persistent storage access 
+           of the CaaSP cluster should be hosted on.
+          </para>
+         </warning>
+         <para>
+          Describes the settings used by <literal>flannel</literal> to create 
+          the overlay network used by all the &kube; pods and services. With 
+          this change, the default settings are exposed to the user for fine 
+          tuning. The most common reason to change them is to avoid clashes 
+          between the default subnetwork we picked up and an already 
+          existing one.
+         </para>
+        </listitem>
+       </varlistentry>
+       
        <varlistentry>
         <term>Proxy Settings</term>
         <listitem>
@@ -573,18 +621,223 @@
          </para>
         </listitem>
        </varlistentry>
-      </variablelist>
+       
+       <varlistentry>
+        <term>SUSE registry mirror</term>
+        <listitem>
+         <para>
+          Options for SUSE registry mirror.
+         </para>
+        </listitem>
+       </varlistentry>
      
-      <informalfigure>
-       <mediaobject>
-        <imageobject role="fo">
-         <imagedata fileref="velum_install_tiller.png" width="100%"/>
-        </imageobject>
-        <imageobject role="html">
-         <imagedata fileref="velum_install_tiller.png" width="100%"/>
-        </imageobject>
-       </mediaobject>
-      </informalfigure>
+       <varlistentry>
+        <term>Cloud provider integration</term>
+        <listitem>
+         <para>
+          Cloud provider integration enables you to deploy &productname; on 
+          &ostack;/&soc;. 
+         </para>
+         <informalfigure>
+          <mediaobject>
+           <imageobject role="fo">
+            <imagedata fileref="velum_cpi.png" width="100%"/>
+           </imageobject>
+           <imageobject role="html">
+            <imagedata fileref="velum_cpi.png" width="100%"/>
+           </imageobject>
+          </mediaobject>
+         </informalfigure>
+         <variablelist>
+          
+          <varlistentry>
+           <term>Keystone API URL</term>
+           <listitem>
+            <para>
+             Specifies the URL of the Keystone API used to authenticate the user. 
+             This value can be found in Horizon (the &ostack; control panel) under 
+             <guimenu>Project &rarr; Access and Security &rarr; API Access &rarr; 
+              Credentials</guimenu>.
+            </para>
+           </listitem>
+          </varlistentry>
+          
+          <varlistentry>
+           <term>Domain name</term>
+           <listitem>
+            <para>
+             (Optional) Used to specify the name of the domain your user belongs
+             to.
+            </para>
+           </listitem>
+          </varlistentry>
+          
+          <varlistentry>
+           <term>Domain ID</term>
+           <listitem>
+            <para>
+             (Optional) Used to specify the name of the domain your user belongs
+             to.
+            </para>
+           </listitem>
+          </varlistentry>
+          
+          <varlistentry>
+           <term>Project name</term>
+           <listitem>
+            <para>
+             (Optional) Used to specify the name of the project where you want 
+             to create your resources.
+            </para>
+           </listitem>
+          </varlistentry>
+          
+          <varlistentry>
+           <term>Project ID</term>
+           <listitem>
+            <para>
+             (Optional) Used to specify the name of the project where you want 
+             to create your resources.
+            </para>
+           </listitem>
+          </varlistentry>
+          
+          <varlistentry>
+           <term>Region name</term>
+           <listitem>
+            <para>
+             Used to specify the identifier of the region to use when running on
+             a multi-region &ostack; cloud. A region is a general division of 
+             an &ostack; deployment.
+            </para>
+           </listitem>
+          </varlistentry>
+          
+          <varlistentry>
+           <term>Username</term>
+           <listitem>
+            <para>
+             Refers to the username of a valid user set in Keystone.
+            </para>
+           </listitem>
+          </varlistentry>
+          
+          <varlistentry>
+           <term>Password</term>
+           <listitem>
+            <para>
+             Refers to the password of a valid user set in Keystone.
+            </para>
+           </listitem>
+          </varlistentry>
+          
+          <varlistentry>
+           <term>Subnet UUID for CaaS Platform private network</term>
+           <listitem>
+            <para>
+             Used to specify the identifier of the subnet you want to create
+             your load balancer on. This value can be found on the &ostack;
+             control panels, under <guimenu>Project &rarr; Network &rarr;
+             Networks</guimenu>. Click on the respective network to see its 
+             subnets.
+            </para>
+           </listitem>
+          </varlistentry>
+          
+          <varlistentry>
+           <term>Floating network UUID</term>
+           <listitem>
+            <para>
+             (Optional) When specified, will lead to the creation of a floating 
+             IP for the load balancer.
+            </para>
+           </listitem>
+          </varlistentry>
+          
+          <varlistentry>
+           <term>Load balancer monitor max retries</term>
+           <listitem>
+            <para>
+             Number of permissible ping failures before changing the load 
+             balancer members status to <literal>INACTIVE</literal>. Must be a 
+             number between 1 and 10. (Default: <replaceable>3</replaceable>)
+            </para>
+           </listitem>
+          </varlistentry>
+          
+          <varlistentry>
+           <term>Cinder Block Storage API version</term>
+           <listitem>
+            <para>
+             Specifies the API version to be used when talking to Cinder.
+             Currently: <literal>v2</literal>
+            </para>
+           </listitem>
+          </varlistentry>
+          
+          <varlistentry>
+           <term>Ignore Cinder availability zone</term>
+           <listitem>
+            <para>
+             Influence availability zone use when attaching Cinder volumes. When
+             Nova and Cinder have different availability zones, this should be 
+             set to <literal>True</literal>.
+            </para>
+           </listitem>
+          </varlistentry>
+         
+         </variablelist>
+        </listitem>
+       </varlistentry>
+     
+       <varlistentry>
+        <term>Container runtime</term>
+        <listitem>
+         <warning>
+          <para>
+           Please note CRI-O is currently only a tech preview. It will work but
+           is not officially supported.
+          </para>
+         </warning>
+         
+         <informalfigure>
+          <mediaobject>
+           <imageobject role="fo">
+            <imagedata fileref="velum_install_options.png" width="100%"/>
+           </imageobject>
+           <imageobject role="html">
+            <imagedata fileref="velum_install_options.png" width="100%"/>
+           </imageobject>
+          </mediaobject>
+         </informalfigure>
+         
+         <para>
+          Allows choice between Docker and CRI-O as the main container runtime.
+         </para>
+        </listitem>
+       </varlistentry>
+     
+       <varlistentry>
+        <term>System wide certificate</term>
+        <listitem>
+         <para>
+          Specify a system wide trusted certificate.
+         </para>
+        </listitem>
+       </varlistentry>
+      </variablelist>
+     </step>
+      
+      <step>
+       <para>
+        Click <guimenu>Next</guimenu> to conifigure the FQDNs for dashboard and &kube; API.
+       </para>
+       <para>
+        Fill in the values for <guimenu>External Dashboard Location</guimenu> and
+        <guimenu>External Kubernetes API server FQDN</guimenu>. If necessary,
+        configure the <guimenu>Proxy Settings</guimenu>.
+       </para>
+      
       <para>
        Click <guimenu>Next</guimenu> to proceed and install some cluster nodes
        as described in <xref
