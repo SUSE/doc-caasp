@@ -1148,6 +1148,7 @@ caasp3-stack-admin|10.81.1.51
       <literal>caas-worker1</literal>, <literal>caas-worker2</literal> and so
       on.
      </para>
+
      <sect3>
       <title>Configuration Files</title>
       <para>
@@ -1163,32 +1164,24 @@ caasp3-stack-admin|10.81.1.51
       </para>
       <para>
        So, for instance, if your working directory is <filename>~/cloud-config</filename>,
-       then for the admin node, you need:
+       then for the admin node, you need these two files:
       </para>
-      <screen>~/cloud-config/cc-admin/user-data</screen>
-      <para>
-       and
-      </para>
-      <screen>~/cloud-config/cc-admin/meta-data</screen>
+      <screen>~/cloud-config/cc-admin/user-data
+~/cloud-config/cc-admin/meta-data</screen>
       <para>
        For a &worker_node;, you need:
       </para>
-      <screen>~/cloud-config/cc-worker/user-data</screen>
-      <para>
-       and
-      </para>
-      <screen>~/cloud-config/cc-worker/meta-data</screen>
+      <screen>~/cloud-config/cc-worker/user-data
+~/cloud-config/cc-worker/meta-data</screen>
       <para>
        The same <filename>meta-data</filename> file can be used for both node types.
        Here is an sample <filename>meta-data</filename> file:
        </para>
-      <screen>
-# File: cloud-config/cc-worker/meta-data
+      <screen>#cloud-config
 instance-id: <replaceable>iid-CAAS01</replaceable>
 network-interfaces: |
   auto <replaceable>eth0</replaceable>
-  iface <replaceable>eth0</replaceable> inet dhcp
-       </screen>
+  iface <replaceable>eth0</replaceable> inet dhcp</screen>
       <para>
        The <filename>user-data</filename> file contains settings such as time
        servers, the &rootuser; password, and the node type.
@@ -1197,14 +1190,14 @@ network-interfaces: |
        Here is an example <filename>cc-admin/user-data</filename> file for an
        &admin_node;:
       </para>
-      <screen>
-#cloud-config
+      <screen>#cloud-config
 debug: True
 disable_root: False
+ssh_deletekeys: False
 ssh_pwauth: True
 chpasswd:
   list: |
-    root:<replaceable>root</replaceable>
+    root:<replaceable>MY_PASSWORD</replaceable>
     expire: False
 ntp:
   servers:
@@ -1213,45 +1206,50 @@ ntp:
 runcmd:
   - /usr/bin/systemctl enable --now ntpd
 suse_caasp:
-  role: <replaceable>admin</replaceable>
-       </screen>
+  role: <replaceable>admin</replaceable></screen>
       <para>
-       Here is an example <filename>cc-worker/user-data</filename> file for a
-       &worker_node;:
+       Here is an example <filename>cc-worker/user-data</filename>  for a
+       &worker_node;. Rather than providing the &rootuser; password in
+       clear text, you can use a hash instead; this example is hashed with
+       SHA-256. 
       </para>
-      <screen>
-#cloud-config
+      <screen>#cloud-config
 debug: True
 disable_root: False
+ssh_deletekeys: False
 ssh_pwauth: True
 chpasswd:
   list: |
-    root:<replaceable>root</replaceable>
+  root:<replaceable>$5$eriogqzq$Dg7PxHsKGzziuEGkZgkLvacjuEFeljJ.rLf.hZqKQLA</replaceable>
     expire: False
 suse_caasp:
    role: <replaceable>cluster</replaceable>
-   admin_node: <replaceable>caas-admin.example.com</replaceable>
-       </screen>
+   admin_node: <replaceable>caas-admin.example.com</replaceable></screen>
      </sect3>
+
      <sect3>
       <title>Preparing an ISO image</title>
       <para>
        Once you have edited the configuration files with your desired settings,
        you need to create an ISO image with the volume label <literal>cidata</literal>
-       containing only the subdirectory for that node type. Use <command>genisoimage</command>
-       to do this.
+       containing only the subdirectory for that node type.
       </para>
       <para>
-       To create the ISO image for an admin node:
+       On &sle; 12 or &opensuse; 42, use <command>genisoimage</command> to do this.
+       On &sle; or &opensuse; 15, use <command>mkisofs</command>. The parameters
+       are the same for both commands.
       </para>
-      <screen>
-&prompt.user; sudo genisoimage -output <replaceable>cc-admin.img</replaceable> -volid <replaceable>cidata</replaceable> -joliet -rock <replaceable>cc-admin</replaceable>
-      </screen>
       <para>
-       To create the ISO image for a worker node, use the same command, but 
-       substitute the name of the folder containing the configuration files for
-       a &worker_node; and title the volume <literal>cc-worker</literal>.
+       For example, to create the ISO image for an admin node on a computer
+       running &opensuse; 42:
       </para>
+      <screen>&prompt.user;sudo genisoimage -output <replaceable>cc-admin.img</replaceable> -volid <replaceable>cidata</replaceable> -joliet -rock <replaceable>cc-admin</replaceable></screen>
+      <para>
+       To create the ISO image for a worker node on a computer running &opensuse;
+       15, substituting the name of the folder containing the configuration
+       files for a &worker_node; and titling the volume <literal>cc-worker</literal>:
+      </para>
+      <screen>&prompt.user;sudo mkisofs -output <replaceable>cc-worker.img</replaceable> -volid <replaceable>cidata</replaceable> -joliet -rock <replaceable>cc-worker</replaceable></screen>
      </sect3>
      
      <sect3>
@@ -1274,9 +1272,7 @@ suse_caasp:
          Create an ISO file called <filename>cc-admin.img</filename> containing
          these two files:
         </para>
-        <screen>
-&prompt.user; sudo genisoimage -output cc-admin.img -volid cidata -joliet -rock cc-admin
-        </screen>
+        <screen>&prompt.user;sudo genisoimage -output cc-admin.img -volid cidata -joliet -rock cc-admin</screen>
        </step>
        <step>
         <para>
@@ -1332,9 +1328,7 @@ suse_caasp:
          Create an ISO file called <filename>cc-worker.img</filename> containing
          these two files:
         </para>
-        <screen>
-&prompt.user; sudo genisoimage -output cc-worker.img -volid cidata -joliet -rock cc-worker
-        </screen>
+        <screen>&prompt.user; sudo genisoimage -output cc-worker.img -volid cidata -joliet -rock cc-worker</screen>
        </step>
       </procedure>
       <para>
@@ -1372,9 +1366,9 @@ suse_caasp:
        bootstap the cluster using the &dashboard; dashboard.
       </para>
      </sect3>
-     
+
     </sect2>
- 
+
    </sect1>
 
   <sect1 xml:id="sec.caasp.installquick.bootstrap">
