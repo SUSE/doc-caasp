@@ -104,21 +104,6 @@
     &dashboard; enables you to update your cluster directly.
     Follow the next procedure to update your cluster.
    </para>
-   
-   <important>
-    <title>Manual Transactional Update</title>
-    <para>
-     If you have used <command>transactional-update shell</command> to manually 
-     create a snapshot and modify transactional updates, make sure that the 
-     node is refreshed as soon as possible after you are finished. If the 
-     automated transactional update script runs before you refresh, your manual 
-     changes will be overwritten by the automatically created snapshot. Moreover, 
-     if you perform another manual installation before a refresh, only the last 
-     snapshot will be used and all prior changes are lost. Either perform all 
-     updates in one session or reboot the node(s) from &dashboard; between each 
-     step.
-  </para>
- </important>
  
    <procedure>
     <title>Updating the Cluster with &dashboard;</title>
@@ -370,19 +355,6 @@
        additional snapshots are created.
       </para>
 <screen>&prompt.root;<command>transactional-update rollback <replaceable>SNAPSHOT_NUMBER</replaceable></command></screen>
-     </listitem>
-    </varlistentry>
-    <varlistentry>
-     <term><literal>shell</literal>
-     </term>
-     <listitem>
-      <para>
-       The command will open a shell session inside a new snapshot. You can
-       perform any of the above actions to manipulate the update status of the
-       machine. After you exit the shell, the new snapshot will be marked as the
-       new active default.
-      </para>
-<screen>&prompt.root;<command>transactional-update shell</command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
