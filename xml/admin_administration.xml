@@ -51,17 +51,19 @@
   </itemizedlist>
 
   <para>
-   Transactional updates are managed by the
-   <command>transactional-update</command> script, which is called once a day.
-   The script checks if any updates are available. If there are any updates to
-   be applied, a new snapshot of the root file system is created and the system
-   is updated using the <command>zypper dup</command>. All updates released to
-   this point are applied. The snapshot is then marked as active and will be
-   used after the next reboot of the system. Ensure that the cluster is
-   rebooted as soon as possible after the update installation is complete,
-   otherwise all changes will be lost.
+   Transactional updates are managed by the <command>transactional-update</command> 
+   script, which is called once a day. The script checks if any updates are 
+   available. If there are any updates to be applied, a new snapshot of the root 
+   file system is created in the background and is updated using 
+   <command>zypper dup</command>. All updates released to this point are applied.
+   The running filesystem/machine state is left untouched.
   </para>
-
+  <para>
+   The new snapshot, once completely updated, is then marked as active and will 
+   be used as the new default after the next reboot of the system. Only the last
+   created snapshot will be used.
+  </para>
+   
   <note>
    <title>General Notes to the Updates Installation</title>
    <para>
@@ -75,13 +77,30 @@
   </note>
 
   <sect2 xml:id="transactional.updates.installation">
-   <title>Manual Installation of Updates</title>
+   <title>Manually Applying Updates</title>
+   
    <para>
     After the <command>transactional-update</command> script has run on all
     nodes, &dashboard; displays any nodes in your cluster running outdated
-    software. &dashboard; then enables you to update your cluster directly.
+    software. The updates are only applied after a reboot. For this purpose,
+    &dashboard; enables you to update your cluster directly.
     Follow the next procedure to update your cluster.
    </para>
+   
+   <important>
+    <title>Manual Transactional Update</title>
+    <para>
+     If you have used <command>transactional-update shell</command> to manually 
+     create a snapshot and modify transactional updates, make sure that the 
+     node is rebooted as soon as possible after you are finished. If the 
+     automated transactional update script runs before you reboot, your manual 
+     changes will be overwritten by the automatically created snapshot. Moreover, 
+     if you perform another manual installation before a reboot, only the last 
+     snapshot will be used and all prior changes are lost. Either perform all 
+     updates in one session or reboot the node(s) between each step.
+  </para>
+ </important>
+ 
    <procedure>
     <title>Updating the Cluster with &dashboard;</title>
     <step>
@@ -332,6 +351,19 @@
        additional snapshots are created.
       </para>
 <screen>&prompt.root;<command>transactional-update rollback <replaceable>SNAPSHOT_NUMBER</replaceable></command></screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>shell</literal>
+     </term>
+     <listitem>
+      <para>
+       The command will open a shell session inside a new snapshot. You can
+       perform any of the above actions to manipulate the update status of the
+       machine. After you exit the shell, the new snapshot will be marked as the
+       new active default.
+      </para>
+<screen>&prompt.root;<command>transactional-update shell</command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
