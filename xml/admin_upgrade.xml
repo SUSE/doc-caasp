@@ -266,19 +266,25 @@ value: value)}'</command></screen>
    </para>
   </note>
   
-  <sect2 xml:id="pro.deploy.upgrade.caasp2.prereq">
+  <sect2 xml:id="sec.deploy.upgrade.caasp2.prereq">
    <title>Ensure All &productname; v2 Updates Are Installed</title>
    <para>
     Before you start the upgrade procedure to &productname; v3, you must ensure
     that all your nodes are running on the latest v2 updates. You can check the
     <filename>SUSEConnect</filename> package version to see if you are up to date.
     To do so you will run a <command>salt</command> command to display the
-    packave version installed on each node.
+    package version installed on each node.
    </para>
    
    <screen>
-&prompt.user;<command>docker exec -i  $(docker ps | grep salt-master | awk '{print $1}') salt --batch 10 -P "roles:(admin|kube-(master|minion))" cmd.run "rpm -q SUSEConnect"</command>
-Executing run on ['12cda3c374144d74804298bdee4d686c', '9b6d8d28393045c0914c959d0a5c0e33', '73b92dd7816147058c3d0fbb67fb18f9', 'admin']
+&prompt.user;<command>docker exec -i  $(docker ps | grep salt-master | awk '{print $1}') \
+salt --batch 10 -P "roles:(admin|kube-(master|minion))" \
+cmd.run "rpm -q SUSEConnect"</command>
+
+Executing run on ['12cda3c374144d74804298bdee4d686c',
+                  '9b6d8d28393045c0914c959d0a5c0e33',
+                  '73b92dd7816147058c3d0fbb67fb18f9',
+                  'admin']
 admin:
     SUSEConnect-0.3.11-3.15.1.x86_64
 jid:
@@ -306,12 +312,99 @@ retcode:
    </screen>
    
    <para>
-    If the package version is <literal>0.3.11-3.15.1</literal>
+    If the package version is <literal>0.3.11-3.15.1</literal> (or higher) you
+    have the latest updates from the v2 channel installed.
    </para>
+   </sect2>
    
-   <para>
-   </para>
-  </sect2>
+   <sect2 xml:id="sec.deploy.upgrade.caasp2.timer">
+    <title>Disable Automatic <literal>transactional-update</literal></title>
+    <para>
+    To begin with the upgrade procedure, you first must disable the automatic
+    transactional update mechanism to avoid conflicts. To do so you must run a
+    <command>salt</command> across the nodes to disable the 
+    <literal>transactional-update.timer</literal>.
+    </para>
+    <screen>
+&prompt.user;<command>docker exec -i $(docker ps | grep salt-master | awk '{print $1}') \
+salt --batch 10 -P "roles:(admin|kube-(master|minion))" \
+cmd.run "systemctl disable --now transactional-update.timer"</command>
+
+Executing run on ['5f6688bbeac94d2ab5c4330dc7043fb2',
+                  'c3afd049edbe43afb4e2e5913a88291b',
+                  '5bf346291a18406290886c2e2f7c3e3f',
+                  'admin']
+
+5bf346291a18406290886c2e2f7c3e3f:
+    Removed symlink /etc/systemd/system/timers.target.wants/transactional-update.timer.
+jid:
+    20180807122220543037
+retcode:
+    0
+admin:
+    Removed symlink /etc/systemd/system/timers.target.wants/transactional-update.timer.
+jid:
+    20180807122220543037
+retcode:
+    0
+c3afd049edbe43afb4e2e5913a88291b:
+    Removed symlink /etc/systemd/system/timers.target.wants/transactional-update.timer.
+jid:
+    20180807122220543037
+retcode:
+    0
+5f6688bbeac94d2ab5c4330dc7043fb2:
+    Removed symlink /etc/systemd/system/timers.target.wants/transactional-update.timer.
+jid:
+    20180807122220543037
+retcode:
+    0
+    </screen>
+   </sect2>
+   
+   <sect2 xml:id="sec.deploy.upgrade.caasp2.upgrade">
+    <title>Performing The Upgrade Procedure</title>
+    <para>
+     Run update command, 10 nodes at a time (--batch 10)
+     NOTE about bandwidth
+    </para>
+    <screen>
+&prompt.user;<command>docker exec -i $(docker ps | grep salt-master | awk '{print $1}') \
+salt --batch 10 -P "roles:(admin|kube-(master|minion))" \
+cmd.run "transactional-update salt migration -n" \
+| tee transactional-update-migration.log</command>
+
+Executing run on ['5f6688bbeac94d2ab5c4330dc7043fb2',
+                  'c3afd049edbe43afb4e2e5913a88291b',
+                  '5bf346291a18406290886c2e2f7c3e3f',
+                  'admin']
+
+5bf346291a18406290886c2e2f7c3e3f:
+    
+    
+    Executing 'zypper --root /tmp/tmp.vbaqUwrLIh --non-interactive  refresh'
+    
+    Retrieving repository 'SUSE-CAASP-ALL-Pool' metadata [...done]
+    Building repository 'SUSE-CAASP-ALL-Pool' cache [....done]
+    Retrieving repository 'SUSE-CAASP-ALL-Updates' metadata [....done]
+    Building repository 'SUSE-CAASP-ALL-Updates' cache [....done]
+    All repositories have been refreshed.
+    Upgrading product SUSE CaaS Platform 3.0 x86_64.
+
+[ SNIP ... ]
+
+    done
+jid:
+    20180807122253512832
+retcode:
+    0
+    </screen>
+    <para>
+     Output to log file <filename>transactional-update-migration.log</filename>
+    </para>
+    
+   </sect2>
+  
   
   
  </sect1>
