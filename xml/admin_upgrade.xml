@@ -266,7 +266,49 @@ value: value)}'</command></screen>
    </para>
   </note>
   
-  <sect2>
+  <sect2 xml:id="pro.deploy.upgrade.caasp2.prereq">
+   <title>Ensure All &productname; v2 Updates Are Installed</title>
+   <para>
+    Before you start the upgrade procedure to &productname; v3, you must ensure
+    that all your nodes are running on the latest v2 updates. You can check the
+    <filename>SUSEConnect</filename> package version to see if you are up to date.
+    To do so you will run a <command>salt</command> command to display the
+    packave version installed on each node.
+   </para>
+   
+   <screen>
+&prompt.user;<command>docker exec -i  $(docker ps | grep salt-master | awk '{print $1}') salt --batch 10 -P "roles:(admin|kube-(master|minion))" cmd.run "rpm -q SUSEConnect"</command>
+Executing run on ['12cda3c374144d74804298bdee4d686c', '9b6d8d28393045c0914c959d0a5c0e33', '73b92dd7816147058c3d0fbb67fb18f9', 'admin']
+admin:
+    SUSEConnect-0.3.11-3.15.1.x86_64
+jid:
+    20180809103558881056
+retcode:
+    0
+73b92dd7816147058c3d0fbb67fb18f9:
+    SUSEConnect-0.3.11-3.15.1.x86_64
+jid:
+    20180809103558881056
+retcode:
+    0
+9b6d8d28393045c0914c959d0a5c0e33:
+    SUSEConnect-0.3.11-3.15.1.x86_64
+jid:
+    20180809103558881056
+retcode:
+    0
+12cda3c374144d74804298bdee4d686c:
+    SUSEConnect-0.3.11-3.15.1.x86_64
+jid:
+    20180809103558881056
+retcode:
+    0
+   </screen>
+   
+   <para>
+    If the package version is <literal>0.3.11-3.15.1</literal>
+   </para>
+   
    <para>
    </para>
   </sect2>
