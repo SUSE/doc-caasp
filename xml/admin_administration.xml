@@ -67,14 +67,14 @@
   <para>
    &dashboard; will show a list of nodes that have new updates
    available for use. The cluster administrator then uses &dashboard; to refresh 
-   the nodes to the new snapshots to ensure the health of services and configuration.
-   &dashboard; uses <command>salt</command> to safely disable services on the 
-   nodes, apply new snapshots, rewrite configurations and then bring the 
-   services and nodes back up.
+   the nodes to the new snapshots to ensure the health of services and 
+   configuration. &dashboard; uses <command>salt</command> to safely disable 
+   services on the nodes, apply new snapshots, rewrite configurations and then 
+   bring the services and nodes back up.
   </para>
   
   <important>
-   <title>Always Use &dashboard; To Update Nodes</title>
+   <title>Always Use &dashboard; To Update (Refresh) Nodes</title>
   <para>
    It is paramount that you never "hard reboot" nodes in the cluster after 
    transactional updates. This will omit reconfiguring services and applications
@@ -110,12 +110,12 @@
     <para>
      If you have used <command>transactional-update shell</command> to manually 
      create a snapshot and modify transactional updates, make sure that the 
-     node is rebooted as soon as possible after you are finished. If the 
-     automated transactional update script runs before you reboot, your manual 
+     node is refreshed as soon as possible after you are finished. If the 
+     automated transactional update script runs before you refresh, your manual 
      changes will be overwritten by the automatically created snapshot. Moreover, 
-     if you perform another manual installation before a reboot, only the last 
+     if you perform another manual installation before a refresh, only the last 
      snapshot will be used and all prior changes are lost. Either perform all 
-     updates in one session or reboot the node(s) between each step.
+     updates in one session or refresh the node(s) between each step.
   </para>
  </important>
  
