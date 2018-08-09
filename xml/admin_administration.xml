@@ -54,19 +54,18 @@
    Transactional updates are managed by the <command>transactional-update</command> 
    script, which is called once a day. The script checks if any updates are 
    available. If there are any updates to be applied, a new snapshot of the root 
-   file system is created in the background and is updated using 
-   <command>zypper dup</command>. All updates released to this point are applied.
-   The running filesystem/machine state is left untouched.
+   file system is created in the background and is updated from the release 
+   channels. All updates released to this point are applied. The running 
+   filesystem/machine state is left untouched.
   </para>
   <para>
    The new snapshot, once completely updated, is then marked as active and will 
-   be used as the new default after the next refresh of the system. Only the last
-   created snapshot will be used.
+   be used as the new default after the next reboot of the system.
   </para>
   
   <para>
    &dashboard; will show a list of nodes that have new updates
-   available for use. The cluster administrator then uses &dashboard; to refresh 
+   available for use. The cluster administrator then uses &dashboard; to reboot 
    the nodes to the new snapshots to ensure the health of services and 
    configuration. &dashboard; uses <command>salt</command> to safely disable 
    services on the nodes, apply new snapshots, rewrite configurations and then 
@@ -74,11 +73,12 @@
   </para>
   
   <important>
-   <title>Always Use &dashboard; To Update (Refresh) Nodes</title>
+   <title>Always Use &dashboard; To Update Nodes</title>
   <para>
    It is paramount that you never "hard reboot" nodes in the cluster after 
    transactional updates. This will omit reconfiguring services and applications
-   and will leave nodes in unhealthy, if not unsusable, states. 
+   and will leave nodes in unhealthy, if not unsusable, states. If you have nodes
+   with pending transactional updates follow <xref linkend="transactional.updates.installation"/>.
   </para>
  </important>
    
@@ -95,12 +95,12 @@
   </note>
 
   <sect2 xml:id="transactional.updates.installation">
-   <title>Manually Applying Updates</title>
+   <title>Applying Updates</title>
    
    <para>
     After the <command>transactional-update</command> script has run on all
     nodes, &dashboard; displays any nodes in your cluster running outdated
-    software. The updates are only applied after a refresh. For this purpose,
+    software. The updates are only applied after a reboot. For this purpose,
     &dashboard; enables you to update your cluster directly.
     Follow the next procedure to update your cluster.
    </para>
@@ -115,7 +115,8 @@
      changes will be overwritten by the automatically created snapshot. Moreover, 
      if you perform another manual installation before a refresh, only the last 
      snapshot will be used and all prior changes are lost. Either perform all 
-     updates in one session or refresh the node(s) between each step.
+     updates in one session or reboot the node(s) from &dashboard; between each 
+     step.
   </para>
  </important>
  
