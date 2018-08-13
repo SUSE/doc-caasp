@@ -363,6 +363,11 @@ jid:
 retcode:
     0
     </screen>
+    <important>
+    <para>
+     If you use &smtool; or &smgr; for mirroring channels: Mirror the v3 channels on your server.
+    </para>
+   </important>
    </sect2>
    
    <sect2 xml:id="sec.deploy.upgrade.caasp2.upgrade">
@@ -382,7 +387,7 @@ retcode:
       If you are performing this step on a high bandwidth connection (for 
       example from within the same datacenter as the cluster), you can raise the
       number of nodes by replacing the value for the (<literal>--batch</literal>)
-      parameter.
+      parameter. It is highly recommended not to change this setting.
      </para>
     </note>
     <screen>
@@ -443,13 +448,13 @@ retcode:
      </step>
      <step>
       <para>
-       Reboot the Admin node as described in 
+       Update the Admin node as described in 
        <xref linkend="sec.admin.transactional-updates.installation" />.
       </para>
      </step>
      <step>
       <para>
-       Reboot the remaining nodes as described in 
+       Update the remaining nodes as described in 
        <xref linkend="sec.admin.transactional-updates.installation" />.
       </para>
      </step>
