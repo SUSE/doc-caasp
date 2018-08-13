@@ -69,12 +69,9 @@
     </listitem>
     <listitem>
      <para>
-      Aside from this, the same platforms as &sle; 12 SP3 are supported.
-     </para>
-    </listitem>
-    <listitem>
-     <para>
-      On bare metal: any server hardware certified for &sle; Server.
+      Aside from this, the same hardware and virtualization platforms
+      as &sle; 12 SP3 are supported. For a list of certified hardware,
+      see <link xlink:href="https://www.suse.com/yessearch/" />.
      </para>
     </listitem>
     <listitem>
@@ -196,19 +193,22 @@
        </para>
       </listitem>
      </itemizedlist>
-     <para>
-      When building a cluster from virtual machines, &suse; recommends building
-      nodes from pre-installed disk images, rather than installing new instances
-      from an ISO image. 
-     </para>
-     <para>
-      Virtual-disk images are available for Hyper-V, KVM, OpenStack, VMware,
-      and Xen. 
-     </para>
-     <para>
-      These VM images include the relevant hypervisor's guest additions or tools
-      (where this is applicable).
-     </para>
+     <tip>
+      <title>Use Disk Images</title>
+      <para>
+       When building a cluster from virtual machines, &suse; recommends building
+       nodes from pre-installed disk images, rather than installing new instances
+       from an ISO image. 
+      </para>
+      <para>
+       Virtual-disk images are available for Hyper-V, KVM, OpenStack, VMware,
+       and Xen. 
+      </para>
+      <para>
+       These VM images include the relevant hypervisor's guest additions or tools
+       (where this is applicable).
+      </para>
+     </tip>
      <important>
       <title>&vmware; Memory Ballooning</title>
       <para>
@@ -256,17 +256,17 @@
    <itemizedlist>
     <listitem>
      <para>
-      &ses;.
+      &ses;
      </para>
     </listitem>
     <listitem>
      <para>
-      NFS.
+      NFS
      </para>
     </listitem>
     <listitem>
      <para>
-      <command>hostpath</command>.
+      <command>hostpath</command>
      </para>
      <note>
       <title><literal>hostpath</literal> Storage</title>
@@ -298,8 +298,8 @@
     </listitem>
     <listitem>
      <para>
-      Minimum disk space: 40 GB (as Btrfs with snapshots) for the root file
-      system.
+      Minimum disk space: 40 GB for the root file system with Btrfs and
+      enabled snapshots.
      </para>
      <para>
       Additional disk space may be required, depending on the count and size of
@@ -312,10 +312,10 @@
     <para>
      &kube; does not support swap. For technical reasons, an &admin_node;
      installed from an ISO image will have a small swap partition which will be
-     disabled after installation. Nodes build using &ay; have none. Although it
-     may be possible to install &productname; on machines with less RAM, if the
-     operating system runs out of available memory, the node and therefore the
-     cluster may fail.
+     disabled after installation. Nodes built using &ay; have none. Although it
+     may be possible to install &productname; with less memory, there is a
+     high risk that the operating systems runs out of memory and subsequently
+     causes a cluster failure.
     </para>
    </note>
   </sect2>
@@ -338,8 +338,8 @@
     <listitem>
      <para>
       The admin node and the &kube; API master must have valid Fully-Qualified
-      Domain Names (FQDNs), which can be resolved both by other nodes and from
-      other networks which need to access the cluster.
+      Domain Names (FQDNs), which can be resolved both by all other nodes and
+      from other networks which need to access the cluster.
      </para>
     </listitem>
     <listitem>
