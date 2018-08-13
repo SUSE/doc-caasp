@@ -4,7 +4,7 @@
   <!ENTITY % entities SYSTEM "entity-decl.ent">
     %entities;
 ]>
-<chapter version="5.0" xml:id="auth"
+<chapter version="5.0" xml:id="cha.admin.auth"
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -23,7 +23,7 @@
    concerned with the <quote>what</quote>.
   </para>
 
-  <sect1 xml:id="auth.kubeconfig">
+  <sect1 xml:id="sec.admin.auth.kubeconfig">
    <title>Authentication</title>
    <para>
     Starting in &productname; 2, &kubectl; needs to authenticate against the
@@ -59,7 +59,7 @@
 
   </sect1>
 
-  <sect1 xml:id="auth.users">
+  <sect1 xml:id="sec.admin.auth.users">
    <title>Managing Users and Groups</title>
    <para>User information is stored in
     <phrase role="productname">OpenLDAP</phrase> running in a container on your
@@ -67,9 +67,9 @@
     for managing these users remotely. To do so, install the
     <package>openldap2</package> package on a computer in your network and make
     sure that computer can connect to the &admin_node; on port 389. For further
-    information, refer to <xref linkend="sec.caasp.installquick.netreqs"/>.
+    information, refer to <xref linkend="sec.deploy.requirements.network"/>.
    </para>
-   <sect2 xml:id="auth.user.ldap-rootpw">
+   <sect2 xml:id="sec.admin.auth.user.ldap-rootpw">
     <title>Obtaining the OpenLDAP Password</title>
     <para>
      Before performing any administrative tasks on the <phrase
@@ -85,7 +85,7 @@
     </para>
    </sect2>
 
-   <sect2 xml:id="auth.users.import-cert">
+   <sect2 xml:id="sec.admin.auth.users.import-cert">
     <title>Importing the LDAP Certificate Locally</title>
     <para>
      To be able to perform any LDAP queries, you first need to import the
@@ -104,7 +104,7 @@ awk '{print $1}') cat /etc/openldap/pki/ca.crt > ~/ca.pem</command>
     </para>
     <screen>&prompt.root;<command>update-ca-certificates</command></screen>
    </sect2>
-   <sect2 xml:id="auth.users.add">
+   <sect2 xml:id="sec.admin.auth.users.add">
     <title>Adding New Users</title>
     <para>
      By default, when you create the first user in &dashboard; during bootstrap of
@@ -115,50 +115,50 @@ awk '{print $1}') cat /etc/openldap/pki/ca.crt > ~/ca.pem</command>
     <para>
      To add a new user, create a LDIF file like this:
     </para>
-    <example xml:id="ex.auth.users.add">
+    <example xml:id="ex.admin.auth.users.add">
      <title>LDIF File For a New User</title>
-     <screen>dn: uid=<replaceable>USERID</replaceable><co xml:id="co.auth.users.add.uid"/>,ou=People,dc=infra,dc=caasp,dc=local
+     <screen>dn: uid=<replaceable>USERID</replaceable><co xml:id="co.admin.auth.users.add.uid"/>,ou=People,dc=infra,dc=caasp,dc=local
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: top
-uid: <replaceable>USERID</replaceable> <xref linkend="co.auth.users.add.uid" xrefstyle="select:label nopage"/>
-userPassword: <replaceable>PASSWORD_HASH</replaceable> <co xml:id="co.auth.users.add.password"/>
-givenname: <replaceable>FIRST_NAME</replaceable> <co xml:id="co.auth.users.add.firstname"/>
-sn: <replaceable>SURNAME</replaceable> <co xml:id="co.auth.users.add.surname"/>
-cn: <replaceable>FULL_NAME</replaceable> <co xml:id="co.auth.users.add.fullname"/>
-mail: <replaceable>E-MAIL_ADDRESS</replaceable> <co xml:id="co.auth.users.add.email"/></screen>
+uid: <replaceable>USERID</replaceable> <xref linkend="co.admin.auth.users.add.uid" xrefstyle="select:label nopage"/>
+userPassword: <replaceable>PASSWORD_HASH</replaceable> <co xml:id="co.admin.auth.users.add.password"/>
+givenname: <replaceable>FIRST_NAME</replaceable> <co xml:id="co.admin.auth.users.add.firstname"/>
+sn: <replaceable>SURNAME</replaceable> <co xml:id="co.admin.auth.users.add.surname"/>
+cn: <replaceable>FULL_NAME</replaceable> <co xml:id="co.admin.auth.users.add.fullname"/>
+mail: <replaceable>E-MAIL_ADDRESS</replaceable> <co xml:id="co.admin.auth.users.add.email"/></screen>
      <para>
       Make sure to replace all the parameters indicated <replaceable>LIKE
        THIS</replaceable> in the template above as follows:
      </para>
      <calloutlist>
-      <callout arearefs="co.auth.users.add.uid">
+      <callout arearefs="co.admin.auth.users.add.uid">
        <para>
         User ID (UID) of the new user. Needs to be unique.
        </para>
       </callout>
-      <callout arearefs="co.auth.users.add.password">
+      <callout arearefs="co.admin.auth.users.add.password">
        <para>
         The user's hashed password. Use <command>/usr/sbin/slappasswd</command>
         to generate the hash.
        </para>
       </callout>
-      <callout arearefs="co.auth.users.add.firstname">
+      <callout arearefs="co.admin.auth.users.add.firstname">
        <para>
         The user's first name
        </para>
       </callout>
-      <callout arearefs="co.auth.users.add.surname">
+      <callout arearefs="co.admin.auth.users.add.surname">
        <para>
         The user's last name
        </para>
       </callout>
-      <callout arearefs="co.auth.users.add.fullname">
+      <callout arearefs="co.admin.auth.users.add.fullname">
        <para>
         The user's full name
        </para>
       </callout>
-      <callout arearefs="co.auth.users.add.email">
+      <callout arearefs="co.admin.auth.users.add.email">
        <para>The user's e-mail address. It is used as the login name to
         &dashboard; and &kube;.</para>
       </callout>
@@ -173,18 +173,18 @@ mail: <replaceable>E-MAIL_ADDRESS</replaceable> <co xml:id="co.auth.users.add.em
      To add this new user to the existing Administrators group, create a new LDIF
      file like this:
     </para>
-    <example xml:id="ex.auth.users.add.admin">
+    <example xml:id="ex.admin.auth.users.add.admin">
      <title>LDIF File to Add a User to the 'Administrators' Group</title>
      <screen>dn: cn=Administrators,ou=Groups,dc=infra,dc=caasp,dc=local
 changetype: modify
 add: uniqueMember
-uniqueMember: uid=<replaceable>USERID</replaceable><co xml:id="co.auth.users.add.admin"/>,ou=People,dc=infra,dc=caasp,dc=local</screen>
+uniqueMember: uid=<replaceable>USERID</replaceable><co xml:id="co.admin.auth.users.add.admin"/>,ou=People,dc=infra,dc=caasp,dc=local</screen>
       <para>
        Make sure to replace all the parameters indicated <replaceable>LIKE
         THIS</replaceable> in the template above as follows:
       </para>
       <calloutlist>
-       <callout arearefs="co.auth.users.add.admin">
+       <callout arearefs="co.admin.auth.users.add.admin">
         <para>The user ID (UID) of the user</para>
        </callout>
       </calloutlist>
@@ -197,28 +197,28 @@ uniqueMember: uid=<replaceable>USERID</replaceable><co xml:id="co.auth.users.add
 -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f <replaceable>LDIF_FILE</replaceable></command></screen>
     </sect2>
 
-    <sect2 xml:id="auth.users.change-pw">
+    <sect2 xml:id="sec.admin.auth.users.change-pw">
      <title>Changing a User's Password</title>
      <para>
       To change a user's password, create a LDIF file like this:
      </para>
-     <example xml:id="ex.auth.users.change-pw">
+     <example xml:id="ex.admin.auth.users.change-pw">
       <title>LDIF File to Change a User's Password</title>
-     <screen>dn: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.change-pw.uid"/>,ou=People,dc=infra,dc=caasp,dc=local
+     <screen>dn: uid=<replaceable>userid</replaceable><co xml:id="co.admin.auth.users.change-pw.uid"/>,ou=People,dc=infra,dc=caasp,dc=local
 changetype: modify
 modify: userPassword
-userPassword: <replaceable>password hash</replaceable><co xml:id="co.auth.users.change-pw.password"/></screen>
+userPassword: <replaceable>password hash</replaceable><co xml:id="co.admin.auth.users.change-pw.password"/></screen>
      <para>
       Make sure to replace all the parameters indicated <replaceable>LIKE
        THIS</replaceable> in the template above as follows:
      </para>
      <calloutlist>
-      <callout arearefs="co.auth.users.change-pw.uid">
+      <callout arearefs="co.admin.auth.users.change-pw.uid">
        <para>
         User ID (UID) of the user.
        </para>
       </callout>
-      <callout arearefs="co.auth.users.change-pw.password">
+      <callout arearefs="co.admin.auth.users.change-pw.password">
        <para>
         The user's new hashed password. Use
         <command>/usr/sbin/slappasswd</command> to generate the hash.
@@ -233,35 +233,35 @@ userPassword: <replaceable>password hash</replaceable><co xml:id="co.auth.users.
 -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f <replaceable>LDIF_FILE</replaceable></command></screen>
    </sect2>
 
-   <sect2 xml:id="auth.group">
+   <sect2 xml:id="sec.admin.auth.group">
     <title>Adding New Groups</title>
     <para>
      Say you have users that you want to grant access to manage a single
      namespace in Kubernetes. To do this, first create your users as mentioned
-     in <xref linkend="auth.users.add"/>. Then create a new group:
+     in <xref linkend="sec.admin.auth.users.add"/>. Then create a new group:
     </para>
-    <example xml:id="ex.auth.group">
+    <example xml:id="ex.admin.auth.group">
      <title>LDIF File to Add a New Group</title>
      <screen>
-dn: cn=<replaceable>group name</replaceable><co xml:id="co.auth.group.cn"/>,ou=Groups,dc=infra,dc=caasp,dc=local
+dn: cn=<replaceable>group name</replaceable><co xml:id="co.admin.auth.group.cn"/>,ou=Groups,dc=infra,dc=caasp,dc=local
 objectclass: top
 objectclass: groupOfUniqueNames
-cn: <replaceable>group name</replaceable><xref linkend="co.auth.group.cn" xrefstyle="select:label nopage"/>
-uniqueMember: uid=<replaceable>member1</replaceable>,<co xml:id="co.auth.group.member"/>ou=People,dc=infra,dc=caasp,dc=local
-uniqueMember: uid=<replaceable>member2</replaceable>,<xref linkend="co.auth.group.member" xrefstyle="select:label nopage"/>ou=People,dc=infra,dc=caasp,dc=local
-uniqueMember: uid=<replaceable>member3</replaceable>,<xref linkend="co.auth.group.member" xrefstyle="select:label nopage"/>ou=People,dc=infra,dc=caasp,dc=local
+cn: <replaceable>group name</replaceable><xref linkend="co.admin.auth.group.cn" xrefstyle="select:label nopage"/>
+uniqueMember: uid=<replaceable>member1</replaceable>,<co xml:id="co.admin.auth.group.member"/>ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=<replaceable>member2</replaceable>,<xref linkend="co.admin.auth.group.member" xrefstyle="select:label nopage"/>ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=<replaceable>member3</replaceable>,<xref linkend="co.admin.auth.group.member" xrefstyle="select:label nopage"/>ou=People,dc=infra,dc=caasp,dc=local
      </screen>
      <para>
       Make sure to replace all the parameters indicated <replaceable>LIKE
        THIS</replaceable> in the template above as follows:
      </para>
      <calloutlist>
-      <callout arearefs="co.auth.group.cn">
+      <callout arearefs="co.admin.auth.group.cn">
        <para>
         The group's name.
        </para>
       </callout>
-      <callout arearefs="co.auth.group.member">
+      <callout arearefs="co.admin.auth.group.member">
        <para>
         Members of the group. Repeat the <literal>uniqueMember</literal>
         attribute for every member of this group.
@@ -279,73 +279,73 @@ uniqueMember: uid=<replaceable>member3</replaceable>,<xref linkend="co.auth.grou
      Next, create a role binding to allow this new LDAP group access in &kube;.
      Create a Kubernetes deployment descriptor like this:
     </para>
-    <example xml:id="ex.auth.group.role">
+    <example xml:id="ex.admin.auth.group.role">
      <title>Kubernetes Role Binding Deployment Descriptor</title>
      <screen># Define a Role and its permissions in &kube;
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: <replaceable>ROLE_NAME</replaceable><co xml:id="co.auth.group.role-name"/>
-  namespace: <replaceable>APPLICABLE_NAMESPACE</replaceable><co xml:id="co.auth.group.role-namespace"/>
+  name: <replaceable>ROLE_NAME</replaceable><co xml:id="co.admin.auth.group.role-name"/>
+  namespace: <replaceable>APPLICABLE_NAMESPACE</replaceable><co xml:id="co.admin.auth.group.role-namespace"/>
 # This set of rules amounts to "allow all"
 rules:
-- apiGroups: [""]<co xml:id="co.auth.group.apigroup"/>
-  resources: ["<replaceable>CONFIGMAP</replaceable>"]<co xml:id="co.auth.group.object"/>
-  resourceNames: ["<replaceable>MY-POD</replaceable>"]<co xml:id="co.auth.group.resnames"/>
-  verbs: ["<replaceable>LIST</replaceable>"]<co xml:id="co.auth.group.function"/>
+- apiGroups: [""]<co xml:id="co.admin.auth.group.apigroup"/>
+  resources: ["<replaceable>CONFIGMAP</replaceable>"]<co xml:id="co.admin.auth.group.object"/>
+  resourceNames: ["<replaceable>MY-POD</replaceable>"]<co xml:id="co.admin.auth.group.resnames"/>
+  verbs: ["<replaceable>LIST</replaceable>"]<co xml:id="co.admin.auth.group.function"/>
 ---
 # Map an LDAP group to this &kube; role
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: <replaceable>ROLE_BINDING_NAME</replaceable><co xml:id="co.auth.group.role-binding-name"/>
-  namespace: <replaceable>APPLICABLE_NAMESPACE</replaceable><xref linkend="co.auth.group.role-namespace" xrefstyle="select:label nopage"/>
+  name: <replaceable>ROLE_BINDING_NAME</replaceable><co xml:id="co.admin.auth.group.role-binding-name"/>
+  namespace: <replaceable>APPLICABLE_NAMESPACE</replaceable><xref linkend="co.admin.auth.group.role-namespace" xrefstyle="select:label nopage"/>
 subjects:
 - kind: Group
-  name: <replaceable>LDAP_GROUP_NAME</replaceable><co xml:id="co.auth.group.ldap-group-name"/>
+  name: <replaceable>LDAP_GROUP_NAME</replaceable><co xml:id="co.admin.auth.group.ldap-group-name"/>
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: Role
-  name: <replaceable>ROLE_NAME</replaceable><xref linkend="co.auth.group.role-name" xrefstyle="select:label nopage"/>
+  name: <replaceable>ROLE_NAME</replaceable><xref linkend="co.admin.auth.group.role-name" xrefstyle="select:label nopage"/>
   apiGroup: rbac.authorization.k8s.io</screen>
      <calloutlist>
-      <callout arearefs="co.auth.group.role-name">
+      <callout arearefs="co.admin.auth.group.role-name">
        <para>
         Name of the new role in &kube;
        </para>
       </callout>
-      <callout arearefs="co.auth.group.role-namespace">
+      <callout arearefs="co.admin.auth.group.role-namespace">
        <para>
         Namespace the new group should be allowed to access. Use
          <literal>default</literal> for &kube;' default namespace
        </para>
       </callout>
-      <callout arearefs="co.auth.group.apigroup">
+      <callout arearefs="co.admin.auth.group.apigroup">
        <para>
         &kube; API groups &mdash; use "" for the core group <literal>rbac.authorization.k8s.io</literal>
        </para>
       </callout>
-      <callout arearefs="co.auth.group.object">
+      <callout arearefs="co.admin.auth.group.object">
        <para>
         &kube; objects/resources e.g. <literal>"configMap"</literal>, <literal>"Pod"</literal>, etc.
        </para>
       </callout>
-      <callout arearefs="co.auth.group.resnames">
+      <callout arearefs="co.admin.auth.group.resnames">
        <para>
         specific named resources, e.g. <literal>"my-pod"</literal>, <literal>"my-config-map"</literal>
        </para>
       </callout>
-      <callout arearefs="co.auth.group.function">
+      <callout arearefs="co.admin.auth.group.function">
        <para>
         Functions as seen in <literal>kubectl</literal> subcommands, e.g. "list", "get", "watch", "update"
        </para>
       </callout>
-      <callout arearefs="co.auth.group.role-binding-name">
+      <callout arearefs="co.admin.auth.group.role-binding-name">
        <para>
         Name of the role binding in &kube;
        </para>
       </callout>
-      <callout arearefs="co.auth.group.ldap-group-name">
+      <callout arearefs="co.admin.auth.group.ldap-group-name">
        <para>
         Name of the corresponding group in LDAP
        </para>

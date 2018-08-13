@@ -4,10 +4,10 @@
   <!ENTITY % entities SYSTEM "entity-decl.ent">
     %entities;
 ]>
-<chapter version="5.0" xml:id="administration"
- xmlns="http://docbook.org/ns/docbook"
- xmlns:xi="http://www.w3.org/2001/XInclude"
- xmlns:xlink="http://www.w3.org/1999/xlink">
+<chapter version="5.0" xml:id="cha.admin"
+  xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xlink="http://www.w3.org/1999/xlink">
  <info>
   <title>Cluster Administration</title>
   <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
@@ -15,7 +15,7 @@
    <dm:translation>yes</dm:translation>
   </dm:docmanager>
  </info>
- <sect1 xml:id="transactional.updates">
+ <sect1 xml:id="sec.admin.transactional-updates">
   <title>Handling Transactional Updates</title>
 
   <para>
@@ -49,19 +49,40 @@
     </para>
    </listitem>
   </itemizedlist>
-
+  
   <para>
-   Transactional updates are managed by the
-   <command>transactional-update</command> script, which is called once a day.
-   The script checks if any updates are available. If there are any updates to
-   be applied, a new snapshot of the root file system is created and the system
-   is updated using the <command>zypper dup</command>. All updates released to
-   this point are applied. The snapshot is then marked as active and will be
-   used after the next reboot of the system. Ensure that the cluster is
-   rebooted as soon as possible after the update installation is complete,
-   otherwise all changes will be lost.
+   Transactional updates are managed by the <command>transactional-update</command> 
+   script, which is called once a day. The script checks if any updates are 
+   available. If there are any updates to be applied, a new snapshot of the root 
+   file system is created in the background and is updated from the release 
+   channels. All updates released to this point are applied. The running 
+   filesystem/machine state is left untouched.
   </para>
-
+  <para>
+   The new snapshot, once completely updated, is then marked as active and will 
+   be used as the new default after the next reboot of the system.
+  </para>
+  
+  <para>
+   &dashboard; will show a list of nodes that have new updates
+   available for use. The cluster administrator then uses &dashboard; to reboot 
+   the nodes to the new snapshots to ensure the health of services and 
+   configuration. &dashboard; uses <command>salt</command> to safely disable 
+   services on the nodes, apply new snapshots, rewrite configurations and then 
+   bring the services and nodes back up.
+  </para>
+  
+  <important>
+   <title>Always Use &dashboard; To Update Nodes</title>
+  <para>
+   It is paramount that you never "hard reboot" nodes in the cluster after 
+   transactional updates. This will omit reconfiguring services and applications
+   and will leave nodes in unhealthy, if not unsusable, states. If you have nodes
+   with pending transactional updates follow
+   <xref linkend="sec.admin.transactional-updates.installation"/>.
+  </para>
+ </important>
+   
   <note>
    <title>General Notes to the Updates Installation</title>
    <para>
@@ -74,14 +95,16 @@
    </para>
   </note>
 
-  <sect2 xml:id="transactional.updates.installation">
-   <title>Manual Installation of Updates</title>
+  <sect2 xml:id="sec.admin.transactional-updates.installation">
+   <title>Applying Updates</title>
    <para>
     After the <command>transactional-update</command> script has run on all
     nodes, &dashboard; displays any nodes in your cluster running outdated
-    software. &dashboard; then enables you to update your cluster directly.
+    software. The updates are only applied after a reboot. For this purpose,
+    &dashboard; enables you to update your cluster directly.
     Follow the next procedure to update your cluster.
    </para>
+ 
    <procedure>
     <title>Updating the Cluster with &dashboard;</title>
     <step>
@@ -147,7 +170,7 @@
    </procedure>
   </sect2>
 
-  <sect2 xml:id="transactional.updates.disabling">
+  <sect2 xml:id="sec.admin.transactional-updates.disabling">
    <title>Disabling Transactional Updates</title>
    <para>
     Even though it is not recommended, you can disable transactional updates by
@@ -156,7 +179,7 @@
 <screen>&prompt.root;<command>systemctl --now disable transactional-update.timer</command></screen>
   </sect2>
  </sect1>
- <sect1 xml:id="ptf.handling">
+ <sect1 xml:id="sec.admin.ptf-handling">
   <title>Handling Program Temporary Fixes</title>
 
   <para>
@@ -191,7 +214,7 @@
 <screen>&prompt.root;<command>transactional-update reboot ptf remove <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
  </sect1>
 
- <sect1 xml:id="commands.node.management">
+ <sect1 xml:id="sec.admin.single-node-managment">
   <title>Commands for Single Node Management</title>
 
   <para>
@@ -199,7 +222,7 @@
    your &cluster_node;s.
   </para>
 
-  <sect2 xml:id="commands.node.management.issue-generator">
+  <sect2 xml:id="sec.admin.single-node-managment.issue-generator">
    <title>The <command>issue-generator</command> Command</title>
    <para>
     On &suse; &mos;, <filename>/etc/issue</filename> is generated by
@@ -242,7 +265,7 @@
     </screen>
   </sect2>
 
-  <sect2 xml:id="commands.node.management.transactional-update">
+  <sect2 xml:id="sec.admin.single-node-managment.transactional-update">
    <title>The <command>transactional-update</command> Command</title>
    <para>
     The <command>transactional-update</command> enables you to install or
@@ -347,7 +370,7 @@
    </variablelist>
   </sect2>
 
-  <sect2 xml:id="commands.node.management.create_autoyast_profile">
+  <sect2 xml:id="sec.admin.single-node-managment.create_autoyast_profile">
    <title>The <command>create_autoyast_profile</command> Command</title>
    <para>
     The <command>create_autoyast_profile</command> command creates an autoyast
@@ -408,8 +431,7 @@
    </variablelist>
   </sect2>
  </sect1>
- 
- <sect1 xml:id="node.management">
+ <sect1 xml:id="sec.admin.node-managment">
   <title>Node Management</title>
   <para>
    After you complete the deployment and you bootstrap the cluster, you may
@@ -418,7 +440,7 @@
    in that case make sure that you do not break the cluster.
   </para>
 
-  <sect2 xml:id="node.management.adding">
+  <sect2 xml:id="sec.admin.node-managment.adding">
    <title>Adding Nodes</title>
    <para>
     You may need to add additional &worker_node;s to your cluster. The
@@ -429,8 +451,7 @@
     <step>
      <para>
       Prepare the node as described in
-      <xref
-       linkend="sec.caasp.installquick.node"/>
+      <xref linkend="sec.deploy.install.iso.node"/>
      </para>
     </step>
     <step>
@@ -487,7 +508,7 @@
    </procedure>
   </sect2>
 
-  <sect2 xml:id="node.management.removing">
+  <sect2 xml:id="sec.admin.node-managment.removing">
    <title>Removing Nodes</title>
    <warning>
     <para>
@@ -637,8 +658,7 @@ entrypoint.sh bundle exec rails runner 'puts Minion.find_by(minion_id: "<replace
   </procedure>
   </sect2>
  </sect1>
-  
- <sect1 xml:id="cluster.monitoring">
+ <sect1 xml:id="sec.admin.cluster-monitoring">
   <title>Cluster Monitoring</title>
 
   <para>
@@ -657,20 +677,18 @@ entrypoint.sh bundle exec rails runner 'puts Minion.find_by(minion_id: "<replace
    <listitem>
     <para>
      By using <emphasis>Heapster</emphasis>, for details refer to
-     <xref
-      linkend="cluster.monitoring.heapster"/>.
+     <xref linkend="sec.admin.cluster-monitoring.heapster"/>.
     </para>
    </listitem>
    <listitem>
     <para>
      By using <emphasis>Grafana</emphasis>, for details refer to
-     <xref
-      linkend="cluster.monitoring.grafana"/>.
+     <xref linkend="sec.admin.cluster-monitoring.grafana"/>.
     </para>
    </listitem>
   </itemizedlist>
 
-  <sect2 xml:id="cluster.monitoring.heapster">
+  <sect2 xml:id="sec.admin.cluster-monitoring.heapster">
    <title>Monitoring with Heapster</title>
    <para>
     <emphasis>Heapster</emphasis> is a tool that collects and interprets
@@ -689,7 +707,7 @@ entrypoint.sh bundle exec rails runner 'puts Minion.find_by(minion_id: "<replace
    </para>
   </sect2>
 
-  <sect2 xml:id="cluster.monitoring.grafana">
+  <sect2 xml:id="sec.admin.cluster-monitoring.grafana">
    <title>Monitoring with Grafana</title>
    <para>
     <emphasis>Grafana</emphasis> is an analytics platform that processes data

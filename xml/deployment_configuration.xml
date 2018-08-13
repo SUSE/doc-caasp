@@ -4,7 +4,7 @@
   <!ENTITY % entities SYSTEM "entity-decl.ent">
     %entities;
 ]>
-<chapter version="5.0" xml:id="configuration"
+<chapter version="5.0" xml:id="cha.configuration"
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -26,7 +26,7 @@
  <para>
   Each configuration stage is described in the following sections.
  </para>
- <sect1 xml:id="installation.configuration">
+ <sect1 xml:id="sec.deploy.configuration">
   <title>Configuration</title>
 
   <para>
@@ -70,7 +70,7 @@
    </varlistentry>
   </variablelist>
  </sect1>
- <sect1 xml:id="cloud-init.configuration">
+ <sect1 xml:id="sec.deploy.cloud-init">
   <title><literal>cloud-init</literal> Configuration</title>
 
   <para>
@@ -108,8 +108,7 @@
   <para>
    More details about the datasources are provided below.
   </para>
-
-  <sect2 xml:id="localdisk.datasource">
+  <sect2 xml:id="sec.deploy.cloud-init.localdisk-datasource">
    <title>The <literal>LocalDisk</literal> Datasource</title>
    <para>
     The <literal>cloud-init</literal> searches for the configuration files:
@@ -119,14 +118,15 @@
    </para>
   </sect2>
 
-  <sect2 xml:id="nocloud.datasource">
+  <sect2 xml:id="sec.deploy.cloud-init.nocloud-datasource">
    <title>The <literal>NoCloud</literal> Datasource</title>
    <para>
     The <literal>NoCloud</literal> datasource enables you to read the
     <literal>cloud-init</literal> configuration without running a network
     service. <literal>cloud-init</literal> searches for the configuration files
-    <filename>meta-data</filename>, <filename>user-data</filename> in the root
-    directory of a local file system formatted as <literal>vfat</literal> or
+    <filename>meta-data</filename>, <filename>user-data</filename>, and 
+    (optional) <filename>vendor-data</filename> in the root directory of a local 
+    file system formatted as <literal>vfat</literal> or
     <literal>iso9660</literal> with a label <literal>cidata</literal>.
     Typically it is an unpartitioned USB stick or disk or a DVD iso.
    </para>
@@ -140,9 +140,133 @@
     <filename>/etc/cloud/cloud.cfg.d/91_kernel_cmdline_url.cfg</filename> and
     it is not overwritten even though the url changes.
    </para>
+   
+   <sect3 xml:id="nocloud.datasource.images">
+    <title>Generating cloud-init images for <literal>NoCloud</literal> datasource</title>
+    <note>
+     <title><command>mkisofs</command> dependecy</title>
+     <para>
+      You need the tool <command>mkisofs</command> to produce the images. 
+      It should be preinstalled &opensuse; Leap and Tumbleweed installations.
+      For other operating systems, please refer to the specific instructions for 
+      the respective distribution.
+     </para>
+     <para>
+      If <command>mkisofs</command> is not available, you can use the nearly 
+      identical <command>genisoimage</command>.
+     </para>
+    </note>
+
+    <para>
+     You can use a local ISO image generated from cloud-init data to help 
+     configuring a cluster that is not hosted in the cloud.
+    </para>
+
+    <para>
+     You will need to create two image files. One that is used to initialize the
+     admin node and one that is used to initialize all worker nodes (and thus the
+     master node). You need to provide a <filename>meta-data</filename> and 
+     <filename>user-data</filename> file per node type.
+    </para>
+       
+    <procedure>
+     <title>Generate cloud-init ISO files</title>
+     <step>
+      <para>
+       Create two directories: <filename>cc-admin</filename> and 
+       <filename>cc-worker</filename>.
+      </para>
+     </step>
+     <step>
+      <para>
+       Create your configuration files as described in:
+      </para>
+       <itemizedlist>
+        <listitem>
+         <para>
+          <xref linkend="sec.deploy.cloud-init.meta-data" />
+         </para>
+        </listitem>
+        
+        <listitem>
+         <para>
+          <xref linkend="sec.deploy.cloud-init.user-data"/>
+         </para>
+        </listitem>
+        
+        <listitem>
+         <para>
+          <xref linkend="sec.deploy.cloud-init.vendor-data"/> (Optional)
+         </para>
+        </listitem>
+       </itemizedlist>
+       <para>
+        The result should be three or more files:
+       </para>
+       <itemizedlist>
+        <listitem>
+         <para>
+          <filename>cc-admin/meta-data</filename> (This file will be reused across 
+          all nodes)
+         </para>
+        </listitem>
+        
+        <listitem>
+         <para>
+          <filename>cc-admin/user-data</filename>
+         </para>
+        </listitem>
+        
+        <listitem>
+         <para>
+          <filename>cc-admin/vendor-data</filename> (Optional)
+         </para>
+        </listitem>
+        
+        <listitem>
+         <para>
+          <filename>cc-worker/user-data</filename>
+         </para>
+        </listitem>
+        
+        <listitem>
+         <para>
+          <filename>cc-worker/vendor-data</filename> (Optional)
+         </para>
+        </listitem>
+       </itemizedlist>
+      </step>
+      
+      <step>
+        <para>
+         Copy <filename>cc-admin/meta-data</filename> to 
+         <filename>cc-worker/</filename>. 
+       </para>
+     </step>
+     <step>
+      <para>
+       Finally, you need to package the respective configurations into two ISO 
+       files. The result of the following commands will be two <literal>iso9660</literal>
+       ISO files with the volume label <literal>cidata</literal> and additional
+      <literal>joliet</literal> metadata.
+      </para>
+      <screen>
+&prompt.user;<command>sudo mkisofs -output cc-admin.img -volid cidata -joliet -rock cc-admin</command> &amp;&amp;
+<command>sudo mkisofs -output cc-worker.img -volid cidata -joliet -rock cc-worker</command>
+      </screen>
+       <para>
+        The files will be called <filename>cc-admin.img</filename> and 
+        <filename>cc-worker.img</filename>. You need to attach these files to 
+        your respective VM as a block device before boot.
+      </para>
+
+     </step>
+    </procedure>
+ 
+   </sect3>
   </sect2>
 
-  <sect2 xml:id="cloud.config.file">
+  <sect2 xml:id="sec.deploy.cloud-init.cloud.cfg">
    <title>The <filename>cloud.cfg</filename> Configuration File</title>
    <para>
     The <filename>cloud.cfg</filename> file is used to define a datasource and
@@ -161,7 +285,7 @@
      # seedfrom: http://my.example.com/&lt;path&gt;/</screen>
   </sect2>
 
-  <sect2 xml:id="meta-data.config.file">
+  <sect2 xml:id="sec.deploy.cloud-init.meta-data">
    <title>The <filename>meta-data</filename> Configuration File</title>
    <para>
     The file <filename>meta-data</filename> is a YAML format file which is
@@ -219,15 +343,14 @@
     </varlistentry>
    </variablelist>
   </sect2>
-
-  <sect2 xml:id="user-data.config.file">
+  <sect2 xml:id="sec.deploy.cloud-init.user-data">
    <title>The <filename>user-data</filename> Configuration File</title>
    <para>
     The configuration file <filename>user-data</filename> is a YAML file used
     to configure users, SSH keys, time zone, etc. Each part of the file is
     described in following sections.
    </para>
-   <sect3 xml:id="user-data.config.header">
+   <sect3 xml:id="sec.deploy.cloud-init.user-data.header">
     <title><filename>user-data</filename> Header</title>
     <para>
      Each <filename>user-data</filename> file must start with
@@ -240,7 +363,7 @@
 debug: True
 disable_root: False</screen>
    </sect3>
-   <sect3 xml:id="user-data.config.runcmd.statements">
+   <sect3 xml:id="sec.deploy.cloud-init.user-data.runcmd-statements">
     <title><literal>runcmd</literal> Statements</title>
     <para>
      In the <filename>user-data</filename> you can use the
@@ -272,13 +395,13 @@ disable_root: False</screen>
       <listitem>
        <para>
         for example, start the NTP server as described in
-        <xref linkend="user-data.config.ntp.server"/>.
+        <xref linkend="sec.deploy.cloud-init.user-data.ntp-server"/>.
        </para>
       </listitem>
      </varlistentry>
     </variablelist>
    </sect3>
-   <sect3 xml:id="user-data.config.authorized_keys">
+   <sect3 xml:id="sec.deploy.cloud-init.user-data.authorized_keys">
     <title>SSH Keys Management</title>
     <para>
      You can configure the behaviour of adding SSH keys to the
@@ -308,7 +431,7 @@ ssh_authorized_keys:
      default user is &rootuser;.
     </para>
    </sect3>
-   <sect3 xml:id="user-data.config.setting.password">
+   <sect3 xml:id="sec.deploy.cloud-init.user-data.password">
     <title>Setting Password</title>
     <para>
      The <filename>user-data</filename> file enables you to set default
@@ -349,7 +472,7 @@ ssh_authorized_keys:
 root:$6$j212wezy$7H/1LT4f9/N3wpgNunhsIqtMj62OKiS3nyNwuizouQc3u7MbYCarYeAHWYPYb2FT.lbioDm2RrkJPb9BZMN1O/
     </screen>
    </sect3>
-   <sect3 xml:id="user-data.config.adding.custom.repository">
+   <sect3 xml:id="sec.deploy.cloud-init.user-data.adding-custom-repository">
     <title>Adding Custom Repository</title>
     <para>
      You can add a custom software repository to your system by using the
@@ -463,7 +586,7 @@ zypper:
      </varlistentry>
     </variablelist>
    </sect3>
-   <sect3 xml:id="user-data.config.setting.timezone">
+   <sect3 xml:id="sec.deploy.cloud-init.user-data.timezone">
     <title>Setting Timezone</title>
     <para>
      You can set a default timezone. Bear in mind that the configured value
@@ -471,7 +594,7 @@ zypper:
     </para>
 <screen>timezone: Europe/Berlin</screen>
    </sect3>
-   <sect3 xml:id="user-data.config.keyboard.hostname">
+   <sect3 xml:id="sec.deploy.cloud-init.user-data.hostname">
     <title>Setting Host name</title>
     <para>
      You can set either a host name or, preferably, a fully-qualified domain
@@ -490,7 +613,7 @@ zypper:
     </para>
 <screen>preserve_hostname: true</screen>
    </sect3>
-   <sect3 xml:id="user-data.config.nameserver">
+   <sect3 xml:id="sec.deploy.cloud-init.user-data.nameserver">
     <title>Configuring Name server</title>
     <para>
      You can configure the server to manage the
@@ -507,7 +630,7 @@ resolv_conf:
     rotate: true
     timeout: 1</screen>
    </sect3>
-   <sect3 xml:id="user-data.config.ntp.server">
+   <sect3 xml:id="sec.deploy.cloud-init.user-data.ntp-server">
     <title>NTP Server Configuration</title>
     <para>
      You can also configure the NTP server. The following snippet configures
@@ -523,7 +646,7 @@ resolv_conf:
 runcmd:
   - /usr/bin/systemctl enable --now ntpd</screen>
    </sect3>
-   <sect3 xml:id="user-data.config.salt.minion">
+   <sect3 xml:id="sec.deploy.cloud-init.user-data.salt-minion">
     <title>&sminion; Configuration</title>
     <para>
      You can use the file to set the &sminion; and its communication with the
@@ -543,7 +666,7 @@ runcmd:
     XXX
    -----END RSA PRIVATE KEY-----</screen>
    </sect3>
-   <sect3 xml:id="caasp.roles.assigment">
+   <sect3 xml:id="sec.deploy.cloud-init.user-data.caasp-roles">
     <title>Assigning Roles to the Cluster Nodes</title>
     <para>
      You need to specify which node of your cluster will be used as the
@@ -577,8 +700,7 @@ runcmd:
     </para>
    </sect3>
   </sect2>
-
-  <sect2 xml:id="vendor-data.config.file">
+  <sect2 xml:id="sec.deploy.cloud-init.vendor-data">
    <title>The <filename>vendor-data</filename> Configuration File</title>
    <para>
     The <filename>vendor-data</filename> is an optional configuration file that
@@ -589,5 +711,6 @@ runcmd:
     The format is the same as used for <filename>user-data</filename>.
    </para>
   </sect2>
+
  </sect1>
 </chapter>

@@ -4,7 +4,7 @@
   <!ENTITY % entities SYSTEM "entity-decl.ent">
     %entities;
 ]>
-<chapter version="5.0" xml:id="cluster.deployment"
+<chapter version="5.0" xml:id="cha.deploy.install"
  xmlns="http://docbook.org/ns/docbook"
  xmlns:xi="http://www.w3.org/2001/XInclude"
  xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -87,15 +87,15 @@
    </para>
   </note>
 
-  <sect1>
+  <sect1 xml:id="sec.deploy.install.iso">
    <title>Installation from ISO images or media</title>
-   <sect2 xml:id="sec.caasp.installquick.admin">
+   <sect2 xml:id="sec.deploy.install.iso.admin">
     <title>Installing the &Admin_Node;</title>
     <para>
      The procedure for installing the &admin_node; is identical whether or not
      you use &ay; for the rest of the cluster.
     </para>
-    <procedure xml:id="pro.caasp.installquick.admin">
+    <procedure xml:id="pro.deploy.install.iso.admin">
      <step>
       <para>
        Connect or insert the &productname; installation media, then reboot the
@@ -449,13 +449,13 @@
     </procedure>
    </sect2>
    
-   <sect2 xml:id="sec.caasp.installquick.conf">
+   <sect2 xml:id="sec.deploy.install.iso.config">
     <title>&Admin_Node; Configuration</title>
     <para>
      Before installing the other nodes, it is necessary to configure the
      &admin_node;.
     </para>
-    <procedure xml:id="pro.caasp.installquick.conf">
+    <procedure xml:id="pro.deploy.install.iso.config">
      <step>
       <para>
        After the &admin_node; has finished booting and you see the login
@@ -841,31 +841,31 @@
       <para>
        Click <guimenu>Next</guimenu> to proceed and install some cluster nodes
        as described in <xref
-        linkend="sec.caasp.installquick.node"/>.
+        linkend="sec.deploy.install.iso.node"/>.
       </para>
      </step>
     </procedure>
    </sect2>
    
-   <sect2 xml:id="sec.caasp.installquick.node">
+   <sect2 xml:id="sec.deploy.install.iso.node">
     <title>Installing &Worker_Node;s</title>
     
     <warning>
      <para>
       Before you can install the &worker_node;s of your new cluster, you need to
       install and configure the &admin_node;. Ensure that you have completed
-      the steps in <xref linkend="sec.caasp.installquick.admin"/> and
-      <xref linkend="sec.caasp.installquick.conf"/>.
+      the steps in <xref linkend="sec.deploy.install.iso.admin"/> and
+      <xref linkend="sec.deploy.install.iso.config"/>.
      </para>
     </warning>
     
-    <sect3 xml:id="sec.caasp.installquick.node.manual">
+    <sect3 xml:id="sec.deploy.install.node.manual">
      <title>Manual Installation</title>
-     <procedure xml:id="pro.caasp.installquick.node.manual">
+     <procedure xml:id="pro.deploy.install.node.manual">
       <step>
        <para>
         Follow the same procedure as for installing the &admin_node; in
-        <xref linkend="sec.caasp.installquick.admin"/>, up
+        <xref linkend="sec.deploy.install.iso.admin"/>, up
         until selection of the <guimenu>System Role</guimenu>.
        </para>
       </step>
@@ -905,14 +905,14 @@
      </procedure>
     </sect3>
     
-    <sect3 xml:id="sec.caasp.installquick.node.ay">
+    <sect3 xml:id="sec.deploy.install.node.ay">
      <title>Automatic Installation Using &ay;</title>
      <para>
       Before installing &worker_node;s with &ay;, you need to obtain the URL
       that points to the &ay; file on the &admin_node;. Generally, this will be
       supplied by the &dashboard; dashboard on the &admin_node;.
      </para>
-     <procedure xml:id="pro.caasp.installquick.node.ay">
+     <procedure xml:id="pro.deploy.install.node.ay">
       <step>
        <para>
         Insert the &productname; DVD into the drive, then reboot the computer
@@ -1008,7 +1008,7 @@
    </sect1>
    
    
-   <sect1 xml:id="sec.caasp.installquick.qcow2">
+   <sect1 xml:id="sec.deploy.install.qcow2">
     <title>Using Pre-installed Disk Images</title>
     <para>
      For building clusters from virtual machines on supported hypervisors, it
@@ -1069,7 +1069,7 @@
      <para>
       Full details of the cloud-init metadata files can be found in the
       Configuration chapter of this manual; for more information, see
-      <xref linkend="cloud-init.configuration"/>.
+      <xref linkend="sec.deploy.cloud-init"/>.
      </para>
      <para>
       As with individual node installation, the &admin_node; needs to be
@@ -1275,7 +1275,7 @@
          address for the admin node of your cluster (here: 
          <literal>10.86.1.72</literal>). Now visit that IP address in your browser. 
          You should see the &dashboard; login page and can continue with 
-         <xref linkend="sec.caasp.installquick.conf"/>.
+         <xref linkend="sec.deploy.install.iso.config"/>.
         </para>
         
         <informalfigure>
@@ -1373,7 +1373,7 @@ caasp3-stack-admin|10.81.1.51
         <step>
          <para>
           Visit the external IP address in your browser. You should see the &dashboard; 
-          login page and can continue with <xref linkend="sec.caasp.installquick.conf"/>.
+          login page and can continue with <xref linkend="sec.deploy.install.iso.config"/>.
          </para>
        </step>
       </procedure>
@@ -1381,7 +1381,7 @@ caasp3-stack-admin|10.81.1.51
      </sect3>
     </sect2>
     
-    <sect2 xml:id="sec.deploy.install.qcow2.procedure.hypervisors">
+    <sect2 xml:id="sec.deploy.install.qcow2.procedure">
      <title>Procedure for Hypervisors</title>
      <para>
       The process is very similar for all hypervisors. The examples in this
@@ -1401,8 +1401,7 @@ caasp3-stack-admin|10.81.1.51
       <literal>caas-worker1</literal>, <literal>caas-worker2</literal> and so
       on.
      </para>
-
-     <sect3>
+     <sect3 xml:id="sec.deploy.install.qcow2.configuration">
       <title>Configuration Files</title>
       <para>
        There are two separate configuration files: <filename>user-data</filename>
@@ -1479,8 +1478,7 @@ suse_caasp:
    role: <replaceable>cluster</replaceable>
    admin_node: <replaceable>caas-admin.example.com</replaceable></screen>
      </sect3>
-
-     <sect3>
+     <sect3 xml:id="sec.deploy.install.qcow2.iso-image">
       <title>Preparing an ISO image</title>
       <para>
        Once you have edited the configuration files with your desired settings,
@@ -1505,7 +1503,7 @@ suse_caasp:
       <screen>&prompt.user;sudo mkisofs -output <replaceable>cc-worker.img</replaceable> -volid <replaceable>cidata</replaceable> -joliet -rock <replaceable>cc-worker</replaceable></screen>
      </sect3>
      
-     <sect3>
+     <sect3 xml:id="sec.deploy.install.qcow2.admin">
       <title>Procedure to Bring Up an &Admin_Node;</title>
       <procedure>
        <step>
@@ -1549,13 +1547,13 @@ suse_caasp:
        </step>
        <step>
         <para>
-         Configure the new &admin_node; as in step <xref linkend="sec.caasp.installquick.conf"/>.         
+         Configure the new &admin_node; as in step <xref linkend="sec.deploy.install.iso.config"/>.
         </para>
        </step>
       </procedure>
      </sect3>
      
-     <sect3>
+     <sect3 xml:id="sec.deploy.install.qcow2.worker">
       <title>Procedure to Bring Up a &Worker_Node;</title>
       <para>
        The first procedure is to generate the configuration files. Unless
@@ -1624,7 +1622,7 @@ suse_caasp:
 
    </sect1>
 
-  <sect1 xml:id="sec.caasp.installquick.bootstrap">
+  <sect1 xml:id="sec.deploy.install.bootstrap">
    <title>Bootstrapping the Cluster</title>
    <para>
     To complete the installation of your &productname; cluster, it is necessary
@@ -1633,7 +1631,7 @@ suse_caasp:
 <!-- cwickert 2017-07-23: FIXME We are already past AutoYaST -->
 <!-- This process leverages &ay; and is (almost) fully automated. -->
    </para>
-   <procedure xml:id="pro.caasp.installquick.bootstrap">
+   <procedure xml:id="pro.deploy.install.bootstrap">
     <step>
      <para>
       Point a web browser to
@@ -1669,7 +1667,7 @@ suse_caasp:
 <!-- cwickert 2017-07-23: FIXME explain relation of internal and external names -->
 <!-- Make sure the <guimenu>Hostname</guimenu> of the master matches the
       name configured as <guimenu>External Kubernetes API server FQDN</guimenu>
-      in <xref linkend="sec.caasp.installquick.conf"/>. If necessary, go
+      in <xref linkend="sec.deploy.install.iso.config"/>. If necessary, go
       <guimenu>Back</guimenu> to chance the setting accordingly. -->
      </para>
     </step>
