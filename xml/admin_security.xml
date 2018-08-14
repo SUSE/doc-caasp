@@ -207,7 +207,7 @@ uniqueMember: uid=<replaceable>USERID</replaceable><co xml:id="co.admin.security
       <title>LDIF File to Change a User's Password</title>
      <screen>dn: uid=<replaceable>userid</replaceable><co xml:id="co.admin.security.users.change-pw.uid"/>,ou=People,dc=infra,dc=caasp,dc=local
 changetype: modify
-modify: userPassword
+replace: userPassword
 userPassword: <replaceable>password hash</replaceable><co xml:id="co.admin.security.users.change-pw.password"/></screen>
      <para>
       Make sure to replace all the parameters indicated <replaceable>LIKE
