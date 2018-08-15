@@ -1,0 +1,695 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<chapter version="5.1" xml:id="cha.admin.software"
+  xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xlink="http://www.w3.org/1999/xlink">
+ <info>
+  <title>Software Management</title>
+  <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
+   <dm:bugtracker/>
+   <dm:translation>yes</dm:translation>
+  </dm:docmanager>
+ </info>
+
+ <sect1 xml:id="sec.admin.software.transactional-updates">
+  <title>Transactional Updates</title>
+
+  <para>
+   For security and stability reasons, the operating system and application
+   should always be up-to-date. While with a single machine you can keep the
+   system up-to-date quite easily by running several commands, in a
+   large-scale cluster the update process can become a real burden. Thus
+   transactional automatic updates have been introduced. Transactional updates
+   can be characterized as follows:
+  </para>
+
+  <itemizedlist>
+   <listitem>
+    <para>
+     They are atomic.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     They do not influence the running system.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     They can be rolled back.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     The system needs to be rebooted to activate the changes.
+    </para>
+   </listitem>
+  </itemizedlist>
+  
+  <para>
+   Transactional updates are managed by the <command>transactional-update</command> 
+   script, which is called once a day. The script checks if any updates are 
+   available. If there are any updates to be applied, a new snapshot of the root 
+   file system is created in the background and is updated from the release 
+   channels. All updates released to this point are applied. The running 
+   filesystem/machine state is left untouched.
+  </para>
+  <para>
+   The new snapshot, once completely updated, is then marked as active and will 
+   be used as the new default after the next reboot of the system.
+  </para>
+  
+  <para>
+   &dashboard; will show a list of nodes that have new updates
+   available for use. The cluster administrator then uses &dashboard; to reboot 
+   the nodes to the new snapshots to ensure the health of services and 
+   configuration. &dashboard; uses <command>salt</command> to safely disable 
+   services on the nodes, apply new snapshots, rewrite configurations and then 
+   bring the services and nodes back up.
+  </para>
+  
+  <important>
+   <title>Always Use &dashboard; To Update Nodes</title>
+  <para>
+   It is paramount that you never "hard reboot" nodes in the cluster after 
+   transactional updates. This will omit reconfiguring services and applications
+   and will leave nodes in unhealthy, if not unsusable, states. If you have nodes
+   with pending transactional updates follow
+   <xref linkend="sec.admin.software.transactional-updates.installation"/>.
+  </para>
+ </important>
+   
+  <note>
+   <title>General Notes to the Updates Installation</title>
+   <para>
+    Only packages that are part of the snapshot of the root file system can be
+    updated. If packages contain files that are not part of the snapshot, the
+    update could fail or break the system.
+   </para>
+   <para>
+    RPMs that require a license to be accepted cannot be updated.
+   </para>
+  </note>
+  
+  <sect2 xml:id="sec.admin.software.transactional-updates.command">
+   <title>The <command>transactional-update</command> Command</title>
+   <important>
+    <title>Only use when requested by SUSE Support</title>
+    <para>
+     This reference for <command>transactional-update</command>
+     should only be used when requested by SUSE Support. Updates are handled by 
+     an automated process and only require user interaction for rebooting of 
+     nodes. 
+    </para>
+   </important>
+   
+   <para>
+    The <command>transactional-update</command> enables you to install or
+    remove updates of your system in an atomic way. The updates are applied all
+    or none of them if any package cannot be installed. Before the update is
+    applied, a snapshot of the system is created in order to restore the
+    previous state in case of a failure.
+   </para>
+
+   <para>
+    If the current root file system is identical to the active root file system
+    (after applying updates and reboot), run cleanup of all old snapshots:
+   </para>
+<screen>&prompt.root;<command>transactional-update cleanup</command></screen>
+   <para>
+    Other options of the command are the following:
+   </para>
+   <variablelist>
+    <varlistentry>
+     <term><literal>up</literal>
+     </term>
+     <listitem>
+      <para>
+       If there are new updates available, a new snapshot is created and
+       <command>zypper up</command> is used to update the snapshot. The
+       snapshot is activated afterwards and is used as the new root file system
+       after reboot.
+      </para>
+<screen>&prompt.root;<command>transactional-update up</command></screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>dup</literal>
+     </term>
+     <listitem>
+      <para>
+       If there are new updates available, a new snapshot is created and
+       <command>zypper dup –no-allow-vendor-change</command> is used to
+       update the snapshot. The snapshot is activated afterwards and is used as
+       the new root file system after reboot.
+      </para>
+<screen>&prompt.root;<command>transactional-update dup</command></screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>patch</literal>
+     </term>
+     <listitem>
+      <para>
+       If there are new updates available, a new snapshot is created and
+       <command>zypper patch</command> is used to update the snapshot. The
+       snapshot is activated afterwards and is used as the new root file system
+       after reboot.
+      </para>
+<screen>&prompt.root;<command>transactional-update patch</command></screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>ptf install</literal>
+     </term>
+     <listitem>
+      <para>
+       The command installs the specified RPMs:
+      </para>
+<screen>&prompt.root;<command>transactional-update ptf install <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>ptf remove</literal>
+     </term>
+     <listitem>
+      <para>
+       The command removes the specified RPMs from the system:
+      </para>
+<screen>&prompt.root;<command>transactional-update ptf remove <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>rollback</literal>
+     </term>
+     <listitem>
+      <para>
+       The command sets the default sub volume. On systems with read-write file
+       system <command>snapper rollback</command> is called. On a read-only
+       file system and without any argument, the current system is set to a new
+       default root file system. If you specify a number, that snapshot is used
+       as the default root file system. On a read-only file system, no
+       additional snapshots are created.
+      </para>
+<screen>&prompt.root;<command>transactional-update rollback <replaceable>SNAPSHOT_NUMBER</replaceable></command></screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>--help</literal>
+     </term>
+     <listitem>
+      <para>
+       The option outputs possible options and subcommands.
+      </para>
+<screen>&prompt.root;<command>transactional-update --help</command></screen>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+  </sect2>
+  
+  <sect2 xml:id="sec.admin.software.transactional-updates.disabling">
+   <title>Disabling Transactional Updates</title>
+   <para>
+    Even though it is not recommended, you can disable transactional updates by
+    issuing the command:
+   </para>
+<screen>&prompt.root;<command>systemctl --now disable transactional-update.timer</command></screen>
+   <note>
+    <title>Disabling transaction update timer is required during upgrade</title>
+    <para>
+     You must disable transactional updates during the upgrade procedure from
+     one version of &productname; to the next.
+    </para>
+   </note>
+  </sect2>
+
+  <sect2 xml:id="sec.admin.software.transactional-updates.installation">
+   <title>Applying Updates</title>
+   <para>
+    After the <command>transactional-update</command> script has run on all
+    nodes, &dashboard; displays any nodes in your cluster running outdated
+    software. The updates are only applied after a reboot. For this purpose,
+    &dashboard; enables you to update your cluster directly.
+    Follow the next procedure to update your cluster.
+   </para>
+
+   <procedure>
+    <title>Updating the Cluster with &dashboard;</title>
+    <step>
+     <para>
+      Login to &dashboard;.
+     </para>
+    </step>
+    <step>
+     <para>
+      If required, click <guimenu>UPDATE ADMIN NODE</guimenu> to start the
+      update.
+     </para>
+     <informalfigure>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="velum_updating.png" width="100%" format="png"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="velum_updating.png" width="100%" format="png"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+    </step>
+    <step>
+     <para>
+      Confirm the update by clicking <guimenu>Reboot to update</guimenu>.
+     </para>
+     <informalfigure>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="velum_reboot_and_update.png" width="100%"
+         format="png"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="velum_reboot_and_update.png" width="100%"
+         format="png"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+    </step>
+    <step>
+     <para>
+      Now you have to wait until the &admin_node; reboots and &dashboard; is
+      available again.
+     </para>
+    </step>
+    <step>
+     <para>
+      Click <guimenu>update all nodes</guimenu> to update &master_node; and
+      &worker_node;s.
+     </para>
+     <informalfigure>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="velum_update_nodes.png" width="100%" format="png"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="velum_update_nodes.png" width="100%" format="png"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+    </step>
+   </procedure>
+  </sect2>
+  
+ </sect1>
+ 
+ <sect1 xml:id="sec.admin.software.patch">
+  <title>Program Temporary Fixes</title>
+
+  <para>
+   Program temporary fixes (PTFs) are available in the &productname;
+   environment. You install them by using the
+   <command>transactional-update</command> script. Typically you invoke the
+   installation of PTFs by running:
+  </para>
+
+<screen>&prompt.root;<command>transactional-update reboot ptf install <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
+
+  <para>
+   The command installs PTF RPMs. The <literal>reboot</literal> option then
+   schedules a reboot after the installation. PTFs are activate only after
+   rebooting of your system.
+  </para>
+
+  <note>
+   <title>Reboot Required</title>
+   <para>
+    If you install or remove PTFs and you call the
+    <command>transactional-update</command> to update the system before reboot,
+    the applied changes by PTFs are lost and need to be done again after
+    reboot.
+   </para>
+  </note>
+
+  <para>
+   In case you need to remove the installed PTFs, use the following command:
+  </para>
+
+ <screen>&prompt.root;<command>transactional-update reboot ptf remove <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
+ </sect1>
+ 
+ <sect1 xml:id="sec.admin.software.upgrade">
+  <title>Upgrade &productname;</title>
+ <para>
+  As &productname; is constantly developed and improved, new versions get
+  released. You are strongly advised to upgrade to a supported release. These
+  upgrades may involve manual intervention.
+ </para>
+ <important>
+  <title>Service Window Required</title>
+  <para>
+   Upgrades may take some time, during which services may be degraded in
+   performance or completely unavailable. Please make sure to plan a service
+   window.
+  </para>
+ </important>
+ <procedure xml:id="pro.admin.upgrade.procedure">
+  <title>General Upgrade Procedure</title>
+  <step>
+   <para>
+    Upgrade the &admin_node;.
+   </para>
+  </step>
+  <step>
+   <para>
+    Manually perform additional upgrade steps of the &admin_node;. These steps
+    are version-specific and described in the following chapters.
+   </para>
+  </step>
+  <step>
+   <para>
+    Upgrade the cluster nodes through &dashboard;.
+   </para>
+  </step>
+ </procedure>
+
+ <sect2 xml:id="sec.admin.software.upgrade.caasp2">
+  <title>Upgrading from &productname; 2</title>
+    
+  <sect3 xml:id="sec.admin.software.upgrade.caasp2.prereq">
+   <title>Ensure All &productname; v2 Updates Are Installed</title>
+   <para>
+    Before you start the upgrade procedure to &productname; v3, you must ensure
+    that all your nodes are running on the latest v2 updates. You can check the
+    <filename>SUSEConnect</filename> package version to see if you are up to date.
+    To do so you will run a <command>salt</command> command to display the
+    package version installed on each node.
+   </para>
+   
+   <screen>
+&prompt.user;<command>docker exec -i  $(docker ps | grep salt-master | awk '{print $1}') \
+salt --batch 10 -P "roles:(admin|kube-(master|minion))" \
+cmd.run "rpm -q SUSEConnect"</command>
+
+Executing run on ['12cda3c374144d74804298bdee4d686c',
+                  '9b6d8d28393045c0914c959d0a5c0e33',
+                  '73b92dd7816147058c3d0fbb67fb18f9',
+                  'admin']
+admin:
+    SUSEConnect-0.3.11-3.15.1.x86_64
+jid:
+    20180809103558881056
+retcode:
+    0
+73b92dd7816147058c3d0fbb67fb18f9:
+    SUSEConnect-0.3.11-3.15.1.x86_64
+jid:
+    20180809103558881056
+retcode:
+    0
+9b6d8d28393045c0914c959d0a5c0e33:
+    SUSEConnect-0.3.11-3.15.1.x86_64
+jid:
+    20180809103558881056
+retcode:
+    0
+12cda3c374144d74804298bdee4d686c:
+    SUSEConnect-0.3.11-3.15.1.x86_64
+jid:
+    20180809103558881056
+retcode:
+    0
+   </screen>
+   
+   <para>
+    If the package version is <literal>0.3.11-3.15.1</literal> (or higher) you
+    have the latest updates from the v2 channel installed.
+   </para>
+  </sect3>
+   
+   <sect3 xml:id="sec.admin.software.upgrade.caasp2.timer">
+    <title>Disable Automatic <literal>transactional-update</literal></title>
+    <para>
+    To begin with the upgrade procedure, you first must disable the automatic
+    transactional update mechanism to avoid conflicts. To do so you must run a
+    <command>salt</command> across the nodes to disable the 
+    <literal>transactional-update.timer</literal>.
+    </para>
+    <screen>
+&prompt.user;<command>docker exec -i $(docker ps | grep salt-master | awk '{print $1}') \
+salt --batch 10 -P "roles:(admin|kube-(master|minion))" \
+cmd.run "systemctl disable --now transactional-update.timer"</command>
+
+Executing run on ['5f6688bbeac94d2ab5c4330dc7043fb2',
+                  'c3afd049edbe43afb4e2e5913a88291b',
+                  '5bf346291a18406290886c2e2f7c3e3f',
+                  'admin']
+
+5bf346291a18406290886c2e2f7c3e3f:
+    Removed symlink /etc/systemd/system/timers.target.wants/transactional-update.timer.
+jid:
+    20180807122220543037
+retcode:
+    0
+admin:
+    Removed symlink /etc/systemd/system/timers.target.wants/transactional-update.timer.
+jid:
+    20180807122220543037
+retcode:
+    0
+c3afd049edbe43afb4e2e5913a88291b:
+    Removed symlink /etc/systemd/system/timers.target.wants/transactional-update.timer.
+jid:
+    20180807122220543037
+retcode:
+    0
+5f6688bbeac94d2ab5c4330dc7043fb2:
+    Removed symlink /etc/systemd/system/timers.target.wants/transactional-update.timer.
+jid:
+    20180807122220543037
+retcode:
+    0
+    </screen>
+    <important>
+    <para>
+     If you use &smtool; or &susemgr; for mirroring channels: Mirror the v3 channels on your server.
+    </para>
+   </important>
+  </sect3>
+   
+   <sect3 xml:id="sec.admin.software.upgrade.caasp2.upgrade">
+    <title>Performing The Upgrade Procedure</title>
+    <para>
+     In the next step you must run the update command across your nodes.
+    </para>
+    <note>
+     <title>Batch size for upgrade</title>
+     <para>
+      In this example we have limited the number of nodes this step will be 
+      performed on to <literal>10 nodes</literal> at a time.
+     </para>
+      
+      <para>
+      This is a precaution to avoid problems on slower network connections.
+      If you are performing this step on a high bandwidth connection (for 
+      example from within the same datacenter as the cluster), you can raise the
+      number of nodes by replacing the value for the (<literal>--batch</literal>)
+      parameter. It is highly recommended not to change this setting.
+     </para>
+    </note>
+    <screen>
+&prompt.user;<command>docker exec -i $(docker ps | grep salt-master | awk '{print $1}') \
+salt --batch <replaceable>10</replaceable> -P "roles:(admin|kube-(master|minion))" \
+cmd.run "transactional-update salt migration -n" \
+| tee transactional-update-migration.log</command>
+
+Executing run on ['5f6688bbeac94d2ab5c4330dc7043fb2',
+                  'c3afd049edbe43afb4e2e5913a88291b',
+                  '5bf346291a18406290886c2e2f7c3e3f',
+                  'admin']
+
+5bf346291a18406290886c2e2f7c3e3f:
+    
+    
+    Executing 'zypper --root /tmp/tmp.vbaqUwrLIh --non-interactive  refresh'
+    
+    Retrieving repository 'SUSE-CAASP-ALL-Pool' metadata [...done]
+    Building repository 'SUSE-CAASP-ALL-Pool' cache [....done]
+    Retrieving repository 'SUSE-CAASP-ALL-Updates' metadata [....done]
+    Building repository 'SUSE-CAASP-ALL-Updates' cache [....done]
+    All repositories have been refreshed.
+    Upgrading product SUSE CaaS Platform 3.0 x86_64.
+
+[ SNIP ... ]
+
+    done
+jid:
+    20180807122253512832
+retcode:
+    0
+    </screen>
+    <para>
+     During the procedure the nodes will be switched to the new release channel
+     for v3, available updates are downloaded and installed, services and 
+     applications are reconfigured and brought up in a orderly fashion.
+    </para>
+    <para>
+     This operation will produce a lot of output for each node. The entire output
+     is mirrored to a log file <filename>transactional-update-migration.log</filename>
+     to the current working directory. This log file can be very helpful should
+     any of the update operations fail.
+    </para>
+   </sect3>
+   
+   <sect3 xml:id="sec.admin.software.upgrade.caasp2.reboot">
+    <title>Reboot cluster nodes from &dashboard;</title>
+    <para>
+     To complete the procedure, you must reboot the cluster nodes. To do this 
+     properly, use &dashboard; to restart the nodes.
+    </para>
+    <procedure>
+     <step>
+      <para>
+       Log in to &dashboard;.
+      </para>
+     </step>
+     <step>
+      <para>
+       Update the Admin node as described in 
+       <xref linkend="sec.admin.software.transactional-updates.installation" />.
+      </para>
+     </step>
+     <step>
+      <para>
+       Update the remaining nodes as described in 
+       <xref linkend="sec.admin.software.transactional-updates.installation" />.
+      </para>
+     </step>
+    </procedure>
+   </sect3>
+  
+  <sect3 xml:id="sec.admin.software.upgrade.caasp2.troubleshooting">
+   <title>Troubleshooting</title>
+   <para>
+    In case the upgrade fails, please perform the support data collection by 
+    running <command>supportconfig</command> on the affected nodes. Provide the 
+    resulting files including the <filename>transactional-update-migration.log</filename>
+    to SUSE Support.
+   </para>
+  </sect3>
+ </sect2>
+ </sect1>
+ 
+ <sect1 xml:id="sec.admin.software.install">
+  <title>Additional Software Installation</title>
+  <para>
+   Once your cluster is ready, you may want to deploy additional software
+   that is not installed on &productname; by default. This chapter provides
+   instructions on how to install and configure &helm;, the &kube; package
+   manager.
+  </para>
+
+  <sect2 xml:id="sec.admin.software.helm">
+   <title>Deploying &helm; and &tiller;</title>
+   <para>
+    &helm; has two parts: &helm; is the client and &tiller; is the server component.
+    &helm; runs on your remote workstation that has access to your cluster, and
+    &tiller; is installed as a container on &productname; when you run &dashboard;
+    for the first time. (See <xref linkend="sec.deploy.install.iso.config"/>.)
+   </para>
+
+   <para>
+    You should match the &helm; version with the version of &tiller;
+    that is running on your cluster. The &tiller; binary cannot report its
+    version, and you need the version that is packaged inside the &tiller;
+    container. Run the following command from your workstation to query the
+    logs:
+   </para>
+   <screen>
+&prompt.root;<command>kubectl logs -l name=tiller --namespace=kube-system | grep "Starting &tiller;"</command>
+[main] 2018/04/04 16:48:27 Starting &tiller; v2.6.1 (tls=false)
+   </screen>
+   <para>
+    If the log gets overwritten and loses this information, the following command
+    queries the <command>rpm</command> package manager inside the container. This
+    works only on &productname;/&scf; installations:
+   </para>
+<screen>&prompt.root;<command>kubectl exec -it $(kubectl get pods -n kube-system | awk '/tiller/{print$1}') \
+-n kube-system -- rpm -q helm</command>
+helm-2.6.1-1.6.x86_64
+   </screen>
+
+   <para>
+    If the Linux distribution on your workstation doesn't provide the correct
+    &helm; version, or you are using some other platform, see the
+    <link xlink:href="https://docs.helm.sh/using_helm/#quickstart"> &helm; Quickstart Guide</link>
+    for installation instructions and basic usage examples. Download the matching
+    &helm; binary into any directory that is in your PATH on your workstation,
+    such as your <filename>~/bin</filename> directory. Then initialize just the
+    client part:
+   </para>
+   <screen>&prompt.user;<command>helm init --client-only</command></screen>
+
+   <para>
+    The &tiller; version that ships with &productname; is supported by &suse;. While
+    &suse; does not provide support for third-party &helm; charts, you can easily
+    use them if necessary.
+   </para>
+  </sect2>
+
+ <sect2 xml:id="sec.admin.software.helm.installing-heapster">
+  <title>Example: Installing heapster</title>
+  <important>
+   <para>
+    By default, <literal>tiller</literal> will be installed and you only need to
+     initialize data for it. Use the <literal>--client-only</literal> parameter.
+   </para>
+  </important>
+    <procedure>
+     <title>Installation of heapster</title>
+     <para>
+      By default, the chart repository for helm will not be known to the system.
+      You must perform <command>helm init</command> to initialize the necessary
+      repository files and then refresh the information using <command>helm repo
+      update</command>.
+
+      After that, you can install <literal>heapster</literal> from the &kube;
+      helm charts repository.
+     </para>
+     <step>
+     <para>
+      (On CaaSP Admin Node) Initialize helm repo data.
+     </para>
+     <screen>&prompt.root;<command>helm init --client-only</command>
+Creating /root/.helm/repository
+Creating /root/.helm/repository/cache
+Creating /root/.helm/repository/local
+Creating /root/.helm/plugins
+Creating /root/.helm/starters
+Creating /root/.helm/repository/repositories.yaml
+Adding stable repo with URL: https://kubernetes-charts.storage.googleapis.com
+Adding local repo with URL: http://127.0.0.1:8879/charts
+$HELM_HOME has been configured at /root/.helm.
+Not installing Tiller due to 'client-only' flag having been set
+Happy Helming!</screen>
+   </step>
+     <step>
+      <para>Install <literal>heapster</literal> from stable/heapster &kube;
+      charts repository</para>
+<screen>&prompt.root;<command>helm install --name heapster-default --namespace=kube-system stable/heapster \
+--version=0.2.7 --set rbac.create=true</command></screen>
+     </step>
+     <step>
+      <para>
+       Verify that <literal>heapster</literal> was deployed successfully.
+      </para>
+<screen>&prompt.root;<command>helm list | grep heapster</command>
+heapster-default  1  Fri Jun 29 10:48:45 2018  DEPLOYED  heapster-0.2.7  kube-system</screen>
+     </step>
+    </procedure>
+  </sect2>
+ </sect1>
+
+</chapter>
