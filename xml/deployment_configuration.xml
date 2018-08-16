@@ -27,7 +27,7 @@
   Each configuration stage is described in the following sections.
  </para>
  <sect1 xml:id="sec.deploy.configuration">
-  <title>Configuration</title>
+  <title>Default Configuration Values</title>
 
   <para>
    The defaults for the first stage configuration are the following:
@@ -35,43 +35,43 @@
 
   <variablelist>
    <varlistentry>
-    <term>timezone</term>
+    <term>Timezone</term>
     <listitem>
      <para>
-      is set to <emphasis>UTC</emphasis> by default, but can be changed by
-      <literal>cloud-init</literal>.
+      The timezone is set to <literal>UTC</literal> by default, but can
+      be changed by <command>cloud-init</command>.
      </para>
     </listitem>
    </varlistentry>
    <varlistentry>
-    <term>keyboard</term>
+    <term>Keyboard Layout</term>
     <listitem>
      <para>
-      is set to <emphasis>us</emphasis> by default, but can be changed during
-      the installation process.
+      The keyboard layout is set to <literal>US</literal> by default,
+      but can be changed during the installation process.
      </para>
     </listitem>
    </varlistentry>
    <varlistentry>
-    <term>locale</term>
+    <term>Locale</term>
     <listitem>
      <para>
-      is set to <emphasis>en_US.utf8</emphasis> by default, but can be changed
-      by <literal>cloud-init</literal>.
+      The locale is set to <literal>en_US.utf8</literal> by default,
+      but can be changed by <command>cloud-init</command>.
      </para>
-     <note>
+     <important>
       <para>
        Note that &productname; does not support the full range of locales that
-       are available in &sle;. Because of this, it is not recommended to change
+       are available in &sle;. Because of this, we do recommend to not change
        the locale.
       </para>
-     </note>
+     </important>
     </listitem>
    </varlistentry>
   </variablelist>
  </sect1>
  <sect1 xml:id="sec.deploy.cloud-init">
-  <title><command>cloud-init</command> Configuration</title>
+  <title>Customizing Configuration with <command>cloud-init</command></title>
 
   <para>
    <command>cloud-init</command> is a tool that helps customizing an
@@ -105,8 +105,8 @@
     <listitem>
      <para>
       Second, <command>cloud-init</command> tries to read the
-      configuration from a local block device, for example an USB stick
-      or DVD. For details, see <xref
+      configuration from a local block device, for example an USB stick,
+      DVD or virtual disk. For details, see <xref
       linkend="sec.deploy.cloud-init.nocloud-datasource" />.
      </para>
     </listitem>
@@ -295,10 +295,8 @@
        ISO files with the volume label <literal>cidata</literal> and additional
       <literal>joliet</literal> metadata.
       </para>
-      <screen>
-&prompt.user;<command>sudo mkisofs -output cc-admin.img -volid cidata -joliet -rock cc-admin</command>
-&prompt.user;<command>sudo mkisofs -output cc-worker.img -volid cidata -joliet -rock cc-worker</command>
-      </screen>
+<screen>&prompt.user;<command>sudo mkisofs -output cc-admin.img -volid cidata -joliet -rock cc-admin</command>
+&prompt.user;<command>sudo mkisofs -output cc-worker.img -volid cidata -joliet -rock cc-worker</command></screen>
        <para>
         The files will be called <filename>cc-admin.img</filename> and 
         <filename>cc-worker.img</filename>. You need to attach these files to 
@@ -314,9 +312,10 @@
   <sect2 xml:id="sec.deploy.cloud-init.cloud.cfg">
    <title>The <filename>cloud.cfg</filename> Configuration File</title>
    <para>
-    The <filename>cloud.cfg</filename> file is used to define a datasource and
-    the locations of the other required configuration files. Use the
-    <literal>#cloud-config</literal> syntax when defining the content.
+    The <filename>/etc/cloud/cloud.cfg</filename> file is used to
+    define a datasource and the locations of the other required
+    configuration files. Use the <literal>#cloud-config</literal>
+    syntax when defining the content.
    </para>
    <para>
     An example with <literal>NoCloud</literal> datasource follows:
