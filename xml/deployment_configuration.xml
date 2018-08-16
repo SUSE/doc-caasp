@@ -133,12 +133,13 @@
    <para>
     Alternatively you can specify a remote location of the
     <filename>cloud.cfg</filename>, but you have to configure network first,
-    e.g. by using local configuration files. The url is specified during boot
-    time and must be in the format:
+    for example by using local configuration files. The url is specified as a boot
+    parameter and must be in the format:
     <literal>cloud-init-url=http://<replaceable>hostname.domain</replaceable>/cloud.cfg</literal>.
     The content of the passed url is copied to
     <filename>/etc/cloud/cloud.cfg.d/91_kernel_cmdline_url.cfg</filename> and
-    it is not overwritten even though the url changes.
+    it is not overwritten even though the url changes. For details about
+    boot parameters, see <link xlink:href="https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_startup.html" />.
    </para>
    
    <sect3 xml:id="nocloud.datasource.images">
@@ -164,8 +165,8 @@
 
     <para>
      You will need to create two image files. One that is used to initialize the
-     admin node and one that is used to initialize all worker nodes (and thus the
-     master node). You need to provide a <filename>meta-data</filename> and 
+     admin node and one that is used to initialize the master and worker
+     nodes. You need to provide a <filename>meta-data</filename> and 
      <filename>user-data</filename> file per node type.
     </para>
        
@@ -251,8 +252,8 @@
       <literal>joliet</literal> metadata.
       </para>
       <screen>
-&prompt.user;<command>sudo mkisofs -output cc-admin.img -volid cidata -joliet -rock cc-admin</command> &amp;&amp;
-<command>sudo mkisofs -output cc-worker.img -volid cidata -joliet -rock cc-worker</command>
+&prompt.user;<command>sudo mkisofs -output cc-admin.img -volid cidata -joliet -rock cc-admin</command>
+&prompt.user;<command>sudo mkisofs -output cc-worker.img -volid cidata -joliet -rock cc-worker</command>
       </screen>
        <para>
         The files will be called <filename>cc-admin.img</filename> and 
