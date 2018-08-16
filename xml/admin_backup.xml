@@ -15,23 +15,242 @@
    <dm:translation>yes</dm:translation>
   </dm:docmanager>
  </info>
+ 
+ <sect1 xml:id="sec.admin.backup.about">
+  <title>About &productname; Backup</title>
+  <para>
+   Due to the nature of &kube; and container technology in general (and thus 
+   &productname;), backup and restore procedures work very differently than with
+   "stateful" infrastructure.
+  </para>
+  <para>
+   A &productname; backup consists of a few basic components that are then
+   dynamically recombined to produce a cluster that is identical in functionality.
+   This is not compatible with a 1:1 backup and restore approach.
+  </para>
+  <para>
+   The backup consists of:
+   
+  </para>
+  
+  <itemizedlist>
+   <listitem>
+    <para>
+     The &dashboard; database from the &productname; admin node.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     The cluster configuration state from <literal>etcd</literal>.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     External "stateful" data stores (not covered in these instructions).
+    </para>
+   </listitem>
+  </itemizedlist>
+  
+   <para>
+   It means that the internal IDs for machines, applications and services will
+   change. It also means that the components for your deployments are likely
+   to be deployed to different nodes than before. If any external services
+   or implementations rely on internal IDs (for example: a specific container ID)
+   these must be adjusted after restoration of a cluster.
+  </para> 
+ </sect1>
 
-<sect1 xml:id="sec.admin.backup">
- <title>Backup</title>
- <para>
- </para>
-</sect1> 
+ <sect1 xml:id="sec.admin.backup">
+  <title>Backup</title>
+  <para>
+   
+  </para>
+  
+  <sect2 xml:id="sec.admin.backup.admin">
+   <title>Backup Admin Node And &dashboard; Database</title>
+   <para>
+    First you must backup the configuration and main MariaDB database for the 
+    Admin node.
+    </para>
+<screen>
+&prompt.root;export ADMIN_NODE=$(awk -F\" '/dashboardExternalHost/ {print $4}' &lt; environment.json)
 
-<sect1 xml:id="sec.admin.restore">
- <title>Restore</title>
- <para>
- </para>
-</sect1>
+ssh -T $ADMIN_NODE &lt;&lt;-'ENDSSH'
+docker exec $(docker ps -qf name="velum-mariadb") \
+mysqldump --password=$(cat /var/lib/misc/infra-secrets/mariadb-root-password) velum_production \
+| gzip &gt; /var/lib/misc/infra-secrets/velum-backup.sql.gz \
+ENDSSH
 
-<sect1 xml:id="sec.admin.recovery">
- <title>Disaster Recovery</title>
- <para>
- </para>
-</sect1>
+ssh -T $ADMIN_NODE \
+tar czf - -C / var/lib/misc \
+etc/salt/pki \
+etc/pki \
+usr/share/caasp-container-manifests \
+usr/share/salt/kubernetes \
+&gt; backup-CaaSP-admin-node.tgz
+   </screen> 
+  </sect2>
+  
+  <sect2 xml:id="sec.admin.backup.etcd">
+   <title>Backup <literal>etcd</literal></title>
+   <para>
+    </para>
+<screen>
+# set -a
+# source /etc/sysconfig/etcdctl
+# etcdctl member list
+</screen>
+
+<screen>
+ # etcdctl member list
+8bef9c9ac28aa50e: name=d5e33fd8fa954a89aa3ddd12937c08e5 peerURLs=https://d5e33fd8fa954a89aa3ddd12937c08e5.infra.caasp.local:2380 clientURLs=https://d5e33fd8fa954a89aa3ddd12937c08e5.infra.caasp.local:2379 isLeader=false
+e69de3a81c5588dd: name=627c1595c5e845c992d34613de46cbc6 peerURLs=https://627c1595c5e845c992d34613de46cbc6.infra.caasp.local:2380 clientURLs=https://627c1595c5e845c992d34613de46cbc6.infra.caasp.local:2379 isLeader=true
+f1f4b14cf8a8ecad: name=720d94b1c5924afd828cf236d7e1bfe6 peerURLs=https://720d94b1c5924afd828cf236d7e1bfe6.infra.caasp.local:2380 clientURLs=https://720d94b1c5924afd828cf236d7e1bfe6.infra.caasp.local:2379 isLeader=false
+</screen>
+   
+ 
+    <screen>
+# cp -p /etc/sysconfig/etcd /tmp/etcd-`date +%F`
+# cp -p /etc/sysconfig/etcdctl /tmp/etcd-`date +%F`
+# cp -p /etc/pki/trust/anchors/SUSE_CaaSP_CA.crt /tmp/etcd-`date +%F`/SUSE_CaaSP_CA.crt
+# cp -p /etc/pki/minion.crt /tmp/etcd-`date +%F`/minion.crt
+# cp -p /etc/pki/minion.key /tmp/etcd-`date +%F`/minion.key
+    </screen>
+   
+   <para>
+   </para>
+    <screen>
+# cd /tmp/etcd-`date +%F`
+# tar -cvzf /tmp/etcd-`date +%F`.tar.gz *
+    </screen>
+    
+    <sect3 xml:id="sec.admin.backup.etcd.etcdctl">
+     <title>Backup using <literal>etcdctl</literal></title>
+     <para>
+      
+     </para>
+ <screen>&prompt.user;systemctl stop etcd
+ etcdctl --debug backup --data-dir=/var/lib/etcd/ --backup-dir=/tmp/etcd-`date +%F`
+ cp -p /var/lib/etcd/member/snap/db /tmp/etcd-`date +%F`/member/snap/
+ chown -R etcd:etcd  /tmp/etcd-`date +%F`/*
+ </screen>
+    </sect3>
+    
+    <sect3 xml:id="sec.admin.backup.etcd.btrfs">
+     <title>Backup using <literal>btrfs</literal> snapshot</title>
+     <para>
+      btrfs subvolume snapshot /var/lib/etcd /tmp/etcd-`date +%F`
+     </para>
+    </sect3>
+    
+  </sect2>
+ </sect1> 
+
+ <sect1 xml:id="sec.admin.restore.admin">
+  <title>Restore</title>
+  
+  <sect2 xml:id="sec.admin.restore.rebuild">
+   <title>Rebuild Admin Node</title>
+     
+  <sect3 xml:id="sec.admin.restore.snapshot">
+   <title>Rebuild Admin Node From Snapshot</title>
+   <para>
+    Make sure the node has the same fqdn as before.
+     - a snapshot of the original admin vm before initial bootstrap (virsh snapshot-create caasp-admin-node)
+     - a restore of that very snapshot (virsh snapshot-revert --current caasp-admin-node)
+   </para>
+  </sect3>
+  
+  <sect3 xml:id="sec.admin.restore.scratch">
+   <title>Rebuild Admin Node From Scratch</title>
+   <para>
+    Make sure the node has the same fqdn as before. (basically use a cname dns record for the node in the first place)
+     - boot a fresh admin node
+     - altered the DNS record for the admin node to point to the replacement now
+   </para>
+  </sect3>
+  
+ </sect2>
+  
+  <sect2 xml:id="sec.admin.restore.admin.node">
+   <title>Restore &dashboard; Database</title>
+   <para>
+    
+   </para>
+<screen>&prompt.root;ssh -T $ADMIN_NODE tar xzf - --exclude='mariadb-root-password' -C / &lt; backup-CaaSP-admin-node.tgz 2>/dev/null
+  ssh -T $ADMIN_NODE &lt;&lt;-'ENDSSH'
+  zcat /var/lib/misc/infra-secrets/velum-backup.sql.gz | docker exec -i $(docker ps -qf name="velum-mariadb") mysql --password=$(cat /var/lib/misc/infra-secrets/mariadb-root-password) velum_production
+  ENDSSH
+  ssh -T $ADMIN_NODE reboot
+   </screen>
+  </sect2>
+  
+  <sect2 xml:id="sec.admin.restore.etcd">
+   <title>Restore <literal>etcd</literal></title>
+   <para>
+    
+   </para>
+  </sect2>
+ </sect1>
+ 
+ <sect1 xml:id="sec.admin.validate">
+  <title>Validate Restore Procedure</title>
+  
+  <sect2 xml:id="sec.admin.validate.etcd">
+   <title>Validate <literal>etcd</literal> service</title>
+  <para>
+   
+  </para>
+   <screen>
+# source /etc/sysconfig/etcdctl
+# etcdctl cluster-health
+Example output:
+member e69de3a81c5588dd is healthy: got healthy result from https://627c1595c5e845c992d34613de46cbc6.infra.caasp.local:2379
+cluster is healthy
+
+# etcdctl member list
+Example output:
+e69de3a81c5588dd: name=627c1595c5e845c992d34613de46cbc6 peerURLs=https://627c1595c5e845c992d34613de46cbc6.infra.caasp.local:2380 clientURLs=https://627c1595c5e845c992d34613de46cbc6.infra.caasp.local:2379 isLeader=true
+
+8. Prepare and add more nodes to the cluster
+
+On new node you have to restore or generate following config files:
+
+    /etc/sysconfig/etcd
+
+    /etcd/sysconfig/etcdctl
+
+This files can be copied from first restored nodes, but you have change ETCD_NAME in all places with ETCD_NAME from new machine. ETCD_NAME it is /etc/machine-id
+
+Next step is to restore or sign new certificates for this new node
+
+    /etc/pki/trust/anchors/SUSE_CaaSP_CA.crt
+
+    /etc/pki/minion.crt
+
+    /etc/pki/minion.key
+
+9. Add new node to the cluster
+
+Get ETCD_NAME of new node, it can be read from /etc/macine-id file and run following command on restored first etcd node
+
+# etcdctl member add &lt;NEW-MACHINE-ID&gt; https://&lt;NEW-MACHINE-ID&gt;.&lt;LOCAL-DOMAIN&gt;:2380
+
+For example
+# etcdctl member add d5e33fd8fa954a89aa3ddd12937c08e5 https://d5e33fd8fa954a89aa3ddd12937c08e5.infra.caasp.local:2380
+
+And example output should be
+
+Added member named d5e33fd8fa954a89aa3ddd12937c08e5 with ID 4e5c6003ee1b53d5 to cluster
+   </screen>
+  </sect2>
+ </sect1>
+
+ <sect1 xml:id="sec.admin.recovery">
+  <title>Disaster Recovery</title>
+  <para>
+   Not yet described.
+  </para>
+ </sect1>
  
 </chapter>
