@@ -755,6 +755,38 @@ runcmd:
     The format is the same as used for <filename>user-data</filename>.
    </para>
   </sect2>
-
  </sect1>
+
+ <sect1 xml:id="sec.configuration.suseconnect">
+  <title>Registering Node at &scc;, &smt; or &rmt;</title>
+  <para>
+   To register a node at the &scc;, &rmtool; (&rmt;) or &smtool;
+   (&smt;), use <command>SUSEConnect</command>. This can be necessary
+   if you want to install updates on your node but did not register
+   during the installation as described in <xref
+   linkend="sec.deploy.install.iso.admin" />.
+  </para>
+  <para>
+   You can also use <command>SUSEConnect</command> to switch from &scc;
+   to a local &rmt; or &smt; server.
+  </para>
+  <para>
+   To register a node at the &scc; and for listing available products, use
+  </para>
+<screen>&prompt.root;<command>SUSEConnect -r REGISTRATION_CODE</command>
+&prompt.root;<command>SUSEConnect --list-extensions</command></screen>
+  <para>
+   Use the displayed commands to enable the required &productname;
+   repositories.
+  </para>
+  <para>
+   If you want to register your node at a &smt; server, refer to the
+   <emphasis>SMT Guide</emphasis> at <link xlink:href="https://www.suse.com/documentation/sles-12/book_smt/data/book_smt.html"/>.
+  </para>
+  <para>
+   If you want to register your node at a &rmt; server, refer to the
+   <emphasis>RMT Guide</emphasis> at <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/book_rmt.html"/>.
+  </para>
+ </sect1>
+
 </chapter>
