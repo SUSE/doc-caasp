@@ -95,33 +95,42 @@ usr/share/salt/kubernetes \
    <title>Backup <literal>etcd</literal></title>
    <para>
     </para>
-<screen>
-# set -a
-# source /etc/sysconfig/etcdctl
-# etcdctl member list
+<screen>&prompt.user;
+set -a
+source /etc/sysconfig/etcdctl
+etcdctl member list
 </screen>
 
 <screen>
- # etcdctl member list
-8bef9c9ac28aa50e: name=d5e33fd8fa954a89aa3ddd12937c08e5 peerURLs=https://d5e33fd8fa954a89aa3ddd12937c08e5.infra.caasp.local:2380 clientURLs=https://d5e33fd8fa954a89aa3ddd12937c08e5.infra.caasp.local:2379 isLeader=false
-e69de3a81c5588dd: name=627c1595c5e845c992d34613de46cbc6 peerURLs=https://627c1595c5e845c992d34613de46cbc6.infra.caasp.local:2380 clientURLs=https://627c1595c5e845c992d34613de46cbc6.infra.caasp.local:2379 isLeader=true
-f1f4b14cf8a8ecad: name=720d94b1c5924afd828cf236d7e1bfe6 peerURLs=https://720d94b1c5924afd828cf236d7e1bfe6.infra.caasp.local:2380 clientURLs=https://720d94b1c5924afd828cf236d7e1bfe6.infra.caasp.local:2379 isLeader=false
+&prompt.user;etcdctl member list
+8bef9c9ac28aa50e: name=d5e33fd8fa954a89aa3ddd12937c08e5 
+                  peerURLs=https://d5e33fd8fa954a89aa3ddd12937c08e5.infra.caasp.local:2380 
+                  clientURLs=https://d5e33fd8fa954a89aa3ddd12937c08e5.infra.caasp.local:2379 
+                  isLeader=false
+e69de3a81c5588dd: name=627c1595c5e845c992d34613de46cbc6 
+                  peerURLs=https://627c1595c5e845c992d34613de46cbc6.infra.caasp.local:2380 
+                  clientURLs=https://627c1595c5e845c992d34613de46cbc6.infra.caasp.local:2379 
+                  isLeader=true
+f1f4b14cf8a8ecad: name=720d94b1c5924afd828cf236d7e1bfe6 
+                  peerURLs=https://720d94b1c5924afd828cf236d7e1bfe6.infra.caasp.local:2380 
+                  clientURLs=https://720d94b1c5924afd828cf236d7e1bfe6.infra.caasp.local:2379 
+                  isLeader=false
 </screen>
    
  
-    <screen>
-# cp -p /etc/sysconfig/etcd /tmp/etcd-`date +%F`
-# cp -p /etc/sysconfig/etcdctl /tmp/etcd-`date +%F`
-# cp -p /etc/pki/trust/anchors/SUSE_CaaSP_CA.crt /tmp/etcd-`date +%F`/SUSE_CaaSP_CA.crt
-# cp -p /etc/pki/minion.crt /tmp/etcd-`date +%F`/minion.crt
-# cp -p /etc/pki/minion.key /tmp/etcd-`date +%F`/minion.key
+    <screen>&prompt.user;
+cp -p /etc/sysconfig/etcd /tmp/etcd-`date +%F`
+cp -p /etc/sysconfig/etcdctl /tmp/etcd-`date +%F`
+cp -p /etc/pki/trust/anchors/SUSE_CaaSP_CA.crt /tmp/etcd-`date +%F`/SUSE_CaaSP_CA.crt
+cp -p /etc/pki/minion.crt /tmp/etcd-`date +%F`/minion.crt
+cp -p /etc/pki/minion.key /tmp/etcd-`date +%F`/minion.key
     </screen>
    
    <para>
    </para>
-    <screen>
-# cd /tmp/etcd-`date +%F`
-# tar -cvzf /tmp/etcd-`date +%F`.tar.gz *
+    <screen>&prompt.user;
+cd /tmp/etcd-`date +%F`
+tar -cvzf /tmp/etcd-`date +%F`.tar.gz *
     </screen>
     
     <sect3 xml:id="sec.admin.backup.etcd.etcdctl">
@@ -129,11 +138,11 @@ f1f4b14cf8a8ecad: name=720d94b1c5924afd828cf236d7e1bfe6 peerURLs=https://720d94b
      <para>
       
      </para>
- <screen>&prompt.user;systemctl stop etcd
- etcdctl --debug backup --data-dir=/var/lib/etcd/ --backup-dir=/tmp/etcd-`date +%F`
- cp -p /var/lib/etcd/member/snap/db /tmp/etcd-`date +%F`/member/snap/
- chown -R etcd:etcd  /tmp/etcd-`date +%F`/*
- </screen>
+<screen>&prompt.user;systemctl stop etcd
+etcdctl --debug backup --data-dir=/var/lib/etcd/ --backup-dir=/tmp/etcd-`date +%F`
+cp -p /var/lib/etcd/member/snap/db /tmp/etcd-`date +%F`/member/snap/
+chown -R etcd:etcd  /tmp/etcd-`date +%F`/*
+     </screen>
     </sect3>
     
     <sect3 xml:id="sec.admin.backup.etcd.btrfs">
@@ -188,8 +197,48 @@ f1f4b14cf8a8ecad: name=720d94b1c5924afd828cf236d7e1bfe6 peerURLs=https://720d94b
   <sect2 xml:id="sec.admin.restore.etcd">
    <title>Restore <literal>etcd</literal></title>
    <para>
-    
+
    </para>
+   
+   <screen>
+    1. Backup can be restored on node with this same FQDN name like previous one
+
+2. Extract tarball file into /var/lib/etcd directory
+
+# rm /var/lib/etcd/* -fr
+# cd /var/lib/etcd
+# tar -xvzf /tmp/etcd-`date +%F`.tar.gz 
+
+3. Move etcd and etcdctl config files 
+
+# mv etcd /etc/sysconfig/etcd
+# mv etcd /etc/sysconfig/etcdctl
+
+4. Restore certificates
+
+# mv SUSE_CaaSP_CA.crt /etc/pki/trust/anchors/SUSE_CaaSP_CA.crt
+# mv minion.crt /etc/pki/minion.crt
+# mv minion.key /etc/pki/minion.key
+
+5. Initialize new etcd cluster
+
+# set -a
+# source /etc/sysconfig/etcd
+# /usr/sbin/etcd --name="${ETCD_NAME}" --data-dir="${ETCD_DATA_DIR}" --listen-client-urls="${ETCD_LISTEN_CLIENT_URLS}" --force-new-cluster
+
+After you will see ready to serve client requests
+
+2017-08-22 11:32:03.296340 I | embed: ready to serve client requests
+2017-08-22 11:32:03.296807 I | embed: serving client requests on [::]:2379
+2017-08-22 11:32:03.298188 E | etcdmain: forgot to set Type=notify in systemd service file?
+
+Server can be stopped by pressing Ctrl + c
+
+6. Ensure correct permissions on /var/lib/etcd and start etcd
+
+# chown -R etcd:etcd /var/lib/etcd
+# systemctl start etcd
+   </screen>
   </sect2>
  </sect1>
  
