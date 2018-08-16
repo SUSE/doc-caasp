@@ -71,50 +71,94 @@
   </variablelist>
  </sect1>
  <sect1 xml:id="sec.deploy.cloud-init">
-  <title><literal>cloud-init</literal> Configuration</title>
+  <title><command>cloud-init</command> Configuration</title>
 
   <para>
-   <literal>cloud-init</literal> is used after the installation is complete.
-   You then define a set of configuration files that will be applied during the
-   boot phase.
+   <command>cloud-init</command> is a tool that helps customizing an
+   operating system at boot time. <command>cloud-init</command> can set
+   environment variables, configure the hostname, SSH keys, mount
+   points and network devices.
   </para>
 
   <para>
-   The <literal>cloud-init</literal> configuration can be loaded from different
-   data sources. Currently, the following datasources are preconfigured, and
-   <literal>cloud-init</literal> searches them in the following order:
+   The customization information is usually read from 3 files during
+   boot: <filename>meta-data</filename>, <filename>user-data</filename>
+   and optionally <filename>vendor-data</filename>. These files can be
+   loaded from different datasources. In &productname;, the following
+   datasources are preconfigured, and <literal>cloud-init</literal>
+   searches them in the following order:
   </para>
 
-  <orderedlist>
+  <variablelist>
+   <varlistentry>
+    <term>LocalDisk</term>
+    <listitem>
+     <para>
+      First, the configuration is searched in the local directory
+      <filename>/cloud-init-config</filename>. For details, see <xref
+      linkend="sec.deploy.cloud-init.localdisk-datasource" />.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>NoCloud</term>
+    <listitem>
+     <para>
+      Second, <command>cloud-init</command> tries to read the
+      configuration from a local block device, for example an USB stick
+      or DVD. For details, see <xref
+      linkend="sec.deploy.cloud-init.nocloud-datasource" />.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>OpenStack</term>
+    <listitem>
+     <para>
+      Third, if there is a running OpenStack service, this datasource can be
+      used. The configuration then depends on a particular setup and
+      is not covered by this manual.
+     </para>
+    </listitem>
+   </varlistentry>
+  </variablelist>
+
+  <para>
+   For details about the configuration files, see:
+  </para>
+  <itemizedlist>
    <listitem>
     <para>
-     the <literal>LocalDisk</literal> datasource
+     <xref linkend="sec.deploy.cloud-init.meta-data" />
     </para>
    </listitem>
    <listitem>
     <para>
-     the <literal>NoCloud</literal> datasource
+     <xref linkend="sec.deploy.cloud-init.user-data"/>
     </para>
    </listitem>
    <listitem>
     <para>
-     the <literal>OpenStack</literal> datasource. If there is a running
-     OpenStack service, this datasource will be used. The configuration then
-     depends on a particular setup and thus it is not covered by this manual.
+     <xref linkend="sec.deploy.cloud-init.vendor-data"/> (Optional)
     </para>
    </listitem>
-  </orderedlist>
+  </itemizedlist>
 
   <para>
-   More details about the datasources are provided below.
+   More information about <command>cloud-init</command> can be found at
+   <link
+   xlink:href="https://cloudinit.readthedocs.io/en/latest/index.html"
+   />.
   </para>
+
   <sect2 xml:id="sec.deploy.cloud-init.localdisk-datasource">
    <title>The <literal>LocalDisk</literal> Datasource</title>
    <para>
-    The <literal>cloud-init</literal> searches for the configuration files:
-    <filename>meta-data</filename>, <filename>user-data</filename> and
-    optionally <filename>vendor-data</filename> in the local directory:
-    <filename>/cloud-init-config</filename>.
+    To provide the <command>cloud-init</command> configuration on the
+    local file system, create a directory <filename>/cloud-init-config/</filename>.
+    Then create the files <filename>meta-data</filename>, <filename>user-data</filename> and
+    optionally <filename>vendor-data</filename>. For details about the
+    content of the files, see the following sections.
    </para>
   </sect2>
 
