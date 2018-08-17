@@ -4,7 +4,7 @@
   <!ENTITY % entities SYSTEM "entity-decl.ent">
     %entities;
 ]>
-<chapter version="5.0" xml:id="cha.deploy.install"
+<chapter version="5.0" xml:id="cha.deployment.prepare_private_cloud"
  xmlns="http://docbook.org/ns/docbook"
  xmlns:xi="http://www.w3.org/2001/XInclude"
  xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -17,118 +17,92 @@
  </info>
  <para>
   This chapter prepares the installation of &productname; on physical
-  machines, manually configured virtual machines and in private cloud
+  machines, manually configured virtual machines or in private cloud
   environments.
  </para>
 
  <para>
-  There are two ways to build a cluster, one of which has two variants.
+  There are two ways to install &productname;:
+ </para>
+ <variablelist>
+  <varlistentry>
+   <term><xref linkend="sec.deploy.prepare.dvd" /></term>
+   <listitem>
+    <para>
+     This method requires lots of manual interaction with the
+     physical or virtual machines. This method is suitable for small to
+     medium cluster sizes.
+    </para>
+   </listitem>
+  </varlistentry>
+  <varlistentry>
+   <term><xref linkend="sec.deploy.prepare.pxe" /></term>
+   <listitem>
+    <para>
+     With this method the boot into the installation is done with a
+     network installation server. This reduces the need to interact
+     with every single node. This method is suitable for medium cluster
+     sizes.
+    </para>
+   </listitem>
+  </varlistentry>
+  <varlistentry>
+   <term><xref linkend="sec.deploy.prepare.openstack" /></term>
+   <listitem>
+    <para>
+     You can deploy &productname; on &soc;. This method is suitable
+     for large cluster sizes.
+    </para>
+   </listitem>
+  </varlistentry>
+  <varlistentry>
+   <term><xref linkend="sec.deploy.prepare.disk_images" /></term>
+   <listitem>
+    <para>
+     You can use prepared disk images ready to deploy on virtual
+     machines. This increases the deployment speed.
+    </para>
+   </listitem>
+  </varlistentry>
+ </variablelist>
+ <para>
+  To customize the setup of the nodes, use <command>cloud-init</command>.
+  For details, see <xref linkend="sec.deploy.cloud-init" />.
  </para>
 
- <orderedlist>
-  <listitem>
-   <para>
-    Installing nodes from installation media (for virtual machines, directly
-    from ISO images, or physical media for bare-metal installations).
-   </para>
-   <warning>
-    <title>&Admin_Node;</title>
-    <para>
-     You must install the &admin_node; first and configure it using
-     &dashboard; before installing the other nodes in the cluster.
-    </para>
-   </warning>
-   <para>
-    With this method, there are two ways to install the worker nodes:
-   </para>
-   <itemizedlist>
-    <listitem>
-     <para>
-      Individually, choosing the node type during installation. This is only
-      feasible for a small number of workers.
-     </para>
-    </listitem>
-    <listitem>
-     <para>
-      Installing the worker nodes using &ay; so that they receive their
-      configuration automatically from the &admin_node;. This is the
-      recommended method for larger clusters, but it is equally suitable for
-      small clusters.
-     </para>
-    </listitem>
-   </itemizedlist>
-   <para>
-    With both methods, the procedure to install the &admin_node; is identical.
-    Only installation process for the &worker_node;s differs.
-   </para>
-  </listitem>
-  <listitem>
-   <para>
-    Using preinstalled virtual disk images. &suse; offers
-    <literal>QCOW2</literal> images for clusters hosted on KVM or &xen;
-    hypervisors.
-   </para>
-   <tip>
-    <title>Use Disk Images</title>
-    <para>
-     When building a cluster from virtual machines, &suse; recommends building
-     nodes from pre-installed disk images, rather than installing new instances
-     from an ISO image.
-    </para>
-    <para>
-     Virtual-disk images are available for Hyper-V, KVM, OpenStack, VMware,
-     and Xen.
-    </para>
-    <para>
-     These VM images include the relevant hypervisor's guest additions or tools
-     (where this is applicable).
-    </para>
-   </tip>
-  </listitem>
- </orderedlist>
-
- <note>
-  <para>
-   It is possible to start setup using PXE. For the full procedure, refer to
-   the &sle; 12 Deployment Guide:
-   <link xlink:href="https://www.suse.com/documentation/sles-12/singlehtml/book_sle_deployment/book_sle_deployment.html#cha.deployment.prep_boot"/>.
-  </para>
-  <para>
-   You can directly use the <filename>initrd</filename> and
-   <filename>linux</filename> files from your install media, or install the
-   package <package>tftpboot-installation-CAASP-3.0</package> onto your TFTP
-   server. The package provides the required <filename>initrd</filename> and
-   <filename>linux</filename> files in the <filename>/srv/tftpboot/</filename>
-   directory. You will need to modify the paths used in the &sle; 12
-   Deployment Guide to correctly point to the files provided by the package.
-  </para>
- </note>
-
- <sect1 xml:id="sec.deploy.install.overview">
+ <sect1 xml:id="sec.deploy.prepare.dvd">
   <title>Installing from USB, DVD or ISO Images</title>
   <para>
-   This procedure provides a short overview of the required steps for
-   the full cluster setup.
+   This procedure provides an overview of the steps for the
+   cluster deployment with classical boot devices like DVD drives. This
+   method is suitable for small to medium cluster sizes.
   </para>
   <procedure>
    <step>
     <para>
-     Choose an installation source. You can install from DVD or USB
+     Choose an installation medium. You can install from DVD or USB
      sticks. On virtual machines, you can install from ISO images.
     </para>
    </step>
    <step>
     <para>
-     Install and configure the &Admin_Node;. For details, see <xref
+     Boot the machine designated for the &admin_node; from your
+     selected medium. Then follow the installation and configuration
+     instructions detailed in <xref
      linkend="sec.deploy.nodes.admin_install" /> and <xref
      linkend="sec.deploy.nodes.admin_configuration" />.
     </para>
    </step>
    <step>
     <para>
-     Install master and worker nodes. To automate the installation, you
-     can use an &ay; file provided by the &admin_node;. For details, see
-     <xref linkend="sec.deploy.nodes.worker_install" />.
+     Boot the machines designated to be the Master and Worker Nodes
+     from your selected medium. Then follow the installation and
+     configuration instructions detailed in <xref
+     linkend="sec.deploy.nodes.worker_install" />. To automate the
+     installation, you can use an &ay; file provided by the
+     &admin_node;. We recommend to use &ay; to speed up the node
+     deployment. For details, see <xref
+     linkend="sec.deploy.nodes.worker_install.manual.autoyast" />.
     </para>
    </step>
    <step>
@@ -140,50 +114,390 @@
   </procedure>
  </sect1>
 
- <sect1 xml:id="sec.deploy.install.qcow2">
-  <title>Installing from Disk Images</title>
+ <sect1 xml:id="sec.deploy.prepare.pxe">
+  <title>Installing from Network Source</title>
   <para>
-   For building clusters from virtual machines on supported
-   hypervisors, it is not necessary to individually install each
-   node. &suse; offers pre-installed VM disk images in the following
-   formats:
+   This procedure provides an overview of the steps for the
+   cluster deployment from an network installation server. A PXE
+   environment sis used to provide the nodes with the data required for
+   installation.
   </para>
-  <variablelist>
-   <varlistentry>
-    <term>&kvm; and &xen;</term>
-    <listitem>
-     <para>
-      In QCOW2 format, for &kvm; and for &xen; using full virtualization.
-     </para>
-    </listitem>
-   </varlistentry>
-   <varlistentry>
-    <term>&xen;</term>
-    <listitem>
-     <para>
-      In QCOW2 format, for &xen; using paravirtualization.
-     </para>
-    </listitem>
-   </varlistentry>
-   <varlistentry>
-    <term>VMware</term>
-    <listitem>
-     <para>
-      In VMDK format, for VMware ESXi.
-     </para>
-    </listitem>
-   </varlistentry>
-   <varlistentry>
-    <term>
-     VHD
-    </term>
-    <listitem>
-     <para>For Microsoft Hyper-V.</para>
-    </listitem>
-   </varlistentry>
-  </variablelist>
+  <procedure>
+   <step>
+    <para>
+     Install an installation server that provides a DHCP, PXE and TFTP
+     service. Additionally, you can provide the installation data on
+     an HTTP or FTP server. For details, refer to the &sle; 12 Deployment Guide:
+     <link xlink:href="https://www.suse.com/documentation/sles-12/singlehtml/book_sle_deployment/book_sle_deployment.html#cha.deployment.prep_boot"/>.
+    </para>
+    <para>
+     You can directly use the <filename>initrd</filename> and
+     <filename>linux</filename> files from your installation media, or
+     install the package
+     <package>tftpboot-installation-CAASP-3.0</package> onto your TFTP
+     server. The package provides the required
+     <filename>initrd</filename> and <filename>linux</filename> files
+     in the <filename>/srv/tftpboot/</filename> directory. You will
+     need to modify the paths used in the &sle; 12 Deployment Guide to
+     correctly point to the files provided by the package.
+    </para>
+   </step>
+   <step>
+    <para>
+     PXE boot the machine designated for the &admin_node;. Then follow
+     the installation and configuration instructions detailed in <xref
+     linkend="sec.deploy.nodes.admin_install" /> and <xref
+     linkend="sec.deploy.nodes.admin_configuration" />.
+    </para>
+   </step>
+   <step>
+    <para>
+     Pxe boot the machines designated to be the Master and Worker
+     Nodes. Then follow the installation and configuration instructions
+     detailed in <xref linkend="sec.deploy.nodes.worker_install" />. To
+     automate the installation, you can use an &ay; file provided by
+     the &admin_node;. For details, see <xref
+     linkend="sec.deploy.nodes.worker_install.manual.autoyast" />.
+    </para>
+   </step>
+   <step>
+    <para>
+     Finish the installation by bootstrapping the cluster. For details,
+     see <xref linkend="sec.deploy.install.bootstrap" />.
+    </para>
+   </step>
+  </procedure>
+ </sect1>
 
-  <sect2 xml:id="sec.deploy.install.qcow2.overview">
+ <sect1 xml:id="sec.deploy.prepare.openstack">
+  <title>Installation on &soc;</title>
+  <para>
+   You can deploy a &productname; on &soc; using &ostack;.
+   You will need a &productname; machine image and &ostack; Heat templates.
+   Once you have created a stack, you will continue with the &productname; setup.
+  </para>
+  <note>
+   <title>&productname; machine image for &soc;</title>
+   <para>
+    Download the latest &productname; for &ostack; image from
+    <link xlink:href="https://download.suse.com">https://download.suse.com</link>
+    (for example,
+    <filename>SUSE-CaaS-Platform-3.0-OpenStack-Cloud.x86_64-1.0.0-GM.qcow2</filename>).
+   </para>
+  </note>
+   <note>
+    <title>
+     &ostack; Heat Templates Repository
+    </title>
+    <para>
+     &productname; Heat templates are available from <link xlink:href="https://github.com/SUSE/caasp-openstack-heat-templates">GitHub</link>.
+    </para>
+  </note>
+
+  <sect2 xml:id="sec.deploy.prepare.openstack.horizon">
+   <title>Using the Horizon Dashboard</title>
+   <procedure>
+   <step>
+    <para>
+     Go to <guimenu>Project &rarr; Compute &rarr; Images</guimenu> and click on
+     <guimenu>Create Image</guimenu>.
+    </para>
+    <para>
+     Give your image a name (for example: <literal>CaaSP-3</literal>); you will
+     need to use this later to find the image.
+    </para>
+   </step>
+    <step>
+     <para>
+      Go to <guimenu>Project &rarr; Orchestration</guimenu> and click on
+      <guimenu>Stacks</guimenu>.
+     </para>
+     <informalfigure>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="horizon_stacks.png" width="100%"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="horizon_stacks.png" width="100%"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+    </step>
+    <step>
+     <para>
+      Click on <guimenu>Launch Stack</guimenu> and provide the stack
+      templates. Either upload the files, provide the URL to the raw files
+      directly (only applies to stack template), or copy and paste the
+      contents into the <guimenu>Direct Input</guimenu> fields.
+     </para>
+     <warning>
+      <title>Replace the default <literal>root_password</literal></title>
+       <para>
+        Do not use the <filename>caasp-environment.yaml</filename> directly
+        from the GitHub repository.
+       </para>
+        <para>
+         You must make sure to replace the value for
+         <literal>root_password</literal> with a secure password.
+         This will become the password for the &rootuser; account on all
+         nodes in the stack.
+        </para>
+    </warning>
+     <informalfigure>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="horizon_launch_stack.png" width="100%"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="horizon_launch_stack.png" width="100%"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+    </step>
+   <step>
+    <para>
+     Click <guimenu>Next</guimenu>.
+    </para>
+   </step>
+    <step>
+     <para>
+      Now you need to define more information about the stack.
+     </para>
+     <variablelist>
+      <varlistentry>
+       <term><literal>Stack Name</literal></term>
+       <listitem>
+        <para>
+         Give your stack a name
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term><literal>Password</literal></term>
+       <listitem>
+        <para>
+         Your &soc; password
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term><literal>Image</literal></term>
+       <listitem>
+        <para>
+         Select the image your machines will be created from
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term><literal>root_password</literal></term>
+       <listitem>
+        <para>
+         Set the root password for your cluster machines
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term><literal>admin</literal>/master/worker_flavor</term>
+       <listitem>
+        <para>
+         Select the machine flavor for your nodes
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term><literal>worker_count</literal></term>
+       <listitem>
+        <para>
+         Number of worker nodes to be launched
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term><literal>external_net</literal></term>
+       <listitem>
+        <para>
+         Select an external network that your cluster will be reachable from
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term><literal>internal_net_cidr</literal></term>
+       <listitem>
+        <para>
+         The internal network range to be used inside the cluster
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term><literal>dns_nameserver</literal></term>
+       <listitem>
+        <para>
+         Internal name server for the cluster
+        </para>
+       </listitem>
+      </varlistentry>
+     </variablelist>
+     <informalfigure>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="horizon_stack_options.png" width="100%"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="horizon_stack_options.png" width="100%"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+    </step>
+    <step>
+     <para>
+     Click <guimenu>Launch</guimenu>.
+     </para>
+    </step>
+    <step>
+     <para>
+      After the cluster has been started and the cluster overview shows
+      <guimenu>Create Complete</guimenu>, you need to find the external IP
+      address for the admin node of your cluster (here:
+      <literal>10.86.1.72</literal>). Now visit that IP address in your browser.
+      You should see the &dashboard; login page and can continue with
+      <xref linkend="sec.deploy.nodes.admin_configuration"/>.
+     </para>
+     <informalfigure>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="horizon_stack_resources.png" width="100%"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="horizon_stack_resources.png" width="100%"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+    </step>
+   </procedure>
+  </sect2>
+
+  <sect2 xml:id="sec.deploy.prepare.openstack.cli">
+   <title>Using the &ostack; CLI</title>
+   <note>
+    <para>
+     You need to have access to the &ostack; command-line tools. You can
+     either access those via <literal>ssh</literal> on your &soc; admin
+     server or
+     <link xlink:href="https://docs.openstack.org/newton/user-guide/common/cli-install-openstack-command-line-clients.html">
+     install a local <command>openstack</command> client</link>.
+    </para>
+    <para>
+     To use the local client, you need to access <guimenu>Project &rarr; Compute &rarr;
+     Access &amp; Security</guimenu> in the Horizon Dashboard and click on the
+     <guimenu>Download &ostack; RC File v3</guimenu>.
+    </para>
+    <para>
+     The downloaded file is a script that you then need to load using the
+     <command>source</command> command. The script will ask you for your
+     &soc; password.
+    </para>
+     <screen>&prompt.user;<command>source container-openrc.sh</command></screen>
+   </note>
+   <procedure>
+     <step>
+      <para>
+       Upload the container image to &ostack; Glance (Image service). This
+       example uses the name <literal>CaaSP-3</literal> as the name of the
+       image that is created in &soc;.
+      </para>
+     <screen>&prompt.user;<command>openstack image create --public --disk-format qcow2 \
+--container-format bare \
+--file SUSE-CaaS-Platform-3.0-OpenStack-Cloud.x86_64-1.0.0-GM.qcow2 \
+<replaceable>CaaSP-3</replaceable></command></screen>
+     </step>
+     <step>
+      <warning>
+       <title>Replace the default <literal>root_password</literal></title>
+        <para>
+         Do not use the <filename>caasp-environment.yaml</filename> directly
+         from the GitHub repository.
+        </para>
+        <para>
+         You must make sure to replace the value for
+         <literal>root_password</literal> with a secure password.
+         This will become the password for the &rootuser; account on all
+         nodes in the stack.
+        </para>
+     </warning>
+      <para>
+       Download the <filename>caasp-stack.yaml</filename> and
+       <filename>caasp-environment.yaml</filename> Heat templates to your
+       workstation and then run the <command>openstack stack create</command>
+       command.
+      </para>
+      <screen>&prompt.user;<command>openstack stack create \
+-t caasp-stack.yaml \
+-e caasp-environment.yaml \
+--parameter image=<replaceable>CaaSP-3</replaceable> <replaceable>caasp3-stack</replaceable></command></screen>
+     </step>
+
+    <step>
+     <para>
+      Find out which (external) IP address was assigned to the admin node
+      of your &productname; cluster (here: <literal>10.81.1.51</literal>).
+     </para>
+     <screen>&prompt.user;<command>openstack server list --name "admin" | awk 'FNR > 3 {print $4 $5 $9}'</command>
+caasp3-stack-admin|10.81.1.51</screen>
+     </step>
+     <step>
+      <para>
+       Visit the external IP address in your browser. You should see the &dashboard;
+       login page and can continue with <xref linkend="sec.deploy.nodes.admin_configuration"/>.
+      </para>
+    </step>
+   </procedure>
+  </sect2>
+ </sect1>
+
+ <sect1 xml:id="sec.deploy.prepare.disk_images">
+  <title>Installing from Disk Images</title>
+ <para>
+  For building clusters from virtual machines on supported
+  hypervisors, it is not necessary to individually install each
+  node. &suse; offers pre-installed VM disk images in the following
+  formats:
+ </para>
+ <variablelist>
+  <varlistentry>
+   <term>&kvm; and &xen;</term>
+   <listitem>
+    <para>
+     In QCOW2 format, for &kvm; and for &xen; using full virtualization.
+    </para>
+   </listitem>
+  </varlistentry>
+  <varlistentry>
+   <term>&xen;</term>
+   <listitem>
+    <para>
+     In QCOW2 format, for &xen; using paravirtualization.
+    </para>
+   </listitem>
+  </varlistentry>
+  <varlistentry>
+   <term>VMware</term>
+   <listitem>
+    <para>
+     In VMDK format, for VMware ESXi.
+    </para>
+   </listitem>
+  </varlistentry>
+  <varlistentry>
+   <term>
+    VHD
+   </term>
+   <listitem>
+    <para>For Microsoft Hyper-V.</para>
+   </listitem>
+  </varlistentry>
+ </variablelist>
+
+  <sect2 xml:id="sec.deploy.prepare.qcow2.overview">
    <title>Overview</title>
    <para>
     When deploying a cluster node from pre-installed disk images, the setup
@@ -210,292 +524,7 @@
    </para>
   </sect2>
 
-  <sect2 xml:id="sec.deploy.install.qcow2.procedure.openstack">
-   <title>Installation on &soc;</title>
-   <para>
-    You can deploy a &productname; on &soc; using &ostack;.
-    You will need a &productname; machine image and &ostack; Heat templates.
-    Once you have created a stack, you will continue with the &productname; setup.
-   </para>
-   <note>
-    <title>&productname; machine image for &soc;</title>
-    <para>
-     Download the latest &productname; for &ostack; image from
-     <link xlink:href="https://download.suse.com">https://download.suse.com</link>
-     (for example,
-     <filename>SUSE-CaaS-Platform-3.0-OpenStack-Cloud.x86_64-1.0.0-GM.qcow2</filename>).
-    </para>
-   </note>
-    <note>
-     <title>
-      &ostack; Heat Templates Repository
-     </title>
-     <para>
-      &productname; Heat templates are available from <link xlink:href="https://github.com/SUSE/caasp-openstack-heat-templates">GitHub</link>.
-     </para>
-   </note>
-
-   <sect3>
-    <title>Using the Horizon Dashboard</title>
-    <procedure>
-    <step>
-     <para>
-      Go to <guimenu>Project &rarr; Compute &rarr; Images</guimenu> and click on
-      <guimenu>Create Image</guimenu>.
-     </para>
-     <para>
-      Give your image a name (for example: <literal>CaaSP-3</literal>); you will
-      need to use this later to find the image.
-     </para>
-    </step>
-     <step>
-      <para>
-       Go to <guimenu>Project &rarr; Orchestration</guimenu> and click on
-       <guimenu>Stacks</guimenu>.
-      </para>
-      <informalfigure>
-       <mediaobject>
-        <imageobject role="fo">
-         <imagedata fileref="horizon_stacks.png" width="100%"/>
-        </imageobject>
-        <imageobject role="html">
-         <imagedata fileref="horizon_stacks.png" width="100%"/>
-        </imageobject>
-       </mediaobject>
-      </informalfigure>
-     </step>
-     <step>
-      <para>
-       Click on <guimenu>Launch Stack</guimenu> and provide the stack
-       templates. Either upload the files, provide the URL to the raw files
-       directly (only applies to stack template), or copy and paste the
-       contents into the <guimenu>Direct Input</guimenu> fields.
-      </para>
-      <warning>
-       <title>Replace the default <literal>root_password</literal></title>
-        <para>
-         Do not use the <filename>caasp-environment.yaml</filename> directly
-         from the GitHub repository.
-        </para>
-         <para>
-          You must make sure to replace the value for
-          <literal>root_password</literal> with a secure password.
-          This will become the password for the &rootuser; account on all
-          nodes in the stack.
-         </para>
-     </warning>
-      <informalfigure>
-       <mediaobject>
-        <imageobject role="fo">
-         <imagedata fileref="horizon_launch_stack.png" width="100%"/>
-        </imageobject>
-        <imageobject role="html">
-         <imagedata fileref="horizon_launch_stack.png" width="100%"/>
-        </imageobject>
-       </mediaobject>
-      </informalfigure>
-     </step>
-    <step>
-     <para>
-      Click <guimenu>Next</guimenu>.
-     </para>
-    </step>
-     <step>
-      <para>
-       Now you need to define more information about the stack.
-      </para>
-      <variablelist>
-       <varlistentry>
-        <term><literal>Stack Name</literal></term>
-        <listitem>
-         <para>
-          Give your stack a name
-         </para>
-        </listitem>
-       </varlistentry>
-       <varlistentry>
-        <term><literal>Password</literal></term>
-        <listitem>
-         <para>
-          Your &soc; password
-         </para>
-        </listitem>
-       </varlistentry>
-       <varlistentry>
-        <term><literal>Image</literal></term>
-        <listitem>
-         <para>
-          Select the image your machines will be created from
-         </para>
-        </listitem>
-       </varlistentry>
-       <varlistentry>
-        <term><literal>root_password</literal></term>
-        <listitem>
-         <para>
-          Set the root password for your cluster machines
-         </para>
-        </listitem>
-       </varlistentry>
-       <varlistentry>
-        <term><literal>admin</literal>/master/worker_flavor</term>
-        <listitem>
-         <para>
-          Select the machine flavor for your nodes
-         </para>
-        </listitem>
-       </varlistentry>
-       <varlistentry>
-        <term><literal>worker_count</literal></term>
-        <listitem>
-         <para>
-          Number of worker nodes to be launched
-         </para>
-        </listitem>
-       </varlistentry>
-       <varlistentry>
-        <term><literal>external_net</literal></term>
-        <listitem>
-         <para>
-          Select an external network that your cluster will be reachable from
-         </para>
-        </listitem>
-       </varlistentry>
-       <varlistentry>
-        <term><literal>internal_net_cidr</literal></term>
-        <listitem>
-         <para>
-          The internal network range to be used inside the cluster
-         </para>
-        </listitem>
-       </varlistentry>
-       <varlistentry>
-        <term><literal>dns_nameserver</literal></term>
-        <listitem>
-         <para>
-          Internal name server for the cluster
-         </para>
-        </listitem>
-       </varlistentry>
-      </variablelist>
-      <informalfigure>
-       <mediaobject>
-        <imageobject role="fo">
-         <imagedata fileref="horizon_stack_options.png" width="100%"/>
-        </imageobject>
-        <imageobject role="html">
-         <imagedata fileref="horizon_stack_options.png" width="100%"/>
-        </imageobject>
-       </mediaobject>
-      </informalfigure>
-     </step>
-     <step>
-      <para>
-      Click <guimenu>Launch</guimenu>.
-      </para>
-     </step>
-     <step>
-      <para>
-       After the cluster has been started and the cluster overview shows
-       <guimenu>Create Complete</guimenu>, you need to find the external IP
-       address for the admin node of your cluster (here:
-       <literal>10.86.1.72</literal>). Now visit that IP address in your browser.
-       You should see the &dashboard; login page and can continue with
-       <xref linkend="sec.deploy.nodes.admin_configuration"/>.
-      </para>
-      <informalfigure>
-       <mediaobject>
-        <imageobject role="fo">
-         <imagedata fileref="horizon_stack_resources.png" width="100%"/>
-        </imageobject>
-        <imageobject role="html">
-         <imagedata fileref="horizon_stack_resources.png" width="100%"/>
-        </imageobject>
-       </mediaobject>
-      </informalfigure>
-     </step>
-    </procedure>
-   </sect3>
-
-   <sect3>
-    <title>Using the &ostack; CLI</title>
-    <note>
-     <para>
-      You need to have access to the &ostack; command-line tools. You can
-      either access those via <literal>ssh</literal> on your &soc; admin
-      server or
-      <link xlink:href="https://docs.openstack.org/newton/user-guide/common/cli-install-openstack-command-line-clients.html">
-      install a local <command>openstack</command> client</link>.
-     </para>
-     <para>
-      To use the local client, you need to access <guimenu>Project &rarr; Compute &rarr;
-      Access &amp; Security</guimenu> in the Horizon Dashboard and click on the
-      <guimenu>Download &ostack; RC File v3</guimenu>.
-     </para>
-     <para>
-      The downloaded file is a script that you then need to load using the
-      <command>source</command> command. The script will ask you for your
-      &soc; password.
-     </para>
-      <screen>&prompt.user;<command>source container-openrc.sh</command></screen>
-    </note>
-    <procedure>
-      <step>
-       <para>
-        Upload the container image to &ostack; Glance (Image service). This
-        example uses the name <literal>CaaSP-3</literal> as the name of the
-        image that is created in &soc;.
-       </para>
-      <screen>&prompt.user;<command>openstack image create --public --disk-format qcow2 \
---container-format bare \
---file SUSE-CaaS-Platform-3.0-OpenStack-Cloud.x86_64-1.0.0-GM.qcow2 \
-<replaceable>CaaSP-3</replaceable></command></screen>
-      </step>
-      <step>
-       <warning>
-        <title>Replace the default <literal>root_password</literal></title>
-         <para>
-          Do not use the <filename>caasp-environment.yaml</filename> directly
-          from the GitHub repository.
-         </para>
-         <para>
-          You must make sure to replace the value for
-          <literal>root_password</literal> with a secure password.
-          This will become the password for the &rootuser; account on all
-          nodes in the stack.
-         </para>
-      </warning>
-       <para>
-        Download the <filename>caasp-stack.yaml</filename> and
-        <filename>caasp-environment.yaml</filename> Heat templates to your
-        workstation and then run the <command>openstack stack create</command>
-        command.
-       </para>
-       <screen>&prompt.user;<command>openstack stack create \
--t caasp-stack.yaml \
--e caasp-environment.yaml \
---parameter image=<replaceable>CaaSP-3</replaceable> <replaceable>caasp3-stack</replaceable></command></screen>
-      </step>
-
-     <step>
-      <para>
-       Find out which (external) IP address was assigned to the admin node
-       of your &productname; cluster (here: <literal>10.81.1.51</literal>).
-      </para>
-      <screen>&prompt.user;<command>openstack server list --name "admin" | awk 'FNR > 3 {print $4 $5 $9}'</command>
-caasp3-stack-admin|10.81.1.51</screen>
-      </step>
-      <step>
-       <para>
-        Visit the external IP address in your browser. You should see the &dashboard;
-        login page and can continue with <xref linkend="sec.deploy.nodes.admin_configuration"/>.
-       </para>
-     </step>
-    </procedure>
-   </sect3>
-  </sect2>
-
-  <sect2 xml:id="sec.deploy.install.qcow2.procedure">
+  <sect2 xml:id="sec.deploy.prepare.qcow2.procedure">
    <title>Procedure for Hypervisors</title>
    <para>
     The process is very similar for all hypervisors. The examples in this
@@ -515,7 +544,7 @@ caasp3-stack-admin|10.81.1.51</screen>
     <literal>caas-worker1</literal>, <literal>caas-worker2</literal> and so
     on.
    </para>
-   <sect3 xml:id="sec.deploy.install.qcow2.configuration">
+   <sect3 xml:id="sec.deploy.prepare.qcow2.configuration">
     <title>Configuration Files</title>
     <para>
      There are two separate configuration files: <filename>user-data</filename>
@@ -592,7 +621,7 @@ suse_caasp:
     role: <replaceable>cluster</replaceable>
     admin_node: <replaceable>caas-admin.example.com</replaceable></screen>
    </sect3>
-   <sect3 xml:id="sec.deploy.install.qcow2.iso-image">
+   <sect3 xml:id="sec.deploy.prepare.qcow2.iso-image">
     <title>Preparing an ISO image</title>
     <para>
      Once you have edited the configuration files with your desired settings,
@@ -617,7 +646,7 @@ suse_caasp:
     <screen>&prompt.user;sudo mkisofs -output <replaceable>cc-worker.img</replaceable> -volid <replaceable>cidata</replaceable> -joliet -rock <replaceable>cc-worker</replaceable></screen>
    </sect3>
 
-   <sect3 xml:id="sec.deploy.install.qcow2.admin">
+   <sect3 xml:id="sec.deploy.prepare.qcow2.admin">
     <title>Procedure to Bring Up an &Admin_Node;</title>
     <procedure>
      <step>
@@ -667,7 +696,7 @@ suse_caasp:
     </procedure>
    </sect3>
 
-   <sect3 xml:id="sec.deploy.install.qcow2.worker">
+   <sect3 xml:id="sec.deploy.prepare.qcow2.worker">
     <title>Procedure to Bring Up a &Worker_Node;</title>
     <para>
      The first procedure is to generate the configuration files. Unless
