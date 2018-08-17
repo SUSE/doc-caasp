@@ -1,0 +1,979 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<chapter version="5.0" xml:id="cha.deploy.nodes"
+ xmlns="http://docbook.org/ns/docbook"
+ xmlns:xi="http://www.w3.org/2001/XInclude"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <info>
+  <title>Installing and Configuring Nodes</title>
+  <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
+   <dm:bugtracker/>
+   <dm:translation>yes</dm:translation>
+  </dm:docmanager>
+ </info>
+ <para>
+  This chapter details the procedures for installing the &admin_node;,
+  master nodes and worker nodes.
+ </para>
+ <sect1 xml:id="sec.deploy.nodes.admin_install">
+  <title>Installing the &Admin_Node;</title>
+  <para>
+   The procedure for installing the &admin_node; is identical whether or not
+   you use &ay; for the rest of the cluster.
+  </para>
+  <procedure xml:id="pro.deploy.nodes.admin_install">
+   <step>
+    <para>
+     Connect or insert the &productname; installation media, then reboot the
+     computer to start the installation program. On machines with a
+     traditional BIOS, you will see the graphical boot screen shown below.
+     The boot screen on machines equipped with UEFI is slightly different.
+    </para>
+    <para>
+     SecureBoot on UEFI machines <emphasis>is</emphasis> supported.
+    </para>
+    <para>
+     Use <keycap>F2</keycap> to change the language for the installer. A
+     corresponding keyboard layout is chosen automatically. See
+     <link
+      xlink:href="https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_startup.html"
+     />
+     for more information about changing boot options.
+    </para>
+    <informalfigure>
+     <mediaobject>
+      <imageobject role="fo">
+       <imagedata fileref="install_boot.png" width="100%"/>
+      </imageobject>
+      <imageobject role="html">
+       <imagedata fileref="install_boot.png" width="100%"/>
+      </imageobject>
+     </mediaobject>
+    </informalfigure>
+   </step>
+   <step>
+    <para>
+     Select <guimenu>Installation</guimenu> on the boot screen, then press
+     <keycap
+      function="enter"
+     />. This boots the system and
+     loads the &productname; installer.
+    </para>
+   </step>
+   <step>
+<!-- <para>
+      Read the License Agreement. It is presented in the language you have
+      chosen on the boot screen. <guimenu>License Translations</guimenu> are
+      available. You need to accept the agreement by checking <guimenu>I Agree
+      to the License Terms</guimenu> to install &productname;. Proceed with
+      <guimenu>Next</guimenu>.
+      </para>  -->
+    <para>
+     Configure the following mandatory settings on the <guimenu>Installation
+     Overview</guimenu> screen.
+    </para>
+    <note>
+     <title>Help and Release Notes</title>
+     <para>
+      From this point on, a brief help document and the Release Notes can be
+      viewed from any screen during the installation process by selecting
+      <guimenu>Help</guimenu> or <guimenu>Release Notes</guimenu>
+      respectively.
+     </para>
+    </note>
+    <variablelist>
+     <varlistentry>
+      <term>Keyboard Layout</term>
+      <listitem>
+       <para>
+        The <guimenu>Keyboard Layout</guimenu> is initialized with the
+        language settings you have chosen on the boot screen. Change it here,
+        if necessary.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>Password for &rootuser;</term>
+      <listitem>
+       <para>
+        Type a password for the system administrator account (called the
+        &rootuser; user) and confirm it.
+       </para>
+       <warning>
+        <title>Do not forget the &rootuser; Password</title>
+        <para>
+         You must not lose the &rootuser; password! After you enter it here,
+         the password cannot be retrieved. For more information, see
+         <link
+          xlink:href="https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_user_root.html"
+         />.
+        </para>
+       </warning>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>Registration Code or SMT Server URL</term>
+      <listitem>
+       <para>
+        Enter the <guimenu>Registration Code or SMT Server
+        URL</guimenu>. SMT Server URLs should use
+        <literal>https</literal> or <literal>http</literal>; other
+        protocols are not supported. Fill this field to enable
+        installing current updates during the installation process.
+        Alternatively, the machine can be registered at the &scc; or
+        a &smt; server at any later point in time with
+        <command>SUSEConnect</command>.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>System Role</term>
+      <listitem>
+       <para>
+        From the <guimenu>System Role</guimenu> menu, choose <guimenu>
+        Administration Node (Dashboard)</guimenu>.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>NTP Servers</term>
+      <listitem>
+       <para>
+        Enter the host names or IP addresses of one or more <guimenu>NTP
+        Servers</guimenu> for the node, separated by colons or white space. A
+        single time server is sufficient, but for optimal precision and
+        reliability, nodes should use at least three.
+       </para>
+       <para>
+        For more information about <literal>NTP</literal>, refer to
+        <link
+         xlink:href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_netz_xntp.html"
+        />
+       </para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+    <informalfigure>
+     <mediaobject>
+      <imageobject role="fo">
+       <imagedata fileref="install_overview_admin.png" width="100%"/>
+      </imageobject>
+      <imageobject role="html">
+       <imagedata fileref="install_overview_admin.png" width="100%"/>
+      </imageobject>
+     </mediaobject>
+    </informalfigure>
+    <para>
+     Optionally, you can customize the following settings. If you do not make
+     any changes, defaults are used. A brief summary of the settings is
+     displayed below the respective settings option.
+    </para>
+    <variablelist>
+     <varlistentry>
+      <term>Partitioning</term>
+      <listitem>
+       <para>
+        Review the partition setup proposed by the system and change it if
+        necessary. You have the following options:
+       </para>
+       <variablelist>
+        <varlistentry>
+         <term>Select a hard disk</term>
+         <listitem>
+          <para>
+           Select a disk on to which to install &productname; with the
+           recommended partitioning scheme.
+          </para>
+         </listitem>
+        </varlistentry>
+        <varlistentry>
+         <term><guimenu>Custom Partitioning (for Experts)</guimenu></term>
+         <listitem>
+          <para>
+           Opens the <guimenu>Expert Partitioner</guimenu> described in
+           <link
+            xlink:href="https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_yast2_i_y2_part_expert.html"
+           />.
+          </para>
+          <warning>
+           <title>For Experts only</title>
+           <para>
+            As the name suggests, the <guimenu>Expert Partitioner</guimenu>
+            is for experts only. Custom partitioning schemes that do not meet
+            the requirements of &productname; are not supported.
+           </para>
+           <itemizedlist>
+            <title>Requirements for custom partitioning schemes</title>
+            <listitem>
+             <para>
+              &productname; only supports the &btrfs; file system with
+              OverlayFS. A read-only &btrfs; file system is used for the root
+              file system, which enables transactional updates.
+             </para>
+            </listitem>
+            <listitem>
+             <para>
+              For snapshots, partitions should have a capacity of at least 11
+              GB.
+             </para>
+            </listitem>
+            <listitem>
+             <para>
+              Depending on the number and size of your containers, you will
+              need sufficient space under the <filename>/var</filename> mount
+              point.
+             </para>
+            </listitem>
+           </itemizedlist>
+          </warning>
+         </listitem>
+        </varlistentry>
+       </variablelist>
+       <para>
+        To accept the proposed setup without any changes, choose
+        <guimenu>Next</guimenu> to proceed.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>Booting</term>
+      <listitem>
+       <para>
+        This section shows the boot loader configuration. Changing the
+        defaults is only recommended if really needed. For details, refer to
+        <link
+         xlink:href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_grub2.html"
+        />.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>Network Configuration</term>
+      <listitem>
+       <para>
+        If the network could not be configured automatically while starting
+        the installation system, you should manually configure the
+        <guimenu>Network Settings</guimenu>. Please make sure at least one
+        network interface is connected to the Internet in order to register
+        your product.
+       </para>
+       <para>
+        By default, the installer requests a host name from the DHCP server.
+        If you set a custom name in the <guimenu>Hostname/DNS</guimenu> tab,
+        make sure that it is unique.
+       </para>
+       <para>
+        For more information on configuring network connections, refer to
+        <link xlink:href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/sec_basicnet_yast.html"/>.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>&kdump;</term>
+      <listitem>
+       <para>
+        &kdump; saves the memory image (<quote>core dump</quote>) to the file
+        system in case the kernel crashes. This enables you to find the cause
+        of the crash by debugging the dump file. For more information, see
+        <link xlink:href="https://www.suse.com/documentation/sles-12/book_sle_tuning/data/cha_tuning_kdump_basic.html"/> .
+       </para>
+       <warning>
+        <title>&kdump; with large amounts of RAM</title>
+        <para>
+         If you have a system with large amounts of RAM or a small hard
+         drive, core dumps may not be able to fit on the disk. If the
+         installer warns you about this, there are two options:
+        </para>
+        <orderedlist>
+         <listitem>
+          <para>
+           Enter the <guimenu>Expert Partitioner</guimenu> and increase the
+           size of the root partition so that it can accommodate the size of
+           the core dump. In this case, you will need to decrease the size of
+           the data partition accordingly. Remember to keep all other
+           parameters of the partitioning (e.g. the root file system, mount
+           point of data partition) when doing these changes.
+          </para>
+         </listitem>
+         <listitem>
+          <para>
+           Disable &kdump; completely.
+          </para>
+         </listitem>
+        </orderedlist>
+       </warning>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>System Information</term>
+      <listitem>
+       <para>
+        View detailed hardware information by clicking <guimenu>System
+        Information</guimenu>. In this screen you can also change
+        <guimenu>Kernel Settings</guimenu>. See
+        <link
+         xlink:href="https://www.suse.com/documentation/sles-12/book_sle_tuning/data/cha_tuning_io.html"
+        />
+        for more information.
+       </para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+    <para>
+     Proceed with <guimenu>Next</guimenu>.
+    </para>
+    <tip>
+     <title>Installing Product Patches at Installation Time</title>
+     <para>
+      If &productname; has been successfully registered at the &scc;, you are
+      asked whether to install the latest available online updates during the
+      installation. If you choose <guimenu>Yes</guimenu>, the system will be
+      installed with the most current packages without having to apply the
+      updates after installation. Activating this option is recommended.
+     </para>
+    </tip>
+   </step>
+   <step>
+    <para>
+     After you have finalized the system configuration on the
+     <guimenu>Installation Overview</guimenu> screen, click
+     <guimenu>Install</guimenu>. Up to this point no changes have been made
+     to your system.
+    </para>
+    <para>
+     Click <guimenu>Install</guimenu> a second time to start the installation
+     process.
+    </para>
+    <informalfigure>
+     <mediaobject>
+      <imageobject role="fo">
+       <imagedata fileref="install_confirm.png" width="100%"/>
+      </imageobject>
+      <imageobject role="html">
+       <imagedata fileref="install_confirm.png" width="100%"/>
+      </imageobject>
+     </mediaobject>
+    </informalfigure>
+   </step>
+   <step>
+    <para>
+     During the installation, the progress is shown in detail on the
+     <guimenu>Details</guimenu> tab.
+    </para>
+    <informalfigure>
+     <mediaobject>
+      <imageobject role="fo">
+       <imagedata fileref="install_perform.png" width="100%"/>
+      </imageobject>
+      <imageobject role="html">
+       <imagedata fileref="install_perform.png" width="100%"/>
+      </imageobject>
+     </mediaobject>
+    </informalfigure>
+   </step>
+   <step>
+    <para>
+     After the installation routine has finished, the computer will reboot
+     into the installed system.
+    </para>
+   </step>
+  </procedure>
+ </sect1>
+
+ <sect1 xml:id="sec.deploy.nodes.admin_configuration">
+  <title>&Admin_Node; Configuration</title>
+  <para>
+   Before installing the other nodes, it is necessary to configure the
+   &admin_node;.
+  </para>
+  <procedure xml:id="pro.deploy.install.iso.config">
+   <step>
+    <para>
+     After the &admin_node; has finished booting and you see the login
+     prompt, point a web browser to:
+    </para>
+    <para>
+     <uri>https://<replaceable>caasp-admin.&exampledomain;</replaceable>
+     </uri>
+    </para>
+    <para>
+     ... where <literal>caasp-admin.&exampledomain;</literal> is the host
+     name or IP address of the &admin_node;. The host name and IP address are
+     both shown on the &admin_node; console, above the login prompt.
+    </para>
+<!-- cwickert 2017-07-23 TODO: We don't really need this image, do we? -->
+<!-- <informalfigure>
+     <mediaobject>
+     <imageobject role="fo">
+     <imagedata fileref="velum_login.png" width="100%"/>
+     </imageobject>
+     <imageobject role="html">
+     <imagedata fileref="velum_login.png" width="100%"/>
+     </imageobject>
+     </mediaobject>
+     </informalfigure> -->
+   </step>
+   <step>
+    <para>
+     To create an Administrator account, click <guimenu>Create an
+     account</guimenu> and provide an e-mail address and a password. Confirm
+     the password and click <guimenu>Create Admin</guimenu>. You will be
+     logged into the dashboard automatically.
+    </para>
+    <informalfigure>
+     <mediaobject>
+      <imageobject role="fo">
+       <imagedata fileref="velum_register.png" width="100%"/>
+      </imageobject>
+      <imageobject role="html">
+       <imagedata fileref="velum_register.png" width="100%"/>
+      </imageobject>
+     </mediaobject>
+    </informalfigure>
+   </step>
+   <step>
+    <para>
+     Fill in the values <guimenu>Internal Dashboard Location</guimenu>.
+     If necessary, configure the other settings.
+    </para>
+    <note>
+     <title>
+      Host Name, FQDN or IP Address
+     </title>
+     <para>
+      Generally, FQDNs are preferable to host names.
+     </para>
+     <para>For test deployments, you can use IP addresses instead of names for
+      both the dashboard and API server, but this is not recommended for
+      use in production.
+     </para>
+    </note>
+    <variablelist>
+     <varlistentry>
+      <term>Internal Dashboard Location</term>
+      <listitem>
+       <para>
+        FQDN or IP of the node running the &dashboard; dashboard (reachable
+        from inside the cluster).
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>External Kubernetes API server FQDN</term>
+      <listitem>
+       <para>
+        Name used to reach the node running the &kube; API server.
+       </para>
+       <note>
+        <para>
+         In a simple, single-master deployment this will be the name of the
+         node that you will select as the &master_node; when bootstrapping the
+         cluster.
+        </para>
+        <para>
+          If you are planning a larger cluster with multiple &master_node;s,
+          they must all be accessible from a single host name. If not, the
+          functionality of &dashboard; will degrade if the original
+          &master_node; is removed. Therefore you should ensure that there is
+          some form of load-balancing or reverse proxy on the value that
+          you enter in this field.
+        </para>
+       </note>
+     </listitem>
+     </varlistentry>
+<!-- cwickert 2017-07-23 TODO: Another varlist for the individual settings? -->
+     <varlistentry>
+      <term>Install Tiller (Helm's Server Component)</term>
+      <listitem>
+       <informalfigure>
+        <mediaobject>
+         <imageobject role="fo">
+          <imagedata fileref="velum_install_tiller.png" width="100%"/>
+         </imageobject>
+         <imageobject role="html">
+          <imagedata fileref="velum_install_tiller.png" width="100%"/>
+         </imageobject>
+        </mediaobject>
+       </informalfigure>
+       <para>
+        If you intend to deploy &scf; on &productname;, or any other software
+        that is installed with &helm; (the &kube; package manager), check the
+        box to install &tiller;.
+<!-- (See <xref linkend="installing.helm"/>.) -->
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>Overlay network settings</term>
+      <listitem>
+       <warning>
+        <title>Adjust overlay network to avoid collision with existing services</title>
+        <para>
+         The overlay network settings have to be verified and adjusted so that
+         they do not collide with any services / addresses in the infrastructure
+         that potentially need to be reached from any node or
+         service running within the &productname; cluster.
+        </para>
+        <para>
+         For example, an oracle database is running on <literal>172.16.4.5</literal>
+         in the existing infrastructure and a pod in the cluster needs to
+         contact that database. Then, the defaults be adjusted to provide a
+         different overlay network. Another example would be an NFS server or
+         a SES/Ceph cluster running anywhere in the network
+         <literal>172.16.0.0/13</literal> and where persistent storage access
+         of the CaaSP cluster should be hosted on.
+        </para>
+       </warning>
+       <para>
+        Describes the settings used by <literal>flannel</literal> to create
+        the overlay network used by all the &kube; pods and services. With
+        this change, the default settings are exposed to the user for fine
+        tuning. The most common reason to change them is to avoid clashes
+        between the default subnetwork we picked up and an already
+        existing one.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>Proxy Settings</term>
+      <listitem>
+       <para>
+        If enabled, you can set proxy servers for <literal>HTTP</literal> and
+        <literal>HTTPS</literal>. You may also configure exceptions and
+        choose whether to apply the settings only to the container engine or
+        to all processes running on the cluster nodes.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>SUSE registry mirror</term>
+      <listitem>
+       <para>
+        Options for SUSE registry mirror.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>Cloud provider integration</term>
+      <listitem>
+       <para>
+        Cloud provider integration enables you to deploy &productname; on
+        &ostack;/&soc;.
+       </para>
+       <informalfigure>
+        <mediaobject>
+         <imageobject role="fo">
+          <imagedata fileref="velum_cpi.png" width="100%"/>
+         </imageobject>
+         <imageobject role="html">
+          <imagedata fileref="velum_cpi.png" width="100%"/>
+         </imageobject>
+        </mediaobject>
+       </informalfigure>
+       <variablelist>
+        <varlistentry>
+         <term>Keystone API URL</term>
+         <listitem>
+          <para>
+           Specifies the URL of the Keystone API used to authenticate the user.
+           This value can be found in Horizon (the &ostack; control panel) under
+           <guimenu>Project &rarr; Access and Security &rarr; API Access &rarr;
+            Credentials</guimenu>.
+          </para>
+         </listitem>
+        </varlistentry>
+        <varlistentry>
+         <term>Domain name</term>
+         <listitem>
+          <para>
+           (Optional) Used to specify the name of the domain your user belongs
+           to.
+          </para>
+         </listitem>
+        </varlistentry>
+        <varlistentry>
+         <term>Domain ID</term>
+         <listitem>
+          <para>
+           (Optional) Used to specify the name of the domain your user belongs
+           to.
+          </para>
+         </listitem>
+        </varlistentry>
+        <varlistentry>
+         <term>Project name</term>
+         <listitem>
+          <para>
+           (Optional) Used to specify the name of the project where you want
+           to create your resources.
+          </para>
+         </listitem>
+        </varlistentry>
+        <varlistentry>
+         <term>Project ID</term>
+         <listitem>
+          <para>
+           (Optional) Used to specify the name of the project where you want
+           to create your resources.
+          </para>
+         </listitem>
+        </varlistentry>
+        <varlistentry>
+         <term>Region name</term>
+         <listitem>
+          <para>
+           Used to specify the identifier of the region to use when running on
+           a multi-region &ostack; cloud. A region is a general division of
+           an &ostack; deployment.
+          </para>
+         </listitem>
+        </varlistentry>
+        <varlistentry>
+         <term>Username</term>
+         <listitem>
+          <para>
+           Refers to the username of a valid user set in Keystone.
+          </para>
+         </listitem>
+        </varlistentry>
+        <varlistentry>
+         <term>Password</term>
+         <listitem>
+          <para>
+           Refers to the password of a valid user set in Keystone.
+          </para>
+         </listitem>
+        </varlistentry>
+        <varlistentry>
+         <term>Subnet UUID for CaaS Platform private network</term>
+         <listitem>
+          <para>
+           Used to specify the identifier of the subnet you want to create
+           your load balancer on. This value can be found on the &ostack;
+           control panels, under <guimenu>Project &rarr; Network &rarr;
+           Networks</guimenu>. Click on the respective network to see its
+           subnets.
+          </para>
+         </listitem>
+        </varlistentry>
+        <varlistentry>
+         <term>Floating network UUID</term>
+         <listitem>
+          <para>
+           (Optional) When specified, will lead to the creation of a floating
+           IP for the load balancer.
+          </para>
+         </listitem>
+        </varlistentry>
+        <varlistentry>
+         <term>Load balancer monitor max retries</term>
+         <listitem>
+          <para>
+           Number of permissible ping failures before changing the load
+           balancer member's status to <literal>INACTIVE</literal>. Must be a
+           number between 1 and 10. (Default: <replaceable>3</replaceable>)
+          </para>
+         </listitem>
+        </varlistentry>
+        <varlistentry>
+         <term>Cinder Block Storage API version</term>
+         <listitem>
+          <para>
+           Specifies the API version to be used when talking to Cinder.
+           Currently: <literal>v2</literal>
+          </para>
+         </listitem>
+        </varlistentry>
+        <varlistentry>
+         <term>Ignore Cinder availability zone</term>
+         <listitem>
+          <para>
+           Influence availability zone use when attaching Cinder volumes. When
+           Nova and Cinder have different availability zones, this should be
+           set to <literal>True</literal>.
+          </para>
+         </listitem>
+        </varlistentry>
+       </variablelist>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>Container runtime</term>
+      <listitem>
+       <warning>
+        <para>
+         Please note CRI-O is currently only a tech preview. It will work but
+         is not officially supported.
+        </para>
+       </warning>
+       <informalfigure>
+        <mediaobject>
+         <imageobject role="fo">
+          <imagedata fileref="velum_install_options.png" width="100%"/>
+         </imageobject>
+         <imageobject role="html">
+          <imagedata fileref="velum_install_options.png" width="100%"/>
+         </imageobject>
+        </mediaobject>
+       </informalfigure>
+       <para>
+        Allows choice between Docker and CRI-O as the main container runtime.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>System wide certificate</term>
+      <listitem>
+       <para>
+        Specify a system wide trusted certificate.
+       </para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </step>
+    <step>
+     <para>
+      Click <guimenu>Next</guimenu> to conifigure the FQDNs for dashboard and &kube; API.
+     </para>
+     <para>
+      Fill in the values for <guimenu>External Dashboard Location</guimenu> and
+      <guimenu>External Kubernetes API server FQDN</guimenu>. If necessary,
+      configure the <guimenu>Proxy Settings</guimenu>.
+     </para>
+    <para>
+     Click <guimenu>Next</guimenu> to proceed and install some cluster nodes
+     as described in <xref
+      linkend="sec.deploy.nodes.worker_install"/>.
+    </para>
+   </step>
+  </procedure>
+ </sect1>
+
+ <sect1 xml:id="sec.deploy.nodes.worker_install">
+  <title>Installing Master and Worker Nodes</title>
+
+  <warning>
+   <para>
+    Before you can install the &worker_node;s of your new cluster, you need to
+    install and configure the &admin_node;. Ensure that you have completed
+    the steps in <xref linkend="sec.deploy.nodes.admin_install"/> and
+    <xref linkend="sec.deploy.nodes.admin_configuration"/>.
+   </para>
+  </warning>
+
+  <sect2 xml:id="sec.deploy.nodes.worker_install.manual">
+   <title>Manual Installation</title>
+   <procedure xml:id="pro.deploy.nodes.worker_install.manual">
+    <step>
+     <para>
+      Follow the same procedure as for installing the &admin_node; in
+      <xref linkend="sec.deploy.nodes.admin_install"/>, up
+      until selection of the <guimenu>System Role</guimenu>.
+     </para>
+    </step>
+    <step>
+     <para>
+      Select <literal>Cluster Node</literal> as <guimenu>System
+      Role</guimenu> and enter the host name or IP address of the
+      &admin_node;.
+     </para>
+     <note>
+      <title>Plain System</title>
+      <para>
+       It is also possible to select a third node type, "plain node". These
+       can be used for testing and debugging purposes, but are not usually
+       needed.
+      </para>
+     </note>
+    </step>
+    <step>
+     <para>
+      After you have finalized the system configuration on the
+      <guimenu>Installation Overview</guimenu> screen, click
+      <guimenu>Install</guimenu>. Up to this point no changes have been made
+      to your system. After you click <guimenu>Install</guimenu> a second
+      time, the installation process starts.
+     </para>
+     <para>
+      After a reboot, the new node should appear in the dashboard and can be
+      added to your cluster.
+     </para>
+     <para>
+      Repeat this procedure at least twice more to add a minimum of three
+      nodes: one &master_node; and two &worker_node;s. This is the minimum
+      supported size for a &productname; cluster.
+     </para>
+    </step>
+   </procedure>
+  </sect2>
+
+  <sect2 xml:id="sec.deploy.nodes.worker_install.manual.autoyast">
+   <title>Automatic Installation Using &ay;</title>
+   <para>
+    Before installing &worker_node;s with &ay;, you need to obtain the URL
+    that points to the &ay; file on the &admin_node;. Generally, this will be
+    supplied by the &dashboard; dashboard on the &admin_node;.
+   </para>
+   <procedure xml:id="pro.deploy.nodes.worker_install.manual.autoyast">
+    <step>
+     <para>
+      Insert the &productname; DVD into the drive, then reboot the computer
+      to start the installation program.
+     </para>
+    </step>
+    <step>
+     <informalfigure>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="install_boot_ay.png" width="100%"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="install_boot_ay.png" width="100%"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+     <para>
+      Select <guimenu>Installation</guimenu> on the boot screen, but
+      <emphasis>do not</emphasis> press <keycap function="enter"/>.
+     </para>
+     <para>
+      Before proceeding to boot the machine, you should enter the necessary
+      <guimenu>Boot Options</guimenu> for &ay; and networking.
+     </para>
+     <para>
+      The most important options are:
+     </para>
+     <variablelist>
+      <varlistentry>
+       <term>autoyast</term>
+       <listitem>
+        <para>
+         Path to the &ay; file. It is in the form of a URL built from the
+         FQDN of the &admin_node;, followed the path to the &ay; file. For
+         example, <literal>http://admin.example.com/autoyast</literal>
+        </para>
+        <para>
+         For more information, refer to
+         <link xlink:href="https://www.suse.com/documentation/sles-12/book_autoyast/data/invoking_autoinst.html#commandline_ay"/>.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>netsetup</term>
+       <listitem>
+        <para>
+         Network configuration. If you are using dhcp, you can simply enter
+         <literal>netsetup=dhcp</literal>. For manual configuration, refer to
+         <link xlink:href="https://www.suse.com/documentation/sles-12/book_autoyast/data/ay_adv_network.html"/>.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>hostname</term>
+       <listitem>
+        <para>
+         The host name for the node, if not provided by DHCP. If you manually
+         specify a host name, make sure that it is unique.
+        </para>
+       </listitem>
+      </varlistentry>
+     </variablelist>
+     <para>
+      Press <keycap function="enter"/>. This boots the system and loads the
+      &productname; installer.
+     </para>
+    </step>
+    <step>
+     <para>
+      So long as there are no errors, the rest of the installation should
+      complete automatically. After a reboot, the new  node should appear in
+      the dashboard and can be added to your cluster.
+     </para>
+    </step>
+   </procedure>
+   <note>
+    <title>&rootuser; Password</title>
+    <para>
+     When nodes are installed using &ay;, there is no opportunity to specify
+     the password for &rootuser;. However, each node will have <command>ssh</command>
+     keys for &rootuser; on the &master_node; pre-installed. Thus it is
+     possible to access the &worker_node;s by opening an <command>ssh</command>
+     session from the &master_node;.
+    </para>
+   </note>
+  </sect2>
+ </sect1>
+
+ <sect1 xml:id="sec.deploy.install.bootstrap">
+  <title>Bootstrapping the Cluster</title>
+  <para>
+   To complete the installation of your &productname; cluster, it is necessary
+   to bootstrap at least three additional nodes; those will be the &kube;
+   master and workers.
+<!-- cwickert 2017-07-23: FIXME We are already past AutoYaST -->
+<!-- This process leverages &ay; and is (almost) fully automated. -->
+  </para>
+  <procedure xml:id="pro.deploy.install.bootstrap">
+   <step>
+    <para>
+     Point a web browser to
+     <uri>https://<replaceable>caasp-admin.&exampledomain;</replaceable>
+     </uri>
+     to open the dashboard, where
+     <literal>caasp-admin.&exampledomain;</literal> is the host name or IP
+     address of the &admin_node;.
+    </para>
+   </step>
+   <step>
+    <para>
+     The dashboard lists all cluster nodes registered at the &admin_node;.
+     Newly installed nodes are be listed as <guimenu>Pending Nodes</guimenu>.
+     You can accept individual nodes or all by clicking <guimenu>Accept All
+     Nodes</guimenu>.
+    </para>
+    <informalfigure>
+     <mediaobject>
+      <imageobject role="fo">
+       <imagedata fileref="velum_nodes.png" width="100%"/>
+      </imageobject>
+      <imageobject role="html">
+       <imagedata fileref="velum_nodes.png" width="100%"/>
+      </imageobject>
+     </mediaobject>
+    </informalfigure>
+    <para>
+     Use the check box in the first column to select the nodes you want to add
+     to your cluster. In the last column, select the one that should become
+     &kube; master. All other nodes will be set to the worker role once you
+     click <guimenu>Bootstrap cluster</guimenu>.
+<!-- cwickert 2017-07-23: FIXME explain relation of internal and external names -->
+<!-- Make sure the <guimenu>Hostname</guimenu> of the master matches the
+     name configured as <guimenu>External Kubernetes API server FQDN</guimenu>
+     in <xref linkend="sec.deploy.nodes.admin_configuration"/>. If necessary, go
+     <guimenu>Back</guimenu> to chance the setting accordingly. -->
+    </para>
+   </step>
+   <step>
+    <para>
+     Please wait while the cluster is bootstrapped. Once finished, the status
+     indicator icon of the nodes changes accordingly and you can download the
+     <command>kubectl</command> config file <filename>kubeconfig</filename>.
+    </para>
+    <informalfigure>
+     <mediaobject>
+      <imageobject role="fo">
+       <imagedata fileref="velum_status.png" width="100%"/>
+      </imageobject>
+      <imageobject role="html">
+       <imagedata fileref="velum_status.png" width="100%"/>
+      </imageobject>
+     </mediaobject>
+    </informalfigure>
+   </step>
+  </procedure>
+ </sect1>
+</chapter>
