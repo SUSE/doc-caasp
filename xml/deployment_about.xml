@@ -20,8 +20,8 @@
   <para>
   &suse; &productname; is a Cloud-Native Computing Foundation (CNCF) certified
   &kube; distribution on top of &suse; &mos;.
-  &suse; &mos; is a minimalist operating system based on &sle; 12 SP3, dedicated
-  to hosting containers. &suse; &mos; OS inherits the benefits of &sle; in the
+  &suse; &mos; is a minimalist operating system based on &sle;, dedicated
+  to hosting containers. &suse; &mos; inherits the benefits of &sle; in the
   form of a smaller, simpler, and more robust operating system, optimized for
   large, clustered deployments. It also features an atomic, transactional update
   mechanism, making the system more resilient against software-update-related
@@ -36,14 +36,14 @@
  <itemizedlist>
   <listitem>
    <para>
-    Workload scheduling places containers according to their needs while
-    improving resource utilization. 
+    Workload scheduling optimizes hardware utilization while taking the
+    container requirements into account.
    </para>
   </listitem>
   <listitem>
    <para>
-    Service discovery and load balancing provides an IP address for your
-    services, and distributes load behind the scenes.
+    Service proxies provide single IP addresses for services and
+    distribute the load between containers.
    </para>
   </listitem>
   <listitem>
@@ -155,7 +155,7 @@
  </para>
  
  <sect1 xml:id="sec.deploy.architecture">
-  <title>&productname; Architecture</title>
+  <title>Architectural Overview</title>
 
   <para>
    A typical &productname; cluster consists of several types of nodes:
@@ -178,13 +178,13 @@
     <itemizedlist>
      <listitem>
       <para>
-       &kube; master: <emphasis>&master_node;s</emphasis> which manage the worker nodes.
+       &kube; master: <emphasis>&master_node;s</emphasis> manage the worker nodes.
       </para>
      </listitem>
      <listitem>
       <para>
-       &kube; worker: <emphasis>&worker_node;s</emphasis> which run the application
-       containers which are the main workload of the cluster. 
+       &kube; worker: <emphasis>&worker_node;s</emphasis> run the application
+       containers with the main workload of the cluster. 
       </para>
      </listitem>
     </itemizedlist>
@@ -228,7 +228,10 @@
     </textobject>
    </mediaobject>
   </figure>
+ </sect1>
 
+ <sect1 xml:id="sec.deploy.components">
+  <title>Software Components</title>
   <para>
    To run the whole cluster, &productname; uses various technologies such as
    &salt;, Flannel networking, the <literal>etcd</literal> distributed key-
@@ -386,72 +389,71 @@
     </textobject>
    </mediaobject>
   </figure>
+ </sect1>
 
-  <sect2 xml:id="sec.deploy.architecture.administration-node">
-   <title>The Administration Node</title>
-   <para>
-    The &admin_node; manages the cluster and runs several applications required
-    for proper functioning of the cluster. Because it is integral to the 
-    operation of &productname;, the &admin_node; must have a fully-qualified 
-    domain name (FQDN) which can be resolved from outside the cluster.  
-   </para>
-   <para>
-    The &admin_node; runs &dashboard;, the administration dashboard; the MariaDB
-    database; the <literal>etcd discovery</literal> server,
-    <emphasis>salt-api</emphasis>, <literal>salt-master</literal> and <literal>salt-minion</literal>. The
-    dashboard, database, and daemons all run in separate containers.
-   </para>
-   <para>
-    &dashboard; is a Web application that enables you to deploy, manage, and
-    monitor the cluster. The dashboard manages the cluster using 
-    <emphasis>salt-api</emphasis> to interact with the underlying &salt;
-    technology.
-   </para>
-   <para>
-    The containers on the &admin_node; are managed by <literal>kubelet</literal>
-    as a static pod. Bear in mind that this <literal>kubelet</literal> does not
-    manage the cluster nodes. Each cluster node has its own running instance of
-    <literal>kubelet</literal>.
-   </para>
-  </sect2>
-  
-  <sect2 xml:id="sec.deploy.architecture.master-nodes">
-   <title>Master Nodes</title>
-   <para>
-    &productname; &master_node;s monitor and control the &worker_node;s. They
-    make global decisions about the cluster, such as starting and scheduling 
-    pods of containers on the &worker_node;s. They run <emphasis>kube-apiserver</emphasis>
-    but do not host application containers.
-   </para>
-   <para>
-    Each cluster must have at least one &master_node;. For larger clusters, more
-    &master_node;s can be added, but there must always be an odd number. 
-   </para>
-   <para>
-    Like the &admin_node;, the &master_node; must have a resolvable FQDN. For
-    &dashboard; to function correctly, it must always be able to resolve the 
-    IP address of a &master_node;, so if there are multiple &master_node;s, they
-    must all share the same FQDN, meaning that load-balancing should be
-    configured.
-   </para>
-  </sect2>
-  <sect2 xml:id="sec.deploy.architecture.worker_node">
-   <title>Worker Nodes</title>
-   <para>
-    The &worker_node;s are the machines in the cluster which host application
-    containers. Each runs its own instance of <emphasis>kubelet</emphasis> which
-    controls the pods on that machine. Earlier versions of &kube; referred to
-    &worker_node;s as "minions".
-   </para>
-   <para>
-    Each &worker_node; runs a container runtime engine (either <literal>Docker</literal>
-    or <literal>cri-o</literal>) and an instance of <literal>kube-proxy</literal>.
-   </para>
-   <para>
-    The &worker_node;s do not require individual FQDNs, although it may help in
-    troubleshooting network problems. 
-   </para>
-  </sect2>
-  
+ <sect1 xml:id="sec.deploy.architecture.administration-node">
+  <title>The Administration Node</title>
+  <para>
+   The &admin_node; manages the cluster and runs several applications required
+   for proper functioning of the cluster. Because it is integral to the 
+   operation of &productname;, the &admin_node; must have a fully-qualified 
+   domain name (FQDN) which can be resolved from outside the cluster.  
+  </para>
+  <para>
+   The &admin_node; runs &dashboard;, the administration dashboard; the MariaDB
+   database; the <literal>etcd discovery</literal> server,
+   <emphasis>salt-api</emphasis>, <literal>salt-master</literal> and <literal>salt-minion</literal>. The
+   dashboard, database, and daemons all run in separate containers.
+  </para>
+  <para>
+   &dashboard; is a Web application that enables you to deploy, manage, and
+   monitor the cluster. The dashboard manages the cluster using 
+   <emphasis>salt-api</emphasis> to interact with the underlying &salt;
+   technology.
+  </para>
+  <para>
+   The containers on the &admin_node; are managed by <literal>kubelet</literal>
+   as a static pod. Bear in mind that this <literal>kubelet</literal> does not
+   manage the cluster nodes. Each cluster node has its own running instance of
+   <literal>kubelet</literal>.
+  </para>
+ </sect1>
+ 
+ <sect1 xml:id="sec.deploy.architecture.master-nodes">
+  <title>Master Nodes</title>
+  <para>
+   &productname; &master_node;s monitor and control the &worker_node;s. They
+   make global decisions about the cluster, such as starting and scheduling 
+   pods of containers on the &worker_node;s. They run <emphasis>kube-apiserver</emphasis>
+   but do not host application containers.
+  </para>
+  <para>
+   Each cluster must have at least one &master_node;. For larger clusters, more
+   &master_node;s can be added, but there must always be an odd number. 
+  </para>
+  <para>
+   Like the &admin_node;, the &master_node; must have a resolvable FQDN. For
+   &dashboard; to function correctly, it must always be able to resolve the 
+   IP address of a &master_node;, so if there are multiple &master_node;s, they
+   must all share the same FQDN, meaning that load-balancing should be
+   configured.
+  </para>
+ </sect1>
+ <sect1 xml:id="sec.deploy.architecture.worker_node">
+  <title>Worker Nodes</title>
+  <para>
+   The &worker_node;s are the machines in the cluster which host application
+   containers. Each runs its own instance of <emphasis>kubelet</emphasis> which
+   controls the pods on that machine. Earlier versions of &kube; referred to
+   &worker_node;s as "minions".
+  </para>
+  <para>
+   Each &worker_node; runs a container runtime engine (either <literal>Docker</literal>
+   or <literal>cri-o</literal>) and an instance of <literal>kube-proxy</literal>.
+  </para>
+  <para>
+   The &worker_node;s do not require individual FQDNs, although it may help in
+   troubleshooting network problems. 
+  </para>
  </sect1>
 </chapter>
