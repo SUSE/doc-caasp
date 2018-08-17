@@ -55,7 +55,7 @@
    It means that the internal IDs for machines, applications and services will
    change. It also means that the components for your deployments are likely
    to be deployed to different nodes than before. If any external services
-   or implementations rely on internal IDs (for example: a specific container ID)
+   or implementations rely on internal IDs (for example: a specific container ID),
    these must be adjusted after restoration of a cluster.
   </para> 
  </sect1>
@@ -63,42 +63,57 @@
  <sect1 xml:id="sec.admin.backup">
   <title>Backup</title>
   <para>
-   
+   The backup procedure consists of taking backups of the &dashboard; database
+   and the <literal>etcd</literal> configuration data.
   </para>
-  
+    
   <sect2 xml:id="sec.admin.backup.admin">
    <title>Backup Admin Node And &dashboard; Database</title>
    <para>
     First you must backup the configuration and main MariaDB database for the 
     Admin node.
     </para>
-<screen>
-&prompt.root;export ADMIN_NODE=$(awk -F\" '/dashboardExternalHost/ {print $4}' &lt; environment.json)
-
-ssh -T $ADMIN_NODE &lt;&lt;-'ENDSSH'
-docker exec $(docker ps -qf name="velum-mariadb") \
+   <procedure>
+    <title>Backup database</title>
+    <step>
+<para>
+ Log in to the admin node of your cluster via <command>ssh</command>.
+</para>
+  </step>
+  
+<step>
+ <para>
+  
+ </para>
+<screen>&prompt.user;<command>docker exec $(docker ps -qf name="velum-mariadb") \
 mysqldump --password=$(cat /var/lib/misc/infra-secrets/mariadb-root-password) velum_production \
-| gzip &gt; /var/lib/misc/infra-secrets/velum-backup.sql.gz \
-ENDSSH
+| gzip &gt; /var/lib/misc/infra-secrets/velum-backup.sql.gz</command>
+   </screen>
+  </step>
 
-ssh -T $ADMIN_NODE \
+<step>
+<screen>
 tar czf - -C / var/lib/misc \
 etc/salt/pki \
 etc/pki \
 usr/share/caasp-container-manifests \
 usr/share/salt/kubernetes \
 &gt; backup-CaaSP-admin-node.tgz
-   </screen> 
+   </screen>
+  </step>
+ </procedure>
   </sect2>
   
   <sect2 xml:id="sec.admin.backup.etcd">
    <title>Backup <literal>etcd</literal></title>
    <para>
     </para>
-<screen>&prompt.user;
-set -a
+
+    <procedure>
+     <step>
+<screen>&prompt.user;set -a
+ 
 source /etc/sysconfig/etcdctl
-etcdctl member list
 </screen>
 
 <screen>
@@ -116,22 +131,32 @@ f1f4b14cf8a8ecad: name=720d94b1c5924afd828cf236d7e1bfe6
                   clientURLs=https://720d94b1c5924afd828cf236d7e1bfe6.infra.caasp.local:2379 
                   isLeader=false
 </screen>
+</step>
    
- 
+<step> 
     <screen>&prompt.user;
 cp -p /etc/sysconfig/etcd /tmp/etcd-`date +%F`
 cp -p /etc/sysconfig/etcdctl /tmp/etcd-`date +%F`
+</screen>
+</step>
+
+<step>
+<screen>
 cp -p /etc/pki/trust/anchors/SUSE_CaaSP_CA.crt /tmp/etcd-`date +%F`/SUSE_CaaSP_CA.crt
 cp -p /etc/pki/minion.crt /tmp/etcd-`date +%F`/minion.crt
 cp -p /etc/pki/minion.key /tmp/etcd-`date +%F`/minion.key
     </screen>
+   </step>
    
+   <step>
    <para>
    </para>
     <screen>&prompt.user;
 cd /tmp/etcd-`date +%F`
 tar -cvzf /tmp/etcd-`date +%F`.tar.gz *
     </screen>
+   </step>
+   </procedure>
     
     <sect3 xml:id="sec.admin.backup.etcd.etcdctl">
      <title>Backup using <literal>etcdctl</literal></title>
@@ -186,12 +211,25 @@ chown -R etcd:etcd  /tmp/etcd-`date +%F`/*
    <para>
     
    </para>
-<screen>&prompt.root;ssh -T $ADMIN_NODE tar xzf - --exclude='mariadb-root-password' -C / &lt; backup-CaaSP-admin-node.tgz 2>/dev/null
-  ssh -T $ADMIN_NODE &lt;&lt;-'ENDSSH'
-  zcat /var/lib/misc/infra-secrets/velum-backup.sql.gz | docker exec -i $(docker ps -qf name="velum-mariadb") mysql --password=$(cat /var/lib/misc/infra-secrets/mariadb-root-password) velum_production
-  ENDSSH
-  ssh -T $ADMIN_NODE reboot
-   </screen>
+   <procedure>
+    <step>
+<screen>&prompt.user;<command>tar xzf - --exclude='mariadb-root-password' \ 
+-C / &lt; backup-CaaSP-admin-node.tgz 2>/dev/null</command>
+</screen>
+    </step>
+
+    <step>
+<screen>&prompt.user;<command>zcat /var/lib/misc/infra-secrets/velum-backup.sql.gz | \
+docker exec -i $(docker ps -qf name="velum-mariadb") \ 
+mysql --password=$(cat /var/lib/misc/infra-secrets/mariadb-root-password) velum_production</command>
+</screen>
+    </step>
+ 
+    <step>
+<screen>&prompt.user;<command>reboot</command>
+    </screen>
+    </step>
+   </procedure>
   </sect2>
   
   <sect2 xml:id="sec.admin.restore.etcd">
