@@ -234,15 +234,15 @@ e69de3a81c5588dd: name=627c1595c5e845c992d34613de46cbc6
     </para>
     <procedure>
      <step>
- <screen>&prompt.user;<command>tar xzf - --exclude='mariadb-root-password' \
- -C / &lt; backup-CaaSP-admin-node.tgz 2>/dev/null</command>
+<screen>&prompt.user;<command>tar xzf - --exclude='mariadb-root-password' \
+-C / &lt; backup-CaaSP-admin-node.tgz 2>/dev/null</command>
  </screen>
      </step>
 
      <step>
- <screen>&prompt.user;<command>zcat /var/lib/misc/infra-secrets/velum-backup.sql.gz | \
- docker exec -i $(docker ps -qf name="velum-mariadb") \
- mysql --password=$(cat /var/lib/misc/infra-secrets/mariadb-root-password) velum_production</command>
+<screen>&prompt.user;<command>zcat /var/lib/misc/infra-secrets/velum-backup.sql.gz | \
+docker exec -i $(docker ps -qf name="velum-mariadb") \
+mysql --password=$(cat /var/lib/misc/infra-secrets/mariadb-root-password) velum_production</command>
  </screen>
      </step>
 
@@ -254,70 +254,71 @@ e69de3a81c5588dd: name=627c1595c5e845c992d34613de46cbc6
    </sect3>
 
    <sect3 xml:id="sec.admin.restore.admin.rebuild.configuration">
-    <title>Restore Cluster Configuration</title>
+    <title>Restore Admin Node Configuration</title>
     <para>
      Section to be added.
     </para>
    </sect3>
-
  </sect2>
-
-
 
   <sect2 xml:id="sec.admin.restore.etcd">
    <title>Restore <literal>etcd</literal></title>
-   <para>
-
-   </para>
+   <important>
+    <title>Preserve Node FQDN</title>
+    <para>
+     The backup must be restored to a node that has the same FQDN
+     as the previous <literal>etcd</literal> node where the backup
+     was taken.
+    </para>
+   </important>
 
    <procedure>
     <step>
      <para>
-    1. Backup can be restored on node with this same FQDN name like previous one
-    </para>
-    </step>
+      Extract tarball file into /var/lib/etcd directory
+     </para>
+<screen>&prompt.user;<command>rm /var/lib/etcd/* -fr</command>
 
-    <step>
-<screen>
-2. Extract tarball file into /var/lib/etcd directory
+<command>cd /var/lib/etcd</command>
 
-rm /var/lib/etcd/* -fr
-cd /var/lib/etcd
-tar -xvzf /tmp/etcd-`date +%F`.tar.gz
+<command>tar -xvzf /tmp/etcd-`date +%F`.tar.gz</command>
      </screen>
     </step>
 
     <step>
-<screen>
-3. Move etcd and etcdctl config files
+     <para>
+      Move etcd and etcdctl config files
+     </para>
+<screen>&prompt.user;<command>mv etcd /etc/sysconfig/etcd</command>
 
-mv etcd /etc/sysconfig/etcd
-mv etcd /etc/sysconfig/etcdctl
+<command>mv etcd /etc/sysconfig/etcdctl</command>
      </screen>
     </step>
 
     <step>
-     <screen>
-4. Restore certificates
+     <para>
+      Restore certificates
+     </para>
+     <screen>&prompt.user;<command>mv SUSE_CaaSP_CA.crt /etc/pki/trust/anchors/SUSE_CaaSP_CA.crt</command>
 
-mv SUSE_CaaSP_CA.crt /etc/pki/trust/anchors/SUSE_CaaSP_CA.crt
-mv minion.crt /etc/pki/minion.crt
-mv minion.key /etc/pki/minion.key
+<command>mv minion.crt /etc/pki/minion.crt</command>
+
+<command>mv minion.key /etc/pki/minion.key</command>
      </screen>
     </step>
 
     <step>
-     <screen>
-5. Initialize new etcd cluster
+     <para>
+       Initialize new etcd cluster
+     </para>
+     <screen>&prompt.user;<command>set -a</command>
 
-set -a
+<command>source /etc/sysconfig/etcd</command>
 
-source /etc/sysconfig/etcd
-
-/usr/sbin/etcd --name="${ETCD_NAME}" \
+<command>/usr/sbin/etcd --name="${ETCD_NAME}" \
 --data-dir="${ETCD_DATA_DIR}" \
 --listen-client-urls="${ETCD_LISTEN_CLIENT_URLS}" \
---force-new-cluster
+--force-new-cluster</command>
      </screen>
     </step>
 
@@ -333,10 +334,10 @@ source /etc/sysconfig/etcd
     </step>
 
     <step>
-     <screen>
-6. Ensure correct permissions on /var/lib/etcd and start etcd
-
-chown -R etcd:etcd /var/lib/etcd
+     <para>
+      Ensure correct permissions on /var/lib/etcd and start etcd
+     </para>
+     <screen>&prompt.root;chown -R etcd:etcd /var/lib/etcd
 systemctl start etcd
    </screen>
    </step>
@@ -350,52 +351,79 @@ systemctl start etcd
   <sect2 xml:id="sec.admin.validate.etcd">
    <title>Validate <literal>etcd</literal> service</title>
   <para>
-
+   After restoration of the cluster configuration you must
+   verify that the configuration has taken and etcd will work
+   as desired.
   </para>
-   <screen>
-source /etc/sysconfig/etcdctl
-etcdctl cluster-health
 
-member e69de3a81c5588dd is healthy: got healthy result from https://627c1595c5e845c992d34613de46cbc6.infra.caasp.local:2379
-cluster is healthy
-</screen>
+  <procedure>
+   <title>Validation</title>
+  <step>
+ <screen>&prompt.user;<command>source /etc/sysconfig/etcdctl</command>
 
-<screen>
-etcdctl member list
+ <command>etcdctl cluster-health</command>
 
-e69de3a81c5588dd: name=627c1595c5e845c992d34613de46cbc6 peerURLs=https://627c1595c5e845c992d34613de46cbc6.infra.caasp.local:2380 clientURLs=https://627c1595c5e845c992d34613de46cbc6.infra.caasp.local:2379 isLeader=true
+ member e69de3a81c5588dd is healthy: got healthy result from https://627c1595c5e845c992d34613de46cbc6.infra.caasp.local:2379
+ cluster is healthy
+ </screen>
+  </step>
 
-8. Prepare and add more nodes to the cluster
+  <step>
+ <screen>&prompt.user;<command>etcdctl member list</command>
 
-On new node you have to restore or generate following config files:
-
-    /etc/sysconfig/etcd
-
-    /etcd/sysconfig/etcdctl
-
-This files can be copied from first restored nodes, but you have change ETCD_NAME in all places with ETCD_NAME from new machine. ETCD_NAME it is /etc/machine-id
-
-Next step is to restore or sign new certificates for this new node
-
-    /etc/pki/trust/anchors/SUSE_CaaSP_CA.crt
-
-    /etc/pki/minion.crt
-
-    /etc/pki/minion.key
-
-9. Add new node to the cluster
-
-Get ETCD_NAME of new node, it can be read from /etc/macine-id file and run following command on restored first etcd node
-
-# etcdctl member add &lt;NEW-MACHINE-ID&gt; https://&lt;NEW-MACHINE-ID&gt;.&lt;LOCAL-DOMAIN&gt;:2380
-
-For example
-# etcdctl member add d5e33fd8fa954a89aa3ddd12937c08e5 https://d5e33fd8fa954a89aa3ddd12937c08e5.infra.caasp.local:2380
-
-And example output should be
-
-Added member named d5e33fd8fa954a89aa3ddd12937c08e5 with ID 4e5c6003ee1b53d5 to cluster
+ e69de3a81c5588dd: name=627c1595c5e845c992d34613de46cbc6 peerURLs=https://627c1595c5e845c992d34613de46cbc6.infra.caasp.local:2380 clientURLs=https://627c1595c5e845c992d34613de46cbc6.infra.caasp.local:2379 isLeader=true
    </screen>
+  </step>
+
+  <step>
+   <para>
+    Prepare and add more nodes to the cluster. On new node you
+    have to restore or generate following config files.
+
+    This files can be copied from first restored nodes, but you
+    have change ETCD_NAME in all places with ETCD_NAME from new
+    machine. ETCD_NAME it is /etc/machine-id
+  </para>
+ <screen>
+ /etc/sysconfig/etcd
+
+ /etcd/sysconfig/etcdctl
+   </screen>
+  </step>
+
+  <step>
+   <para>
+    Next step is to restore or sign new certificates for this new node
+   </para>
+
+ <screen>
+ /etc/pki/trust/anchors/SUSE_CaaSP_CA.crt
+
+ /etc/pki/minion.crt
+
+ /etc/pki/minion.key
+   </screen>
+ </step>
+
+ <step>
+ <para>
+ 9. Add new node to the cluster
+ </para>
+
+ <screen>
+ Get ETCD_NAME of new node, it can be read from /etc/macine-id file and run following command on restored first etcd node
+
+ # etcdctl member add &lt;NEW-MACHINE-ID&gt; https://&lt;NEW-MACHINE-ID&gt;.&lt;LOCAL-DOMAIN&gt;:2380
+
+ For example
+ # etcdctl member add d5e33fd8fa954a89aa3ddd12937c08e5 https://d5e33fd8fa954a89aa3ddd12937c08e5.infra.caasp.local:2380
+
+ And example output should be
+
+ Added member named d5e33fd8fa954a89aa3ddd12937c08e5 with ID 4e5c6003ee1b53d5 to cluster
+ </screen>
+ </step>
+</procedure>
   </sect2>
  </sect1>
 
