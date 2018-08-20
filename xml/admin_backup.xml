@@ -30,7 +30,6 @@
   </para>
   <para>
    The backup consists of:
-
   </para>
 
   <itemizedlist>
@@ -464,8 +463,111 @@ e69de3a81c5588dd: name=627c1595c5e845c992d34613de46cbc6
  <sect1 xml:id="sec.admin.recovery">
   <title>Disaster Recovery</title>
   <para>
-   Not yet described.
+   Steps that can be taken after a catastrophic outage event.
   </para>
+
+  <sect2 xml:id="sec.admin.recovery.blackout">
+   <title>Collecting Cluster Information After Power Outage</title>
+
+   <sect3 xml:id="sec.admin.recovery.blackout.general">
+    <title>Collect General Information</title>
+    <procedure>
+     <step>
+      <para>
+       Check hardware and kernel status on all nodes using <command>dmesg</command>.
+      </para>
+     </step>
+
+     <step>
+      <para>
+       Check CPU usage and load on all nodes using <command>top</command>.
+       Look out for any excessive CPU/memory usage or high load.
+      </para>
+     </step>
+    </procedure>
+   </sect3>
+
+   <sect3 xml:id="sec.admin.recovery.blackout.velum">
+    <title>Check &dashboard; Information</title>
+    <procedure>
+     <step>
+      <para>
+       Login to &dashboard; dashboard and check the nodes' status. All nodes should
+       be green. If some nodes are in failed status, please re-run the
+       orchestration. If the <guimenu>RETRY</guimenu> option in &dashboard; is
+       not available, you can run it manually from a shell on the admin node.
+      </para>
+<screen>&prompt.user;<command>docker exec -it $(docker ps | grep "salt-master" | awk '{print $1}') \
+salt-run -l debug state.orchestrate orch.kubernetes</command>
+ </screen>
+     </step>
+    </procedure>
+   </sect3>
+
+   <sect3 xml:id="sec.admin.recovery.blackout.etcd">
+    <title>Check <literal>etcd</literal></title>
+    <para>
+     <xref linkend="sec.admin.validate.etcd"/>
+    </para>
+   </sect3>
+
+   <sect3 xml:id="sec.admin.recovery.blackout.kubernetes">
+    <title>Check Kubernetes Cluster Health</title>
+
+    <procedure>
+    <step>
+     <para>
+      Verify that all of the nodes you expect to see are present and that they
+      are all in the <literal>Ready</literal> state.
+     </para>
+<screen>&prompt.user;<command>kubectl get nodes</command></screen>
+    </step>
+    <step>
+     <para>
+      Verify that &kube; master, <literal>Dex</literal> and <literal>KubeDNS</literal>
+      services are running.
+     </para>
+<screen>&prompt.user;<command>kubectl cluster-info</command></screen>
+    </step>
+
+    <step>
+     <para>
+     If is required to get more status data you can dump detailed cluster
+     information.
+    </para>
+<screen>&prompt.user;<command>kubectl cluster-info dump</command></screen>
+    </step>
+
+    <step>
+     <para>
+      For even more information you can use <command>journalctl</command> to
+      dig into the log information on individual machines.
+     </para>
+     <itemizedlist mark="bullet">
+      <listitem>
+       <para>
+        On master nodes:
+       </para>
+<screen><command>journalctl -u kube-apiserver</command>
+<command>journalctl -u kube-scheduler</command>
+<command>journalctl -u kube-controller-manager</command>
+<command>journalctl -u kube-proxy</command>
+<command>journalctl -u kubelet</command>
+       </screen>
+      </listitem>
+      <listitem>
+       <para>
+        On worker nodes:
+       </para>
+<screen><command>journalctl -u kube-proxy</command>
+<command>journalctl -u kubelet</command>
+       </screen>
+      </listitem>
+     </itemizedlist>
+    </step>
+   </procedure>
+  </sect3>
+  </sect2>
  </sect1>
 
 </chapter>
