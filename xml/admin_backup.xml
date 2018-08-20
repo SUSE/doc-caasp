@@ -15,11 +15,11 @@
    <dm:translation>yes</dm:translation>
   </dm:docmanager>
  </info>
- 
+
  <sect1 xml:id="sec.admin.backup.about">
   <title>About &productname; Backup</title>
   <para>
-   Due to the nature of &kube; and container technology in general (and thus 
+   Due to the nature of &kube; and container technology in general (and thus
    &productname;), backup and restore procedures work very differently than with
    "stateful" infrastructure.
   </para>
@@ -30,9 +30,9 @@
   </para>
   <para>
    The backup consists of:
-   
+
   </para>
-  
+
   <itemizedlist>
    <listitem>
     <para>
@@ -50,14 +50,14 @@
     </para>
    </listitem>
   </itemizedlist>
-  
+
    <para>
    It means that the internal IDs for machines, applications and services will
    change. It also means that the components for your deployments are likely
    to be deployed to different nodes than before. If any external services
    or implementations rely on internal IDs (for example: a specific container ID),
    these must be adjusted after restoration of a cluster.
-  </para> 
+  </para>
  </sect1>
 
  <sect1 xml:id="sec.admin.backup">
@@ -66,11 +66,11 @@
    The backup procedure consists of taking backups of the &dashboard; database
    and the <literal>etcd</literal> configuration data.
   </para>
-    
+
   <sect2 xml:id="sec.admin.backup.admin">
    <title>Backup Admin Node And &dashboard; Database</title>
    <para>
-    First you must backup the configuration and main MariaDB database for the 
+    First you must backup the configuration and main MariaDB database for the
     Admin node.
     </para>
    <procedure>
@@ -80,10 +80,10 @@
  Log in to the admin node of your cluster via <command>ssh</command>.
 </para>
   </step>
-  
+
 <step>
  <para>
-  
+
  </para>
 <screen>&prompt.user;<command>docker exec $(docker ps -qf name="velum-mariadb") \
 mysqldump --password=$(cat /var/lib/misc/infra-secrets/mariadb-root-password) velum_production \
@@ -103,7 +103,7 @@ usr/share/salt/kubernetes \
   </step>
  </procedure>
   </sect2>
-  
+
   <sect2 xml:id="sec.admin.backup.etcd">
    <title>Backup <literal>etcd</literal></title>
    <para>
@@ -112,28 +112,28 @@ usr/share/salt/kubernetes \
     <procedure>
      <step>
 <screen>&prompt.user;set -a
- 
+
 source /etc/sysconfig/etcdctl
 </screen>
 
 <screen>
 &prompt.user;etcdctl member list
-8bef9c9ac28aa50e: name=d5e33fd8fa954a89aa3ddd12937c08e5 
-                  peerURLs=https://d5e33fd8fa954a89aa3ddd12937c08e5.infra.caasp.local:2380 
-                  clientURLs=https://d5e33fd8fa954a89aa3ddd12937c08e5.infra.caasp.local:2379 
+8bef9c9ac28aa50e: name=d5e33fd8fa954a89aa3ddd12937c08e5
+                  peerURLs=https://d5e33fd8fa954a89aa3ddd12937c08e5.infra.caasp.local:2380
+                  clientURLs=https://d5e33fd8fa954a89aa3ddd12937c08e5.infra.caasp.local:2379
                   isLeader=false
-e69de3a81c5588dd: name=627c1595c5e845c992d34613de46cbc6 
-                  peerURLs=https://627c1595c5e845c992d34613de46cbc6.infra.caasp.local:2380 
-                  clientURLs=https://627c1595c5e845c992d34613de46cbc6.infra.caasp.local:2379 
+e69de3a81c5588dd: name=627c1595c5e845c992d34613de46cbc6
+                  peerURLs=https://627c1595c5e845c992d34613de46cbc6.infra.caasp.local:2380
+                  clientURLs=https://627c1595c5e845c992d34613de46cbc6.infra.caasp.local:2379
                   isLeader=true
-f1f4b14cf8a8ecad: name=720d94b1c5924afd828cf236d7e1bfe6 
-                  peerURLs=https://720d94b1c5924afd828cf236d7e1bfe6.infra.caasp.local:2380 
-                  clientURLs=https://720d94b1c5924afd828cf236d7e1bfe6.infra.caasp.local:2379 
+f1f4b14cf8a8ecad: name=720d94b1c5924afd828cf236d7e1bfe6
+                  peerURLs=https://720d94b1c5924afd828cf236d7e1bfe6.infra.caasp.local:2380
+                  clientURLs=https://720d94b1c5924afd828cf236d7e1bfe6.infra.caasp.local:2379
                   isLeader=false
 </screen>
 </step>
-   
-<step> 
+
+<step>
     <screen>&prompt.user;
 cp -p /etc/sysconfig/etcd /tmp/etcd-`date +%F`
 cp -p /etc/sysconfig/etcdctl /tmp/etcd-`date +%F`
@@ -147,7 +147,7 @@ cp -p /etc/pki/minion.crt /tmp/etcd-`date +%F`/minion.crt
 cp -p /etc/pki/minion.key /tmp/etcd-`date +%F`/minion.key
     </screen>
    </step>
-   
+
    <step>
    <para>
    </para>
@@ -157,11 +157,11 @@ tar -cvzf /tmp/etcd-`date +%F`.tar.gz *
     </screen>
    </step>
    </procedure>
-    
+
     <sect3 xml:id="sec.admin.backup.etcd.etcdctl">
      <title>Backup using <literal>etcdctl</literal></title>
      <para>
-      
+
      </para>
 <screen>&prompt.user;systemctl stop etcd
 etcdctl --debug backup --data-dir=/var/lib/etcd/ --backup-dir=/tmp/etcd-`date +%F`
@@ -169,23 +169,23 @@ cp -p /var/lib/etcd/member/snap/db /tmp/etcd-`date +%F`/member/snap/
 chown -R etcd:etcd  /tmp/etcd-`date +%F`/*
      </screen>
     </sect3>
-    
+
     <sect3 xml:id="sec.admin.backup.etcd.btrfs">
      <title>Backup using <literal>btrfs</literal> snapshot</title>
      <para>
       btrfs subvolume snapshot /var/lib/etcd /tmp/etcd-`date +%F`
      </para>
     </sect3>
-    
+
   </sect2>
- </sect1> 
+ </sect1>
 
  <sect1 xml:id="sec.admin.restore.admin">
   <title>Restore</title>
-  
+
   <sect2 xml:id="sec.admin.restore.rebuild">
    <title>Rebuild Admin Node</title>
-     
+
   <sect3 xml:id="sec.admin.restore.snapshot">
    <title>Rebuild Admin Node From Snapshot</title>
    <para>
@@ -194,7 +194,7 @@ chown -R etcd:etcd  /tmp/etcd-`date +%F`/*
      - a restore of that very snapshot (virsh snapshot-revert --current caasp-admin-node)
    </para>
   </sect3>
-  
+
   <sect3 xml:id="sec.admin.restore.scratch">
    <title>Rebuild Admin Node From Scratch</title>
    <para>
@@ -203,66 +203,66 @@ chown -R etcd:etcd  /tmp/etcd-`date +%F`/*
      - altered the DNS record for the admin node to point to the replacement now
    </para>
   </sect3>
-  
+
  </sect2>
-  
+
   <sect2 xml:id="sec.admin.restore.admin.node">
    <title>Restore &dashboard; Database</title>
    <para>
-    
+
    </para>
    <procedure>
     <step>
-<screen>&prompt.user;<command>tar xzf - --exclude='mariadb-root-password' \ 
+<screen>&prompt.user;<command>tar xzf - --exclude='mariadb-root-password' \
 -C / &lt; backup-CaaSP-admin-node.tgz 2>/dev/null</command>
 </screen>
     </step>
 
     <step>
 <screen>&prompt.user;<command>zcat /var/lib/misc/infra-secrets/velum-backup.sql.gz | \
-docker exec -i $(docker ps -qf name="velum-mariadb") \ 
+docker exec -i $(docker ps -qf name="velum-mariadb") \
 mysql --password=$(cat /var/lib/misc/infra-secrets/mariadb-root-password) velum_production</command>
 </screen>
     </step>
- 
+
     <step>
 <screen>&prompt.user;<command>reboot</command>
     </screen>
     </step>
    </procedure>
   </sect2>
-  
+
   <sect2 xml:id="sec.admin.restore.etcd">
    <title>Restore <literal>etcd</literal></title>
    <para>
 
    </para>
-   
+
    <screen>
     1. Backup can be restored on node with this same FQDN name like previous one
 
 2. Extract tarball file into /var/lib/etcd directory
 
-# rm /var/lib/etcd/* -fr
-# cd /var/lib/etcd
-# tar -xvzf /tmp/etcd-`date +%F`.tar.gz 
+rm /var/lib/etcd/* -fr
+cd /var/lib/etcd
+tar -xvzf /tmp/etcd-`date +%F`.tar.gz
 
-3. Move etcd and etcdctl config files 
+3. Move etcd and etcdctl config files
 
-# mv etcd /etc/sysconfig/etcd
-# mv etcd /etc/sysconfig/etcdctl
+mv etcd /etc/sysconfig/etcd
+mv etcd /etc/sysconfig/etcdctl
 
 4. Restore certificates
 
-# mv SUSE_CaaSP_CA.crt /etc/pki/trust/anchors/SUSE_CaaSP_CA.crt
-# mv minion.crt /etc/pki/minion.crt
-# mv minion.key /etc/pki/minion.key
+mv SUSE_CaaSP_CA.crt /etc/pki/trust/anchors/SUSE_CaaSP_CA.crt
+mv minion.crt /etc/pki/minion.crt
+mv minion.key /etc/pki/minion.key
 
 5. Initialize new etcd cluster
 
-# set -a
-# source /etc/sysconfig/etcd
-# /usr/sbin/etcd --name="${ETCD_NAME}" --data-dir="${ETCD_DATA_DIR}" --listen-client-urls="${ETCD_LISTEN_CLIENT_URLS}" --force-new-cluster
+set -a
+source /etc/sysconfig/etcd
+/usr/sbin/etcd --name="${ETCD_NAME}" --data-dir="${ETCD_DATA_DIR}" --listen-client-urls="${ETCD_LISTEN_CLIENT_URLS}" --force-new-cluster
 
 After you will see ready to serve client requests
 
@@ -274,29 +274,31 @@ Server can be stopped by pressing Ctrl + c
 
 6. Ensure correct permissions on /var/lib/etcd and start etcd
 
-# chown -R etcd:etcd /var/lib/etcd
-# systemctl start etcd
+chown -R etcd:etcd /var/lib/etcd
+systemctl start etcd
    </screen>
   </sect2>
  </sect1>
- 
+
  <sect1 xml:id="sec.admin.validate">
   <title>Validate Restore Procedure</title>
-  
+
   <sect2 xml:id="sec.admin.validate.etcd">
    <title>Validate <literal>etcd</literal> service</title>
   <para>
-   
+
   </para>
    <screen>
-# source /etc/sysconfig/etcdctl
-# etcdctl cluster-health
-Example output:
+source /etc/sysconfig/etcdctl
+etcdctl cluster-health
+
 member e69de3a81c5588dd is healthy: got healthy result from https://627c1595c5e845c992d34613de46cbc6.infra.caasp.local:2379
 cluster is healthy
+</screen>
 
-# etcdctl member list
-Example output:
+<screen>
+etcdctl member list
+
 e69de3a81c5588dd: name=627c1595c5e845c992d34613de46cbc6 peerURLs=https://627c1595c5e845c992d34613de46cbc6.infra.caasp.local:2380 clientURLs=https://627c1595c5e845c992d34613de46cbc6.infra.caasp.local:2379 isLeader=true
 
 8. Prepare and add more nodes to the cluster
@@ -339,5 +341,5 @@ Added member named d5e33fd8fa954a89aa3ddd12937c08e5 with ID 4e5c6003ee1b53d5 to 
    Not yet described.
   </para>
  </sect1>
- 
+
 </chapter>
