@@ -319,7 +319,7 @@ mysql --password=$(cat /var/lib/misc/infra-secrets/mariadb-root-password) velum_
 
      <step>
       <para>
-        Initialize new etcd cluster
+        Initialize a new <literal>etcd</literal> cluster
       </para>
 <screen>&prompt.user;<command>set -a</command>
 
@@ -334,13 +334,27 @@ mysql --password=$(cat /var/lib/misc/infra-secrets/mariadb-root-password) velum_
 
      <step>
       <para>
-       After you will see ready to serve client requests.
+       Wait for the server to start up and look for the message
+       <quote>ready to serve client requests</quote> in the output.
       </para>
 <screen>
-2017-08-22 11:32:03.296340 I | embed: ready to serve client requests
+2017-08-22 11:32:03.296340 I | embed: ready to serve client requests <co xml:id="co.ready"/>
 2017-08-22 11:32:03.296807 I | embed: serving client requests on [::]:2379
 2017-08-22 11:32:03.298188 E | etcdmain: forgot to set Type=notify in systemd service file?
       </screen>
+      <calloutlist>
+       <callout arearefs="co.ready">
+         <para>Server is ready to serve requests.</para>
+       </callout>
+      </calloutlist>
+      <para>
+       Once the server has reached this point, you can quit it
+       using
+       <keycombo>
+        <keycap function="control"/>
+        <keycap>C</keycap>
+       </keycombo>.
+      </para>
      </step>
 
      <step>
@@ -352,7 +366,7 @@ mysql --password=$(cat /var/lib/misc/infra-secrets/mariadb-root-password) velum_
     </step>
     <step>
      <para>
-      Start <command>etcd</command>.
+      Start the <command>etcd</command> service.
      </para>
 <screen>
 <command>systemctl start etcd</command>
@@ -369,37 +383,37 @@ mysql --password=$(cat /var/lib/misc/infra-secrets/mariadb-root-password) velum_
    <procedure>
     <step>
      <para>
-      Prepare and add more nodes to the cluster. On new nodes you
-      have to restore or generate the following config files.
+      Prepare and add more nodes to the cluster.
 
       These files can be copied from the first restored node, but you
       must replace <literal>ETCD_NAME</literal> in all places with
       <literal>ETCD_NAME</literal> from the individual nodes'
       contents of <filename>/etc/machine-id</filename>.
     </para>
-  <screen>&prompt.user;<command>/etc/sysconfig/etcd</command>
+<screen>&prompt.user;<command>/etc/sysconfig/etcd</command>
 
-  <command>/etcd/sysconfig/etcdctl</command>
+<command>/etcd/sysconfig/etcdctl</command>
      </screen>
     </step>
 
    <step>
    <para>
-   Add new node to the cluster
+   Add new node to the cluster.
+   Get ETCD_NAME of new node, it can be read from /etc/macine-id file and run following command on restored first etcd node
    </para>
 
- <screen>
- Get ETCD_NAME of new node, it can be read from /etc/macine-id file and run following command on restored first etcd node
+<screen>&prompt.user;<command>etcdctl member add <replaceable>&lt;NEW-MACHINE-ID&gt;</replaceable> https://<replaceable>&lt;NEW-MACHINE-ID&gt;.&lt;LOCAL-DOMAIN&gt;</replaceable>:2380</command>
+</screen>
 
- # etcdctl member add &lt;NEW-MACHINE-ID&gt; https://&lt;NEW-MACHINE-ID&gt;.&lt;LOCAL-DOMAIN&gt;:2380
+<para>
+ For example:
+</para>
+<screen>&prompt.user;<command>etcdctl member add d5e33fd8fa954a89aa3ddd12937c08e5 \
+https://d5e33fd8fa954a89aa3ddd12937c08e5.infra.caasp.local:2380</command>
 
- For example
- # etcdctl member add d5e33fd8fa954a89aa3ddd12937c08e5 https://d5e33fd8fa954a89aa3ddd12937c08e5.infra.caasp.local:2380
+Added member named d5e33fd8fa954a89aa3ddd12937c08e5 with ID 4e5c6003ee1b53d5 to cluster
+</screen>
 
- And example output should be
-
- Added member named d5e33fd8fa954a89aa3ddd12937c08e5 with ID 4e5c6003ee1b53d5 to cluster
-   </screen>
    </step>
 
    </procedure>
