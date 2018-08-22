@@ -787,6 +787,22 @@ runcmd:
    If you want to register your node at a &rmt; server, refer to the
    <emphasis>RMT Guide</emphasis> at <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/book_rmt.html"/>.
   </para>
+  <note xml:id="sec.configuration.suseconnect.proxy">
+   <title>Using a Proxy Server with Authentication</title>
+   <para>
+    Create the file <filename>/root/.curlrc</filename> with the content:
+   </para>
+<screen>--proxy https://<replaceable>PROXY_FQDN</replaceable>:<replaceable>PROXY_PORT</replaceable>
+--proxy-user "<replaceable>USER</replaceable>:<replaceable>PASSWORD</replaceable>"</screen>
+   <para>
+    Replace <replaceable>PROXY_FQDN</replaceable> with the fully
+    qualified domain name of the proxy server and
+    <replaceable>PROXY_PORT</replaceable> with its port. Replace
+    <replaceable>USER</replaceable> and
+    <replaceable>PASSWORD</replaceable> with the credentials of an
+    allowed user for the proxy server.
+   </para>
+  </note>
  </sect1>
 
 </chapter>
