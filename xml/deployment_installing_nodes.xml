@@ -386,6 +386,122 @@
   </procedure>
  </sect1>
 
+ <sect1 xml:id="sec.deploy.nodes.admin_install_cli">
+  <title>Installing the &Admin_Node; with Command Line Interface</title>
+
+  <para>
+   This procedure is intended to be used with public cloud
+   installations. Use SSH to log into the admin node and run the
+   <command>caasp-admin-setup</command> executable as the
+   <literal>root</literal>user.
+  </para>
+
+  <para>
+   By default the <command>caasp-admin-setup</command> executable operates in
+   <literal>wizard</literal> mode, walking you through the necessary steps.
+   During this process your &scc; credentials will be requested. Registration
+   with &scc; can be skipped. If this step is skipped during setup the admin node
+   and the cluster nodes will not receive any updates. While registration to
+   &scc; can be performed after the initial setup with
+   <literal>SUSEConnect</literal>, performing the registration during setup has
+   the advantage that cluster nodes will automatically be registered with &scc;
+   as well. If you prefer not to run the <literal>wizard</literal>, use
+   <command>caasp-admin-setup --help</command> to obtain a list of the
+   available command line arguments.
+  </para>
+
+  <para>
+   Once the <literal>caasp-admin-setup</literal> process is complete all
+   &productname; containers will be launched on the admin node instance. Use
+   your web browser to access the Velum dashboard via <literal>https</literal>.
+   If you did not provide your own certificate, a certificate was generated for
+   you and the fingerprint was written to the terminal in which
+   <command>caasp-admin-setup</command> was executed. You can compare this
+   fingerprint in your browser to establish the chain of trust.
+  </para>
+
+  <para>
+   Microsoft Azure does not provide a time protocol service. Please refer to
+   <link xlink:href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_netz_xntp.html">
+   SUSE Linux Enterprise Server documentation</link> for more information about
+   NTP configuration. No manual NTP configuration is required on the cluster
+   nodes, they synchronize time with the admininstration node.
+  </para>
+
+  <sect2>
+   <title><command>caasp-admin-setup</command> Details</title>
+   <para>
+    The general purpose of <command>caasp-admin-setup</command> is to collect
+    all information needed to successfully start the &productname; containers.
+   </para>
+   <para>
+    When <command>caasp-admin-setup</command> is executed it determines which
+    cluster node image to use according to the cloud framework. For this
+    operation to succeed outgoing traffic on port <literal>443</literal> to the
+    Internet must be permitted. The code will access the <literal>Public Cloud
+    Information Tracker</literal> service operated by SUSE. This service
+    provides information about all images ever released to the Public Cloud by
+    SUSE. The latest available cluster node image for this version of
+    &productname; will be used. This initial outreach and image filtering
+    introduces a small startup delay before the command line options are
+    processed or the wizard mode starts.
+   </para>
+  </sect2>
+  <sect2>
+   <title>Providing SSL Certificate and Key</title>
+   <para>
+    You may choose to supply your own SSL certificate and key for initial
+    access the dashboard, with the <literal>--ssl-crt</literal> and
+    <literal>--ssl-key</literal> options or by answering the question
+    <quote>Would you like to use your own certificate from a known (public
+    or self signed) Certificate Authority?</quote> with
+    <literal>y</literal>.
+   </para>
+   <para>
+    In order to use your own SSL certificate and key you must upload the files
+    to the admin node into a location of your choice. This location is then
+    provided to the setup code. For example, if your certificate is called
+    <filename>my-velum.crt</filename> and you uploaded it to
+    <filename>/tmp</filename> then the <command>caasp-admin-setup</command>
+    code expects <filename>/tmp/my-velum.crt</filename> as the location for
+    the SSL certificate. The same concept applies to the SSL key. The
+    certificate and key will be placed in the appropriate locations on the
+    admin node.
+   </para>
+  </sect2>
+  <sect2>
+   <title>Velum Administrator Credentials</title>
+   <para>
+    Velum is the name of the administrative dashboard web interface. The setup
+    code will ask for an e-mail address and a password if not supplied with
+    the <literal>--admin-email</literal> and
+    <literal>--admin-password</literal> arguments. These are the
+    administrative credentials to log into the Velum dashboard. The e-mail
+    used does not have to be an e-mail associated with your &scc; account.
+    Please do not forget the values you enter, as they cannot be recovered.
+   </para>
+  </sect2>
+  <sect2>
+   <title>Registering with &scc;</title>
+   <para>
+    The setup code will ask for an e-mail address and the registration code.
+    Use your &scc; credentials that provide access to the &productname; product
+    in &scc;. The admin node and all cluster nodes will get registered to &scc;.
+    The registration process requires access to the Internet on port 443.
+    Alternatively you may use the <literal>--reg-email</literal> and
+    <literal>--reg-code</literal> arguments. Registration with &scc; is
+    optional. However, without registration the system will not receive any
+    updates unless specifically setup to receive updates via a different route
+    such as a private &smt; server. Registration after the initial setup also
+    requires an explicit registration of each node in the cluster.
+   </para>
+   <para>
+    When all information is collected, accept your selections/input with
+    <literal>y</literal> to complete the initial setup.
+   </para>
+  </sect2>
+ </sect1>
+
  <sect1 xml:id="sec.deploy.nodes.admin_configuration">
   <title>Configuring the &Admin_Node;</title>
   <para>
