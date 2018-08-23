@@ -781,6 +781,250 @@
   </para>
  </sect1>
 
+ <sect1 xml:id="sec.deploy.requirements.public_cloud">
+  <title>General Public Cloud Requirements</title>
+  <para>
+   In Amazon EC2, the adminstrative instance must be launched with an IAM role
+   that allows full access to the EC2 API. In Microsoft Azure, all security
+   credentials will be collected during setup. In Google Compute Engine, the
+   instance must be launched with an IAM role including <literal>Compute
+   Admin</literal> and <literal>Service Account Actor</literal> scopes.
+  </para>
+  <para>
+   Select an instance size for the Administrative node that meets the system
+   requirements as documented in the &productname; documentation.
+  </para>
+  <variablelist>
+   <varlistentry>
+    <term>Memory</term>
+    <listitem>
+     <para>
+      Minimal main memory: 8GB
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>Volume Size</term>
+    <listitem>
+     <para>
+      Root volume size should be at least 40GB and is dependent on the size and
+      number of different containers running in the cluster. The default root
+      volume size of the images is smaller than 40GB in some Public Cloud
+      frameworks; you must resize the root volume to meet your needs upon
+      instance launch using the command line tools or the web interface for the
+      framework of your choice.
+     </para>
+    </listitem>
+   </varlistentry>
+  </variablelist>
+ </sect1>
+
+ <sect1 xml:id="sec.deploy.requirements.public_cloud_network">
+  <title>Public Cloud Network Requirements</title>
+  <para>
+   &productname; expects that DNS resolution is functional. In general, Public
+   Cloud providers provide a DNS service that works with internal host names.
+   You can also set up your own DNS resolution; please refer to the
+   documentation of the Public Cloud provider of your choice to configure your
+   own DNS service.
+  </para>
+  <para>
+   It is recommended that &productname; is setup to run in two subnets in one
+   network segment, also referred to as VPC or VNET. The Administrative node
+   should run in a subnet that is not accessible to the outside world and
+   should be connected to your network via VPN or other means. Consider a
+   security group/firewall that only allows ingress traffic on ports 22 (SSH)
+   and 443 (https) for the Administrative node from outside the VPC. All nodes
+   must have access to the Internet through some route in order to connect to
+   SCC and receive updates, or be otherwise configured to receive updates (e.g.
+   via an SMT server).
+  </para>
+  <para>
+   Depending on the applications running in your cluster you may consider
+   exposing the subnet for the cluster nodes to the outside world. Use a
+   security group/firewall that only allows incoming traffic on ports served by
+   your workload(s). For example, a containerized application providing the
+   backend for REST based services with content served over https should only
+   allow ingress traffic on port 443.
+  </para>
+  <para>
+   Traffic between the two subnets should be allowed to flow freely.
+   &productname; uses the following ports:
+  </para>
+  <para>
+   <guimenu>Administrative node</guimenu>
+  </para>
+  <itemizedlist>
+   <listitem>
+    <para>
+     ssh: 22
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     http: 80 (Redirects to 443, https)
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     ntp: 123 (In cases where the service provider has a time service the admin
+     node image is configured to use the ntp service provided by the framework.
+     Cluster nodes always point back to the admin node)
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     slapd: 389
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     https: 443
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     etcd: 2379
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     etcd: 2380
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     salt master: 4505
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     salt master: 4506
+    </para>
+   </listitem>
+  </itemizedlist>
+  <para>
+   <guimenu>Master node role</guimenu>
+  </para>
+  <itemizedlist>
+   <listitem>
+    <para>
+     ssh: 22
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     etcd: 2379
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     etcd: 2380
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     kubelet: 4198
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     haproxy: 6443
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     haproxy: 6444
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     flanneld: 8285 (UDP)
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     kubelet: 10250
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     kube-scheduler: 10251
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     kube-controller-manager: 10252
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     kubelet: 10255
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     kube-proxy: 10256
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     kube-proxy: 32000
+    </para>
+   </listitem>
+  </itemizedlist>
+  <para>
+   <guimenu>Worker node role</guimenu>
+  </para>
+  <itemizedlist>
+   <listitem>
+    <para>
+     ssh: 22
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     etcd: 2379
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     etcd: 2380
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     kubelet: 4194
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     flanneld: 8285 (UDP)
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     kubelet: 10250
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     kubelet: 10255
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     kube-proxy: 10256
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     kube-proxy: 32000
+    </para>
+   </listitem>
+  </itemizedlist>
+ </sect1>
+
  <sect1 xml:id="sec.deploy.requirements.limits">
   <title>Limitations</title>
   <itemizedlist mark="bullet" spacing="normal">
