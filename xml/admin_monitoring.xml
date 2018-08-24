@@ -16,7 +16,7 @@
   </dm:docmanager>
  </info>
 
- <sect1 xml:id="sec.admin.cluster-monitoring">
+ <sect1 xml:id="sec.admin.monitoring.cluster">
   <title>Cluster Monitoring</title>
 
   <para>
@@ -35,18 +35,18 @@
    <listitem>
     <para>
      By using <emphasis>Heapster</emphasis>, for details refer to
-     <xref linkend="sec.admin.cluster-monitoring.heapster"/>.
+     <xref linkend="sec.admin.monitoring.cluster..heapster"/>.
     </para>
    </listitem>
    <listitem>
     <para>
      By using <emphasis>Grafana</emphasis>, for details refer to
-     <xref linkend="sec.admin.cluster-monitoring.grafana"/>.
+     <xref linkend="sec.admin.monitoring.cluster..grafana"/>.
     </para>
    </listitem>
   </itemizedlist>
 
-  <sect2 xml:id="sec.admin.cluster-monitoring.heapster">
+  <sect2 xml:id="sec.admin.monitoring.cluster..heapster">
    <title>Monitoring with Heapster</title>
    <para>
     <emphasis>Heapster</emphasis> is a tool that collects and interprets
@@ -65,7 +65,7 @@ https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/heap
    </para>
   </sect2>
 
-  <sect2 xml:id="sec.admin.cluster-monitoring.grafana">
+  <sect2 xml:id="sec.admin.monitoring.cluster..grafana">
    <title>Monitoring with Grafana</title>
    <para>
     <emphasis>Grafana</emphasis> is an analytics platform that processes data
@@ -94,4 +94,69 @@ https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-co
 <screen>&prompt.root;<command>kubectl apply -f grafana-service.yaml</command></screen>
   </sect2>
  </sect1>
+
+ <sect1 xml:id="sec.admin.monitoring.cluster.health">
+  <title>Cluster Health Checking</title>
+  <para>
+   Although &kube; takes care of a lot of traditional deployment problems
+   automatically, it is considered good practice to monitor the availability
+   and health of your services and applications to react to problems should they
+   go beyond the self-healing capabilities this is, however, beyond the scope of
+   this document.
+  </para>
+
+  <para>
+   This document is intended to give you an overview of points you should monitor
+   to ensure correct functionality of the &productname; itself.
+  </para>
+
+  <note>
+   <title>Upstream documentation on monitoring details</title>
+
+   <para>
+    Instructions like how to set up <link xlink:href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/">Liveness and Readiness Probes</link>
+    or how to <link xlink:href="https://kubernetes.io/docs/tasks/debug-application-cluster/monitor-node-health/">Monitor individual Node health</link>
+    can be found in the &kube; upstream documentation.
+   </para>
+  </note>
+
+  <sect2 xml:id="sec.admin.monitoring.cluster.health.etcd">
+   <title><literal>etcd</literal> Cluster Health</title>
+   <para>
+    - Check that all machines that have the `etcd` role on the cluster see the etcd cluster as healthy.
+<screen>
+docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
+salt -G 'roles:etcd' \
+cmd.run 'set -a; source /etc/sysconfig/etcdctl; etcdctl cluster-health'
+    </screen>
+   </para>
+  </sect2>
+
+  <sect2 xml:id="sec.admin.monitoring.cluster.health.components">
+   <title>Running Components</title>
+   <para>
+    Check if the cluster has all required components running:
+   </para>
+   <screen>
+kubectl cluster-info
+      </screen>
+      <para>
+       You can optionally run <command>kubectl cluster-info dump</command> to obtain a much more detailed output
+      </para>
+  </sect2>
+
+  <sect2 xml:id="sec.admin.monitoring.cluster.disk-usage">
+   <title>Disk Usage</title>
+   <para>
+    It's good to also check that all machines are healthy in terms of free disk space from time to time, also when something fails:
+   </para>
+
+<screen>&prompt.user;docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
+salt -P 'roles:(admin|kube-master|kube-minion)' \
+cmd.run "df -h"
+  </screen>
+ </sect2>
+
+
+  </sect1>
 </chapter>
