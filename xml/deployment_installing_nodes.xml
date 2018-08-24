@@ -388,14 +388,17 @@
 
  <sect1 xml:id="sec.deploy.nodes.admin_install_cli">
   <title>Installing the &Admin_Node; with Command Line Interface</title>
-
+  <note>
+   <para>
+    This procedure is intended to be used with public cloud
+    installations.
+   </para>
+  </note>
   <para>
-   This procedure is intended to be used with public cloud
-   installations. Use SSH to log into the admin node and run the
+   Use SSH to log into the admin node and run the
    <command>caasp-admin-setup</command> executable as the
    <literal>root</literal>user.
   </para>
-
   <para>
    By default the <command>caasp-admin-setup</command> executable operates in
    <literal>wizard</literal> mode, walking you through the necessary steps.
@@ -409,7 +412,6 @@
    <command>caasp-admin-setup --help</command> to obtain a list of the
    available command line arguments.
   </para>
-
   <para>
    Once the <literal>caasp-admin-setup</literal> process is complete all
    &productname; containers will be launched on the admin node instance. Use
@@ -419,7 +421,6 @@
    <command>caasp-admin-setup</command> was executed. You can compare this
    fingerprint in your browser to establish the chain of trust.
   </para>
-
   <sect2>
    <title><command>caasp-admin-setup</command> Details</title>
    <para>
@@ -437,6 +438,10 @@
     &productname; will be used. This initial outreach and image filtering
     introduces a small startup delay before the command line options are
     processed or the wizard mode starts.
+   </para>
+   <para>
+    When all information is collected, accept your selections/input with
+    <literal>y</literal> to complete the initial setup.
    </para>
   </sect2>
   <sect2>
@@ -476,20 +481,20 @@
   <sect2>
    <title>Registering with &scc;</title>
    <para>
-    The setup code will ask for an e-mail address and the registration code.
-    Use your &scc; credentials that provide access to the &productname; product
-    in &scc;. The admin node and all cluster nodes will get registered to &scc;.
-    The registration process requires access to the Internet on port 443.
-    Alternatively you may use the <literal>--reg-email</literal> and
+    To register all cluster nodes with &scc;, provide your e-mail
+    address and the registration code. The registration process
+    requires access to the Internet on port 443. Alternatively you may
+    use the <literal>--reg-email</literal> and
     <literal>--reg-code</literal> arguments. Registration with &scc; is
-    optional. However, without registration the system will not receive any
-    updates unless specifically setup to receive updates via a different route
-    such as a private &smt; server. Registration after the initial setup also
-    requires an explicit registration of each node in the cluster.
+    optional. However, without registration the system will not receive
+    any updates unless specifically setup to receive updates via a
+    different route such as a private &smt; server. Registration after
+    the initial setup also requires an explicit registration of each
+    node in the cluster.
    </para>
    <para>
-    When all information is collected, accept your selections/input with
-    <literal>y</literal> to complete the initial setup.
+    For registering your nodes after the installation, refer to
+    <xref linkend="sec.configuration.suseconnect" />.
    </para>
   </sect2>
  </sect1>
