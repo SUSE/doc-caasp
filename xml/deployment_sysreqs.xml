@@ -389,7 +389,7 @@
     </para>
     <table xml:id="tab.deploy.requirements.ports">
      <title>Node types and open ports</title>
-     <tgroup cols="6">
+     <tgroup cols="4">
       <thead>
        <row>
         <entry>
@@ -404,22 +404,12 @@
         </entry>
         <entry>
          <para>
-          Internal / External
-         </para>
-        </entry>
-        <entry>
-         <para>
-          Open after orchestration
+          Accessibility<superscript>1</superscript>
          </para>
         </entry>
         <entry>
          <para>
           Description
-         </para>
-        </entry>
-        <entry>
-         <para>
-          Notes
          </para>
         </entry>
        </row>
@@ -443,17 +433,7 @@
         </entry>
         <entry>
          <para>
-          No
-         </para>
-        </entry>
-        <entry>
-         <para>
-          ssh
-         </para>
-        </entry>
-        <entry>
-         <para>
-          Useful but not essential
+          SSH (useful but not required)
          </para>
         </entry>
        </row>
@@ -475,15 +455,9 @@
         </entry>
         <entry>
          <para>
-          No
-         </para>
-        </entry>
-        <entry>
-         <para>
           HTTP
          </para>
         </entry>
-        <entry/>
        </row>
        <row>
         <entry>
@@ -498,17 +472,7 @@
         </entry>
         <entry>
          <para>
-          No
-         </para>
-        </entry>
-        <entry>
-         <para>
-          LDAP
-         </para>
-        </entry>
-        <entry>
-         <para>
-          User management
+          LDAP (user management)
          </para>
         </entry>
        </row>
@@ -525,15 +489,9 @@
         </entry>
         <entry>
          <para>
-          No
-         </para>
-        </entry>
-        <entry>
-         <para>
           HTTPS
          </para>
         </entry>
-        <entry/>
        </row>
        <row>
         <entry>
@@ -548,15 +506,9 @@
         </entry>
         <entry>
          <para>
-          No
-         </para>
-        </entry>
-        <entry>
-         <para>
           <literal>etcd</literal> discovery
          </para>
         </entry>
-        <entry/>
        </row>
        <row>
         <entry>
@@ -571,15 +523,9 @@
         </entry>
         <entry>
          <para>
-          No
-         </para>
-        </entry>
-        <entry>
-         <para>
           Salt
          </para>
         </entry>
-        <entry/>
        </row>
        <row>
         <entry morerows="5" valign="middle">
@@ -599,17 +545,7 @@
         </entry>
         <entry>
          <para>
-          Yes
-         </para>
-        </entry>
-        <entry>
-         <para>
-          <literal>etcd</literal> control
-         </para>
-        </entry>
-        <entry>
-         <para>
-          Peer-to-peer <literal>etcd</literal> traffic
+          <literal>etcd</literal> (peer-to-peer traffic)
          </para>
         </entry>
        </row>
@@ -626,17 +562,7 @@
         </entry>
         <entry>
          <para>
-          No
-         </para>
-        </entry>
-        <entry>
-         <para>
-          VXLAN traffic
-         </para>
-        </entry>
-        <entry>
-         <para>
-          Used by Flannel
+          VXLAN traffic (used by Flannel)
          </para>
         </entry>
        </row>
@@ -653,15 +579,9 @@
         </entry>
         <entry>
          <para>
-          Yes
-         </para>
-        </entry>
-        <entry>
-         <para>
           &kube; API server
          </para>
         </entry>
-        <entry/>
        </row>
        <row>
         <entry>
@@ -676,15 +596,9 @@
         </entry>
         <entry>
          <para>
-          Yes
-         </para>
-        </entry>
-        <entry>
-         <para>
           Kubelet
          </para>
         </entry>
-        <entry/>
        </row>
        <row>
         <entry>
@@ -699,15 +613,9 @@
         </entry>
         <entry>
          <para>
-          Yes
-         </para>
-        </entry>
-        <entry>
-         <para>
           kube-proxy
          </para>
         </entry>
-        <entry/>
        </row>
        <row>
         <entry>
@@ -722,17 +630,7 @@
         </entry>
         <entry>
          <para>
-          Yes
-         </para>
-        </entry>
-        <entry>
-         <para>
-          Dex
-         </para>
-        </entry>
-        <entry>
-         <para>
-          OICD Connect
+          Dex (OICD Connect)
          </para>
         </entry>
        </row>
@@ -754,17 +652,7 @@
         </entry>
         <entry>
          <para>
-          Yes
-         </para>
-        </entry>
-        <entry>
-         <para>
-          <literal>etcd</literal> control
-         </para>
-        </entry>
-        <entry>
-         <para>
-          Peer-to-peer <literal>etcd</literal> traffic
+          <literal>etcd</literal> (peer-to-peer traffic)
          </para>
         </entry>
        </row>
@@ -781,16 +669,8 @@
         </entry>
         <entry>
          <para>
-          Yes
-         </para>
-        </entry>
-        <entry>
-         <para>
           Kubelet
          </para>
-        </entry>
-        <entry>
-         <para></para>
         </entry>
        </row>
        <row>
@@ -806,17 +686,7 @@
         </entry>
         <entry>
          <para>
-          No
-         </para>
-        </entry>
-        <entry>
-         <para>
-          VXLAN traffic
-         </para>
-        </entry>
-        <entry>
-         <para>
-          Used by Flannel
+          VXLAN traffic (used by Flannel)
          </para>
         </entry>
        </row>
@@ -833,15 +703,9 @@
         </entry>
         <entry>
          <para>
-          Yes
-         </para>
-        </entry>
-        <entry>
-         <para>
           Kubelet
          </para>
         </entry>
-        <entry/>
        </row>
        <row>
         <entry>
@@ -856,15 +720,9 @@
         </entry>
         <entry>
          <para>
-          Yes
-         </para>
-        </entry>
-        <entry>
-         <para>
           kube-proxy
          </para>
         </entry>
-        <entry/>
        </row>
        <row>
         <entry>
@@ -879,17 +737,7 @@
         </entry>
         <entry>
          <para>
-          Yes
-         </para>
-        </entry>
-        <entry>
-         <para>
-          Dex
-         </para>
-        </entry>
-        <entry>
-         <para>
-          OICD Connect
+          Dex (OICD Connect)
          </para>
         </entry>
        </row>
@@ -898,6 +746,11 @@
     </table>
    </listitem>
   </itemizedlist>
+  <para>
+   1) Information about whether the port is used by
+   <emphasis>internal</emphasis> cluster nodes or
+   <emphasis>external</emphasis> networks or hosts.
+  </para>
   <para>
    When some additional ingress mechanism is used, additional ports would also
    be open.
