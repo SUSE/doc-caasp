@@ -1162,4 +1162,278 @@ spec:
    <xref linkend="sec.admin.logging.kubernetes"/>
   </para>
  </sect1>
+
+ <sect1 xml:id="sec.admin.security.external.ldap">
+  <title>Configuring External LDAP Server</title>
+
+  <sect2 xml:id="sec.admin.security.external.ldap.configuration">
+   <title>LDAP Connector Settings</title>
+   <note>
+    <title>LDAP Anonymous Binding</title>
+    <para>
+     Anonymous binding is available, if allowed by the LDAP server.
+    </para>
+   </note>
+   <para>
+    Configure the cluster to authenticate &dashboard; and &kube; users against a
+    pre-existing Lightweight Directory Access Protocol (LDAP)
+    server and use <link xlink:href="https://ldap.com/ldap-filters/">LDAP Filters</link>
+    to select the scope of users that will be permitted access.
+   </para>
+
+   <para>
+    Access the LDAP configuration settings under <guimenu>Settings
+    &rarr; EXTERNAL AUTHENTICATION &rarr; LDAP Connectors</guimenu>.
+   </para>
+   <para>
+    Click on <guimenu>Add LDAP connector</guimenu> to add a new connector.
+   </para>
+   <informalfigure>
+    <mediaobject>
+     <imageobject role="fo">
+      <imagedata fileref="velum_settings_ldap.png" width="100%"/>
+     </imageobject>
+     <imageobject role="html">
+      <imagedata fileref="velum_settings_ldap.png" width="100%"/>
+     </imageobject>
+    </mediaobject>
+   </informalfigure>
+   <variablelist>
+    <varlistentry>
+     <term>Name</term>
+     <listitem>
+      <para>
+       Name shown to user when selecting a connector
+      </para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+   <sect3>
+    <title>Server</title>
+    <para>
+     Basic settings for the LDAP server host
+    </para>
+    <variablelist>
+     <varlistentry>
+      <term>Host</term>
+      <listitem>
+       <para>
+        Host name of LDAP server reachable from the cluster
+       </para>
+       <note>
+        <title>Provide the hostname as FQDN</title>
+        <para>
+         The <guimenu>Host</guimenu> field must use a Fully Qualified Domain
+         Name, as IP address is not allowed with TLS.
+        </para>
+       </note>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>Port</term>
+      <listitem>
+       <para>
+        The port on which to connect to the host (e.g. <literal>StartTLS: 389, TLS: 646</literal>)
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>StartTLS</term>
+      <listitem>
+       <para>
+        When enabled use StartTLS otherwise TLS will be used
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>Certificate</term>
+      <listitem>
+       <para>
+        The <guimenu>Certificate</guimenu> field must be a Base64-encoded PEM
+        key.
+       </para>
+       <note>
+        <title>Remove the enclosing lines</title>
+        <para>
+         You must enter the certificate body only. This means only the content
+         between the <literal>-----BEGIN CERTIFICATE-----</literal> and
+         <literal>-----END CERTIFICATE-----</literal> lines but not those lines
+         themselves.
+        </para>
+       </note>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </sect3>
+
+   <sect3>
+    <title>Authentication</title>
+    <variablelist>
+     <varlistentry>
+      <term>Anonymous</term>
+      <listitem>
+       <para>
+        Use anonymous authentication to do initial user search.
+       </para>
+       <para>
+        Selects if you wish to perform an anonymous bind with the LDAP server.
+        If set to <guimenu>False</guimenu> you must provide a
+        <guimenu>DN</guimenu> and a <guimenu>Password</guimenu>. The latter two
+        are hidden when the slider is set to <guimenu>True</guimenu>.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>DN</term>
+      <listitem>
+       <para>
+        Bind DN of user that can do user searches
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>Password</term>
+      <listitem>
+       <para>
+        Password of the user
+       </para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </sect3>
+
+   <sect3>
+    <title>User Search</title>
+    <para>
+     Definition of the user search parameters
+    </para>
+    <variablelist>
+     <varlistentry>
+      <term>Username Prompt</term>
+      <listitem>
+       <para>
+        Label of LDAP attribute users will enter to identify themselves (e.g.
+        <literal>username</literal>)
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>Base DN</term>
+      <listitem>
+       <para>
+        BaseDN where users are located (e.g. <literal>cn=users,dc=example,dc=com</literal>)
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>Filter</term>
+      <listitem>
+       <para>
+        Filter to specify type of user objects (e.g. <literal>"(objectClass=person)"</literal>)
+       </para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </sect3>
+   <sect3>
+    <title>User Attribute Map</title>
+    <para>
+     Definition of the user attribute map
+    </para>
+    <variablelist>
+     <varlistentry>
+      <term>Username</term>
+      <listitem>
+       <para>
+         Attribute users will enter to identify themselves
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>ID</term>
+      <listitem>
+       <para>
+        Attribute used to identify user within the system (e.g. <literal>uid</literal>)
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>Email</term>
+      <listitem>
+       <para>
+        Attribute containing email of users
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>Name</term>
+      <listitem>
+       <para>
+        Attribute used as username used within OIDC tokens
+       </para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </sect3>
+
+   <sect3>
+    <title>Group Search</title>
+    <para>
+     Definition of group search parameters
+    </para>
+    <variablelist>
+     <varlistentry>
+      <term>Base DN</term>
+      <listitem>
+       <para>
+        BaseDN where groups are located (e.g. <literal>cn=users,dc=example,dc=com</literal>)
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>Filter</term>
+      <listitem>
+       <para>
+        Filter to specify type of user objects (e.g. <literal>"(objectClass=group)"</literal>)
+       </para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </sect3>
+
+   <sect3>
+    <title>Group Attribute Map</title>
+    <para>
+     Definition of group attribute map
+    </para>
+    <variablelist>
+     <varlistentry>
+      <term>User</term>
+      <listitem>
+       <para>
+        Attribute to map as user (e.g. <literal>uid</literal>)
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>Group</term>
+      <listitem>
+       <para>
+        Attribute identifying membership (e.g. <literal>member</literal>)
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>Name</term>
+      <listitem>
+       <para>
+        Attribute to map as name (e.g. <literal>name</literal>)
+       </para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </sect3>
+
+  </sect2>
+ </sect1>
 </chapter>
