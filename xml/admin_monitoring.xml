@@ -124,13 +124,14 @@ https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-co
   <sect2 xml:id="sec.admin.monitoring.cluster.health.etcd">
    <title><literal>etcd</literal> Cluster Health</title>
    <para>
-    - Check that all machines that have the `etcd` role on the cluster see the etcd cluster as healthy.
+    Check that all machines that have the `etcd` role on the cluster see the etcd cluster as healthy.
+    </para>
 <screen>
 docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
 salt -G 'roles:etcd' \
 cmd.run 'set -a; source /etc/sysconfig/etcdctl; etcdctl cluster-health'
     </screen>
-   </para>
+
   </sect2>
 
   <sect2 xml:id="sec.admin.monitoring.cluster.health.components">
