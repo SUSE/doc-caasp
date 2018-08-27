@@ -763,4 +763,110 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8</screen>
    </para>
   </sect2>
  </sect1>
+
+ <sect1 xml:id="sec.admin.scale_cluster">
+  <title>Scaling the Cluster</title>
+  <para>
+   The default maximum number of nodes in a cluster is 40. The Salt
+   Master configuration needs to be adjusted to handle installation and
+   updating a of larger cluster:
+  </para>
+  <table>
+   <title>Node Count and Salt Worker Threads</title>
+   <tgroup cols="2">
+    <thead>
+     <row>
+      <entry>
+       <para>
+        Nodes
+       </para>
+      </entry>
+      <entry>
+       <para>
+        Salt Worker Threads
+       </para>
+      </entry>
+     </row>
+    </thead>
+    <tbody>
+     <row>
+      <entry>
+       <para>
+        &gt;40
+       </para>
+      </entry>
+      <entry>
+       <para>
+        20
+       </para>
+      </entry>
+     </row>
+     <row>
+      <entry>
+       <para>
+        &gt;60
+       </para>
+      </entry>
+      <entry>
+       <para>
+        30
+       </para>
+      </entry>
+     </row>
+     <row>
+      <entry>
+       <para>
+        &gt;75
+       </para>
+      </entry>
+      <entry>
+       <para>
+        40
+       </para>
+      </entry>
+     </row>
+     <row>
+      <entry>
+       <para>
+        &gt;85
+       </para>
+      </entry>
+      <entry>
+       <para>
+        50
+       </para>
+      </entry>
+     </row>
+     <row>
+      <entry>
+       <para>
+        &gt;95
+       </para>
+      </entry>
+      <entry>
+       <para>
+        60
+       </para>
+      </entry>
+     </row>
+    </tbody>
+   </tgroup>
+  </table>
+  <para>
+   To change the variable in the Salt Master configuration, run the
+   following on the &admin_node;:
+  </para>
+<screen>&prompt.root;<command>echo "worker_threads: 20" > /etc/caasp/salt-master-custom.conf</command>
+&prompt.root;<command>saltid=$(docker ps | grep salt-master | awk '{print $1}')</command>
+&prompt.root;<command>docker kill $saltid</command></screen>
+  <para>
+   Salt master will be automatically restarted by kubelet.
+  </para>
+  <para>
+   Following bootstrapping failure, you can check if Salt
+   worker_threads is too low.
+  </para>
+<screen>&prompt.root;<command>docker logs $(docker ps | grep salt-master | \
+    awk '{print $1}') 2>&amp;1 | grep -i worker_threads</command></screen>
+ </sect1>
 </chapter>
