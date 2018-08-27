@@ -1165,6 +1165,46 @@ spec:
 
  <sect1 xml:id="sec.admin.security.external.ldap">
   <title>Configuring External LDAP Server</title>
+  <para>
+   You can configure the cluster to authenticate &dashboard; and &kube; users
+   against a pre-existing Lightweight Directory Access Protocol (LDAP) server
+   and use <link xlink:href="https://ldap.com/ldap-filters/">LDAP Filters</link>
+   to select the scope of users that will be permitted access.
+  </para>
+  <procedure>
+   <title>Configuring External LDAP connector</title>
+   <step>
+    <para>
+     Log in to &dashboard;
+    </para>
+   </step>
+   <step>
+    <para>
+     Access the LDAP configuration settings under <guimenu>Settings
+     &rarr; EXTERNAL AUTHENTICATION &rarr; LDAP Connectors</guimenu>.
+    </para>
+   </step>
+   <step>
+    <para>
+     Click on <guimenu>Add LDAP connector</guimenu> to add a new connector.
+    </para>
+   </step>
+   <step>
+    <para>
+     Configure the connector.
+    </para>
+   </step>
+   <step>
+    <para>
+     Test the connector.
+    </para>
+   </step>
+   <step>
+    <para>
+     Save your connector settings.
+    </para>
+   </step>
+  </procedure>
 
   <sect2 xml:id="sec.admin.security.external.ldap.configuration">
    <title>LDAP Connector Settings</title>
@@ -1174,20 +1214,9 @@ spec:
      Anonymous binding is available, if allowed by the LDAP server.
     </para>
    </note>
-   <para>
-    Configure the cluster to authenticate &dashboard; and &kube; users against a
-    pre-existing Lightweight Directory Access Protocol (LDAP)
-    server and use <link xlink:href="https://ldap.com/ldap-filters/">LDAP Filters</link>
-    to select the scope of users that will be permitted access.
-   </para>
 
-   <para>
-    Access the LDAP configuration settings under <guimenu>Settings
-    &rarr; EXTERNAL AUTHENTICATION &rarr; LDAP Connectors</guimenu>.
-   </para>
-   <para>
-    Click on <guimenu>Add LDAP connector</guimenu> to add a new connector.
-   </para>
+
+
    <informalfigure>
     <mediaobject>
      <imageobject role="fo">
