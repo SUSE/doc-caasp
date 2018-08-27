@@ -97,4 +97,102 @@
    linkend="sec.configuration.suseconnect.proxy" />.
   </para>
  </sect1>
+
+ <sect1 xml:id="sec.admin.troubleshooting.replace_certificates">
+  <title>Replacing TLS/SSL Certificates</title>
+  <para>
+   Sometimes certificates are not updated properly because they are
+   outdated. To replace outdated certificates, execute the following
+   procedure.
+  </para>
+  <procedure>
+   <step>
+    <para>
+     Use SSH  and log in on the &admin_node;.
+    </para>
+   </step>
+   <step>
+    <para>
+      Move the expired certs out of the way.
+    </para>
+    <screen>&prompt.root.admin;<command>mv /etc/pki/{velum,ldap,salt-api}.crt /root</command></screen>
+   </step>
+   <step>
+    <para>
+     Generate new certificates.
+    </para>
+<screen>&prompt.root.admin;<command>cd /etc/pki</command>
+&prompt.root.admin;<command>/usr/share/caasp-container-manifests/gen-certs.sh</command></screen>
+    <tip>
+     <title>Generating Additional Certificates</title>
+     <para>
+      To regenerate additional certificates, for example
+      <filename>/etc/pki/kubectl-client-cert.crt</filename>, add an
+      additional line at the end of the
+      <command>gen-certs.sh</command> script:
+     </para>
+<screen>&prompt.root.admin;<command>transactional-update shell</command>
+<prompt>transactional update #</prompt> <command>echo "gencert \"kubectl-client-cert\" \"kubectl-client-cert\" \
+    \"\$all_hostnames\" \"\$(ip_addresses)\"" >>/usr/share/caasp-container-manifests/gen-certs.sh</command>
+<prompt>transactional update # </prompt><command>/usr/share/caasp-container-manifests/gen-certs.sh</command>
+<prompt>transactional update # </prompt><command>exit</command></screen>
+    </tip>
+   </step>
+   <step>
+    <para>
+     Use SSH and log in on a &master_node;.
+    </para>
+   </step>
+   <step>
+    <para>Backup and delete the dex-tls secret.</para>
+<screen>&prompt.root.master;<command>kubectl -n kube-system get secret dex-tls -o yaml > /root/dex-tls</command>
+&prompt.root.master;<command>kubectl -n kube-system delete secret dex-tls</command></screen>
+   </step>
+   <step>
+    <para>
+     On a master node, find and delete the Dex pods.
+    </para>
+    <important>
+     <para>
+      This prevents new authentications requests from succeeding.
+      However, the static credentials located on the master nodes will
+      continue to function.
+     </para>
+     <para>
+      The Dex pods will not restart by themselves until the dex-tls
+      secret is recreated.
+     </para>
+    </important>
+<screen>&prompt.root.master;<command>kubectl -n kube-system get pods | grep dex</command>
+&prompt.root.master;<command>kubectl -n kube-system delete pods <replaceable>DEX_POD1</replaceable> <replaceable>DEX_POD2</replaceable> <replaceable>DEX_POD3</replaceable></command></screen>
+   </step>
+   <step>
+    <para>
+     Manually run the salt orchestration on the &admin_node;. This may
+     take some time.
+    </para>
+<screen>&prompt.root.admin;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
+    bash -c "salt-run state.orchestrate orch.kubernetes" 2&amp;>1 > salt-run.log</command></screen>
+   </step>
+   <step>
+    <para>
+     Check the tail of <filename>salt-run.log</filename> to see if the
+     orchestration succeeded.
+    </para>
+    <screen>&prompt.root.admin;<command>tail -n 50 salt-run.log</command></screen>
+   </step>
+   <step>
+    <para>
+     On a master node, validate the dex pods are running.
+    </para>
+    <screen>&prompt.root.master;<command>kubectl -n kube-system get pods | grep dex</command></screen>
+   </step>
+   <step>
+    <para>
+     If you are not able to log in into Velum, reboot the &admin_node;.
+     Then test and validate that the cluster is still functional.
+    </para>
+   </step>
+  </procedure>
+ </sect1>
 </chapter>
