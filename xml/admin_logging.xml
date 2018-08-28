@@ -33,42 +33,31 @@
   <title>About &productname; Logging</title>
   <para>
    Logging across the cluster is done on multiple logical levels. You can think
-   of them as four logical layers (simplified).
+   of them as three logical layers (simplified).
   </para>
 
    <itemizedlist>
     <listitem>
      <para>
-      CaaSP Infrastructure (Salt, Velum, LDAP)
+      &productname; Infrastructure (Salt, Velum, LDAP)
      </para>
-     <itemizedlist>
-      <listitem>
-       <para>
-        Cluster (kubelet, etcd, dex, flanneld, haproxy, tiller)
-      </para>
-      <itemizedlist>
-       <listitem>
-        <para>
-         Pod (systemd, journald, dmesg)
-       </para>
-       <itemizedlist>
-        <listitem>
-         <para>
-          Application
-        </para>
-       </listitem>
-      </itemizedlist>
-      </listitem>
-     </itemizedlist>
-     </listitem>
-    </itemizedlist>
+    </listitem>
+    <listitem>
+     <para>
+      Cluster (etcd, dex, tiller, kubernetes apiserver, kubernetes controller-manager, kubernetes scheduler)
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     Pod (kubelet, haproxy, flanneld, systemd, journald, dmesg)
+    </para>
    </listitem>
   </itemizedlist>
 
   <para>
    The individual log files allow introspection of activities across the cluster.
    Due to some technical limitations it is sometimes not possible to directly
-   trace log events from one level to the next. Most log files would be used for
+   trace log events from one layer to the next. Most log files would be used for
    debugging purposes only.
   </para>
  </sect1>
@@ -101,9 +90,9 @@
   <title>Salt Logging</title>
   <para>
    <literal>Salt</literal> performs a variety of functions that control behavior
-   and configuration the &kube; cluster. The health of the cluster relies on
-   successful execution of <literal>Salt</literal> commands. You have three main
-   sources for <literal>Salt</literal> related log information.
+   and configuration of the &kube; cluster. A failure of executing certain
+   <literal>Salt</literal> workflows could lead to an unhealthy cluster, in such
+   a case it can be inspected using <literal>Salt</literal> log information".
   </para>
 
   <sect2 xml:id="sec.admin.logging.salt.orchestration">
@@ -143,11 +132,7 @@
     </listitem>
    </itemizedlist>
 
-<screen>&prompt.user;<command>docker exec -it $(docker ps | grep dashboard | awk '{print $1}') \
-entrypoint.sh bundle \
-exec rails runner 'puts(Minion.all.map(&amp;:to_yaml))' &gt; events.txt</command>
-
-<command>/var/lib/supportutils-plugin-suse-caasp/debug-salt \
+<screen>&prompt.user;<command>/var/lib/supportutils-plugin-suse-caasp/debug-salt \
 --json_output=events.txt \
 --summary_output=events-summarized.txt \
 --text-status \
@@ -164,9 +149,9 @@ exec rails runner 'puts(Minion.all.map(&amp;:to_yaml))' &gt; events.txt</command
   <sect2 xml:id="sec.admin.logging.salt.master">
    <title>Salt Master Log</title>
    <para>
-    Retrieve the <literal>Salt</literal> master logs. This doesn't usually
-    provide much insight, but might contain some issues related to the
-    <literal>salt-database</literal> connection.
+    Retrieve the <literal>Salt master</literal> logs. These logs don't include
+    any information to trace past or ongoing actions; but rather errors that
+    have been raised by the <literal>Salt master</literal> itself.
    </para>
 
 <screen>&prompt.user;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
@@ -197,10 +182,21 @@ salt '*' cmd.run "cat /var/log/salt/minion"</command>
  <sect1 xml:id="sec.admin.logging.transactional-updates">
   <title>Transactional Update Log</title>
   <para>
-   In some cases, <command>transactional-update</command> can run into issues
-   when creating new snapshots. These problems can stem from problems attempting
-   to download packages from the update channels or when nodes run out of disk
-   space.
+   The <command>transactional-update</command> method processes updates in the
+   background and generates new machine image snapshots. This process can run
+   into issues. Possible causes are connectivity issues or timeouts against the
+   package repository. In such cases the update fails and the affected node will
+   be marked with a red cross in &dashboard;.
+  </para>
+  <para>
+   In most cases this situation resolves itself the next time the update process
+   runs automatically. If you have performed manual updates or must debug a
+   failed update, you can read the log for <command>transactional-update</command>
+   with the command below.
+  </para>
+
+  <para>
+   For more information, see: <xref linkend="sec.admin.software.transactional-updates"/>
   </para>
 
 <screen>
@@ -210,15 +206,97 @@ cmd.run "journalctl -u transactional-update"</command>
  </screen>
  </sect1>
 
+ <sect1 xml:id="sec.admin.logging.audit">
+  <title>&kube; Audit Log</title>
+  <para>
+   To track actions that have been performed on the cluster, you can enable the
+   &kube; audit log in &dashboard;.
+  </para>
+  <para>
+   Navigate to: <guimenu>Settings &rarr; KUBERNETES &rarr; Auditing</guimenu>.
+   This allows the audit logs to be written on the &kube; master nodes at
+   <filename>/var/log/kube-apiserver/audit.log</filename> and you can then use
+   an external data collector like <literal>fluentd</literal> to collect all the
+   audit logs.
+  </para>
+
+  <note>
+   <title>Kubernetes Audit Log Documentation</title>
+   <para>
+    For more information on the audit log and its contents, see:
+    <link xlink:href="https://v1-9.docs.kubernetes.io/docs/tasks/debug-application-cluster/audit/">Kubernetes Documentation: Auditing</link>
+   </para>
+  </note>
+
+  <important>
+   <title>&kube; Audit Log Limitations</title>
+   <para>
+    The &kube; audit log only collects and stores actions performed on the &kube;
+    level of the cluster. This does not include any actions performed by
+    &productname; administrators in &dashboard; or any of the resulting
+    actions of services.
+   </para>
+  </important>
+
+  <informalfigure>
+   <mediaobject>
+    <imageobject role="fo">
+     <imagedata fileref="velum_settings_audit.png" width="100%" format="png"/>
+    </imageobject>
+    <imageobject role="html">
+     <imagedata fileref="velum_settings_audit.png" width="100%" format="png"/>
+    </imageobject>
+   </mediaobject>
+  </informalfigure>
+
+  <variablelist>
+   <varlistentry>
+    <term>Enable Auditing</term>
+    <listitem>
+    <para>
+     Enable / Disable the audit logging feature (Default: <literal>Disabled</literal>)
+    </para>
+   </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>Max size</term>
+    <listitem>
+    <para>
+     Maximum size in megabytes of the audit log file before it gets rotated
+     (Default: <literal>10</literal>)
+    </para>
+   </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>Max age</term>
+    <listitem>
+    <para>
+     Maximum number of days to retain old audit log files (Default: <literal>15</literal>)
+    </para>
+   </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>Max backup</term>
+    <listitem>
+    <para>
+     Maximum number of audit log files to retain (Default: <literal>20</literal>)
+    </para>
+   </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>Policy</term>
+    <listitem>
+    <para>
+     The YAML file defining the <link xlink:href="https://v1-9.docs.kubernetes.io/docs/tasks/debug-application-cluster/audit/#audit-policy">auditing policy rules</link>
+    </para>
+   </listitem>
+   </varlistentry>
+  </variablelist>
+ </sect1>
+
  <sect1 xml:id="sec.admin.logging.fluentd">
   <title>External log collection (fluentd)</title>
-  <para>
-   There's a notable exception at infra level, and is that we allow audit logs
-   to be configured from within Velum. This allows the audit logs to be written
-   on the &kube; master nodes at <filename>/var/log/kube-apiserver/audit.log</filename>
-   and an external data collector (continuous reading) like <literal>fluentd</literal>
-   can be used to collect all the audit logs.
-  </para>
+
 
   <para>
    At &kube; level, there are different solutions that can be implemented, for example: <literal>fluentd</literal>
