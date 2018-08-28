@@ -213,11 +213,19 @@ cmd.run "journalctl -u transactional-update"</command>
    &kube; audit log in &dashboard;.
   </para>
   <para>
+<<<<<<< Updated upstream
    Navigate to: <guimenu>Settings &rarr; KUBERNETES &rarr; Auditing</guimenu>.
    This allows the audit logs to be written on the &kube; master nodes at
    <filename>/var/log/kube-apiserver/audit.log</filename> and you can then use
    an external data collector like <literal>fluentd</literal> to collect all the
    audit logs.
+=======
+   There's a notable exception at infra level, and is that we allow audit logs
+   to be configured from within Velum. This allows the audit logs to be written
+   on the &kube; master nodes at <filename>/var/log/kube-apiserver/audit.log</filename>
+   and an external data collector like <literal>fluentd</literal>
+   can be used to collect all the audit logs.
+>>>>>>> Stashed changes
   </para>
 
   <note>
