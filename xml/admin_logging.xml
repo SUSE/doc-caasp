@@ -392,58 +392,88 @@ cmd.run "journalctl -u transactional-update"</command>
     minions.
    </para>
 
-   <itemizedlist>
-    <listitem>
-     <para>
-      all
-     </para>
-    </listitem>
-    <listitem>
-     <para>
-      garbage
-     </para>
-    </listitem>
-    <listitem>
-     <para>
-      trace
-     </para>
-    </listitem>
-    <listitem>
-     <para>
-      debug
-     </para>
-    </listitem>
-    <listitem>
-     <para>
-      profile
-     </para>
-    </listitem>
-    <listitem>
-     <para>
-      info
-     </para>
-    </listitem>
-    <listitem>
-     <para>
-      warning
-     </para>
-    </listitem>
-    <listitem>
-     <para>
-      error
-     </para>
-    </listitem>
-    <listitem>
-     <para>
-      critical
-     </para>
-    </listitem>
-    <listitem>
-     <para>
-      quiet
-     </para>
-    </listitem>
-   </itemizedlist>
+   <variablelist>
+    <varlistentry>
+     <term>quiet</term>
+     <listitem>
+      <para>
+       Nothing should be logged at this level
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>critical</term>
+     <listitem>
+      <para>
+       Critical errors
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>error</term>
+     <listitem>
+      <para>
+       Errors
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>warning</term>
+     <listitem>
+      <para>
+       Warnings
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>info</term>
+     <listitem>
+      <para>
+       Normal log information
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>profile</term>
+     <listitem>
+      <para>
+       Profiling information on salt performance
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>debug</term>
+     <listitem>
+      <para>
+       Information useful for debugging both salt implementations and salt code
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>trace</term>
+     <listitem>
+      <para>
+       More detailed code debugging information
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>garbage</term>
+     <listitem>
+      <para>
+       Even more debugging information
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>all</term>
+     <listitem>
+      <para>
+       Everything
+      </para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
 
    <para>
    For detailed explanations of the usage of these log levels please see:
@@ -475,11 +505,11 @@ cmd.run "journalctl -u transactional-update"</command>
      </screen>
 
     <para>
-     After deleting this container, the <literal>kubelet</literal> will bring a
-     new <literal>salt-master</literal> container automatically with the new
-     configuration applied. So you can check the logs with the
+     After deleting this container, the <literal>kubelet</literal> will bring up
+     a new <literal>salt-master</literal> container automatically with the new
+     configuration applied. Then. you can check the logs with the
      <literal>debug</literal> loglevel.
-     </para>
+    </para>
 
 <screen>
 <command>docker logs -f $(docker ps | grep salt-master | awk '{print $1}')</command>
@@ -512,12 +542,104 @@ cmd.run "journalctl -u transactional-update"</command>
    <title>&kube; Log Levels</title>
    <para>
     For &kube; our default <literal>loglevel</literal> is <literal>2</literal>
-    <link xlink:href="https://kubernetes.io/docs/reference/kubectl/cheatsheet/#kubectl-output-verbosity-and-debugging">Kubernetes Upstream: Output Verbosity and Debugging</link>.
-    However, this setting can be tweaked by using pillar overrides. If modified,
-    this setting will be applied to all &kube; components; there's no way to set
-    a different loglevel per components. Moreover, there is no way to specify
-    different loglevels per machine.
+    (<link xlink:href="https://kubernetes.io/docs/reference/kubectl/cheatsheet/#kubectl-output-verbosity-and-debugging">Kubernetes Upstream: Output Verbosity and Debugging</link>).
    </para>
+
+   <variablelist>
+    <varlistentry>
+     <term>0</term>
+     <listitem>
+      <para>
+       Generally useful for this to ALWAYS be visible to an operator.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>1</term>
+     <listitem>
+      <para>
+       A reasonable default log level if you don't want verbosity.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>2</term>
+     <listitem>
+      <para>
+       Useful steady state information about the service and important log messages
+       that may correlate to significant changes in the system. This is the
+       recommended default log level for most systems.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>3</term>
+     <listitem>
+      <para>
+       Extended information about changes.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>4</term>
+     <listitem>
+      <para>
+       Debug level verbosity.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>6</term>
+     <listitem>
+      <para>
+       Display requested resources.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>7</term>
+     <listitem>
+      <para>
+       Display HTTP request headers.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>8</term>
+     <listitem>
+      <para>
+       Display HTTP request contents.
+      </para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+
+   <!-- FIXME mnapp 28.8.18, this can be uncommented once https://github.com/kubic-project/velum/pull/640 is merged -->
+   <!--
+   <procedure>
+    <title>Modify &kube; Log Level Across The Cluster</title>
+    <step>
+     <para>
+      Change the log level value in the Salt pillar.
+     </para>
+<screen>&prompt.user;<command>docker exec -it $(docker ps | grep dashboard | awk '{print $1}') \
+entrypoint.sh bundle exec rake "velum:create_pillar['kube_log_level', 'desired_loglevel']"</command>
+</screen>
+</step>
+<step>
+ <para>
+  Then run Salt orchestration to rebuild the configuration across the cluster.
+ </para>
+ <screen>&prompt.user;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
+salt-run state.orchestrate orch.kubernetes</command>
+   </screen>
+  </step>
+ </procedure>
+   <para>
+    If modified, this setting will be applied to all &kube; components; there is
+    no way to set a different loglevel per component. Moreover, there is no way
+    to specify different loglevels per machine.
+   </para> -->
   </sect2>
 
  </sect1>
