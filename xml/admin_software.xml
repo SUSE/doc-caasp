@@ -340,45 +340,41 @@
  <screen>&prompt.root;<command>transactional-update reboot ptf remove <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
  </sect1>
  
- <sect1 xml:id="sec.admin.software.upgrade">
-  <title>Upgrade &productname;</title>
- <para>
-  As &productname; is constantly developed and improved, new versions get
-  released. You are strongly advised to upgrade to a supported release. These
-  upgrades may involve manual intervention.
- </para>
- <important>
-  <title>Service Window Required</title>
-  <para>
-   Upgrades may take some time, during which services may be degraded in
-   performance or completely unavailable. Please make sure to plan a service
-   window.
-  </para>
- </important>
- <procedure xml:id="pro.admin.upgrade.procedure">
-  <title>General Upgrade Procedure</title>
-  <step>
-   <para>
-    Upgrade the &admin_node;.
-   </para>
-  </step>
-  <step>
-   <para>
-    Manually perform additional upgrade steps of the &admin_node;. These steps
-    are version-specific and described in the following chapters.
-   </para>
-  </step>
-  <step>
-   <para>
-    Upgrade the cluster nodes through &dashboard;.
-   </para>
-  </step>
- </procedure>
-
- <sect2 xml:id="sec.admin.software.upgrade.caasp2">
+ <sect1 xml:id="sec.admin.software.upgrade_caasp2">
   <title>Upgrading from &productname; 2</title>
-    
-  <sect3 xml:id="sec.admin.software.upgrade.caasp2.prereq">
+  <para>
+   As &productname; is constantly developed and improved, new versions get
+   released. You are strongly advised to upgrade to a supported release. These
+   upgrades may involve manual intervention.
+  </para>
+  <important>
+   <title>Service Window Required</title>
+   <para>
+    Upgrades may take some time, during which services may be degraded in
+    performance or completely unavailable. Please make sure to plan a service
+    window.
+   </para>
+  </important>
+  <procedure xml:id="pro.admin.upgrade.procedure">
+   <title>General Upgrade Procedure</title>
+   <step>
+    <para>
+     Upgrade the &admin_node;.
+    </para>
+   </step>
+   <step>
+    <para>
+     Manually perform additional upgrade steps of the &admin_node;. These steps
+     are version-specific and described in the following chapters.
+    </para>
+   </step>
+   <step>
+    <para>
+     Upgrade the cluster nodes through &dashboard;.
+    </para>
+   </step>
+  </procedure>
+  <sect2 xml:id="sec.admin.software.upgrade_caasp2.prereq">
    <title>Ensure All &productname; v2 Updates Are Installed</title>
    <para>
     Before you start the upgrade procedure to &productname; v3, you must ensure
@@ -427,9 +423,9 @@ retcode:
     If the package version is <literal>0.3.11-3.15.1</literal> (or higher) you
     have the latest updates from the v2 channel installed.
    </para>
-  </sect3>
+  </sect2>
    
-   <sect3 xml:id="sec.admin.software.upgrade.caasp2.timer">
+   <sect2 xml:id="sec.admin.software.upgrade_caasp2.timer">
     <title>Disable Automatic <literal>transactional-update</literal></title>
     <para>
     To begin with the upgrade procedure, you first must disable the automatic
@@ -477,9 +473,9 @@ retcode:
      If you use &smtool; or &susemgr; for mirroring channels: Mirror the v3 channels on your server.
     </para>
    </important>
-  </sect3>
+  </sect2>
    
-   <sect3 xml:id="sec.admin.software.upgrade.caasp2.upgrade">
+   <sect2 xml:id="sec.admin.software.upgrade_caasp2.upgrade">
     <title>Performing The Upgrade Procedure</title>
     <para>
      In the next step you must run the update command across your nodes.
@@ -541,9 +537,9 @@ retcode:
      to the current working directory. This log file can be very helpful should
      any of the update operations fail.
     </para>
-   </sect3>
+   </sect2>
    
-   <sect3 xml:id="sec.admin.software.upgrade.caasp2.reboot">
+   <sect2 xml:id="sec.admin.software.upgrade_caasp2.reboot">
     <title>Reboot cluster nodes from &dashboard;</title>
     <para>
      To complete the procedure, you must reboot the cluster nodes. To do this 
@@ -568,9 +564,9 @@ retcode:
       </para>
      </step>
     </procedure>
-   </sect3>
+   </sect2>
   
-  <sect3 xml:id="sec.admin.software.upgrade.caasp2.troubleshooting">
+  <sect2 xml:id="sec.admin.software.upgrade_caasp2.troubleshooting">
    <title>Troubleshooting</title>
    <para>
     In case the upgrade fails, please perform the support data collection by 
@@ -578,8 +574,7 @@ retcode:
     resulting files including the <filename>transactional-update-migration.log</filename>
     to SUSE Support.
    </para>
-  </sect3>
- </sect2>
+  </sect2>
  </sect1>
  
  <sect1 xml:id="sec.admin.software.install">
