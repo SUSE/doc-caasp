@@ -64,6 +64,21 @@
   </para>
  </sect1>
 
+ <sect1 xml:id="sec.admin.troubleshooting.etcd">
+  <title>Checking <literal>etcd</literal> Health</title>
+  <para>
+   To work with <command>etcdctl</command>, you have to pass parameters
+   with paths to required certificates.
+  </para>
+  <para>
+   Use SSH to log into one of the cluster nodes, for example your first master.
+   The following command provides an example for using <command>etcdctl</command>.
+  </para>
+<screen>&prompt.root;<command>source /etc/sysconfig/etcdctl</command>
+&prompt.root;<command>etcdctl --endpoints $ETCDCTL_ENDPOINT --ca-file $ETCDCTL_CA_FILE \
+    --cert-file $ETCDCTL_CERT_FILE --key-file $ETCDCTL_KEY_FILE cluster-health</command></screen>
+ </sect1>
+
  <sect1 xml:id="sec.admin.troubleshooting.velum_ptf">
   <title>Locking Installed Program Temporary Fixes</title>
   <para>
