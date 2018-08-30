@@ -220,9 +220,7 @@
   <sect2 xml:id="sec.admin.logging.salt.master">
    <title>Salt Master Log</title>
    <para>
-    Retrieve the <literal>Salt master</literal> logs. These logs don't include
-    any information to trace past or ongoing actions; but rather errors that
-    have been raised by the <literal>Salt master</literal> itself.
+    Retrieve the <literal>Salt master</literal> logs.
    </para>
 <screen>&prompt.user;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
 cat /var/log/salt/master</command>
