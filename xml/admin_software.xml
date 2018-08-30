@@ -302,7 +302,112 @@
     </step>
    </procedure>
   </sect2>
-  
+
+  <sect2 xml:id="sec.admin.software.transactional-updates.recovering">
+   <title>Recovering from Failed Updates</title>
+   <para>
+    Velum notifies you about failed updates. If the update failed,
+    there are several things that can be the cause. The following list
+    provides an overview of things to check. For general information
+    about troubleshooting, read <xref
+    linkend="sec.admin.troubleshooting.overview" />.
+   </para>
+   <warning>
+    <title>Do Not Interfere with Transactional Updates</title>
+    <para>
+     Do not manually interfere with transactional updates. Do so only
+     if you are requested to do so by &suse; support.
+    </para>
+    <para>
+     For details, see <xref
+     linkend="sec.admin.software.transactional-updates.command" />.
+    </para>
+   </warning>
+   <variablelist>
+    <varlistentry>
+     <term>Stopping Services and Reboot</term>
+     <listitem>
+      <para>
+       Velum uses &salt; to stop all services and reboot the node. Salt
+       also takes care of adjusting configuration. Check the logs of
+       the &salt; master and minions for error messages. For details,
+       see <emphasis>Salt Logging</emphasis><!--<xref
+       linkend="sec.admin.logging.salt.master" /> and <xref
+       linkend="sec.admin.logging.salt.minion" /> -->.
+      </para>
+      <remark>
+       Enable xrefs once https://github.com/SUSE/doc-caasp/pull/78 is
+       merged.
+      </remark>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>Installing Updates</term>
+     <listitem>
+      <para>
+       Updates are installed once a day but only applied after a reboot
+       is manually triggered. If the installation of updates fails,
+       Velum shows the message <literal>Update Failed</literal> as the
+       node's status. In this case, log in on the node and check
+       <filename>/var/log/transactional-update.log</filename> for
+       problems.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>Starting Services</term>
+     <listitem>
+      <para>
+       Finally, all services of the node are being restarted. Look
+       which services have failed by executing <command>systemctl
+       list-units --failed</command>. Then check the logs of failed
+       services.
+      </para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+   <para>
+    The following procedure can help in some situations.
+   </para>
+   <procedure>
+    <step>
+     <para>
+      Reboot all nodes.
+     </para>
+<screen>&prompt.root.admin;<command>exec -it $(docker ps | grep salt-master | \
+    awk '{print $1}') salt '*' system.reboot</command></screen>
+    </step>
+    <step>
+     <para>
+      On the &admin_node; run
+     </para>
+<screen>&prompt.root.admin;<command>docker exec -it $(docker ps | grep salt-master | \
+    awk '{print $1}') salt "*" cmd.run "transactional-update cleanup reboot dup"</command></screen>
+    </step>
+    <step>
+     <para>
+      Reboot all nodes again.
+     </para>
+<screen>&prompt.root.admin;<command>exec -it $(docker ps | grep salt-master | \
+    awk '{print $1}') salt '*' system.reboot</command></screen>
+    </step>
+    <step>
+     <para>
+      Start the update with debug output.
+     </para>
+<screen>&prompt.root.admin;<command>docker exec -it $(docker ps | grep salt-master | \
+    awk '{print $1}') salt-run -l debug state.orchestrate orch.update</command></screen>
+    </step>
+    <step>
+     <para>
+      If there is any ongoing problem, look at all the &salt; grains of
+      all nodes in <filename>/etc/salt/grains</filename>. This file
+      contains the status if the update is ongoing, and is therefore
+      providing the "Update Retry" in Velum.
+     </para>
+    </step>
+   </procedure>
+  </sect2>
  </sect1>
  
  <sect1 xml:id="sec.admin.software.patch">
