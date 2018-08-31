@@ -16,7 +16,7 @@
   </dm:docmanager>
  </info>
 
- <sect1 xml:id="sec.admin.cluster-monitoring">
+ <sect1 xml:id="sec.admin.monitoring.cluster">
   <title>Cluster Monitoring</title>
 
   <para>
@@ -26,27 +26,29 @@
   <itemizedlist>
    <listitem>
     <para>
-     by directly accessing the <emphasis>cAdvisor</emphasis> on
+     By directly accessing the <emphasis>cAdvisor</emphasis> on
      <literal>http://<replaceable>WORKER NODE ADDRESS</replaceable>
-     ;:4194/containers/</literal>. The <emphasis>cAdvisor</emphasis> runs on
-     worker nodes by default.
+     ;:4194/containers/</literal>.
+    </para>
+    <para>
+    The <emphasis>cAdvisor</emphasis> runs on worker nodes by default.
     </para>
    </listitem>
    <listitem>
     <para>
      By using <emphasis>Heapster</emphasis>, for details refer to
-     <xref linkend="sec.admin.cluster-monitoring.heapster"/>.
+     <xref linkend="sec.admin.monitoring.cluster..heapster"/>.
     </para>
    </listitem>
    <listitem>
     <para>
      By using <emphasis>Grafana</emphasis>, for details refer to
-     <xref linkend="sec.admin.cluster-monitoring.grafana"/>.
+     <xref linkend="sec.admin.monitoring.cluster..grafana"/>.
     </para>
    </listitem>
   </itemizedlist>
 
-  <sect2 xml:id="sec.admin.cluster-monitoring.heapster">
+  <sect2 xml:id="sec.admin.monitoring.cluster..heapster">
    <title>Monitoring with Heapster</title>
    <para>
     <emphasis>Heapster</emphasis> is a tool that collects and interprets
@@ -65,7 +67,7 @@ https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/heap
    </para>
   </sect2>
 
-  <sect2 xml:id="sec.admin.cluster-monitoring.grafana">
+  <sect2 xml:id="sec.admin.monitoring.cluster..grafana">
    <title>Monitoring with Grafana</title>
    <para>
     <emphasis>Grafana</emphasis> is an analytics platform that processes data
@@ -94,4 +96,5 @@ https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-co
 <screen>&prompt.root;<command>kubectl apply -f grafana-service.yaml</command></screen>
   </sect2>
  </sect1>
+
 </chapter>

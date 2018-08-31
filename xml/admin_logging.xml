@@ -1,0 +1,650 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<chapter version="5.1" xml:id="cha.admin.logging"
+  xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xlink="http://www.w3.org/1999/xlink">
+ <info>
+  <title>Logging</title>
+  <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
+   <dm:bugtracker/>
+   <dm:translation>yes</dm:translation>
+  </dm:docmanager>
+ </info>
+ <important>
+  <title>Scope Of This Document</title>
+  <para>
+   The scope of this document is limited to the &productname; Infrastructure
+   layer. Logging the activity of deployed applications is beyond the scope of
+   this document.
+  </para>
+  <para>
+   Please refer to:
+   <link xlink:href="https://kubernetes.io/docs/concepts/cluster-administration/logging/">Kubernetes:
+   Logging Architecture</link> for more information.
+  </para>
+  <para>
+   The &productname; components run in indvidual Docker containers and
+   typically you can get a set of log information using <link xlink:href="https://docs.docker.com/engine/reference/commandline/logs/#extended-description">docker-logs</link>.
+  </para>
+  <para>
+   For detailed information on how to use log files for the individual
+   components, please refer to the respective official documentation of the
+   component.
+  </para>
+ </important>
+ <sect1 xml:id="sec.admin.logging.intro">
+  <title>About &productname; Logging</title>
+
+  <para>
+   Logging across the cluster is done on multiple logical levels. You can think
+   of them as three logical layers (simplified).
+  </para>
+
+  <itemizedlist>
+   <listitem>
+    <para>
+     &productname; Infrastructure (Salt, Velum, LDAP)
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     Cluster (etcd, dex, tiller, kubernetes apiserver, kubernetes
+     controller-manager, kubernetes scheduler)
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     Pod (kubelet, haproxy, flanneld, systemd, journald, dmesg)
+    </para>
+   </listitem>
+  </itemizedlist>
+
+  <para>
+   The individual log files allow introspection of activities across the
+   cluster. Due to some technical limitations it is sometimes not possible to
+   directly trace log events from one layer to the next. Most log files would
+   be used for debugging purposes only.
+  </para>
+
+  <sect2 xml:id="sec.admin.logging.intro.log-levels">
+   <title>Log levels</title>
+   <para>
+    There are two main components and their respective sub-components that
+    allow configuration of different loglevels: Salt and &kube;.
+   </para>
+   <itemizedlist>
+    <listitem>
+     <para>
+      Salt
+     </para>
+     <itemizedlist>
+      <listitem>
+       <para>
+        <literal>salt-master</literal>
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        <literal>salt-minion</literal> on each machine
+       </para>
+      </listitem>
+     </itemizedlist>
+    </listitem>
+    <listitem>
+     <para>
+      &kube;
+     </para>
+     <itemizedlist>
+      <listitem>
+       <para>
+        Master nodes
+       </para>
+       <itemizedlist mark="circle">
+        <listitem>
+         <para>
+          <literal>apiserver</literal>
+         </para>
+        </listitem>
+        <listitem>
+         <para>
+          <literal>controller-manager</literal>
+         </para>
+        </listitem>
+        <listitem>
+         <para>
+          <literal>scheduler</literal>
+         </para>
+        </listitem>
+       </itemizedlist>
+      </listitem>
+      <listitem>
+       <para>
+        All nodes
+       </para>
+       <itemizedlist mark="circle">
+        <listitem>
+         <para>
+          <literal>kubelet</literal>
+         </para>
+        </listitem>
+        <listitem>
+         <para>
+          <literal>kube proxy</literal>
+         </para>
+        </listitem>
+       </itemizedlist>
+      </listitem>
+     </itemizedlist>
+    </listitem>
+   </itemizedlist>
+  </sect2>
+ </sect1>
+ <sect1 xml:id="sec.admin.logging.admin">
+  <title>Admin Node Logs</title>
+
+  <sect2 xml:id="sec.admin.logging.velum">
+   <title>&dashboard; Logs</title>
+   <para>
+    The &dashboard; logs will contain more details on error messages displayed
+    in the dashboard.
+   </para>
+   <para>
+    Logs are generated in the &dashboard; container
+    (<literal>k8s_velum-dashboard</literal>) running on the admin node.
+   </para>
+<screen>&prompt.user;<command>docker logs $(docker ps | grep k8s_velum-dashboard | awk '{print $1}')</command>
+   </screen>
+  </sect2>
+
+  <sect2 xml:id="sec.admin.logging.ldap">
+   <title>OpenLDAP Logs</title>
+   <para>
+    The OpenLDAP logs contain information about the authentication of users in
+    the &dashboard; dashboard.
+   </para>
+   <para>
+    The OpenLDAP logs are generated in the
+    <filename>k8s_openldap_velum</filename> container running on the admin
+    node.
+   </para>
+<screen>&prompt.user;<command>docker logs $(docker ps | grep k8s_openldap_velum | awk '{print $1}')</command>
+    </screen>
+  </sect2>
+ </sect1>
+ <sect1 xml:id="sec.admin.logging.salt">
+  <title>Salt Logging</title>
+
+  <para>
+   <literal>Salt</literal> performs a variety of functions that control
+   behavior and configuration of the &kube; cluster. A failure of executing
+   certain <literal>Salt</literal> workflows could lead to an unhealthy
+   cluster, in such a case it can be inspected using <literal>Salt</literal>
+   log information.
+  </para>
+
+  <para>
+   Salt orchestration and master log are generated on the <literal>Salt
+   Master</literal> container (<filename>k8s_salt-master</filename>) running on
+   the admin node.
+  </para>
+
+  <para>
+   Salt minion logs are generated in the respective salt minion containers on
+   each node. The <literal>salt-master</literal> collects these logs on the
+   admin node and writes them into the MariaDB container
+   <filename>k8s_velum-mariadb</filename>.
+  </para>
+
+  <sect2 xml:id="sec.admin.logging.salt.orchestration">
+   <title>Salt Orchestration Log</title>
+   <para>
+    The <literal>Salt</literal> orchestration logs contains log entries about
+    orchestration events that have changed the cluster.
+   </para>
+   <para>
+    Orchestration events are:
+   </para>
+   <itemizedlist>
+    <listitem>
+     <para>
+      Bootstrapping
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Adding new nodes
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Removing nodes
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Updating settings
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Upgrading a cluster
+     </para>
+    </listitem>
+   </itemizedlist>
+<screen>&prompt.user;<command>/var/lib/supportutils-plugin-suse-caasp/debug-salt \
+--json_output=events.txt \
+--summary_output=events-summarized.txt \
+--text-status \
+--no-color</command>
+         </screen>
+   <para>
+    Reading the <filename>events-summarized.txt</filename> file should be
+    enough for detecting most (if not all) of the issues caused by
+    <literal>Salt</literal>.
+   </para>
+  </sect2>
+
+  <sect2 xml:id="sec.admin.logging.salt.master">
+   <title>Salt Master Log</title>
+   <para>
+    Retrieve the <literal>salt-master</literal> logs.
+   </para>
+<screen>&prompt.user;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
+cat /var/log/salt/master</command>
+    </screen>
+  </sect2>
+
+  <sect2 xml:id="sec.admin.logging.salt.minion">
+   <title>Salt Minion Logs</title>
+   <para>
+    Retrieve the <literal>salt-minion</literal> logs for all nodes. This will
+    show all output for all <literal>salt-minions</literal> at once. Execute
+    the following command on the admin node.
+   </para>
+   <para>
+    Of course, it's possible to retrieve this information on any specific node
+    by reading the <filename>/var/log/salt/minion</filename> file.
+   </para>
+<screen>
+&prompt.user;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
+salt '*' cmd.run "cat /var/log/salt/minion"</command>
+    </screen>
+  </sect2>
+
+  <sect2 xml:id="sec.admin.logging.log-levels.salt">
+   <title>Salt Log Levels</title>
+   <para>
+    Salt provides different loglevels that apply both to the master and the
+    minions.
+   </para>
+   <variablelist>
+    <varlistentry>
+     <term>quiet</term>
+     <listitem>
+      <para>
+       Nothing should be logged at this level
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>critical</term>
+     <listitem>
+      <para>
+       Critical errors
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>error</term>
+     <listitem>
+      <para>
+       Errors
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>warning</term>
+     <listitem>
+      <para>
+       Warnings
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>info</term>
+     <listitem>
+      <para>
+       Normal log information
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>profile</term>
+     <listitem>
+      <para>
+       Profiling information on salt performance
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>debug</term>
+     <listitem>
+      <para>
+       Information useful for debugging both salt implementations and salt code
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>trace</term>
+     <listitem>
+      <para>
+       More detailed code debugging information
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>garbage</term>
+     <listitem>
+      <para>
+       Even more debugging information
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>all</term>
+     <listitem>
+      <para>
+       Everything
+      </para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+   <para>
+    For detailed explanations of the usage of these log levels please see:
+    <link xlink:href="https://docs.saltstack.com/en/latest/ref/configuration/logging/">Salt
+    Log Levels (Upstream)</link>
+   </para>
+   <sect3 xml:id="sec.admin.logging.log-levels.salt.set">
+    <title>Setting A Different Log Level</title>
+    <para>
+     The <literal>salt-master</literal> configuration can be modified on the
+     admin node, at <filename>/etc/caasp/salt-master-custom.conf</filename>.
+     Inside this file you can add: <literal>log_level: debug</literal>.
+    </para>
+    <para>
+     Note that after any change on this file you need to restart the
+     <literal>salt-master</literal> container, like:
+    </para>
+<screen>
+<command>docker rm -f $(docker ps | grep salt-master | awk '{print $1}')</command>.
+     </screen>
+    <para>
+     After deleting this container, the <literal>kubelet</literal> will bring
+     up a new <literal>salt-master</literal> container automatically with the
+     new configuration applied. Then. you can check the logs with the
+     <literal>debug</literal> loglevel.
+    </para>
+<screen>
+<command>docker logs -f $(docker ps | grep salt-master | awk '{print $1}')</command>
+   </screen>
+   </sect3>
+  </sect2>
+ </sect1>
+ <sect1 xml:id="sec.admin.logging.transactional-updates">
+  <title>Transactional Update Log</title>
+
+  <para>
+   The <command>transactional-update</command> method processes updates in the
+   background and generates new machine image snapshots. This process can run
+   into issues. Possible causes are connectivity issues or timeouts against the
+   package repository. In such cases the update fails and the affected node
+   will be marked with a red cross in &dashboard;.
+  </para>
+
+  <para>
+   In most cases this situation resolves itself the next time the update
+   process runs automatically. If you have performed manual updates or must
+   debug a failed update, you can read the log for
+   <command>transactional-update</command> with the command below.
+  </para>
+
+  <para>
+   The <command>transactional-update</command> logs are generated in the &mos;
+   layer on each node respectively.
+  </para>
+
+  <para>
+   For more information on transactional-update, see:
+   <xref linkend="sec.admin.software.transactional-updates"/>
+  </para>
+
+<screen>
+&prompt.user;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
+salt -P 'roles:(admin|kube-master|kube-minion)' \
+cmd.run "journalctl -u transactional-update"</command>
+ </screen>
+ </sect1>
+ <sect1 xml:id="sec.admin.logging.kubernetes">
+  <title>&kube; Audit Log</title>
+
+  <para>
+   To track actions that have been performed on the cluster, you can enable the
+   &kube; audit log in &dashboard;.
+  </para>
+
+  <para>
+   Navigate to: <guimenu>Settings &rarr; KUBERNETES &rarr; Auditing</guimenu>.
+   This allows the audit logs to be written on the &kube; master nodes at
+   <filename>/var/log/kube-apiserver/audit.log</filename> and you can then use
+   an external data collector like <literal>fluentd</literal> to collect all
+   the audit logs.
+  </para>
+
+  <note>
+   <title>Kubernetes Audit Log Documentation</title>
+   <para>
+    For more information on the audit log and its contents, see:
+    <link xlink:href="https://v1-9.docs.kubernetes.io/docs/tasks/debug-application-cluster/audit/">Kubernetes
+    Documentation: Auditing</link>
+   </para>
+  </note>
+
+  <important>
+   <title>&kube; Audit Log Limitations</title>
+   <para>
+    The &kube; audit log only collects and stores actions performed on the
+    &kube; level of the cluster. This does not include any actions performed by
+    &productname; administrators in &dashboard; or any of the resulting actions
+    of services.
+   </para>
+  </important>
+
+  <informalfigure>
+   <mediaobject>
+    <imageobject role="fo">
+     <imagedata fileref="velum_settings_audit.png" width="100%" format="png"/>
+    </imageobject>
+    <imageobject role="html">
+     <imagedata fileref="velum_settings_audit.png" width="100%" format="png"/>
+    </imageobject>
+   </mediaobject>
+  </informalfigure>
+
+  <variablelist>
+   <varlistentry>
+    <term>Enable Auditing</term>
+    <listitem>
+     <para>
+      Enable / Disable the audit logging feature (Default:
+      <literal>Disabled</literal>)
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>Max size</term>
+    <listitem>
+     <para>
+      Maximum size in megabytes of the audit log file before it gets rotated
+      (Default: <literal>10</literal>)
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>Max age</term>
+    <listitem>
+     <para>
+      Maximum number of days to retain old audit log files (Default:
+      <literal>15</literal>)
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>Max backup</term>
+    <listitem>
+     <para>
+      Maximum number of audit log files to retain (Default:
+      <literal>20</literal>)
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>Policy</term>
+    <listitem>
+     <para>
+      The YAML file defining the
+      <link xlink:href="https://v1-9.docs.kubernetes.io/docs/tasks/debug-application-cluster/audit/#audit-policy">auditing
+      policy rules</link>
+     </para>
+    </listitem>
+   </varlistentry>
+  </variablelist>
+
+  <sect2 xml:id="sec.admin.logging.log-levels.kubernetes">
+   <title>&kube; Log Levels</title>
+   <para>
+    For &kube; our default <literal>loglevel</literal> is <literal>2</literal>
+    (<link xlink:href="https://kubernetes.io/docs/reference/kubectl/cheatsheet/#kubectl-output-verbosity-and-debugging">Kubernetes
+    Upstream: Output Verbosity and Debugging</link>).
+   </para>
+   <variablelist>
+    <varlistentry>
+     <term>0</term>
+     <listitem>
+      <para>
+       Generally useful for this to ALWAYS be visible to an operator.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>1</term>
+     <listitem>
+      <para>
+       A reasonable default log level if you don't want verbosity.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>2</term>
+     <listitem>
+      <para>
+       Useful steady state information about the service and important log
+       messages that may correlate to significant changes in the system. This
+       is the recommended default log level for most systems.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>3</term>
+     <listitem>
+      <para>
+       Extended information about changes.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>4</term>
+     <listitem>
+      <para>
+       Debug level verbosity.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>6</term>
+     <listitem>
+      <para>
+       Display requested resources.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>7</term>
+     <listitem>
+      <para>
+       Display HTTP request headers.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>8</term>
+     <listitem>
+      <para>
+       Display HTTP request contents.
+      </para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+<!-- FIXME mnapp 28.8.18, this can be uncommented once https://github.com/kubic-project/velum/pull/640 is merged -->
+   <sect3 xml:id="sec.admin.logging.log-levels.kubernetes.set">
+    <title>Setting A Different Log Level</title>
+    <procedure>
+     <title>Modify &kube; Log Level Across The Cluster</title>
+     <step>
+      <para>
+       Change the log level value in the Salt pillar.
+      </para>
+<screen>&prompt.user;<command>docker exec -it $(docker ps | grep dashboard | awk '{print $1}') \
+entrypoint.sh bundle exec rake "velum:create_pillar['kube_log_level', '5']"</command>
+</screen>
+     </step>
+     <step>
+      <para>
+       Then run Salt orchestration to rebuild the configuration across the
+       cluster.
+      </para>
+<screen>&prompt.user;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
+salt-run state.orchestrate orch.kubernetes</command>
+   </screen>
+     </step>
+    </procedure>
+    <para>
+     If modified, this setting will be applied to all &kube; components; there
+     is no way to set a different loglevel per component. Moreover, there is no
+     way to specify different loglevels per machine.
+    </para>
+   </sect3>
+  </sect2>
+ </sect1>
+ <sect1 xml:id="sec.admin.logging.fluentd">
+  <title>External log collection</title>
+
+  <para>
+   At &kube; level, there are different solutions that can be implemented. For
+   example:
+   <link xlink:href="https://docs.fluentd.org/v0.12/articles/kubernetes-fluentd">fluentd</link>
+   can be used to collect all applications log in a central instance.
+  </para>
+
+  <para>
+   Then,
+   <link xlink:href="https://kubernetes.io/docs/tasks/debug-application-cluster/logging-elasticsearch-kibana/">Elasticsearch
+   and Kibana</link> can be used to provide an intuitive way to visualize and
+   interact with the logs.
+  </para>
+ </sect1>
+</chapter>
