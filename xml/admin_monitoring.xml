@@ -26,7 +26,8 @@
    <listitem>
     <para>
      By directly accessing the <emphasis>cAdvisor</emphasis> on
-     <literal>http://<replaceable>WORKER NODE ADDRESS</replaceable>:4194/containers/</literal>.
+     <literal>http://<replaceable>WORKER NODE
+     ADDRESS</replaceable>:4194/containers/</literal>.
     </para>
     <para>
      The <emphasis>cAdvisor</emphasis> runs on worker nodes by default.
@@ -136,11 +137,14 @@ https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-co
    <note>
     <title>Understanding cluster health</title>
     <para>
-     Consider reading <link xlink:href="https://kubernetes.io/docs/tasks/debug-application-cluster/debug-cluster/">Kubernetes: Troubleshoot Clusters</link>
+     Consider reading
+     <link xlink:href="https://kubernetes.io/docs/tasks/debug-application-cluster/debug-cluster/">Kubernetes:
+     Troubleshoot Clusters</link>
     </para>
    </note>
    <para>
-    The basic check if a cluster is working correctly is based on a few criteria:
+    The basic check if a cluster is working correctly is based on a few
+    criteria:
    </para>
    <itemizedlist>
     <listitem>
@@ -158,40 +162,40 @@ https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-co
      <itemizedlist>
       <listitem>
        <para>
-       <literal>kube-apiserver</literal>
-      </para>
-     </listitem>
-     <listitem>
-      <para>
-      <literal>kube-controller-manager</literal>
-     </para>
-    </listitem>
-    <listitem>
-     <para>
-     <literal> kube-scheduler</literal>
-    </para>
-   </listitem>
-  </itemizedlist>
+        <literal>kube-apiserver</literal>
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        <literal>kube-controller-manager</literal>
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        <literal> kube-scheduler</literal>
+       </para>
+      </listitem>
+     </itemizedlist>
     </listitem>
    </itemizedlist>
    <note>
     <title>High-Availability Environments</title>
     <para>
-     In a HA environment you can monitor <literal>https://apiserver-ha-name:6443/healthz</literal>.
-     If any master node is running correctly you will receive a valid response.
-     This does not mean that all master nodes necessarily work correctly.
+     In a HA environment you can monitor
+     <literal>https://apiserver-ha-name:6443/healthz</literal>. If any master
+     node is running correctly you will receive a valid response. This does not
+     mean that all master nodes necessarily work correctly.
     </para>
     <para>
      This endpoint will return a successful HTTP response if the cluster is
-     operational; otherwise it will fail. It will for example check that it
-     can access `etcd` too.
-   </para>
-  </note>
-
+     operational; otherwise it will fail. It will for example check that it can
+     access <literal>etcd</literal> too.
+    </para>
+   </note>
    <sect3 xml:id="sec.admin.monitoring.cluster.health.etcd">
     <title><literal>etcd</literal> Cluster Health</title>
     <para>
-     Check that all machines that have the `etcd` role on the cluster see the
+     Check that all machines that have the <literal>etcd</literal> role on the cluster see the
      etcd cluster as healthy.
     </para>
 <screen>&prompt.user;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
@@ -219,8 +223,8 @@ cmd.run 'set -a; source /etc/sysconfig/etcdctl; etcdctl cluster-health'</command
     Is the <literal>kubelet</literal> up and working in this node?
    </para>
    <para>
-    Is CNI working as expected in this node?
-    If not then kube-dns can not start, first step check if kube-dns service is there
+    Is CNI working as expected in this node? If not then kube-dns can not
+    start, first step check if kube-dns service is there
    </para>
 <screen>&prompt.user;<command>kubectl get deployments -n kube-system</command>
 NAME            DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
@@ -228,28 +232,29 @@ dex             3         3         3            3           7d
 kube-dns        3         3         3            3           7d
 tiller-deploy   1         1         1            1           7d
 </screen>
-
 <screen>
 but in general
 if kube-dns is running
 and you are able to create pods
 then you can be 100% sure that CNI and your CNI plugin are working
 </screen>
-
    <para>
-    The <literal>kubelet</literal> has a port exposed: <literal>10250</literal> on all machines; it's possible to perform an HTTP request
-    to <literal>https://node:10250/healthz</literal> to find out if the kubelet is healthy on that machine
+    The <literal>kubelet</literal> has a port exposed: <literal>10250</literal>
+    on all machines; it's possible to perform an HTTP request to
+    <literal>https://node:10250/healthz</literal> to find out if the kubelet is
+    healthy on that machine.
    </para>
    <para>
-    There's also the <link xlink:href="https://kubernetes.io/docs/tasks/debug-application-cluster/monitor-node-health/">Monitor Node Health</link>
-    check. This is a <literal>DaemonSet</literal> (we don't have SLE images for this AFAIK) that runs on every node, and
-    reports to the `apiserver` back as `NodeCondition` and `Events`
+    There's also the
+    <link xlink:href="https://kubernetes.io/docs/tasks/debug-application-cluster/monitor-node-health/">Monitor Node Health</link>
+    check. This is a <literal>DaemonSet</literal> that runs on every node, and
+    reports to the <literal>apiserver</literal> back as
+    <literal>NodeCondition</literal> and <literal>Events</literal>.
    </para>
-
   </sect2>
 
   <sect2 xml:id="sec.admin.monitoring.health.service">
-   <title>Service/Applications Health Checks</title>
+   <title>Service/Application Health Checks</title>
    <para>
     If the deployed services contain a health endpoint, or if they contain an
     endpoint that can be used to determine if the service is up, you can use
@@ -257,68 +262,123 @@ then you can be 100% sure that CNI and your CNI plugin are working
    </para>
    <note>
     <title>Health check endpoints vs. functional endpoints</title>
-   <para>
-    A proper health check is always preferred if designed correctly.
-   </para>
-   <para>
-    Despite the fact that any endpoint could potentially be used to infer if
-    your application is up, a specific health endpoint in your application is
-    preferred. Such an endpoint will only respond affirmatively when all your
-    setup code on the server has finished and the application is running in a
-    desired state.
-   </para>
-  </note>
-
+    <para>
+     A proper health check is always preferred if designed correctly.
+    </para>
+    <para>
+     Despite the fact that any endpoint could potentially be used to infer if
+     your application is up, a specific health endpoint in your application is
+     preferred. Such an endpoint will only respond affirmatively when all your
+     setup code on the server has finished and the application is running in a
+     desired state.
+    </para>
+   </note>
    <sect3 xml:id="sec.admin.monitoring.health.service.livenessprobe">
     <title>livenessProbe</title>
-   <para>
-    Probes are executed by each `kubelet` against the pods that define them and that are running in that
-    specific node.
-   </para>
-
-   <para>
-   <link xlink:href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/">livenessProbe</link>
-         * They are used to detect running but misbehaving pods; this is: a service that might be running (the
-        process didn't die), but that is not responding as expected
-      * When a `livenessProbe` fails, Kubernetes will automatically restart the pod and increase the `RESTARTS`
-        count for that pod
-      * This probes will be executed every `periodSeconds` starting from `initialDelaySeconds`
-        * `initialDelaySeconds` is the seconds to wait before performing the very first liveness probe
-        * `periodSeconds` is the time that the kubelet should wait between liveness probes
-      * They support also a `successThreshold`, `failureThreshold` and a `timeoutSeconds` attribute
-        * `successThreshold` is the number of minimum consecutive successes for the probe to be considered
-          successful (default value is 1)
-        * `failureThreshold` is the number of times this probe is allowed to fail in order to assume that
-          the service is not responding (default value is 3)
-        * `timeoutSeconds`: number of seconds after the probe timeouts (default is 1)
-      * There are different options for the liveness probe to check:
-        * Command
-          * A command executed within a container; a retcode of 0 means success; otherwise failure
-        * TCP
-          * If a TCP connection can be established is considered success
-        * HTTP
-          * Any HTTP response between 200 and 400 indicates success
-         </para>
-        </sect3>
-
-        <sect3 xml:id="sec.admin.monitoring.health.service.readinessprobe">
-         <title>readinessProbe</title>
-
-     <para>
-            <link xlink:href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#define-readiness-probes">readinessProbe</link>
-        * They are used to wait for processes that take some time to start. Despite the container might be
-          running, it might be doing some time consuming init operations. During this time, you don't want
-          Kubernetes to route traffic to that specific pod; also, you don't want that container to be
-          restarted.
-          * This probes will be executed every `periodSeconds` starting from `initialDelaySeconds` until
-            the service is ready.
-          * They support the same kind of probes as the `livenessProbe`
-
-      * Both probes can be used at the same time: the `livenessProbe` will ensure that if a service is
-        running yet misbehaving, it will be restarted, and `readinessProbe` will ensure that Kubernetes
-        won't route traffic to that specific pod until it's considered to be fully functional and running
+    <para>
+     Probes are executed by each <literal>kubelet</literal> against the pods that define them
+     and that are running in that specific node.
+    </para>
+    <para>
+     <link xlink:href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/">livenessProbe</link>
+     They are used to detect running but misbehaving pods; this is: a service
+     that might be running (the process didn't die), but that is not responding
+     as expected
+    </para>
+    <para>
+     When a <literal>livenessProbe</literal> fails, Kubernetes will automatically restart the
+     pod and increase the <literal>RESTARTS</literal> count for that pod.
+    </para>
+    <para>
+     This probes will be executed every <literal>periodSeconds</literal> starting from
+     <literal>initialDelaySeconds</literal>
+      <literal>initialDelaySeconds</literal> is the seconds to wait
+     before performing the very first liveness probe
+    </para>
+    <para>
+     <literal>periodSeconds</literal> is the time that the kubelet should wait between liveness probes
+    </para>
+    <para>
+     They support also a <literal>successThreshold</literal>, <literal>failureThreshold</literal> and a
+     <literal>timeoutSeconds</literal> attribute
+    </para>
+     <itemizedlist>
+      <listitem>
+       <para>
+        successThreshold is the number of minimum consecutive successes for
+        the probe to be considered successful (default value is 1)
        </para>
-      </sect3>
+      </listitem>
+      <listitem>
+       <para>
+        <literal>failureThreshold</literal> is the number of times this probe is allowed to fail
+        in order to assume that the service is not responding (default value is
+        3)
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        <literal>timeoutSeconds</literal>: number of seconds after the probe timeouts (default
+        is 1)
+       </para>
+      </listitem>
+     </itemizedlist>
+    <para>
+     There are different options for the liveness probe to check:
+    </para>
+    <variablelist>
+     <varlistentry>
+      <term>Command</term>
+      <listitem>
+      <para>
+       A command executed within a container; a retcode of 0 means success;
+       otherwise failure.
+      </para>
+     </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>TCP</term>
+      <listitem>
+      <para>
+       If a TCP connection can be established is considered success/
+      </para>
+     </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>HTTP</term>
+      <listitem>
+      <para>
+       Any HTTP response between <literal>200</literal> and <literal>400</literal>
+       indicates success.
+      </para>
+     </listitem>
+     </varlistentry>
+    </variablelist>
+
+   </sect3>
+   <sect3 xml:id="sec.admin.monitoring.health.service.readinessprobe">
+    <title>readinessProbe</title>
+    <para>
+     <link xlink:href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#define-readiness-probes">readinessProbe</link>
+     They are used to wait for processes that take some time to start. Despite
+     the container might be running, it might be doing some time consuming init
+     operations. During this time, you don't want Kubernetes to route traffic
+     to that specific pod; also, you don't want that container to be restarted.
+    </para>
+    <para>
+     This probes will be executed every <literal>periodSeconds</literal> starting from
+     <literal>initialDelaySeconds</literal> until the service is ready.
+    </para>
+    <para>
+     They support the same kind of probes as the <literal>livenessProbe</literal>
+    </para>
+    <para>
+     Both probes can be used at the same time: the <literal>livenessProbe</literal> will ensure
+     that if a service is running yet misbehaving, it will be restarted, and
+     <literal>readinessProbe</literal> will ensure that Kubernetes won't route traffic to that
+     specific pod until it's considered to be fully functional and running
+    </para>
+   </sect3>
   </sect2>
 
   <sect2 xml:id="sec.admin.monitoring.health.general">
@@ -329,12 +389,11 @@ then you can be 100% sure that CNI and your CNI plugin are working
      It's good to also check that all machines are healthy in terms of free
      disk space from time to time, also when something fails:
     </para>
-<screen>&prompt.user;docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
-   salt -P 'roles:(admin|kube-master|kube-minion)' \
-   cmd.run "df -h"
+<screen>&prompt.user;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
+salt -P 'roles:(admin|kube-master|kube-minion)' \
+cmd.run "df -h"</command>
    </screen>
    </sect3>
-
   </sect2>
  </sect1>
 </chapter>
