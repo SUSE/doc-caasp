@@ -19,21 +19,23 @@
   <title>Scope Of This Document</title>
   <para>
    The scope of this document is limited to the &productname; Infrastructure
-   layer. Logging the activity of deployed applications is beyond the scope of this
-   document.
+   layer. Logging the activity of deployed applications is beyond the scope of
+   this document.
   </para>
   <para>
    Please refer to:
-   <link xlink:href="https://kubernetes.io/docs/concepts/cluster-administration/logging/">Kubernetes: Logging Architecture</link>
-   for more information.
+   <link xlink:href="https://kubernetes.io/docs/concepts/cluster-administration/logging/">Kubernetes:
+   Logging Architecture</link> for more information.
   </para>
   <para>
-   The &productname; components run in indvidual Docker containers and typically
-   you can get a set of log information using <command>docker logs</command>.
+   The &productname; components run in indvidual Docker containers and
+   typically you can get a set of log information using <command>docker
+   logs</command>.
   </para>
   <para>
-   For detailed information on how to use log files for the individual components,
-   please refer to the respective official documentation of the component.
+   For detailed information on how to use log files for the individual
+   components, please refer to the respective official documentation of the
+   component.
   </para>
  </important>
  <sect1 xml:id="sec.admin.logging.intro">
@@ -153,8 +155,8 @@
     in the dashboard.
    </para>
    <para>
-    Logs are generated in the &dashboard; container (<literal>k8s_velum-dashboard</literal>)
-    running on the admin node.
+    Logs are generated in the &dashboard; container
+    (<literal>k8s_velum-dashboard</literal>) running on the admin node.
    </para>
 <screen>&prompt.user;<command>docker logs $(docker ps | grep k8s_velum-dashboard | awk '{print $1}')</command>
    </screen>
@@ -167,12 +169,12 @@
     the &dashboard; dashboard.
    </para>
    <para>
-    The OpenLDAP logs are generated in the <filename>k8s_openldap_velum</filename>
-    container running on the admin node.
+    The OpenLDAP logs are generated in the
+    <filename>k8s_openldap_velum</filename> container running on the admin
+    node.
    </para>
 <screen>&prompt.user;<command>docker logs $(docker ps | grep k8s_openldap_velum | awk '{print $1}')</command>
     </screen>
-
   </sect2>
  </sect1>
  <sect1 xml:id="sec.admin.logging.salt">
@@ -185,14 +187,18 @@
    cluster, in such a case it can be inspected using <literal>Salt</literal>
    log information.
   </para>
+
   <para>
-   Salt orchestration and master log are generated on the <literal>Salt Master</literal>
-   container (<filename>k8s_salt-master</filename>) running on the admin node.
+   Salt orchestration and master log are generated on the <literal>Salt
+   Master</literal> container (<filename>k8s_salt-master</filename>) running on
+   the admin node.
   </para>
+
   <para>
    Salt minion logs are generated in the respective salt minion containers on
    each node. The <literal>salt-master</literal> collects these logs on the
-   admin node and writes them into the MariaDB container <filename>k8s_velum-mariadb</filename>.
+   admin node and writes them into the MariaDB container
+   <filename>k8s_velum-mariadb</filename>.
   </para>
 
   <sect2 xml:id="sec.admin.logging.salt.orchestration">
@@ -249,7 +255,6 @@
    <para>
     Retrieve the <literal>salt-master</literal> logs.
    </para>
-
 <screen>&prompt.user;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
 cat /var/log/salt/master</command>
     </screen>
@@ -262,7 +267,6 @@ cat /var/log/salt/master</command>
     show all output for all <literal>salt-minions</literal> at once. Execute
     the following command on the admin node.
    </para>
-
    <para>
     Of course, it's possible to retrieve this information on any specific node
     by reading the <filename>/var/log/salt/minion</filename> file.
@@ -369,23 +373,23 @@ salt '*' cmd.run "cat /var/log/salt/minion"</command>
    <sect3 xml:id="sec.admin.logging.log-levels.salt.set">
     <title>Setting A Different Log Level</title>
     <para>
-      The <literal>salt-master</literal> configuration can be modified on the
-      admin node, at <filename>/etc/caasp/salt-master-custom.conf</filename>.
-      Inside this file you can add: <literal>log_level: debug</literal>.
-     </para>
-     <para>
-      Note that after any change on this file you need to restart the
-      <literal>salt-master</literal> container, like:
-     </para>
+     The <literal>salt-master</literal> configuration can be modified on the
+     admin node, at <filename>/etc/caasp/salt-master-custom.conf</filename>.
+     Inside this file you can add: <literal>log_level: debug</literal>.
+    </para>
+    <para>
+     Note that after any change on this file you need to restart the
+     <literal>salt-master</literal> container, like:
+    </para>
 <screen>
 <command>docker rm -f $(docker ps | grep salt-master | awk '{print $1}')</command>.
      </screen>
-     <para>
-      After deleting this container, the <literal>kubelet</literal> will bring
-      up a new <literal>salt-master</literal> container automatically with the
-      new configuration applied. Then. you can check the logs with the
-      <literal>debug</literal> loglevel.
-     </para>
+    <para>
+     After deleting this container, the <literal>kubelet</literal> will bring
+     up a new <literal>salt-master</literal> container automatically with the
+     new configuration applied. Then. you can check the logs with the
+     <literal>debug</literal> loglevel.
+    </para>
 <screen>
 <command>docker logs -f $(docker ps | grep salt-master | awk '{print $1}')</command>
    </screen>
@@ -411,8 +415,8 @@ salt '*' cmd.run "cat /var/log/salt/minion"</command>
   </para>
 
   <para>
-   The <command>transactional-update</command> logs are generated in the
-   &mos; layer on each node respectively.
+   The <command>transactional-update</command> logs are generated in the &mos;
+   layer on each node respectively.
   </para>
 
   <para>
@@ -627,19 +631,21 @@ salt-run state.orchestrate orch.kubernetes</command>
    </sect3>
   </sect2>
  </sect1>
-
  <sect1 xml:id="sec.admin.logging.fluentd">
   <title>External log collection</title>
 
   <para>
    At &kube; level, there are different solutions that can be implemented. For
-   example: <link xlink:href="https://docs.fluentd.org/v0.12/articles/kubernetes-fluentd">fluentd</link>
+   example:
+   <link xlink:href="https://docs.fluentd.org/v0.12/articles/kubernetes-fluentd">fluentd</link>
    can be used to collect all applications log in a central instance.
   </para>
+
   <para>
-   Then, <link xlink:href="https://kubernetes.io/docs/tasks/debug-application-cluster/logging-elasticsearch-kibana/">Elasticsearch and Kibana</link>
-   can be used to provide an intuitive way to visualize and interact with the
-   logs.
+   Then,
+   <link xlink:href="https://kubernetes.io/docs/tasks/debug-application-cluster/logging-elasticsearch-kibana/">Elasticsearch
+   and Kibana</link> can be used to provide an intuitive way to visualize and
+   interact with the logs.
   </para>
  </sect1>
 </chapter>
