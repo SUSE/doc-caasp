@@ -136,25 +136,33 @@
  <sect1 xml:id="sec.admin.logging.admin">
   <title>Admin Node Logs</title>
 
-  <para>
-   More information to be added.
-  </para>
-
   <sect2 xml:id="sec.admin.logging.velum">
    <title>&dashboard; Logs</title>
    <para>
-    More information to be added.
+    The &dashboard; logs will contain more details on error messages displayed
+    in the dashboard.
    </para>
+   <para>
+    Logs are generated in the &dashboard; container (<literal>k8s_velum-dashboard</literal>)
+    running on the admin node.
+   </para>
+<screen>&prompt.user;<command>docker logs $(docker ps | grep k8s_velum-dashboard | awk '{print $1}')</command>
+   </screen>
   </sect2>
 
   <sect2 xml:id="sec.admin.logging.ldap">
-   <title>LDAP Logs</title>
+   <title>OpenLDAP Logs</title>
    <para>
-    &productname; &dashboard; uses OpenLDAP.
+    The OpenLDAP logs contain information about the authentication of users in
+    the &dashboard; dashboard.
    </para>
    <para>
-    More information to be added.
+    The OpenLDAP logs are generated in the <filename>k8s_openldap_velum</filename>
+    container running on the admin node.
    </para>
+<screen>&prompt.user;<command>docker logs $(docker ps | grep k8s_openldap_velum | awk '{print $1}')</command>
+    </screen>
+
   </sect2>
  </sect1>
  <sect1 xml:id="sec.admin.logging.salt">
@@ -165,7 +173,16 @@
    behavior and configuration of the &kube; cluster. A failure of executing
    certain <literal>Salt</literal> workflows could lead to an unhealthy
    cluster, in such a case it can be inspected using <literal>Salt</literal>
-   log information".
+   log information.
+  </para>
+  <para>
+   Salt orchestration and master log are generated on the <literal>Salt Master</literal>
+   container (<filename>k8s_salt-master</filename>) running on the admin node.
+  </para>
+  <para>
+   Salt minion logs are generated in the respective salt minion containers on
+   each node. The Salt master collects these logs on the admin node and writes
+   them into the MariaDB container <filename>k8s_velum-mariadb</filename>.
   </para>
 
   <sect2 xml:id="sec.admin.logging.salt.orchestration">
@@ -222,6 +239,7 @@
    <para>
     Retrieve the <literal>Salt master</literal> logs.
    </para>
+
 <screen>&prompt.user;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
 cat /var/log/salt/master</command>
     </screen>
@@ -234,6 +252,7 @@ cat /var/log/salt/master</command>
     show all output for all <literal>salt-minions</literal> at once. Execute
     the following command on the admin node.
    </para>
+
    <para>
     Of course, it's possible to retrieve this information on any specific node
     by reading the <filename>/var/log/salt/minion</filename> file.
@@ -409,7 +428,12 @@ salt '*' cmd.run "cat /var/log/salt/minion"</command>
   </para>
 
   <para>
-   For more information, see:
+   The <command>transactional-update</command> logs are generated in the
+   &mos; layer on each node respectively.
+  </para>
+
+  <para>
+   For more information on transactional-update, see:
    <xref linkend="sec.admin.software.transactional-updates"/>
   </para>
 
@@ -620,18 +644,19 @@ salt-run state.orchestrate orch.kubernetes</command>
    </sect3>
   </sect2>
  </sect1>
+
  <sect1 xml:id="sec.admin.logging.fluentd">
-  <title>External log collection (fluentd)</title>
+  <title>External log collection</title>
 
   <para>
-   At &kube; level, there are different solutions that can be implemented, for
-   example: <literal>fluentd</literal> can be used to collect all applications
-   log in a central instance
-   (https://docs.fluentd.org/v0.12/articles/kubernetes-fluentd). Then,
-   Elasticsearch and Kibana can be used
-   (https://kubernetes.io/docs/tasks/debug-application-cluster/logging-elasticsearch-kibana/)
-   to have an intuitive way to interact with the logs.
-   https://docs.fluentd.org/v0.12/articles/kubernetes-fluentd
+   At &kube; level, there are different solutions that can be implemented. For
+   example: <link xlink:href="https://docs.fluentd.org/v0.12/articles/kubernetes-fluentd">fluentd</link>
+   can be used to collect all applications log in a central instance.
+  </para>
+  <para>
+   Then, <link xlink:href="https://kubernetes.io/docs/tasks/debug-application-cluster/logging-elasticsearch-kibana/">Elasticsearch and Kibana</link>
+   can be used to provide an intuitive way to visualize and interact with the
+   logs.
   </para>
  </sect1>
 </chapter>
