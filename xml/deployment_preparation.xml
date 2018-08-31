@@ -154,8 +154,7 @@
     <term>&vmware;</term>
     <listitem>
      <para>
-      In VMDK format, for &vmware; ESXi. Read <xref linkend=
-      "sec.deploy.preparation.disk_images.vmware" />.
+      In VMDK format, for &vmware; ESXi.
      </para>
     </listitem>
    </varlistentry>
@@ -174,44 +173,59 @@
    <para>
     When deploying a cluster node from pre-installed disk images, the
     setup program never runs. Therefore, the configuration must happen
-    while the node is starting up. The process is very similar for all
-    hypervisors. The examples in this manual use &kvm; running on
-    &sle;.
+    while the node is starting up. For this purpose, &productname;
+    includes <command>cloud-init</command>. The described process is
+    very similar for all hypervisors. The examples in this manual use
+    &kvm; running on &sle;. The following procedure outlines the
+    overall process.
    </para>
-   <para>
-    For node configuration, <literal>cloud-init</literal> is used.
-    Place the <command>cloud-init</command> configuration files into a
-    specific subdirectory. Then create an ISO image that contains these
-    files. Attach the ISO image to the VM as a secondary disk. The
-    pre-installed operating is configured to look for a medium with the
-    volume label <literal>cidata</literal>. Configuration files on this
-    volume are searched and applied by <command>cloud-init</command>.
-   </para>
-   <para>
-    For details, read <xref
-    linkend="sec.deploy.preparation.disk_images.configuration" /> and
-    the following sections. For further details, refer to <xref
-    linkend="sec.deploy.cloud-init"/>.
-   </para>
-   <para>
-    You need to build at least two ISO images with configuration
-    information: one for the &admin_node; and one for the
-    &worker_node;s. If you wish to assign specific host names or
-    customize individual &worker_node;s, then you should create
-    separate ISO images for each node.
-   </para>
-   <para>
-    Additionally, you need to make a separate copy of the downloaded VM
-    disk image for each VM. We suggest keeping the original download
-    elsewhere and making a fresh copy for each node, naming it
-    appropriately: for example, <literal>caas-admin</literal>,
-    <literal>caas-master</literal>, <literal>caas-worker1</literal>,
-    <literal>caas-worker2</literal> and so on.
-   </para>
+   <procedure>
+    <step>
+     <para>
+      Only for &vmware;: Convert VMDK images. See <xref linkend=
+      "sec.deploy.preparation.disk_images.vmware" />.
+     </para>
+    </step>
+    <step>
+     <para>
+      Write <command>cloud-init</command> configuration files. See
+      <xref linkend="sec.deploy.preparation.disk_images.configuration"
+      />.
+     </para>
+    </step>
+    <step>
+     <para>
+      Prepare ISO images containing the <command>cloud-init</command>
+      configuration files. See <xref
+      linkend="sec.deploy.preparation.disk_images.iso-image" />.
+     </para>
+    </step>
+    <step>
+     <para>
+      Create a copy of the downloaded disk image for each virtual
+      machine, naming them appropriately: for example,
+      <literal>caas-admin</literal>, <literal>caas-master</literal>,
+      <literal>caas-worker1</literal>, <literal>caas-worker2</literal>
+      and so on.
+     </para>
+    </step>
+    <step>
+     <para>
+      Boot and configure the &admin_node;. See <xref
+      linkend="sec.deploy.preparation.qcow2.admin" />.
+     </para>
+    </step>
+    <step>
+     <para>
+      Boot and configure the worker nodes. See <xref
+      linkend="sec.deploy.preparation.disk_images.worker" />.
+     </para>
+    </step>
+   </procedure>
   </sect2>
 
   <sect2 xml:id="sec.deploy.preparation.disk_images.vmware">
-   <title>Convert Images for &vmware; ESX and ESXi</title>
+   <title>Converting Images for &vmware; ESX and ESXi</title>
    <para>
     Downloaded disk images need to be converted for usage with &vmware;
     ESX and ESXi. Run the following command on the downloaded disk
@@ -296,12 +310,17 @@ chpasswd:
 suse_caasp:
     role: <replaceable>cluster</replaceable>
     admin_node: <replaceable>caas-admin.example.com</replaceable></screen>
+    <para>
+     For more informatin, also refer to <xref
+     linkend="sec.deploy.cloud-init" />.
+    </para>
   </sect2>
   <sect2 xml:id="sec.deploy.preparation.disk_images.iso-image">
    <title>Preparing an ISO image</title>
    <para>
-    Once you have edited the configuration files with your desired settings,
-    you need to create an ISO image with the volume label <literal>cidata</literal>
+    First, edit the configuration files as described in <xref linkend=
+    "sec.deploy.preparation.disk_images.configuration" />. Then
+    create an ISO image with the volume label <literal>cidata</literal>
     containing only the subdirectory for that node type.
    </para>
    <para>
@@ -313,37 +332,18 @@ suse_caasp:
     For example, to create the ISO image for an admin node on a computer
     running &opensuse; 42:
    </para>
-   <screen>&prompt.user;sudo genisoimage -output <replaceable>cc-admin.img</replaceable> -volid <replaceable>cidata</replaceable> -joliet -rock <replaceable>cc-admin</replaceable></screen>
+   <screen>&prompt.user;<command>sudo genisoimage -output <replaceable>cc-admin.img</replaceable> -volid <replaceable>cidata</replaceable> -joliet -rock <replaceable>cc-admin</replaceable></command></screen>
    <para>
     To create the ISO image for a worker node on a computer running &opensuse;
     15, substituting the name of the folder containing the configuration
     files for a &worker_node; and titling the volume <literal>cc-worker</literal>:
    </para>
-   <screen>&prompt.user;sudo mkisofs -output <replaceable>cc-worker.img</replaceable> -volid <replaceable>cidata</replaceable> -joliet -rock <replaceable>cc-worker</replaceable></screen>
+   <screen>&prompt.user;<command>sudo mkisofs -output <replaceable>cc-worker.img</replaceable> -volid <replaceable>cidata</replaceable> -joliet -rock <replaceable>cc-worker</replaceable></command></screen>
   </sect2>
 
   <sect2 xml:id="sec.deploy.preparation.qcow2.admin">
-   <title>Procedure to Bring Up an &Admin_Node;</title>
+   <title>Bringing Up an &Admin_Node;</title>
    <procedure>
-    <step>
-     <para>
-      Make a folder called <filename>cc-admin</filename>.
-     </para>
-    </step>
-    <step>
-     <para>
-      In that folder, prepare <filename>user-data</filename> and <filename>meta-data</filename>
-      files to set the &rootuser; password, node name and so on for the
-      &admin_node;.
-     </para>
-    </step>
-    <step>
-     <para>
-      Create an ISO file called <filename>cc-admin.img</filename> containing
-      these two files:
-     </para>
-     <screen>&prompt.user;sudo genisoimage -output cc-admin.img -volid cidata -joliet -rock cc-admin</screen>
-    </step>
     <step>
      <para>
       Create a new VM for the &admin_node;.
@@ -356,7 +356,9 @@ suse_caasp:
     </step>
     <step>
      <para>
-      Attach the <filename>cc-admin.img</filename> disk image as a secondary disk.
+      Attach the <filename>cc-admin.img</filename> image as a
+      secondary disk. For details about preparing the image, see <xref
+      linkend="sec.deploy.preparation.disk_images.iso-image" />
     </para>
     </step>
     <step>
@@ -373,38 +375,7 @@ suse_caasp:
   </sect2>
 
   <sect2 xml:id="sec.deploy.preparation.disk_images.worker">
-   <title>Procedure to Bring Up a &Worker_Node;</title>
-   <para>
-    The first procedure is to generate the configuration files. Unless
-    you wish to customize the individual &worker_node;s, then you need only
-    do this part once.
-   </para>
-   <procedure>
-    <step>
-     <para>
-      Make a folder called <filename>cc-worker</filename>.
-     </para>
-    </step>
-    <step>
-     <para>
-      In that folder, prepare a <filename>user-data</filename> file to set the &rootuser;
-      password, network settings and so on for the &worker_node;. If no
-      changes are necessary, you can copy the <filename>meta-data</filename>
-      file from that used to configure the &admin_node;.
-     </para>
-    </step>
-    <step>
-     <para>
-      Create an ISO file called <filename>cc-worker.img</filename> containing
-      these two files:
-     </para>
-     <screen>&prompt.user; sudo genisoimage -output cc-worker.img -volid cidata -joliet -rock cc-worker</screen>
-    </step>
-   </procedure>
-   <para>
-    Once you have a disk image containing the configuration files, it can be
-    reused for multiple &worker_node;s.
-   </para>
+   <title>Bringing Up a &Worker_Node;</title>
    <para>
     Then, repeat the following steps for each &worker_node;:
    </para>
@@ -422,7 +393,9 @@ suse_caasp:
     <step>
      <para>
       Attach the <filename>cc-worker.img</filename> disk image as a
-      secondary disk.
+      secondary disk. For details about preparing the image, see <xref
+      linkend="sec.deploy.preparation.disk_images.iso-image" />. The
+      ISO image can be reused for multiple &worker_node;s.
      </para>
     </step>
     <step>
