@@ -4,7 +4,7 @@
   <!ENTITY % entities SYSTEM "entity-decl.ent">
     %entities;
 ]>
-<chapter version="5.1" xml:id="cha.admin.monitoring"
+<chapter version="5.0" xml:id="cha.admin.monitoring"
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -15,7 +15,6 @@
    <dm:translation>yes</dm:translation>
   </dm:docmanager>
  </info>
-
  <sect1 xml:id="sec.admin.monitoring.cluster">
   <title>Cluster Monitoring</title>
 
@@ -27,28 +26,27 @@
    <listitem>
     <para>
      By directly accessing the <emphasis>cAdvisor</emphasis> on
-     <literal>http://<replaceable>WORKER NODE ADDRESS</replaceable>
-     ;:4194/containers/</literal>.
+     <literal>http://<replaceable>WORKER NODE ADDRESS</replaceable>:4194/containers/</literal>.
     </para>
     <para>
-    The <emphasis>cAdvisor</emphasis> runs on worker nodes by default.
+     The <emphasis>cAdvisor</emphasis> runs on worker nodes by default.
     </para>
    </listitem>
    <listitem>
     <para>
      By using <emphasis>Heapster</emphasis>, for details refer to
-     <xref linkend="sec.admin.monitoring.cluster..heapster"/>.
+     <xref linkend="sec.admin.monitoring.cluster.heapster"/>.
     </para>
    </listitem>
    <listitem>
     <para>
      By using <emphasis>Grafana</emphasis>, for details refer to
-     <xref linkend="sec.admin.monitoring.cluster..grafana"/>.
+     <xref linkend="sec.admin.monitoring.cluster.grafana"/>.
     </para>
    </listitem>
   </itemizedlist>
 
-  <sect2 xml:id="sec.admin.monitoring.cluster..heapster">
+  <sect2 xml:id="sec.admin.monitoring.cluster.heapster">
    <title>Monitoring with Heapster</title>
    <para>
     <emphasis>Heapster</emphasis> is a tool that collects and interprets
@@ -59,7 +57,7 @@
    <para>
     To deploy <emphasis>Heapster</emphasis>, run the following command:
    </para>
- <screen>&prompt.user;<command>kubectl apply -f \
+<screen>&prompt.user;<command>kubectl apply -f \
 https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/heapster/heapster.yaml</command></screen>
    <para>
     <emphasis>Heapster</emphasis> can store data in
@@ -67,7 +65,7 @@ https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/heap
    </para>
   </sect2>
 
-  <sect2 xml:id="sec.admin.monitoring.cluster..grafana">
+  <sect2 xml:id="sec.admin.monitoring.cluster.grafana">
    <title>Monitoring with Grafana</title>
    <para>
     <emphasis>Grafana</emphasis> is an analytics platform that processes data
@@ -75,7 +73,7 @@ https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/heap
     You can deploy <emphasis>Grafana</emphasis> by running the following
     commands:
    </para>
- <screen>&prompt.user;<command>kubectl apply -f \
+<screen>&prompt.user;<command>kubectl apply -f \
 https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/heapster/heapster.yaml</command>
 &prompt.user;<command>kubectl apply -f \
 https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/influxdb.yaml</command>
@@ -85,7 +83,7 @@ https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-co
    <para>
     Then open the file <filename>grafana-service.yaml</filename>:
    </para>
- <screen>&prompt.user;<command>vi grafana-service.yaml</command></screen>
+<screen>&prompt.user;<command>vi grafana-service.yaml</command></screen>
    <para>
     In the file uncomment the line with the <literal>NodePort</literal> type.
    </para>
@@ -96,148 +94,247 @@ https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-co
 <screen>&prompt.root;<command>kubectl apply -f grafana-service.yaml</command></screen>
   </sect2>
  </sect1>
+ <sect1 xml:id="sec.admin.monitoring.health">
+  <title>Health Checking</title>
 
- <sect1 xml:id="sec.admin.monitoring.cluster.health">
-   <title>Cluster Health Checking</title>
-   <para>
-    Although &kube; takes care of a lot of traditional deployment problems with
-    it self-healing capabilities automatically, it is considered good practice to
-    monitor the availability and health of your services and applications to
-    react to problems should they go beyond these automated measures.
-   </para>
-   <para>
-    This, however, beyond the scope of this document.
-   </para>
+  <para>
+   Although &kube; takes care of a lot of the traditional deployment problems
+   with its self-healing capabilities, it is considered good practice to
+   monitor the availability and health of your services and applications to
+   react to problems should they go beyond these automated measures.
+  </para>
 
-   <para>
-    This document is intended to give you an overview of points you should monitor
-    to ensure correct functionality of the &productname; itself.
-   </para>
+  <para>
+   A complete set of instructions on how to monitor and maintain the health of
+   you cluster is, however, beyond the scope of this document.
+  </para>
 
-   <note>
-    <title>Upstream Documentation On Monitoring Details</title>
+  <para>
+   There are three levels of health checks.
+  </para>
+
+  <itemizedlist>
+   <listitem>
     <para>
-     Instructions like how to set up <link xlink:href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/">Liveness and Readiness Probes</link>
-     or how to <link xlink:href="https://kubernetes.io/docs/tasks/debug-application-cluster/monitor-node-health/">Monitor individual Node health</link>
-     can be found in the &kube; upstream documentation.
+     Cluster
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     Node
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     Application / Service
+    </para>
+   </listitem>
+  </itemizedlist>
+
+  <sect2 xml:id="sec.admin.monitoring.health.cluster">
+   <title>Cluster Health Checks</title>
+   <note>
+    <title>Understanding cluster health</title>
+    <para>
+     Consider reading <link xlink:href="https://kubernetes.io/docs/tasks/debug-application-cluster/debug-cluster/">Kubernetes: Troubleshoot Clusters</link>
     </para>
    </note>
+   <para>
+    The basic check if a cluster is working correctly is based on a few criteria:
+   </para>
+   <itemizedlist>
+    <listitem>
+     <para>
+      Are all services running as expected?
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Is there at least one master fully working?
+     </para>
+     <para>
+      The minimal services for the master to work properly are:
+     </para>
+     <itemizedlist>
+      <listitem>
+       <para>
+       <literal>kube-apiserver</literal>
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+      <literal>kube-controller-manager</literal>
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+     <literal> kube-scheduler</literal>
+    </para>
+   </listitem>
+  </itemizedlist>
+    </listitem>
+   </itemizedlist>
+   <note>
+    <title>High-Availability Environments</title>
+    <para>
+     In a HA environment you can monitor <literal>https://apiserver-ha-name:6443/healthz</literal>.
+     If any master node is running correctly you will receive a valid response.
+     This does not mean that all master nodes necessarily work correctly.
+    </para>
+    <para>
+     This endpoint will return a successful HTTP response if the cluster is
+     operational; otherwise it will fail. It will for example check that it
+     can access `etcd` too.
+   </para>
+  </note>
 
-  <screen>
-   There are three levels of health checks. One is related to the cluster itself (e.g. is the cluster running in a healthy state? is etcd in a healthy state?), another is with the nodes themselves, and the last one is related to the services running on top of the cluster.
-
-   * Cluster
-     * Consider [reading this](https://kubernetes.io/docs/tasks/debug-application-cluster/debug-cluster/)
-     * Are all services running as expected
-        * Is there at least one master fully working?
-          * The minimal services for the master to work properly are:
-            * kube-apiserver
-            * kube-controller-manager
-            * kube-scheduler
-        * Is `etcd` healthy?
-          * `etcd` needs to be in a healthy state in order for kubernetes to access the stored information
-        * In an HA environment where you will always reach one master if there's one master up at all, you
-          can monitor `https://apiserver-ha-name:6443/healthz`. This endpoint will return a successful HTTP
-          response if the cluster is operational; otherwise it will fail. It will for example check that it
-          can access `etcd` too.
-        * Aside from the apiserver health check (that to some extent also includes an `etcd` health check),
-          you can explicitly run health checks on the `etcd` cluster. Since `etcd` requires client certificates
-          you cannot query `etcd` health endpoint directly; but instead you can run
-          `set -a; source /etc/sysconfig/etcdctl; etcdctl cluster-health`. Note that this command will change
-          with the new `etcd` version to: `etcdctl endpoint health`
-
-   * Node
-     * Is the kubelet up and working in this node?
-       * The `kubelet` has a port exposed: `10250` on all machines; it's possible to perform an HTTP request
-         to `https://node:10250/healthz` to find out if the kubelet is healthy on that machine
-       * There's also the [Monitor Node Health](https://kubernetes.io/docs/tasks/debug-application-cluster/monitor-node-health/)
-         check. This is a `DaemonSet` (we don't have SLE images for this AFAIK) that runs on every node, and
-         reports to the `apiserver` back as `NodeCondition` and `Events`
-     * Is CNI working as expected in this node?
-       * This needs to be confirmed by someone like @nirmoy or @mrostecki: is there a way to confirm that
-         CNI is working fine in this node?
-
-   * Services/Applications
-     * If the deployed services contain a health endpoint, or if they contain an endpoint that can be used
-       to determine if the service is up, you can use `livenessProbes` and/or `readinessProbes`. Note that
-       a health check is preferred if designed correctly. Despite any endpoint can work to determine if your
-       server is up, a specific health endpoint in your application that only responds affirmatively when all
-       your setup code on your server has finished is preferred.
-
-       Probes are executed by each `kubelet` against the pods that define them and that are running in that
-       specific node.
-
-       * [`livenessProbe`](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/)
-         * They are used to detect running but misbehaving pods; this is: a service that might be running (the
-           process didn't die), but that is not responding as expected
-         * When a `livenessProbe` fails, Kubernetes will automatically restart the pod and increase the `RESTARTS`
-           count for that pod
-         * This probes will be executed every `periodSeconds` starting from `initialDelaySeconds`
-           * `initialDelaySeconds` is the seconds to wait before performing the very first liveness probe
-           * `periodSeconds` is the time that the kubelet should wait between liveness probes
-         * They support also a `successThreshold`, `failureThreshold` and a `timeoutSeconds` attribute
-           * `successThreshold` is the number of minimum consecutive successes for the probe to be considered
-             successful (default value is 1)
-           * `failureThreshold` is the number of times this probe is allowed to fail in order to assume that
-             the service is not responding (default value is 3)
-           * `timeoutSeconds`: number of seconds after the probe timeouts (default is 1)
-         * There are different options for the liveness probe to check:
-           * Command
-             * A command executed within a container; a retcode of 0 means success; otherwise failure
-           * TCP
-             * If a TCP connection can be established is considered success
-           * HTTP
-             * Any HTTP response between 200 and 400 indicates success
-
-       * [`readinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#define-readiness-probes)
-         * They are used to wait for processes that take some time to start. Despite the container might be
-           running, it might be doing some time consuming init operations. During this time, you don't want
-           Kubernetes to route traffic to that specific pod; also, you don't want that container to be
-           restarted.
-           * This probes will be executed every `periodSeconds` starting from `initialDelaySeconds` until
-             the service is ready.
-           * They support the same kind of probes as the `livenessProbe`
-
-       * Both probes can be used at the same time: the `livenessProbe` will ensure that if a service is
-         running yet misbehaving, it will be restarted, and `readinessProbe` will ensure that Kubernetes
-         won't route traffic to that specific pod until it's considered to be fully functional and running
-</screen>
-<sect2 xml:id="sec.admin.monitoring.cluster.health.etcd">
- <title><literal>etcd</literal> Cluster Health</title>
- <para>
-  Check that all machines that have the `etcd` role on the cluster see the etcd cluster as healthy.
-  </para>
-<screen>
-docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
+   <sect3 xml:id="sec.admin.monitoring.cluster.health.etcd">
+    <title><literal>etcd</literal> Cluster Health</title>
+    <para>
+     Check that all machines that have the `etcd` role on the cluster see the
+     etcd cluster as healthy.
+    </para>
+<screen>&prompt.user;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
 salt -G 'roles:etcd' \
-cmd.run 'set -a; source /etc/sysconfig/etcdctl; etcdctl cluster-health'
-  </screen>
-
-</sect2>
-
-<sect2 xml:id="sec.admin.monitoring.cluster.health.components">
- <title>Running Components</title>
- <para>
-  Check if the cluster has all required components running:
- </para>
- <screen>
-kubectl cluster-info
+cmd.run 'set -a; source /etc/sysconfig/etcdctl; etcdctl cluster-health'</command>
+           </screen>
+   </sect3>
+   <sect3 xml:id="sec.admin.monitoring.cluster.health.components">
+    <title>Running Components</title>
+    <para>
+     Check if the cluster has all required components running:
+    </para>
+<screen>&prompt.user;<command>kubectl cluster-info</command>
     </screen>
     <para>
-     You can optionally run <command>kubectl cluster-info dump</command> to obtain a much more detailed output
+     You can optionally run <command>kubectl cluster-info dump</command> to
+     obtain a much more detailed output
     </para>
-</sect2>
+   </sect3>
+  </sect2>
 
-<sect2 xml:id="sec.admin.monitoring.cluster.disk-usage">
- <title>Disk Usage</title>
- <para>
-  It's good to also check that all machines are healthy in terms of free disk space from time to time, also when something fails:
- </para>
-
-<screen>&prompt.user;docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
-salt -P 'roles:(admin|kube-master|kube-minion)' \
-cmd.run "df -h"
+  <sect2 xml:id="sec.admin.monitoring.health.node">
+   <title>Node Health Checks</title>
+   <para>
+    Is the <literal>kubelet</literal> up and working in this node?
+   </para>
+   <para>
+    Is CNI working as expected in this node?
+    If not then kube-dns can not start, first step check if kube-dns service is there
+   </para>
+<screen>&prompt.user;<command>kubectl get deployments -n kube-system</command>
+NAME            DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+dex             3         3         3            3           7d
+kube-dns        3         3         3            3           7d
+tiller-deploy   1         1         1            1           7d
 </screen>
-</sect2>
-</sect1>
+
+<screen>
+but in general
+if kube-dns is running
+and you are able to create pods
+then you can be 100% sure that CNI and your CNI plugin are working
+</screen>
+
+   <para>
+    The <literal>kubelet</literal> has a port exposed: <literal>10250</literal> on all machines; it's possible to perform an HTTP request
+    to <literal>https://node:10250/healthz</literal> to find out if the kubelet is healthy on that machine
+   </para>
+   <para>
+    There's also the <link xlink:href="https://kubernetes.io/docs/tasks/debug-application-cluster/monitor-node-health/">Monitor Node Health</link>
+    check. This is a <literal>DaemonSet</literal> (we don't have SLE images for this AFAIK) that runs on every node, and
+    reports to the `apiserver` back as `NodeCondition` and `Events`
+   </para>
+
+  </sect2>
+
+  <sect2 xml:id="sec.admin.monitoring.health.service">
+   <title>Service/Applications Health Checks</title>
+   <para>
+    If the deployed services contain a health endpoint, or if they contain an
+    endpoint that can be used to determine if the service is up, you can use
+    <literal>livenessProbes</literal> and/or <literal>readinessProbes</literal>.
+   </para>
+   <note>
+    <title>Health check endpoints vs. functional endpoints</title>
+   <para>
+    A proper health check is always preferred if designed correctly.
+   </para>
+   <para>
+    Despite the fact that any endpoint could potentially be used to infer if
+    your application is up, a specific health endpoint in your application is
+    preferred. Such an endpoint will only respond affirmatively when all your
+    setup code on the server has finished and the application is running in a
+    desired state.
+   </para>
+  </note>
+
+   <sect3 xml:id="sec.admin.monitoring.health.service.livenessprobe">
+    <title>livenessProbe</title>
+   <para>
+    Probes are executed by each `kubelet` against the pods that define them and that are running in that
+    specific node.
+   </para>
+
+   <para>
+   <link xlink:href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/">livenessProbe</link>
+         * They are used to detect running but misbehaving pods; this is: a service that might be running (the
+        process didn't die), but that is not responding as expected
+      * When a `livenessProbe` fails, Kubernetes will automatically restart the pod and increase the `RESTARTS`
+        count for that pod
+      * This probes will be executed every `periodSeconds` starting from `initialDelaySeconds`
+        * `initialDelaySeconds` is the seconds to wait before performing the very first liveness probe
+        * `periodSeconds` is the time that the kubelet should wait between liveness probes
+      * They support also a `successThreshold`, `failureThreshold` and a `timeoutSeconds` attribute
+        * `successThreshold` is the number of minimum consecutive successes for the probe to be considered
+          successful (default value is 1)
+        * `failureThreshold` is the number of times this probe is allowed to fail in order to assume that
+          the service is not responding (default value is 3)
+        * `timeoutSeconds`: number of seconds after the probe timeouts (default is 1)
+      * There are different options for the liveness probe to check:
+        * Command
+          * A command executed within a container; a retcode of 0 means success; otherwise failure
+        * TCP
+          * If a TCP connection can be established is considered success
+        * HTTP
+          * Any HTTP response between 200 and 400 indicates success
+         </para>
+        </sect3>
+
+        <sect3 xml:id="sec.admin.monitoring.health.service.readinessprobe">
+         <title>readinessProbe</title>
+
+     <para>
+            <link xlink:href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#define-readiness-probes">readinessProbe</link>
+        * They are used to wait for processes that take some time to start. Despite the container might be
+          running, it might be doing some time consuming init operations. During this time, you don't want
+          Kubernetes to route traffic to that specific pod; also, you don't want that container to be
+          restarted.
+          * This probes will be executed every `periodSeconds` starting from `initialDelaySeconds` until
+            the service is ready.
+          * They support the same kind of probes as the `livenessProbe`
+
+      * Both probes can be used at the same time: the `livenessProbe` will ensure that if a service is
+        running yet misbehaving, it will be restarted, and `readinessProbe` will ensure that Kubernetes
+        won't route traffic to that specific pod until it's considered to be fully functional and running
+       </para>
+      </sect3>
+  </sect2>
+
+  <sect2 xml:id="sec.admin.monitoring.health.general">
+   <title>General Health Checks</title>
+   <sect3 xml:id="sec.admin.monitoring.cluster.disk-usage">
+    <title>Disk Usage</title>
+    <para>
+     It's good to also check that all machines are healthy in terms of free
+     disk space from time to time, also when something fails:
+    </para>
+<screen>&prompt.user;docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
+   salt -P 'roles:(admin|kube-master|kube-minion)' \
+   cmd.run "df -h"
+   </screen>
+   </sect3>
+
+  </sect2>
+ </sect1>
 </chapter>
