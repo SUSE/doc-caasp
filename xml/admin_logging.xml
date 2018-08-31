@@ -19,10 +19,20 @@
   <title>Scope Of This Document</title>
   <para>
    The scope of this document is limited to the &productname; Infrastructure
-   layer.
+   layer. Logging the activity of deployed applications is beyond the scope of this
+   document.
   </para>
   <para>
-   For information on how to access log files for the individual components,
+   Please refer to:
+   <link xlink:href="https://kubernetes.io/docs/concepts/cluster-administration/logging/">Kubernetes: Logging Architecture</link>
+   for more information.
+  </para>
+  <para>
+   The &productname; components run in indvidual Docker containers and typically
+   you can get a set of log information using <command>docker logs</command>.
+  </para>
+  <para>
+   For detailed information on how to use log files for the individual components,
    please refer to the respective official documentation of the component.
   </para>
  </important>
@@ -74,12 +84,12 @@
      <itemizedlist>
       <listitem>
        <para>
-        Salt master
+        <literal>salt-master</literal>
        </para>
       </listitem>
       <listitem>
        <para>
-        Salt minion on each machine
+        <literal>salt-minion</literal> on each machine
        </para>
       </listitem>
      </itemizedlist>
@@ -96,17 +106,17 @@
        <itemizedlist mark="circle">
         <listitem>
          <para>
-          apiserver
+          <literal>apiserver</literal>
          </para>
         </listitem>
         <listitem>
          <para>
-          controller-manager
+          <literal>controller-manager</literal>
          </para>
         </listitem>
         <listitem>
          <para>
-          scheduler
+          <literal>scheduler</literal>
          </para>
         </listitem>
        </itemizedlist>
@@ -118,12 +128,12 @@
        <itemizedlist mark="circle">
         <listitem>
          <para>
-          kubelet
+          <literal>kubelet</literal>
          </para>
         </listitem>
         <listitem>
          <para>
-          kube proxy
+          <literal>kube proxy</literal>
          </para>
         </listitem>
        </itemizedlist>
@@ -181,8 +191,8 @@
   </para>
   <para>
    Salt minion logs are generated in the respective salt minion containers on
-   each node. The Salt master collects these logs on the admin node and writes
-   them into the MariaDB container <filename>k8s_velum-mariadb</filename>.
+   each node. The <literal>salt-master</literal> collects these logs on the
+   admin node and writes them into the MariaDB container <filename>k8s_velum-mariadb</filename>.
   </para>
 
   <sect2 xml:id="sec.admin.logging.salt.orchestration">
@@ -192,7 +202,7 @@
     orchestration events that have changed the cluster.
    </para>
    <para>
-    Orchestration events are
+    Orchestration events are:
    </para>
    <itemizedlist>
     <listitem>
@@ -237,7 +247,7 @@
   <sect2 xml:id="sec.admin.logging.salt.master">
    <title>Salt Master Log</title>
    <para>
-    Retrieve the <literal>Salt master</literal> logs.
+    Retrieve the <literal>salt-master</literal> logs.
    </para>
 
 <screen>&prompt.user;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
@@ -359,16 +369,9 @@ salt '*' cmd.run "cat /var/log/salt/minion"</command>
    <sect3 xml:id="sec.admin.logging.log-levels.salt.set">
     <title>Setting A Different Log Level</title>
     <para>
-     When debugging issues, <literal>debug</literal> is usually enough and is
-     what the &productname; engineers use to debug problems.
-    </para>
-    <sect4 xml:id="sec.admin.logging.log-levels.salt.set.master">
-     <title>Salt Master</title>
-     <para>
-      In the case of the <literal>salt-master</literal>, this configuration can
-      be modified in the admin node, at
-      <filename>/etc/caasp/salt-master-custom.conf</filename>. Inside this file
-      you can add: <literal>log_level: debug</literal>.
+      The <literal>salt-master</literal> configuration can be modified on the
+      admin node, at <filename>/etc/caasp/salt-master-custom.conf</filename>.
+      Inside this file you can add: <literal>log_level: debug</literal>.
      </para>
      <para>
       Note that after any change on this file you need to restart the
@@ -386,26 +389,6 @@ salt '*' cmd.run "cat /var/log/salt/minion"</command>
 <screen>
 <command>docker logs -f $(docker ps | grep salt-master | awk '{print $1}')</command>
    </screen>
-    </sect4>
-    <sect4 xml:id="sec.admin.logging.log-levels.salt.set.minion">
-     <title>Salt Minions</title>
-     <note>
-      <title>Modifications on Salt minions are not persistent</title>
-      <para>
-       These changes are discarded when the node is updated with a new snapshot
-       by <literal>transactional-update</literal>.
-      </para>
-     </note>
-     <para>
-      In the case of the <literal>Salt</literal> minions, there's no "official"
-      way to tweak this configuration, however, a new file can be added on the
-      minion that you want to print debugging <literal>Salt</literal>
-      information in: <filename>/etc/salt/minion.d/100-debug.conf</filename>.
-      After doing a <command>systemctl restart salt-minion</command> you can
-      check that it now prints debugging information with <command>journalctl
-      -fu salt-minion</command>.
-     </para>
-    </sect4>
    </sect3>
   </sect2>
  </sect1>
