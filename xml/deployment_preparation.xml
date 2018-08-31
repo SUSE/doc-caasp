@@ -151,10 +151,11 @@
     </listitem>
    </varlistentry>
    <varlistentry>
-    <term>VMware</term>
+    <term>&vmware;</term>
     <listitem>
      <para>
-      In VMDK format, for VMware ESXi.
+      In VMDK format, for &vmware; ESXi. Read <xref linkend=
+      "sec.deploy.preparation.disk_images.vmware" />.
      </para>
     </listitem>
    </varlistentry>
@@ -187,8 +188,10 @@
     volume are searched and applied by <command>cloud-init</command>.
    </para>
    <para>
-    Read the following sections for more details. For further details,
-    refer to <xref linkend="sec.deploy.cloud-init"/>.
+    For details, read <xref
+    linkend="sec.deploy.preparation.disk_images.configuration" /> and
+    the following sections. For further details, refer to <xref
+    linkend="sec.deploy.cloud-init"/>.
    </para>
    <para>
     You need to build at least two ISO images with configuration
@@ -205,6 +208,16 @@
     <literal>caas-master</literal>, <literal>caas-worker1</literal>,
     <literal>caas-worker2</literal> and so on.
    </para>
+  </sect2>
+
+  <sect2 xml:id="sec.deploy.preparation.disk_images.vmware">
+   <title>Convert Images for &vmware; ESX and ESXi</title>
+   <para>
+    Downloaded disk images need to be converted for usage with &vmware;
+    ESX and ESXi. Run the following command on the downloaded disk
+    images:
+   </para>
+   <screen>&prompt.root;<command>vmkfstools -i <replaceable>DOWNLOADED_IMAGE</replaceable>.vmdk <replaceable>CONVERTED_IMAGE</replaceable>.vmdk</command></screen>
   </sect2>
 
   <sect2 xml:id="sec.deploy.preparation.disk_images.configuration">
