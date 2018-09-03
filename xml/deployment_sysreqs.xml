@@ -260,48 +260,103 @@
  <sect1 xml:id="sec.deploy.requirements.hardware">
   <title>Minimum Node Specification</title>
   <para>
-   Each node in the cluster must meet the following minimum specifications.
+   Each node in the cluster must meet the following minimum specifications. All
+   these specifications must be adjusted according to the expected load and type
+   of deployments.
   </para>
-  <itemizedlist mark="bullet" spacing="normal">
-   <listitem>
-    <para>
-     Any AMD64/Intel* EM64T processor (quad-core processors are recommended).
-     32-bit processors are not supported.
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     Minimum RAM: 8 GB.
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     Minimum disk space: 40 GB for the root file system with Btrfs and
-     enabled snapshots.
-    </para>
-    <para>
-     Additional disk space may be required, depending on the count and size of
-     container images you intend to run.
-    </para>
-    <para>
-     The default root volume size of the images is smaller than 40GB in
-     some Public Cloud frameworks. You must resize the root volume to
-     meet your needs upon instance launch using the command line tools
-     or the web interface for the framework of your choice.
-    </para>
-   </listitem>
-  </itemizedlist>
-  <note>
-   <title>Swap partitions</title>
-   <para>
-    &kube; does not support swap. For technical reasons, an &admin_node;
-    installed from an ISO image will have a small swap partition which will be
-    disabled after installation. Nodes built using &ay; have none. Although it
-    may be possible to install &productname; with less memory, there is a
-    high risk that the operating systems runs out of memory and subsequently
-    causes a cluster failure.
-   </para>
-  </note>
+  <variablelist>
+   <varlistentry>
+    <term>(v)CPU</term>
+    <listitem>
+     <itemizedlist>
+      <listitem>
+       <para>
+        AMD64/Intel* EM64T processor (4 core highly recommended)
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        32-bit processors are not supported
+       </para>
+      </listitem>
+     </itemizedlist>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>Memory</term>
+    <listitem>
+     <itemizedlist>
+      <listitem>
+       <para>
+        <literal>8 GB</literal>
+       </para>
+       <para>
+        Although it may be possible to install &productname; with less memory
+        than recommended, there is a high risk that the operating system will
+        run out of memory and subsequently causes a cluster failure.
+       </para>
+       <note>
+        <title>Swap partitions</title>
+        <para>
+         &kube; does not support swap.
+        </para>
+        <para>
+         For technical reasons, an &admin_node; installed from an ISO image will
+          have a small swap partition which will be disabled after installation.
+          Nodes built using &ay; do not have a swap partition.
+        </para>
+       </note>
+      </listitem>
+     </itemizedlist>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>Storage Size</term>
+    <listitem>
+     <itemizedlist>
+      <listitem>
+       <para>
+        <literal>40 GB</literal>
+        for the root file system with Btrfs and enabled snapshots.
+       </para>
+       <note>
+        <title>Cloud default root volume size</title>
+        <para>
+         In some Public Cloud frameworks the default root volume size of the
+         images is smaller than 40GB. You must resize the root volume before
+         instance launch using the command line tools or the web interface for
+         the framework of your choice.
+        </para>
+       </note>
+      </listitem>
+     </itemizedlist>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>Storage Performance</term>
+    <listitem>
+     <itemizedlist>
+      <listitem>
+       <para>
+        IOPS: <literal>500</literal> sequential IOPS
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        Write Performance: <literal>10MB/s</literal>
+       </para>
+       <note>
+        <title>etcd Storage requirements</title>
+        <para>
+         Storage performance requirements are tied closely to the
+         <link xlink:href="https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware.md#disks">etcd hardware recommendations</link>
+        </para>
+       </note>
+      </listitem>
+     </itemizedlist>
+    </listitem>
+   </varlistentry>
+  </variablelist>
  </sect1>
 
  <sect1 xml:id="sec.deploy.requirements.network">
