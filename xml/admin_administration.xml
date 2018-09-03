@@ -451,4 +451,307 @@ entrypoint.sh bundle exec rails runner 'puts Minion.find_by(minion_id: "<replace
   </sect2>
  </sect1>
 
+ <sect1 xml:id="sec.admin.nodes.graceful_shutdown">
+  <title>Graceful Shutdown and Startup</title>
+  <sect2 xml:id="sec.admin.nodes.graceful_shutdown.overview">
+   <title>Overview</title>
+   <para>
+    &kube;, being a self-healing solution, tries to keep all pods and
+    services available. In general, this is of its core features and
+    desired functions. But it is important to take this into account if
+    you are doing a complete shutdown of the infrastructure.
+   </para>
+   <para>
+    During the shutdown process, &kube;'s effort to reschedule pods that
+    were running on shut down nodes is a waste of time.
+   </para>
+   <para>
+    There are two ways of shutting down the whole cluster: Shut down
+    and start all nodes at once or restart them sequentially in
+    segments. In both cases, &productname; expects that IP addresses do
+    not change after the restart, even when using dynamic IP addresses.
+   </para>
+   <para>
+    When restarting segments of nodes, it is possible to avoid
+    downtime.
+   </para>
+   <note>
+    <title>Deviating from Shutdown and Startup Procedures</title>
+    <para>
+     The procedures described in this section are recommended to
+     reduce logged errors. However, it is possible to not follow this
+     order as long as all nodes are stopped in a graceful way.
+    </para>
+   </note>
+  </sect2>
+  <sect2 xml:id="sec.admin.nodes.graceful_shutdown.nodes">
+   <title>Node Types</title>
+   <para>
+    For shutting down and starting nodes, three different types of nodes
+    are relevant:
+   </para>
+   <itemizedlist>
+    <listitem>
+     <para>
+      The &admin_node; contain state and need to be shut
+      down in a graceful way to ensure that all state has been synced
+      to disk in a clean way.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Nodes with <literal>etcd</literal> nodes contain state
+      and also need to be shut down in a graceful way. They will
+      usually be a subset of the master nodes. But it can happen that
+      some workers run <literal>etcd</literal> members.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      The rest (masters and workers not running <literal>etcd</literal>
+      members): these nodes contain local state possibly created by
+      applications running on top of the cluster. They need to be
+      shutdown in a graceful way too, when possible.
+     </para>
+    </listitem>
+   </itemizedlist>
+  </sect2>
+  <sect2 xml:id="sec.admin.nodes.graceful_shutdown.complete">
+   <title>Complete Shutdown</title>
+   <sect3 xml:id="sec.admin.nodes.graceful_shutdown.complete.shutdown">
+    <title>Shutting Down</title>
+    <para>
+     All commands are executed on the admin node.
+    </para>
+    <procedure>
+     <step>
+      <para>
+       Disable scheduling on the whole cluster. This will avoid
+       &kube; rescheduling jobs while you are shutting down nodes.
+      </para>
+      <screen>&prompt.root.admin;<command>kubectl get nodes -o name | xargs -I{} kubectl cordon {}</command></screen>
+     </step>
+     <step>
+      <para>
+       Gracefully shut down all worker nodes.
+      </para>
+<screen>&prompt.root.admin;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
+    salt --async -G 'roles:kube-minion' cmd.run 'systemctl poweroff'</command></screen>
+     </step>
+     <step>
+      <para>
+       Gracefully shut down all master nodes.
+      </para>
+<screen>&prompt.root.admin;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
+    salt --async -G 'roles:kube-master' cmd.run 'systemctl poweroff'</command></screen>
+     </step>
+     <step>
+      <para>
+       Shut down the &admin_node;:
+      </para>
+      <screen>&prompt.root.admin;<command>systemctl poweroff</command></screen>
+     </step>
+    </procedure>
+   </sect3>
+   <sect3 xml:id="sec.admin.nodes.graceful_shutdown.complete.startup">
+    <title>Starting Up</title>
+    <procedure>
+     <step>
+      <para>
+       Start the &admin_node; up. All commands are executed on the
+       &admin_node;.
+      </para>
+     </step>
+     <step>
+      <para>
+       Once that the admin node is up, start the master nodes back. Keep
+       checking the status of the master nodes. Continue as soon as all
+       master nodes are ready.
+      </para>
+<screen>&prompt.root.admin;<command>kubectl get nodes</command>
+NAME       STATUS                        ROLES     AGE       VERSION
+master-0   Ready,SchedulingDisabled      master    21h       v1.9.8
+master-1   Ready,SchedulingDisabled      master    21h       v1.9.8
+master-2   Ready,SchedulingDisabled      master    21h       v1.9.8
+worker-0   NotReady,SchedulingDisabled   &lt;none>    21h       v1.9.8
+worker-1   NotReady,SchedulingDisabled   &lt;none>    21h       v1.9.8
+worker-2   NotReady,SchedulingDisabled   &lt;none>    21h       v1.9.8
+worker-3   NotReady,SchedulingDisabled   &lt;none>    21h       v1.9.8
+worker-4   NotReady,SchedulingDisabled   &lt;none>    21h       v1.9.8</screen>
+     </step>
+     <step>
+      <para>
+       Continue by starting all the worker nodes. Keep checking the
+       status of the nodes. Continue when all nodes are ready.
+      </para>
+<screen>&prompt.root.admin;<command>kubectl get nodes</command>
+NAME       STATUS                     ROLES     AGE       VERSION
+master-0   Ready,SchedulingDisabled   master    21h       v1.9.8
+master-1   Ready,SchedulingDisabled   master    21h       v1.9.8
+master-2   Ready,SchedulingDisabled   master    21h       v1.9.8
+worker-0   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
+worker-1   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
+worker-2   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
+worker-3   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
+worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8</screen>
+     </step>
+     <step>
+      <para>
+       Uncordon all nodes so they can receive new workloads:
+      </para>
+      <screen>&prompt.root.admin;<command>kubectl get nodes -o name | xargs -I{} kubectl uncordon {}</command></screen>
+     </step>
+    </procedure>
+   </sect3>
+  </sect2>
+  <sect2 xml:id="sec.admin.nodes.graceful_shutdown.segmented">
+   <title>Segmented Reboots</title>
+   <para>
+    A sequential reboot of cluster segments is a way to completely
+    avoid the downtime of services, or at least reduce it as much as
+    possible. However, downtime of services occurs if
+   </para>
+   <itemizedlist>
+    <listitem>
+     <para>
+      all pods of a service are forced on one node.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      a pod has only one replica.
+     </para>
+    </listitem>
+   </itemizedlist>
+
+   <sect3 xml:id="sec.admin.nodes.graceful_shutdown.segmented.worker">
+    <title>Rebooting Worker Nodes</title>
+    <para>
+     The number of worker nodes to reboot at once depends on the number
+     of total worker nodes and their labels. For example, if there are
+     5 worker nodes with 2 of them having the label <literal>diskType:
+     ssd</literal> then the two nodes with SSDs must not be shut down
+     at the same time.
+    </para>
+    <para>
+     The size of segments for simultaneous reboots depends on the
+     topology of the cluster and the workload. We recommend to use
+     small segment sizes. This makes it less likely that all nodes
+     running replicas of the same pod are shut down at the same time.
+    </para>
+    <para>
+     During this migration time, the worker nodes need to be able
+     to reach the master nodes at all times. This includes master nodes
+     that are already or not yet updated.
+    </para>
+   </sect3>
+   <sect3>
+    <title>Rebooting Master Nodes</title>
+    <para>
+     Master nodes should not run  workloads. This means that the
+     decision to batch the reboots of master nodes depends on whether
+     the you want to keep control of the cluster while the reboot is
+     taking place.
+    </para>
+    <para>
+     If all the master nodes disappear at the same time, the worker
+     nodes continue serving the services they are running. But no
+     further operation will take place on the worker nodes, since they
+     cannot contact an <literal>apiserver</literal> to discover new
+     workloads or perform any other operations.
+    </para>
+    <para>
+     It is safe to choose batches as desired. Rebooting one by one is
+     the safest, two by two is generally safe too. For larger batches
+     than two, certain cluster services, for example
+     <literal>dex</literal>, could be completely shut down.
+    </para>
+   </sect3>
+  </sect2>
+  <sect2>
+   <title>Behavior of <literal>etcd</literal></title>
+   <para>
+    <literal>etcd</literal> is a distributed key-value store. Some
+    nodes on the cluster run <literal>etcd</literal> members that
+    sync with other peers in order to provide a fault-tolerant storage
+    that &kube; uses for persistence.
+   </para>
+   <para>
+    <literal>etcd</literal> is the central piece where &kube; reads and
+    writes in order to have global knowledge about the cluster status
+    and desired state.
+   </para>
+   <para>
+    It's very important to note that <literal>etcd</literal>
+    automatically recovers from temporary failures like machine
+    reboots. Whether <literal>etcd</literal> is available or not
+    depends on how many <literal>etcd</literal> members are not
+    available at a given moment provided by the <emphasis>Fault
+    Tolerance Table</emphasis> in <link xlink:href=
+    "https://coreos.com/etcd/docs/latest/v2/admin_guide.html" />.
+   </para>
+   <para>
+    <literal>etcd</literal> knows how many peers conform the
+    <literal>etcd</literal> cluster; based on this information the
+    <literal>etcd</literal> cluster can be in three different states:
+    healthy, degraded or unavailable.
+   </para>
+   <variablelist>
+    <varlistentry>
+     <term>Healthy</term>
+     <listitem>
+      <para>
+       All <literal>etcd</literal> members are working as expected.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>Degraded</term>
+     <listitem>
+      <para>
+       Some <literal>etcd</literal> members are not working as
+       expected, but there's still a majority in the working ones. This
+       still means the cluster is working, because it has quorum.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>Unavailable</term>
+     <listitem>
+      <para>
+       There is no working majority of peers. The cluster is not
+       available and cannot be used because the quorum is lost.
+      </para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+   <para>
+    It is important to differentiate between transient and
+    permanent failures. Transient failures happen when a member is
+    temporarily not available, for example when a machine running one
+    <literal>etcd</literal> member is rebooting. Permanent failures
+    happen when a member was irrevocably lost, for example a machine
+    hard disk failure. The <literal>etcd</literal> cluster can tolerate
+    up to (N - 1) / 2 permanent failures, where N is the number of
+    <literal>etcd</literal> members; a subset of masters and possibly
+    workers.
+   </para>
+   <para>
+    When (N - 1) / 2 or fewer permanent failures happen in a given
+    <literal>etcd</literal> cluster, the cluster still has a quorum. It
+    is then possible to remove the faulty members and add new ones. The
+    new members will synchronize with the existing ones. This does not
+    require an explicit backup/restore procedure, as it is normal
+    <literal>etcd</literal> operation.
+   </para>
+   <para>
+    When more than (N - 1) / 2 permanent failures happen in a given
+    <literal>etcd</literal> cluster, the quorum is lost irrevocably.
+    That means that there is no way to recover from that situation,
+    because it is no longer possible to remove faulty members or add
+    new members. In this case, it is necessary to start a new
+    <literal>etcd</literal> cluster from a backup, and grow it.
+   </para>
+  </sect2>
+ </sect1>
 </chapter>
