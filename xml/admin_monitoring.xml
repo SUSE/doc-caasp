@@ -182,9 +182,9 @@ https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-co
     <title>High-Availability Environments</title>
     <para>
      In a HA environment you can monitor
-     <literal>https://apiserver-ha-name:6443/healthz</literal>. If any master
-     node is running correctly you will receive a valid response. This does not
-     mean that all master nodes necessarily work correctly.
+     <literal>https://<replaceable>MASTER NODE LOADBALANCER</replaceable>:6443/healthz</literal>.
+     If any master node is running correctly you will receive a valid response.
+     This does not mean that all master nodes necessarily work correctly.
     </para>
     <para>
      This endpoint will return a successful HTTP response if the cluster is
@@ -219,12 +219,27 @@ cmd.run 'set -a; source /etc/sysconfig/etcdctl; etcdctl cluster-health'</command
 
   <sect2 xml:id="sec.admin.monitoring.health.node">
    <title>Node Health Checks</title>
+
+   <sect3 xml:id="sec.admin.monitoring.health.node.kubelet">
+    <title>Check <literal>kubelet</literal> health</title>
+    <para>
+     Is the <literal>kubelet</literal> up and working in this node?
+    </para>
+    <para>
+     The <literal>kubelet</literal> has a port exposed: <literal>10250</literal>
+     on all machines; it's possible to perform an HTTP request to
+     <literal>https://node:10250/healthz</literal> to find out if the kubelet is
+     healthy on that machine.
+    </para>
+
+   </sect3>
+
+   <sect3 xml:id="sec.admin.monitoring.health.node.cni">
+    <title>Check <literal>CNI</literal></literal>
    <para>
-    Is the <literal>kubelet</literal> up and working in this node?
-   </para>
-   <para>
-    Is CNI working as expected in this node? If not then kube-dns can not
-    start, first step check if kube-dns service is there
+    Is CNI (Container Networking Interface) working as expected in this node?
+    If not, <literal>kube-dns</literal> can not start, first step check if the
+    <literal>kube-dns</literal> service is running.
    </para>
 <screen>&prompt.user;<command>kubectl get deployments -n kube-system</command>
 NAME            DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
@@ -232,18 +247,14 @@ dex             3         3         3            3           7d
 kube-dns        3         3         3            3           7d
 tiller-deploy   1         1         1            1           7d
 </screen>
-<screen>
-but in general
-if kube-dns is running
-and you are able to create pods
-then you can be 100% sure that CNI and your CNI plugin are working
-</screen>
+
    <para>
-    The <literal>kubelet</literal> has a port exposed: <literal>10250</literal>
-    on all machines; it's possible to perform an HTTP request to
-    <literal>https://node:10250/healthz</literal> to find out if the kubelet is
-    healthy on that machine.
-   </para>
+   If kube-dns is running and you are able to create pods then you can be certain
+   that CNI and your CNI plugin are working correctly.
+  </para>
+ </sect3>
+
+
    <para>
     There's also the
     <link xlink:href="https://kubernetes.io/docs/tasks/debug-application-cluster/monitor-node-health/">Monitor Node Health</link>
