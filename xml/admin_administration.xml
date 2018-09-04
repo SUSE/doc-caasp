@@ -857,8 +857,7 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8</screen>
    following on the &admin_node;:
   </para>
 <screen>&prompt.root;<command>echo "worker_threads: 20" > /etc/caasp/salt-master-custom.conf</command>
-&prompt.root;<command>saltid=$(docker ps | grep salt-master | awk '{print $1}')</command>
-&prompt.root;<command>docker kill $saltid</command></screen>
+&prompt.root;<command>docker restart $(docker ps | grep salt-master | awk '{print $1}')</command></screen>
   <para>
    Salt master will be automatically restarted by kubelet.
   </para>
