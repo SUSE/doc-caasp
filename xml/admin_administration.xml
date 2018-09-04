@@ -454,10 +454,6 @@ entrypoint.sh bundle exec rails runner 'puts Minion.find_by(minion_id: "<replace
     you are doing a complete shutdown of the infrastructure.
    </para>
    <para>
-    During the shutdown process, &kube;'s effort to reschedule pods that
-    were running on shut down nodes is a waste of time.
-   </para>
-   <para>
     There are two ways of shutting down the whole cluster: Shut down
     and start all nodes at once or restart them sequentially in
     segments. In both cases, &productname; expects that IP addresses do
@@ -640,7 +636,7 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8</screen>
    <sect3>
     <title>Rebooting Master Nodes</title>
     <para>
-     Master nodes should not run  workloads. This means that the
+     Master nodes should not run user workloads. This means that the
      decision to batch the reboots of master nodes depends on whether
      you want to keep control of the cluster while the reboot is
      taking place.
