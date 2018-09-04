@@ -15,23 +15,23 @@
    <dm:translation>yes</dm:translation>
   </dm:docmanager>
  </info>
- 
+
  <!-- FIXME, mnapp 14/08/18 fill in these sections
- 
+
  <sect1 xml:id="sec.admin.concepts">
   <title>Concepts</title>
  </sect1>
- 
+
  <sect1 xml:id="sec.admin.startup">
   <title>Startup</title>
  </sect1>
- 
+
  <sect1 xml:id="sec.admin.shutdown">
   <title>Shutdown</title>
  </sect1>
- 
+
 -->
- 
+
  <sect1 xml:id="sec.admin.kubernetes.install-kubectl">
   <title>Interacting with &kube;</title>
   <para>
@@ -54,7 +54,7 @@
     installation instructions</link> from the &kube; project.
    </para>
   </tip>
-  
+
   <procedure>
    <title>Installing <literal>kubectl</literal> from the package repository</title>
    <step>
@@ -137,6 +137,31 @@ caasp3-worker-4   Ready     &lt;none&gt;    1d        v1.9.8</screen>
  </procedure>
  </sect1>
 
+ <sect1 xml:id="sec.admin.salt">
+  <title>Interacting with <literal>salt</literal></title>
+  <para>
+   You can run commands across all nodes in the cluster by running them via
+   <literal>salt</literal>.
+  </para>
+  <para>
+   Log in to the admin node and run:
+  </para>
+<screen>&prompt.user;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
+salt -P 'roles:(admin|kube-master|kube-minion)' \
+cmd.run "<replaceable>df -h</replaceable>"</command>
+</screen>
+  <para>
+   This command tells <literal>docker</literal> to find the
+   <literal>salt-master</literal> container and execute the command on all nodes
+   that match the roles <literal>admin</literal>, <literal>kube-master</literal>,
+   and <literal>kube-minion</literal> (which is all nodes).
+  </para>
+  <para>
+   Replace the example <command>df -h</command> with a command of your choice.
+   The output will be produced in your current terminal session.
+  </para>
+ </sect1>
+
  <sect1 xml:id="sec.admin.nodes">
   <title>Node Management</title>
   <para>
@@ -212,7 +237,7 @@ caasp3-worker-4   Ready     &lt;none&gt;    1d        v1.9.8</screen>
      </para>
     </step>
    </procedure>
-   
+
    <sect3 xml:id="sec.admin.nodes.create_autoyast_profile">
      <title>The <command>create_autoyast_profile</command> Command</title>
      <para>
@@ -305,7 +330,7 @@ caasp3-worker-4   Ready     &lt;none&gt;    1d        v1.9.8</screen>
      to remove it. You must first add a second master node as a replacement.
     </para>
    </note>
-   
+
    <procedure>
     <step>
      <para>
@@ -325,7 +350,7 @@ caasp3-worker-4   Ready     &lt;none&gt;    1d        v1.9.8</screen>
      <para>
     The cluster will then attempt to remove the node in a controlled manner.
     Progress is indicated by a spinning icon and the words <literal>Pending removal</literal>
-    in the location where the <guimenu>Remove</guimenu>-button was displayed before. 
+    in the location where the <guimenu>Remove</guimenu>-button was displayed before.
      </para>
      <informalfigure>
       <mediaobject>
@@ -335,14 +360,14 @@ caasp3-worker-4   Ready     &lt;none&gt;    1d        v1.9.8</screen>
       </mediaobject>
      </informalfigure>
      <para>
-      This should conclude the regular removal process. If the node is successfully 
+      This should conclude the regular removal process. If the node is successfully
       removed, it will disappear from the list after a few moments.
      </para>
     </step>
     <step>
      <para>
       In some cases nodes can not be removed in a controlled manner and must be
-      forced out of the cluster. A typical scenario is a machine instance was 
+      forced out of the cluster. A typical scenario is a machine instance was
       removed externally or has no connectivity. In such cases, the removal will
       fail. You then get the option to <guimenu>Force remove</guimenu>. A dialog
       will ask you to confirm the removal.
@@ -356,7 +381,7 @@ caasp3-worker-4   Ready     &lt;none&gt;    1d        v1.9.8</screen>
      </informalfigure>
      <para>
       Additionally, a large warning dialog will ask you to confirm the forced
-      removal. Click <guimenu>Proceed with forcible removal</guimenu> if you 
+      removal. Click <guimenu>Proceed with forcible removal</guimenu> if you
       are sure you wish to force the node out of the cluster.
      </para>
      <informalfigure>
@@ -371,26 +396,26 @@ caasp3-worker-4   Ready     &lt;none&gt;    1d        v1.9.8</screen>
   </sect2>
 
   <sect2 xml:id="sec.admin.nodes.remove.unassigned">
-  <!-- FIXME mnapp 2018-07-03, replace terminology and screenshots once 
+  <!-- FIXME mnapp 2018-07-03, replace terminology and screenshots once
   bsc#1100113 has been resolved -->
-  
+
    <title>Removing unassigned nodes</title>
    <para>You might run into the situation where you have (accidentally) added
     new nodes to a cluster but did not wish to bootstrap them. They are now
     registered against the cluster and show up in "Unassigned nodes".
     You might have already configured the machine to register with another cluster
     and want to clean out this entry from the "Unassigned Nodes" view.
-    
+
     You must perform the following steps:
    </para>
    <procedure>
    <step>
     <para>
-     Find the "Unassigned nodes" line in the overview and click on <guimenu>(new)</guimenu> 
-     next to the count number. You will be shown the "Unassigned Nodes" view 
-     where all the unassigned nodes are listed. Make sure that you first assign 
-     all roles to nodes that you wish to keep and proceed with bootstrapping. 
-     Once the list only show the nodes you are sure to remove copy the ID of the 
+     Find the "Unassigned nodes" line in the overview and click on <guimenu>(new)</guimenu>
+     next to the count number. You will be shown the "Unassigned Nodes" view
+     where all the unassigned nodes are listed. Make sure that you first assign
+     all roles to nodes that you wish to keep and proceed with bootstrapping.
+     Once the list only show the nodes you are sure to remove copy the ID of the
      node you wish to drop.
     </para>
     <informalfigure>
@@ -414,7 +439,7 @@ caasp3-worker-4   Ready     &lt;none&gt;    1d        v1.9.8</screen>
     <warning>
      <para>
       Make absolutely sure that the node ID you have copied is the one of the node
-       you wish to drop. This command is <literal>irreversible</literal> and will remove the 
+       you wish to drop. This command is <literal>irreversible</literal> and will remove the
        specified node from the cluster without confirmation.
       </para>
      </warning>
@@ -425,5 +450,5 @@ entrypoint.sh bundle exec rails runner 'puts Minion.find_by(minion_id: "<replace
   </procedure>
   </sect2>
  </sect1>
- 
+
 </chapter>
