@@ -82,9 +82,11 @@
    Use SSH to log into one of the cluster nodes, for example your first master.
    The following command provides an example for using <command>etcdctl</command>.
   </para>
-<screen>&prompt.root;<command>source /etc/sysconfig/etcdctl</command>
+<screen>&prompt.root;<command>set -a</command>
+ &prompt.root;<command>source /etc/sysconfig/etcdctl</command>
 &prompt.root;<command>etcdctl --endpoints $ETCDCTL_ENDPOINT --ca-file $ETCDCTL_CA_FILE \
-    --cert-file $ETCDCTL_CERT_FILE --key-file $ETCDCTL_KEY_FILE cluster-health</command></screen>
+    --cert-file $ETCDCTL_CERT_FILE --key-file $ETCDCTL_KEY_FILE cluster-health</command>
+&prompt.root;<command>etcdctl cluster-health</command></screen>
  </sect1>
 
  <sect1 xml:id="sec.admin.troubleshooting.velum_ptf">
