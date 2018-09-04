@@ -16,18 +16,10 @@
   </dm:docmanager>
  </info>
 
- <!-- FIXME, mnapp 14/08/18 fill in these sections
+ <!-- FIXME, mnapp 04/09/18 fill in these sections
 
  <sect1 xml:id="sec.admin.concepts">
   <title>Concepts</title>
- </sect1>
-
- <sect1 xml:id="sec.admin.startup">
-  <title>Startup</title>
- </sect1>
-
- <sect1 xml:id="sec.admin.shutdown">
-  <title>Shutdown</title>
  </sect1>
 
 -->
@@ -253,7 +245,7 @@ cmd.run "<replaceable>df -h</replaceable>"</command>
         <para>
          Specify to which file the command should save the created profile.
         </para>
-  <screen>&prompt.root;<command>create_autoyast_profile -o <replaceable>FILENAME</replaceable></command></screen>
+<screen>&prompt.root;<command>create_autoyast_profile -o <replaceable>FILENAME</replaceable></command></screen>
        </listitem>
       </varlistentry>
       <varlistentry>
@@ -263,7 +255,7 @@ cmd.run "<replaceable>df -h</replaceable>"</command>
         <para>
          Specify the host name of the &smaster;.
         </para>
-  <screen>&prompt.root;<command>create_autoyast_profile --salt-master <replaceable>SALTMASTER</replaceable></command></screen>
+<screen>&prompt.root;<command>create_autoyast_profile --salt-master <replaceable>SALTMASTER</replaceable></command></screen>
        </listitem>
       </varlistentry>
       <varlistentry>
@@ -273,7 +265,7 @@ cmd.run "<replaceable>df -h</replaceable>"</command>
         <para>
          Specify the URL of the SMT server.
         </para>
-  <screen>&prompt.root;<command>create_autoyast_profile --smt-url <replaceable>SALTMASTER</replaceable></command></screen>
+<screen>&prompt.root;<command>create_autoyast_profile --smt-url <replaceable>SALTMASTER</replaceable></command></screen>
        </listitem>
       </varlistentry>
       <varlistentry>
@@ -283,7 +275,7 @@ cmd.run "<replaceable>df -h</replaceable>"</command>
         <para>
          Specify the registration code for &productname;.
         </para>
-  <screen>&prompt.root;<command>create_autoyast_profile --regcode <replaceable>RIGISTRATION_CODE</replaceable></command></screen>
+<screen>&prompt.root;<command>create_autoyast_profile --regcode <replaceable>RIGISTRATION_CODE</replaceable></command></screen>
        </listitem>
       </varlistentry>
       <varlistentry>
@@ -293,7 +285,7 @@ cmd.run "<replaceable>df -h</replaceable>"</command>
         <para>
          Specify an e-mail address for registration.
         </para>
-  <screen>&prompt.root;<command>create_autoyast_profile --reg-email <replaceable>E-MAIL_ADRESS</replaceable></command></screen>
+<screen>&prompt.root;<command>create_autoyast_profile --reg-email <replaceable>E-MAIL_ADRESS</replaceable></command></screen>
        </listitem>
       </varlistentry>
      </variablelist>
@@ -443,7 +435,7 @@ cmd.run "<replaceable>df -h</replaceable>"</command>
        specified node from the cluster without confirmation.
       </para>
      </warning>
-    <screen>&prompt.root;<command>docker exec -it $(docker ps | grep "velum-dashboard" | awk '{print $1}') \
+<screen>&prompt.root;<command>docker exec -it $(docker ps | grep "velum-dashboard" | awk '{print $1}') \
 entrypoint.sh bundle exec rails runner 'puts Minion.find_by(minion_id: "<replaceable>$ID_FROM_UNASSIGNED_QUEUE</replaceable>").destroy'</command>
     </screen>
    </step>
@@ -493,25 +485,23 @@ entrypoint.sh bundle exec rails runner 'puts Minion.find_by(minion_id: "<replace
    <itemizedlist>
     <listitem>
      <para>
-      The &admin_node; contain state and need to be shut
-      down in a graceful way to ensure that all state has been synced
-      to disk in a clean way.
+      The &admin_node; contains state and needs to be shut down in a graceful
+      way to ensure that all state has been synced to disk in a clean way.
      </para>
     </listitem>
     <listitem>
      <para>
-      Nodes with <literal>etcd</literal> nodes contain state
-      and also need to be shut down in a graceful way. They will
-      usually be a subset of the master nodes. But it can happen that
-      some workers run <literal>etcd</literal> members.
+      Nodes with <literal>etcd</literal> contain state and also need to be shut
+      down in a graceful way. They will usually be a subset of the master nodes.
+      But it can happen that some workers run <literal>etcd</literal> members.
      </para>
     </listitem>
     <listitem>
      <para>
       The rest (masters and workers not running <literal>etcd</literal>
-      members): these nodes contain local state possibly created by
+      members): These nodes contain local state possibly created by
       applications running on top of the cluster. They need to be
-      shutdown in a graceful way too, when possible.
+      shut down in a graceful way too, when possible.
      </para>
     </listitem>
    </itemizedlist>
@@ -529,27 +519,27 @@ entrypoint.sh bundle exec rails runner 'puts Minion.find_by(minion_id: "<replace
        Disable scheduling on the whole cluster. This will avoid
        &kube; rescheduling jobs while you are shutting down nodes.
       </para>
-      <screen>&prompt.root.admin;<command>kubectl get nodes -o name | xargs -I{} kubectl cordon {}</command></screen>
+<screen>&prompt.root.admin;<command>kubectl get nodes -o name | xargs -I{} kubectl cordon {}</command></screen>
      </step>
      <step>
       <para>
        Gracefully shut down all worker nodes.
       </para>
 <screen>&prompt.root.admin;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
-    salt --async -G 'roles:kube-minion' cmd.run 'systemctl poweroff'</command></screen>
+salt --async -G 'roles:kube-minion' cmd.run 'systemctl poweroff'</command></screen>
      </step>
      <step>
       <para>
        Gracefully shut down all master nodes.
       </para>
 <screen>&prompt.root.admin;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
-    salt --async -G 'roles:kube-master' cmd.run 'systemctl poweroff'</command></screen>
+salt --async -G 'roles:kube-master' cmd.run 'systemctl poweroff'</command></screen>
      </step>
      <step>
       <para>
        Shut down the &admin_node;:
       </para>
-      <screen>&prompt.root.admin;<command>systemctl poweroff</command></screen>
+<screen>&prompt.root.admin;<command>systemctl poweroff</command></screen>
      </step>
     </procedure>
    </sect3>
@@ -564,9 +554,9 @@ entrypoint.sh bundle exec rails runner 'puts Minion.find_by(minion_id: "<replace
      </step>
      <step>
       <para>
-       Once that the admin node is up, start the master nodes back. Keep
-       checking the status of the master nodes. Continue as soon as all
-       master nodes are ready.
+       Once that the admin node is up, start the master nodes. Keep checking
+       the status of the master nodes. Continue as soon as all master nodes are
+       <literal>Ready</literal>.
       </para>
 <screen>&prompt.root.admin;<command>kubectl get nodes</command>
 NAME       STATUS                        ROLES     AGE       VERSION
@@ -582,7 +572,7 @@ worker-4   NotReady,SchedulingDisabled   &lt;none>    21h       v1.9.8</screen>
      <step>
       <para>
        Continue by starting all the worker nodes. Keep checking the
-       status of the nodes. Continue when all nodes are ready.
+       status of the nodes. Continue when all nodes are <literal>Ready</literal>.
       </para>
 <screen>&prompt.root.admin;<command>kubectl get nodes</command>
 NAME       STATUS                     ROLES     AGE       VERSION
@@ -599,7 +589,7 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8</screen>
       <para>
        Uncordon all nodes so they can receive new workloads:
       </para>
-      <screen>&prompt.root.admin;<command>kubectl get nodes -o name | xargs -I{} kubectl uncordon {}</command></screen>
+<screen>&prompt.root.admin;<command>kubectl get nodes -o name | xargs -I{} kubectl uncordon {}</command></screen>
      </step>
     </procedure>
    </sect3>
@@ -608,18 +598,18 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8</screen>
    <title>Segmented Reboots</title>
    <para>
     A sequential reboot of cluster segments is a way to completely
-    avoid the downtime of services, or at least reduce it as much as
-    possible. However, downtime of services occurs if
+    avoid the downtime of services or at least reduce it as much as
+    possible. However, downtime of services occurs if:
    </para>
    <itemizedlist>
     <listitem>
      <para>
-      all pods of a service are forced on one node.
+      All pods of a service are forced on one node
      </para>
     </listitem>
     <listitem>
      <para>
-      a pod has only one replica.
+      A pod has only one replica
      </para>
     </listitem>
    </itemizedlist>
@@ -628,10 +618,12 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8</screen>
     <title>Rebooting Worker Nodes</title>
     <para>
      The number of worker nodes to reboot at once depends on the number
-     of total worker nodes and their labels. For example, if there are
-     5 worker nodes with 2 of them having the label <literal>diskType:
-     ssd</literal> then the two nodes with SSDs must not be shut down
-     at the same time.
+     of total worker nodes and their labels.
+    </para>
+    <para>
+     For example: If there are 5 worker nodes with 2 of them having the label
+     <literal>diskType: ssd</literal>, then the two nodes with SSDs must not be
+     shut down at the same time.
     </para>
     <para>
      The size of segments for simultaneous reboots depends on the
@@ -650,15 +642,15 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8</screen>
     <para>
      Master nodes should not run  workloads. This means that the
      decision to batch the reboots of master nodes depends on whether
-     the you want to keep control of the cluster while the reboot is
+     you want to keep control of the cluster while the reboot is
      taking place.
     </para>
     <para>
      If all the master nodes disappear at the same time, the worker
-     nodes continue serving the services they are running. But no
-     further operation will take place on the worker nodes, since they
-     cannot contact an <literal>apiserver</literal> to discover new
-     workloads or perform any other operations.
+     nodes continue serving the services they are running. No further operation
+     will take place on the worker nodes, since they cannot contact an
+     <literal>apiserver</literal> to discover new workloads or perform any other
+     operations.
     </para>
     <para>
      It is safe to choose batches as desired. Rebooting one by one is
@@ -668,7 +660,7 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8</screen>
     </para>
    </sect3>
   </sect2>
-  <sect2>
+  <sect2 xml:id="sec.admin.nodes.graceful_shutdown.etcd">
    <title>Behavior of <literal>etcd</literal></title>
    <para>
     <literal>etcd</literal> is a distributed key-value store. Some
@@ -677,18 +669,14 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8</screen>
     that &kube; uses for persistence.
    </para>
    <para>
-    <literal>etcd</literal> is the central piece where &kube; reads and
+    <literal>etcd</literal> is the central component where &kube; reads and
     writes in order to have global knowledge about the cluster status
     and desired state.
    </para>
    <para>
     It's very important to note that <literal>etcd</literal>
     automatically recovers from temporary failures like machine
-    reboots. Whether <literal>etcd</literal> is available or not
-    depends on how many <literal>etcd</literal> members are not
-    available at a given moment provided by the <emphasis>Fault
-    Tolerance Table</emphasis> in <link xlink:href=
-    "https://coreos.com/etcd/docs/latest/v2/admin_guide.html" />.
+    reboots.
    </para>
    <para>
     <literal>etcd</literal> knows how many peers conform the
@@ -726,15 +714,40 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8</screen>
     </varlistentry>
    </variablelist>
    <para>
-    It is important to differentiate between transient and
-    permanent failures. Transient failures happen when a member is
-    temporarily not available, for example when a machine running one
-    <literal>etcd</literal> member is rebooting. Permanent failures
-    happen when a member was irrevocably lost, for example a machine
-    hard disk failure. The <literal>etcd</literal> cluster can tolerate
-    up to (N - 1) / 2 permanent failures, where N is the number of
-    <literal>etcd</literal> members; a subset of masters and possibly
-    workers.
+   Whether <literal>etcd</literal> is available or not depends on how many
+   <literal>etcd</literal> members are available/not available at a given
+   moment. It is important to differentiate between transient and
+   permanent failures. Transient failures happen when a member is
+   temporarily not available, for example when a machine running one
+   <literal>etcd</literal> member is rebooting. Permanent failures
+   happen when a member was irrevocably lost, for example a machine
+   hard disk failure. The <literal>etcd</literal> cluster can tolerate
+   up to (N - 1) / 2 permanent failures, where N is the number of
+   <literal>etcd</literal> members; a subset of masters and possibly
+   workers. The number of etcd nodes must always maintain
+   <literal>Majority</literal> quorum.
+  </para>
+  <para>
+   <literal>Majority</literal> means that the number of available etcd cluster
+   members must never be lower or equal to the number of unavailable nodes.
+   If, for example, you have only <literal>1</literal> or <literal>2</literal>
+   etcd members, the cluster has a fault tolerance of <literal>0</literal>
+   because <literal>0</literal> nodes can be faulty for the cluster to maintain
+   <literal>Majority</literal>.
+  </para>
+  <para>
+   If you have <literal>6</literal> nodes, a maximum of <literal>2</literal>
+   nodes can become faulty for the cluster to remain in degraded but working
+   state. If <literal>3</literal> or more nodes fail, there is no longer a
+   majority of nodes working, therefore the cluster becomes unavailable.
+  </para>
+  <para>
+   For example: The fault tolerance of a cluster with <literal>7</literal>
+   nodes is <literal>3</literal>, because you need at least <literal>4</literal>
+   active nodes to maintain majority.
+  </para>
+   <para>
+
    </para>
    <para>
     When (N - 1) / 2 or fewer permanent failures happen in a given
