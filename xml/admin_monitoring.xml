@@ -138,7 +138,7 @@ https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-co
     <title>Understanding cluster health</title>
     <para>
      Consider reading
-     <link xlink:href="https://kubernetes.io/docs/tasks/debug-application-cluster/debug-cluster/">Kubernetes:
+     <link xlink:href="https://kubernetes.io/docs/tasks/debug-application-cluster/debug-cluster/">&kube;:
      Troubleshoot Clusters</link>
     </para>
    </note>
@@ -154,61 +154,138 @@ https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-co
     </listitem>
     <listitem>
      <para>
-      Is there at least one master fully working?
+      Is there at least one &kube; master fully working? Even if the
+      deployment is configured to be highly available, it's useful to know if
+      <literal>kube-controller-manager</literal> is down on one of the machines.
      </para>
-     <para>
-      The minimal services for the master to work properly are:
-     </para>
-     <itemizedlist>
-      <listitem>
-       <para>
-        <literal>kube-apiserver</literal>
-       </para>
-      </listitem>
-      <listitem>
-       <para>
-        <literal>kube-controller-manager</literal>
-       </para>
-      </listitem>
-      <listitem>
-       <para>
-        <literal> kube-scheduler</literal>
-       </para>
-      </listitem>
-     </itemizedlist>
     </listitem>
    </itemizedlist>
+
+   <sect3 xml:id="sec.admin.monitoring.health.cluster.kubernetes">
+    <title>&kube; master</title>
+    <para>
+     All components in &kube; expose a <literal>/healthz</literal> endpoint. The
+     expected (healthy) response is a <literal>200 HTTP</literal> and
+     a response body containing <literal>ok</literal>.
+    </para>
+    <para>
+     The minimal services for the master to work properly are:
+    </para>
+    <variablelist>
+     <varlistentry>
+      <term>kube-apiserver</term>
+      <listitem>
+      <para>
+       The component that receives your requests from <command>kubectl</command>
+       and from the rest of the &kube; components.
+      </para>
+      <para>
+       Endpoint: <literal>https://<replaceable>MASTER NODE FQDN</replaceable>:6444/healthz</literal> (HTTPS)
+      </para>
+<screen>&prompt.user;<command>curl -i https://localhost:6444/healthz</command>
+ok
+      </screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+      <term>kube-controller-manager</term>
+      <listitem>
+      <para>
+       The component that contains the control loop, driving current state to
+       the desired state.
+      </para>
+      <para>
+       Endpoint: <literal>http://<replaceable>MASTER NODE FQDN</replaceable>:10252/healthz</literal> (HTTP)
+      </para>
+<screen>&prompt.user;<command>curl -i http://localhost:10252/healthz</command>
+ok
+      </screen>
+     </listitem>
+    </varlistentry>
+     <varlistentry>
+      <term>kube-scheduler</term>
+      <listitem>
+      <para>
+       The component that schedules workloads to nodes.
+      </para>
+      <para>
+       Endpoint: <literal>http://<replaceable>MASTER NODE FQDN</replaceable>:10251/healthz</literal> (HTTP)
+      </para>
+<screen>&prompt.user;<command>curl -i http://localhost:10251/healthz</command>
+ok
+      </screen>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+
    <note>
     <title>High-Availability Environments</title>
     <para>
-     In a HA environment you can monitor
+     In a HA environment you can monitor <literal>kube-apiserver</literal> on
      <literal>https://<replaceable>MASTER NODE LOADBALANCER</replaceable>:6443/healthz</literal>.
+    </para>
+    <para>
      If any master node is running correctly you will receive a valid response.
-     This does not mean that all master nodes necessarily work correctly.
+    </para>
+    <para>
+     This does, however, not mean that all master nodes necessarily work
+     correctly. To ensure that all master nodes work properly the health checks
+     must be repeated individually for each master node deployed.
     </para>
     <para>
      This endpoint will return a successful HTTP response if the cluster is
      operational; otherwise it will fail. It will for example check that it can
-     access <literal>etcd</literal> too.
+     access <literal>etcd</literal> too. This should not be used to infer that
+     the overall cluster health is ideal. It will return a a successful response
+     even when only minimal operational cluster health exists.
+    </para>
+    <para>
+     To probe for full cluster health, you must perform individual health
+     checking for all machines individually.
     </para>
    </note>
+  </sect3>
+
    <sect3 xml:id="sec.admin.monitoring.cluster.health.etcd">
-    <title><literal>etcd</literal> Cluster Health</title>
+    <title><literal>etcd</literal> Cluster</title>
     <para>
      Check that all machines that have the <literal>etcd</literal> role on the cluster see the
      etcd cluster as healthy.
     </para>
-<screen>&prompt.user;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
-salt -G 'roles:etcd' \
+<screen>&prompt.user;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') salt -G 'roles:etcd' \
 cmd.run 'set -a; source /etc/sysconfig/etcdctl; etcdctl cluster-health'</command>
-           </screen>
+
+f69e7af2880f42d68dca26ca892cb945:
+    member af7ffa9bb1cb7c67 is healthy: got healthy result from https://caasp-master:2379
+    member cc40a990d09b4705 is healthy: got healthy result from https://caasp-worker-1:2379
+    member fe9b5ee9e1cc3cf7 is healthy: got healthy result from https://caasp-worker-2:2379
+    cluster is healthy
+ab040b25c2584bc8904971c0acbb250f:
+    member af7ffa9bb1cb7c67 is healthy: got healthy result from https://caasp-master:2379
+    member cc40a990d09b4705 is healthy: got healthy result from https://caasp-worker-1:2379
+    member fe9b5ee9e1cc3cf7 is healthy: got healthy result from https://caasp-worker-2:2379
+    cluster is healthy
+63008aabc75b471b9a1aa2f64e4d30eb:
+    member af7ffa9bb1cb7c67 is healthy: got healthy result from https://caasp-master:2379
+    member cc40a990d09b4705 is healthy: got healthy result from https://caasp-worker-1:2379
+    member fe9b5ee9e1cc3cf7 is healthy: got healthy result from https://caasp-worker-2:2379
+    cluster is healthy
+   </screen>
    </sect3>
+
    <sect3 xml:id="sec.admin.monitoring.cluster.health.components">
     <title>Running Components</title>
     <para>
      Check if the cluster has all required components running:
     </para>
 <screen>&prompt.user;<command>kubectl cluster-info</command>
+
+Kubernetes master is running at https://api.infra.caasp.local:6443
+Dex is running at https://api.infra.caasp.local:6443/api/v1/namespaces/kube-system/services/dex:dex/proxy
+KubeDNS is running at https://api.infra.caasp.local:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+Tiller is running at https://api.infra.caasp.local:6443/api/v1/namespaces/kube-system/services/tiller:tiller/proxy
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
     </screen>
     <para>
      You can optionally run <command>kubectl cluster-info dump</command> to
@@ -226,43 +303,46 @@ cmd.run 'set -a; source /etc/sysconfig/etcdctl; etcdctl cluster-health'</command
      Is the <literal>kubelet</literal> up and working in this node?
     </para>
     <para>
-     The <literal>kubelet</literal> has a port exposed: <literal>10250</literal>
-     on all machines; it's possible to perform an HTTP request to
-     <literal>https://node:10250/healthz</literal> to find out if the kubelet is
-     healthy on that machine.
+     The <literal>kubelet</literal> has a port exposed <literal>10250</literal>
+     on all machines; it's possible to perform an HTTP request to the endpoint
+     to find out if the kubelet is healthy on that machine.
     </para>
-
+    <para>
+     Endpoint: <literal>https://<replaceable>NODE</replaceable>:10250/healthz</literal> (HTTPS)
+    </para>
+<screen>&prompt.user;<command>curl -i https://localhost:10250/healthz</command>
+ok
+    </screen>
    </sect3>
 
    <sect3 xml:id="sec.admin.monitoring.health.node.cni">
-    <title>Check <literal>CNI</literal></literal>
-   <para>
-    Is CNI (Container Networking Interface) working as expected in this node?
-    If not, <literal>kube-dns</literal> can not start, first step check if the
-    <literal>kube-dns</literal> service is running.
-   </para>
+    <title>Check <literal>CNI</literal></title>
+    <para>
+     Is CNI (Container Networking Interface) working as expected in this node?
+     If not, <literal>kube-dns</literal> can not start, first step check if the
+     <literal>kube-dns</literal> service is running.
+    </para>
 <screen>&prompt.user;<command>kubectl get deployments -n kube-system</command>
 NAME            DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
 dex             3         3         3            3           7d
 kube-dns        3         3         3            3           7d
 tiller-deploy   1         1         1            1           7d
-</screen>
+    </screen>
 
-   <para>
-   If kube-dns is running and you are able to create pods then you can be certain
-   that CNI and your CNI plugin are working correctly.
-  </para>
- </sect3>
+    <para>
+     If kube-dns is running and you are able to create pods then you can be certain
+     that CNI and your CNI plugin are working correctly.
+    </para>
+    <para>
+     There's also the
+     <link xlink:href="https://kubernetes.io/docs/tasks/debug-application-cluster/monitor-node-health/">Monitor Node Health</link>
+     check. This is a <literal>DaemonSet</literal> that runs on every node, and
+     reports to the <literal>apiserver</literal> back as
+     <literal>NodeCondition</literal> and <literal>Events</literal>.
+    </para>
+   </sect3>
+   </sect2>
 
-
-   <para>
-    There's also the
-    <link xlink:href="https://kubernetes.io/docs/tasks/debug-application-cluster/monitor-node-health/">Monitor Node Health</link>
-    check. This is a <literal>DaemonSet</literal> that runs on every node, and
-    reports to the <literal>apiserver</literal> back as
-    <literal>NodeCondition</literal> and <literal>Events</literal>.
-   </para>
-  </sect2>
 
   <sect2 xml:id="sec.admin.monitoring.health.service">
    <title>Service/Application Health Checks</title>
@@ -297,7 +377,7 @@ tiller-deploy   1         1         1            1           7d
      as expected
     </para>
     <para>
-     When a <literal>livenessProbe</literal> fails, Kubernetes will automatically restart the
+     When a <literal>livenessProbe</literal> fails, &kube; will automatically restart the
      pod and increase the <literal>RESTARTS</literal> count for that pod.
     </para>
     <para>
@@ -373,7 +453,7 @@ tiller-deploy   1         1         1            1           7d
      <link xlink:href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#define-readiness-probes">readinessProbe</link>
      They are used to wait for processes that take some time to start. Despite
      the container might be running, it might be doing some time consuming init
-     operations. During this time, you don't want Kubernetes to route traffic
+     operations. During this time, you don't want &kube; to route traffic
      to that specific pod; also, you don't want that container to be restarted.
     </para>
     <para>
@@ -386,7 +466,7 @@ tiller-deploy   1         1         1            1           7d
     <para>
      Both probes can be used at the same time: the <literal>livenessProbe</literal> will ensure
      that if a service is running yet misbehaving, it will be restarted, and
-     <literal>readinessProbe</literal> will ensure that Kubernetes won't route traffic to that
+     <literal>readinessProbe</literal> will ensure that &kube; won't route traffic to that
      specific pod until it's considered to be fully functional and running
     </para>
    </sect3>
@@ -394,17 +474,19 @@ tiller-deploy   1         1         1            1           7d
 
   <sect2 xml:id="sec.admin.monitoring.health.general">
    <title>General Health Checks</title>
-   <sect3 xml:id="sec.admin.monitoring.cluster.disk-usage">
-    <title>Disk Usage</title>
-    <para>
-     It's good to also check that all machines are healthy in terms of free
-     disk space from time to time, also when something fails:
-    </para>
+   <para>
+    There are some basic checks that are best practice for system administration.
+    These go beyond the scope of this document but one example is disk usage.
+   </para>
+   <para>
+    By replacing <command>cmd.run "df -h"</command> with
+    <command>cmd.run "[YOURCOMMAND]"</command>, you can perform a command across
+    all nodes in the salt cluster.
+   </para>
 <screen>&prompt.user;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
 salt -P 'roles:(admin|kube-master|kube-minion)' \
-cmd.run "df -h"</command>
+<replaceable>cmd.run "df -h"</replaceable></command>
    </screen>
-   </sect3>
   </sect2>
  </sect1>
 </chapter>
