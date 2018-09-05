@@ -75,8 +75,8 @@
    <step>
     <para>
      Check logs from Salt orchestration. If &productname; cluster
-     bootstrap fails in Velum, retry and look into
-     <command>salt-master</command> orchestration logs by executing:
+     bootstrap fails in Velum, look into <command>salt-master</command>
+     orchestration logs by executing:
     </para>
 <screen>&prompt.root.admin;<command>docker exec -it $(docker ps | grep "salt-master" | awk '{print $1}') \
     salt-run state.event pretty=True > salt-event.logs</command></screen>
@@ -200,13 +200,6 @@
   <para>
    Additionally, keep the network requirements in mind, as stated in
    <xref linkend="sec.deploy.requirements.network" />.
-  </para>
- </sect1>
-
- <sect1 xml:id="sec.admin.troubleshooting.rbac">
-  <title>RBAC/PSP</title>
-  <para>
-
   </para>
  </sect1>
 
