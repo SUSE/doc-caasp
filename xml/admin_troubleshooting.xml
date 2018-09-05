@@ -58,10 +58,74 @@
  </sect1>
 
  <sect1 xml:id="sec.admin.troubleshooting.failed_bootstrap">
-  <title>Recover from Failed Bootstrap</title>
+  <title>Debugging Failed Bootstrap</title>
   <para>
-   
+   If the bootstrapping as described in <xref
+   linkend="sec.deploy.install.bootstrap" /> fails, there are several
+   places to look for errors. The following procedure outlines where to
+   start debugging.
   </para>
+  <procedure>
+   <step>
+    <para>
+     Check the logs from Velum dashboard. Execute on the &admin_node;:
+    </para>
+    <screen>&prompt.root.admin;<command>docker logs $(docker ps | grep "velum-dashboard" | awk '{print $1}')</command></screen>
+   </step>
+   <step>
+    <para>
+     Check logs from Salt orchestration. If &productname; cluster
+     bootstrap fails in Velum, retry and look into
+     <command>salt-master</command> orchestration logs by executing:
+    </para>
+<screen>&prompt.root.admin;<command>docker exec -it $(docker ps | grep "salt-master" | awk '{print $1}') \
+    salt-run state.event pretty=True > salt-event.logs</command></screen>
+   </step>
+   <step>
+    <para>
+     Retry bootstrapping from &admin_node; console.
+    </para>
+<screen>&prompt.root.admin;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
+    salt-run -l debug state.orchestrate orch.kubernetes > salt-orchestration.logs</command></screen>
+   </step>
+   <step>
+    <para>
+     If the orchestration failed in late state, you can check if
+     <command>etcd</command> and the &kube; cluster is up and running.
+     Log in on a &master_node; and check if <command>etcd</command>
+     cluster is up and running.
+    </para>
+<screen>&prompt.root.master;<command>set -a</command>
+&prompt.root.master;<command>source /etc/sysconfig/etcdctl</command>
+&prompt.root.master;<command>etcdctl member list</command>
+&prompt.root.master;<command>etcdctl endpoint health</command>
+&prompt.root.master;<command>etcdctl endpoint status</command>
+&prompt.root.master;<command>journalctl -u etcd</command></screen>
+    <para>
+     Check if &kube; cluster is up and running.
+    </para>
+<screen>&prompt.root.master;<command>kubectl get nodes</command>
+&prompt.root.master;<command>kubectl cluster-info</command>
+&prompt.root.master;<command>journalctl -u kubelet</command>
+&prompt.root.master;<command>journalctl -u kube-apiserver</command>
+&prompt.root.master;<command>journalctl -u kube-scheduler</command>
+&prompt.root.master;<command>journalctl -u kube-controller-manager</command></screen>
+   </step>
+   <step>
+    <para>
+     Collect all relevant logs with <command>supportconfig</command> on
+     the &master_node; and &admin_node;.
+    </para>
+<screen>&prompt.root.admin;<command>supportconfig</command>
+&prompt.root.admin;<command>tar -xvjf /var/log/nts_*.tbz</command>
+&prompt.root.admin;<command>cd nts*</command>
+&prompt.root.admin;<command>cat etcd.txt kubernetes.txt salt-minion.txt</command></screen>
+<screen>&prompt.root.master;<command>supportconfig</command>
+&prompt.root.master;<command>tar -xvjf /var/log/nts_*.tbz</command>
+&prompt.root.master;<command>cd nts*</command>
+&prompt.root.master;<command>cat etcd.txt kubernetes.txt salt-minion.txt</command></screen>
+   </step>
+  </procedure>
  </sect1>
 
  <sect1 xml:id="sec.admin.troubleshooting.failed_update">
@@ -83,7 +147,7 @@
    The following command provides an example for using <command>etcdctl</command>.
   </para>
 <screen>&prompt.root;<command>set -a</command>
- &prompt.root;<command>source /etc/sysconfig/etcdctl</command>
+&prompt.root;<command>source /etc/sysconfig/etcdctl</command>
 &prompt.root;<command>etcdctl --endpoints $ETCDCTL_ENDPOINT --ca-file $ETCDCTL_CA_FILE \
     --cert-file $ETCDCTL_CERT_FILE --key-file $ETCDCTL_KEY_FILE cluster-health</command>
 &prompt.root;<command>etcdctl cluster-health</command></screen>
