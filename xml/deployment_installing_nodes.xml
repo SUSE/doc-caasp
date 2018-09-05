@@ -1090,4 +1090,42 @@
    </step>
   </procedure>
  </sect1>
+
+ <sect1 xml:id="sec.deploy.install.vmware_tools">
+  <title>Installing &vmware; Tools</title>
+  <para>
+   This section is only relevant for deployments on &vmware; ESX and
+   ESXi environments. This step is not required if you are using
+   virtual disk images as described in <xref
+   linkend="sec.deploy.preparation.disk_images" />, because
+   <package>open-vm-tools</package> is already installed.
+  </para>
+  <para>
+   After the bootstrapping of the cluster is finished, install the
+   &vmware; tools on all nodes that are included in the package
+   <package>open-vm-tools</package>. Log in on the &admin_node; and
+   execute:
+  </para>
+  <procedure>
+   <step>
+    <para>
+     Install <package>open-vm-tools</package> on all nodes.
+    </para>
+<screen>&prompt.root.admin;<command>docker exec $(docker ps -q --filter name=salt-master) salt -P \
+    "roles:admin|kube-master|kube-minion" cmd.run 'transactional-update pkg install --no-confirm open-vm-tools'</command></screen>
+   </step>
+   <step>
+    <para>
+     Reboot all nodes. If you are already running a workload, also see
+     <xref linkend="sec.admin.nodes.graceful_shutdown" />.
+    </para>
+<screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q --filter name=salt-master) salt '*' system.reboot</command></screen>
+   </step>
+   <step>
+    <para>
+     Check status of &vmware; Tools in the ESX / ESXi user interface.
+    </para>
+   </step>
+  </procedure>
+ </sect1>
 </chapter>
