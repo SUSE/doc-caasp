@@ -332,13 +332,13 @@ suse_caasp:
     For example, to create the ISO image for an admin node on a computer
     running &opensuse; 42:
    </para>
-   <screen>&prompt.user;<command>sudo genisoimage -output <replaceable>cc-admin.img</replaceable> -volid <replaceable>cidata</replaceable> -joliet -rock <replaceable>cc-admin</replaceable></command></screen>
+   <screen>&prompt.user;<command>sudo genisoimage -output <replaceable>cc-admin.iso</replaceable> -volid <replaceable>cidata</replaceable> -joliet -rock <replaceable>cc-admin</replaceable></command></screen>
    <para>
     To create the ISO image for a worker node on a computer running &opensuse;
     15, substituting the name of the folder containing the configuration
     files for a &worker_node; and titling the volume <literal>cc-worker</literal>:
    </para>
-   <screen>&prompt.user;<command>sudo mkisofs -output <replaceable>cc-worker.img</replaceable> -volid <replaceable>cidata</replaceable> -joliet -rock <replaceable>cc-worker</replaceable></command></screen>
+   <screen>&prompt.user;<command>sudo mkisofs -output <replaceable>cc-worker.iso</replaceable> -volid <replaceable>cidata</replaceable> -joliet -rock <replaceable>cc-worker</replaceable></command></screen>
   </sect2>
 
   <sect2 xml:id="sec.deploy.preparation.qcow2.admin">
@@ -356,8 +356,8 @@ suse_caasp:
     </step>
     <step>
      <para>
-      Attach the <filename>cc-admin.img</filename> image as a
-      secondary disk. For details about preparing the image, see <xref
+      Attach the <filename>cc-admin.iso</filename> image as a
+      virtual DVD unit. For details about preparing the image, see <xref
       linkend="sec.deploy.preparation.disk_images.iso-image" />
     </para>
     </step>
@@ -392,8 +392,8 @@ suse_caasp:
     </step>
     <step>
      <para>
-      Attach the <filename>cc-worker.img</filename> disk image as a
-      secondary disk. For details about preparing the image, see <xref
+      Attach the <filename>cc-worker.iso</filename> disk image as a
+      virtual DVD unit. For details about preparing the image, see <xref
       linkend="sec.deploy.preparation.disk_images.iso-image" />. The
       ISO image can be reused for multiple &worker_node;s.
      </para>
