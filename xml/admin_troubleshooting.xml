@@ -74,12 +74,12 @@
    </step>
    <step>
     <para>
-     Check logs from Salt orchestration. If &productname; cluster
-     bootstrap fails in Velum, look into <command>salt-master</command>
-     orchestration logs by executing:
+     Convert the log into a human readable format and open it with
+     <command>less</command>.
     </para>
-<screen>&prompt.root.admin;<command>docker exec -it $(docker ps | grep "salt-master" | awk '{print $1}') \
-    salt-run state.event pretty=True > salt-event.logs</command></screen>
+<screen>&prompt.root.admin;<command>/var/lib/supportutils-plugin-suse-caasp/debug-salt --json_output=salt.json \
+    --summary_output=summary.txt --text-status --no-color</command>
+&prompt.root.admin;<command>less summary.txt</command></screen>
    </step>
    <step>
     <para>
@@ -148,8 +148,6 @@
   </para>
 <screen>&prompt.root;<command>set -a</command>
 &prompt.root;<command>source /etc/sysconfig/etcdctl</command>
-&prompt.root;<command>etcdctl --endpoints $ETCDCTL_ENDPOINT --ca-file $ETCDCTL_CA_FILE \
-    --cert-file $ETCDCTL_CERT_FILE --key-file $ETCDCTL_KEY_FILE cluster-health</command>
 &prompt.root;<command>etcdctl cluster-health</command></screen>
  </sect1>
 
@@ -161,6 +159,13 @@
    when updates are started with Velum. To prevent this, execute the
    following procedure.
   </para>
+  <important>
+   <title>Locks Disable Updates for Package</title>
+   <para>
+    If a package is locked, it will no longer receive any updates until
+    the lock is released with <command>zypper rl</command>.
+   </para>
+  </important>
   <procedure>
    <step>
     <para>
