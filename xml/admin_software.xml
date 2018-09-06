@@ -389,7 +389,7 @@
    </para>
    
    <screen>
-&prompt.user;<command>docker exec -i  $(docker ps | grep salt-master | awk '{print $1}') \
+&prompt.user;<command>docker exec -i  $(docker ps -q -f name=salt-master) \
 salt --batch 10 -P "roles:(admin|kube-(master|minion))" \
 cmd.run "rpm -q SUSEConnect"</command>
 
@@ -438,7 +438,7 @@ retcode:
     <literal>transactional-update.timer</literal>.
     </para>
     <screen>
-&prompt.user;<command>docker exec -i $(docker ps | grep salt-master | awk '{print $1}') \
+&prompt.user;<command>docker exec -i $(docker ps -q -f name=salt-master) \
 salt --batch 10 -P "roles:(admin|kube-(master|minion))" \
 cmd.run "systemctl disable --now transactional-update.timer"</command>
 
@@ -500,7 +500,7 @@ retcode:
      </para>
     </note>
     <screen>
-&prompt.user;<command>docker exec -i $(docker ps | grep salt-master | awk '{print $1}') \
+&prompt.user;<command>docker exec -i $(docker ps -q -f name=salt-master) \
 salt --batch <replaceable>10</replaceable> -P "roles:(admin|kube-(master|minion))" \
 cmd.run "transactional-update salt migration -n" \
 | tee transactional-update-migration.log</command>
