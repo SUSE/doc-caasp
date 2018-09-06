@@ -320,4 +320,54 @@
    </step>
   </procedure>
  </sect1>
+ <sect1 xml:id="sec.admin.troubleshooting.add_ca_cert">
+  <title>Fix the error <literal>x509: certificate signed by unknown authority</literal></title>
+  <para>
+   When interacting with &kube; you can run into the situation where your
+   existing configuration for the authentication has changed (cluster has been
+   rebuild, certificates have been switched.)
+  </para>
+  <para>
+   In such a case you might see an error message in the output of your CLI tool.
+  </para>
+<screen><literal>x509: certificate signed by unknown authority</literal>
+ </screen>
+ <para>
+  This message indicates that your current system does not know the Certificate
+  Authority (CA) that signed the SSL certificates used for encrypting the
+  communication to the cluster. You then need to add or update the Root CA
+  certificate in your local trust store.
+ </para>
+ <procedure>
+  <step>
+   <para>
+    Copy the Root CA certificate file into the trust anchors directory
+    <filename>/etc/pki/trust/anchors/</filename>.
+   </para>
+   <para>
+    Replace <literal>SUSE_CaaSP_CA.crt</literal> with the actual name of your
+    file.
+   </para>
+<screen>&prompt.user;<command>cp <replaceable>SUSE_CaaSP_CA.crt</replaceable> /etc/pki/trust/anchors/</command>
+   </screen>
+  </step>
+  <step>
+   <para>
+    Update the cache for known CA certificates.
+   </para>
+<screen>&prompt.user;<command>update-ca-certificates</command></screen>
+  </step>
+ </procedure>
+ <note>
+  <title>Operating system specific instructions</title>
+  <para>
+   The location of the trust store anchors directory or the command to refresh
+   the CA certificates cache might vary depending on your operating system.
+  </para>
+  <para>
+   Please consult the official documentation for your operating system to
+   find the respective alternatives.
+  </para>
+ </note>
+ </sect1>
 </chapter>
