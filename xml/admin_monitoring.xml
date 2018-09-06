@@ -253,7 +253,7 @@ ok
      Check that all machines that have the <literal>etcd</literal> role on the cluster see the
      etcd cluster as healthy.
     </para>
-<screen>&prompt.user;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') salt -G 'roles:etcd' \
+<screen>&prompt.user;<command>docker exec -it $(docker ps -q -f name=salt-master) salt -G 'roles:etcd' \
 cmd.run 'set -a; source /etc/sysconfig/etcdctl; etcdctl cluster-health'</command>
 
 f69e7af2880f42d68dca26ca892cb945:
@@ -518,7 +518,7 @@ tiller-deploy   1         1         1            1           7d
   <sect2 xml:id="sec.admin.monitoring.health.general">
    <title>General Health Checks</title>
    <para>
-    It is advisable to apply other best practices from system administration
+    We recommend to apply other best practices from system administration
     to your monitoring and health checking approach. These steps are not
     specific to &productname; and are beyond the scope of this document. To
     simplify performing tasks like disk usage checks, you can use <literal>salt</literal>.
