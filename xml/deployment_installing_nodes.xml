@@ -391,12 +391,13 @@
 
  <sect1 xml:id="sec.deploy.nodes.admin_install_cli">
   <title>Installing the &Admin_Node; with Command Line Interface</title>
-  <note>
+  <important>
+   <title>Do not use this for datacenter installations</title>
    <para>
     This procedure is intended to be used with public cloud
-    installations.
+    installations only.
    </para>
-  </note>
+  </important>
   <para>
    Use SSH to log into the admin node and run the
    <command>caasp-admin-setup</command> executable as the
@@ -558,6 +559,16 @@
      Fill in the values <guimenu>Internal Dashboard Location</guimenu>.
      If necessary, configure the other settings.
     </para>
+    <informalfigure>
+     <mediaobject>
+      <imageobject role="fo">
+       <imagedata fileref="velum_setup1.png" width="100%"/>
+      </imageobject>
+      <imageobject role="html">
+       <imagedata fileref="velum_setup1.png" width="100%"/>
+      </imageobject>
+     </mediaobject>
+    </informalfigure>
     <note>
      <title>
       Host Name, FQDN or IP Address
@@ -581,42 +592,8 @@
       </listitem>
      </varlistentry>
      <varlistentry>
-      <term>External Kubernetes API server FQDN</term>
-      <listitem>
-       <para>
-        Name used to reach the node running the &kube; API server.
-       </para>
-       <note>
-        <para>
-         In a simple, single-master deployment this will be the name of the
-         node that you will select as the &master_node; when bootstrapping the
-         cluster.
-        </para>
-        <para>
-          If you are planning a larger cluster with multiple &master_node;s,
-          they must all be accessible from a single host name. If not, the
-          functionality of &dashboard; will degrade if the original
-          &master_node; is removed. Therefore you should ensure that there is
-          some form of load-balancing or reverse proxy on the value that
-          you enter in this field.
-        </para>
-       </note>
-     </listitem>
-     </varlistentry>
-<!-- cwickert 2017-07-23 TODO: Another varlist for the individual settings? -->
-     <varlistentry>
       <term>Install Tiller (Helm's Server Component)</term>
       <listitem>
-       <informalfigure>
-        <mediaobject>
-         <imageobject role="fo">
-          <imagedata fileref="velum_install_tiller.png" width="100%"/>
-         </imageobject>
-         <imageobject role="html">
-          <imagedata fileref="velum_install_tiller.png" width="100%"/>
-         </imageobject>
-        </mediaobject>
-       </informalfigure>
        <para>
         If you intend to deploy &scf; on &productname;, or any other software
         that is installed with &helm; (the &kube; package manager), check the
@@ -828,16 +805,6 @@
          is not officially supported.
         </para>
        </warning>
-       <informalfigure>
-        <mediaobject>
-         <imageobject role="fo">
-          <imagedata fileref="velum_install_options.png" width="100%"/>
-         </imageobject>
-         <imageobject role="html">
-          <imagedata fileref="velum_install_options.png" width="100%"/>
-         </imageobject>
-        </mediaobject>
-       </informalfigure>
        <para>
         Allows choice between Docker and CRI-O as the main container runtime.
        </para>
@@ -853,19 +820,43 @@
      </varlistentry>
     </variablelist>
    </step>
-    <step>
-     <para>
-      Click <guimenu>Next</guimenu> to configure the FQDNs for dashboard and &kube; API.
-     </para>
-     <para>
-      Fill in the values for <guimenu>External Dashboard Location</guimenu> and
-      <guimenu>External Kubernetes API server FQDN</guimenu>. If necessary,
-      configure the <guimenu>Proxy Settings</guimenu>.
-     </para>
+   <step>
     <para>
-     Click <guimenu>Next</guimenu> to proceed and install some cluster nodes
-     as described in <xref
-      linkend="sec.deploy.nodes.worker_install"/>.
+     Click <guimenu>Next</guimenu>.
+    </para>
+   </step>
+   <step>
+    <para>
+     You will be shown an information screen about &ay;.
+    </para>
+    <informalfigure>
+     <mediaobject>
+      <imageobject role="fo">
+       <imagedata fileref="velum_setup2.png" width="100%"/>
+      </imageobject>
+      <imageobject role="html">
+       <imagedata fileref="velum_setup2.png" width="100%"/>
+      </imageobject>
+     </mediaobject>
+    </informalfigure>
+    <para>
+     This is now the time for you to install the master/worker nodes for
+     the cluster.
+    </para>
+    <important>
+     <title>Leave the admin node configuration open</title>
+     <para>
+      If you quit out of the configuration process at this time by closing
+      the browser window/tab, you will lose all input you made to the settings
+      and have to restart the configuration from the beginning.
+     </para>
+     <para>
+      We recommend you leave the browser window/tab open while you perform the
+      installation of the other nodes in a new window.
+     </para>
+    </important>
+    <para>
+     Continue with <xref linkend="sec.deploy.nodes.worker_install"/>.
     </para>
    </step>
   </procedure>
@@ -881,6 +872,18 @@
     <xref linkend="sec.deploy.nodes.admin_configuration"/>.
    </para>
   </warning>
+
+  <sect2 xml:id="sec.deploy.nodes.openstack">
+   <title>Installation on Cloud services</title>
+   <para>
+    If you are installing on an &ostack; based cloud using HEAT templates or
+    using a public cloud service (Azure, EC2, GCE), your machines will be set up
+    automatically.
+   </para>
+   <para>
+    You can continue directly to <xref linkend="sec.deploy.install.bootstrap"/>.
+   </para>
+  </sect2>
 
   <sect2 xml:id="sec.deploy.nodes.worker_install.manual">
    <title>Manual Installation</title>
@@ -925,6 +928,12 @@
       supported size for a &productname; cluster.
      </para>
     </step>
+    <step>
+     <para>
+      Once you have installed all desired machines, continue with
+      <xref linkend="sec.deploy.install.bootstrap"/>.
+     </para>
+    </step>
    </procedure>
   </sect2>
 
@@ -935,6 +944,16 @@
     that points to the &ay; file on the &admin_node;. Generally, this will be
     supplied by the &dashboard; dashboard on the &admin_node;.
    </para>
+   <note>
+    <title>&rootuser; Password</title>
+    <para>
+     When nodes are installed using &ay;, there is no opportunity to specify
+     the password for &rootuser;. However, each node will have <command>ssh</command>
+     keys for &rootuser; on the &master_node; pre-installed. Thus it is
+     possible to access the &worker_node;s by opening an <command>ssh</command>
+     session from the &master_node;.
+    </para>
+   </note>
    <procedure xml:id="pro.deploy.nodes.worker_install.manual.autoyast">
     <step>
      <para>
@@ -1011,17 +1030,14 @@
       the dashboard and can be added to your cluster.
      </para>
     </step>
+    <step>
+     <para>
+      Once you have installed all desired machines, continue with
+      <xref linkend="sec.deploy.install.bootstrap"/>.
+     </para>
+    </step>
    </procedure>
-   <note>
-    <title>&rootuser; Password</title>
-    <para>
-     When nodes are installed using &ay;, there is no opportunity to specify
-     the password for &rootuser;. However, each node will have <command>ssh</command>
-     keys for &rootuser; on the &master_node; pre-installed. Thus it is
-     possible to access the &worker_node;s by opening an <command>ssh</command>
-     session from the &master_node;.
-    </para>
-   </note>
+
   </sect2>
  </sect1>
 
@@ -1041,59 +1057,133 @@
   <procedure xml:id="pro.deploy.install.bootstrap">
    <step>
     <para>
-     Point a web browser to
-     <uri>https://<replaceable>caasp-admin.&exampledomain;</replaceable>
-     </uri>
-     to open the dashboard, where
-     <literal>caasp-admin.&exampledomain;</literal> is the host name or IP
-     address of the &admin_node;.
+     Return to your admin node; with the &ay; instructions screen open from before.
     </para>
    </step>
    <step>
     <para>
-     The dashboard lists all cluster nodes registered at the &admin_node;.
-     Newly installed nodes are be listed as <guimenu>Pending Nodes</guimenu>.
-     You can accept individual nodes or all by clicking <guimenu>Accept All
-     Nodes</guimenu>.
-    </para>
-    <informalfigure>
-     <mediaobject>
-      <imageobject role="fo">
-       <imagedata fileref="velum_nodes.png" width="100%"/>
-      </imageobject>
-      <imageobject role="html">
-       <imagedata fileref="velum_nodes.png" width="100%"/>
-      </imageobject>
-     </mediaobject>
-    </informalfigure>
-    <para>
-     Use the check box in the first column to select the nodes you want to add
-     to your cluster. In the last column, select the one that should become
-     &kube; master. All other nodes will be set to the worker role once you
-     click <guimenu>Bootstrap cluster</guimenu>.
-<!-- cwickert 2017-07-23: FIXME explain relation of internal and external names -->
-<!-- Make sure the <guimenu>Hostname</guimenu> of the master matches the
-     name configured as <guimenu>External Kubernetes API server FQDN</guimenu>
-     in <xref linkend="sec.deploy.nodes.admin_configuration"/>. If necessary, go
-     <guimenu>Back</guimenu> to chance the setting accordingly. -->
+     Click <guimenu>Next</guimenu>.
     </para>
    </step>
    <step>
     <para>
-     Please wait while the cluster is bootstrapped. Once finished, the status
-     indicator icon of the nodes changes accordingly and you can download the
-     <command>kubectl</command> config file <filename>kubeconfig</filename>.
+     On the screen <guimenu>Select nodes and roles</guimenu>, you will see a
+     list of <literal>salt-minion</literal> IDs under <guimenu>Pending Nodes</guimenu>.
+     These are internal IDs for the master/worker nodes you have just set up and
+     which have automatically registered with the admin node in the background.
+    </para>
+   </step>
+    <step>
+    <para>
+     <guimenu>Accept</guimenu> individual nodes into the cluster or click
+     <guimenu>Accept All Nodes</guimenu>.
+    </para>
+   </step>
+   <step>
+    <para>
+     Assign the roles of the added nodes.
+    </para>
+    <para>
+     By clicking on <guimenu>Select remaining nodes</guimenu>, all
+     nodes without a selected role will be assigned the <literal>Worker</literal>
+     role.
     </para>
     <informalfigure>
      <mediaobject>
       <imageobject role="fo">
-       <imagedata fileref="velum_status.png" width="100%"/>
+       <imagedata fileref="velum_setup3.png" width="100%"/>
       </imageobject>
       <imageobject role="html">
-       <imagedata fileref="velum_status.png" width="100%"/>
+       <imagedata fileref="velum_setup3.png" width="100%"/>
       </imageobject>
      </mediaobject>
     </informalfigure>
+    <important>
+     <title>Minimum cluster size</title>
+     <para>
+      You must designate at least <literal>1</literal> master node and
+      <literal>2</literal> worker nodes..
+     </para>
+    </important>
+    <tip>
+     <title>Assign Unused Nodes Later</title>
+    <para>
+     Nodes that you do not wish to designate for a role now, can later be
+     assigned one on the &dashboard; status page.
+    </para>
+   </tip>
+   </step>
+   <step>
+    <para>
+     Once you have assigned all desired nodes a role, click
+     <guimenu>Next</guimenu>.
+    </para>
+   </step>
+    <step>
+     <para>
+      The last step is to configure the external FQDNs for dashboard and &kube;
+      API.
+     </para>
+     <para>
+      These values will determine where the nodes in the cluster will attempt
+      to communicate.
+     </para>
+     <note>
+      <title>Master Node Loadbalancer FQDN</title>
+      <para>
+        If you are planning a larger cluster with multiple &master_node;s,
+        they must all be accessible from a single host name. If not, the
+        functionality of &dashboard; will degrade if the original
+        &master_node; is removed.
+       </para>
+       <para>
+        Therefore, you should ensure that there is some form of load-balancing
+        or reverse proxy configured at the location you enter here.
+      </para>
+     </note>
+    <informalfigure>
+     <mediaobject>
+      <imageobject role="fo">
+       <imagedata fileref="velum_setup4.png" width="100%"/>
+      </imageobject>
+      <imageobject role="html">
+       <imagedata fileref="velum_setup4.png" width="100%"/>
+      </imageobject>
+     </mediaobject>
+    </informalfigure>
+    <variablelist>
+    <varlistentry>
+     <term>External Kubernetes API FQDN</term>
+     <listitem>
+      <para>
+       Name used to reach the node running the &kube; API server.
+      </para>
+      <para>
+       In a simple deployment with a single master node, this will be the name
+       of the node that was selected as the &master_node; during bootstrapping
+       of the cluster.
+      </para>
+    </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>External Dashboard FQDN</term>
+     <listitem>
+      <para>
+       Name used to reach the admin node running &dashboard;.
+      </para>
+    </listitem>
+    </varlistentry>
+   </variablelist>
+   </step>
+   <step>
+    <para>
+    Click on <guimenu>Bootstrap cluster</guimenu> to finalize the intial setup
+    and start the bootstrapping process.
+   </para>
+   <para>
+    The status overview will be shown while the nodes are bootstrapped for their
+    respective roles in the background.
+   </para>
    </step>
   </procedure>
  </sect1>
@@ -1118,13 +1208,14 @@
     <para>
      Install <package>open-vm-tools</package> on all nodes.
     </para>
-<screen>&prompt.root.admin;<command>docker exec $(docker ps -q --filter name=salt-master) salt -P \
-    "roles:admin|kube-master|kube-minion" cmd.run 'transactional-update pkg install --no-confirm open-vm-tools'</command></screen>
+<screen>&prompt.root.admin;<command>docker exec $(docker ps -q --filter name=salt-master) \
+salt -P "roles:admin|kube-master|kube-minion" \
+cmd.run 'transactional-update pkg install --no-confirm open-vm-tools'</command></screen>
    </step>
    <step>
     <para>
-     Reboot all nodes. If you are already running a workload, also see
-     <xref linkend="sec.admin.nodes.graceful_shutdown" />.
+     Reboot all nodes using <literal>salt</literal>. If you are already running
+     a workload, also see <xref linkend="sec.admin.nodes.graceful_shutdown" />.
     </para>
 <screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q --filter name=salt-master) salt '*' system.reboot</command></screen>
    </step>
