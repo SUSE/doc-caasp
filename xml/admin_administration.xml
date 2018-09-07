@@ -29,72 +29,54 @@
   <para>
    &kube; requires the use of <literal>kubectl</literal> for many tasks.
    You can perform most of these actions while logged in to an SSH session on
-   the master node of your &productname; cluster.
+   the master node of your &productname; cluster. <literal>kubectl</literal>
+   is a pre-installed component of &productname;.
   </para>
   <para>
-   One key exception is the use of <literal>kubectl proxy</literal>.
    The proxy functionality requires <literal>kubectl</literal> to be installed
    on your local machine to act as a proxy between the local workstation and the
-    remote cluster.
+   remote cluster.
   </para>
-  <tip>
-   <title>Installing kubectl on non-SUSE OS</title>
+  <important>
+  <para>
+   Installing <literal>kubectl</literal> locally is not officially supported by
+    &suse; or &productname;.
+  </para>
+ </important>
+
+  <important>
+   <title>&sle; Desktop 12 SP3 / 15.0 - Installation from Packagehub</title>
    <para>
-    If you are using an operating system other than &sle; or &opensuse; please
-    consult the
+   The use of PackageHub is <link xlink:href="https://packagehub.suse.com/support/">exempt from commercial
+   support</link>.
+   </para>
+   <para>
+    If you are using &sle; 12 SP3 or 15.0, you must
+    <link xlink:href="https://www.suse.com/documentation/sled-15/book_quickstarts/data/sec_modules_installing.html">enable the PackageHub</link>
+    Extension.
+   </para>
+   <para>
+    The instructions are identical for both versions.
+   </para>
+  </important>
+
+  <tip>
+   <title>Installing kubectl on non-SUSE OS or old release</title>
+   <para>
+    If you are using an operating system other than the current &sle; 12 SP3/15.0
+    or &opensuse; Tumbleweed/Leap please consult the
     <link xlink:href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">
     installation instructions</link> from the &kube; project.
    </para>
   </tip>
 
-  <procedure>
-   <title>Installing <literal>kubectl</literal> from the package repository</title>
+   <procedure>
+    <title>Install the <literal>kubectl</literal> package</title>
    <step>
     <para>
-     Go to <link xlink:href="https://build.opensuse.org/repositories/Virtualization:containers">the <filename>Virtualization:containers</filename> repository</link> and find the version of &sle;/&opensuse; you are using.
+     Install the <filename>kubectl</filename> package:
     </para>
-   </step>
-   <step>
-    <para>
-      Click the "Go to download repository" underneath your version.
-     </para>
-      <informalfigure>
-       <mediaobject>
-        <imageobject role="fo">
-         <imagedata fileref="dl_repo_link.png" width="100%" format="png"/>
-        </imageobject>
-        <imageobject role="html">
-         <imagedata fileref="dl_repo_link.png" width="100%" format="png"/>
-        </imageobject>
-       </mediaobject>
-      </informalfigure>
-   </step>
-   <step>
-    <para>
-     Copy the URL to the repository from the URL bar of your browser. This is the location you will add as repository information in zypper.
-    </para>
-   </step>
-   <step>
-     <para>
-      Open a terminal on your local machine add a repository to zypper:
-     </para>
-     <screen>&prompt.sudo;<command>zypper ar -f \
-https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/</command></screen>
-      <para>
-       You will have to trust the key signature for the repository to continue.
-      </para>
-   </step>
-   <step>
-    <para>
-     Refresh the repository information:
-    </para>
-    <screen>&prompt.sudo;<command>zypper ref</command></screen>
-   </step>
-   <step>
-    <para>
-     Install the <filename>kubernetes-client</filename> package:
-    </para>
-    <screen>&prompt.sudo;<command>zypper in kubernetes-client</command></screen>
+<screen>&prompt.sudo;<command>zypper in kubectl</command></screen>
    </step>
    <step>
     <para>
