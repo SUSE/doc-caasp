@@ -14,52 +14,107 @@
    <dm:bugtracker></dm:bugtracker>
    <dm:translation>yes</dm:translation>
   </dm:docmanager>
+  <abstract>
+   <para>
+    This section introduces the security features of &productname;.
+    This includes authentication, management of users and groups, and
+    the configuration of audit log files.
+   </para>
+  </abstract>
  </info>
- <para>
-  Role-based access control (RBAC) adds the ability to perform authentication
-  and authorization of activities performed against a &kube; cluster.
-  Authentication is concerned with the <quote>who</quote> and authorization is
-  concerned with the <quote>what</quote>.
- </para>
  <sect1 xml:id="sec.admin.security.auth.kubeconfig">
-  <title>Authentication</title>
-
+  <title>Access Control Overview</title>
   <para>
-   Starting in &productname; 2, &kubectl; needs to authenticate against the
-   &kube; &master_node;. The necessary authentication information is included
-   in the &kubeconfig; file available from &dashboard;. To download the
-   &kubeconfig;, go to the <guimenu>Home</guimenu> page and scroll to the
-   <emphasis>Nodes</emphasis> section. Then use the
-   <guimenu>kubeconfig</guimenu> button and authenticate with your user name
-   and password. Download the file from &dashboard; and save it as
-   <filename>$HOME/.kube/config</filename>.
+   &productname; provides role-based access control (RBAC) to perform
+   authentication and authorization of activities performed against a
+   &kube; cluster. &kube; uses several steps for access control.
+   The steps in processing order are:
   </para>
+  <variablelist>
+   <varlistentry>
+    <term>Authentication</term>
+    <listitem>
+     <para>
+      The authentication confirms the identity of an user. The
+      <emphasis>OpenID Connect</emphasis> (<emphasis>OIDC</emphasis>)
+      implementation <literal>dex</literal> is used as an
+      authentication provider by &kube;. <literal>dex</literal>
+      connects to an LDAP server to look up user information. To
+      authenticate against the cluster, the
+      <filename>kubeconfig</filename> file is used. For details, refer
+      to <xref linkend="sec.admin.kubernetes.install-kubectl" />.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>Authorization</term>
+    <listitem>
+     <para>
+      &productname; uses <emphasis>role-based access control</emphasis>
+      (<emphasis>RBAC</emphasis>). Roles and users are managed with
+      LDAP. For details, refer to <xref linkend=
+      "sec.admin.security.users" />.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>Admission</term>
+    <listitem>
+     <para>
+      Admission controllers in &kube; can mutate and validate requests.
+      For details, refer to <link xlink:href=
+      "https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/"
+      />.
+     </para>
+    </listitem>
+   </varlistentry>
+  </variablelist>
+  <para>
+   For details about access control in &kube;, refer to <link
+   xlink:href=
+   "https://kubernetes.io/docs/reference/access-authn-authz/controlling-access/"
+   />.
+  </para>
+ </sect1>
 
-  <tip xml:id="security.auth.login.kubeconfig">
-   <title>The KUBECONFIG variable</title>
-   <para>
-    &kubectl; uses an environment variable named <varname>KUBECONFIG</varname>
-    to locate your &kubeconfig; file. If this variable is not specified, it
-    defaults to <filename>$HOME/.kube/config</filename>. To use a different
-    location, run
-   </para>
-<screen>&prompt.user;<command>export KUBECONFIG=<replaceable>/PATH/TO/KUBE/CONFIG/FILE</replaceable></command></screen>
-  </tip>
+ <sect1 xml:id="sec.admin.security.installing_rootca">
+  <title>Obtaining and Installing Root CA Certificate</title>
 
-  <note xml:id="security.auth.login.rootca">
-   <title>Obtaining the root CA certificate</title>
+  <procedure>
+   <step>
+    <para>
+     Obtain the root CA certificate from any node in your cluster with
+     <command>scp</command>.
+    </para>
+    <screen>&prompt.user;<command>scp NODE:/etc/pki/trust/anchors/<replaceable>SUSE_CaaSP_CA</replaceable>.crt .</command></screen>
+   </step>
+   <step>
+    <para>
+     Copy the Root CA certificate file into the trust anchors directory
+     <filename>/etc/pki/trust/anchors/</filename>.
+    </para>
+    <screen>&prompt.sudo;cp <replaceable>SUSE_CaaSP_CA</replaceable>.crt <filename>/etc/pki/trust/anchors/</filename></screen>
+   </step>
+   <step>
+    <para>
+     Update the cache for known CA certificates.
+    </para>
+    <screen>&prompt.sudo;<command>update-ca-certificates</command></screen>
+   </step>
+  </procedure>
+  <note>
+   <title>Operating System Specific Instructions</title>
    <para>
-    You can obtain the root CA certificate from any node in your cluster via
-    SCP:
+    The location of the trust store anchors directory or the command to refresh
+    the CA certificates cache might vary depending on your operating system.
    </para>
-<screen>&prompt.user;<command>scp <replaceable>NODE</replaceable>:/etc/pki/trust/anchors/SUSE_CaaSP_CA.crt .</command></screen>
    <para>
-    To trust this root CA certificate on your machine, place it in
-    <filename>/etc/pki/trust/anchors/</filename> and call the
-    <command>update-ca-certificates</command> script.
+    Please consult the official documentation for your operating system to
+    find the respective alternatives.
    </para>
   </note>
  </sect1>
+
  <sect1 xml:id="sec.admin.security.users">
   <title>Managing Users and Groups</title>
 
@@ -91,7 +146,7 @@ cat /var/lib/misc/infra-secrets/openldap-password</command></screen>
   </sect2>
 
   <sect2 xml:id="sec.admin.security.users.import-cert">
-   <title>Importing the LDAP certificate locally</title>
+   <title>Importing the LDAP Certificate</title>
    <para>
     To be able to perform any LDAP queries, you first need to import the
     generated LDAP certificate to your local trusted certificate storage. On

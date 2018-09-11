@@ -55,13 +55,24 @@
   </important>
 
   <tip>
-   <title>Installing kubectl on non-SUSE OS or old release</title>
+   <title>Installing <command>kubectl</command> on Non-SUSE OS or Old Release</title>
    <para>
     If you are using an operating system other than the current &sle; 12 SP3/15.0
     or &opensuse; Tumbleweed/Leap please consult the
     <link xlink:href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">
     installation instructions</link> from the &kube; project.
    </para>
+  </tip>
+
+  <tip>
+   <title>The KUBECONFIG Variable</title>
+   <para>
+    &kubectl; uses an environment variable named <varname>KUBECONFIG</varname>
+    to locate your &kubeconfig; file. If this variable is not specified, it
+    defaults to <filename>$HOME/.kube/config</filename>. To use a different
+    location, run
+   </para>
+<screen>&prompt.user;<command>export KUBECONFIG=<replaceable>/PATH/TO/KUBE/CONFIG/FILE</replaceable></command></screen>
   </tip>
 
    <procedure>
