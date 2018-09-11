@@ -230,7 +230,7 @@ mail: <replaceable>E-MAIL_ADDRESS</replaceable> <co xml:id="co.admin.security.us
    <para>
     Populate your OpenLDAP server with this LDIF file:
    </para>
-<screen>&prompt.root;<command>ldapadd -H ldap://<replaceable>ADMINISTRATION_NODE_FQDN</replaceable>:389 -ZZ \
+<screen>&prompt.user;<command>ldapadd -H ldap://<replaceable>ADMINISTRATION_NODE_FQDN</replaceable>:389 -ZZ \
 -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f <replaceable>LDIF_FILE</replaceable></command></screen>
    <para>
     To add this new user to the existing Administrators group, create a new
@@ -258,7 +258,7 @@ uniqueMember: uid=<replaceable>USERID</replaceable><co xml:id="co.admin.security
     Populate your <phrase role="productname">OpenLDAP</phrase> server with the
     LDIF file:
    </para>
-<screen>&prompt.root;<command>ldapadd -H ldap://<replaceable>ADMINISTRATION_NODE_FQDN</replaceable>:389 -ZZ \
+<screen>&prompt.user;<command>ldapadd -H ldap://<replaceable>ADMINISTRATION_NODE_FQDN</replaceable>:389 -ZZ \
 -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f <replaceable>LDIF_FILE</replaceable></command></screen>
   </sect2>
 
@@ -294,13 +294,15 @@ userPassword: <replaceable>password hash</replaceable><co xml:id="co.admin.secur
    <para>
     Populate your OpenLDAP server with this LDIF file:
    </para>
-<screen>&prompt.root;<command>ldapadd -H ldap://<replaceable>ADMINISTRATION_NODE_FQDN</replaceable>:389 -ZZ \
--D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f <replaceable>LDIF_FILE</replaceable></command></screen>
+<screen>&prompt.user;<command>ldapadd -H ldap://<replaceable>ADMINISTRATION_NODE_FQDN</replaceable>:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local \
+    -w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f <replaceable>LDIF_FILE</replaceable></command></screen>
   </sect2>
 
   <sect2 xml:id="sec.admin.security.users.delete">
    <title>Deleting User</title>
 
+<screen>&prompt.user;<command>ldapdelete -H ldap://<replaceable>ADMINISTRATION_NODE_FQDN</replaceable>:389 -ZZ -D \
+"uid=<replaceable>USER_ID</replaceable>,ou=People,dc=infra,dc=caasp,dc=local" -w <replaceable>LDAP_ADMIN_PASSWORD</replaceable></command></screen>
   </sect2>
 
   <sect2 xml:id="sec.admin.security.groups">
@@ -343,7 +345,7 @@ uniqueMember: uid=<replaceable>member3</replaceable>,<xref linkend="co.admin.sec
     Populate your <phrase role="productname">OpenLDAP</phrase> server with the
     LDIF file:
    </para>
-<screen>&prompt.root;<command>ldapadd -H ldap://<replaceable>ADMINISTRATION_NODE_FQDN</replaceable>:389 -ZZ \
+<screen>&prompt.user;<command>ldapadd -H ldap://<replaceable>ADMINISTRATION_NODE_FQDN</replaceable>:389 -ZZ \
 -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f <replaceable>LDIF_FILE</replaceable></command></screen>
    <para>
     Next, create a role binding to allow this new LDAP group access in &kube;.
