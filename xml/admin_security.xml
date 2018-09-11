@@ -263,7 +263,7 @@ uniqueMember: uid=<replaceable>USERID</replaceable><co xml:id="co.admin.security
   </sect2>
 
   <sect2 xml:id="sec.admin.security.users.change-pw">
-   <title>Changing a User's Password</title>
+   <title>Changing User Password</title>
    <para>
     To change a user's password, create a LDIF file like this:
    </para>
@@ -296,6 +296,11 @@ userPassword: <replaceable>password hash</replaceable><co xml:id="co.admin.secur
    </para>
 <screen>&prompt.root;<command>ldapadd -H ldap://<replaceable>ADMINISTRATION_NODE_FQDN</replaceable>:389 -ZZ \
 -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f <replaceable>LDIF_FILE</replaceable></command></screen>
+  </sect2>
+
+  <sect2 xml:id="sec.admin.security.users.delete">
+   <title>Deleting User</title>
+
   </sect2>
 
   <sect2 xml:id="sec.admin.security.groups">
