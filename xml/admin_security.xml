@@ -124,60 +124,62 @@
    standard LDAP administration tools for managing these users remotely. To do
    so, install the <package>openldap2</package> package on a computer in your
    network and make sure that computer can connect to the &admin_node; on port
-   389. For further information, refer to
-   <xref linkend="sec.deploy.requirements.network"/>.
+   389.
   </para>
 
-  <sect2 xml:id="sec.admin.security.users.ldap-rootpw">
-   <title>Obtaining the OpenLDAP Password</title>
+  <sect2 xml:id="sec.admin.security.users.ldap_preparation">
+   <title>Preparing LDAP Authentication</title>
    <para>
-    Before performing any administrative tasks on the
-    <phrase
-      role="productname">OpenLDAP</phrase> instance, you will need
-    to retrieve your <phrase role="productname">OpenLDAP</phrase> administrator
-    account password. To do this, run:
+    To perform administrative tasks from a
+    <replaceable>WORKSTATION</replaceable> on the <phrase role=
+    "productname">LDAP</phrase> directory, retrieve the <phrase
+    role="productname">OpenLDAP</phrase> administrator password and
+    install the LDAP certificate.
    </para>
-<screen>&prompt.user;<command>ssh root@<replaceable>caasp-admin.example.com</replaceable> \
-cat /var/lib/misc/infra-secrets/openldap-password</command></screen>
-   <para>
-    Make sure to replace <replaceable>caasp-admin.example.com</replaceable>
-    with the FQDN or IP of your &admin_node;.
-   </para>
-  </sect2>
-
-  <sect2 xml:id="sec.admin.security.users.import-cert">
-   <title>Importing the LDAP Certificate</title>
-   <para>
-    To be able to perform any LDAP queries, you first need to import the
-    generated LDAP certificate to your local trusted certificate storage. On
-    the &admin_node;, run:
-   </para>
-<screen>&prompt.root;<command>docker exec -it $(docker ps | grep openldap | \
+   <procedure>
+    <step>
+     <para>
+      Retrieve the LDAP admin password. Note the password for later use.
+     </para>
+<screen>&prompt.root.admin;<command>cat /var/lib/misc/infra-secrets/openldap-password</command></screen>
+    </step>
+    <step>
+     <para>
+      Import the LDAP certificate to your local trusted certificate
+      storage. On the &admin_node;, run:
+     </para>
+<screen>&prompt.root.admin;<command>docker exec -it $(docker ps | grep openldap | \
 awk '{print $1}') cat /etc/openldap/pki/ca.crt > ~/ca.pem</command>
-&prompt.root;<command>scp ~/ca.pem root@<replaceable>WORKSTATION</replaceable>:/usr/share/pki/trust/anchors/ca-caasp.crt.pem</command></screen>
-   <para>
-    Replace <replaceable>WORKSTATION</replaceable> with the appropriate
-    hostname for the workstation where you wish to run the LDAP queries.
-   </para>
-   <para>
-    Then, on that workstation, run:
-   </para>
+&prompt.root.admin;<command>scp ~/ca.pem root@<replaceable>WORKSTATION</replaceable>:/usr/share/pki/trust/anchors/ca-caasp.crt.pem</command></screen>
+     <para>
+      Replace <replaceable>WORKSTATION</replaceable> with the appropriate
+      hostname for the workstation where you wish to run the LDAP queries.
+     </para>
+    </step>
+    <step>
+     <para>
+      Then, on that workstation, run:
+     </para>
 <screen>&prompt.root;<command>update-ca-certificates</command></screen>
+    </step>
+   </procedure>
   </sect2>
 
   <sect2 xml:id="sec.admin.security.users.add">
-   <title>Adding New Users</title>
+   <title>Adding New User</title>
    <para>
     By default, when you create the first user in &dashboard; during bootstrap
     of your cluster, that user is granted <literal>Cluster
     Administrator</literal> privileges within &kube;. You can add additional
     users with these rights by adding new entries into the LDAP directory.
    </para>
-   <para>
-    To add a new user, create a LDIF file like this:
-   </para>
-   <example xml:id="ex.admin.security.users.add">
-    <title>LDIF File For a New User</title>
+   <procedure>
+    <step>
+     <para>
+      To add a new user, create a LDIF file like this:
+     </para>
+     <example xml:id="ex.admin.security.users.add">
+      <title>LDIF File For a New User</title>
 <screen>dn: uid=<replaceable>USERID</replaceable><co xml:id="co.admin.security.users.add.uid"/>,ou=People,dc=infra,dc=caasp,dc=local
 objectClass: person
 objectClass: inetOrgPerson
@@ -188,171 +190,189 @@ givenname: <replaceable>FIRST_NAME</replaceable> <co xml:id="co.admin.security.u
 sn: <replaceable>SURNAME</replaceable> <co xml:id="co.admin.security.users.add.surname"/>
 cn: <replaceable>FULL_NAME</replaceable> <co xml:id="co.admin.security.users.add.fullname"/>
 mail: <replaceable>E-MAIL_ADDRESS</replaceable> <co xml:id="co.admin.security.users.add.email"/></screen>
-    <para>
-     Make sure to replace all the parameters indicated <replaceable>LIKE
-     THIS</replaceable> in the template above as follows:
-    </para>
-    <calloutlist>
-     <callout arearefs="co.admin.security.users.add.uid">
-      <para>
-       User ID (UID) of the new user. Needs to be unique.
-      </para>
-     </callout>
-     <callout arearefs="co.admin.security.users.add.password">
-      <para>
-       The user's hashed password. Use <command>/usr/sbin/slappasswd</command>
-       to generate the hash.
-      </para>
-     </callout>
-     <callout arearefs="co.admin.security.users.add.firstname">
-      <para>
-       The user's first name
-      </para>
-     </callout>
-     <callout arearefs="co.admin.security.users.add.surname">
-      <para>
-       The user's last name
-      </para>
-     </callout>
-     <callout arearefs="co.admin.security.users.add.fullname">
-      <para>
-       The user's full name
-      </para>
-     </callout>
-     <callout arearefs="co.admin.security.users.add.email">
-      <para>
-       The user's e-mail address. It is used as the login name to &dashboard;
-       and &kube;.
-      </para>
-     </callout>
-    </calloutlist>
-   </example>
-   <para>
-    Populate your OpenLDAP server with this LDIF file:
-   </para>
+      <calloutlist>
+       <callout arearefs="co.admin.security.users.add.uid">
+        <para>
+         User ID (UID) of the new user. Needs to be unique.
+        </para>
+       </callout>
+       <callout arearefs="co.admin.security.users.add.password">
+        <para>
+         The user's hashed password. Use <command>/usr/sbin/slappasswd</command>
+         to generate the hash.
+        </para>
+       </callout>
+       <callout arearefs="co.admin.security.users.add.firstname">
+        <para>
+         The user's first name
+        </para>
+       </callout>
+       <callout arearefs="co.admin.security.users.add.surname">
+        <para>
+         The user's last name
+        </para>
+       </callout>
+       <callout arearefs="co.admin.security.users.add.fullname">
+        <para>
+         The user's full name
+        </para>
+       </callout>
+       <callout arearefs="co.admin.security.users.add.email">
+        <para>
+         The user's e-mail address. It is used as the login name to &dashboard;
+         and &kube;.
+        </para>
+       </callout>
+      </calloutlist>
+     </example>
+    </step>
+    <step>
+     <para>
+      Populate your OpenLDAP server with this LDIF file:
+     </para>
 <screen>&prompt.user;<command>ldapadd -H ldap://<replaceable>ADMINISTRATION_NODE_FQDN</replaceable>:389 -ZZ \
 -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f <replaceable>LDIF_FILE</replaceable></command></screen>
-   <para>
-    To add this new user to the existing Administrators group, create a new
-    LDIF file like this:
-   </para>
-   <example xml:id="ex.admin.auth.users.add.admin">
-    <title>LDIF File to Add a User to the 'Administrators' Group</title>
-<screen>dn: cn=Administrators,ou=Groups,dc=infra,dc=caasp,dc=local
-changetype: modify
-add: uniqueMember
-uniqueMember: uid=<replaceable>USERID</replaceable><co xml:id="co.admin.security.users.add.admin"/>,ou=People,dc=infra,dc=caasp,dc=local</screen>
-    <para>
-     Make sure to replace all the parameters indicated <replaceable>LIKE
-     THIS</replaceable> in the template above as follows:
-    </para>
-    <calloutlist>
-     <callout arearefs="co.admin.security.users.add.admin">
-      <para>
-       The user ID (UID) of the user
-      </para>
-     </callout>
-    </calloutlist>
-   </example>
-   <para>
-    Populate your <phrase role="productname">OpenLDAP</phrase> server with the
-    LDIF file:
-   </para>
-<screen>&prompt.user;<command>ldapadd -H ldap://<replaceable>ADMINISTRATION_NODE_FQDN</replaceable>:389 -ZZ \
--D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f <replaceable>LDIF_FILE</replaceable></command></screen>
+    </step>
+   </procedure>
   </sect2>
 
-  <sect2 xml:id="sec.admin.security.users.change-pw">
-   <title>Changing User Password</title>
+  <sect2 xml:id="sec.admin.security.users.change">
+   <title>Changing User</title>
    <para>
-    To change a user's password, create a LDIF file like this:
+    The following procedure details how to modify a user in the
+    LDAP directory. The example LDIF files detail how to change a user
+    password and add a user to the <literal>Administrators</literal>
+    group. To modify other fields, use the the password example and
+    replace <literal>userPassword</literal> with other field names.
    </para>
-   <example xml:id="ex.admin.security.users.change-pw">
-    <title>LDIF File to Change a User's Password</title>
-<screen>dn: uid=<replaceable>userid</replaceable><co xml:id="co.admin.security.users.change-pw.uid"/>,ou=People,dc=infra,dc=caasp,dc=local
+   <procedure>
+    <step>
+     <para>
+      Create a LDIF file that contains the change to the LDAP directory.
+     </para>
+     <example xml:id="ex.admin.security.users.change_password">
+      <title>Change User Password</title>
+<screen>dn: uid=<replaceable>USERID</replaceable><co xml:id="co.admin.security.users.change-pw.uid"/>,ou=People,dc=infra,dc=caasp,dc=local
 changetype: modify
 replace: userPassword
-userPassword: <replaceable>password hash</replaceable><co xml:id="co.admin.security.users.change-pw.password"/></screen>
-    <para>
-     Make sure to replace all the parameters indicated <replaceable>LIKE
-     THIS</replaceable> in the template above as follows:
-    </para>
-    <calloutlist>
-     <callout arearefs="co.admin.security.users.change-pw.uid">
-      <para>
-       User ID (UID) of the user.
-      </para>
-     </callout>
-     <callout arearefs="co.admin.security.users.change-pw.password">
-      <para>
-       The user's new hashed password. Use
-       <command>/usr/sbin/slappasswd</command> to generate the hash.
-      </para>
-     </callout>
-    </calloutlist>
-   </example>
-   <para>
-    Populate your OpenLDAP server with this LDIF file:
-   </para>
-<screen>&prompt.user;<command>ldapadd -H ldap://<replaceable>ADMINISTRATION_NODE_FQDN</replaceable>:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local \
+userPassword: <replaceable>PASSWORD</replaceable><co xml:id="co.admin.security.users.change-pw.password"/></screen>
+      <calloutlist>
+       <callout arearefs="co.admin.security.users.change-pw.uid">
+        <para>
+         <replaceable>USERID</replaceable> with the user's ID.
+        </para>
+       </callout>
+       <callout arearefs="co.admin.security.users.change-pw.password">
+        <para>
+         <replaceable>PASSWORD</replaceable> with the user's new hashed
+         password. Use <command>/usr/sbin/slappasswd</command> to
+         generate the hash.
+        </para>
+       </callout>
+      </calloutlist>
+     </example>
+     <example xml:id="ex.admin.security.users.change_group">
+      <title>Add User to Administrators Group</title>
+  <screen>dn: cn=Administrators,ou=Groups,dc=infra,dc=caasp,dc=local
+  changetype: modify
+  add: uniqueMember
+  uniqueMember: uid=<replaceable>USERID</replaceable><co xml:id="co.admin.security.users.add.admin"/>,ou=People,dc=infra,dc=caasp,dc=local</screen>
+      <calloutlist>
+       <callout arearefs="co.admin.security.users.add.admin">
+        <para>
+         <replaceable>USERID</replaceable> with the user's ID.
+        </para>
+       </callout>
+      </calloutlist>
+     </example>
+    </step>
+    <step>
+     <para>
+      Execute <command>ldapmodify</command>.
+     </para>
+<screen>&prompt.user;<command>ldapmodify -H ldap://<replaceable>ADMIN_NODE</replaceable>:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local \
     -w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f <replaceable>LDIF_FILE</replaceable></command></screen>
+    </step>
+   </procedure>
   </sect2>
 
   <sect2 xml:id="sec.admin.security.users.delete">
    <title>Deleting User</title>
-
-<screen>&prompt.user;<command>ldapdelete -H ldap://<replaceable>ADMINISTRATION_NODE_FQDN</replaceable>:389 -ZZ -D \
-"uid=<replaceable>USER_ID</replaceable>,ou=People,dc=infra,dc=caasp,dc=local" -w <replaceable>LDAP_ADMIN_PASSWORD</replaceable></command></screen>
+    <para>
+     The following procedure details how to delete a user from the
+     LDAP database.
+    </para>
+    <procedure>
+     <step>
+      <para>
+       Create an LDIF file that contains that specifies the distinguished
+       name of the entry and a deletion command.
+      </para>
+<screen>dn: uid=<replaceable>USER_ID</replaceable>,ou=People,dc=infra,dc=caasp,dc=local
+changetype: delete</screen>
+     </step>
+     <step>
+      <para>
+       Execute <command>ldapmodify</command>.
+      </para>
+<screen>&prompt.user;<command>ldapmodify -H ldap://<replaceable>ADMIN_NODE</replaceable>:389 -ZZ -D uid=<replaceable>USER_ID</replaceable>,ou=People,dc=infra,dc=caasp,dc=local \
+    -w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f <replaceable>LDIF_DELETE</replaceable></command></screen>
+     </step>
+    </procedure>
   </sect2>
 
   <sect2 xml:id="sec.admin.security.groups">
-   <title>Adding New Groups</title>
+   <title>Adding New Group</title>
    <para>
-    Say you have users that you want to grant access to manage a single
-    namespace in Kubernetes. To do this, first create your users as mentioned
-    in <xref linkend="sec.admin.security.users.add"/>. Then create a new group:
+    To grant users access to manage a single namespace in &kube;, first
+    create your users as mentioned in <xref linkend=
+    "sec.admin.security.users.add"/>. Then execute the following
+    procedure.
    </para>
-   <example xml:id="ex.admin.security.groups">
-    <title>LDIF File to Add a New Group</title>
-<screen>
-dn: cn=<replaceable>group name</replaceable><co xml:id="co.admin.security.groups.cn"/>,ou=Groups,dc=infra,dc=caasp,dc=local
+   <procedure>
+    <step>
+     <para>
+       Create a LDIF file for a new group:
+     </para>
+     <example xml:id="ex.admin.security.groups">
+      <title>LDIF File to Add a New Group</title>
+<screen>dn: cn=<replaceable>group name</replaceable><co xml:id="co.admin.security.groups.cn"/>,ou=Groups,dc=infra,dc=caasp,dc=local
 objectclass: top
 objectclass: groupOfUniqueNames
 cn: <replaceable>group name</replaceable><xref linkend="co.admin.security.groups.cn" xrefstyle="select:label nopage"/>
 uniqueMember: uid=<replaceable>member1</replaceable>,<co xml:id="co.admin.security.groups.member"/>ou=People,dc=infra,dc=caasp,dc=local
 uniqueMember: uid=<replaceable>member2</replaceable>,<xref linkend="co.admin.security.groups.member" xrefstyle="select:label nopage"/>ou=People,dc=infra,dc=caasp,dc=local
-uniqueMember: uid=<replaceable>member3</replaceable>,<xref linkend="co.admin.security.groups.member" xrefstyle="select:label nopage"/>ou=People,dc=infra,dc=caasp,dc=local
-     </screen>
-    <para>
-     Make sure to replace all the parameters indicated <replaceable>LIKE
-     THIS</replaceable> in the template above as follows:
-    </para>
-    <calloutlist>
-     <callout arearefs="co.admin.security.groups.cn">
-      <para>
-       The group's name.
-      </para>
-     </callout>
-     <callout arearefs="co.admin.security.groups.member">
-      <para>
-       Members of the group. Repeat the <literal>uniqueMember</literal>
-       attribute for every member of this group.
-      </para>
-     </callout>
-    </calloutlist>
-   </example>
-   <para>
-    Populate your <phrase role="productname">OpenLDAP</phrase> server with the
-    LDIF file:
-   </para>
+uniqueMember: uid=<replaceable>member3</replaceable>,<xref linkend="co.admin.security.groups.member" xrefstyle="select:label nopage"/>ou=People,dc=infra,dc=caasp,dc=local</screen>
+      <calloutlist>
+       <callout arearefs="co.admin.security.groups.cn">
+        <para>
+         The group's name.
+        </para>
+       </callout>
+       <callout arearefs="co.admin.security.groups.member">
+        <para>
+         Members of the group. Repeat the <literal>uniqueMember</literal>
+         attribute for every member of this group.
+        </para>
+       </callout>
+      </calloutlist>
+     </example>
+    </step>
+    <step>
+     <para>
+      Populate your <phrase role="productname">OpenLDAP</phrase> server
+      with the LDIF file:
+     </para>
 <screen>&prompt.user;<command>ldapadd -H ldap://<replaceable>ADMINISTRATION_NODE_FQDN</replaceable>:389 -ZZ \
 -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f <replaceable>LDIF_FILE</replaceable></command></screen>
-   <para>
-    Next, create a role binding to allow this new LDAP group access in &kube;.
-    Create a Kubernetes deployment descriptor like this:
-   </para>
-   <example xml:id="ex.admin.security.groups.role">
-    <title>Kubernetes Role Binding Deployment Descriptor</title>
+    </step>
+    <step>
+     <para>
+      Next, create a role binding to allow this new LDAP group access in &kube;.
+      Create a Kubernetes deployment descriptor like this:
+     </para>
+     <example xml:id="ex.admin.security.groups.role">
+      <title>Kubernetes Role Binding Deployment Descriptor</title>
 <screen># Define a Role and its permissions in &kube;
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -380,58 +400,62 @@ roleRef:
   kind: Role
   name: <replaceable>ROLE_NAME</replaceable><xref linkend="co.admin.security.groups.role-name" xrefstyle="select:label nopage"/>
   apiGroup: rbac.authorization.k8s.io</screen>
-    <calloutlist>
-     <callout arearefs="co.admin.security.groups.role-name">
-      <para>
-       Name of the new role in &kube;
-      </para>
-     </callout>
-     <callout arearefs="co.admin.security.groups.role-namespace">
-      <para>
-       Namespace the new group should be allowed to access. Use
-       <literal>default</literal> for &kube;' default namespace
-      </para>
-     </callout>
-     <callout arearefs="co.admin.security.groups.apigroup">
-      <para>
-       &kube; API groups &mdash; use "" for the core group
-       <literal>rbac.authorization.k8s.io</literal>
-      </para>
-     </callout>
-     <callout arearefs="co.admin.security.groups.object">
-      <para>
-       &kube; objects/resources e.g. <literal>"configMap"</literal>,
-       <literal>"Pod"</literal>, etc.
-      </para>
-     </callout>
-     <callout arearefs="co.admin.security.groups.resnames">
-      <para>
-       specific named resources, e.g. <literal>"my-pod"</literal>,
-       <literal>"my-config-map"</literal>
-      </para>
-     </callout>
-     <callout arearefs="co.admin.security.groups.function">
-      <para>
-       Functions as seen in <literal>kubectl</literal> subcommands, e.g.
-       "list", "get", "watch", "update"
-      </para>
-     </callout>
-     <callout arearefs="co.admin.security.groups.role-binding-name">
-      <para>
-       Name of the role binding in &kube;
-      </para>
-     </callout>
-     <callout arearefs="co.admin.security.groups.ldap-group-name">
-      <para>
-       Name of the corresponding group in LDAP
-      </para>
-     </callout>
-    </calloutlist>
-   </example>
-   <para>
-    Add this role and binding to &kube;:
-   </para>
+      <calloutlist>
+       <callout arearefs="co.admin.security.groups.role-name">
+        <para>
+         Name of the new role in &kube;
+        </para>
+       </callout>
+       <callout arearefs="co.admin.security.groups.role-namespace">
+        <para>
+         Namespace the new group should be allowed to access. Use
+         <literal>default</literal> for &kube;' default namespace
+        </para>
+       </callout>
+       <callout arearefs="co.admin.security.groups.apigroup">
+        <para>
+         &kube; API groups &mdash; use "" for the core group
+         <literal>rbac.authorization.k8s.io</literal>
+        </para>
+       </callout>
+       <callout arearefs="co.admin.security.groups.object">
+        <para>
+         &kube; objects/resources e.g. <literal>"configMap"</literal>,
+         <literal>"Pod"</literal>, etc.
+        </para>
+       </callout>
+       <callout arearefs="co.admin.security.groups.resnames">
+        <para>
+         specific named resources, e.g. <literal>"my-pod"</literal>,
+         <literal>"my-config-map"</literal>
+        </para>
+       </callout>
+       <callout arearefs="co.admin.security.groups.function">
+        <para>
+         Functions as seen in <literal>kubectl</literal> subcommands, e.g.
+         "list", "get", "watch", "update"
+        </para>
+       </callout>
+       <callout arearefs="co.admin.security.groups.role-binding-name">
+        <para>
+         Name of the role binding in &kube;
+        </para>
+       </callout>
+       <callout arearefs="co.admin.security.groups.ldap-group-name">
+        <para>
+         Name of the corresponding group in LDAP
+        </para>
+       </callout>
+      </calloutlist>
+     </example>
+    </step>
+    <step>
+     <para>
+      Add this role and binding to &kube;:
+     </para>
 <screen>&prompt.user;<command>kubectl apply -f <replaceable>DEPLOYMENT_DESCRIPTOR_FILE</replaceable></command></screen>
+    </step>
+   </procedure>
   </sect2>
 
   <sect2>
