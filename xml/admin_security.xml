@@ -51,9 +51,13 @@
     <listitem>
      <para>
       &productname; uses <emphasis>role-based access control</emphasis>
-      (<emphasis>RBAC</emphasis>). Roles and users are managed with
-      LDAP. For details, refer to <xref linkend=
-      "sec.admin.security.users" />.
+      (<emphasis>RBAC</emphasis>). For &kube;, RBAC defines which
+      subjects can do which operations on API resources. Groups and
+      users, called <emphasis>subjects</emphasis> in &kube;, are
+      managed with LDAP. For details, refer to <xref linkend=
+      "sec.admin.security.users" />. To define which operations, called
+      <emphasis>verbs</emphasis> in &kube;, are allowed for subjects,
+      refer to <xref linkend="sec.admin.security.role_binding" />.
      </para>
     </listitem>
    </varlistentry>
@@ -377,10 +381,260 @@ uniqueMember: uid=<replaceable>member3</replaceable>,<xref linkend="co.admin.sec
 <screen>&prompt.user;<command>ldapadd -H ldap://<replaceable>ADMINISTRATION_NODE_FQDN</replaceable>:389 -ZZ \
 -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f <replaceable>LDIF_FILE</replaceable></command></screen>
     </step>
+   </procedure>
+  </sect2>
+ </sect1>
+ <sect1 xml:id="sec.admin.security.role_binding">
+  <title>Role Management</title>
+  <para>
+   &productname; uses <emphasis>role-based access control</emphasis>
+   authorization for &kube;. Roles define, which
+   <emphasis>subjects</emphasis> (users or groups) can use which
+   <emphasis>verbs</emphasis> (operations) on
+   <emphasis>resources</emphasis>. The following sections provide an
+   overview of resources, verbs and how to create role bindings.
+  </para>
+  <sect2 xml:id="sec.admin.security.role_binding.verb">
+   <title>List of Verbs</title>
+   <para>
+    This section provides an overview of the most common
+    <emphasis>verbs</emphasis> (operations) used for defining roles.
+    Verbs correspond to sub-commands of <command>kubectl</command>.
+   </para>
+   <variablelist>
+    <varlistentry>
+     <term>create</term>
+     <listitem>
+      <para>
+       Create a resource.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>delete</term>
+     <listitem>
+      <para>
+       Delete resources.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>deletecollection</term>
+     <listitem>
+      <para>
+       Delete a collection of CronJob.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>get</term>
+     <listitem>
+      <para>
+       Display individual resource.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>list</term>
+     <listitem>
+      <para>
+       Display collections.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>patch</term>
+     <listitem>
+      <para>
+       Update an API object in place.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>proxy</term>
+     <listitem>
+      <para>
+       Allows running &kubectl; in a mode where it acts as a reverse
+       proxy.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>update</term>
+     <listitem>
+      <para>
+       Update fields of a resource, for example annotations or labels.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>watch</term>
+     <listitem>
+      <para>
+       Watch resource.
+      </para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+  </sect2>
+  <sect2 xml:id="sec.admin.security.role_binding.resource">
+   <title>List of Resources</title>
+   <para>
+    This section provides an overview of the most common
+    <emphasis>resources</emphasis> used for defining roles.
+   </para>
+   <variablelist>
+    <varlistentry>
+     <term>Autoscaler</term>
+     <listitem>
+      <para>
+       <link xlink:href=
+       "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/"
+       />
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>ConfigMaps</term>
+     <listitem>
+      <para>
+       <link xlink:href=
+       "https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/"
+       />
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>Cronjob</term>
+     <listitem>
+      <para>
+       <link xlink:href=
+       "https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/"
+       />
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>DaemonSet</term>
+     <listitem>
+      <para>
+       <link xlink:href=
+       "https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/"
+       />
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>Deployment</term>
+     <listitem>
+      <para>
+       <link xlink:href=
+       "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/"
+       />
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>Ingress</term>
+     <listitem>
+      <para>
+       <link xlink:href=
+       "https://kubernetes.io/docs/concepts/services-networking/ingress/"
+       />
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>Job</term>
+     <listitem>
+      <para>
+       <link xlink:href=
+       "https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/"
+       />
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>Namespace</term>
+     <listitem>
+      <para>
+       <link xlink:href=
+       "https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/"
+       />
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>Node</term>
+     <listitem>
+      <para>
+       <link xlink:href=
+       "https://kubernetes.io/docs/concepts/architecture/nodes/"
+       />
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>Pod</term>
+     <listitem>
+      <para>
+       <link xlink:href=
+       "https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/"
+       />
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>PV</term>
+     <listitem>
+      <para>
+       <link xlink:href=
+       "https://kubernetes.io/docs/concepts/storage/persistent-volumes/"
+       />
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>Secrets</term>
+     <listitem>
+      <para>
+       <link xlink:href=
+       "https://kubernetes.io/docs/concepts/configuration/secret/"
+       />
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>Service</term>
+     <listitem>
+      <para>
+       <link xlink:href=
+       "https://kubernetes.io/docs/concepts/services-networking/service/"
+       />
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>ReplicaSets</term>
+     <listitem>
+      <para>
+       <link xlink:href=
+       "https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/"
+       />
+      </para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+  </sect2>
+  <sect2 xml:id="sec.admin.security.role_binding.create">
+   <title>Create Role Bindings</title>
+
+   <procedure>
     <step>
      <para>
-      Next, create a role binding to allow this new LDAP group access in &kube;.
-      Create a Kubernetes deployment descriptor like this:
+      Create a role binding to allow this new LDAP group access in
+      &kube;. Create a file that  contains a Kubernetes deployment
+      descriptor like this:
      </para>
      <example xml:id="ex.admin.security.groups.role">
       <title>Kubernetes Role Binding Deployment Descriptor</title>
@@ -467,15 +721,6 @@ roleRef:
 <screen>&prompt.user;<command>kubectl apply -f <replaceable>DEPLOYMENT_DESCRIPTOR_FILE</replaceable></command></screen>
     </step>
    </procedure>
-  </sect2>
-
-  <sect2>
-   <title>Further information</title>
-   <para>
-    For more details on authorization in &kube;, refer to
-    <link
-     xlink:href="https://kubernetes.io/docs/admin/authorization/rbac/"></link>
-   </para>
   </sect2>
  </sect1>
  <sect1 xml:id="sec.admin.security.audit">
