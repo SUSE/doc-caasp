@@ -57,7 +57,7 @@
       managed with LDAP. For details, refer to <xref linkend=
       "sec.admin.security.users" />. To define which operations, called
       <emphasis>verbs</emphasis> in &kube;, are allowed for subjects,
-      refer to <xref linkend="sec.admin.security.role_binding" />.
+      refer to <xref linkend="sec.admin.security.role" />.
      </para>
     </listitem>
    </varlistentry>
@@ -384,7 +384,7 @@ uniqueMember: uid=<replaceable>member3</replaceable>,<xref linkend="co.admin.sec
    </procedure>
   </sect2>
  </sect1>
- <sect1 xml:id="sec.admin.security.role_binding">
+ <sect1 xml:id="sec.admin.security.role">
   <title>Role Management</title>
   <para>
    &productname; uses <emphasis>role-based access control</emphasis>
@@ -392,9 +392,10 @@ uniqueMember: uid=<replaceable>member3</replaceable>,<xref linkend="co.admin.sec
    <emphasis>subjects</emphasis> (users or groups) can use which
    <emphasis>verbs</emphasis> (operations) on
    <emphasis>resources</emphasis>. The following sections provide an
-   overview of resources, verbs and how to create role bindings.
+   overview of resources, verbs and how to create roles. Roles can
+   then be assigned to users and groups.
   </para>
-  <sect2 xml:id="sec.admin.security.role_binding.verb">
+  <sect2 xml:id="sec.admin.security.role.verb">
    <title>List of Verbs</title>
    <para>
     This section provides an overview of the most common
@@ -477,7 +478,7 @@ uniqueMember: uid=<replaceable>member3</replaceable>,<xref linkend="co.admin.sec
     </varlistentry>
    </variablelist>
   </sect2>
-  <sect2 xml:id="sec.admin.security.role_binding.resource">
+  <sect2 xml:id="sec.admin.security.role.resource">
    <title>List of Resources</title>
    <para>
     This section provides an overview of the most common
@@ -626,101 +627,160 @@ uniqueMember: uid=<replaceable>member3</replaceable>,<xref linkend="co.admin.sec
     </varlistentry>
    </variablelist>
   </sect2>
-  <sect2 xml:id="sec.admin.security.role_binding.create">
-   <title>Create Role Bindings</title>
-
-   <procedure>
-    <step>
-     <para>
-      Create a role binding to allow this new LDAP group access in
-      &kube;. Create a file that  contains a Kubernetes deployment
-      descriptor like this:
-     </para>
-     <example xml:id="ex.admin.security.groups.role">
-      <title>Kubernetes Role Binding Deployment Descriptor</title>
-<screen># Define a Role and its permissions in &kube;
-kind: Role
+  <sect2 xml:id="sec.admin.security.role.create">
+   <title>Create Role</title>
+   <para>
+    Roles are defined in YAML files. To apply role definitions to
+    &kube;, use <command>kubectl apply -f
+    <replaceable>YAML_FILE</replaceable></command>. The following
+    examples provide an overview about different use cases of roles.
+   </para>
+   <example>
+    <title>Simple Role for Core Resource</title>
+    <para>
+     This example allows to <literal>get</literal>, <literal>watch</literal>
+     and <literal>list</literal> all <literal>pods</literal> in the
+     namespace <literal>default</literal>.
+    </para>
+    <screen>kind: Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: <replaceable>ROLE_NAME</replaceable><co xml:id="co.admin.security.groups.role-name"/>
-  namespace: <replaceable>APPLICABLE_NAMESPACE</replaceable><co xml:id="co.admin.security.groups.role-namespace"/>
-# This set of rules amounts to "allow all"
+  name: view-pods<co xml:id="co.admin.security.role.example1.name"/>
+  namespace: default<co xml:id="co.admin.security.role.example1.namespace"/>
 rules:
-- apiGroups: [""]<co xml:id="co.admin.security.groups.apigroup"/>
-  resources: ["<replaceable>CONFIGMAP</replaceable>"]<co xml:id="co.admin.security.groups.object"/>
-  resourceNames: ["<replaceable>MY-POD</replaceable>"]<co xml:id="co.admin.security.groups.resnames"/>
-  verbs: ["<replaceable>LIST</replaceable>"]<co xml:id="co.admin.security.groups.function"/>
----
-# Map an LDAP group to this &kube; role
-kind: RoleBinding
+- apiGroups: [""]<co xml:id="co.admin.security.role.example1.apigroups"/>
+  resources: ["pods"]<co xml:id="co.admin.security.role.example1.resources"/>
+  verbs: ["get", "watch", "list"]<co xml:id="co.admin.security.role.example1.verbs"/></screen>
+    <calloutlist>
+       <callout arearefs="co.admin.security.role.example1.name">
+        <para>
+         Name of the role. This is required to associate the rule with
+         a group or user. For details, refer to <xref linkend="sec.admin.security.role.create_binding" />.
+        </para>
+       </callout>
+       <callout arearefs="co.admin.security.role.example1.namespace">
+        <para>
+         Namespace the new group should be allowed to access. Use
+         <literal>default</literal> for &kube;' default namespace.
+        </para>
+       </callout>
+       <callout arearefs="co.admin.security.role.example1.apigroups">
+        <para>
+         &kube; API groups. Use "" for the core group
+         <literal>rbac.authorization.k8s.io</literal>.
+        </para>
+       </callout>
+       <callout arearefs="co.admin.security.role.example1.resources">
+        <para>
+         &kube; resources. For a list of available resources, refer to
+         <xref linkend="sec.admin.security.role.resource" />.
+        </para>
+       </callout>
+       <callout arearefs="co.admin.security.role.example1.verbs">
+        <para>
+         &kube; verbs. For a list of available verbs, refer to
+         <xref linkend="sec.admin.security.role.verb" />.
+        </para>
+       </callout>
+    </calloutlist>
+   </example>
+   <example>
+    <title>Clusterwide Creation of Pods</title>
+    <para>
+     This example allows to <literal>create</literal>
+     <literal>pods</literal> clusterwide. Note the
+     <literal>ClusterRole</literal> value for <option>kind</option>.
+    </para>
+    <screen>kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: admin-create-pods<co xml:id="co.admin.security.role.example2.name"/>
+rules:
+- apiGroups: [""]<co xml:id="co.admin.security.role.example2.apigroups"/>
+  resources: ["pods"]<co xml:id="co.admin.security.role.example2.resources"/>
+  verbs: ["create"]<co xml:id="co.admin.security.role.example2.verbs"/></screen>
+    <calloutlist>
+       <callout arearefs="co.admin.security.role.example2.name">
+        <para>
+         Name of the role. This is required to associate the rule with
+         a group or user. For details, refer to <xref linkend="sec.admin.security.role.create_binding" />.
+        </para>
+       </callout>
+       <callout arearefs="co.admin.security.role.example2.apigroups">
+        <para>
+         &kube; API groups. Use "" for the core group
+         <literal>rbac.authorization.k8s.io</literal>.
+        </para>
+       </callout>
+       <callout arearefs="co.admin.security.role.example2.resources">
+        <para>
+         &kube; resources. For a list of available resources, refer to
+         <xref linkend="sec.admin.security.role.resource" />.
+        </para>
+       </callout>
+       <callout arearefs="co.admin.security.role.example2.verbs">
+        <para>
+         &kube; verbs. For a list of available verbs, refer to
+         <xref linkend="sec.admin.security.role.verb" />.
+        </para>
+       </callout>
+    </calloutlist>
+   </example>
+  </sect2>
+  <sect2 xml:id="sec.admin.security.role.create_binding">
+   <title>Create Role Bindings</title>
+   <para>
+    To bind a group or user to a rule, create a YAML file that contains
+    the role binding description. Then apply the binding with
+    <command>kubectl apply -f
+    <replaceable>YAML_FILE</replaceable></command>. The following
+    examples provide an overview about different use cases of role
+    bindings.
+   </para>
+   <example xml:id="ex.admin.security.groups.role">
+    <title>Binding a Group to a Role</title>
+    <para>
+     This example shows how to bind a group to a defined role.
+    </para>
+<screen>kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
   name: <replaceable>ROLE_BINDING_NAME</replaceable><co xml:id="co.admin.security.groups.role-binding-name"/>
-  namespace: <replaceable>APPLICABLE_NAMESPACE</replaceable><xref linkend="co.admin.security.groups.role-namespace" xrefstyle="select:label nopage"/>
+  namespace: <replaceable>NAMESPACE</replaceable><co xml:id="co.admin.security.groups.role-namespace"/>
 subjects:
 - kind: Group
   name: <replaceable>LDAP_GROUP_NAME</replaceable><co xml:id="co.admin.security.groups.ldap-group-name"/>
   apiGroup: rbac.authorization.k8s.io
 roleRef:
-  kind: Role
-  name: <replaceable>ROLE_NAME</replaceable><xref linkend="co.admin.security.groups.role-name" xrefstyle="select:label nopage"/>
+- kind: Role
+  name: <replaceable>ROLE_NAME</replaceable><co xml:id="co.admin.security.groups.role-name"/>
   apiGroup: rbac.authorization.k8s.io</screen>
-      <calloutlist>
-       <callout arearefs="co.admin.security.groups.role-name">
-        <para>
-         Name of the new role in &kube;
-        </para>
-       </callout>
-       <callout arearefs="co.admin.security.groups.role-namespace">
-        <para>
-         Namespace the new group should be allowed to access. Use
-         <literal>default</literal> for &kube;' default namespace
-        </para>
-       </callout>
-       <callout arearefs="co.admin.security.groups.apigroup">
-        <para>
-         &kube; API groups &mdash; use "" for the core group
-         <literal>rbac.authorization.k8s.io</literal>
-        </para>
-       </callout>
-       <callout arearefs="co.admin.security.groups.object">
-        <para>
-         &kube; objects/resources e.g. <literal>"configMap"</literal>,
-         <literal>"Pod"</literal>, etc.
-        </para>
-       </callout>
-       <callout arearefs="co.admin.security.groups.resnames">
-        <para>
-         specific named resources, e.g. <literal>"my-pod"</literal>,
-         <literal>"my-config-map"</literal>
-        </para>
-       </callout>
-       <callout arearefs="co.admin.security.groups.function">
-        <para>
-         Functions as seen in <literal>kubectl</literal> subcommands, e.g.
-         "list", "get", "watch", "update"
-        </para>
-       </callout>
-       <callout arearefs="co.admin.security.groups.role-binding-name">
-        <para>
-         Name of the role binding in &kube;
-        </para>
-       </callout>
-       <callout arearefs="co.admin.security.groups.ldap-group-name">
-        <para>
-         Name of the corresponding group in LDAP
-        </para>
-       </callout>
-      </calloutlist>
-     </example>
-    </step>
-    <step>
-     <para>
-      Add this role and binding to &kube;:
-     </para>
-<screen>&prompt.user;<command>kubectl apply -f <replaceable>DEPLOYMENT_DESCRIPTOR_FILE</replaceable></command></screen>
-    </step>
-   </procedure>
+    <calloutlist>
+     <callout arearefs="co.admin.security.groups.role-binding-name">
+      <para>
+       Defines a name for this new role binding.
+      </para>
+     </callout>
+     <callout arearefs="co.admin.security.groups.role-namespace">
+      <para>
+       Name of the namespace for which the binding applies.
+      </para>
+     </callout>
+     <callout arearefs="co.admin.security.groups.role-name">
+      <para>
+       Name of the role used. For defining rules, refer to
+       <xref linkend="sec.admin.security.role.create" />.
+      </para>
+     </callout>
+     <callout arearefs="co.admin.security.groups.ldap-group-name">
+      <para>
+       Name of the LDAP group to which this binding applies. For
+       creating groups, refer to <xref linkend=
+       "sec.admin.security.groups" />.
+      </para>
+     </callout>
+    </calloutlist>
+   </example>
   </sect2>
  </sect1>
  <sect1 xml:id="sec.admin.security.audit">
