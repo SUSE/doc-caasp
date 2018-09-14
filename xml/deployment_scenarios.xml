@@ -16,18 +16,178 @@
   </dm:docmanager>
  </info>
 
- <sect1 xml:id="sec.deploy.scenarios.concepts">
-  <title>Deployment Scenario Concepts</title>
-  <informalfigure>
-   <mediaobject>
-    <imageobject role="fo">
-     <imagedata fileref="airgap.png" width="100%"/>
-    </imageobject>
-    <imageobject role="html">
-     <imagedata fileref="airgap.png" width="100%"/>
-    </imageobject>
-   </mediaobject>
-  </informalfigure>
- </sect1>
+ <sect1 xml:id="sec.deploy.scenarios.airgap">
+  <title>Airgapped installation</title>
+  <para>
+   An airgapped deployment can not have any direct connection to the Internet
+   or external networks. For this reason all data must be transferred into
+   the airgapped network in a secure fashion.
+  </para>
 
+  <important>
+   <title>Scope of this document</title>
+   <para>
+    Scope: Our description will focus on how to mirror CaaSP/SUSE resources
+   </para>
+  </important>
+
+  <sect2 xml:id="sec.deploy.scenarios.airgap.concepts">
+   <title>Concepts</title>
+   <para>
+    Requirement: Strictly NO connection (not even proxy) between internal and external/upstream layers
+   </para>
+   <para>
+    In order to disconnect &productname; from the external network we must provide ways for the components to retrieve data from alternative sources inside the trusted network.
+   </para>
+   <para>
+    The three main sources that must be replaced are:
+   </para>
+   <itemizedlist>
+    <listitem>
+     <para>
+      &mos; RPM packages
+     </para>
+     <para>
+      Provided by the &suse; package repositories
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Docker/CRI-O Container images
+     </para>
+     <para>
+      Provided by the &suse; container registry (https://registry.suse.com)
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Helm installation charts
+     </para>
+     <para>
+      Provided by the &suse; helm chart repository (https://kubernetes-charts.suse.com/)
+     </para>
+    </listitem>
+   </itemizedlist>
+
+   <informalfigure>
+    <mediaobject>
+     <imageobject role="fo">
+      <imagedata fileref="airgap.png" width="100%"/>
+     </imageobject>
+     <imageobject role="html">
+      <imagedata fileref="airgap.png" width="100%"/>
+     </imageobject>
+    </mediaobject>
+   </informalfigure>
+
+   <variablelist>
+    <varlistentry>
+     <term>upstream</term>
+     <listitem>
+      <para>
+       Outside controlled network
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>external</term>
+     <listitem>
+      <para>
+       Inside customer network, outside airgapped network
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>internal</term>
+     <listitem>
+      <para>
+       I airgapped network
+      </para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+   <para>
+    Customer needs to configure additional mirrors for upstream container registries and helm chart repos if they wish to use those.
+   </para>
+  </sect2>
+
+  <sect2 xml:id="sec.deploy.scenarios.airgap.requirements">
+   <title>Special Requirements</title>
+   <para>
+    This scenario requires additional machines and a secure way to transport
+    data to the internal update servers.
+   </para>
+   <sect3>
+    <title>Machines needed in addition to the cluster</title>
+    <para>
+     All of these can be hosted on one shared machine for each location
+    </para>
+    <para>
+     External:
+    </para>
+    <itemizedlist>
+     <listitem>
+      <para>
+       <literal>1</literal>
+       (virtual) machine for the RMT server (SLES 15)
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       <literal>1</literal>
+       (virtual) machine for every container registry
+      </para>
+     </listitem>
+    </itemizedlist>
+
+    <para>
+     Internal:
+    </para>
+    <itemizedlist>
+     <listitem>
+      <para>
+       <literal>1</literal>
+       (virtual) machine for the RMT server (SLES 15)
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       <literal>1</literal>
+       (virtual) machine for every container registry
+      </para>
+      <para>
+       You can host multiple container registries on a single machine. They must
+       be run on different ports and use different storage paths.
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       <literal>1</literal>
+       (virtual) machine for the helm chart server
+      </para>
+     </listitem>
+    </itemizedlist>
+
+    <note>
+     <title>Adjust number of mirror servers</title>
+    <para>
+     Multiply all these numbers by the amount of fallback/failover you require.
+    </para>
+    </note>
+   </sect3>
+
+   <sect3 xml:id="sec.deploy.scenarios.airgap.storage">
+    <title>Secure Storage</title>
+    <para>
+     Transferring data from the external network mirror to the internal mirror
+     can be performed in many ways. The most common way is portable storage
+     (USB keys or external hard drives).
+     </para>
+     <para>
+      Data integrity checks and secure handling procedures of such storage is
+      beyond the scope of this document.
+      </para>
+     </sect3>
+  </sect2>
+ </sect1>
 </chapter>
