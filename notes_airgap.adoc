@@ -1,19 +1,32 @@
 = Air Gapped CaaSP
 
+== Concepts
+
+image::images/src/png/airgap.png[airgap]
+
 - upstream: outside customer network
 - external: inside customer network, outside airgapped network
 - internal: inside airgapped network
 
-Requirement that there is strictly NO connection (not even proxy) between internal
-and external layer
+Requirement: Strictly NO connection (not even proxy) between internal and external/upstream layers
 
-Our description will focus on how to mirror CaaSP/SUSE resources
-customer needs to configure mirrors for upstream container registries and helm chart repos if they
-wish to use those
+Scope: Our description will focus on how to mirror CaaSP/SUSE resources
+
+Customer needs to configure additional mirrors for upstream container registries and helm chart repos if they wish to use those
+
 
 == What needs to be done
 
-Customer needs to:
+=== RPM Package Mirror
+
+. set up an external SMT/RMT mirror to update from the SUSE repository (SLES15)
+.. https://www.suse.com/documentation/sles-15/book_rmt/data/book_rmt.html
+. set up an internal SMT/RMT mirror that is updated from the external mirror (SLES15)
+.. configure all CaaSP nodes to get updates from the internal RMT server
+.. internal mirror should be up and running before deploying caasp, this makes
+rolling out much easier
+
+=== Container image registry
 
 . set up one external mirror for _each_ container registry to "pull through" images
 .. manually select images to retrieve
@@ -23,30 +36,39 @@ Customer needs to:
 ... Velum -> Settings -> Remote Registries
 .. configure CaaSP to rewrite external registry requests to that mirror
 ... Velum -> Settings -> Mirrors
-. set up an external SMT/RMT mirror to update from the SUSE repository
-.. manually select packages to retrieve (or mirror full repository)
-. set up an internal SMT/RMT mirror that is updated from the external mirror
-.. configure all nodes to get updates from the internal mirror
+.. you can host multiple registries on one internal
+
+Add disclaimer that this does not mirror anything from upstream registries other than SUSE
+external other registries can be configured in Velum
+
+=== Helm chart repository
+
 . set up an internal helm chart mirror (webserver hosting static files)
 .. add helm repo to admin node
 
-Add disclaimer that this does not mirror anything from external helm charts or registries
-Customer needs to add more mirrors or change helm chart templates to use internal resources
+Add disclaimer that this does not mirror anything from upstream helm charts other than SUSE
+
+Customer needs to add more mirrors or change helm chart templates to use upstream resources
 
 == Machines needed in addition to the cluster
+
+All of these can be hosted on one shared machine for each location
 
 Multiply all these numbers by the amount of fallback/failover you need
 
 External:
 
 - 1 (virtual) machine for every container registry
-- 1 (virtual) machine for the RMT server (SLE 15)
+- 1 (virtual) machine for the RMT server (SLES 15)
 
 Internal:
 
 - 1 (virtual) machine for every container registry
-- 1 (virtual) machine for the RMT server (SLE 15)
+- 1 (virtual) machine for the RMT server (SLES 15)
 - 1 (virtual) machine for the helm chart server
+
+You can host multiple container registries on a single machine
+you need to run these on different ports
 
 == Procedure for Update
 
@@ -84,6 +106,12 @@ Helm chart:
 
 . helm will use internal chart repo
 . external resources will fail to load
+
+== How to reconfigure existing cluster
+
+. Docker/Kubernetes: Velum -> Settings -> Remote Registries / Mirrors
+. RPM: Configure RMT server as repo
+. Helm: Configure internal mirror as repo
 
 == Issues
 
