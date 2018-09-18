@@ -245,35 +245,61 @@
   <sect2 xml:id="sec.deploy.scenarios.airgap.rpm-repository">
    <title>RPM Repository Mirror</title>
    <para>
-    RMT
+    Providing RPM packages is be handled by the <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/book_rmt.html">&rmtool; (RMT)</link>.
+    RMT will provide a repository server that holds the packages and related
+    metadata for &mos; to install them like from the upstream repository.
+    Data is synchronized once a day to the external mirror automatically.
+    You can then copy this data to your trusted storage at any point and update
+    the internal mirror.
    </para>
    <sect3>
-    <title>Mirror configuration</title>
+    <title>Mirror Configuration</title>
     <para>
-     . set up an external SMT/RMT mirror to update from the SUSE repository
-     (SLES15) ..
-     https://www.suse.com/documentation/sles-15/book_rmt/data/book_rmt.html .
-     set up an internal SMT/RMT mirror that is updated from the external mirror
-     (SLES15) .. configure all CaaSP nodes to get updates from the internal RMT
-     server .. internal mirror should be up and running before deploying caasp,
-     this makes rolling out much easier
+     Set up two <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/cha_rmt_installation.html">RMT mirrors</link>.
+     One in the external network and one in the airgapped network.
+    </para>
+    <para>
+     Configure all &productname; nodes to <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/sec_rmt_client_clientsetupscript.html">get updates from the internal RMT
+     server</link>.
+    </para>
+    <note>
+     <title>Deploy The Mirror Before &productname; Cluster Deployment</title>
+    <para>
+     The mirror on the internal network should be up and running before
+     deploying &productname;, this makes rolling out much easier since you can
+     configure the nodes during installation to use the correct internal mirror.
+     If the cluster is deployed before the mirror is running, you must
+     reconfigure all nodes manually.
+    </para>
+   </note>
+   </sect3>
+   <sect3>
+    <title>Updating The Mirror</title>
+    <para>
+     Follow the procedure in
+     <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/sec_rmt_mirroring_export_import.html" />.
+     </para>
+    </sect3>
+  </sect2>
+
+  <sect2 xml:id="sec.deploy.scenarios.airgap.container-registry">
+   <title>Container Registry</title>
+   <sect3>
+    <title>Mirror Configuration</title>
+    <para>
+     . set up one external mirror for _each_ container registry to "pull
+     through" images .. manually select images to retrieve . set up at least
+     one container registry in the internal network that is updated from the
+     external mirror(s) .. set the registry to read only in the config file of
+     the internal mirror .. configure kubernetes to use this internal registry
+     ... Velum -> Settings -> Remote Registries .. configure CaaSP to rewrite
+     external registry requests to that mirror ... Velum -> Settings -> Mirrors
+     .. you can host multiple registries on one internal Add disclaimer that
+     this does not mirror anything from upstream registries other than SUSE
+     external other registries can be configured in Velum
     </para>
     <screen>
-This guide explains how to configure an air-gapped on-premise mirror of the SUSE container registry.
 
-The final architecture of the deployment will look like the following figure.
-
-
-The deployment consists of the following entities:
-    • registry.suse.com: this is the official container registry of SUSE.
-    • mirror.local.lan: this is a regular on-premise registry of the SUSE registry. The node running this service must be able to reach the official SUSE registry.
-    • Air-gapped network: nodes inside of this network are completely isolated from the outside. They cannot reach neither the official SUSE registry nor the mirror.local.lan host.
-
-The SUSE Container as a Service Platform cluster is deployed inside the air-gapped network. The same applies to the air-gapped mirror named “mirror.secure.lan”.
-Prerequisites
-Before proceeding with the next steps the user must deploy a traditional on-premise mirror. Please consult the “how to setup an on-premise mirror of SUSE registry” documentation.
-
-The rest of the document will assume the traditional on-premise registry is running on a host named “mirror.local.lan”.
 Air-gapped registry installation
 On a regular SUSE Linux Enterprise Server machine install the “docker-distribution-registry” package. The package is available inside of the containers module:
 
@@ -334,37 +360,7 @@ The mirror is read-only and can serve only the images that were previously cache
     </screen>
    </sect3>
    <sect3>
-    <title>Updating the Mirror</title>
-    <screen>
-     RPM:
-     https://www.suse.com/documentation/sles-15/book_rmt/data/sec_rmt_mirroring_export_import.html
-     . Update external package repository from upstream
-     . Export repo state to data storage
-     . Connect data storage to internal mirror
-     . Import repo state
-     </screen>
-    </sect3>
-  </sect2>
-
-  <sect2 xml:id="sec.deploy.scenarios.airgap.container-registry">
-   <title>Container Registry</title>
-   <sect3>
-    <title>Mirror configuration</title>
-    <para>
-     . set up one external mirror for _each_ container registry to "pull
-     through" images .. manually select images to retrieve . set up at least
-     one container registry in the internal network that is updated from the
-     external mirror(s) .. set the registry to read only in the config file of
-     the internal mirror .. configure kubernetes to use this internal registry
-     ... Velum -> Settings -> Remote Registries .. configure CaaSP to rewrite
-     external registry requests to that mirror ... Velum -> Settings -> Mirrors
-     .. you can host multiple registries on one internal Add disclaimer that
-     this does not mirror anything from upstream registries other than SUSE
-     external other registries can be configured in Velum
-    </para>
-   </sect3>
-   <sect3>
-    <title>Updating the Mirror</title>
+    <title>Updating The Mirror</title>
     <screen>
      Container images:
 
@@ -378,7 +374,7 @@ The mirror is read-only and can serve only the images that were previously cache
   <sect2 xml:id="sec.deploy.scenarios.airgap.helm-charts">
    <title>Helm Chart Repository</title>
    <sect3>
-    <title>Mirror configuration</title>
+    <title>Mirror Configuration</title>
     <para>
      . set up an internal helm chart mirror (webserver hosting static files) ..
      add helm repo to admin node Add disclaimer that this does not mirror
@@ -387,7 +383,7 @@ The mirror is read-only and can serve only the images that were previously cache
     </para>
    </sect3>
    <sect3>
-    <title>Updating the Mirror</title>
+    <title>Updating The Mirror</title>
     <screen>
      Helm charts:
 
