@@ -287,35 +287,74 @@
    <sect3>
     <title>Mirror Configuration</title>
     <para>
-     . set up one external mirror for _each_ container registry to "pull
-     through" images .. manually select images to retrieve . set up at least
-     one container registry in the internal network that is updated from the
-     external mirror(s) .. set the registry to read only in the config file of
-     the internal mirror .. configure kubernetes to use this internal registry
-     ... Velum -> Settings -> Remote Registries .. configure CaaSP to rewrite
-     external registry requests to that mirror ... Velum -> Settings -> Mirrors
-     .. you can host multiple registries on one internal Add disclaimer that
-     this does not mirror anything from upstream registries other than SUSE
-     external other registries can be configured in Velum
+     Disclaimer: The presented example configuration does not mirror anything
+     from upstream registries other than SUSE. Other registries can be configured
+     in Velum and need their own mirrors.
     </para>
-    <screen>
+    <para>
+     Internal and airgapped mirrors have two different configurations.
+     Airgapped is readonly and no proxy. The internal one is more or less a
+     standard registry.
+     </para>
+    <para>
+     https://docs.docker.com/registry/configuration/
+    </para>
+    <!-- FIXME mnapp 18.9.18 what configuration needs to be done for these registries? -->
+    <para>
+     Set up one external mirror for _each_ container registry to "pull
+     through" images. Manually select images to retrieve. Set up at least
+     one container registry in the internal network that is updated from the
+     external mirror(s). Set the registry to read only in the config file of
+     the internal mirror. Configure &kube; to use this internal registry.
+     <guimenu>Velum -> Settings -> Remote Registries</guimenu>.
+     Configure &productname; to rewrite external registry requests to that
+     mirror <guimenu>Velum -> Settings -> Mirrors</guimenu> you can host
+     multiple registries on one internal mirror the need to run on different
+     ports.
+     </para>
+    <procedure>
+     <title>Set Up The External Mirror</title>
+     <step>
+      <para>
+       On a regular &sle; 15 machine, install the <filename>docker-distribution-registry</filename>
+       package. The package is available from the <literal>containers</literal>
+       module:
+      </para>
+      <!-- FIXME mnapp 18.9.18 is this module enabled by default or how to turn that on? -->
+<screen>&prompt.sudo;<command>zypper in docker-distribution-registry</command>
+</screen>
+     </step>
 
-Air-gapped registry installation
-On a regular SUSE Linux Enterprise Server machine install the “docker-distribution-registry” package. The package is available inside of the containers module:
+      <step>
+       <para>
+        Now start the registry service and enable it at boot time:
+        </para>
+        <screen>
+&prompt.sudo;<command>systemctl enable --now registry.service</command>
+         </screen>
+       </step>
+    </procedure>
 
-$ sudo zypper in docker-distribution-registry
-Configuration
-The registry package provides a default configuration file: /etc/registry/config.yml
-
-Identify the “storage” section and add the following lines:
+    <procedure>
+     <title>Set Up Internal Mirror</title>
+     <step>
+      <para>
+       The registry package provides a default configuration file:
+       <filename>/etc/registry/config.yml</filename>. Identify the
+       <literal>storage</literal> section and add the following lines:
+       </para>
+       <screen>
 maintenance:
     readonly:
       enabled: true
+       </screen>
 
-These lines will make the registry read-only, preventing its images from being overwritten by the clients of the air-gapped network.
-
-The complete file will look like:
-
+       <para>
+       These lines will make the registry read-only, preventing its images from
+       being overwritten by the clients of the air-gapped network. The complete
+       file will look like:
+       </para>
+       <screen>
 version: 0.1
 log:
   level: info
@@ -327,40 +366,56 @@ storage:
       enabled: true
 http:
   addr: 0.0.0.0:5000
+         </screen>
+      </step>
+     </procedure>
 
-Now start the registry service and enable it at boot time:
-sudo systemctl enable --now registry.service
+   <important>
+    <title>This example does not provide any security measures</title>
+    <para>
+     The default configuration is not using certificates to secure the
+     communication between this registry and all the nodes communicating with it.
+     </para>
+     <para>
+     There is also no authentication and authorization in place. For production
+     usage we highly recommend to deploy the registry using TLS certificates and
+     implement authentication and authorization by deploying a Portus instance.
+    </para>
+   </important>
 
-Note well: the default configuration is not using certificates to secure the communication between this registry and all the nodes communicating with it. Also there is no authentication and authorization in place.
-For production usage it’s recommended to deploy the registry using tls certificates and implement authentication and authorization by deploying a Portus instance.
+   <!-- FIXME mnapp 18.9.18 Shouldn't we explain how to provide this default auth/security? -->
 
-Note well: do not add the “proxy” section like in a traditional on-premise mirror. This is not needed and would cause the registry service to refuse to start. There would be an error at start time caused by the node not being able to connect to the remote registry.
-Synchronizing contents
-This procedure illustrates how to synchronize the air-gapped registry with the traditional on-premise one.
-
-    1. Attach an external hard drive to “mirror.local.lan” and copy all the contents of “/var/lib/docker-registry” to it:
-
-sudo rsync -aP --delete /var/lib/docker-registry /mnt/usbdisk
-
-    2. Attach the external hard drive to “mirror.secure.lan” and import the contents into the registry:
-
-sudo rsync -aP --delete /mnt/usbdisk/docker-registry/ /var/lib/docker-registry/
-
-Additional security steps can be introduced between step #1 and #2; for example scanning the exported data using corporate tools before introducing them inside of the air-gapped network.
-
-Note well: it’s not needed to stop the registry services while doing the backup and restore procedures.
-
-Using the mirror
-Using the air-gapped mirror works exactly like using a traditional on-premise mirror. Please refer to SUSE Container as Service Platform documentation to configure your cluster to take advantage of this air-gapped mirror.
-
-Nothing has to be changed inside of Dockerfile(s), Kubernetes manifest files, Helm charts, custom scripts, etc. All the images with a prefix “registry.suse.com/” will be automatically pulled from this air-gapped mirror.
-
-The mirror is read-only and can serve only the images that were previously cached by the regular on-premise mirror.
-
-    </screen>
+   <important>
+    <title>Do Not Configure The <literal>proxy</literal> Section For The Internal Mirror</title>
+    <para>
+     Do not add the “proxy” section like you must do on the external on-premise
+     mirror. This is not needed and would cause the registry service to refuse
+     to start since the airgapped network can not reach the specified proxy.
+    </para>
+   </important>
    </sect3>
+
    <sect3>
     <title>Updating The Mirror</title>
+    <procedure>
+     <title>Update Container Registry Mirror</title>
+     <step>
+     <para>
+      <link xlink:href="https://docs.docker.com/registry/deploying/#copy-an-image-from-docker-hub-to-your-registry">Copy the docker images to your external registry mirror</link>
+     </para>
+     <screen>
+Example for docker image pull here
+     </screen>
+    </step>
+    <step>
+     <para>
+      Tag the image with your internal mirror name
+      </para>
+     <screen>
+Example for docker tag with hostname:port here
+     </screen>
+     </step>
+    </procedure>
     <screen>
      Container images:
 
@@ -368,6 +423,30 @@ The mirror is read-only and can serve only the images that were previously cache
      . Copy registry data onto data storage
      . Connect storage to internal instance and upload data
      </screen>
+     <screen>
+     Synchronizing contents
+     This procedure illustrates how to synchronize the air-gapped registry with the traditional on-premise one.
+
+         1. Attach an external hard drive to “mirror.local.lan” and copy all the contents of “/var/lib/docker-registry” to it:
+
+     sudo rsync -aP --delete /var/lib/docker-registry /mnt/usbdisk
+
+         2. Attach the external hard drive to “mirror.secure.lan” and import the contents into the registry:
+
+     sudo rsync -aP --delete /mnt/usbdisk/docker-registry/ /var/lib/docker-registry/
+
+     Additional security steps can be introduced between step #1 and #2; for example scanning the exported data using corporate tools before introducing them inside of the air-gapped network.
+
+     Note well: it’s not needed to stop the registry services while doing the backup and restore procedures.
+
+     Using the mirror
+     Using the air-gapped mirror works exactly like using a traditional on-premise mirror. Please refer to SUSE Container as Service Platform documentation to configure your cluster to take advantage of this air-gapped mirror.
+
+     Nothing has to be changed inside of Dockerfile(s), Kubernetes manifest files, Helm charts, custom scripts, etc. All the images with a prefix “registry.suse.com/” will be automatically pulled from this air-gapped mirror.
+
+     The mirror is read-only and can serve only the images that were previously cached by the regular on-premise mirror.
+
+         </screen>
     </sect3>
   </sect2>
 
