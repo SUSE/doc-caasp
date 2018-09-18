@@ -128,7 +128,7 @@
    standard LDAP administration tools for managing these users remotely. To do
    so, install the <package>openldap2</package> package on a computer in your
    network and make sure that computer can connect to the &admin_node; on port
-   389.
+   <literal>389</literal>.
   </para>
 
   <sect2 xml:id="sec.admin.security.users.ldap_preparation">
@@ -288,7 +288,7 @@ userPassword: <replaceable>PASSWORD</replaceable><co xml:id="co.admin.security.u
      </example>
      <example xml:id="ex.admin.security.users.change_group">
       <title>Add User to Administrators Group</title>
-  <screen>dn: cn=Administrators,ou=Groups,dc=infra,dc=caasp,dc=local
+<screen>dn: cn=Administrators,ou=Groups,dc=infra,dc=caasp,dc=local
   changetype: modify
   add: uniqueMember
   uniqueMember: uid=<replaceable>USERID</replaceable><co xml:id="co.admin.security.users.add.admin"/>,ou=People,dc=infra,dc=caasp,dc=local</screen>
