@@ -844,6 +844,222 @@ roleRef:
   </sect2>
  </sect1>
 
+ <sect1 xml:id="sec.admin.security.pod_policies">
+  <title>Pod Security Policies</title>
+  <para>
+   This section provides an overview of policy settings for pod
+   security. By default, pod security policies are already enabled on
+   &productname;.
+  </para>
+  <para>
+   &productname; comes with 2 defined policies. The required role
+   definition is also included in the examples. Role bindings have
+   to be created manually. For details about roles and role bindings,
+   refer to <xref linkend= "sec.admin.security.role" />.
+  </para>
+  <variablelist>
+   <varlistentry>
+    <term><xref linkend="ex.admin.security.pod_policies.definition.unprivileged"/></term>
+    <listitem>
+     <para>
+      This is the default policy. It is a compromise between security
+      and daily needs. This policy is bound to the role
+      <literal>suse:caasp:psp:unprivileged</literal>.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term><xref linkend="ex.admin.security.pod_policies.definition.privileged"/></term>
+    <listitem>
+     <para>
+      This policy has few restrictions and should only be given to
+      highly trusted users. This policy is bound to the role
+      <literal>suse:caasp:psp:privileged</literal>.
+     </para>
+    </listitem>
+   </varlistentry>
+  </variablelist>
+  <para>
+   To adapt the provided example policies to your needs, copy them
+   into a YAML file. Then apply the definition by executing
+   <command>kubectl apply -f
+   <replaceable>YAML_FILE</replaceable></command>.
+  </para>
+  <para>
+   Detailed information is available at <link xlink:href=
+  "https://kubernetes.io/docs/concepts/policy/pod-security-policy/"
+  />.
+  </para>
+  <example xml:id="ex.admin.security.pod_policies.definition.unprivileged">
+   <title>Unprivileged Pod Security Policy</title>
+   <para>
+    The unprivileged Pod Security Policy is intended to be a
+    reasonable compromise between the reality of &kube; workloads and
+    the role <literal>suse:caasp:psp:privileged</literal>. By
+    default, &productname; grants this policy to all users
+    and service accounts.
+   </para>
+<screen>apiVersion: extensions/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: suse.caasp.psp.unprivileged
+  annotations:
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: docker/default
+    seccomp.security.alpha.kubernetes.io/defaultProfileName: docker/default
+    apparmor.security.beta.kubernetes.io/allowedProfileNames: runtime/default
+    apparmor.security.beta.kubernetes.io/defaultProfileName: runtime/default
+spec:
+  # Privileged
+  privileged: false
+  # Volumes and File Systems
+  volumes:
+    # Kubernetes Pseudo Volume Types
+    - configMap
+    - secret
+    - emptyDir
+    - downwardAPI
+    - projected
+    - persistentVolumeClaim
+    # Networked Storage
+    - nfs
+    - rbd
+    - cephFS
+    - glusterfs
+    - fc
+    - iscsi
+    # Cloud Volumes
+    - cinder
+    - gcePersistentDisk
+    - awsElasticBlockStore
+    - azureDisk
+    - azureFile
+    - vsphereVolume
+  allowedHostPaths:
+    # Note: We don't allow hostPath volumes above, but set this to a path we
+    # control anyway as a belt+braces protection. /dev/null may be a better
+    # option, but the implications of pointing this towards a device are
+    # unclear.
+    - pathPrefix: /opt/kubernetes-hostpath-volumes
+  readOnlyRootFilesystem: false
+  # Users and groups
+  runAsUser:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  fsGroup:
+    rule: RunAsAny
+  # Privilege Escalation
+  allowPrivilegeEscalation: false
+  defaultAllowPrivilegeEscalation: false
+  # Capabilities
+  allowedCapabilities: []
+  defaultAddCapabilities: []
+  requiredDropCapabilities: []
+  # Host namespaces
+  hostPID: false
+  hostIPC: false
+  hostNetwork: false
+  hostPorts:
+  - min: 0
+    max: 65535
+  # SELinux
+  seLinux:
+    # SELinux is unsed in CaaSP
+    rule: 'RunAsAny'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: suse:caasp:psp:unprivileged
+rules:
+  - apiGroups: ['extensions']
+    resources: ['podsecuritypolicies']
+    verbs: ['use']
+resourceNames: ['suse.caasp.psp.unprivileged']</screen>
+  </example>
+  <example xml:id="ex.admin.security.pod_policies.definition.privileged">
+   <title>Privileged Pod Security Policy</title>
+   <para>
+    The privileged Pod Security Policy is intended to be given only to
+    trusted workloads. It provides for as few restrictions as possible
+    and should only be assigned to highly trusted users.
+   </para>
+<screen>apiVersion: extensions/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: suse.caasp.psp.privileged
+  annotations:
+    seccomp.security.alpha.kubernetes.io/defaultProfileName: docker/default
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
+    apparmor.security.beta.kubernetes.io/defaultProfileName: runtime/default
+spec:
+  # Privileged
+  privileged: true
+  # Volumes and File Systems
+  volumes:
+    # Kubernetes Pseudo Volume Types
+    - configMap
+    - secret
+    - emptyDir
+    - downwardAPI
+    - projected
+    - persistentVolumeClaim
+    # Kubernetes Host Volume Types
+    - hostPath
+    # Networked Storage
+    - nfs
+    - rbd
+    - cephFS
+    - glusterfs
+    - fc
+    - iscsi
+    # Cloud Volumes
+    - cinder
+    - gcePersistentDisk
+    - awsElasticBlockStore
+    - azureDisk
+    - azureFile
+    - vsphereVolume
+  #allowedHostPaths: []
+  readOnlyRootFilesystem: false
+  # Users and groups
+  runAsUser:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  fsGroup:
+    rule: RunAsAny
+  # Privilege Escalation
+  allowPrivilegeEscalation: true
+  defaultAllowPrivilegeEscalation: true
+  # Capabilities
+  allowedCapabilities:
+    - '*'
+  defaultAddCapabilities: []
+  requiredDropCapabilities: []
+  # Host namespaces
+  hostPID: true
+  hostIPC: true
+  hostNetwork: true
+  hostPorts:
+  - min: 0
+    max: 65535
+  seLinux:
+    # SELinux is unsed in CaaSP
+    rule: 'RunAsAny'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: suse:caasp:psp:privileged
+rules:
+  - apiGroups: ['extensions']
+    resources: ['podsecuritypolicies']
+    verbs: ['use']
+resourceNames: ['suse.caasp.psp.privileged']</screen>
+  </example>
+ </sect1>
+
  <sect1 xml:id="sec.admin.security.audit">
   <title>Security Audit Log</title>
 
