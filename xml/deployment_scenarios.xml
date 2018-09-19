@@ -170,65 +170,60 @@
    </variablelist>
   </sect2>
 
-  <sect2 xml:id="sec.deploy.scenarios.airgap.requirements">
-   <title>Special Requirements</title>
+  <sect2 xml:id="sec.deploy.scenarios.airgap.machines">
+   <title>Machines Needed In Addition To The Cluster</title>
    <para>
-    This scenario requires additional machines and a secure way to transport
-    data to the internal update servers.
+    All of these can be hosted on one shared machine for each location.
    </para>
-   <sect3>
-    <title>Machines Needed In Addition To The Cluster</title>
-    <para>
-     All of these can be hosted on one shared machine for each location.
-    </para>
-    <para>
-     External:
-    </para>
-    <itemizedlist>
-     <listitem>
-      <para>
-       <literal>1</literal> (virtual) machine for the RMT server (SLES 15)
-      </para>
-     </listitem>
-     <listitem>
-      <para>
-       <literal>1</literal> (virtual) machine for every container registry
-      </para>
-     </listitem>
-    </itemizedlist>
-    <para>
-     Internal:
-    </para>
-    <itemizedlist>
-     <listitem>
-      <para>
-       <literal>1</literal> (virtual) machine for the RMT server (SLES 15)
-      </para>
-     </listitem>
-     <listitem>
-      <para>
-       <literal>1</literal> (virtual) machine for every container registry
-      </para>
-      <para>
-       You can host multiple container registries on a single machine. They
-       must be run on different ports and use different storage paths.
-      </para>
-     </listitem>
-     <listitem>
-      <para>
-       <literal>1</literal> (virtual) machine for the helm chart server
-      </para>
-     </listitem>
-    </itemizedlist>
-    <note>
-     <title>Adjust Number Of Mirror Servers</title>
+   <para>
+    External:
+   </para>
+   <itemizedlist>
+    <listitem>
      <para>
-      Multiply all these numbers by the amount of fallback/failover you
-      require.
+      <literal>1</literal> (virtual) machine for the RMT server (SLES 15)
      </para>
-    </note>
-   </sect3>
-   <sect3 xml:id="sec.deploy.scenarios.airgap.storage">
+    </listitem>
+    <listitem>
+     <para>
+      <literal>1</literal> (virtual) machine for every container registry
+     </para>
+    </listitem>
+   </itemizedlist>
+   <para>
+    Internal:
+   </para>
+   <itemizedlist>
+    <listitem>
+     <para>
+      <literal>1</literal> (virtual) machine for the RMT server (SLES 15)
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      <literal>1</literal> (virtual) machine for every container registry
+     </para>
+     <para>
+      You can host multiple container registries on a single machine. They
+      must be run on different ports and use different storage paths.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      <literal>1</literal> (virtual) machine for the helm chart server
+     </para>
+    </listitem>
+   </itemizedlist>
+   <note>
+    <title>Adjust Number Of Mirror Servers</title>
+    <para>
+     Multiply all these numbers by the amount of fallback/failover you
+     require.
+    </para>
+   </note>
+  </sect2>
+
+   <sect2 xml:id="sec.deploy.scenarios.airgap.storage">
     <title>Trusted Storage</title>
     <para>
      Transferring data from the external network mirror to the internal mirror
@@ -236,11 +231,25 @@
      (USB keys or external hard drives).
     </para>
     <para>
-     Data integrity checks and secure handling procedures of such storage is
-     beyond the scope of this document.
+     Sizing of the storage is dependent on the number of data sources that need
+     to be stored. Container images can easily measure several Gigabytes per
+     item although they are generally smaller for Kubernetes related
+     applications. The overall size of any given RPM repository is at least
+     tens of Gigabytes. At the time of writing the package repository for &sls;
+     alone contains <literal>36GB</literal> of data. It is highly recommended
+     to have enough storage for multiple snapshots of the repositories.
+     </para>
+     <para>
+      We recommend external storage with at least <literal>500GB</literal>.
+     </para>
+     <note>
+      <title>Handling Of Secure Storage</title>
+    <para>
+     Data integrity checks, duplication, backup, and secure handling procedures
+     of secure storage are beyond the scope of this document.
     </para>
-   </sect3>
-  </sect2>
+    </note>
+   </sect2>
 
   <sect2 xml:id="sec.deploy.scenarios.airgap.rpm-repository">
    <title>RPM Repository Mirror</title>
@@ -254,6 +263,16 @@
    </para>
    <sect3>
     <title>Mirror Configuration</title>
+    <note>
+     <title>Deploy The Mirror Before &productname; Cluster Deployment</title>
+     <para>
+      The mirror on the internal network should be up and running before
+      deploying &productname;, this makes rolling out much easier since you can
+      configure the nodes during installation to use the correct internal mirror.
+      If the cluster is deployed before the mirror is running, you must
+      reconfigure all nodes manually.
+     </para>
+    </note>
     <para>
      Set up two <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/cha_rmt_installation.html">RMT mirrors</link>.
      One in the external network and one in the airgapped network.
@@ -262,16 +281,6 @@
      Configure all &productname; nodes to <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/sec_rmt_client_clientsetupscript.html">get updates from the internal RMT
      server</link>.
     </para>
-    <note>
-     <title>Deploy The Mirror Before &productname; Cluster Deployment</title>
-    <para>
-     The mirror on the internal network should be up and running before
-     deploying &productname;, this makes rolling out much easier since you can
-     configure the nodes during installation to use the correct internal mirror.
-     If the cluster is deployed before the mirror is running, you must
-     reconfigure all nodes manually.
-    </para>
-   </note>
    </sect3>
    <sect3>
     <title>Updating The Mirror</title>
@@ -283,14 +292,13 @@
   </sect2>
 
   <sect2 xml:id="sec.deploy.scenarios.airgap.container-registry">
-   <title>Container Registry</title>
+   <title>Container Registry Mirror</title>
+   <para>
+    Container image registries are provided by SUSE, Docker, and other sources.
+    The &suse; container registry is used to update the &productname; components.
+   </para>
    <sect3>
     <title>Mirror Configuration</title>
-    <para>
-     Disclaimer: The presented example configuration does not mirror anything
-     from upstream registries other than SUSE. Other registries can be configured
-     in Velum and need their own mirrors.
-    </para>
     <para>
      Internal and airgapped mirrors have two different configurations.
      Airgapped is readonly and no proxy. The internal one is more or less a
@@ -301,7 +309,7 @@
     </para>
     <!-- FIXME mnapp 18.9.18 what configuration needs to be done for these registries? -->
     <para>
-     Set up one external mirror for _each_ container registry to "pull
+     Set up one (virtual) external mirror for _each_ container registry to "pull
      through" images. Manually select images to retrieve. Set up at least
      one container registry in the internal network that is updated from the
      external mirror(s). Set the registry to read only in the config file of
@@ -316,14 +324,28 @@
      <title>Set Up The External Mirror</title>
      <step>
       <para>
-       On a regular &sle; 15 machine, install the <filename>docker-distribution-registry</filename>
-       package. The package is available from the <literal>containers</literal>
-       module:
+       <link xlink:href="https://www.suse.com/documentation/sles-15/book_quickstarts/data/sec_sle_installquick.html">Set up a &sls; 15 machine</link> on the external network.
+       </para>
+      <para>
+       Make sure you have
+       <link xlink:href="https://www.suse.com/documentation/sles-15/book_quickstarts/data/sec_modules_installing.html">enabled the <filename>containers</filename> module</link>.
       </para>
-      <!-- FIXME mnapp 18.9.18 is this module enabled by default or how to turn that on? -->
+     </step>
+     <step>
+      <para>
+       Install the <filename>docker-distribution-registry</filename>
+       package:
+      </para>
 <screen>&prompt.sudo;<command>zypper in docker-distribution-registry</command>
 </screen>
      </step>
+     <step>
+      <para>
+       The registry package provides a default configuration file:
+       <filename>/etc/registry/config.yml</filename>. Fill in the necessary
+       configuration details.
+       </para>
+      </step>
 
       <step>
        <para>
@@ -339,9 +361,18 @@
      <title>Set Up Internal Mirror</title>
      <step>
       <para>
-       The registry package provides a default configuration file:
-       <filename>/etc/registry/config.yml</filename>. Identify the
-       <literal>storage</literal> section and add the following lines:
+       <link xlink:href="https://www.suse.com/documentation/sles-15/book_quickstarts/data/sec_sle_installquick.html">Set up a &sls; 15 machine</link> on the airgapped network.
+       </para>
+      <para>
+       Make sure you have
+       <link xlink:href="https://www.suse.com/documentation/sles-15/book_quickstarts/data/sec_modules_installing.html">enabled the <filename>containers</filename> module</link>.
+      </para>
+     </step>
+     <step>
+      <para>
+       In the default configuration file <filename>/etc/registry/config.yml</filename>,
+       identify the <literal>storage</literal> section and add the following
+       lines:
        </para>
        <screen>
 maintenance:
@@ -367,6 +398,14 @@ storage:
 http:
   addr: 0.0.0.0:5000
          </screen>
+         <important>
+          <title>Do Not Configure The <literal>proxy</literal> Section For The Internal Mirror</title>
+          <para>
+           Do not add the “proxy” section like you must do on the external on-premise
+           mirror. This is not needed and would cause the registry service to refuse
+           to start since the airgapped network can not reach the specified proxy.
+          </para>
+         </important>
       </step>
      </procedure>
 
@@ -385,14 +424,7 @@ http:
 
    <!-- FIXME mnapp 18.9.18 Shouldn't we explain how to provide this default auth/security? -->
 
-   <important>
-    <title>Do Not Configure The <literal>proxy</literal> Section For The Internal Mirror</title>
-    <para>
-     Do not add the “proxy” section like you must do on the external on-premise
-     mirror. This is not needed and would cause the registry service to refuse
-     to start since the airgapped network can not reach the specified proxy.
-    </para>
-   </important>
+
    </sect3>
 
    <sect3>
@@ -451,14 +483,13 @@ Example for docker tag with hostname:port here
   </sect2>
 
   <sect2 xml:id="sec.deploy.scenarios.airgap.helm-charts">
-   <title>Helm Chart Repository</title>
+   <title>Helm Chart Repository Mirror</title>
    <sect3>
     <title>Mirror Configuration</title>
     <para>
-     . set up an internal helm chart mirror (webserver hosting static files) ..
-     add helm repo to admin node Add disclaimer that this does not mirror
-     anything from upstream helm charts other than SUSE Customer needs to add
-     more mirrors or change helm chart templates to use upstream resources
+     Set up an internal Helm chart mirror. This can be any webserver capable of
+     hosting static files. Add the internal mirror as a helm repo to the Admin
+     node.
     </para>
    </sect3>
    <sect3>
@@ -472,5 +503,30 @@ Example for docker tag with hostname:port here
      </screen>
     </sect3>
   </sect2>
+
+  <sect2 xml:id="sec.deploy.scenarios.airgap.caasp-deployment">
+   <title>Deployment Of &productname; In An Airgapped Environment</title>
+   <screen>
+    === Using the ISO
+
+    From YaST register the node against the RMT server. This will ensure the final node zypper repositories are pointed against RMT, moreover all the available updates are going to be installed (-> no need to run a transactional-update right after the installation -> way faster).
+
+    === Using AutoYast
+
+    Ensure the admin node is registered against RMT, that will ensure the nodes are provisioned by AutoYaST are:
+
+    Registered against RMT too
+    Have all the updates applied
+
+    === Using a prebuilt image (eg: KVM, Xen)
+
+    The node has to be registered against RMT. This should be done in the same way
+    as a regular SLE machine: via SUSEConnect.
+
+    === Existing unregistered running node
+
+    Again, they should be using SUSEConnect.
+    </screen>
+   </sect2>
  </sect1>
 </chapter>
