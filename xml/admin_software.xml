@@ -447,40 +447,62 @@
  
  <sect1 xml:id="sec.admin.software.upgrade_caasp2">
   <title>Upgrading from &productname; 2</title>
+  <warning>
+   <title>Read This Section Carefully</title>
+   <para>
+    Before executing the single steps of the upgrade procedure,
+    carefully read all information in this overview section.
+   </para>
+  </warning>
   <para>
    As &productname; is constantly developed and improved, new versions get
    released. You are strongly advised to upgrade to a supported release. These
    upgrades may involve manual intervention.
   </para>
-  <important>
-   <title>Service Window Required</title>
-   <para>
-    Upgrades may take some time, during which services may be degraded in
-    performance or completely unavailable. Please make sure to plan a service
-    window.
-   </para>
-  </important>
   <procedure xml:id="pro.admin.upgrade.procedure">
-   <title>General Upgrade Procedure</title>
+   <title>Overview of Upgrade Procedure</title>
    <step>
     <para>
-     Upgrade the &admin_node;.
+      Plan a maintenance window. Upgrades may take some time, during
+      which services may be degraded in performance or completely
+      unavailable.
     </para>
    </step>
    <step>
     <para>
-     Manually perform additional upgrade steps of the &admin_node;. These steps
-     are version-specific and described in the following chapters.
+     If you are using <emphasis>&rmtool;</emphasis> or
+     <emphasis>&smtool;</emphasis>, enable the &productname; 3
+     repositories and mirror the packages.
     </para>
    </step>
    <step>
     <para>
-     Upgrade the cluster nodes through &dashboard;.
+     Install all updates for &productname; 2. For details, see <xref
+     linkend= "sec.admin.software.upgrade_caasp2.prereq" />
+    </para>
+   </step>
+   <step>
+    <para>
+     Disable automatic updates during the upgrade procedure. For
+     details, see <xref linkend=
+     "sec.admin.software.upgrade_caasp2.timer" />.
+    </para>
+   </step>
+   <step>
+    <para>
+     Upgrade the nodes. For details, refer to <xref linkend=
+     "sec.admin.software.upgrade_caasp2.upgrade" />.
+    </para>
+   </step>
+   <step>
+    <para>
+     Reboot all nodes. For details, refer to <xref linkend=
+     "sec.admin.software.upgrade_caasp2.reboot" />.
     </para>
    </step>
   </procedure>
   <sect2 xml:id="sec.admin.software.upgrade_caasp2.prereq">
-   <title>Ensure All &productname; v2 Updates Are Installed</title>
+   <title>Install &productname; 2 Updates</title>
    <para>
     Before you start the upgrade procedure to &productname; v3, you must ensure
     that all your nodes are running on the latest v2 updates. You can check the
@@ -531,7 +553,7 @@ retcode:
   </sect2>
    
    <sect2 xml:id="sec.admin.software.upgrade_caasp2.timer">
-    <title>Disable Automatic <literal>transactional-update</literal></title>
+    <title>Disable Automatic Updates</title>
     <para>
     To begin with the upgrade procedure, you first must disable the automatic
     transactional update mechanism to avoid conflicts. To do so you must run a
@@ -573,17 +595,12 @@ jid:
 retcode:
     0
     </screen>
-    <important>
-    <para>
-     If you use &smtool; or &susemgr; for mirroring channels: Mirror the v3 channels on your server.
-    </para>
-   </important>
   </sect2>
    
    <sect2 xml:id="sec.admin.software.upgrade_caasp2.upgrade">
-    <title>Performing The Upgrade Procedure</title>
+    <title>Upgrading to &productname; 3</title>
     <para>
-     In the next step you must run the update command across your nodes.
+     Run the update command across your nodes.
     </para>
     <note>
      <title>Batch size for upgrade</title>
@@ -645,7 +662,7 @@ retcode:
    </sect2>
    
    <sect2 xml:id="sec.admin.software.upgrade_caasp2.reboot">
-    <title>Reboot cluster nodes from &dashboard;</title>
+    <title>Reboot Cluster Nodes</title>
     <para>
      To complete the procedure, you must reboot the cluster nodes. To do this 
      properly, use &dashboard; to restart the nodes.
