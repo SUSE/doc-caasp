@@ -9,7 +9,7 @@
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink">
  <info>
-  <title>&productname; Integration with &ses;</title>
+  <title>&ses; Integration</title>
   <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
    <dm:bugtracker></dm:bugtracker>
    <dm:translation>yes</dm:translation>
@@ -30,76 +30,80 @@
   <itemizedlist>
    <listitem>
     <para>
-     The &productname; cluster can access the SES cluster.
+     The &productname; cluster can communicate with the SES nodes&mdash;master,
+     monitoring nodes, OSD nodes and the metadata server, in case you need a
+     shared file system. For more details regarding SES refer to the SES 
+     documentation, here: <link xlink:href=
+     "https://www.suse.com/documentation/suse-enterprise-storage/" />.
     </para>
    </listitem>
    <listitem>
     <para>
-     The &productname; cluster can communicate with the SES nodes&mdash;master,
-     monitoring nodes, OSD nodes and the metadata server, in case you need a
-     shared file system. For more details regarding SES refer to the SES 
-     documentation, here: <link xlink:href="https://www.suse.com/documentation/ses-4/book_storage_admin/data/book_storage_admin.html"/>.
+     The SES cluster has a pool with RADOS Block Device (RBD) enabled.
     </para>
    </listitem>
   </itemizedlist>
  </sect1>
  <sect1 xml:id="sec.admin.integration.mounting-named-object-storage">
-  <title>Mounting a Named Object Storage to a Container</title>
+  <title>Using RBD in a Pod</title>
 
   <para>
-   The procedure below describes steps to take when you need to mount a fixed
-   name storage volume to a particular container.
+   The procedure below describes steps to take when you need to use a
+   RADOS Block Device in a Pod.
   </para>
 
   <procedure>
-   <title>Mounting Storage to a Container</title>
+   <title>Using RBD in a Pod</title>
    <step>
     <para>
-     On the &master_node; apply the configuration that includes the Ceph secret
-     by using the <command>kubectl apply</command>:
+     Retrieve the Ceph admin secret. Get the key value from the file
+     <filename>/etc/ceph/ceph.client.admin.keyring</filename>.
     </para>
-<screen>&prompt.user;<command>kubectl apply -f - &lt;&lt; *EOF*</command>
+   </step>
+   <step>
+    <para>
+     On the &master_node; apply the configuration that includes the
+     Ceph secret by using the <command>kubectl apply</command>. Replace
+     <replaceable>CEPH_SECRET</replaceable> your Ceph secret.
+    </para>
+<screen>&prompt.user;<command>kubectl apply -f - &lt;&lt; *EOF*
 apiVersion: v1
 kind: Secret
 metadata:
   name: ceph-secret
 type: "kubernetes.io/rbd"
 data:
-  key: "<replaceable>CEPH_SECRET_KEY</replaceable>"
-*EOF*</screen>
-    <para>
-     The Ceph secret key is stored on the SES master node in the file
-     <filename>/etc/ceph/ceph.client.admin.keyring</filename> &ndash; use the
-     <literal>key</literal> value.
-    </para>
+  key: "$(echo <replaceable>CEPH_SECRET</replaceable> | base64)"
+*EOF*</command></screen>
    </step>
    <step>
     <para>
      Create an image in the SES cluster. On the master node, run the following
      command:
     </para>
-<screen>&prompt.root;<command>rbd create -s <replaceable>1G</replaceable> <replaceable>YOUR_VOLUME</replaceable></command></screen>
+<screen>&prompt.root;<command>rbd create -s <replaceable>SIZE</replaceable> <replaceable>YOUR_VOLUME</replaceable></command></screen>
     <para>
-     Where <replaceable>1G</replaceable> is the size of the image and
+     Where <replaceable>SIZE</replaceable> is the size of the image and
      <replaceable>YOUR_VOLUME</replaceable> is the name of the image.
     </para>
    </step>
    <step>
     <para>
-     Create a pod that uses the image. On the &master_node; run the following:
+     Create a pod that uses the image by executing the following
+     command on the &master_node;. The example is a minimal
+     configuration for using a RADOS Block Devide. Fill in the IP
+     addresses and ports of your monitor nodes. The port number usually
+     is <literal>6789</literal>.
     </para>
-<screen>&prompt.user;<command>kubectl apply -f - &lt;&lt; *EOF*</command>
+<screen>&prompt.user;<command>kubectl apply -f - &lt;&lt; *EOF*
 apiVersion: v1
 kind: Pod
 metadata:
-  name: busybox-rbd
-  labels:
-    app: busybox-rbd
+  name: <replaceable>POD_NAME</replaceable>
 spec:
   containers:
-  - name: busybox-rbd-container
-    image: busybox
-    command: ['sh', '-c', 'echo The app is running! &amp;&amp; sleep 3600']
+  - name: <replaceable>CONTAINER_NAME</replaceable>
+    image: <replaceable>IMAGE_NAME</replaceable>
     volumeMounts:
     - mountPath: /mnt/rbdvol
       name: rbdvol
@@ -107,18 +111,17 @@ spec:
   - name: rbdvol
     rbd:
       monitors:
-      - [monitor1 ip:port]
-      - [monitor2 ip:port]
-      - [monitor3 ip:port]
-      - [monitor4 ip:port]
-     pool: rbd
-     image: yourvolume
-     user: admin
-     secretRef:
-       name: ceph-secret
-     fsType: ext4
-     readOnly: false
-*EOF*</screen>
+      - [<replaceable>MONITOR1_IP</replaceable>:<replaceable>MONITOR1_PORT</replaceable>]
+      - [<replaceable>MONITOR2_IP</replaceable>:<replaceable>MONITOR2_PORT</replaceable>]
+      - [<replaceable>MONITOR3_IP</replaceable>:<replaceable>MONITOR3_PORT</replaceable>]
+      pool: rbd
+      image: <replaceable>YOUR_VOLUME</replaceable>
+      user: admin
+      secretRef:
+        name: ceph-secret
+      fsType: ext4
+      readOnly: false
+*EOF*</command></screen>
    </step>
    <step>
     <para>
@@ -130,7 +133,7 @@ spec:
     <para>
      Once the pod is running, check the mounted volume:
     </para>
-<screen>&prompt.user;<command>kubectl exec -it busybox-rbd -- df -k</command>
+<screen>&prompt.user;<command>kubectl exec -it <replaceable>CONTAINER_NAME</replaceable> -- df -k</command>
 ...
 /dev/rbd1               999320      1284    929224   0% /mnt/rbdvol
 ...</screen>
@@ -141,10 +144,10 @@ spec:
    In case you need to delete the pod, run the following command on &master_node;:
   </para>
 
-<screen>&prompt.user;<command>kubectl delete pod <replaceable>BUSYBOX-RBD</replaceable></command></screen>
+<screen>&prompt.user;<command>kubectl delete pod <replaceable>POD_NAME</replaceable></command></screen>
  </sect1>
  <sect1 xml:id="sec.admin.integration.persistent-volumes">
-  <title>Creating Pods with Persistent Volumes</title>
+  <title>Using RBD in Persistent Volume</title>
 
   <para>
    The following procedure describes how to attach a pod to a persistent SES
@@ -152,14 +155,36 @@ spec:
   </para>
 
   <procedure>
-   <title>Creating a Pod with Persistent Volume and Persistent Volume Claims</title>
+   <title>Creating a Pod with RBD in Persistent Volume</title>
+   <step>
+    <para>
+     Retrieve the Ceph admin secret. Get the key value from the file
+     <filename>/etc/ceph/ceph.client.admin.keyring</filename>.
+    </para>
+   </step>
+   <step>
+    <para>
+     On the &master_node; apply the configuration that includes the
+     Ceph secret by using the <command>kubectl apply</command>. Replace
+     <replaceable>CEPH_SECRET</replaceable> your Ceph secret.
+    </para>
+<screen>&prompt.user;<command>kubectl apply -f - &lt;&lt; *EOF*
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ceph-secret
+type: "kubernetes.io/rbd"
+data:
+  key: "$(echo <replaceable>CEPH_SECRET</replaceable> | base64)"
+*EOF*</command></screen>
+   </step>
    <step>
     <para>
      Create a volume on the SES cluster:
     </para>
-<screen>&prompt.root;<command>rbd create -s <replaceable>1G</replaceable> <replaceable>YOUR_VOLUME</replaceable></command></screen>
+<screen>&prompt.root;<command>rbd create -s <replaceable>SIZE</replaceable> <replaceable>YOUR_VOLUME</replaceable></command></screen>
     <para>
-     Where <replaceable>1G</replaceable> is the size of the image and
+     Where <replaceable>SIZE</replaceable> is the size of the image and
      <replaceable>YOUR_VOLUME</replaceable> is the name of the image.
     </para>
    </step>
@@ -167,22 +192,21 @@ spec:
     <para>
      Create the persistent volume on the &master_node;:
     </para>
-<screen>&prompt.user;<command>kubectl apply -f - &lt;&lt; *EOF*</command>
+<screen>&prompt.user;<command>kubectl apply -f - &lt;&lt; *EOF*
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: yourpv
+  name: <replaceable>PV_NAME</replaceable>
 spec:
   capacity:
-    storage: 1Gi
+    storage: <replaceable>SIZE</replaceable>
   accessModes:
     - ReadWriteOnce
   rbd:
     monitors:
-    - [monitor1 ip:port]
-    - [monitor2 ip:port]
-    - [monitor3 ip:port]
-    - [monitor4 ip:port]
+    - [<replaceable>MONITOR1_IP</replaceable>:<replaceable>MONITOR1_PORT</replaceable>]
+    - [<replaceable>MONITOR2_IP</replaceable>:<replaceable>MONITOR2_PORT</replaceable>]
+    - [<replaceable>MONITOR3_IP</replaceable>:<replaceable>MONITOR3_PORT</replaceable>]
     pool: rbd
     image: <replaceable>YOUR_VOLUME</replaceable>
     user: admin
@@ -190,24 +214,24 @@ spec:
       name: ceph-secret
     fsType: ext4
     readOnly: false
-*EOF*</screen>
+*EOF*</command></screen>
    </step>
    <step>
     <para>
      Create a persistent volume claim on the &master_node;:
     </para>
-<screen>&prompt.user;<command>kubectl apply -f - &lt;&lt; *EOF*</command>
+<screen>&prompt.user;<command>kubectl apply -f - &lt;&lt; *EOF*
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: yourpvc
+  name: <replaceable>PV_NAME</replaceable>
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
-*EOF*</screen>
+      storage: <replaceable>SIZE</replaceable>
+*EOF*</command></screen>
     <note>
      <title>Listing Volumes</title>
      <para>
@@ -224,26 +248,23 @@ spec:
      Create a pod that uses the persistent volume claim. On the &master_node; run
      the following:
     </para>
-<screen>&prompt.user;<command>kubectl apply -f - &lt;&lt;*EOF*</command>
+<screen>&prompt.user;<command>kubectl apply -f - &lt;&lt;*EOF*
 apiVersion: v1
 kind: Pod
 metadata:
-  name: busybox-rbd
-  labels:
-    app: busybox-rbd
+  name: <replaceable>POD_NAME</replaceable>
 spec:
   containers:
-  - name: busybox-rbd-container
-    image: busybox
-    command: ['sh', '-c', 'echo The app is running! &amp;&amp; sleep 3600']
+  - name: <replaceable>CONTAINER_NAME</replaceable>
+    image: <replaceable>IMAGE_NAME</replaceable>
     volumeMounts:
     - mountPath: /mnt/rbdvol
       name: rbdvol
   volumes:
   - name: rbdvol
     persistentVolumeClaim:
-      claimName: yourpvc
-*EOF*</screen>
+      claimName: <replaceable>PV_NAME</replaceable>
+*EOF*</command></screen>
    </step>
    <step>
     <para>
@@ -255,7 +276,7 @@ spec:
     <para>
      Once pod is running, check the volume by running on the &master_node;:
     </para>
-<screen>&prompt.user;<command>kubectl exec -it busybox-rbd -- df -k</command>
+<screen>&prompt.user;<command>kubectl exec -it <replaceable>CONTAINER_NAME</replaceable> -- df -k</command>
 
 ...
 /dev/rbd3               999320      1284    929224   0% /mnt/rbdvol
@@ -268,13 +289,13 @@ spec:
    &master_node;:
   </para>
 
-<screen>&prompt.user;<command>kubectl delete pod busybox-rbd</command></screen>
+<screen>&prompt.user;<command>kubectl delete pod <replaceable>CONTAINER_NAME</replaceable></command></screen>
 
   <para>
    And when the command finishes, run
   </para>
 
-<screen>&prompt.user;<command>kubectl delete persistentvolume yourpv</command></screen>
+<screen>&prompt.user;<command>kubectl delete persistentvolume <replaceable>PV_NAME</replaceable></command></screen>
 
   <note>
    <title>Deleting a Pod</title>
