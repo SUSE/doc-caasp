@@ -17,8 +17,8 @@
  </info>
  <para>
   This chapter specifies the requirements to install and operate
-  &productname;. Before you begin the installation, please make sure
-  your system meets all requirements listed below.
+  &productname;. Before you begin the installation, make sure your system meets
+  all requirements listed below.
  </para>
  <sect1 xml:id="sec.deploy.requirements.system.cluster">
   <title>Cluster Size Requirements</title>
@@ -28,96 +28,95 @@
    physical or virtual machines.
   </para>
   <para>
-   The minimum supported cluster size is four nodes: a single &admin_node;, one
-   &master_node;, and two &worker_node;s.
+   <emphasis role="bold">The minimum supported cluster size is four
+   nodes</emphasis>: a single &admin_node;, one &master_node;, and two
+   &worker_node;s.
   </para>
   <note>
    <title>Test and Proof-of-Concept Clusters</title>
    <para>
-    It is possible to provision a three-node cluster with only a single
-    &worker_node;, but this is not a supported configuration for deployment.
+    It is possible to provision a three-node cluster with a single
+    &worker_node; only, but this is not a supported configuration for
+    a production deployment.
    </para>
   </note>
   <para>
    For improved performance, multiple &master_node;s are supported, but there
-   must always be an odd number. For cluster reliability, when using multiple
-   master nodes, some form of DNS load-balancing should be used.
+   must always be an odd number. See FIXME for details.
   </para>
-  <para>Any number of &worker_node;s may be added up to the maximum cluster
-   size. For the current maximum supported number of nodes, please refer to
-   the Release Notes on <link xlink:href="https://www.suse.com/releasenotes/"/>.
+  <para>
+   Any number of &worker_node;s may be added up to the maximum cluster
+   size. More than one hundred nodes are supported, refer to the Release Notes
+   at <link xlink:href="https://www.suse.com/releasenotes/"/> for the exact
+   number.
   </para>
  </sect1>
 
  <sect1 xml:id="sec.deploy.requirements.environment">
   <title>Supported Environments</title>
-  <para>
+    <para>
    Regarding deployment scenarios, &suse; supports &productname; running in
    the following environments:
+
+   <remark condition="clarity">
+    2018-09-20 - fs: Is a mix of bare metal and virtualized nodes supported?
+   </remark>
   </para>
-  <itemizedlist>
-   <listitem>
-    <para>
-     &productname; only supports x86_64 hardware.
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     Aside from this, the same hardware and virtualization platforms
-     as &sle; 12 SP3 are supported. For a list of certified hardware,
-     see <link xlink:href="https://www.suse.com/yessearch/" />.
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     Virtualized&mdash;running under the following hypervisors:
-    </para>
-    <itemizedlist>
+
+  <sect2 xml:id="sec.deploy.requirements.environment.bare_metal">
+   <title>Bare Metal</title>
+   <para>
+    &productname; only supports AMD64*/Intel* 64 hardware. Apart from this
+    limitation, the same hardware as for &sle; 12 SP3 is supported. For a list
+    of certified hardware refer to <link
+    xlink:href="https://www.suse.com/yessearch/"/>.
+   </para>
+  </sect2>
+
+  <sect2 xml:id="sec.deploy.requirements.environment.virtual">
+   <title>Virtualized</title>
+   <para>
+    &productname; can be fully deployed in a virtualized environment. The
+    following hypervisor and host systems are supported:
+   </para>
+   <variablelist>
+    <varlistentry>
+     <term>&kvm;</term>
      <listitem>
       <para>
-       KVM
+       Deploying on KVM is supported when the hypervisor runs on the following
+       host platforms:
       </para>
       <itemizedlist>
        <listitem>
         <para>
-         on &sle; 11 SP4
+         &sle; 11 SP4
         </para>
        </listitem>
        <listitem>
         <para>
-         on &sle; 12 SP1
-        </para>
-       </listitem>
-       <listitem>
-        <para>
-         on &sle; 12 SP2
-        </para>
-       </listitem>
-       <listitem>
-        <para>
-         on &sle; 12 SP3
+         &sle; 12 SP1 / SP2 /SP3
         </para>
        </listitem>
       </itemizedlist>
      </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>&xen;</term>
      <listitem>
       <para>
-       Xen
+       Deploying on &xen; is supported both, fully virtualized or
+       paravirtualized. The following host systems are supported:
       </para>
       <itemizedlist>
        <listitem>
         <para>
-         same host platforms as for KVM
+         &sle; 11 SP4
         </para>
        </listitem>
        <listitem>
         <para>
-         full virtualization
-        </para>
-       </listitem>
-       <listitem>
-        <para>
-         paravirtualization
+         &sle; 12 SP1 / SP2 /SP3
         </para>
        </listitem>
        <listitem>
@@ -127,23 +126,12 @@
        </listitem>
       </itemizedlist>
      </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>&vmware;</term>
      <listitem>
       <para>
-       &vmware;
-      </para>
-      <important>
-       <title>Disable &vmware; Memory Ballooning</title>
-       <para>
-        When installing &productname; on &vmware; you must disable &vmware;'s
-        memory ballooning feature. &vmware; has instructions on how to do this
-        here: <link xlink:href="https://kb.vmware.com/s/article/1002586"></link>
-       </para>
-      </important>
-      <para>
-       When using pre-installed disk images, read <xref
-       linkend="sec.deploy.preparation.disk_images.vmware" />. After
-       bootstrapping the cluster, install the &vmware; tools. For
-       details, see <xref linkend= "sec.deploy.install.vmware_tools" />.
+       Deploying on the following VMware versions is supported:
       </para>
       <itemizedlist>
        <listitem>
@@ -153,39 +141,49 @@
        </listitem>
        <listitem>
         <para>
-         ESXi 6.0
+         ESXi 6.0 and 6.5+
+        </para>
+       </listitem>
+      </itemizedlist>
+      <itemizedlist>
+       <title>Notes</title>
+       <listitem>
+        <para>
+         Memory ballooning needs to be disabled, see <link
+         xlink:href="https://kb.vmware.com/s/article/1002586"/>.
         </para>
        </listitem>
        <listitem>
         <para>
-         ESXi 6.5+
+         When using images for deployment, they need to be converted. See <xref
+         linkend="sec.deploy.preparation.disk_images.vmware"/>.
+        </para>
+       </listitem>
+       <listitem>
+        <para>
+         When not using images for deployment, the &vmware; tools need to be
+         installed after bootstrapping, see <xref linkend=
+         "sec.deploy.install.vmware_tools"/>.
         </para>
        </listitem>
       </itemizedlist>
      </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>Hyper-V</term>
      <listitem>
       <para>
-       Hyper-V
+       Deploying on the following host systems is supported:
       </para>
       <itemizedlist>
        <listitem>
         <para>
-         Windows Server 2008 SP2+
+         Windows Server 2008 SP2+ / R2 SP1+
         </para>
        </listitem>
        <listitem>
         <para>
-         Windows Server 2008 R2 SP1+
-        </para>
-       </listitem>
-       <listitem>
-        <para>
-         Windows Server 2012+
-        </para>
-       </listitem>
-       <listitem>
-        <para>
-         Windows Server 2012 R2+
+         Windows Server 2012+ / 2012 R2+
         </para>
        </listitem>
        <listitem>
@@ -195,171 +193,222 @@
        </listitem>
       </itemizedlist>
      </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>Oracle VM</term>
      <listitem>
       <para>
-       Oracle VM 3.3
+       Deploying on Oracle VM 3.3 is supported.
       </para>
      </listitem>
-    </itemizedlist>
-   </listitem>
-   <listitem>
-    <para>
-     Private and Public Cloud Environments
-    </para>
-    <itemizedlist>
+    </varlistentry>
+   </variablelist>
+  </sect2>
+
+  <sect2 xml:id="sec.deploy.requirements.environment.private_cloud">
+   <title>Private Cloud</title>
+   <para>
+    Installing &productname; on &soc; 7 is fully supported. &suse; provides
+    ready-to-use images and &ostack; heat temples. Refer to <xref
+    linkend="sec.deploy.preparation.openstack"/> for details.
+   </para>
+  </sect2>
+
+  <sect2 xml:id="sec.deploy.requirements.environment.public_cloud">
+   <title>Public Cloud</title>
+   <para>
+    Installing &productname; on the following public clouds is supported. Refer
+    to <xref linkend="sec.deploy.preparation.public_cloud"/> for details.
+   </para>
+   <variablelist>
+    <varlistentry>
+     <term>Amazon AWS*</term>
      <listitem>
       <para>
-       &soc; 7
+       The administrative instance must be launched with an IAM role that
+       allows full access to the EC2 API.
       </para>
      </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>Microsoft Azure*</term>
      <listitem>
       <para>
-       Amazon AWS*
+       All security credentials will be collected during setup.
+      </para>
+      <para>
+       Microsoft Azure does not provide a time protocol service. Make sure to
+       configure a public NTP server when configuring the &admin_node; (see
+       <xref linkend="sec.deploy.nodes.admin_install"/> for instructions).
       </para>
      </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>Google Compute Engine*</term>
      <listitem>
       <para>
-       Microsoft Azure*
+       The instance must be launched with an IAM role including
+       <literal>Compute Admin</literal> and <literal>Service Account
+       Actor</literal> scopes.
       </para>
      </listitem>
-     <listitem>
+    </varlistentry>
+   </variablelist>
+  </sect2>
+ </sect1>
+
+ <sect1 xml:id="sec.deploy.requirements.hardware">
+  <title>Minimum  Hardware Requirements for the Nodes</title>
+  <para>
+   Each node in the cluster needs to meet the following minimum specifications.
+   Note that these specifications describe the minimum hardware needed to set
+   up a proof of concept installation. For a production deployment, they need
+   to be adjusted according to the expected load and type of deployment.
+
+   <remark condition="clarity">
+    2018-09-21 - fs: How many NICs on each node? Is it different for different
+    node types?
+   </remark>
+
+  </para>
+  <variablelist>
+   <varlistentry>
+    <term>(v)CPU: 4 Core AMD64*/Intel* EM64T</term>
+    <listitem>
+     <para>
+      32-bit processors and other architectures are not supported
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>Memory: 8 GB</term>
+    <listitem>
+     <para>
+      Although it may be possible to install &productname; with less memory
+      than recommended, there is a high risk that the operating system will
+      run out of memory and subsequently causes a cluster failure.
+     </para>
+     <note>
+      <title>Swap</title>
       <para>
-       Google Compute Engine*
+       &kube; does not support swap.
       </para>
-     </listitem>
-    </itemizedlist>
-   </listitem>
-  </itemizedlist>
+      <para>
+       For technical reasons, an &admin_node; installed from an ISO image will
+       have a small swap partition which will be disabled after installation.
+      </para>
+     </note>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>Disk Space: 40 GB for the Root File System</term>
+    <listitem>
+     <para>
+      Although only a small portion of it will be allocated after the
+      installation, the space is mainly required for Btrfs snapshots, that will
+      be created whenever updates are available.
+     </para>
+     <important>
+      <title>Cloud default root volume size</title>
+      <para>
+       In some Public Cloud frameworks the default root volume size of the
+       images is smaller than 40GB. You need to resize the root volume before
+       launching the instance by using the command line tools or the Web
+       interface for the framework of your choice.
+      </para>
+     </important>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>Storage Performance: 500 sequential IOPS</term>
+    <listitem>
+     <para>
+      Storage performance requirements are mainly specified by the needs of
+      etcd. The <systemitem class="daemon">etcd</systemitem> daemon permanently
+      writes metadata, requests and checkpoints to disk. If these write
+      operations take too long, cluster stability will be negatively
+      affected. Therefore, the disk should be able to perform 500
+      <emphasis>sequential</emphasis> IOPS (input/output operations per second)
+      and have a bandwidth of at least 10 MB/s. Note that etcd data is highly
+      available, because it is automatically replicated on different nodes.
+     </para>
+     <para>
+      On bare metal hardware the performance requirements are best met when
+      using an SSD. When using spinning disks, striped RAID (RAID 0) should
+      provide the required performance.
+     </para>
+     <para>
+      In virtualized environments it is recommended to test the disk
+      performance by using a disk benchmark. Public cloud providers usually
+      only provide <emphasis>concurrent</emphasis> IOPS rates which may differ
+      significantly from <emphasis>sequential</emphasis> IOPS rates.
+     </para>
+    </listitem>
+   </varlistentry>
+  </variablelist>
  </sect1>
 
  <sect1 xml:id="sec.deploy.requirements.storage">
   <title>Container Data Storage</title>
   <para>
-   Storage can be provided using:
-  </para>
-  <itemizedlist>
-   <listitem>
-    <para>
-     &ses;
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     NFS
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     <command>hostpath</command>
-    </para>
-    <note>
-     <title><literal>hostpath</literal> Storage</title>
-     <para>
-      Storage using <literal>hostpath</literal> is still supported, but by
-      default it is disabled by <literal>PodSecurityPolicies</literal>.
-     </para>
-    </note>
-   </listitem>
-  </itemizedlist>
- </sect1>
+   Storage for containers can be provided by using:
+   <remark condition="clarity">
+    2018-09-21 - fs: A general introduction on how data storage for CaaS
+    Platform is supposed to be provided is missing. What are the pros and cons
+    of each solution? What is the scale of each solution? When to use which?
+   </remark>
 
- <sect1 xml:id="sec.deploy.requirements.hardware">
-  <title>Minimum Node Specification</title>
-  <para>
-   Each node in the cluster must meet the following minimum specifications. All
-   these specifications must be adjusted according to the expected load and type
-   of deployments.
+   <remark condition="clarity">
+    2018-09-21 - fs: Should we also mention Cinder on SOC7 here?
+   </remark>
+
   </para>
   <variablelist>
    <varlistentry>
-    <term>(v)CPU</term>
+    <term>&ses;</term>
     <listitem>
-     <itemizedlist>
-      <listitem>
-       <para>
-        <literal>4 Core</literal> AMD64/Intel* EM64T processor 
-       </para>
-      </listitem>
-      <listitem>
-       <para>
-        32-bit processors are not supported
-       </para>
-      </listitem>
-     </itemizedlist>
+     <para>
+      &ses; combines the capabilities of the Ceph (<link
+      xlink:href="http://ceph.com/"/>) storage project with the enterprise
+      engineering and support of SUSE. &ses; provides a distributed storage
+      architecture running on commodity hardware platforms. &productname;
+      contains a &ses; subscription that may exclusively used to provide data
+      storage for &productname;. For more information on &ses;, visit <link
+      xlink:href="https://www.suse.com/products/caas-platform/"/>.
+     </para>
     </listitem>
    </varlistentry>
    <varlistentry>
-    <term>Memory</term>
+    <term>NFS</term>
     <listitem>
-     <itemizedlist>
-      <listitem>
-       <para>
-        <literal>8 GB</literal>
-       </para>
-       <para>
-        Although it may be possible to install &productname; with less memory
-        than recommended, there is a high risk that the operating system will
-        run out of memory and subsequently causes a cluster failure.
-       </para>
-       <note>
-        <title>Swap partitions</title>
-        <para>
-         &kube; does not support swap.
-        </para>
-        <para>
-         For technical reasons, an &admin_node; installed from an ISO image will
-          have a small swap partition which will be disabled after installation.
-          Nodes built using &ay; do not have a swap partition.
-        </para>
-       </note>
-      </listitem>
-     </itemizedlist>
+     <para>
+      <remark condition="clarity">
+       2018-09-21 - fs: Completely undocumented. We need content and setup
+       instructions. The only thing I found was
+       https://wiki.microfocus.com/index.php/SUSE_CaaS_Platform/FAQ#How_do_I_set_up_a_simple_NFS_based_StorageClass_for_test_purposes.3F,
+       but this is for testing purposes only (since a cluster node is used to
+       export NFS)
+      </remark>
+     </para>
     </listitem>
    </varlistentry>
    <varlistentry>
-    <term>Storage Size</term>
+    <term>hostpath</term>
     <listitem>
-     <itemizedlist>
-      <listitem>
-       <para>
-        <literal>40 GB</literal>
-        for the root file system with Btrfs and enabled snapshots.
-       </para>
-       <note>
-        <title>Cloud default root volume size</title>
-        <para>
-         In some Public Cloud frameworks the default root volume size of the
-         images is smaller than 40GB. You must resize the root volume before
-         instance launch using the command line tools or the web interface for
-         the framework of your choice.
-        </para>
-       </note>
-      </listitem>
-     </itemizedlist>
-    </listitem>
-   </varlistentry>
-   <varlistentry>
-    <term>Storage Performance</term>
-    <listitem>
-     <itemizedlist>
-      <listitem>
-       <para>
-        IOPS: <literal>500</literal> sequential IOPS
-       </para>
-      </listitem>
-      <listitem>
-       <para>
-        Write Performance: <literal>10MB/s</literal>
-       </para>
-       <note>
-        <title>etcd Storage requirements</title>
-        <para>
-         Storage performance requirements are tied closely to the
-         <link xlink:href="https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware.md#disks">etcd hardware recommendations</link>
-        </para>
-       </note>
-      </listitem>
-     </itemizedlist>
+     <para>
+      <remark condition="clarity">
+       2018-09-21 - fs: Also completely undocumented. What is this? How to set
+       it up? Why is it disabled by default? What does "is still supported"
+       mean?
+      </remark>
+     </para>
+     <note>
+      <title><literal>hostpath</literal> Storage</title>
+      <para>
+       Storage using <literal>hostpath</literal> is still supported, but by
+       default it is disabled by <literal>PodSecurityPolicies</literal>.
+      </para>
+     </note>
     </listitem>
    </varlistentry>
   </variablelist>
@@ -370,83 +419,98 @@
   <itemizedlist mark="bullet" spacing="normal">
    <listitem>
     <para>
-     All the nodes on the cluster must be on a the same network and be able to
-     communicate directly with one another.
-    </para>
-    <important>
-     <title>Reliable Networking</title>
-     <para>
-      Please make sure all nodes can communicate without interruptions.
-     </para>
-    </important>
-   </listitem>
-   <listitem>
-    <para>
-     The admin node and the &kube; API master must have valid Fully-Qualified
-     Domain Names (FQDNs), which can be resolved both by all other nodes and
-     from other networks which need to access the cluster.
-    </para>
-    <para>
-     Admin node and &kube; API master node should be configured as CNAME records
-     in the local DNS. This improves portability for disaster recovery.
+     All the nodes on the cluster must be on the same network and be able to
+     reliably communicate directly with one another. This is essential for
+     cluster stability.
     </para>
    </listitem>
    <listitem>
     <para>
-     A DHCP server to dynamically provide IP addresses and host names for the
-     nodes in your cluster (unless you configure all nodes statically).
+     The &admin_node; and the &master_node;(s) must have valid Fully-Qualified
+     Domain Names (FQDNs), which need to be resolvable by all nodes in the
+     cluster and from other networks which need to access the cluster.
+    </para>
+    <para>
+     The &admin_node; and the &master_node;(s) should be configured as CNAME
+     records in the local DNS. This improves portability for disaster recovery.
+     <remark condition="clarity">
+      2018-09-21 - fs: What does "local DNS" means in this context?
+     </remark>
     </para>
    </listitem>
    <listitem>
     <para>
-     A DNS server to resolve host names. If you are using host names to
-     specify nodes, please make sure you have reliable DNS resolution at all
-     times, especially in combination with DHCP.
+     IP addresses and host names for &worker_node;s should be provided by a DHCP
+     server unless you want to configure all nodes with static addresses and
+     names.
+     <remark condition="clarity">
+      2018-09-21 - fs: Do we recommend a dedicated DHCP server for CaaS? Can it
+      run on the admin node?
+     </remark>
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     Host names need to be resolved by a DNS server. You may optionally use
+     host names for &worker_node;s. If you do so, make sure you have reliable
+     DNS resolution at all times, especially in combination with DHCP.
     </para>
     <important>
      <title>Unique Host Names</title>
      <para>
-      Host names must be unique. It is recommended to let the DHCP server
-      provide not only IP addresses but also host names of the cluster nodes.
+      Host names need to be unique. If you use host names for worker nodes,
+      it is recommended to let the DHCP server provide not only IP addresses
+      but also host names.
      </para>
     </important>
    </listitem>
    <listitem>
     <para>
      On the same network, a separate computer with a Web browser is required
-     in order to complete bootstrap of the cluster.
+     to complete bootstrap of the cluster.
+     <remark condition="clarity">
+      2018-09-21 - fs: Is this really true? How to access the Velum dashboard
+      once bootstrapping has been done? Is it possible to access the admin
+      node from a different network via a second NIC?
+     </remark>
     </para>
    </listitem>
    <listitem>
     <para>
-     We recommend that &productname; is setup to run in two subnets in
-     one network segment, also referred to as VPC or VNET. The
-     &admin_node; should run in a subnet that is not accessible to the
-     outside world and should be connected to your network via VPN or
-     other means. Consider a security group/firewall that only allows
-     ingress traffic on ports 22 (SSH) and 443 (https) for the
-     Administrative node from outside the VPC. All nodes must have
-     access to the Internet through some route in order to connect to
-     &scc; and receive updates, or be otherwise configured to receive
-     updates, for example through &smt;.
+     We recommend that &productname; is setup to run in two subnets in one
+     network segment, also called VPC or VNET. The &admin_node; should run in a
+     subnet that is not accessible to the outside world and should be connected
+     to your network via VPN or other means. Consider a security group/firewall
+     that only allows ingress traffic on ports 22 (SSH) and 443 (HTTPS) for the
+     Administrative node from outside the VPC. All nodes must have access to
+     the Internet through some route to connect to &scc; and receive updates,
+     or be otherwise configured to receive updates, for example through &smt;.
+     <remark condition="clarity">
+      2018-09-21 - fs: Does this require any configuration work on the cluster
+      nodes? If so, this needs to be documented.
+     </remark>
     </para>
     <para>
      Depending on the applications running in your cluster you may
      consider exposing the subnet for the cluster nodes to the outside
      world. Use a security group/firewall that only allows incoming
      traffic on ports served by your workload. For example, a
-     containerized application providing the backend for REST based
-     services with content served over https should only allow ingress
+     containerized application providing the back-end for REST based
+     services with content served over HTTPS should only allow ingress
      traffic on port 443.
+     <remark condition="clarity">
+      2018-09-21 - fs: Does this require any configuration work on the cluster
+      nodes? If so, this needs to be documented.
+     </remark>
     </para>
    </listitem>
    <listitem>
     <para>
      In a &productname; cluster, internal TCP/IP ports are managed using
-     <literal>iptables</literal> controlled by <literal>Salt</literal> and so
-     need not be manually configured. However, for reference and for
-     environments where there are existing security policies, the following
-     are the standard ports in use.
+     <literal>iptables</literal> controlled by <literal>Salt</literal> and
+     therefore do not need not be configured manually. However, for reference
+     and for environments where there are existing security policies, the
+     following table shows which ports are used by default.
     </para>
     <table xml:id="tab.deploy.requirements.ports">
      <title>Node types and open ports</title>
@@ -808,51 +872,61 @@
    </listitem>
   </itemizedlist>
   <para>
-   1) Information about whether the port is used by
-   <emphasis>internal</emphasis> cluster nodes or
-   <emphasis>external</emphasis> networks or hosts.
+   <superscript>1</superscript> Information about whether the port is used by
+   <emphasis>internal</emphasis> cluster nodes or <emphasis>external</emphasis>
+   networks or hosts.
   </para>
-  <para>
-   When some additional ingress mechanism is used, additional ports would also
-   be open.
-  </para>
+
+  <warning>
+   <title>
+    Changing the Network Interface Configuration and Proxy Settings
+   </title>
+   <para>
+    Changing the network interface setup after the installation is not possible
+    and not supported. Changing HTTP proxy settings such as name, port, user or
+    password, after bootstrapping the cluster is also not supported.
+   </para>
+  </warning>
  </sect1>
 
- <sect1 xml:id="sec.deploy.requirements.public_cloud">
-  <title>Public Cloud Requirements</title>
+ <sect1 xml:id="sec.deploy.requirements.load_balancer">
+  <title>Multiple Master Nodes</title>
+  <para>
+   <remark condition="clarity">
+    2018-09-21 - fs: Check if the following makes sense
+   </remark>
+   An operational &master_node; is essential for your cluster. In case the
+   &master_node; fails, the whole cluster will stop operating. In deployments
+   with many &worker_node;s a single master may also negatively affect cluster
+   performance. It is therefore recommended to make the master node highly
+   available in a production environment. This can be achieved by setting up
+   multiple master nodes. A multi master setup always needs to have an odd
+   number of nodes to establish quorum in the case of a loss of one or more
+   members. There are two ways to set up multiple masters:
+  </para>
   <variablelist>
    <varlistentry>
-    <term>Amazon AWS*</term>
+    <term>Via an External Load Balancer</term>
     <listitem>
      <para>
-      The adminstrative instance must be launched with an IAM role that
-      allows full access to the EC2 API.
+      During installation, you are asked for the FQDN of the master node. If
+      you have an external load balancer, configure it for the given name, and
+      route ports 6443 and 32000 to all your master nodes.
      </para>
     </listitem>
    </varlistentry>
    <varlistentry>
-    <term>Microsoft Azure*</term>
+    <term>Via DNS Round-Robin</term>
     <listitem>
      <para>
-      All security credentials will be collected during setup.
-     </para>
-     <para>
-      Microsoft Azure does not provide a time protocol service. Please
-      refer to <link xlink:href=
-      "https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_netz_xntp.html"
-      > &sls; documentation</link> for more information about NTP
-      configuration. No manual NTP configuration is required on the
-      cluster nodes, they synchronize time with the &admin_node;.
-      </para>
-    </listitem>
-   </varlistentry>
-   <varlistentry>
-    <term>Google Compute Engine*</term>
-    <listitem>
-     <para>
-      The instance must be launched with an IAM role including
-      <literal>Compute Admin</literal> and <literal>Service Account
-      Actor</literal> scopes.
+      You can create a DNS round-robin record for the &master_node; FQDN which
+      points at all &master_node;s simultaneously. However, this will not
+      provide high availability, or evenness of request distribution like a real
+      load balancer.
+      <remark condition="clarity">
+       2018-09-21 - fs: Then why use it? What is the advantage of this setup
+       compared to a single master node?
+      </remark>
      </para>
     </listitem>
    </varlistentry>
@@ -861,15 +935,13 @@
 
  <sect1 xml:id="sec.deploy.requirements.limits">
   <title>Limitations</title>
+  <para>
+   The following limitations apply to &productname; &productnumber;;
+  </para>
   <itemizedlist mark="bullet" spacing="normal">
    <listitem>
-<!-- cwickert 2017-04-06: FIXME - check if still applies
-      https://bugzilla.suse.com/show_bug.cgi?id=1029317
-      jahalackova: that's still valid for 1.0.
-      -->
     <para>
-     &productname; &productnumber; does not support remote installations with
-     <literal>Virtual Network Computing (VNC)</literal>.
+     Remote installations via VNC (Virtual Network Computing) are not supported
     </para>
    </listitem>
    <listitem>
@@ -878,6 +950,24 @@
      support dual-booting with other operating systems. Ensure that all drives
      in all cluster nodes are empty and contain no other operating systems
      before beginning installation.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     Changing the network interface setup after the installation is not
+     possible and not supported.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     Changing HTTP proxy settings such as name, port, user or password, after
+     bootstrapping the cluster is not supported.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     Integrating a corporate LDAP or Active Directory server with Kubernetes is
+     currently not supported.
     </para>
    </listitem>
   </itemizedlist>
