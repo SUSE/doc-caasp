@@ -32,7 +32,7 @@
     <para>
      The &productname; cluster can communicate with the SES nodes&mdash;master,
      monitoring nodes, OSD nodes and the metadata server, in case you need a
-     shared file system. For more details regarding SES refer to the SES 
+     shared file system. For more details regarding SES refer to the SES
      documentation, here: <link xlink:href=
      "https://www.suse.com/documentation/suse-enterprise-storage/" />.
     </para>
@@ -63,8 +63,8 @@
    <step>
     <para>
      On the &master_node; apply the configuration that includes the
-     Ceph secret by using the <command>kubectl apply</command>. Replace
-     <replaceable>CEPH_SECRET</replaceable> your Ceph secret.
+     Ceph secret by using <command>kubectl apply</command>. Replace
+     <replaceable>CEPH_SECRET</replaceable> with your Ceph secret.
     </para>
 <screen>&prompt.user;<command>kubectl apply -f - &lt;&lt; *EOF*
 apiVersion: v1
@@ -78,7 +78,7 @@ data:
    </step>
    <step>
     <para>
-     Create an image in the SES cluster. On the master node, run the following
+     Create an image in the SES cluster. On the &master_node;, run the following
      command:
     </para>
 <screen>&prompt.root;<command>rbd create -s <replaceable>SIZE</replaceable> <replaceable>YOUR_VOLUME</replaceable></command></screen>
@@ -91,9 +91,9 @@ data:
    <step>
     <para>
      Create a pod that uses the image by executing the following
-     command on the &master_node;. The example is a minimal
-     configuration for using a RADOS Block Devide. Fill in the IP
-     addresses and ports of your monitor nodes. The port number usually
+     command on the &master_node;. In this example it is a minimal
+     configuration for using a <literal>RADOS</literal> Block Device. Fill in
+     the IP addresses and ports of your monitor nodes. The port number usually
      is <literal>6789</literal>.
     </para>
 <screen>&prompt.user;<command>kubectl apply -f - &lt;&lt; *EOF*
@@ -142,7 +142,8 @@ spec:
   </procedure>
 
   <para>
-   In case you need to delete the pod, run the following command on &master_node;:
+   In case you need to delete the pod, run the following command on the
+   &master_node;:
   </para>
 
 <screen>&prompt.user;<command>kubectl delete pod <replaceable>POD_NAME</replaceable></command></screen>
@@ -165,9 +166,9 @@ spec:
    </step>
    <step>
     <para>
-     On the &master_node; apply the configuration that includes the
-     Ceph secret by using the <command>kubectl apply</command>. Replace
-     <replaceable>CEPH_SECRET</replaceable> your Ceph secret.
+     On the &master_node;, apply the configuration that includes the
+     Ceph secret by using <command>kubectl apply</command>. Replace
+     <replaceable>CEPH_SECRET</replaceable> with your Ceph secret.
     </para>
 <screen>&prompt.user;<command>kubectl apply -f - &lt;&lt; *EOF*
 apiVersion: v1
@@ -186,7 +187,7 @@ data:
 <screen>&prompt.root;<command>rbd create -s <replaceable>SIZE</replaceable> <replaceable>YOUR_VOLUME</replaceable></command></screen>
     <para>
      Replace <replaceable>SIZE</replaceable> with the size of the
-     image, for example <literal>1G</literal>, and
+     image, for example <literal>1G</literal> (1 Gigabyte), and
      <replaceable>YOUR_VOLUME</replaceable> is the name of the image.
     </para>
    </step>
