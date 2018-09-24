@@ -852,10 +852,12 @@ roleRef:
    &productname;.
   </para>
   <para>
-   &productname; comes with 2 defined policies. The required role
-   definition is also included in the examples. Role bindings have
-   to be created manually. For details about roles and role bindings,
-   refer to <xref linkend= "sec.admin.security.role" />.
+   &productname; comes with 2 pre-defined policies. These policies are
+   detailed in the examples below, including the required role
+   definitions. All authenticated users and service accounts are given
+   the role <literal>suse:caasp:psp:unprivileged</literal>. Other role
+   bindings have to be created manually. For details about roles and
+   role bindings, refer to <xref linkend= "sec.admin.security.role" />.
   </para>
   <variablelist>
    <varlistentry>
@@ -880,9 +882,9 @@ roleRef:
    </varlistentry>
   </variablelist>
   <para>
-   To adapt the provided example policies to your needs, copy them
-   into a YAML file. Then apply the definition by executing
-   <command>kubectl apply -f
+   To create new policies, you can adapt the provided example policies
+   to your needs. Then copy them into a YAML file. Then apply the
+   definition by executing <command>kubectl apply -f
    <replaceable>YAML_FILE</replaceable></command>.
   </para>
   <para>
@@ -899,10 +901,11 @@ roleRef:
     default, &productname; grants this policy to all users
     and service accounts.
    </para>
-<screen>apiVersion: extensions/v1beta1
+<screen>---
+apiVersion: extensions/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: suse.caasp.psp.unprivileged
+  name: suse.caasp.psp.unprivileged<co xml:id="co.admin.security.pod_policies.definition.unprivileged.name"/>
   annotations:
     seccomp.security.alpha.kubernetes.io/allowedProfileNames: docker/default
     seccomp.security.alpha.kubernetes.io/defaultProfileName: docker/default
@@ -970,12 +973,20 @@ spec:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: suse:caasp:psp:unprivileged
+  name: suse:caasp:psp:unprivileged<xref linkend="co.admin.security.pod_policies.definition.unprivileged.name"/>
 rules:
   - apiGroups: ['extensions']
     resources: ['podsecuritypolicies']
     verbs: ['use']
-resourceNames: ['suse.caasp.psp.unprivileged']</screen>
+resourceNames: ['suse.caasp.psp.unprivileged']<xref linkend="co.admin.security.pod_policies.definition.unprivileged.name"/></screen>
+   <calloutlist>
+    <callout arearefs="co.admin.security.pod_policies.definition.unprivileged.name">
+     <para>
+      Make sure to change the policy and role name when adapting the
+      example for your own policies.
+     </para>
+    </callout>
+   </calloutlist>
   </example>
   <example xml:id="ex.admin.security.pod_policies.definition.privileged">
    <title>Privileged Pod Security Policy</title>
@@ -984,10 +995,11 @@ resourceNames: ['suse.caasp.psp.unprivileged']</screen>
     trusted workloads. It provides for as few restrictions as possible
     and should only be assigned to highly trusted users.
    </para>
-<screen>apiVersion: extensions/v1beta1
+<screen>---
+apiVersion: extensions/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: suse.caasp.psp.privileged
+  name: suse.caasp.psp.privileged<co xml:id="co.admin.security.pod_policies.definition.privileged.name"/>
   annotations:
     seccomp.security.alpha.kubernetes.io/defaultProfileName: docker/default
     seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
@@ -1051,12 +1063,20 @@ spec:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: suse:caasp:psp:privileged
+  name: suse:caasp:psp:privileged<xref linkend="co.admin.security.pod_policies.definition.privileged.name"/>
 rules:
   - apiGroups: ['extensions']
     resources: ['podsecuritypolicies']
     verbs: ['use']
-resourceNames: ['suse.caasp.psp.privileged']</screen>
+resourceNames: ['suse.caasp.psp.privileged']<xref linkend="co.admin.security.pod_policies.definition.privileged.name"/></screen>
+   <calloutlist>
+    <callout arearefs="co.admin.security.pod_policies.definition.privileged.name">
+     <para>
+      Make sure to change the policy and role name when adapting the
+      example for your own policies.
+     </para>
+    </callout>
+   </calloutlist>
   </example>
  </sect1>
 
