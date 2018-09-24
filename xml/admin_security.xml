@@ -861,7 +861,7 @@ roleRef:
   </para>
   <variablelist>
    <varlistentry>
-    <term><xref linkend="ex.admin.security.pod_policies.definition.unprivileged"/></term>
+    <term><xref linkend="ex.admin.security.pod_policies.unprivileged"/></term>
     <listitem>
      <para>
       This is the default policy. It is a compromise between security
@@ -871,12 +871,21 @@ roleRef:
     </listitem>
    </varlistentry>
    <varlistentry>
-    <term><xref linkend="ex.admin.security.pod_policies.definition.privileged"/></term>
+    <term><xref linkend="ex.admin.security.pod_policies.privileged"/></term>
     <listitem>
      <para>
       This policy has few restrictions and should only be given to
       highly trusted users. This policy is bound to the role
       <literal>suse:caasp:psp:privileged</literal>.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term><xref linkend="ex.admin.security.pod_policies.daemonset" /></term>
+    <listitem>
+     <para>
+      This example details how to define a privileged DaemonSet with a
+      new default service account.
      </para>
     </listitem>
    </varlistentry>
@@ -892,7 +901,7 @@ roleRef:
   "https://kubernetes.io/docs/concepts/policy/pod-security-policy/"
   />.
   </para>
-  <example xml:id="ex.admin.security.pod_policies.definition.unprivileged">
+  <example xml:id="ex.admin.security.pod_policies.unprivileged">
    <title>Unprivileged Pod Security Policy</title>
    <para>
     The unprivileged Pod Security Policy is intended to be a
@@ -905,7 +914,7 @@ roleRef:
 apiVersion: extensions/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: suse.caasp.psp.unprivileged<co xml:id="co.admin.security.pod_policies.definition.unprivileged.name"/>
+  name: suse.caasp.psp.unprivileged<co xml:id="co.admin.security.pod_policies.unprivileged.name"/>
   annotations:
     seccomp.security.alpha.kubernetes.io/allowedProfileNames: docker/default
     seccomp.security.alpha.kubernetes.io/defaultProfileName: docker/default
@@ -973,14 +982,14 @@ spec:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: suse:caasp:psp:unprivileged<xref linkend="co.admin.security.pod_policies.definition.unprivileged.name"/>
+  name: suse:caasp:psp:unprivileged<xref linkend="co.admin.security.pod_policies.unprivileged.name"/>
 rules:
   - apiGroups: ['extensions']
     resources: ['podsecuritypolicies']
     verbs: ['use']
-resourceNames: ['suse.caasp.psp.unprivileged']<xref linkend="co.admin.security.pod_policies.definition.unprivileged.name"/></screen>
+resourceNames: ['suse.caasp.psp.unprivileged']<xref linkend="co.admin.security.pod_policies.unprivileged.name"/></screen>
    <calloutlist>
-    <callout arearefs="co.admin.security.pod_policies.definition.unprivileged.name">
+    <callout arearefs="co.admin.security.pod_policies.unprivileged.name">
      <para>
       Make sure to change the policy and role name when adapting the
       example for your own policies.
@@ -988,7 +997,7 @@ resourceNames: ['suse.caasp.psp.unprivileged']<xref linkend="co.admin.security.p
     </callout>
    </calloutlist>
   </example>
-  <example xml:id="ex.admin.security.pod_policies.definition.privileged">
+  <example xml:id="ex.admin.security.pod_policies.privileged">
    <title>Privileged Pod Security Policy</title>
    <para>
     The privileged Pod Security Policy is intended to be given only to
@@ -999,7 +1008,7 @@ resourceNames: ['suse.caasp.psp.unprivileged']<xref linkend="co.admin.security.p
 apiVersion: extensions/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: suse.caasp.psp.privileged<co xml:id="co.admin.security.pod_policies.definition.privileged.name"/>
+  name: suse.caasp.psp.privileged<co xml:id="co.admin.security.pod_policies.privileged.name"/>
   annotations:
     seccomp.security.alpha.kubernetes.io/defaultProfileName: docker/default
     seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
@@ -1063,20 +1072,85 @@ spec:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: suse:caasp:psp:privileged<xref linkend="co.admin.security.pod_policies.definition.privileged.name"/>
+  name: suse:caasp:psp:privileged<xref linkend="co.admin.security.pod_policies.privileged.name"/>
 rules:
   - apiGroups: ['extensions']
     resources: ['podsecuritypolicies']
     verbs: ['use']
-resourceNames: ['suse.caasp.psp.privileged']<xref linkend="co.admin.security.pod_policies.definition.privileged.name"/></screen>
+resourceNames: ['suse.caasp.psp.privileged']<xref linkend="co.admin.security.pod_policies.privileged.name"/></screen>
    <calloutlist>
-    <callout arearefs="co.admin.security.pod_policies.definition.privileged.name">
+    <callout arearefs="co.admin.security.pod_policies.privileged.name">
      <para>
       Make sure to change the policy and role name when adapting the
       example for your own policies.
      </para>
     </callout>
    </calloutlist>
+  </example>
+  <example xml:id="ex.admin.security.pod_policies.daemonset">
+   <title>Privileged DaemonSet</title>
+   <para>
+    This example details how to create a privileged DaemonSet which uses
+    the role <literal>suse:caasp:psp:privileged</literal>.
+   </para>
+<screen>---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: <replaceable>NAMESPACE</replaceable>
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: <replaceable>SERVICE_ACCOUNT_NAME</replaceable>
+  namespace: <replaceable>NAMESPACE</replaceable>
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: <replaceable>ROLE_BINDING_NAME</replaceable>
+  namespace: <replaceable>NAMESPACE</replaceable>
+roleRef:
+  kind: ClusterRole
+  name: suse:caasp:psp:privileged
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- kind: ServiceAccount
+  name: <replaceable>SERVICE_ACCOUNT_NAME</replaceable>
+  namespace: <replaceable>NAMESPACE</replaceable>
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: <replaceable>DAEMONSET_NAME</replaceable>
+  namespace: <replaceable>NAMESPACE</replaceable>
+spec:
+  selector:
+    matchLabels:
+      name: <replaceable>DAEMONSET_NAME</replaceable>
+  template:
+    metadata:
+      labels:
+        name: <replaceable>DAEMONSET_NAME</replaceable>
+    spec:
+      serviceAccountName: <replaceable>SERVICE_ACCOUNT_NAME</replaceable>
+      hostPID: true
+      hostIPC: true
+      hostNetwork: true
+      nodeSelector:
+        beta.kubernetes.io/arch: amd64
+      containers:
+      - name: <replaceable>CONTAINER_NAME</replaceable>
+        image: <replaceable>IMAGE_NAME</replaceable>
+        volumeMounts:
+        - name: examplemount
+          mountPath: /something
+        securityContext:
+          privileged: true
+      volumes:
+      - name: examplemount
+        hostPath:
+          path: /var/log</screen>
   </example>
  </sect1>
 
