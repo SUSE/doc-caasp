@@ -83,7 +83,8 @@ data:
     </para>
 <screen>&prompt.root;<command>rbd create -s <replaceable>SIZE</replaceable> <replaceable>YOUR_VOLUME</replaceable></command></screen>
     <para>
-     Where <replaceable>SIZE</replaceable> is the size of the image and
+     Replace <replaceable>SIZE</replaceable> with the size of the
+     image, for example <literal>1G</literal>, and
      <replaceable>YOUR_VOLUME</replaceable> is the name of the image.
     </para>
    </step>
@@ -184,7 +185,8 @@ data:
     </para>
 <screen>&prompt.root;<command>rbd create -s <replaceable>SIZE</replaceable> <replaceable>YOUR_VOLUME</replaceable></command></screen>
     <para>
-     Where <replaceable>SIZE</replaceable> is the size of the image and
+     Replace <replaceable>SIZE</replaceable> with the size of the
+     image, for example <literal>1G</literal>, and
      <replaceable>YOUR_VOLUME</replaceable> is the name of the image.
     </para>
    </step>
@@ -215,6 +217,11 @@ spec:
     fsType: ext4
     readOnly: false
 *EOF*</command></screen>
+    <para>
+     Replace <replaceable>SIZE</replaceable> with the desired size of
+     the volume. Use the <emphasis>gibibit</emphasis> notation, for
+     example <literal>1Gi</literal>.
+    </para>
    </step>
    <step>
     <para>
@@ -232,6 +239,11 @@ spec:
     requests:
       storage: <replaceable>SIZE</replaceable>
 *EOF*</command></screen>
+    <para>
+     Replace <replaceable>SIZE</replaceable> with the desired size of
+     the volume. Use the <emphasis>gibibit</emphasis> notation, for
+     example <literal>1Gi</literal>.
+    </para>
     <note>
      <title>Listing Volumes</title>
      <para>
@@ -300,7 +312,8 @@ spec:
   <note>
    <title>Deleting a Pod</title>
    <para>
-    When you delete the pod, the persistent volume claim is deleted as well.
+    When you delete the pod, the persistent volume claim is deleted as
+    well. The RBD is not deleted.
    </para>
   </note>
  </sect1>
