@@ -855,4 +855,196 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8</screen>
 <screen>&prompt.root;<command>docker logs $(docker ps | grep salt-master | \
     awk '{print $1}') 2>&amp;1 | grep -i worker_threads</command></screen>
  </sect1>
+
+ <sect1 xml:id="sec.admin.velum.registry">
+  <title>Configuring Remote Container Registry</title>
+  <para>
+   A remote registry allows you to be able access container images locally. This
+   is commonly used in cases where a  CaaS Platform cluster is not allowed to
+   have direct access to the internet. You can create a local registry with the
+   images that you will need and add the information for that registry here.
+   If the registry is using a self-signed certificate, it can be added here to
+   create trust between Kubernetes and the registry.
+  </para>
+  <para>
+   By default the &suse; container registry is configured as the only remote
+   registry named <literal>SUSE</literal>.
+   </para>
+
+   <procedure>
+    <title>Adding A Remote Registry</title>
+    <step>
+     <para>
+      Log in to &dashboard; and navigate to <guimenu>Settings &rarr; Remote Registries</guimenu>.
+     </para>
+    </step>
+    <step>
+     <para>
+      Click on <guimenu>Add Remote Registry</guimenu> to add a new remote
+      registry configuration.
+      </para>
+     <informalfigure>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="velum_settings_remote_registry.png" width="100%"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="velum_settings_remote_registry.png" width="100%"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+     </step>
+
+     <step>
+      <para>
+       Fill in the options for the new registry.
+      </para>
+     <informalfigure>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="velum_settings_new_registry.png" width="100%"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="velum_settings_new_registry.png" width="100%"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+
+     <variablelist>
+      <varlistentry>
+       <term>Name</term>
+       <listitem>
+        <para>
+         Define a name for the registry.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>URL</term>
+       <listitem>
+        <para>
+         Enter the URL for the registry in the format
+         <literal>http(s)://&lt;hostname&gt;:&lt;port&gt;</literal>.
+          </para>
+         </listitem>
+        </varlistentry>
+        <varlistentry>
+         <term>Certificate</term>
+         <listitem>
+          <para>
+           Will only be shown if the <literal>URL</literal> field contains
+           <literal>https:</literal>.
+           </para>
+           <para>
+           Provide the body of the (self-signed) SSL certificate for the registry.
+          </para>
+         </listitem>
+        </varlistentry>
+       </variablelist>
+       </step>
+
+       <step>
+        <informalfigure>
+         <mediaobject>
+          <imageobject role="fo">
+           <imagedata fileref="velum_settings_registry_details.png" width="100%"/>
+          </imageobject>
+          <imageobject role="html">
+           <imagedata fileref="velum_settings_registry_details.png" width="100%"/>
+          </imageobject>
+         </mediaobject>
+        </informalfigure>
+       </step>
+
+       <step>
+        <informalfigure>
+         <mediaobject>
+          <imageobject role="fo">
+           <imagedata fileref="velum_settings_registry_overview.png" width="100%"/>
+          </imageobject>
+          <imageobject role="html">
+           <imagedata fileref="velum_settings_registry_overview.png" width="100%"/>
+          </imageobject>
+         </mediaobject>
+        </informalfigure>
+       </step>
+     </procedure>
+
+     <procedure>
+      <title>Removing A Registry</title>
+      <step>
+       <para>
+        Log in to &dashboard; and navigate to <guimenu>Settings &rarr; Remote Registries</guimenu>.
+       </para>
+      </step>
+      <step>
+      <para>
+       Click on the red trashcan icon in the row of the registry you wish to
+       delete and confirm the popup dialog by clicking <guimenu>OK</guimenu>.
+       </para>
+      </step>
+      <step>
+      <para>
+       </para>
+      </step>
+     </procedure>
+ </sect1>
+
+ <sect1 xml:id="sec.admin.velum.mirror">
+  <title>Configuring Registry Mirror</title>
+  <para>
+   Similar to the <guimenu>Remote Registries</guimenu> page, the
+   <guimenu>Mirrors</guimenu> page  allows you to add redundant image mirrors
+   to existing registries. The internal container engine will use this
+   information to reroute requests from the cluster nodes to the defined mirror
+   address.
+  </para>
+
+   <informalfigure>
+    <mediaobject>
+     <imageobject role="fo">
+      <imagedata fileref="velum_settings_mirror.png" width="100%"/>
+     </imageobject>
+     <imageobject role="html">
+      <imagedata fileref="velum_settings_mirror.png" width="100%"/>
+     </imageobject>
+    </mediaobject>
+   </informalfigure>
+
+   <informalfigure>
+    <mediaobject>
+     <imageobject role="fo">
+      <imagedata fileref="velum_settings_new_mirror.png" width="100%"/>
+     </imageobject>
+     <imageobject role="html">
+      <imagedata fileref="velum_settings_new_mirror.png" width="100%"/>
+     </imageobject>
+    </mediaobject>
+   </informalfigure>
+
+   <informalfigure>
+    <mediaobject>
+     <imageobject role="fo">
+      <imagedata fileref="velum_settings_mirror_details.png" width="100%"/>
+     </imageobject>
+     <imageobject role="html">
+      <imagedata fileref="velum_settings_mirror_details.png" width="100%"/>
+     </imageobject>
+    </mediaobject>
+   </informalfigure>
+
+   <informalfigure>
+    <mediaobject>
+     <imageobject role="fo">
+      <imagedata fileref="velum_settings_mirror_overview.png" width="100%"/>
+     </imageobject>
+     <imageobject role="html">
+      <imagedata fileref="velum_settings_mirror_overview.png" width="100%"/>
+     </imageobject>
+    </mediaobject>
+   </informalfigure>
+
+
+
+ </sect1>
 </chapter>
