@@ -470,39 +470,53 @@ Future:
       Registry: Restricting Access</link>.
      </para>
     </important>
-    <note>
-     <title>Registry Mirrors Are Read Only</title>
-     <para>
-      For security reasons, both the registry mirrors are configured in
-      <literal>read-only</literal> mode. Therefore, pushing container images to
-      these mirrors will not be possible.
-     </para>
-     <para>
-      If you need the ability to store modified container images, you will have
-      to create another registry that will hold these images. The steps needed
-      to run your own full container image registry are not part of this
-      document. For more information you can refer to:
-      <link xlink:href="https://docs.docker.com/registry/">Docker
-      Registry</link>.
-     </para>
-    </note>
+
     <para>
-     Internal and airgapped mirrors have slightly different configurations.
+     The external and internal mirrors have slightly different configurations.
     </para>
     <para>
-     The external mirror is configured as a
+     The external mirror is configured and acts as a
      <link xlink:href="https://docs.docker.com/registry/recipes/mirror/">"pull
-     through"-cache</link>. Which means, it connects to the upstream registry
-     and any attempt to pull an image from this registry is routed through this
-     mirror. The images pulled through this mirror will be stored in the cache.
-     This cache is the the data you need to transfer to the internal mirror.
+     through"-cache</link>. It connects to the upstream registry and any attempt
+     to pull an image from this registry is routed through this mirror. All
+     images pulled through this mirror will be stored in the cache. This cache
+     is the the data you need to transfer to the internal mirror.
     </para>
     <para>
-     You can host multiple registries on one internal mirror the need to run on
-     different ports. The respective container registry mirror must be
-     available to the &productname; cluster nodes at the configured port
-     (Default: <literal>5000</literal>).
+     The internal mirror acts as a container registry mirror that provides the
+     images to the &productname; cluster nodes. You can host multiple registries
+     on one internal mirror but they need to run on different ports. Each
+     respective container registry mirror must be available to the &productname;
+     cluster nodes at the configured port (Default: <literal>5000</literal>).
     </para>
+    <para>
+     Nothing has to be changed inside of Dockerfile(s), Kubernetes manifest
+     files, Helm charts, custom scripts, etc. All images using a prefix that
+     was configured as a remote registry/mirror (for example <literal>registry.suse.com/</literal>)
+     will be automatically pulled from the air-gapped mirror(s).
+     </para>
+     <note>
+      <title>Registry Mirrors Are Read Only</title>
+      <para>
+       For security reasons, both the registry mirrors are configured in
+       <literal>read-only</literal> mode. Therefore, pushing container images to
+       these mirrors will not be possible. They can only serve images that were
+       previously pulled and cached by the external mirror and then uploaded to
+       the internal mirror.
+      </para>
+      <para>
+       If you need the ability to store modified container images, you will have
+       to create a new registry that will hold these images. The steps needed
+       to run your own full container image registry are not part of this
+       document.
+      </para>
+       <para>
+       For more information you can refer to:
+       <link xlink:href="https://docs.docker.com/registry/">Docker
+       Registry</link>.
+      </para>
+     </note>
+
     <procedure>
      <title>Set Up The External Mirror</title>
      <step>
@@ -694,13 +708,32 @@ http:
     <procedure>
      <title>Update Container Registry Mirror</title>
      <step>
-      <para></para>
-     </step>
-     <step>
       <para>
        Pull all the desired images
       </para>
      </step>
+     <step>
+      <para>
+       Attach your trusted storage to the external mirror as <filename>/mnt/usbdisk</filename>
+       and copy all the contents of <filename>/var/lib/docker-registry</filename>
+       onto the drive.
+      </para>
+<screen>&prompt.sudo;<command>rsync -aP --delete /var/lib/docker-registry <replaceable>/mnt/usbdisk</replaceable></command>
+        </screen>
+      </step>
+      <step>
+       <para>
+        Transport the trusted storage to the airgapped network and attach it
+        to the internal container registry mirror in the same way.
+        </para>
+        </step>
+        <step>
+         <para>
+          Copy the data from the trusted storage onto the internal mirror.
+          </para>
+<screen>&prompt.sudo;<command>rsync -aP --delete <replaceable>/mnt/usbdisk</replaceable>/docker-registry/ /var/lib/docker-registry/</command>
+                  </screen>
+          </step>
     </procedure>
 <screen>
      Container images:
@@ -726,9 +759,7 @@ http:
      Using the mirror
 
 
-     Nothing has to be changed inside of Dockerfile(s), Kubernetes manifest files, Helm charts, custom scripts, etc. All the images with a prefix “registry.suse.com/” will be automatically pulled from this air-gapped mirror.
 
-     The mirror is read-only and can serve only the images that were previously cached by the regular on-premise mirror.
          </screen>
     <note>
      <title>Configuring Additional External Registries</title>
