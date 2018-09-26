@@ -447,6 +447,7 @@ Future:
     Images that are located on other registries must be mirrored separately on
     the airgapped network.
    </para>
+
    <sect3 xml:id="sec.deploy.scenarios.airgap.container-registry.configuration">
     <title>Mirror Configuration</title>
     <important>
@@ -656,7 +657,8 @@ http:
     </para>
 <!-- FIXME mnapp 18.9.18 Shouldn't we explain how to provide this default auth/security? -->
    </sect3>
-   <sect2 xml:id="sec.deploy.scenarios.airgap.container-registry.clients">
+
+   <sect3 xml:id="sec.deploy.scenarios.airgap.container-registry.clients">
     <title>Client Configuration</title>
     <para>
      Using the air-gapped mirror works exactly like using a traditional
@@ -678,7 +680,8 @@ http:
       </para>
      </step>
     </procedure>
-   </sect2>
+   </sect3>
+
    <sect3 xml:id="sec.deploy.scenarios.airgap.container-registry.update">
     <title>Updating The Mirror</title>
     <note>
@@ -743,25 +746,36 @@ http:
 
   <sect2 xml:id="sec.deploy.scenarios.airgap.helm-charts">
    <title>Helm Chart Repository Mirror</title>
+   <para>
+    Helm Charts provide a simple way to deploy entire application stacks
+    including all their dependencies and configurations. The repository consists
+    of chart packages that contain the necessary information and an index file.
+   </para>
    <sect3>
     <title>Mirror Configuration</title>
     <para>
      Set up an internal Helm chart mirror. This can be any webserver capable of
-     hosting static files. Add the internal mirror as a helm repo to the Admin
-     node.
+     hosting static files.
+    </para>
+    <para>
+     You do not need a Helm chart repository mirror on the external
+     network.
     </para>
    </sect3>
    <sect3>
     <title>Client Configuration</title>
-<screen>
-     Add the webserver as a repo to helm on the admin node.
-     https://docs.helm.sh/helm/#helm-repo-add
-    </screen>
+    <para>
+     Add the webserver as a repo to <command>helm</command> on the admin node.
+     </para>
+<screen>&prompt.user;<command>helm repo add SUSE-MIRROR <replaceable>&lt;internal-mirror.hostname&gt;</replaceable></command>
+   </screen>
    </sect3>
    <sect3 xml:id="sec.deploy.scenarios.airgap.helm-charts.update">
     <title>Updating The Mirror</title>
     <para>
-     To update
+     To update the repository, you simply download the helm chart repository
+     data from the upstream source and transfer it to your trusted storage.
+     Then you transfer the data onto the webserver in your airgapped network.
     </para>
     <procedure>
      <title>Download Helm Charts From Suse Repository</title>
@@ -832,7 +846,7 @@ http:
     <title>Using AutoYast</title>
     <para>
      Ensure the admin node is registered against RMT, that will ensure the
-     nodes are provisioned by AutoYaST are: Registered against RMT too Have all
+     nodes that are provisioned by AutoYaST are registered against RMT to have all
      the updates applied
     </para>
    </sect3>
