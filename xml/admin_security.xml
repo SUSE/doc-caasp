@@ -81,44 +81,6 @@
   </para>
  </sect1>
 
- <sect1 xml:id="sec.admin.security.installing_rootca">
-  <title>Obtaining and Installing Root CA Certificate</title>
-
-  <procedure>
-   <step>
-    <para>
-     Obtain the root CA certificate from any node in your cluster with
-     <command>scp</command>.
-    </para>
-    <screen>&prompt.user;<command>scp NODE:/etc/pki/trust/anchors/<replaceable>SUSE_CaaSP_CA</replaceable>.crt .</command></screen>
-   </step>
-   <step>
-    <para>
-     Copy the Root CA certificate file into the trust anchors directory
-     <filename>/etc/pki/trust/anchors/</filename>.
-    </para>
-    <screen>&prompt.sudo;cp <replaceable>SUSE_CaaSP_CA</replaceable>.crt <filename>/etc/pki/trust/anchors/</filename></screen>
-   </step>
-   <step>
-    <para>
-     Update the cache for known CA certificates.
-    </para>
-    <screen>&prompt.sudo;<command>update-ca-certificates</command></screen>
-   </step>
-  </procedure>
-  <note>
-   <title>Operating System Specific Instructions</title>
-   <para>
-    The location of the trust store anchors directory or the command to refresh
-    the CA certificates cache might vary depending on your operating system.
-   </para>
-   <para>
-    Please consult the official documentation for your operating system to
-    find the respective alternatives.
-   </para>
-  </note>
- </sect1>
-
  <sect1 xml:id="sec.admin.security.users">
   <title>Managing Users and Groups</title>
 
@@ -783,6 +745,105 @@ roleRef:
    </example>
   </sect2>
  </sect1>
+
+ <sect1 xml:id="sec.admin.security.certs">
+  <title>Certificates</title>
+  <para>
+   During the installation of &productname;, a CA (Certificate Authority)
+   certificate is generated; that is then used to authenticate and verify all
+   communications. The process also creates and distributes client certificates
+   for the components.
+  </para>
+  <para>
+   Communication is secured with TLS v1.2 using the <literal>AES 128 CBC</literal>
+   cipher.
+  </para>
+  <para>
+   All client certificates are 4096 Bit RSA encrypted.
+  </para>
+  <para>
+   Certificates are located in
+   <filename>/etc/pki</filename>
+   on each cluster node.
+  </para>
+
+  <sect2 xml:id="sec.admin.security.certs.renewal">
+   <title>Certificate Renewal</title>
+   <para>
+    The CA certificate is valid for <literal>3650</literal> days (10 years)
+    by default.
+   </para>
+   <para>
+    The client certificates are valid for <literal>365</literal> days (1 year)
+    by default.
+   </para>
+   <para>
+    All certificates have a renewal period of <literal>90</literal> days before
+    expiration. If orchestration of the cluster is run during that period, the
+    certificates which are about to expire are renewed automatically.
+   </para>
+   <para>
+    To manually renew certificates, refer to <xref linkend="sec.admin.troubleshooting.replace_certificates"/>.
+   </para>
+   <important>
+    <title>Renewing Expired Certificates</title>
+    <para>
+     If for whatever reason any of the certificates have failed to renew
+     automatically, please log in to &dashboard; and navigate to
+     <guimenu>Settings</guimenu>. Click the <guimenu>Apply changes</guimenu>
+     button. This will force a refresh of the cluster settings and any expired
+     certificates should be renewed automatically.
+    </para>
+    <para>
+     If this still fails, you can replace the certificates manually. Refer to:
+     <xref linkend="sec.admin.troubleshooting.replace_certificates"/>.
+     </para>
+   </important>
+  </sect2>
+
+  <sect2 xml:id="sec.admin.security.certs.installing_rootca">
+   <title>Obtaining and Installing Root CA Certificate</title>
+   <procedure>
+    <step>
+     <para>
+      Obtain the root CA certificate from any node in your cluster with
+      <command>scp</command>.
+     </para>
+     <screen>&prompt.user;<command>scp NODE:/etc/pki/trust/anchors/<replaceable>SUSE_CaaSP_CA</replaceable>.crt .</command>
+     </screen>
+    </step>
+    <step>
+     <para>
+      Copy the Root CA certificate file into the trust anchors directory
+      <filename>/etc/pki/trust/anchors/</filename>.
+     </para>
+     <screen>&prompt.sudo;cp
+      <replaceable>SUSE_CaaSP_CA</replaceable>.crt
+      <filename>/etc/pki/trust/anchors/</filename>
+     </screen>
+    </step>
+    <step>
+     <para>
+      Update the cache for known CA certificates.
+     </para>
+     <screen>&prompt.sudo;<command>update-ca-certificates</command>
+     </screen>
+    </step>
+   </procedure>
+   <note>
+    <title>Operating System Specific Instructions</title>
+    <para>
+     The location of the trust store anchors directory or the command to refresh
+     the CA certificates cache might vary depending on your operating system.
+    </para>
+    <para>
+     Please consult the official documentation for your operating system to find
+     the respective alternatives.
+    </para>
+   </note>
+  </sect2>
+ </sect1>
+
  <sect1 xml:id="sec.admin.security.audit">
   <title>Security Audit Log</title>
 
