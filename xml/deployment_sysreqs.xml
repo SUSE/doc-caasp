@@ -47,6 +47,67 @@
    size. For the current maximum supported number of nodes, please refer to
    the Release Notes on <link xlink:href="https://www.suse.com/releasenotes/"/>.
   </para>
+
+  <sect2 xml:id="sec.deploy.requirements.system.cluster.salt_cluster_size">
+   <title>Salt Cluster Sizing</title>
+   <para>
+    &productname; relies on SaltStack (or Salt for short) to automate various
+    tasks. The actions are performed by so called "workers". A worker can handle
+    a theoretical number of nodes at the same time. The number of available
+    workers limits the overall size of the cluster.
+    </para>
+    <para>
+     Up until a total cluster size of <literal>40</literal> nodes, no
+     adjustments to the default configuration of &productname; need to be made.
+    </para>
+    <para>
+     For clusters that consist of more than <literal>40</literal> nodes the
+     number of &sworker;s must be adjusted as follows:
+    </para>
+
+    <table>
+     <title>Salt Cluster Sizing</title>
+      <tgroup cols="2" align="center">
+       <colspec colname="c1"/>
+       <colspec colname="c2"/>
+       <thead>
+        <row>
+         <entry>Cluster Size (nodes)</entry>
+         <entry>&sworker;s </entry>
+        </row>
+       </thead>
+       <tbody>
+        <row>
+         <entry>&gt;40</entry>
+         <entry>20</entry>
+        </row>
+        <row>
+         <entry>&gt;60</entry>
+         <entry>30</entry>
+        </row>
+        <row>
+         <entry>&gt;75</entry>
+         <entry>40</entry>
+        </row>
+        <row>
+         <entry>&gt;85</entry>
+         <entry>50</entry>
+        </row>
+        <row>
+         <entry>&gt;95</entry>
+         <entry>60</entry>
+        </row>
+       </tbody>
+      </tgroup>
+     </table>
+     <para>
+      As a rule of thumb, two thirds of the cluster nodes should be &sworker;s
+      if the cluster grows above <literal>100</literal> nodes.
+     </para>
+     <para>
+      To adjust the number of &sworker;s, refer to: <xref linkend="sec.admin.salt.workers"/>.
+      </para>
+   </sect2>
  </sect1>
 
  <sect1 xml:id="sec.deploy.requirements.environment">
@@ -277,7 +338,7 @@
      <itemizedlist>
       <listitem>
        <para>
-        <literal>4 Core</literal> AMD64/Intel* EM64T processor 
+        <literal>4 Core</literal> AMD64/Intel* EM64T processor
        </para>
       </listitem>
       <listitem>
