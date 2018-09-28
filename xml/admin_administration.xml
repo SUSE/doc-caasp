@@ -137,6 +137,52 @@ cmd.run "<replaceable>df -h</replaceable>"</command>
    Replace the example <command>df -h</command> with a command of your choice.
    The output will be produced in your current terminal session.
   </para>
+
+  <sect2 xml:id="sec.admin.salt.workers">
+   <title>Adjusting The Number Of Salt Workers</title>
+   <para>
+    It will sometimes be necessary to resize the cluster to adjust for workloads
+    or other factors. Salt will run into problems, if the number of nodes to
+    handle becomes too large without adjusting the number of available &sworker;s.
+   </para>
+   <para>
+    For the correct value, refer to
+    <xref linkend="sec.deploy.requirements.system.cluster.salt_cluster_size"/>.
+   </para>
+   <procedure>
+    <title>Adjust The Salt Worker Count</title>
+    <step>
+     <para>
+      Log in to your admin node via SSH.
+     </para>
+    </step>
+    <step>
+     <para>
+      Run the following command to adjust the configured number of workers
+      (here: <literal>20</literal>).
+     </para>
+<screen>&prompt.root.admin;<command>echo "worker_threads:<replaceable>20</replaceable>" > /etc/salt/salt-master-custom.conf</command>
+    </screen>
+    </step>
+    <step>
+     <para>
+      Find the ID of the &smaster; container.
+     </para>
+<screen>&prompt.root.admin;<command>saltid=$(docker ps -q -f salt-master)</command>
+    </screen>
+    </step>
+    <step>
+     <para>
+      And restart the &smaster;.
+     </para>
+<screen>&prompt.root.admin;<command>docker kill $saltid</command>
+    </screen>
+    </step>
+   </procedure>
+   <para>
+    Now, Salt will restart and adjust the number of workers in the cluster.
+    </para>
+  </sect2>
  </sect1>
 
  <sect1 xml:id="sec.admin.nodes">
@@ -855,13 +901,13 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
    </tgroup>
   </table>
   <para>
-   To change the variable in the Salt Master configuration, run the
+   To change the variable in the &smaster; configuration, run the
    following on the &admin_node;:
   </para>
 <screen>&prompt.root;<command>echo "worker_threads: 20" > /etc/caasp/salt-master-custom.conf</command>
 &prompt.root;<command>docker restart $(docker ps | grep salt-master | awk '{print $1}')</command></screen>
   <para>
-   Salt master will be automatically restarted by kubelet.
+   &smaster; will be automatically restarted by kubelet.
   </para>
   <para>
    Following bootstrapping failure, you can check if Salt
