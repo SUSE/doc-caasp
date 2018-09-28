@@ -52,9 +52,10 @@
    <title>Salt Cluster Sizing</title>
    <para>
     &productname; relies on SaltStack (or Salt for short) to automate various
-    tasks. The actions are performed by so called "workers". A worker can handle
-    a theoretical number of nodes at the same time. The number of available
-    workers limits the overall size of the cluster.
+    tasks. The actions are performed by so called "minions". A minion can handle
+    a theoretical number of nodes at the same time. Salt assigns a configured
+    number of "worker threads" to the minions. The number of available
+    worker threads limits the overall size of the cluster.
     </para>
     <para>
      Up until a total cluster size of <literal>40</literal> nodes, no
@@ -62,7 +63,7 @@
     </para>
     <para>
      For clusters that consist of more than <literal>40</literal> nodes the
-     number of &sworker;s must be adjusted as follows:
+     number of Salt worker threads must be adjusted as follows:
     </para>
 
     <table>
@@ -73,7 +74,7 @@
        <thead>
         <row>
          <entry>Cluster Size (nodes)</entry>
-         <entry>&sworker;s </entry>
+         <entry>Salt worker threads </entry>
         </row>
        </thead>
        <tbody>
@@ -101,11 +102,13 @@
       </tgroup>
      </table>
      <para>
-      As a rule of thumb, two thirds of the cluster nodes should be &sworker;s
-      if the cluster grows above <literal>100</literal> nodes.
+      As a rule of thumb, if the cluster grows above <literal>100</literal>
+      nodes the number of worker threads should be at about two thirds of the
+      overall number of cluster nodes.
      </para>
      <para>
-      To adjust the number of &sworker;s, refer to: <xref linkend="sec.admin.salt.workers"/>.
+      To adjust the number of Salt worker threads, refer to:
+      <xref linkend="sec.admin.salt.worker_threads"/>.
       </para>
    </sect2>
  </sect1>
