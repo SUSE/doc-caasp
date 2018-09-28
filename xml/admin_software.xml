@@ -50,40 +50,40 @@
     </para>
    </listitem>
   </itemizedlist>
-  
+
   <para>
-   Transactional updates are managed by the <command>transactional-update</command> 
-   script, which is called once a day. The script checks if any updates are 
-   available. If there are any updates to be applied, a new snapshot of the root 
-   file system is created in the background and is updated from the release 
-   channels. All updates released to this point are applied. The running 
+   Transactional updates are managed by the <command>transactional-update</command>
+   script, which is called once a day. The script checks if any updates are
+   available. If there are any updates to be applied, a new snapshot of the root
+   file system is created in the background and is updated from the release
+   channels. All updates released to this point are applied. The running
    filesystem/machine state is left untouched.
   </para>
   <para>
-   The new snapshot, once completely updated, is then marked as active and will 
+   The new snapshot, once completely updated, is then marked as active and will
    be used as the new default after the next reboot of the system.
   </para>
-  
+
   <para>
    &dashboard; will show a list of nodes that have new updates
-   available for use. The cluster administrator then uses &dashboard; to reboot 
-   the nodes to the new snapshots to ensure the health of services and 
-   configuration. &dashboard; uses <command>salt</command> to safely disable 
-   services on the nodes, apply new snapshots, rewrite configurations and then 
+   available for use. The cluster administrator then uses &dashboard; to reboot
+   the nodes to the new snapshots to ensure the health of services and
+   configuration. &dashboard; uses <command>salt</command> to safely disable
+   services on the nodes, apply new snapshots, rewrite configurations and then
    bring the services and nodes back up.
   </para>
-  
+
   <important>
    <title>Always Use &dashboard; To Update Nodes</title>
   <para>
-   It is paramount that you never "hard reboot" nodes in the cluster after 
+   It is paramount that you never "hard reboot" nodes in the cluster after
    transactional updates. This will omit reconfiguring services and applications
    and will leave nodes in unhealthy, if not unsusable, states. If you have nodes
    with pending transactional updates follow
    <xref linkend="sec.admin.software.transactional-updates.installation"/>.
   </para>
  </important>
-   
+
   <note>
    <title>General Notes to the Updates Installation</title>
    <para>
@@ -95,19 +95,19 @@
     RPMs that require a license to be accepted cannot be updated.
    </para>
   </note>
-  
+
   <sect2 xml:id="sec.admin.software.transactional-updates.command">
    <title>The <command>transactional-update</command> Command</title>
    <important>
     <title>Only use when requested by SUSE Support</title>
     <para>
      This reference for <command>transactional-update</command>
-     should only be used when requested by SUSE Support. Updates are handled by 
-     an automated process and only require user interaction for rebooting of 
-     nodes. 
+     should only be used when requested by SUSE Support. Updates are handled by
+     an automated process and only require user interaction for rebooting of
+     nodes.
     </para>
    </important>
-   
+
    <para>
     The <command>transactional-update</command> enables you to install or
     remove updates of your system in an atomic way. The updates are applied all
@@ -211,7 +211,7 @@
     </varlistentry>
    </variablelist>
   </sect2>
-  
+
   <sect2 xml:id="sec.admin.software.transactional-updates.disabling">
    <title>Disabling Transactional Updates</title>
    <para>
@@ -304,7 +304,7 @@
   </sect2>
 
   <sect2 xml:id="sec.admin.software.transactional-updates.recovering">
-   <title>Recovering from Failed Updates</title>
+   <title>Recovering From Failed Updates</title>
    <para>
     Velum notifies you about failed updates. If the update failed,
     there are several things that can be the cause. The following list
@@ -409,7 +409,7 @@
    </procedure>
   </sect2>
  </sect1>
- 
+
  <sect1 xml:id="sec.admin.software.patch">
   <title>Program Temporary Fixes</title>
 
@@ -444,9 +444,9 @@
 
  <screen>&prompt.root;<command>transactional-update reboot ptf remove <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
  </sect1>
- 
+
  <sect1 xml:id="sec.admin.software.upgrade_caasp2">
-  <title>Upgrading from &productname; 2</title>
+  <title>Upgrading From &productname; 2</title>
   <warning>
    <title>Read This Section Carefully</title>
    <para>
@@ -510,7 +510,7 @@
     To do so you will run a <command>salt</command> command to display the
     package version installed on each node.
    </para>
-   
+
    <screen>
 &prompt.user;<command>docker exec -i  $(docker ps -q -f name=salt-master) \
 salt --batch 10 -P "roles:(admin|kube-(master|minion))" \
@@ -545,19 +545,19 @@ jid:
 retcode:
     0
    </screen>
-   
+
    <para>
     If the package version is <literal>0.3.11-3.15.1</literal> (or higher) you
     have the latest updates from the v2 channel installed.
    </para>
   </sect2>
-   
+
    <sect2 xml:id="sec.admin.software.upgrade_caasp2.timer">
     <title>Disable Automatic Updates</title>
     <para>
     To begin with the upgrade procedure, you first must disable the automatic
     transactional update mechanism to avoid conflicts. To do so you must run a
-    <command>salt</command> command across the nodes to disable the 
+    <command>salt</command> command across the nodes to disable the
     <literal>transactional-update.timer</literal>.
     </para>
     <screen>
@@ -596,7 +596,7 @@ retcode:
     0
     </screen>
   </sect2>
-   
+
    <sect2 xml:id="sec.admin.software.upgrade_caasp2.upgrade">
     <title>Upgrading to &productname; 3</title>
     <para>
@@ -605,13 +605,13 @@ retcode:
     <note>
      <title>Batch size for upgrade</title>
      <para>
-      In this example we have limited the number of nodes this step will be 
+      In this example we have limited the number of nodes this step will be
       performed on to <literal>10 nodes</literal> at a time.
      </para>
-      
+
       <para>
       This is a precaution to avoid problems on slower network connections.
-      If you are performing this step on a high bandwidth connection (for 
+      If you are performing this step on a high bandwidth connection (for
       example from within the same datacenter as the cluster), you can raise the
       number of nodes by replacing the value for the (<literal>--batch</literal>)
       parameter. It is highly recommended not to change this setting.
@@ -629,10 +629,10 @@ Executing run on ['5f6688bbeac94d2ab5c4330dc7043fb2',
                   'admin']
 
 5bf346291a18406290886c2e2f7c3e3f:
-    
-    
+
+
     Executing 'zypper --root /tmp/tmp.vbaqUwrLIh --non-interactive  refresh'
-    
+
     Retrieving repository 'SUSE-CAASP-ALL-Pool' metadata [...done]
     Building repository 'SUSE-CAASP-ALL-Pool' cache [....done]
     Retrieving repository 'SUSE-CAASP-ALL-Updates' metadata [....done]
@@ -650,7 +650,7 @@ retcode:
     </screen>
     <para>
      During the procedure the nodes will be switched to the new release channel
-     for v3, available updates are downloaded and installed, services and 
+     for v3, available updates are downloaded and installed, services and
      applications are reconfigured and brought up in a orderly fashion.
     </para>
     <para>
@@ -660,11 +660,11 @@ retcode:
      any of the update operations fail.
     </para>
    </sect2>
-   
+
    <sect2 xml:id="sec.admin.software.upgrade_caasp2.reboot">
     <title>Reboot Cluster Nodes</title>
     <para>
-     To complete the procedure, you must reboot the cluster nodes. To do this 
+     To complete the procedure, you must reboot the cluster nodes. To do this
      properly, use &dashboard; to restart the nodes.
     </para>
     <procedure>
@@ -675,30 +675,30 @@ retcode:
      </step>
      <step>
       <para>
-       Update the Admin node as described in 
+       Update the Admin node as described in
        <xref linkend="sec.admin.software.transactional-updates.installation" />.
       </para>
      </step>
      <step>
       <para>
-       Update the remaining nodes as described in 
+       Update the remaining nodes as described in
        <xref linkend="sec.admin.software.transactional-updates.installation" />.
       </para>
      </step>
     </procedure>
    </sect2>
-  
+
   <sect2 xml:id="sec.admin.software.upgrade_caasp2.troubleshooting">
    <title>Troubleshooting</title>
    <para>
-    In case the upgrade fails, please perform the support data collection by 
-    running <command>supportconfig</command> on the affected nodes. Provide the 
+    In case the upgrade fails, please perform the support data collection by
+    running <command>supportconfig</command> on the affected nodes. Provide the
     resulting files including the <filename>transactional-update-migration.log</filename>
     to SUSE Support.
    </para>
   </sect2>
  </sect1>
- 
+
  <sect1 xml:id="sec.admin.software.install">
   <title>Additional Software Installation</title>
   <para>
