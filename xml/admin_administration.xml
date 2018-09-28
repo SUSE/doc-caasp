@@ -138,12 +138,13 @@ cmd.run "<replaceable>df -h</replaceable>"</command>
    The output will be produced in your current terminal session.
   </para>
 
-  <sect2 xml:id="sec.admin.salt.workers">
-   <title>Adjusting The Number Of Salt Workers</title>
+  <sect2 xml:id="sec.admin.salt.worker_threads">
+   <title>Adjusting The Number Of Salt Worker Threads</title>
    <para>
     It will sometimes be necessary to resize the cluster to adjust for workloads
     or other factors. Salt will run into problems, if the number of nodes to
-    handle becomes too large without adjusting the number of available &sworker;s.
+    handle becomes too large without adjusting the number of available
+    Salt worker threads.
    </para>
    <para>
     For the correct value, refer to
