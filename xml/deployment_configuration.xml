@@ -168,8 +168,8 @@
     The <literal>NoCloud</literal> datasource enables you to read the
     <literal>cloud-init</literal> configuration without running a network
     service. <literal>cloud-init</literal> searches for the configuration files
-    <filename>meta-data</filename>, <filename>user-data</filename>, and 
-    (optional) <filename>vendor-data</filename> in the root directory of a local 
+    <filename>meta-data</filename>, <filename>user-data</filename>, and
+    (optional) <filename>vendor-data</filename> in the root directory of a local
     file system formatted as <literal>vfat</literal> or
     <literal>iso9660</literal> with a label <literal>cidata</literal>.
     Typically it is an unpartitioned USB stick or disk or a DVD iso.
@@ -185,40 +185,40 @@
     it is not overwritten even though the url changes. For details about
     boot parameters, see <link xlink:href="https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_startup.html" />.
    </para>
-   
+
    <sect3 xml:id="nocloud.datasource.images">
     <title>Generating cloud-init images for <literal>NoCloud</literal> datasource</title>
     <note>
      <title><command>mkisofs</command> dependecy</title>
      <para>
-      You need the tool <command>mkisofs</command> to produce the images. 
+      You need the tool <command>mkisofs</command> to produce the images.
       It should be preinstalled &opensuse; Leap and Tumbleweed installations.
-      For other operating systems, please refer to the specific instructions for 
+      For other operating systems, please refer to the specific instructions for
       the respective distribution.
      </para>
      <para>
-      If <command>mkisofs</command> is not available, you can use the nearly 
+      If <command>mkisofs</command> is not available, you can use the nearly
       identical <command>genisoimage</command>.
      </para>
     </note>
 
     <para>
-     You can use a local ISO image generated from cloud-init data to help 
+     You can use a local ISO image generated from cloud-init data to help
      configuring a cluster that is not hosted in the cloud.
     </para>
 
     <para>
      You will need to create two image files. One that is used to initialize the
      admin node and one that is used to initialize the master and worker
-     nodes. You need to provide a <filename>meta-data</filename> and 
+     nodes. You need to provide a <filename>meta-data</filename> and
      <filename>user-data</filename> file per node type.
     </para>
-       
+
     <procedure>
      <title>Generate cloud-init ISO files</title>
      <step>
       <para>
-       Create two directories: <filename>cc-admin</filename> and 
+       Create two directories: <filename>cc-admin</filename> and
        <filename>cc-worker</filename>.
       </para>
      </step>
@@ -232,13 +232,13 @@
           <xref linkend="sec.deploy.cloud-init.meta-data" />
          </para>
         </listitem>
-        
+
         <listitem>
          <para>
           <xref linkend="sec.deploy.cloud-init.user-data"/>
          </para>
         </listitem>
-        
+
         <listitem>
          <para>
           <xref linkend="sec.deploy.cloud-init.vendor-data"/> (Optional)
@@ -251,29 +251,29 @@
        <itemizedlist>
         <listitem>
          <para>
-          <filename>cc-admin/meta-data</filename> (This file will be reused across 
+          <filename>cc-admin/meta-data</filename> (This file will be reused across
           all nodes)
          </para>
         </listitem>
-        
+
         <listitem>
          <para>
           <filename>cc-admin/user-data</filename>
          </para>
         </listitem>
-        
+
         <listitem>
          <para>
           <filename>cc-admin/vendor-data</filename> (Optional)
          </para>
         </listitem>
-        
+
         <listitem>
          <para>
           <filename>cc-worker/user-data</filename>
          </para>
         </listitem>
-        
+
         <listitem>
          <para>
           <filename>cc-worker/vendor-data</filename> (Optional)
@@ -281,16 +281,16 @@
         </listitem>
        </itemizedlist>
       </step>
-      
+
       <step>
         <para>
-         Copy <filename>cc-admin/meta-data</filename> to 
-         <filename>cc-worker/</filename>. 
+         Copy <filename>cc-admin/meta-data</filename> to
+         <filename>cc-worker/</filename>.
        </para>
      </step>
      <step>
       <para>
-       Finally, you need to package the respective configurations into two ISO 
+       Finally, you need to package the respective configurations into two ISO
        files. The result of the following commands will be two <literal>iso9660</literal>
        ISO files with the volume label <literal>cidata</literal> and additional
       <literal>joliet</literal> metadata.
@@ -305,7 +305,7 @@
 
      </step>
     </procedure>
- 
+
    </sect3>
   </sect2>
 
@@ -337,6 +337,14 @@
     file typically contains the <literal>instance-id</literal> and
     <literal>network-interfaces</literal> options. Each is described below.
    </para>
+   <important>
+    <title>Network Configuration Priority</title>
+    <para>
+     If you are deploying &productname; nodes using &ay;, the network settings
+     from <literal>cloud-init</literal> will be ignored and the settings
+     made in the &ay; process are applied.
+    </para>
+   </important>
    <variablelist>
     <varlistentry>
      <term><literal>instance-id</literal>
@@ -506,7 +514,7 @@ ssh_authorized_keys:
     </para>
     <screen>mkpasswd --method=SHA-512 --rounds=4096</screen>
     <para>
-     This command would create an SHA-512 password hash with 4096 salt rounds, 
+     This command would create an SHA-512 password hash with 4096 salt rounds,
      using <literal>stdin</literal> as input.
     </para>
     <para>
