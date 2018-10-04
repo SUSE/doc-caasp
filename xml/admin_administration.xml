@@ -526,6 +526,21 @@ salt --async -G 'roles:kube-master' cmd.run 'systemctl poweroff'</command></scre
    </sect3>
    <sect3 xml:id="sec.admin.nodes.graceful_shutdown.complete.startup">
     <title>Starting Up</title>
+    <note>
+     <title><literal>kubectl</literal> Needs Master Nodes To Function</title>
+     <para>
+      <command>kubectl</command> requires use of the &kube; API hosted on the
+      master nodes. Therefore, until at least some of the master nodes have
+      started successfully, you will see error messages of the type
+      <literal>HTTP 503</literal>.
+     </para>
+     <screen>
+Error from server (InternalError): an error on the server
+("&lt;html&gt;&lt;body&gt;&lt;h1&gt;503 Service Unavailable&lt;/h1&gt;\nNo server is available
+to handle this request.\n&lt;/body&gt;&lt;/html&gt;") has prevented the request
+from succeeding (get nodes)
+     </screen>
+    </note>
     <procedure>
      <step>
       <para>
@@ -548,7 +563,8 @@ worker-0   NotReady,SchedulingDisabled   &lt;none>    21h       v1.9.8
 worker-1   NotReady,SchedulingDisabled   &lt;none>    21h       v1.9.8
 worker-2   NotReady,SchedulingDisabled   &lt;none>    21h       v1.9.8
 worker-3   NotReady,SchedulingDisabled   &lt;none>    21h       v1.9.8
-worker-4   NotReady,SchedulingDisabled   &lt;none>    21h       v1.9.8</screen>
+worker-4   NotReady,SchedulingDisabled   &lt;none>    21h       v1.9.8
+      </screen>
      </step>
      <step>
       <para>
@@ -564,7 +580,8 @@ worker-0   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
 worker-1   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
 worker-2   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
 worker-3   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
-worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8</screen>
+worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
+      </screen>
      </step>
      <step>
       <para>
