@@ -16,56 +16,73 @@
   </dm:docmanager>
  </info>
  <para>
-  This chapter prepares the installation of &productname; on physical
-  machines, manually configured virtual machines or in private cloud
-  environments.
- </para>
-
- <para>
-  There are several ways to install &productname;:
+  Depending on the environment, &productname; can be installed using several
+  methods. Each method requires differnt steps for preparation:
  </para>
  <variablelist>
+  <!-- Installing on Bare Metal or Virtual Machines -->
   <varlistentry>
-   <term><xref linkend="sec.deploy.preparation.dvd" /></term>
+   <term><xref linkend="sec.deploy.preparation.baremetal"/></term>
    <listitem>
     <para>
-     This method requires lots of manual interaction with the
-     physical or virtual machines. This method is suitable for small to
-     medium cluster sizes.
+     An installtion on physical hardware or virtual machines gives you the
+     choice of three different installation methods:
+    </para>
+    <itemizedlist>
+     <listitem>
+      <!-- Installing from USB, DVD or ISO Images -->
+      <para>
+       <xref linkend="sec.deploy.preparation.dvd" xrefstyle="select:title"/>:
+       This method requires manual interaction with the physical or virtual
+       machine. This method is suitable for small to medium cluster sizes and
+       can be used for manual and &ay; installations.
+      </para>
+     </listitem>
+     <listitem>
+      <!-- Installing from Network Source -->
+      <para>
+       <xref linkend="sec.deploy.preparation.pxe" xrefstyle="select:title"/>:
+       With this method the boot image is provided by a network installation
+       server. The nodes boot the image using network boot (PXE). This method
+       reduces the need to interact with every single node. It is suitable for
+       medium cluster sizes and can be used for manual and &ay; installations.
+      </para>
+     </listitem>
+     <listitem>
+      <!-- Installing from Virtual Disk Images -->
+      <para>
+       <xref linkend="sec.deploy.preparation.disk_images"
+       xrefstyle="select:title"/>: You can use prepared disk images ready to
+       deploy on virtual machines. Since node configuration is done
+       automatically via <command>cloud-init</command>, this increases the
+       deployment speed.  This method is suitable for medium to large cluster
+       sizes.  It cannot be used for &ay; installations. This method is also
+       recommended when installing on VMware ESX and ESXi environments, since
+       the images alrteady contain the <package>open-vm-tools</package>, which
+       otherwise need to be installed separately on each node.
+      </para>
+     </listitem>
+    </itemizedlist>
+   </listitem>
+  </varlistentry>
+  <varlistentry>
+   <term>
+    <!-- Installing in SUSE OpenStack Cloud -->
+    <xref linkend="sec.deploy.preparation.openstack" xrefstyle="select:title"/>
+   </term>
+   <listitem>
+    <para>
+     &suse; provides disk images and &ostack; Heat teamplates required for
+     deploying &productname; on &soc;.
     </para>
    </listitem>
   </varlistentry>
   <varlistentry>
-   <term><xref linkend="sec.deploy.preparation.disk_images" /></term>
-   <listitem>
-    <para>
-     You can use prepared disk images ready to deploy on virtual
-     machines. This increases the deployment speed.
-    </para>
-   </listitem>
-  </varlistentry>
-  <varlistentry>
-   <term><xref linkend="sec.deploy.preparation.pxe" /></term>
-   <listitem>
-    <para>
-     With this method the boot into the installation is done with a
-     network installation server. This reduces the need to interact
-     with every single node. This method is suitable for medium cluster
-     sizes.
-    </para>
-   </listitem>
-  </varlistentry>
-  <varlistentry>
-   <term><xref linkend="sec.deploy.preparation.openstack" /></term>
-   <listitem>
-    <para>
-     You can deploy &productname; on &soc;. This method is suitable
-     for large cluster sizes.
-    </para>
-   </listitem>
-  </varlistentry>
-  <varlistentry>
-   <term><xref linkend="sec.deploy.preparation.public_cloud" /></term>
+   <!-- Installing in Public Cloud -->
+   <term>
+    <xref linkend="sec.deploy.preparation.public_cloud"
+          xrefstyle="select:title"/>
+   </term>
    <listitem>
     <para>
      This section is about installing &productname; in a public cloud,
@@ -76,407 +93,686 @@
    </listitem>
   </varlistentry>
  </variablelist>
- <para>
-  To customize the setup of the nodes, use <command>cloud-init</command>.
-  For details, see <xref linkend="sec.deploy.cloud-init" />.
- </para>
 
- <sect1 xml:id="sec.deploy.preparation.dvd">
-  <title>Installing from USB, DVD or ISO Images</title>
+
+ <sect1 xml:id="sec.deploy.preparation.baremetal">
+  <title>Installing on Bare Metal or Virtual Machines</title>
   <para>
-   This procedure provides an overview of the steps for the
-   cluster deployment with classical boot devices like DVD drives. This
-   method is suitable for small to medium cluster sizes.
+   An installtion on physical hardware or virtual machines can be done by
+   booting from an ISO image or a network source. Virtual machines can also be
+   installed from virtual disk images.
+  </para>
+
+  <sect2 xml:id="sec.deploy.preparation.dvd">
+   <title>Installing from USB, DVD or ISO Images</title>
+   <para>
+   This procedure provides an overview of the steps for the cluster deployment
+   with classical boot devices like DVD drives. This method is suitable for
+   installing small to medium clusters on bare metal or virtual machines.
+   </para>
+   <procedure>
+    <step>
+     <para>
+     Choose an installation medium. You can install from DVD or a USB
+     flash medium. On virtual machines, you can install from ISO images.
+    </para>
+    <tip>
+     <title>Creating a Bootable USB Flash Drive</title>
+     <para>
+      To create a bootable flash disk, you need to copy a DVD image to the
+      device using the dd command. The flash disk must not be mounted, all data
+      on the device will be erased:
+     </para>
+     <screen>&prompt.sudo;dd if=<replaceable>PATH_TO_ISO_IMAGE</replaceable> of=<replaceable>USB_STORAGE_DEVICE</replaceable> bs=4M</screen>
+    </tip>
+   </step>
+   <step>
+    <para>
+     Boot the machine designated to become the &admin_node; from the
+     selected medium. Follow the installation instructions at <xref
+     linkend="sec.deploy.nodes.admin_install"/>.
+    </para>
+   </step>
+   <step>
+    <para>
+     Configure the &admin_node; as described in <xref
+     linkend="sec.deploy.nodes.admin_configuration"/> until you see the
+     <guimenu>Select nodes and roles</guimenu> screen.
+    </para>
+   </step>
+   <step>
+    <para>
+     Boot the machines designated to become the &master_node;(s) and the
+     &worker_node;s from the selected medium. The same ISO image as for booting
+     and installing the &admin_node; is also used for the other node types. To
+     set up the nodes you have two choices:
+    </para>
+    <itemizedlist>
+    <listitem>
+     <para>
+      Setting up the nodes manually. You will have to enter data such as
+      language, keyboard, registration code and the &admin_node;'s address on
+      single setup dialog.  This dialog is very similar to the one that was
+      used to set up the &admin_node;. See <xref
+      linkend="sec.deploy.nodes.worker_install"/> for details. Only use this
+      method for small cluster sizes (up to five nodes).
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Setting up the nodes automatically with &ay;. The &admin_node; serves a
+      ready-to-use &ay; file which can be downloaded by the nodes during
+      boot. This considerably speeds up the node deployment and is therefore
+      the recommended method. See <xref
+      linkend="sec.deploy.nodes.worker_install.manual.autoyast"/> for details.
+     </para>
+    </listitem>
+    </itemizedlist>
+   </step>
+   <step>
+    <para>
+     Finish the installation by bootstrapping the nodes. For details,
+     see <xref linkend="sec.deploy.install.bootstrap"/>.
+    </para>
+   </step>
+   <step>
+    <para>
+     For deployments on &vmware; ESX/ESXi: install the
+     <package>open-vm-tools</package> package. See <xref
+     linkend="sec.deploy.install.vmware_tools" />.
+    </para>
+   </step>
+  </procedure>
+ </sect2>
+
+ <sect2 xml:id="sec.deploy.preparation.pxe">
+  <title>Installing from a Network Source</title>
+  <para>
+   This procedure provides an overview of the steps for the cluster deployment
+   from an network installation server. A PXE environment is used to provide
+   the nodes with the data required for installation. This method is suitable
+   for installing small to medium clusters on bare metal or virtual machines.
   </para>
   <procedure>
    <step>
     <para>
-     Choose an installation medium. You can install from DVD or USB
-     sticks. On virtual machines, you can install from ISO images.
+     Provide an installation server that provides a DHCP, PXE and TFTP
+     service. Additionally, you can provide the installation data on
+     an HTTP or FTP server. Such a server can be set up using &sle;,
+     installation instructions are available at:
+    </para>
+    <itemizedlist>
+     <listitem>
+      <para><link
+       xlink:href="https://www.suse.com/documentation/sles-12/singlehtml/book_sle_deployment/book_sle_deployment.html#cha.deployment.instserver">&slea; 12 SP3: Setting Up an Installation Server</link>
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       <link
+       xlink:href="https://www.suse.com/documentation/sles-15/singlehtml/book_sle_deployment/book_sle_deployment.html#part.installserver">&slea;
+       15; Setting Up an Installation Server</link>
+      </para>
+     </listitem>
+    </itemizedlist>
+    <substeps>
+     <step>
+      <para>
+       To provide the Kernel and initrd, you can mount the ISO image of the
+       installation media and use the files
+       <filename>/boot/x86_64/loader/linux</filename> and
+       <filename>/boot/x86_64/loader/initrd</filename> from this medium.
+      </para>
+      <para>
+       Alternatively, install the package
+       <package>tftpboot-installation-CAASP-3.0</package> on the installation
+       server. This package can also be found on the installation media. It is
+       located at
+       <filename>/suse/noarch/tftpboot-installation-CAASP-3.0-x86_64-<replaceable>VERSION</replaceable>.noarch.rpm</filename>. The
+       package provides the Kernel and initrd in the /srv/tftpboot/
+       directory. To install it, mount the ISO image of the installation media
+       und use zypper for installing, for example:
+      </para>
+      <screen>&prompt.sudo;mount -o loop SUSE-CaaS-Platform-3.0-DVD-x86_64-GM-DVD1.iso /mnt
+&prompt.sudo;zypper in \
+      /mnt/suse/noarch/tftpboot-installation-CAASP-3.0-x86_64-14.337.3-1.7.noarch.rpm</screen>
+     </step>
+     <step>
+      <para> The examples in the server installation instructions refer to
+      &sle;&mdash;make sure to adjust the paths to correctly point to the files
+      for &productname;.
+      </para>
+     </step>
+    </substeps>
+   </step>
+   <step>
+    <para>
+     PXE boot the machine designated to become the &admin_node; from the
+     selected medium. Follow the installation instructions at <xref
+     linkend="sec.deploy.nodes.admin_install"/>.
     </para>
    </step>
    <step>
     <para>
-     Boot the machine designated for the &admin_node; from your
-     selected medium. Then follow the installation and configuration
-     instructions detailed in <xref
-     linkend="sec.deploy.nodes.admin_install" /> and <xref
-     linkend="sec.deploy.nodes.admin_configuration" />.
+     Configure the &admin_node; as described in <xref
+     linkend="sec.deploy.nodes.admin_configuration"/> until you see the
+     <guimenu>Select nodes and roles</guimenu> screen.
     </para>
    </step>
    <step>
     <para>
-     Boot the machines designated to be the Master and Worker Nodes
-     from your selected medium. Then follow the installation and
-     configuration instructions detailed in <xref
-     linkend="sec.deploy.nodes.worker_install" />. To automate the
-     installation, you can use an &ay; file provided by the
-     &admin_node;. We recommend to use &ay; to speed up the node
-     deployment. For details, see <xref
-     linkend="sec.deploy.nodes.worker_install.manual.autoyast" />.
+     PXE boot the machines designated to become the &master_node;(s) and the
+     &worker_node;s from the selected medium. The same ISO image as for booting
+     and installing the &admin_node; is also used for the other node types. To
+     set up the nodes you have two choices:
+    </para>
+    <itemizedlist>
+    <listitem>
+     <para>
+      Setting up the nodes manually. You will have to enter data such as
+      language, keyboard, registration code and the &admin_node;'s address on
+      single setup dialog.  This dialog is very similar to the one that was
+      used to set up the &admin_node;. See <xref
+      linkend="sec.deploy.nodes.worker_install"/> for details. Only use this
+      method for small cluster sizes (up to five nodes).
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Setting up the nodes automatically with &ay;. The &admin_node; serves a
+      ready-to-use &ay; file which can be downloaded by the nodes during
+      boot. This considerably speeds up the node deployment and is therefore
+      the recommended method. See <xref
+      linkend="sec.deploy.nodes.worker_install.manual.autoyast"/> for details.
+     </para>
+    </listitem>
+    </itemizedlist>
+   </step>
+   <step>
+    <para>
+     Finish the installation by bootstrapping the nodes. For details,
+     see <xref linkend="sec.deploy.install.bootstrap"/>.
     </para>
    </step>
    <step>
     <para>
-     Finish the installation by bootstrapping the cluster. For details,
-     see <xref linkend="sec.deploy.install.bootstrap" />.
-    </para>
-   </step>
-   <step>
-    <para>
-     For &vmware; ESX/ESXi: install the <package>open-vm-tools</package>
-     package. See <xref linkend="sec.deploy.install.vmware_tools" />.
+     For deployments on &vmware; ESX/ESXi: install the
+     <package>open-vm-tools</package> package. See <xref
+     linkend="sec.deploy.install.vmware_tools" />.
     </para>
    </step>
   </procedure>
- </sect1>
+ </sect2>
 
- <sect1 xml:id="sec.deploy.preparation.disk_images">
+ <sect2 xml:id="sec.deploy.preparation.disk_images">
   <title>Installing from Virtual Disk Images</title>
   <para>
    For building clusters from virtual machines on supported
    hypervisors, it is not necessary to individually install each
-   node. &suse; offers pre-installed VM disk images in the following
-   formats:
+   node. &suse; offers pre-installed VM disk images for the following
+   hypervisors:
   </para>
-  <variablelist>
-   <varlistentry>
-    <term>&kvm; and &xen;</term>
-    <listitem>
-     <para>
-      In QCOW2 format, for &kvm; and for &xen; using full virtualization.
-     </para>
-    </listitem>
-   </varlistentry>
-   <varlistentry>
-    <term>&xen;</term>
-    <listitem>
-     <para>
-      In QCOW2 format, for &xen; using paravirtualization.
-     </para>
-    </listitem>
-   </varlistentry>
-   <varlistentry>
-    <term>&vmware;</term>
-    <listitem>
-     <para>
-      In VMDK format, for &vmware; ESXi.
-     </para>
-    </listitem>
-   </varlistentry>
-   <varlistentry>
-    <term>
-     VHD
-    </term>
-    <listitem>
-     <para>For Microsoft Hyper-V.</para>
-    </listitem>
-   </varlistentry>
-  </variablelist>
-
-  <sect2 xml:id="sec.deploy.preparation.disk_images.overview">
-   <title>Overview</title>
-   <para>
-    When deploying a cluster node from pre-installed disk images, the
-    setup program never runs. Therefore, the configuration must happen
-    while the node is starting up. For this purpose, &productname;
-    includes <command>cloud-init</command>. The described process is
-    very similar for all hypervisors. The examples in this manual use
-    &kvm; running on &sle;. The following procedure outlines the
-    overall process.
-   </para>
-   <procedure>
-    <step>
-     <para>
-      For &vmware; ESX/ESXi: Convert VMDK images. See <xref linkend=
-      "sec.deploy.preparation.disk_images.vmware" />.
-     </para>
-    </step>
-    <step>
-     <para>
-      Write <command>cloud-init</command> configuration files. See
-      <xref linkend="sec.deploy.preparation.disk_images.configuration"
-      />.
-     </para>
-    </step>
-    <step>
-     <para>
-      Prepare ISO images containing the <command>cloud-init</command>
-      configuration files. See <xref
-      linkend="sec.deploy.preparation.disk_images.iso-image" />.
-     </para>
-    </step>
-    <step>
-     <para>
-      Create a copy of the downloaded disk image for each virtual
-      machine, naming them appropriately: for example,
-      <literal>caas-admin</literal>, <literal>caas-master</literal>,
-      <literal>caas-worker1</literal>, <literal>caas-worker2</literal>
-      and so on.
-     </para>
-    </step>
-    <step>
-     <para>
-      Boot and configure the &admin_node;. See <xref
-      linkend="sec.deploy.preparation.qcow2.admin" />.
-     </para>
-    </step>
-    <step>
-     <para>
-      Boot and configure the worker nodes. See <xref
-      linkend="sec.deploy.preparation.disk_images.worker" />.
-     </para>
-    </step>
-   </procedure>
-  </sect2>
-
-  <sect2 xml:id="sec.deploy.preparation.disk_images.vmware">
-   <title>Converting Images for &vmware; ESX and ESXi</title>
-   <para>
-    Downloaded disk images need to be converted for usage with &vmware;
-    ESX and ESXi. On the ESX/ESXi host, run the following command on the
-    downloaded disk images:
-   </para>
-   <screen>&prompt.root;<command>vmkfstools -i <replaceable>DOWNLOADED_IMAGE</replaceable>.vmdk <replaceable>CONVERTED_IMAGE</replaceable>.vmdk</command></screen>
-  </sect2>
-
-  <sect2 xml:id="sec.deploy.preparation.disk_images.configuration">
-   <title>Configuration Files</title>
-   <para>
-    There are two separate configuration files: <filename>user-data</filename>
-    and <filename>meta-data</filename>. Each node needs both. Thus, you need to
-    prepare at a minimum one pair of files for the &admin_node;, and another
-    pair of files for all the &worker_node;s.
-   </para>
-   <para>
-    Place the files into subdirectories named <filename>cc-admin</filename>
-    for the &admin_node; and <filename>cc-worker</filename> for the
-    &worker_node;s.
-   </para>
-   <para>
-    So, for instance, if your working directory is <filename>~/cloud-config</filename>,
-    then for the admin node, you need these two files:
-   </para>
-   <screen>~/cloud-config/cc-admin/user-data
-~/cloud-config/cc-admin/meta-data</screen>
-   <para>
-    For a &worker_node;, you need:
-   </para>
-   <screen>~/cloud-config/cc-worker/user-data
-~/cloud-config/cc-worker/meta-data</screen>
-   <para>
-    The same <filename>meta-data</filename> file can be used for both node types.
-    Here is an sample <filename>meta-data</filename> file:
-    </para>
-    <screen>#cloud-config
-instance-id: <replaceable>iid-CAAS01</replaceable>
-network-interfaces: |
-   auto <replaceable>eth0</replaceable>
-   iface <replaceable>eth0</replaceable> inet dhcp</screen>
-   <para>
-    The <filename>user-data</filename> file contains settings such as time
-    servers, the &rootuser; password, and the node type.
-   </para>
-   <para>
-    Here is an example <filename>cc-admin/user-data</filename> file for an
-    &admin_node;:
-   </para>
-   <screen>#cloud-config
-debug: True
-disable_root: False
-ssh_deletekeys: False
-ssh_pwauth: True
-chpasswd:
-   list: |
-     root:<replaceable>MY_PASSWORD</replaceable>
-     expire: False
-ntp:
-   servers:
-     - <replaceable>ntp1.example.com</replaceable>
-     - <replaceable>ntp2.example.com</replaceable>
-runcmd:
-   - /usr/bin/systemctl enable --now ntpd
-suse_caasp:
-  role: <replaceable>admin</replaceable></screen>
-   <para>
-    Here is an example <filename>cc-worker/user-data</filename>  for a
-    &worker_node;. Rather than providing the &rootuser; password in
-    clear text, you can use a hash instead; this example is hashed with
-    SHA-256.
-   </para>
-   <screen>#cloud-config
-debug: True
-disable_root: False
-ssh_deletekeys: False
-ssh_pwauth: True
-chpasswd:
-   list: |
-   root:<replaceable>$5$eriogqzq$Dg7PxHsKGzziuEGkZgkLvacjuEFeljJ.rLf.hZqKQLA</replaceable>
-     expire: False
-suse_caasp:
-    role: <replaceable>cluster</replaceable>
-    admin_node: <replaceable>caas-admin.example.com</replaceable></screen>
+  <itemizedlist>
+   <listitem>
     <para>
-     For more informatin, also refer to <xref
-     linkend="sec.deploy.cloud-init" />.
+     <emphasis role="bold">&kvm; and &xen; (fully virtualized)</emphasis>: In
+     QCOW2 format
+     (<filename>SUSE-CaaS-Platform-3.0-for-KVM-and-Xen.x86_64-3.0.0-GM.qcow2</filename>)
     </para>
-  </sect2>
-  <sect2 xml:id="sec.deploy.preparation.disk_images.iso-image">
-   <title>Preparing an ISO image</title>
-   <para>
-    First, edit the configuration files as described in <xref linkend=
-    "sec.deploy.preparation.disk_images.configuration" />. Then
-    create an ISO image with the volume label <literal>cidata</literal>
-    containing only the subdirectory for that node type.
-   </para>
-   <para>
-    On &sle; 12 or &opensuse; 42, use <command>genisoimage</command> to do this.
-    On &sle; or &opensuse; 15, use <command>mkisofs</command>. The parameters
-    are the same for both commands.
-   </para>
-   <para>
-    For example, to create the ISO image for an admin node on a computer
-    running &opensuse; 42:
-   </para>
-   <screen>&prompt.user;<command>sudo genisoimage -output <replaceable>cc-admin.iso</replaceable> -volid <replaceable>cidata</replaceable> -joliet -rock <replaceable>cc-admin</replaceable></command></screen>
-   <para>
-    To create the ISO image for a worker node on a computer running &opensuse;
-    15, substituting the name of the folder containing the configuration
-    files for a &worker_node; and titling the volume <literal>cc-worker</literal>:
-   </para>
-   <screen>&prompt.user;<command>sudo mkisofs -output <replaceable>cc-worker.iso</replaceable> -volid <replaceable>cidata</replaceable> -joliet -rock <replaceable>cc-worker</replaceable></command></screen>
-  </sect2>
-
-  <sect2 xml:id="sec.deploy.preparation.qcow2.admin">
-   <title>Bringing Up an &Admin_Node;</title>
-   <procedure>
-    <step>
-     <para>
-      Create a new VM for the &admin_node;.
-     </para>
-    </step>
-    <step>
-     <para>
-      Attach a copy of the downloaded disk image as its main hard disk.
-     </para>
-    </step>
-    <step>
-     <para>
-      Attach the <filename>cc-admin.iso</filename> image as a
-      virtual DVD unit. For details about preparing the image, see <xref
-      linkend="sec.deploy.preparation.disk_images.iso-image" />
+   </listitem>
+   <listitem>
+    <para>
+     <emphasis role="bold">&xen; (paravirtualized)</emphasis>: In QCOW2 format
+     (<filename>SUSE-CaaS-Platform-3.0-for-XEN.x86_64-3.0.0-GM.qcow2</filename>)
     </para>
-    </step>
-    <step>
-     <para>
-      Start the VM.
-     </para>
-    </step>
-    <step>
-     <para>
-      Configure the new &admin_node; as in step <xref linkend="sec.deploy.nodes.admin_configuration"/>.
-     </para>
-    </step>
-   </procedure>
-  </sect2>
+   </listitem>
+   <listitem>
+    <para>
+     <emphasis role="bold">VMware ESX/ESXi</emphasis>: In VMDK format
+     (<filename>SUSE-CaaS-Platform-3.0-for-VMware.x86_64-3.0.0-GM.vmdk</filename>)
+    </para>
+    <para>
+     Before you can use the image, it needs to be converted. On the ESX/ESXi
+     host, run the following command:
+    </para>
+    <screen>&prompt.root;<command>vmkfstools \
+-i <replaceable>DOWNLOAD_IMAGE</replaceable>.vmdk \ <replaceable>CONVERTED_IMAGE</replaceable>.vmdk</command></screen>
+   </listitem>
+   <listitem>
+    <para>
+     <emphasis role="bold">Microsoft Hyper-V</emphasis>: In VHD format
+     (<filename>SUSE-CaaS-Platform-3.0-for-MS-HyperV.x86_64-3.0.0-GM.vhdfixed.xz</filename>)
+    </para>
+   </listitem>
+  </itemizedlist>
 
-  <sect2 xml:id="sec.deploy.preparation.disk_images.worker">
-   <title>Bringing Up a &Worker_Node;</title>
-   <para>
-    Then, repeat the following steps for each &worker_node;:
-   </para>
-   <procedure>
-    <step>
-     <para>
-      Create a new VM for the &worker_node;.
-     </para>
-    </step>
-    <step>
-     <para>
-      Attach a copy of the downloaded disk image as its main hard disk.
-     </para>
-    </step>
-    <step>
-     <para>
-      Attach the <filename>cc-worker.iso</filename> disk image as a
-      virtual DVD unit. For details about preparing the image, see <xref
-      linkend="sec.deploy.preparation.disk_images.iso-image" />. The
-      ISO image can be reused for multiple &worker_node;s.
-     </para>
-    </step>
-    <step>
-     <para>
-      Start the VM.
-     </para>
-    </step>
-   </procedure>
-   <para>
-    Once you have brought up as many &worker_node;s as you need, proceed to
-    bootstap the cluster using the &dashboard; dashboard.
-   </para>
-  </sect2>
- </sect1>
-
- <sect1 xml:id="sec.deploy.preparation.pxe">
-  <title>Installing from Network Source</title>
   <para>
-   This procedure provides an overview of the steps for the
-   cluster deployment from an network installation server. A PXE
-   environment sis used to provide the nodes with the data required for
-   installation.
+   When deploying a cluster node from pre-installed disk images, the
+   setup program never runs. Therefore, must happen
+   while the node is starting up. For this purpose, &productname;
+   includes <command>cloud-init</command> to apply setup data to each instance.
+   Therefore it is necessary to provide the respective data for cloud-init as
+   an ISO-image for each node that gets launched. This image gets attached as a
+   virtual drive to each virtual machine, so that cloud-init cann acess the
+   data, when the machine is launched by booting the disk image.
   </para>
+
   <procedure>
+   <title>Overview: Installing from Virtual Disk Images</title>
    <step>
     <para>
-     Install an installation server that provides a DHCP, PXE and TFTP
-     service. Additionally, you can provide the installation data on
-     an HTTP or FTP server. For details, refer to the &sle; 12 Deployment Guide:
-     <link xlink:href="https://www.suse.com/documentation/sles-12/singlehtml/book_sle_deployment/book_sle_deployment.html#cha.deployment.prep_boot"/>.
-    </para>
-    <para>
-     You can directly use the <filename>initrd</filename> and
-     <filename>linux</filename> files from your installation media, or
-     install the package
-     <package>tftpboot-installation-CAASP-3.0</package> onto your TFTP
-     server. The package provides the required
-     <filename>initrd</filename> and <filename>linux</filename> files
-     in the <filename>/srv/tftpboot/</filename> directory. You will
-     need to modify the paths used in the &sle; 12 Deployment Guide to
-     correctly point to the files provided by the package.
+     Download the disk images and create a copy of the downloaded disk image
+     for each virtual machine.
     </para>
    </step>
    <step>
     <para>
-     PXE boot the machine designated for the &admin_node;. Then follow
-     the installation and configuration instructions detailed in <xref
-     linkend="sec.deploy.nodes.admin_install" /> and <xref
-     linkend="sec.deploy.nodes.admin_configuration" />.
+     Write <command>cloud-init</command> configuration files and Create ISO
+     images containing these configuration files for each virtual machine. See
+     <xref linkend="sec.deploy.preparation.disk_images.configuration"/>.
     </para>
    </step>
    <step>
     <para>
-     Pxe boot the machines designated to be the Master and Worker
-     Nodes. Then follow the installation and configuration instructions
-     detailed in <xref linkend="sec.deploy.nodes.worker_install" />. To
-     automate the installation, you can use an &ay; file provided by
-     the &admin_node;. For details, see <xref
-     linkend="sec.deploy.nodes.worker_install.manual.autoyast" />.
-    </para>
-   </step>
-   <step>
-    <para>
-     Finish the installation by bootstrapping the cluster. For details,
-     see <xref linkend="sec.deploy.install.bootstrap" />.
-    </para>
-   </step>
-   <step>
-    <para>
-     For &vmware; ESX/ESXi: install the <package>open-vm-tools</package>
-     package. See <xref linkend="sec.deploy.install.vmware_tools" />.
+     Configure and launch the virtual machines. See <xref
+     linkend="sec.deploy.preparation.qcow2.nodes" />.
     </para>
    </step>
   </procedure>
- </sect1>
+
+  <sect3 xml:id="sec.deploy.preparation.disk_images.configuration">
+   <title>Creating the cloud-init Configuration</title>
+   <para>
+    A &productname; virtual disk image is used to set up all three node types
+    (&admin_node;, &worker_node; &master_node;). To define the node type and to
+    provide additional configuration data, <command>cloud-init</command> is
+    used to apply this data to each instance.
+   </para>
+   <para>
+    <command>cloud-init</command> uses two yaml-formatted configuration files
+    to provide the data for each node:
+   </para>
+   <variablelist>
+    <varlistentry>
+     <term><filename>meta-data</filename></term>
+     <listitem>
+      <para>
+       In public clouds, the metadata is usually provided by the cloud
+       vendor. With &productname; it is used to provide a unique instance-ID
+       and the network interface setup for each instance.
+      </para>
+      <para>
+       Because the instance-ID needs to be unique, a different
+       <filename>meta-data</filename> is required for each node.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><filename>user-data</filename></term>
+     <listitem>
+      <para>
+       The data provided with this file is used to set up and configure the
+       different node types.
+      </para>
+      <para>
+       Because &master_node;s and &worker_node;s can be set up with the same
+       configuration, only two different <filename>user-data</filename>, one
+       for the &admin_node; and one for all other nodes are required. If
+       required by your setup, you may alternatively provide individual
+       <filename>user-data</filename> files for each node.
+      </para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+
+   <para>
+    The following examples show <command>cloud-init</command> configuration
+    files for &productname; containing the minimum of required data. This
+    should be sufficient for most setups. More information describing
+    additional configuration options for <command>cloud-init</command> is
+    available at <xref linkend="sec.deploy.cloud-init"/>.
+   </para>
+
+   <example xml:id="ex.ci.meta-data">
+    <title><filename>meta-data</filename></title>
+
+    <screen>#cloud-config <co xml:id="co.meta.start"/>
+# Meta Data File for &productname;
+instance-id: <replaceable>admin</replaceable> <co xml:id="co.meta.id"/>
+network-interfaces: | <co xml:id="co.meta.net"/>
+   auto <replaceable>eth0</replaceable> <co xml:id="co.meta.net-start"/>
+   iface <replaceable>eth0</replaceable> inet dhcp <co xml:id="co.meta.net-config"/></screen>
+
+    <calloutlist>
+     <callout arearefs="co.meta.start">
+      <para>
+       Each configuration file needs to start with this line.
+       <remark condition="clarity">
+        2018-10-05 - fs: Is this true???
+       </remark>
+      </para>
+     </callout>
+     <callout arearefs="co.meta.id">
+      <para>
+       The instance ID. Needs to be unique for each node. See <xref
+       linkend="ex.ci.geniso"/> for an example on how to automatically create
+       such a unique ID.
+      </para>
+     </callout>
+     <callout arearefs="co.meta.net">
+      <para>
+       Network configuration section.
+      </para>
+     </callout>
+     <callout arearefs="co.meta.net-start">
+      <para>
+       Define when to start a network interface. In this example, the interface
+       <replaceable>eth0</replaceable> is started during boot.
+      </para>
+     </callout>
+     <callout arearefs="co.meta.net-config">
+      <para>
+       Network interface configuration. In this example, the interface
+       <replaceable>eth0</replaceable> is configured via DHCP. In case you
+       require a static configuration, use the following values:
+      </para>
+      <screen>iface eth0 inet static
+  address <replaceable>NODE_ADDRESS</replaceable>
+  network <replaceable>NETWORk_ADDRESS</replaceable>
+  netmask <replaceable>NETMASK</replaceable>
+  broadcast <replaceable>BROADCAST_ADDRESS</replaceable>
+  gateway <replaceable>GATEWAY_ADDRESS</replaceable></screen>
+     </callout>
+    </calloutlist>
+   </example>
+
+   <example xml:id="ex.ci.user-data">
+    <title><filename>user-data</filename></title>
+
+    <informaltable>
+     <tgroup cols="2">
+      <colspec colnum="1" colname="1" colwidth="50*"/>
+      <colspec colnum="2" colname="2" colwidth="50*"/>
+      <thead>
+       <row>
+        <entry><para>Admin Node</para></entry>
+        <entry><para>Master/Worker Nodes</para></entry>
+       </row>
+      </thead>
+      <tbody>
+       <row>
+        <entry>
+         <screen>#cloud-config <co xml:id="co.user.start"/>
+# Admin Node
+# User Data File
+debug: True <co xml:id="co.user.debug"/>
+disable_root: False <co xml:id="co.user.login"/>
+ssh_deletekeys: False
+ssh_pwauth: True
+chpasswd: <co xml:id="co.user.root_pw"/>
+   list: |
+     root:<replaceable>ROOT_PASSWORD</replaceable>
+     expire: False
+ntp: <co xml:id="co.user.ntp"/>
+   servers:
+     - <replaceable>ntp1.&exampledomain;</replaceable>
+     - <replaceable>ntp2.&exampledomain;</replaceable>
+runcmd: <co xml:id="co.user.runcmd"/>
+   - /usr/bin/systemctl enable --now ntpd
+suse_caasp: <co xml:id="co.user.caas"/>
+  role: admin</screen>
+        </entry>
+        <entry valign="top">
+         <screen>#cloud-config <xref linkend="co.user.start" xrefstyle="select:label nopage"/>
+# Master/Worker Node
+# User Data File
+debug: True <xref linkend="co.user.debug" xrefstyle="select:label nopage"/>
+disable_root: False <xref linkend="co.user.login" xrefstyle="select:label nopage"/>
+ssh_deletekeys: False
+ssh_pwauth: True
+chpasswd: <xref linkend="co.user.root_pw" xrefstyle="select:label nopage"/>
+   list: |
+   root:<replaceable>ROOT_PASSWORD</replaceable>
+     expire: False
+suse_caasp: <xref linkend="co.user.caas" xrefstyle="select:label nopage"/>
+    role: cluster
+    admin_node: <replaceable>caas-admin.example.com</replaceable></screen>
+        </entry>
+       </row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+
+    <calloutlist>
+     <callout arearefs="co.user.start">
+      <para>
+       Each configuration file needs to start with this line.
+       <remark condition="clarity">
+        2018-10-05 - fs: Is this true???
+       </remark>
+      </para>
+     </callout>
+     <callout arearefs="co.user.debug">
+      <para>
+       Turns on debugging output. Useful in case errors occur.
+      </para>
+     </callout>
+     <callout arearefs="co.user.login">
+      <para>
+       Three options that define how to log in to the node.
+      </para>
+      <simplelist>
+       <member>
+        <literal>disable_root: False</literal> disables passwordless
+        authentication for &rootuser;
+       </member>
+       <member>
+        <literal>ssh_deletekeys: False</literal> disables automatic deletion of
+        existing SSH host keys. This setting is strongly recommended, because
+        otherwise the host keys will change each time the cloud-init
+        configuration is changed.
+        <remark condition="clarity">
+         2018-10-05 - fs: Is that true??
+        </remark>
+       </member>
+       <member>
+        <literal>ssh_pwauth: True</literal> allows to log in with a password
+        via SSH
+       </member>
+      </simplelist>
+     </callout>
+     <callout arearefs="co.user.root_pw">
+      <para>
+       Set the &rootuser; password for the node. It can be specified as plain
+       text or as a hash generated by <command>mkpasswd</command>. See <xref
+       linkend="sec.deploy.cloud-init.user-data.password"/> for details.
+      </para>
+     </callout>
+     <callout arearefs="co.user.ntp">
+      <para>
+       Specify a list of NTP servers here. This setting is only used for the
+       &admin_node;.
+      </para>
+     </callout>
+     <callout arearefs="co.user.runcmd">
+      <para>
+       Specify a list of commands to be executed. Enabling the <systemitem
+       class="daemon">ntpd</systemitem> as in this example is required on the
+       &admin_node;.
+      </para>
+     </callout>
+     <callout arearefs="co.user.caas">
+      <para>
+       Set the node type here. For the &admin_node; it is <literal>role:
+       admin</literal>, for all other nodes <literal>role: cluster</literal>.
+       The value for <literal>admin_node:</literal> (FQDN of the &admin_node;)
+       only needs to be specified for &worker_node;s and &master_node;s. For
+       these node types it is mandatory.
+      </para>
+     </callout>
+    </calloutlist>
+   </example>
+
+   <para>
+    Create pairs of <filename>meta-data</filename> and
+    <filename>user-data</filename> files as described above for each node you
+    like to deploy. Then create an ISO image containing these files for each
+    node using the command <command>mkisofs</command>.
+   </para>
+
+   <example xml:id="ex.ci.geniso">
+    <title>Creating cloud-init ISO Images for all Nodes</title>
+    <para>
+     The following example shows how to create ISO images for all nodes. Images
+     for the &master_node;s and &worker_node;s are created from a template, so
+     you only need to create two sets of configuration files.
+    </para>
+    <procedure>
+     <step>
+      <para>
+       Change to a clean working directory.
+      </para>
+     </step>
+     <step>
+      <para>
+       Create a text file <filename>cluster_nodes.txt</filename> with node
+       names for all &master_node;s and &worker_node;s. The names need to be
+       unique and each line must only contain one name, for example:
+      </para>
+      <screen>worker1
+worker2
+worker3
+master</screen>
+     </step>
+     <step>
+      <para>
+       In the working directory, create a <filename>meta-data</filename>
+       file. Specify <literal>§§§§§</literal> as value for
+       <literal>instance-id</literal>. It will later automatically be replaced
+       with the node name.
+      </para>
+      <screen>instance-id: §§§§§</screen>
+      <para>
+       In the working directory, also create a <filename>user-data</filename>
+       file suitable for &master_node;s and &worker_node;s.
+      </para>
+     </step>
+     <step>
+      <para>
+       Run the following commands to create ISO images for all nodes listed in
+       <filename>cluster_nodes.txt</filename>:
+      </para>
+      <screen>
+for NODE in $(cat cluster_nodes.txt); do
+  mkdir $NODE
+  cp user-data $NODE
+  sed -e "s/§§§§§/${NODE}/" &lt; meta-data > $NODE/meta-data
+  mkisofs -output ${NODE}.iso -volid ${NODE}-data -joliet -rock $NODE
+  rm -rf $NODE
+done</screen>
+     </step>
+     <step>
+      <para>
+       Create a directory for the &admin_node;, for example
+       <literal>admin/</literal>. Create the files
+       <filename>admin/meta-data</filename> and
+       <filename>admin/user-data</filename> containing the configuration for
+       the &admin_node;. Specify a unique value for
+       <literal>instance-id</literal>, for example <literal>admin</literal>:
+      </para>
+      <screen>instance-id: admin</screen>
+     </step>
+     <step>
+      <para>
+       Create the ISO image for the &admin_node;:
+      </para>
+      <screen>mkisofs -output admin.iso -volid admin-data -joliet -rock admin</screen>
+     </step>
+     <step>
+      <para>
+       The working directory now contains ISO images for all nodes specified in
+       <filename>cluster_nodes.txt</filename> plus one for the &admin_node;.
+      </para>
+     </step>
+    </procedure>
+   </example>
+  </sect3>
+
+  <sect3 xml:id="sec.deploy.preparation.qcow2.nodes">
+   <title>Launching the Nodes</title>
+   <para>
+    To launch the nodes you need a copy of the virtual disk image for each node
+    and the node-specific ISO images created in <xref
+    linkend="sec.deploy.preparation.disk_images.configuration"/>.
+   </para>
+   <procedure>
+    <step>
+     <para>
+      Create a new virtual machine for the &admin_node;.
+     </para>
+    </step>
+    <step>
+     <para>
+      Attach a copy of the disk image as its main hard disk.
+     </para>
+    </step>
+    <step>
+     <para>
+      Attach the ISO image for the &admin_node;
+      (<filename>admin.iso</filename>) as a virtual CDROM.
+    </para>
+    </step>
+    <step>
+     <para>
+      Start the virtual machine.
+     </para>
+    </step>
+    <step>
+     <para>
+      Configure the &admin_node; as described in <xref
+      linkend="sec.deploy.nodes.admin_configuration"/> until you see the
+      <guimenu>Select nodes and roles</guimenu> screen.
+     </para>
+    </step>
+    <step>
+     <para>
+      For each &master_node; and &worker_node;, do the following:
+     </para>
+     <substeps>
+      <step>
+       <para>
+        Create a new virtual machine for the node.
+       </para>
+      </step>
+      <step>
+       <para>
+        Attach a copy of the disk image as its main hard disk.
+       </para>
+      </step>
+      <step>
+       <para>
+        Attach the ISO image for this specific node as a virtual CDROM.
+       </para>
+      </step>
+      <step>
+       <para>
+        Start the virtual machine.
+       </para>
+      </step>
+     </substeps>
+    </step>
+    <step>
+     <para>
+      Finish the installation by bootstrapping the nodes. For details,
+      see <xref linkend="sec.deploy.install.bootstrap"/>.
+     </para>
+    </step>
+   </procedure>
+  </sect3>
+ </sect2>
+</sect1>
+
+
 
  <sect1 xml:id="sec.deploy.preparation.openstack">
   <title>Installing in &soc;</title>
