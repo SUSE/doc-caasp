@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<chapter version="5.0" xml:id="cha.user.ingress"
+ xmlns="http://docbook.org/ns/docbook"
+ xmlns:xi="http://www.w3.org/2001/XInclude"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <info>
+  <title>NGINX Ingress Controller</title>
+  <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
+   <dm:bugtracker/>
+   <dm:translation>yes</dm:translation>
+  </dm:docmanager>
+ </info>
+
+<screen>
+# Deployment instructions
+
+For QA, these are the instructions to follow:
+
+* Deploy a CaaSP cluster with the tiller addon enabled
+* Download the kubeconfig file from the cluster
+* Ensure the suse-ca certificate is added to the cluster (you should
+have that on your computer under
+/usr/share/pki/trust/anchors/SUSE_Trust_Root.crt.pem). You will probably
+have to manually restart the docker daemon on the master and workers due
+to https://bugzilla.suse.com/show_bug.cgi?id=1107704
+* Install helm on your laptop
+* Init helm via "helm init --client-only"
+* Create a nginx-ingress-config-values-suse-no-psp.yaml file with the
+following contents (substitute THE_IMAGE_HERE by the nginx image):
+
+# Disable the creation of pod security policy
+podSecurityPolicy:
+  enabled: false
+
+# Create a specific service account
+serviceAccount:
+  create: true
+  name: nginx-ingress
+
+controller:
+  image:
+    repository: registry.suse.de/devel/casp/3.0/controllernode/images_container_base/sles12/nginx-ingress-controller
+    tag: 0.15.0
+  service:
+    type: NodePort
+    nodePorts:
+      http: 30080
+      https: 30443
+
+Note well: watch out for indentation errors while doing the copy and paste.
+
+* Install the helm chart: "helm install --name nginx-ingress
+stable/nginx-ingress --values nginx-ingress-config-values-suse-no-psp.yaml"
+
+Ensure all the nginx-ingress controller pods are running as expected.
+Then checkout this repository [1] and perform:
+
+kubectl apply -f examples
+
+Wait for all the pods to be up and running.
+
+In the meantime change your /etc/hosts to have these contents:
+
+172.30.2.0 stilton.local
+172.30.2.0 cheddar.local
+172.30.2.0 wensleydale.local
+
+Where 172.30.2.0 is the IP of one of your worker nodes.
+</screen>
+<screen>
+ # Disable the creation of pod security policy
+podSecurityPolicy:
+ enabled: false
+
+# Create a specific service account
+serviceAccount:
+ create: true
+ name: nginx-ingress
+
+controller:
+ image:
+   #repository: registry.suse.de/devel/casp/3.0/controllernode/images_container_base/sles12/nginx-ingress-controller
+   repository: registry.suse.de/suse/maintenance/8791/suse_sle-12-sp3_update_products_casp30_update_containers/sles12/nginx-ingress-controller
+   tag: 0.15.0
+ service:
+   type: NodePort
+   nodePorts:
+     http: 30080
+     https: 30443
+</screen>
+</chapter>
