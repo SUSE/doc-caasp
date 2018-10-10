@@ -17,7 +17,7 @@
  </info>
  <para>
   Depending on the environment, &productname; can be installed using several
-  methods. Each method requires differnt steps for preparation:
+  methods. Each method requires different steps for preparation:
  </para>
  <variablelist>
   <!-- Installing on Bare Metal or Virtual Machines -->
@@ -25,12 +25,12 @@
    <term><xref linkend="sec.deploy.preparation.baremetal"/></term>
    <listitem>
     <para>
-     An installtion on physical hardware or virtual machines gives you the
+     An installation on physical hardware or virtual machines gives you the
      choice of three different installation methods:
     </para>
     <itemizedlist>
      <listitem>
-      <!-- Installing from USB, DVD or ISO Images -->
+      <!-- Installing from Flash Disks, DVD or ISO Images -->
       <para>
        <xref linkend="sec.deploy.preparation.dvd" xrefstyle="select:title"/>:
        This method requires manual interaction with the physical or virtual
@@ -58,7 +58,7 @@
        deployment speed.  This method is suitable for medium to large cluster
        sizes.  It cannot be used for &ay; installations. This method is also
        recommended when installing on VMware ESX and ESXi environments, since
-       the images alrteady contain the <package>open-vm-tools</package>, which
+       the images already contain the <package>open-vm-tools</package>, which
        otherwise need to be installed separately on each node.
       </para>
      </listitem>
@@ -72,7 +72,7 @@
    </term>
    <listitem>
     <para>
-     &suse; provides disk images and &ostack; Heat teamplates required for
+     &suse; provides disk images and &ostack; Heat templates required for
      deploying &productname; on &soc;.
     </para>
    </listitem>
@@ -96,15 +96,15 @@
 
 
  <sect1 xml:id="sec.deploy.preparation.baremetal">
-  <title>Installing on Bare Metal or Virtual Machines</title>
+  <title>Preparing a Bare Metal / Virtual Machine Installation</title>
   <para>
-   An installtion on physical hardware or virtual machines can be done by
+   An installation on physical hardware or virtual machines can be done by
    booting from an ISO image or a network source. Virtual machines can also be
    installed from virtual disk images.
   </para>
 
   <sect2 xml:id="sec.deploy.preparation.dvd">
-   <title>Installing from USB, DVD or ISO Images</title>
+   <title>Installing from Flash Disks, DVD or ISO Images</title>
    <para>
    This procedure provides an overview of the steps for the cluster deployment
    with classical boot devices like DVD drives. This method is suitable for
@@ -113,11 +113,11 @@
    <procedure>
     <step>
      <para>
-     Choose an installation medium. You can install from DVD or a USB
-     flash medium. On virtual machines, you can install from ISO images.
+     Choose an installation medium. You can install from DVD or a flash
+     disk medium. On virtual machines, you can install from ISO images.
     </para>
     <tip>
-     <title>Creating a Bootable USB Flash Drive</title>
+     <title>Creating a Bootable Flash Disk</title>
      <para>
       To create a bootable flash disk, you need to copy a DVD image to the
       device using the dd command. The flash disk must not be mounted, all data
@@ -231,7 +231,7 @@
        <filename>/suse/noarch/tftpboot-installation-CAASP-3.0-x86_64-<replaceable>VERSION</replaceable>.noarch.rpm</filename>. The
        package provides the Kernel and initrd in the /srv/tftpboot/
        directory. To install it, mount the ISO image of the installation media
-       und use zypper for installing, for example:
+       and use zypper for installing, for example:
       </para>
       <screen>&prompt.sudo;mount -o loop SUSE-CaaS-Platform-3.0-DVD-x86_64-GM-DVD1.iso /mnt
 &prompt.sudo;zypper in \
@@ -309,7 +309,8 @@
   <para>
    For building clusters from virtual machines on supported
    hypervisors, it is not necessary to individually install each
-   node. &suse; offers pre-installed VM disk images for the following
+   node. &suse; offers pre-installed VM disk images on <link
+   xlink:href="https://download.suse.com/"/> for the following
    hypervisors:
   </para>
   <itemizedlist>
@@ -317,31 +318,30 @@
     <para>
      <emphasis role="bold">&kvm; and &xen; (fully virtualized)</emphasis>: In
      QCOW2 format
-     (<filename>SUSE-CaaS-Platform-3.0-for-KVM-and-Xen.x86_64-3.0.0-GM.qcow2</filename>)
+     (<filename>SUSE-CaaS-Platform-3.0-KVM-and-Xen.x86_64-1.0.0-GM.qcow2</filename>)
     </para>
    </listitem>
    <listitem>
     <para>
      <emphasis role="bold">&xen; (paravirtualized)</emphasis>: In QCOW2 format
-     (<filename>SUSE-CaaS-Platform-3.0-for-XEN.x86_64-3.0.0-GM.qcow2</filename>)
+     (<filename>SUSE-CaaS-Platform-3.0-XEN.x86_64-1.0.0-GM.qcow2</filename>)
     </para>
    </listitem>
    <listitem>
     <para>
      <emphasis role="bold">VMware ESX/ESXi</emphasis>: In VMDK format
-     (<filename>SUSE-CaaS-Platform-3.0-for-VMware.x86_64-3.0.0-GM.vmdk</filename>)
+     (<filename>SUSE-CaaS-Platform-3.0-VMware.x86_64-1.0.0-GM.vmdk</filename>)
     </para>
     <para>
      Before you can use the image, it needs to be converted. On the ESX/ESXi
      host, run the following command:
     </para>
-    <screen>&prompt.root;<command>vmkfstools \
--i <replaceable>DOWNLOAD_IMAGE</replaceable>.vmdk \ <replaceable>CONVERTED_IMAGE</replaceable>.vmdk</command></screen>
+    <screen>&prompt.root;<command>vmkfstools-i <replaceable>DOWNLOAD_IMAGE</replaceable>.vmdk <replaceable>CONVERTED_IMAGE</replaceable>.vmdk</command></screen>
    </listitem>
    <listitem>
     <para>
      <emphasis role="bold">Microsoft Hyper-V</emphasis>: In VHD format
-     (<filename>SUSE-CaaS-Platform-3.0-for-MS-HyperV.x86_64-3.0.0-GM.vhdfixed.xz</filename>)
+     (<filename>SUSE-CaaS-Platform-3.0-MS-HyperV.x86_64-1.0.0-GM.vhdfixed.xz</filename>)
     </para>
    </listitem>
   </itemizedlist>
@@ -353,7 +353,7 @@
    includes <command>cloud-init</command> to apply setup data to each instance.
    Therefore it is necessary to provide the respective data for cloud-init as
    an ISO-image for each node that gets launched. This image gets attached as a
-   virtual drive to each virtual machine, so that cloud-init cann acess the
+   virtual drive to each virtual machine, so that cloud-init can access the
    data, when the machine is launched by booting the disk image.
   </para>
 
@@ -772,50 +772,76 @@ done</screen>
  </sect2>
 </sect1>
 
-
-
- <sect1 xml:id="sec.deploy.preparation.openstack">
-  <title>Installing in &soc;</title>
+<sect1 xml:id="sec.deploy.preparation.openstack">
+  <title>Preparing a &soc; Installation</title>
   <para>
-   You can deploy a &productname; on &soc; using &ostack;.
-   You will need a &productname; machine image and &ostack; Heat templates.
-   Once you have created a stack, you will continue with the &productname; setup.
+   You can deploy a &productname; on &soc; using &ostack;. You will need a
+   &productname; machine image and &ostack; Heat templates which are provided
+   by &suse;.
   </para>
-  <note>
-   <title>&productname; machine image for &soc;</title>
+
+  <sect2 xml:id="sec.deploy.preparation.openstack.prep">
+   <title>Preparation</title>
    <para>
-    Download the latest &productname; for &ostack; image from
-    <link xlink:href="https://download.suse.com">https://download.suse.com</link>
-    (for example,
-    <filename>SUSE-CaaS-Platform-3.0-OpenStack-Cloud.x86_64-1.0.0-GM.qcow2</filename>).
+    Upload the &productname; image to the &soc; and make the eat templates
+    available:
    </para>
-  </note>
-   <note>
-    <title>
-     &ostack; Heat Templates Repository
-    </title>
-    <para>
-     &productname; Heat templates are available from <link xlink:href="https://github.com/SUSE/caasp-openstack-heat-templates">GitHub</link>.
-    </para>
-  </note>
+   <procedure>
+    <step>
+     <para>
+      Download the latest &productname; for &ostack; image from <link
+      xlink:href="https://download.suse.com"/> (for example,
+      <filename>SUSE-CaaS-Platform-3.0-OpenStack-Cloud.x86_64-1.0.0-GM.qcow2</filename>).
+     </para>
+    </step>
+    <step>
+     <para>
+      Upload the image to Glance:
+     </para>
+     <screen>&prompt.user;openstack image create --public --disk-format qcow2 \
+--container-format bare --file <replaceable>IMAGE</replaceable> CaaSP-3</screen>
+     <para>
+      In this example, the image is named <literal>CaaSP-3</literal>&mdash;you
+      will need this name later in the process.
+     </para>
+    </step>
+    <step>
+     <para>
+      The &ostack; Heat templates are named
+      <filename>caasp-environment.yaml</filename> and
+      <filename>caasp-stack.yaml</filename>.
+     </para>
+     <para>
+      On &soc; 8 and later, they can be made available by installing the
+      package <package>caasp-openstack-heat-templates</package>.
+     </para>
+     <screen>&prompt.sudo;zypper in caasp-openstack-heat-templates</screen>
+     <para>
+      The template files will be installed to
+      <filename>/usr/share/caasp-openstack-heat-templates</filename>.
+     </para>
+     <para>
+      For &soc; 7, download the two template files from <link
+      xlink:href="https://github.com/SUSE/caasp-openstack-heat-templates">GitHub</link>..
+     </para>
+     <screen>&prompt.user;wget https://raw.githubusercontent.com/SUSE/caasp-openstack-heat-templates/master/caasp-environment.yaml
+&prompt.user;wget  https://raw.githubusercontent.com/SUSE/caasp-openstack-heat-templates/master/caasp-stack.yaml</screen>
+    </step>
+   </procedure>
+  </sect2>
 
   <sect2 xml:id="sec.deploy.preparation.openstack.horizon">
-   <title>Using the Horizon Dashboard</title>
+   <title>Launching the Stack Using the Horizon Dashboard</title>
    <procedure>
-   <step>
-    <para>
-     Go to <guimenu>Project &rarr; Compute &rarr; Images</guimenu> and click on
-     <guimenu>Create Image</guimenu>.
-    </para>
-    <para>
-     Give your image a name (for example: <literal>CaaSP-3</literal>); you will
-     need to use this later to find the image.
-    </para>
-   </step>
     <step>
      <para>
-      Go to <guimenu>Project &rarr; Orchestration</guimenu> and click on
-      <guimenu>Stacks</guimenu>.
+      Log in to the &soc; the Horizon Dashboard.
+     </para>
+    </step>
+    <step>
+     <para>
+      Go to <menuchoice><guimenu>Project</guimenu>
+      <guimenu>Orchestration</guimenu> <guimenu>Stacks</guimenu></menuchoice>.
      </para>
      <informalfigure>
       <mediaobject>
@@ -830,87 +856,152 @@ done</screen>
     </step>
     <step>
      <para>
-      Click on <guimenu>Launch Stack</guimenu> and provide the stack
-      templates. Either upload the files, provide the URL to the raw files
-      directly (only applies to stack template), or copy and paste the
-      contents into the <guimenu>Direct Input</guimenu> fields.
+      Click on <guimenu>Launch Stack</guimenu> to open the <guimenu>Select
+      Template</guimenu> dialog.
      </para>
-     <warning>
-      <title>Replace the default <literal>root_password</literal></title>
+     <informalfigure>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="horizon_launch_stack.png" width="100%"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="horizon_launch_stack.png" width="100%"/>
+       </imageobject>
+      </mediaobject>
+     </informalfigure>
+    </step>
+    <step>
+     <para>
+      Under <guimenu>Template Source</guimenu> provide the
+      <filename>caasp-stack.yaml</filename> file. Under <guimenu>Environment
+      Source</guimenu> provide the <filename>caasp-environment.yaml</filename>.
+     </para>
+     <para>
+      You may either upload the respective files or copy and paste the
+      contents into the <guimenu>Direct Input</guimenu> fields. The
+      <guimenu>Template Source</guimenu> can also be provided as a URL to the
+      raw file.
+     </para>
+    </step>
+   <step>
+    <para>
+     Click <guimenu>Next</guimenu> to proceed to the <guimenu>Launch
+     Stack</guimenu> dialog.
+    </para>
+    <informalfigure>
+     <mediaobject>
+      <imageobject role="fo">
+       <imagedata fileref="horizon_stack_options.png" width="100%"/>
+      </imageobject>
+      <imageobject role="html">
+       <imagedata fileref="horizon_stack_options.png" width="100%"/>
+      </imageobject>
+     </mediaobject>
+    </informalfigure>
+   </step>
+   <step>
+    <para>
+     Now you need to provide additional information on the stack. You may also
+     adjust the data provided by the environment template:
+    </para>
+    <variablelist>
+     <title>Stack Meta Data</title>
+     <varlistentry>
+      <term><guimenu>Stack Name</guimenu></term>
+      <listitem>
        <para>
-        Do not use the <filename>caasp-environment.yaml</filename> directly
-        from the GitHub repository.
+        Provide a Name for the stack.
        </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><guimenu>Creation Timeout</guimenu></term>
+      <listitem>
+       <para>
+        Provide the number of minutes before the for the creation of the stack
+        times out. The more nodes you launch, the larger the timeout should be.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><guimenu>Rollback on Failure</guimenu></term>
+      <listitem>
+       <para>
+        Performs a rollback in case the stack creation fails or times out.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><guimenu>Password for user "User"</guimenu></term>
+       <listitem>
         <para>
-         You must make sure to replace the value for
-         <literal>root_password</literal> with a secure password.
-         This will become the password for the &rootuser; account on all
-         nodes in the stack.
+         Your &soc; password.
         </para>
-    </warning>
-     <informalfigure>
-      <mediaobject>
-       <imageobject role="fo">
-        <imagedata fileref="horizon_launch_stack.png" width="100%"/>
-       </imageobject>
-       <imageobject role="html">
-        <imagedata fileref="horizon_launch_stack.png" width="100%"/>
-       </imageobject>
-      </mediaobject>
-     </informalfigure>
-    </step>
-   <step>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term><guimenu>Image</guimenu></term>
+       <listitem>
+        <para>
+         Select the &productname; image you uploaded earlier. It will be listed
+         by the name you provided on upload (<literal>CaaSP-3</literal> in the
+         example above). The nodes will be launched from that image.
+        </para>
+       </listitem>
+      </varlistentry>
+    </variablelist>
+
     <para>
-     Click <guimenu>Next</guimenu>.
+     The following data was provided via the
+     <filename>caasp-environment.yaml</filename> template file. You should at
+     least adjust the &rootuser; password and the number of worker nodes that
+     should be launched. Also make sure the networking data is correct.
     </para>
-   </step>
-    <step>
-     <para>
-      Now you need to define more information about the stack.
-     </para>
-     <variablelist>
-      <varlistentry>
-       <term><literal>Stack Name</literal></term>
-       <listitem>
+
+    <variablelist>
+     <title>Environment Data</title>
+     <varlistentry>
+      <term><guimenu>root_password</guimenu></term>
+      <listitem>
+       <para>
+        Set the &rootuser; password that will be used for all nodes.
+       </para>
+       <warning>
+        <title>Provide a Secure &rootuser; Password</title>
         <para>
-         Give your stack a name
+         The &rootuser; password is set to <literal>linux</literal> by
+         default. It is strongly recommended to replace it with a secure
+         password.
         </para>
-       </listitem>
-      </varlistentry>
+       </warning>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><guimenu>admin_flavor</guimenu></term>
+      <listitem>
+       <para>
+        Optionally, change the machine flavor for the admin node.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><guimenu>master_flavor</guimenu></term>
+      <listitem>
+       <para>
+        Optionally, change the machine flavor for the master node.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><guimenu>worker_flavor</guimenu></term>
+      <listitem>
+       <para>
+        Optionally, change the machine flavor for the worker nodes.
+       </para>
+      </listitem>
+     </varlistentry>
       <varlistentry>
-       <term><literal>Password</literal></term>
-       <listitem>
-        <para>
-         Your &soc; password
-        </para>
-       </listitem>
-      </varlistentry>
-      <varlistentry>
-       <term><literal>Image</literal></term>
-       <listitem>
-        <para>
-         Select the image your machines will be created from
-        </para>
-       </listitem>
-      </varlistentry>
-      <varlistentry>
-       <term><literal>root_password</literal></term>
-       <listitem>
-        <para>
-         Set the root password for your cluster machines
-        </para>
-       </listitem>
-      </varlistentry>
-      <varlistentry>
-       <term><literal>admin</literal>/master/worker_flavor</term>
-       <listitem>
-        <para>
-         Select the machine flavor for your nodes
-        </para>
-       </listitem>
-      </varlistentry>
-      <varlistentry>
-       <term><literal>worker_count</literal></term>
+       <term><guimenu>worker_count</guimenu></term>
        <listitem>
         <para>
          Number of worker nodes to be launched
@@ -918,54 +1009,39 @@ done</screen>
        </listitem>
       </varlistentry>
       <varlistentry>
-       <term><literal>external_net</literal></term>
+       <term><guimenu>external_net</guimenu></term>
        <listitem>
         <para>
-         Select an external network that your cluster will be reachable from
+         The external network from which your cluster can be reached.
         </para>
        </listitem>
       </varlistentry>
       <varlistentry>
-       <term><literal>internal_net_cidr</literal></term>
+       <term><guimenu>internal_net_cidr</guimenu></term>
        <listitem>
         <para>
-         The internal network range to be used inside the cluster
+         The internal network address to be used inside the cluster.
         </para>
        </listitem>
       </varlistentry>
       <varlistentry>
-       <term><literal>dns_nameserver</literal></term>
+       <term><guimenu>dns_nameserver</guimenu></term>
        <listitem>
         <para>
-         Internal name server for the cluster
+         Internal name server for the cluster.
         </para>
        </listitem>
       </varlistentry>
      </variablelist>
-     <informalfigure>
-      <mediaobject>
-       <imageobject role="fo">
-        <imagedata fileref="horizon_stack_options.png" width="100%"/>
-       </imageobject>
-       <imageobject role="html">
-        <imagedata fileref="horizon_stack_options.png" width="100%"/>
-       </imageobject>
-      </mediaobject>
-     </informalfigure>
     </step>
     <step>
      <para>
-     Click <guimenu>Launch</guimenu>.
-     </para>
-    </step>
-    <step>
-     <para>
-      After the cluster has been started and the cluster overview shows
-      <guimenu>Create Complete</guimenu>, you need to find the external IP
-      address for the admin node of your cluster (here:
-      <literal>10.86.1.72</literal>). Now visit that IP address in your browser.
-      You should see the &dashboard; login page and can continue with
-      <xref linkend="sec.deploy.nodes.admin_configuration"/>.
+     Click <guimenu>Launch</guimenu> to start the cluster. Finishing this task
+     will take some time. After it has been completely started, you will see
+     the  <guimenu>Create Complete</guimenu> message. Navigate to the instance
+     overview page for the &admin_node; via
+     <menuchoice><guimenu>Project</guimenu> <guimenu>Compute</guimenu>
+     <guimenu>Instances</guimenu></menuchoice>.
      </para>
      <informalfigure>
       <mediaobject>
@@ -977,324 +1053,365 @@ done</screen>
        </imageobject>
       </mediaobject>
      </informalfigure>
+    </step>
+    <step>
+     <para>
+      Locate the external IP address for the &admin_node; under the <guimenu>IP
+      Addresses</guimenu> headline.  Visit that IP address in your browser to
+      open the &admin_node; dashboard. Continue with <xref
+      linkend="sec.deploy.nodes.admin_configuration"/>.
+     </para>
     </step>
    </procedure>
   </sect2>
 
   <sect2 xml:id="sec.deploy.preparation.openstack.cli">
-   <title>Using the &ostack; CLI</title>
-   <note>
-    <para>
-     You need to have access to the &ostack; command-line tools. You can
-     either access those via <literal>ssh</literal> on your &soc; admin
-     server or
-     <link xlink:href="https://docs.openstack.org/newton/user-guide/common/cli-install-openstack-command-line-clients.html">
-     install a local <command>openstack</command> client</link>.
-    </para>
-    <para>
-     To use the local client, you need to access <guimenu>Project &rarr; Compute &rarr;
-     Access &amp; Security</guimenu> in the Horizon Dashboard and click on the
-     <guimenu>Download &ostack; RC File v3</guimenu>.
-    </para>
-    <para>
-     The downloaded file is a script that you then need to load using the
-     <command>source</command> command. The script will ask you for your
-     &soc; password.
-    </para>
-     <screen>&prompt.user;<command>source container-openrc.sh</command></screen>
-   </note>
-   <procedure>
-     <step>
-      <para>
-       Upload the container image to &ostack; Glance (Image service). This
-       example uses the name <literal>CaaSP-3</literal> as the name of the
-       image that is created in &soc;.
-      </para>
-     <screen>&prompt.user;<command>openstack image create --public --disk-format qcow2 \
---container-format bare \
---file SUSE-CaaS-Platform-3.0-OpenStack-Cloud.x86_64-1.0.0-GM.qcow2 \
-<replaceable>CaaSP-3</replaceable></command></screen>
-     </step>
-     <step>
-      <warning>
-       <title>Replace the default <literal>root_password</literal></title>
-        <para>
-         Do not use the <filename>caasp-environment.yaml</filename> directly
-         from the GitHub repository.
-        </para>
-        <para>
-         You must make sure to replace the value for
-         <literal>root_password</literal> with a secure password.
-         This will become the password for the &rootuser; account on all
-         nodes in the stack.
-        </para>
-     </warning>
-      <para>
-       Download the <filename>caasp-stack.yaml</filename> and
-       <filename>caasp-environment.yaml</filename> Heat templates to your
-       workstation and then run the <command>openstack stack create</command>
-       command.
-      </para>
-      <screen>&prompt.user;<command>openstack stack create \
--t caasp-stack.yaml \
--e caasp-environment.yaml \
---parameter image=<replaceable>CaaSP-3</replaceable> <replaceable>caasp3-stack</replaceable></command></screen>
-     </step>
+   <title>Launching the Stack Using the &ostack; CLI</title>
 
+   <para>
+    To get access to the &ostack; command-line tools you can either access them
+    by logging in on your &soc; admin server via <literal>ssh</literal> or by
+     <link xlink:href="https://www.suse.com/documentation/suse-openstack-cloud-7/book_cloud_user/data/sect1_13_chapter_book_cloud_user.html">
+     installing a local <command>openstack</command> client</link>.
+   </para>
+   <para>
+    To use the local client, you first need to access the Horizon Dashboard and
+    go to <menuchoice><guimenu>Project</guimenu>
+     <guimenu>Compute</guimenu> <guimenu>Access &amp;
+     Security</guimenu></menuchoice> in the Horizon Dashboard and click
+     <guimenu>Download &ostack; RC File v3</guimenu>.
+   </para>
+   <para>
+    The downloaded file is a script that you then need to load using the
+    <command>source</command> command. The script will ask you for your &soc;
+    password.
+   </para>
+   <screen>&prompt.user;source container-openrc.sh</screen>
+
+   <procedure>
     <step>
      <para>
-      Find out which (external) IP address was assigned to the admin node
-      of your &productname; cluster (here: <literal>10.81.1.51</literal>).
+      Adjust the <filename>caasp-environment.yaml</filename> according to your
+      needs.  You should at least adjust the &rootuser; password and the
+      number of worker nodes that should be launched. Also make sure the
+      networking data is correct.
      </para>
-     <screen>&prompt.user;<command>openstack server list --name "admin" | awk 'FNR > 3 {print $4 $5 $9}'</command>
-caasp3-stack-admin|10.81.1.51</screen>
-     </step>
-     <step>
+     <warning>
+      <title>Provide a Secure &rootuser; Password</title>
       <para>
-       Visit the external IP address in your browser. You should see the &dashboard;
-       login page and can continue with <xref linkend="sec.deploy.nodes.admin_configuration"/>.
+       The &rootuser; password is set to <literal>linux</literal> by
+       default. It is strongly recommended to replace it with a secure
+       password.
       </para>
+     </warning>
+    </step>
+    <step>
+     <para>
+      Create and launch the stack using the <command>openstack stack
+      create</command> command:
+     </para>
+     <screen>&prompt.user;<command>openstack stack create -t caasp-stack.yaml \
+-e caasp-environment.yaml --parameter image=<replaceable>CaaSP-3</replaceable>
+      <replaceable>caasp3-stack</replaceable></command></screen>
+     <para>
+      The options <option>-t</option> and <option>-e</option> take the
+      parameters for the template and environment file. With
+      <option>image</option> you specify the name for the &productname;
+      image. The last parameter is the name for the stack.
+     </para>
+    </step>
+    <step>
+     <para>
+      Locate the external IP address for the &admin_node; by running the
+      following command:
+     </para>
+     <screen>&prompt.user;openstack server list --name "admin" | awk 'FNR > 3 {print $4 $5 $9}'
+caasp3-stack-admin|10.81.1.51</screen>
+     <para>
+      Visit that IP address in your browser to open the &admin_node;
+      dashboard. Continue with <xref
+      linkend="sec.deploy.nodes.admin_configuration"/>.
+     </para>
     </step>
    </procedure>
   </sect2>
  </sect1>
 
  <sect1 xml:id="sec.deploy.preparation.public_cloud">
-  <title>Installing in Public Cloud</title>
-  <sect2 xml:id="sec.deploy.preparation.public_cloud.overview">
-   <title>Overview</title>
+  <title>Preparing a Public Cloud Installation</title>
+  <para>
+   The &productname; images published by &suse; are located in the General
+   Catalog in Amazon EC2, the Marketplace in Microsoft Azure, and are
+   launch-able from the suse-byos-cloud project in Google Compute Engine. They
+   can be found using <command>pint</command>, see <link
+   xlink:href="https://www.suse.com/c/riddle-me-this/"/> for more information.
+  </para>
+  <para>
+   The images are provided as <literal>Bring Your Own Subscription
+   (BYOS)</literal> images. &productname; instances need to be registered with
+   the &scc; in order to receive bugfix and security updates. Images labeled
+   with the <literal>cluster</literal> designation in the name are not intended
+   to be started directly; they are deployed by the &admin_node;. The
+   &admin_node; image contains the <literal>admin</literal> designation in the
+   image name.
+  </para>
+
+  <important>
+   <title>Requirements</title>
    <para>
-    The &productname; images published by &suse; in selected Public Cloud
-    environments are provided as <literal>Bring Your Own Subscription
-    (BYOS)</literal> images. &productname; instances need to be registered with
-    the &scc; in order to receive bugfix and security
-    updates. Images labeled with the <literal>cluster</literal> designation in
-    the name are not intended to be started directly; they are deployed by the
-    Administrative node. Administrative node images contain the
-    <literal>admin</literal> designation in the image name.
+    Before you start provisioning the nodes, make sure to read the system
+    requirements for public cloud installations in <xref
+    linkend="sec.deploy.requirements.environment.public_cloud"/>.
    </para>
+  </important>
+
+  <sect2 xml:id="sec.deploy.preparation.public_cloud.provisioning.aws">
+   <title>Preparing a Amazon Web Services EC2 Installation</title>
    <para>
-    The following procedure outlines the deployment process:
+    To prepare a Amazon EC2 installation follow these steps:
    </para>
    <procedure>
     <step>
      <para>
-      Read the special system requirements for public cloud
-      installations in <xref
-      linkend="sec.deploy.requirements.environment.public_cloud"/>.
+      Select proper instance types. You may select from one of the predefined
+      instance types, hand select for general container workloads, or choose
+      <guimenu>Other types...</guimenu> and enter any <guimenu>instance
+      type</guimenu>, defined at <link
+      xlink:href="https://aws.amazon.com/ec2/instance-types/"/>.
      </para>
     </step>
     <step>
      <para>
-      Provision the cluster nodes. For details, see <xref linkend=
-      "sec.deploy.preparation.public_cloud.provisioning" />.
+      Two configuration options are required in EC2:
+     </para>
+     <variablelist>
+      <varlistentry>
+       <term>Subnet ID</term>
+       <listitem>
+        <para>
+         The <literal>subnet</literal> within which cluster nodes will be
+         attached to the network, in the form
+         <literal>subnet-xxxxxxxx</literal>.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>Security Group ID</term>
+       <listitem>
+        <para>
+         The <literal>security group</literal> defining network access rules
+         for the cluster nodes, in the form <literal>sg-xxxxxxxx</literal>.
+        </para>
+       </listitem>
+      </varlistentry>
+     </variablelist>
+     <para>
+      The defaults used for those two options are preset to the subnet ID of
+      the &admin_node; and the security group ID that will be automatically
+      created by <command>caasp-admin-setup</command>. You may choose to place
+      the cluster nodes in a different subnet and may also use a custom
+      security group. If you do so, make sure that traffic is allowed between
+      the individual cluster nodes and also between the &admin_node; and all
+      other cluster nodes.
+     </para>
+     <para>
+      See the <link xlink:href="https://aws.amazon.com/documentation/vpc/">
+      Amazon Virtual Private Cloud Documentation</link>for more information.
      </para>
     </step>
     <step>
      <para>
-      Deploy the admin node with <command>caasp-admin-setup</command>.
+      Deploy the &admin_node; by running <command>caasp-admin-setup</command>.
       For details, see <xref
       linkend="sec.deploy.nodes.admin_install_cli" />.
      </para>
     </step>
     <step>
      <para>
-      Finish bootstrapping your cluster. The provisioned worker nodes
-      are ready to be consumed into the cluster. For details, see <xref
-      linkend= "sec.deploy.install.bootstrap" />.
+      Finish the installation by bootstrapping the nodes. For details, see
+      <xref linkend= "sec.deploy.install.bootstrap" />.
      </para>
     </step>
    </procedure>
   </sect2>
 
-  <sect2 xml:id="sec.deploy.preparation.public_cloud.provisioning">
-   <title>Provisioning Cluster Nodes</title>
-   <sect3 xml:id="sec.deploy.preparation.public_cloud.provisioning.aws">
-    <title>Amazon Web Services EC2</title>
-    <para>
-     You may select from one of the predefined instance types, hand selected
-     for general container workloads, or choose <guimenu>Other
-     types...</guimenu> and enter any <guimenu>instance type</guimenu>, as
-     defined at <link xlink:href="https://aws.amazon.com/ec2/instance-types/">
-     https://aws.amazon.com/ec2/instance-types/</link>
-    </para>
-    <para>
-     Two configuration options are required in EC2:
-    </para>
-    <variablelist>
-     <varlistentry>
-      <term>Subnet ID</term>
-      <listitem>
-       <para>
-        The <literal>subnet</literal> within which cluster nodes will be
-        attached to the network, in the form
-        <literal>subnet-xxxxxxxx</literal>.
-       </para>
-      </listitem>
-     </varlistentry>
-     <varlistentry>
-      <term>Security Group ID</term>
-      <listitem>
-       <para>
-        The <literal>security group</literal> defining network access rules for
-        the cluster nodes, in the form <literal>sg-xxxxxxxx</literal>.
-       </para>
-      </listitem>
-     </varlistentry>
-    </variablelist>
-    <para>
-     The defaults used for those two options are preset to the subnet ID of the
-     administration host and the security group ID that was automatically
-     created by <command>caasp-admin-setup</command>. You may choose to place
-     the cluster nodes in a different subnet and you can also use a custom
-     security group, but please bear in mind that traffic must be allowed
-     between the individual cluster nodes and also between the admininstration
-     node and the cluster nodes.
-    </para>
-    <para>
-     See the <link xlink:href="https://aws.amazon.com/documentation/vpc/">
-     Amazon Virtual Private Cloud Documentation</link>for more information.
-    </para>
-   </sect3>
-   <sect3 xml:id="sec.deploy.preparation.public_cloud.provisioning.azure">
-    <title>Microsoft Azure</title>
-    <para>
-     You need to configure credentials for access to the Azure framework so
-     instances can be created, as well as parameters for the cluster node
-     instances themselves. The credentials refer to authentication via a
-     service principal. See
-     <link xlink:href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal">
-     https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal</link>
+  <sect2 xml:id="sec.deploy.preparation.public_cloud.provisioning.azure">
+   <title>Preparing a Microsoft Azure Installation</title>
+   <para>
+    To prepare a Microsoft Azure installation follow these steps:
+   </para>
+   <procedure>
+    <step>
+     <para>
+      You need to configure credentials for access to the Azure framework so
+      instances can be created, as well as parameters for the cluster node
+      instances themselves. The credentials refer to authentication via a
+      service principal. See
+     <link xlink:href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal"/>
      for more information on how you can create a service principal.
-    </para>
-    <variablelist>
-     <varlistentry>
-      <term>Subscription ID</term>
-      <listitem>
-       <para>
-        The subscription ID of your Azure account.
-       </para>
-      </listitem>
-     </varlistentry>
-     <varlistentry>
-      <term>Tenant ID</term>
-      <listitem>
-       <para>
-        The tenant ID of your service principal, also known as the Active
-        Directory ID.
-       </para>
-      </listitem>
-     </varlistentry>
-     <varlistentry>
-      <term>Application ID</term>
-      <listitem>
-       <para>
-        The application ID of your service principal.
-       </para>
-      </listitem>
-     </varlistentry>
-     <varlistentry>
-      <term>Client Secret</term>
-      <listitem>
-       <para>
-        The key value or password of your service principal.
-       </para>
-      </listitem>
-     </varlistentry>
-    </variablelist>
-    <para>
-     Below the <guimenu>Service Principal Authentication</guimenu> box you will
-     find the <guimenu>Instance Type</guimenu> configuration. You may select
-     from one of the predefined instance types, hand selected for general
-     container workloads, or choose <guimenu>Other types...</guimenu> and enter
-     any <literal>size</literal>, as defined at
-     <link xlink:href="https://docs.microsoft.com/en-us/azure/virtual-machines/linux/sizes/">
-     https://docs.microsoft.com/en-us/azure/virtual-machines/linux/sizes/</link>Set
-     the <guimenu>Cluster size</guimenu> using the slider.
-    </para>
-    <para>
-     The parameters in <guimenu>Resource Scopes</guimenu> define attributes of
-     the cluster instances, as required for Azure Resource Manager:
-    </para>
-    <variablelist>
-     <varlistentry>
-      <term>Resource Group</term>
-      <listitem>
-       <para>
-        The Resource Group in which all cluster nodes will be created.
-       </para>
-      </listitem>
-     </varlistentry>
-     <varlistentry>
-      <term>Storage Account</term>
-      <listitem>
-       <para>
-        The Storage Account that will be used for storing the cluster node OS
-        disks. See
-        <link xlink:href="https://docs.microsoft.com/en-us/azure/storage/common/storage-create-storage-account">
-        https://docs.microsoft.com/en-us/azure/storage/common/storage-create-storage-account</link>for
-        more information about Azure Storage Accounts.
-       </para>
-      </listitem>
-     </varlistentry>
-     <varlistentry>
-      <term>Network</term>
-      <listitem>
-       <para>
-        The virtual network the cluster nodes will be connected to.
-       </para>
-      </listitem>
-     </varlistentry>
-     <varlistentry>
-      <term>Subnet</term>
-      <listitem>
-       <para>
-        A subnet in the previously defined virtual network. See
-        <link xlink:href="https://docs.microsoft.com/en-us/azure/virtual-network/">
-        https://docs.microsoft.com/en-us/azure/virtual-network/</link> for more
-        information about Azure Virtual Networks.
-       </para>
-      </listitem>
-     </varlistentry>
-    </variablelist>
-   </sect3>
-   <sect3 xml:id="sec.deploy.preparation.public_cloud.provisioning.google">
-    <title>Google Compute Engine</title>
-    <para>
-     You may select from one of the predefined instance types, hand selected
-     for general container workloads, or choose <guimenu>Other
-     types...</guimenu> and enter any <literal>machine type</literal>, as
-     defined at
-     <link xlink:href="https://cloud.google.com/compute/docs/machine-types">
-     https://cloud.google.com/compute/docs/machine-types</link>
-    </para>
-    <para>
-     Two configuration options are required in GCE:
-    </para>
-    <variablelist>
-     <varlistentry>
-      <term>Network</term>
-      <listitem>
-       <para>
-        The name of the virtual network the cluster nodes will run within.
-       </para>
-      </listitem>
-     </varlistentry>
-     <varlistentry>
-      <term>Subnet</term>
-      <listitem>
-       <para>
-        If you created a custom network, you must specify the name of the
-        subnet within which the cluster nodes will run.
-       </para>
-      </listitem>
-     </varlistentry>
-    </variablelist>
-    <para>
-     See the <link xlink:href="https://cloud.google.com/vpc/docs/vpc"> GCE
-     Network Documentation</link> for more information.
-    </para>
-   </sect3>
+     </para>
+     <variablelist>
+      <varlistentry>
+       <term>Subscription ID</term>
+       <listitem>
+        <para>
+         The subscription ID of your Azure account.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>Tenant ID</term>
+       <listitem>
+        <para>
+         The tenant ID of your service principal, also known as the Active
+         Directory ID.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>Application ID</term>
+       <listitem>
+        <para>
+         The application ID of your service principal.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>Client Secret</term>
+       <listitem>
+        <para>
+         The key value or password of your service principal.
+        </para>
+       </listitem>
+      </varlistentry>
+     </variablelist>
+     <para>
+      Below the <guimenu>Service Principal Authentication</guimenu> box you
+      will find the <guimenu>Instance Type</guimenu> configuration. You may
+      select from one of the predefined instance types, hand selected for
+      general container workloads, or choose <guimenu>Other types...</guimenu>
+      and enter any <literal>size</literal>, as defined at <link
+      xlink:href="https://docs.microsoft.com/en-us/azure/virtual-machines/linux/sizes/"/>.
+      Set the <guimenu>Cluster size</guimenu> using the slider.
+     </para>
+     <para>
+      The parameters in <guimenu>Resource Scopes</guimenu> define attributes of
+      the cluster instances, as required for Azure Resource Manager:
+     </para>
+     <variablelist>
+      <varlistentry>
+       <term>Resource Group</term>
+       <listitem>
+        <para>
+         The Resource Group in which all cluster nodes will be created.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>Storage Account</term>
+       <listitem>
+        <para>
+         The Storage Account that will be used for storing the cluster node OS
+         disks. See
+         <link
+           xlink:href="https://docs.microsoft.com/en-us/azure/storage/common/storage-create-storage-account"/>
+         for more information about Azure Storage Accounts.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>Network</term>
+       <listitem>
+        <para>
+         The virtual network the cluster nodes will be connected to.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>Subnet</term>
+       <listitem>
+        <para>
+         A subnet in the previously defined virtual network. See
+         <link xlink:href="https://docs.microsoft.com/en-us/azure/virtual-network/"/>
+         for more information about Azure Virtual Networks.
+        </para>
+       </listitem>
+      </varlistentry>
+     </variablelist>
+    </step>
+    <step>
+     <para>
+      Deploy the &admin_node; by running <command>caasp-admin-setup</command>.
+      For details, see <xref
+      linkend="sec.deploy.nodes.admin_install_cli" />.
+     </para>
+    </step>
+    <step>
+     <para>
+      Finish the installation by bootstrapping the nodes. For details, see
+      <xref linkend= "sec.deploy.install.bootstrap" />.
+     </para>
+    </step>
+   </procedure>
+  </sect2>
+  <sect2 xml:id="sec.deploy.preparation.public_cloud.provisioning.google">
+   <title>Preparing a Google Compute Engine Installation</title>
+   <para>
+    To prepare a Google Compute Engine (GCE) installation follow these steps:
+   </para>
+
+   <procedure>
+    <step>
+     <para>
+      Select proper instance types. You may select from one of the predefined
+      instance types, hand select for general container workloads, or choose
+      <guimenu>Other types...</guimenu> and enter any <guimenu>machine
+      type</guimenu>, defined at <link
+      xlink:href="https://cloud.google.com/compute/docs/machine-types/"/>.
+     </para>
+    </step>
+    <step>
+     <para>
+      Two configuration options are required in GCE:
+     </para>
+     <variablelist>
+      <varlistentry>
+       <term>Network</term>
+       <listitem>
+        <para>
+         The name of the virtual network the cluster nodes will run within.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>Subnet</term>
+       <listitem>
+        <para>
+         If you created a custom network, you must specify the name of the
+         subnet within which the cluster nodes will run.
+        </para>
+       </listitem>
+      </varlistentry>
+     </variablelist>
+     <para>
+      See the <link xlink:href="https://cloud.google.com/vpc/docs/vpc">GCE
+      Network Documentation</link> for more information.
+     </para>
+    </step>
+    <step>
+     <para>
+      Deploy the &admin_node; by running <command>caasp-admin-setup</command>.
+      For details, see <xref
+      linkend="sec.deploy.nodes.admin_install_cli" />.
+     </para>
+    </step>
+    <step>
+     <para>
+      Finish the installation by bootstrapping the nodes. For details, see
+      <xref linkend= "sec.deploy.install.bootstrap" />.
+     </para>
+    </step>
+   </procedure>
   </sect2>
  </sect1>
 </chapter>
