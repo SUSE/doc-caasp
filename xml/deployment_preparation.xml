@@ -827,11 +827,34 @@ done</screen>
      <screen>&prompt.user;wget https://raw.githubusercontent.com/SUSE/caasp-openstack-heat-templates/master/caasp-environment.yaml
 &prompt.user;wget  https://raw.githubusercontent.com/SUSE/caasp-openstack-heat-templates/master/caasp-stack.yaml</screen>
     </step>
+    <step>
+     <para>
+      Proceed with launching the nodes. You have the following alternatives:
+     </para>
+     <itemizedlist>
+      <!-- Launching the Stack Using the Horizon Dashboard  -->
+      <listitem>
+       <para>
+        <xref linkend="sec.deploy.preparation.openstack.horizon"/>
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        <xref linkend="sec.deploy.preparation.openstack.cli"/>
+       </para>
+      </listitem>
+     </itemizedlist>
+    </step>
    </procedure>
   </sect2>
 
   <sect2 xml:id="sec.deploy.preparation.openstack.horizon">
    <title>Launching the Stack Using the Horizon Dashboard</title>
+   <para>
+    To launch the stack, you may either use the Horizon Dashboard, as cescribed
+    here, or the command line, as described in <xref
+    linkend="sec.deploy.preparation.openstack.cli"/>.
+   </para>
    <procedure>
     <step>
      <para>
@@ -1066,7 +1089,12 @@ done</screen>
   </sect2>
 
   <sect2 xml:id="sec.deploy.preparation.openstack.cli">
-   <title>Launching the Stack Using the &ostack; CLI</title>
+   <title>Launching the Stack Using the &ostack; Command Line</title>
+   <para>
+    To launch the stack, you may either use the command line, as cescribed
+    here, or the Horizon Dashboard, as described in <xref
+    linkend="sec.deploy.preparation.openstack.horizon"/>.
+   </para>
 
    <para>
     To get access to the &ostack; command-line tools you can either access them
