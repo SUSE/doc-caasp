@@ -16,18 +16,104 @@
   </dm:docmanager>
  </info>
  <para>
-  
+  The core functionality of &productname; is provided by &kube;. Use the
+  <command>kubectl</command> command to communicate with &kube;.
+  &kube; requires a valid authentication. Each authenticated user then
+  has a set of privileges assigned.
  </para>
  <sect1 xml:id="sec.user.access.credentials">
-  <title>Access Control</title>
+  <title>Cluster Access</title>
   <para>
-
+   This section is intended for normal users. If you are the admin,
+   refer to <xref linkend="sec.admin.kubernetes.install-kubectl" />.
   </para>
+  <para>
+   To access the &kube; cluster, execute the following steps:
+  </para>
+  <procedure>
+   <step>
+    <para>
+     Get your credentials consisting of an e-mail address and a password
+     from your cluster administrator. You also need the FQDN to the
+     admin node.
+    </para>
+   </step>
+   <step>
+    <para>
+     Download the <filename>kubeconfig</filename> by visiting
+     <literal>https://<replaceable>ADMIN_NODE</replaceable>/kubecofnig</literal>.
+     Log in with your credentials and store the
+     <filename>kubeconfig</filename> as
+     <filename>~/.kube/config</filename>.
+    </para>
+   </step>
+   <step>
+    <para>
+     Obtain the cluster root certificate and update your certificate
+     store. On &sle; or &opensuse;, execute:
+    </para>
+<screen>&prompt.sudo;<command>cp <replaceable>CERTIFICATE_FILE</replaceable> /etc/pki/trust/anchors/</command>
+&prompt.sudo;<command>update-ca-certificates</command></screen>
+   </step>
+  </procedure>
  </sect1>
  <sect1 xml:id="sec.user.access.kubectl">
   <title>Using <command>kubectl</command></title>
   <para>
-
+   <command>kubectl</command> is a command line user interface to the
+   &kube; cluster. By default, the authorization credentials are read
+   from the file <filename>~/.kube/config</filename>.
+  </para>
+  <para>
+   To perform a specific command, at least one of your assigned roles
+   needs to have the required privilege. The default syntax for
+   <command>kubectl</command> commands is:
+  </para>
+  <screen>&prompt.user;<command>kubectl <replaceable>COMMAND</replaceable> <replaceable>TYPE</replaceable> <replaceable>NAME</replaceable> <replaceable>FLAGS</replaceable></command></screen>
+  <variablelist>
+   <varlistentry>
+    <term>COMMAND</term>
+    <listitem>
+     <para>
+      The operation that is performed on the resource, for example
+      <literal>create</literal>, <literal>get</literal>,
+      or <literal>delete</literal>.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>TYPE</term>
+    <listitem>
+     <para>
+      The resource type on which the operation is performed, for example
+      <literal>pod</literal>, <literal>service</literal>, or
+      <literal>namespace</literal>.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>NAME</term>
+    <listitem>
+     <para>
+      The name of specific resources (<replaceable>TYPE</replaceable>).
+      If omitted, the command is performed on all resources of a type.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>FLAGS</term>
+    <listitem>
+     <para>
+      This allows setting further details for the command, for example
+      the &kube; API server URL.
+     </para>
+    </listitem>
+   </varlistentry>
+  </variablelist>
+  <para>
+   For more details about <command>kubectl</command>, refer to
+   <command>kubectl --help</command> and
+   <link xlink:href="https://v1-9.docs.kubernetes.io/docs/reference/kubectl/overview/" />.
   </para>
  </sect1>
 </chapter>
