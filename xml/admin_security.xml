@@ -1221,9 +1221,6 @@ spec:
      Anonymous binding is available, if allowed by the LDAP server.
     </para>
    </note>
-
-
-
    <informalfigure>
     <mediaobject>
      <imageobject role="fo">
@@ -1461,6 +1458,258 @@ spec:
     </variablelist>
    </sect3>
 
+  </sect2>
+
+  <sect2 xml:id="sec.admin.security.external.ldap.examples">
+   <title>Examples</title>
+   <para>
+    In both directories, <literal>user-regular1</literal> and
+    <literal>user-regular2</literal> are members of the
+    <literal>k8s-users</literal> group, <literal>user-admin</literal> is a
+    member of the <literal>k8s-admins</literal> group.
+   </para>
+
+   <para>
+    For Active Directory, <literal>user-bind</literal> is a simple user which is
+    member of the default <literal>Domain Users</literal> group. Hence, we can
+    use it to authenticate because has read-only access to Active Directory.
+   </para>
+
+   <para>
+    The mail attribute is used to create the RBAC rules.
+   </para>
+
+   <sect3 xml:id="sec.admin.security.external.ldap.examples.ad">
+    <title>Active Directory</title>
+    <example>
+     <title>Active Directory Content LDIF</title>
+<screen># user-regular1, Users, example.com
+dn: CN=user-regular1,CN=Users,DC=example,DC=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: user
+cn: user-regular1
+sn: Regular1
+givenName: User
+distinguishedName: CN=user-regular1,CN=Users,DC=example,DC=com
+displayName: User Regular1
+memberOf: CN=Domain Users,CN=Users,DC=example,DC=com
+memberOf: CN=k8s-users,CN=Groups,DC=example,DC=com
+name: user-regular1
+sAMAccountName: user-regular1
+objectCategory: CN=Person,CN=Schema,CN=Configuration,DC=example,DC=com
+mail: user-regular1@example.com
+
+# user-regular2, Users, example.com
+dn: CN=user-regular2,CN=Users,DC=example,DC=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: user
+cn: user-regular2
+sn: Regular2
+givenName: User
+distinguishedName: CN=user-regular2,CN=Users,DC=example,DC=com
+displayName: User Regular2
+memberOf: CN=Domain Users,CN=Users,DC=example,DC=com
+memberOf: CN=k8s-users,CN=Groups,DC=example,DC=com
+name: user-regular2
+sAMAccountName: user-regular2
+objectCategory: CN=Person,CN=Schema,CN=Configuration,DC=example,DC=com
+mail: user-regular2@example.com
+
+# user-bind, Users, example.com
+dn: CN=user-bind,CN=Users,DC=example,DC=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: user
+cn: user-bind
+sn: Bind
+givenName: User
+distinguishedName: CN=user-bind,CN=Users,DC=example,DC=com
+displayName: User Bind
+memberOf: CN=Domain Users,CN=Users,DC=example,DC=com
+name: user-bind
+sAMAccountName: user-bind
+objectCategory: CN=Person,CN=Schema,CN=Configuration,DC=example,DC=com
+mail: user-bind@example.com
+
+# user-admin, Users, example.com
+dn: CN=user-admin,CN=Users,DC=example,DC=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: user
+cn: user-admin
+sn:: Admin
+givenName: User
+distinguishedName: CN=user-admin,CN=Users,DC=example,DC=com
+displayName: User Admin
+memberOf: CN=k8s-admins,CN=Groups,DC=example,DC=com
+memberOf: CN=k8s-users,CN=Groups,DC=example,DC=com
+name: user-admin
+sAMAccountName: user-admin
+objectCategory: CN=Person,CN=Schema,CN=Configuration,DC=example,DC=com
+mail: user-admin@example.com
+
+# k8s-users, Groups, example.com
+dn: CN=k8s-users,CN=Groups,DC=example,DC=com
+objectClass: top
+objectClass: group
+cn: k8s-users
+member: CN=user-regular1,CN=Users,DC=example,DC=com
+member: CN=user-regular2,CN=Users,DC=example,DC=com
+member: CN=user-admin,CN=Users,DC=example,DC=com
+distinguishedName: CN=k8s-users,CN=Groups,DC=example,DC=com
+name: k8s-users
+sAMAccountName: k8s-users
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=example,DC=com
+
+# k8s-admins, Groups, example.com
+dn: CN=k8s-admins,CN=Groups,DC=example,DC=com
+objectClass: top
+objectClass: group
+cn: k8s-admins
+member: CN=user-admin,CN=Users,DC=example,DC=com
+distinguishedName: CN=k8s-admins,CN=Groups,DC=example,DC=com
+name: k8s-admins
+sAMAccountName: k8s-admins
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=example,DC=com
+     </screen>
+    </example>
+    <example>
+     <title>Active Directory LDAP Connector (YAML)</title>
+<screen># Server
+Host: domain-controler.example.com
+Port: 636
+StartTLS: Off
+
+Certificate: DC_Trust_Root.crt
+
+# Authentication
+Anonymous: False
+DN: user-bind@example.com
+Password: &lt;password&gt;
+
+# User search
+Identifying User Attribute: sAMAccountName
+Base DN: CN=Users,DC=example,DC=com
+Filter: (objectClass=person)
+
+# User Attribute Map
+Username: sAMAccountName
+ID: distinguishedName
+Email: mail
+Name: sAMAccountName
+
+# Group Search
+Base DN: CN=Groups,DC=example,DC=com
+Filter: (objectClass=group)
+
+# Group Attribute Map
+User: distinguishedName
+Group: member
+Name: sAMAccountName
+     </screen>
+    </example>
+   </sect3>
+
+   <sect3 xml:id="sec.admin.security.external.ldap.examples.openldap">
+    <title>openLDAP</title>
+    <example>
+     <title>openLDAP Content LDIF</title>
+<screen># user-regular1, accounts, example.com
+dn: CN=user-regular1,OU=accounts,DC=example,DC=com
+cn: User Regular1
+uidNumber: 200
+gidNumber: 50
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+uid: user-regular1
+mail: user-regular1@example.com
+sn: Regular1
+givenName: User
+
+# user-regular2, accounts, example.com
+dn: CN=user-regular2,OU=accounts,DC=example,DC=com
+cn: User Regular2
+uidNumber: 300
+gidNumber: 50
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+uid: user-regular2
+mail: user-regular2@example.com
+sn: Regular2
+givenName: User
+
+# user-admin, accounts, example.com
+dn: CN=user-admin,OU=accounts,DC=example,DC=com
+cn: User Admin
+uidNumber: 1000
+gidNumber: 10
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+uid: user-admin
+mail: user-admin@example.com
+sn: Admin
+givenName: User
+
+# k8s-users, accounts, example.com
+dn: CN=k8s-users,OU=accounts,DC=example,DC=com
+gidNumber: 50
+objectClass: posixGroup
+cn: k8s-users
+memberUid: user-regular1
+memberUid: user-regular2
+
+# k8s-admins, accounts, example.com
+dn: CN=k8s-admins,OU=accounts,DC=example,DC=com
+gidNumber: 100
+objectClass: posixGroup
+cn: k8s-admins
+memberUid: user-admin
+     </screen>
+    </example>
+
+    <example>
+     <title>External LDAP Connector without Authentication</title>
+<screen># Server
+Host: ldap.example.com
+Port: 636
+StartTLS: Off
+
+Certificate: LDAP_Trust_Root.crt
+
+# Authentication
+Anonymous: True
+
+# User search
+Identifying User Attribute: uid
+Base DN: OU=accounts,DC=example,DC=com
+Filter: (objectClass=person)
+
+# User Attribute Map
+Username: uid
+ID: uid
+Email: mail
+Name: uid
+
+# Group Search
+Base DN: OU=accounts,DC=example,DC=com
+Filter: (objectClass=posixGroup)
+
+# Group Attribute Map
+User: uid
+Group: memberUid
+Name: cn
+     </screen>
+    </example>
+   </sect3>
   </sect2>
  </sect1>
 </chapter>
