@@ -1170,6 +1170,14 @@ spec:
    and use <link xlink:href="https://ldap.com/ldap-filters/">LDAP Filters</link>
    to select the scope of users that will be permitted access.
   </para>
+  <important>
+   <title>Automatic Attributes from LDAP</title>
+   <para>
+    Please note that users that belong to the <literal>administrators</literal>
+    group in LDAP will automatically be assigned the role of
+    <literal>cluster-admin</literal>.
+    </para>
+   </important>
   <procedure>
    <title>Configuring External LDAP connector</title>
    <step>
