@@ -1547,8 +1547,8 @@ sn:: Admin
 givenName: User
 distinguishedName: CN=user-admin,CN=Users,DC=example,DC=com
 displayName: User Admin
+memberOf: CN=Domain Users,CN=Users,DC=example,DC=com
 memberOf: CN=k8s-admins,CN=Groups,DC=example,DC=com
-memberOf: CN=k8s-users,CN=Groups,DC=example,DC=com
 name: user-admin
 sAMAccountName: user-admin
 objectCategory: CN=Person,CN=Schema,CN=Configuration,DC=example,DC=com
@@ -1561,7 +1561,6 @@ objectClass: group
 cn: k8s-users
 member: CN=user-regular1,CN=Users,DC=example,DC=com
 member: CN=user-regular2,CN=Users,DC=example,DC=com
-member: CN=user-admin,CN=Users,DC=example,DC=com
 distinguishedName: CN=k8s-users,CN=Groups,DC=example,DC=com
 name: k8s-users
 sAMAccountName: k8s-users
@@ -1623,8 +1622,8 @@ Name: sAMAccountName
 <screen># user-regular1, accounts, example.com
 dn: CN=user-regular1,OU=accounts,DC=example,DC=com
 cn: User Regular1
-uidNumber: 200
-gidNumber: 50
+uidNumber: 1200
+gidNumber: 500
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: person
@@ -1636,8 +1635,8 @@ givenName: User
 # user-regular2, accounts, example.com
 dn: CN=user-regular2,OU=accounts,DC=example,DC=com
 cn: User Regular2
-uidNumber: 300
-gidNumber: 50
+uidNumber: 1300
+gidNumber: 500
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: person
@@ -1650,7 +1649,7 @@ givenName: User
 dn: CN=user-admin,OU=accounts,DC=example,DC=com
 cn: User Admin
 uidNumber: 1000
-gidNumber: 10
+gidNumber: 100
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: person
@@ -1661,7 +1660,7 @@ givenName: User
 
 # k8s-users, accounts, example.com
 dn: CN=k8s-users,OU=accounts,DC=example,DC=com
-gidNumber: 50
+gidNumber: 500
 objectClass: posixGroup
 cn: k8s-users
 memberUid: user-regular1
