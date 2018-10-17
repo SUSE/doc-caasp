@@ -16,6 +16,36 @@
   </dm:docmanager>
  </info>
 
+ <sect1 xml:id="sec.user.ingress.prereqs">
+  <title>Prerequisites</title>
+  <para>
+
+   </para>
+
+ </sect1>
+
+ <sect1>
+  <screen>
+  # Disable the creation of pod security policy
+  podSecurityPolicy:
+    enabled: false
+
+  # Create a specific service account
+  serviceAccount:
+    create: true
+    name: nginx-ingress
+
+  controller:
+    image:
+      repository: registry.suse.de/devel/casp/3.0/controllernode/images_container_base/sles12/nginx-ingress-controller
+      tag: 0.15.0
+    service:
+      type: NodePort
+      nodePorts:
+        http: 30080
+        https: 30443
+  </screen>
+  </sect1>
 <screen>
 # Deployment instructions
 
@@ -25,32 +55,13 @@ For QA, these are the instructions to follow:
 * Download the kubeconfig file from the cluster
 * Ensure the suse-ca certificate is added to the cluster (you should
 have that on your computer under
-/usr/share/pki/trust/anchors/SUSE_Trust_Root.crt.pem). You will probably
-have to manually restart the docker daemon on the master and workers due
-to https://bugzilla.suse.com/show_bug.cgi?id=1107704
+/usr/share/pki/trust/anchors/SUSE_Trust_Root.crt.pem).
 * Install helm on your laptop
-* Init helm via "helm init --client-only"
+* Init helm via "helm init --client-only" on admin node
 * Create a nginx-ingress-config-values-suse-no-psp.yaml file with the
 following contents (substitute THE_IMAGE_HERE by the nginx image):
 
-# Disable the creation of pod security policy
-podSecurityPolicy:
-  enabled: false
 
-# Create a specific service account
-serviceAccount:
-  create: true
-  name: nginx-ingress
-
-controller:
-  image:
-    repository: registry.suse.de/devel/casp/3.0/controllernode/images_container_base/sles12/nginx-ingress-controller
-    tag: 0.15.0
-  service:
-    type: NodePort
-    nodePorts:
-      http: 30080
-      https: 30443
 
 Note well: watch out for indentation errors while doing the copy and paste.
 
