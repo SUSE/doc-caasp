@@ -208,7 +208,9 @@
        adjust the boot configuration, e.g. by adding additional kernel parameters.
        This can be done by editing <replaceable>/etc/default/grub</replaceable>,
        calling <command>transactional-update grub.cfg</command> and then rebooting
-       the machine to activate the change.
+       the machine to activate the change. Please note that without rebooting
+       the machine, the new grub config will be overwritten with the default by
+       any transactional-update that takes place.
       </para>
 <screen>&prompt.root;<command>transactional-update grub.cfg</command></screen>
      </listitem>
