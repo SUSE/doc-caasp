@@ -200,6 +200,20 @@
      </listitem>
     </varlistentry>
     <varlistentry>
+     <term><literal>grub.cfg</literal>
+     </term>
+     <listitem>
+      <para>
+       The command creates a new grub2 config. Sometimes it is necessary to
+       adjust the boot configuration, e.g. by adding additional kernel parameters.
+       This can be done by editing <replaceable>/etc/default/grub</replaceable>,
+       calling <command>transactional-update grub.cfg</command> and then rebooting
+       the machine to activate the change.
+      </para>
+<screen>&prompt.root;<command>transactional-update grub.cfg</command></screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
      <term><literal>--help</literal>
      </term>
      <listitem>
