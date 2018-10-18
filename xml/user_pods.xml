@@ -15,20 +15,50 @@
    <dm:translation>yes</dm:translation>
   </dm:docmanager>
  </info>
- <para>
+ <para/>
 
- </para>
  <sect1 xml:id="sec.user.pods.overview">
   <title>Overview</title>
   <para>
-
+   Pods are the computing units of &kube; and consist of one or more
+   containers. A pod has its own unique network IP and storage
+   resources. To scale an application, multiple pods with the same
+   container can be started. The load is automatically distributed
+   among the cluster nodes.
+  </para>
+  <para>
+   A very good introduction to starting an application in a pod is
+   available at
+   <link xlink:href=
+   "https://v1-9.docs.kubernetes.io/docs/tutorials/kubernetes-basics/deploy-interactive/"
+   />.
+  </para>
+  <para>
+   For more information about pods, refer to <link xlink:href=
+   "https://v1-9.docs.kubernetes.io/docs/concepts/workloads/pods/pod-overview/"
+   />.
   </para>
  </sect1>
  <sect1 xml:id="sec.user.pods.create">
   <title>Creating Pods</title>
   <para>
-
+   To create a pod, first define it in a YAML file. The used containers
+   must be available in the registry.
   </para>
+  <example>
+  <title>Pod with nginx-container</title>
+  
+<screen>apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.7.9
+    ports:
+    - containerPort: 80</screen>
+  </example>
  </sect1>
  <sect1 xml:id="sec.user.pods.remove">
   <title>Removing Pods</title>
