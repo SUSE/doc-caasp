@@ -1304,4 +1304,53 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
    </procedure>
   </sect2>
  </sect1>
+
+ <sect1 xml:id="sec.admin.compute_resources">
+  <title>Reserving Compute Resources</title>
+  <para>
+   By default, &kube; will allocate all available hardware resources of
+   a node to pods. This can starve core services of needed resources,
+   which are, for example, required for managing single nodes or the
+   cluster. To prevent core services from running out of resources, you
+   can reserve CPU, memory, and disk resources for them.
+  </para>
+  <warning>
+   <title>Carefully Check Entered Values</title>
+   <para>
+    Entering invalid values into the input fields may break nodes.
+    Carefully check the entered values before selecting the
+    <guimenu>Save</guimenu> button.
+   </para>
+  </warning>
+  <informalfigure>
+   <mediaobject>
+    <imageobject role="fo">
+     <imagedata fileref="velum_settings_compute_resource.png" width="100%"/>
+    </imageobject>
+    <imageobject role="html">
+     <imagedata fileref="velum_settings_compute_resource.png" width="100%"/>
+    </imageobject>
+   </mediaobject>
+  </informalfigure>
+  <para>
+   To reserve hardware resources, go to the &dashboard; dashboard and
+   then proceed to <emphasis>Settings</emphasis> and <emphasis>Compute
+   Resources Reservation</emphasis>.
+  </para>
+  <para>
+   You can reserve resources for &kube; services in the box
+   <literal>&kube; core services</literal> and for services running on
+   a single node in <literal>Host system services</literal>.
+  </para>
+  <para>
+   In the box <literal>Eviction threshold</literal>, you can set rules
+   for killing pods when the usage of RAM or storage reaches a defined
+   level. This prevents nodes from actually running out of resources,
+   which would then trigger the default out-of-resource-handling.
+  </para>
+  <para>
+   To activate entered settings, use the <guimenu>Save</guimenu> button
+   at the bottom of the page.
+  </para>
+ </sect1>
 </chapter>
