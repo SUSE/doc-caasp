@@ -104,4 +104,389 @@ controller:
      http: 30080
      https: 30443
 </screen>
+
+<screen>
+ # Requirements
+# The client must have working kubectl and helm clients
+# The server must have tiller installed
+
+# Install Helm
+sudo zypper in helm
+
+# Make sure you run tiller on your k8s cluster
+kubectl get pods --all-namespaces | grep tiller
+Output: kube-system   tiller-deploy-6bb4bf898f-c88gz   1/1       Running   0          13m
+
+or
+
+kubectl cluster-info | grep tiller
+Output: Tiller is running at https://kube-api-x1.devenv.caasp.suse.net:6443/api/v1/proxy/namespaces/kube-system/services/tiller
+
+# Initialize helm client (given that Tiler is running on your k8s cluster)
+helm init --client-only
+
+
+# Configure Helm to use SUSE Helm Charts
+# Add the SUSE Helm Charts repository
+helm repo add suse https://kubernetes-charts.suse.com
+
+# Update it to get the latest changes
+helm repo update
+
+# Now you should be able to fetch suse/nginx-ingress
+helm search nginx | grep suse
+Output: suse/nginx-ingress          0.28.3        0.15.0      An nginx Ingress controller that uses ConfigMap...
+
+# Install it (without any modification)
+helm install --name nginx-ingress suse/nginx-ingress
+
+Notice: By default, nginx-ingress is using LoadBalancer. This implies that your have deployed k8s
+on a cloud environment where k8s can talk with the underlying infrastructure and bind a loadbalancer.
+
+# OPTIONAL: Install it (with modifications)
+# In case you want to modify the default values (e.g. use NodePort instead of LB) then you can do sth like that:
+# Step 1: Create a yaml file with your changes
+vi custom.yaml
+
+serviceAccount:
+  create: true
+  name: nginx-ingress
+
+controller:
+  service:
+    type: NodePort
+    nodePorts:
+      http: 30080
+      https: 30443
+
+
+# Step 2: Install SUSE nginx-ingress and ovewrite the default values based on `custom.yaml`
+helm install --name nginx-ingress suse/nginx-ingress --values custom.yaml
+
+
+Verification:
+~~~~~~~~~~~~~
+* kubectl get pods
+
+NAME                                             READY     STATUS    RESTARTS   AGE
+nginx-ingress-controller-59cb9795d-pzhbn         1/1       Running   0          1m
+nginx-ingress-default-backend-6b9b546dc8-crnps   1/1       Running   0          1m
+
+
+* kubectl get svc
+
+NAME                            CLUSTER-IP     EXTERNAL-IP   PORT(S)                      AGE
+kubernetes                      172.24.0.1     <none>        443/TCP                      28m
+nginx-ingress-controller        172.24.5.136   <nodes>       80:30080/TCP,443:30443/TCP   2m
+nginx-ingress-default-backend   172.24.42.17   <none>        80/TCP                       2m
+
+
+Our suse nginx ingress controller RESOURCE is up and running
+
+Test case:
+~~~~~~~~~~
+# An example can be using Fan-out ingress method as NodePort type
+# Read: https://kubernetes.io/docs/concepts/services-networking/service/#nodeport
+# Read: https://kubernetes.io/docs/concepts/services-networking/ingress/#types-of-ingress
+
+# Deploy 2 pods (nginx webserver and echoserver)
+kubectl run nginx --image=nginx --port=80
+kubectl run echoserver --image=gcr.io/google_containers/echoserver:1.4 --port=8080
+
+# Expose them with NodePort
+kubectl expose deployment nginx --target-port=80 --type=NodePort
+kubectl expose deployment echoserver --target-port=8080 --type=NodePort
+
+# Bound them into an ingress object
+# When someone visits '/' will point them to 'nginx' service
+# When someone visits '/bar' will point them to 'echoserver' service
+NOTICE: My machine/domain is ultron.suse.de (replace that with yours)
+
+vi fanout-ingress.yml
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: test
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: ultron.suse.de
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: nginx
+          servicePort: 80
+      - path: /bar
+        backend:
+          serviceName: echoserver
+          servicePort: 8080
+
+# Create the object
+kubectl create -f fanout-ingress.yml
+
+# Configure a LoadBalancer on your Host machine
+sudo zypper in nginx
+
+# Configure nginx to work as LB
+NOTICE: My machine is ultron.suse.de (replace that with yours)
+NOTICE: The hostnames of the nodes are taken from caasp-devenv tool (replace it with yours)
+
+cat /etc/nginx/nginx.conf
+
+load_module '/usr/lib64/nginx/modules/ngx_stream_module.so';
+events {
+    worker_connections  1024;
+}
+
+stream {
+    upstream stream_backend {
+        server master-0.devenv.caasp.suse.net:30080;
+        server worker-0.devenv.caasp.suse.net:30080;
+        server worker-1.devenv.caasp.suse.net:30080;
+    }
+
+  server {
+    listen ultron.suse.de:80;
+    proxy_pass stream_backend;
+  }
+}
+
+# Make sure that your Host knows the IP addresses of the k8s nodes:
+vi /etc/hosts
+# k8s Master nodes
+10.17.2.0  master-0.devenv.caasp.suse.net
+# k8s Worker nodes
+10.17.3.0  worker-0.devenv.caasp.suse.net
+10.17.3.1  worker-1.devenv.caasp.suse.net
+
+
+# Test it:
+firefox or curl -L ultron.suse.de --> should point you to webserver pod
+firefox or curl -L ultron.suse.de/bar --> should point you to echoserver pod
+</screen>
+
+<screen>
+ Ingress are (in a sense) reverse-proxies. An ingress controller might be 'nginx' or 'haproxy' or some other webserver. You create this controller. It listens to the kubernetes API.
+
+The only way to expose Pods to the outside world is through services. When we deploy those pods they are __not__ available to the outside world. Typically, in order to be able to access the pods, you have to be part of the cluster. So to enable the communication of between the pods and the outside world, we need to configure services (notice that services are required for discovery).
+
+Some services are always meant to be used internally. For example a database. You don not want to expose your database to the outside world. So this would be available only internally and
+withing the cluster, across the pods. According to k8s terminology, these type of services are called 'ClusterIP'.
+
+There are some other pods that need to be accessible from the outside. Which means you need to have external endpoints or DNS names or CNAMES so you can actually have internet access on these pods. To do that you have to configure the external service in order to have access to the outside world. These services are typically called 'NodePort'. They are reachable through the '<NODE-IP> : <NodePort endpoint'. This is going to be available on every node. So if you know the IP Address of a Node, you can hit any Node and give the access any external nodeport service.
+
+Using the concept of 'labels and selectors' we can associate the services with the appropriate back-end pods. So when a service end-point is hit, it will route the traffic in any of the
+blahblah-ports deployed in any node.
+
+In case you are deploying your nodes on a Public Cloud (eg. Google Computing, EC2 or Azure) you can also configure a cloud loadbalancer. This is using the cloud specific APIs to provision
+a load balancert and wires the NodePort to the LoadBalancer. So, it will 'automate' the step of exposing Pods on a NodePort and then creating a LoadBalancer and manually pointing the LoadBalancer to all the NodePorts. So using the 'LoadBalancer' type, k8s will use the underlying cloud provider to automatically wire up the port forwarding to appropriate Nodeports running accross the cluster.
+
+If you exposing Pods on the Internet, you are basically exposing NodePorts, and NodePorts can be forwarded to a LoadBalancer.
+
+Classic Problems:
+~~~~~~~~~~~~~~~~~
+* External URLS:
+When you are deploying a public facing application on a k8s cluster, is creating a new loadbalancer for every service. So that means if you have multiple services you want all of them to share a Load Balancer and that is very difficult.
+
+* Load Balancers:
+If you are using the type LoadBalancer in your services definition you will end-up creating a new LoadBalancer for every service. So it is not a very optimal way. Another way is deploying k8s in your data-center on bare-metal and you might already have a physical loadbalancer like 'F5'. And how would you point that in your existing deployment in your k8s cluster?
+
+* SSL-terminated endpoints:
+How do you configure SSL termination?
+
+* Name-based virtual hosting
+How do you create a very clean mechanism of routing your traffic to appropriate service end-points without creating a lot of back-end clutter configuration?
+
+Solution:
+~~~~~~~~~
+To solve this problem, the community started building a thing called as an 'Ingress'. An Ingress is nothing but a collection of rules that will allow inbound connections to reach the cluster services. Ingress as it itself is not a Load Balancer. Ingress as itself is a physical represantiona of an 'edge' device. It is logical controller that will be mapped into one of your Load Balancer (either cloud or physical) and it will create a set of rules. These rules will route the traffic -- at runtime -- to an appropriate end-point. And obviously you cannot use an ingress to route traffic to a ClusterIP, because ClusterIP is never reachable to the outside world. So if you have a set of Pods that are exposed to the outside world through NodePort and you want a very clean mechanism to expose them, and create a set of rules, then you actually create an Ingress.
+
+An Ingress is a level above service. And it is configured to expose services through 'External URLs'. This is the preferred way and the best practice, to wire-up a CNAME to your service endpoint. So if you want to configure an external URL using the nodeport in its raw form it is not a good idea. You should actually go for an ingress and made this as an intermediary between your domain name and your endpoint. So it decouples your physical deployment from your logical domain name. So when you are actually changing any definition you can just tweak your load balancer or ingress and the CNAME remains the same. That gives you a nice and clean mechanism to decouple your domain-names from your NodePorts. Of course a collection of LoadBalancers can be integrated in k8s through ingress you can bring multiple varieties of LoadBalancer like F5, HA Proxy, nginx ... and you can very easily integrate that with k8s. And because you have a layer above the services you can also off-load SSL termination. So you can handle SSL at the ingress while keeping your NodePorts out of the picture. You can basically add your LetsEncrypt certificate at the Ingress level and this will handle the TLS termination, so you don not have to touch the NodePort. You can also do 'Name-based virtual hosting' so basically you will have the same IP address but you will have multiple hostnames, for example
+
+food.bar.com --> different service endpoint and abc.bar.com --> to another service endpoint. So you can create a complicated routing logic but on the Ingress level. This gives you plenty of room to play with the configuration.
+
+And once again: Ingress cannot function if your do not have services. It is a decoupling layer between Internet and your NodePorts.
+
+
+Back to Ajejandro's questions:
+
+On 2018-10-30 00:49, Alejandro Bonilla wrote:
+> - What are the use cases for nginx when there is already a LoadBalancer
+> availability at the underlying infrastructure?
+
+Use Case 1
+~~~~~~~~~~~
+
+Let's say we have k8s 3 node cluster running on the Google Container Engine. We will use this cluster to create an ingress and also configure a set of rules. So the very first thing is deploying an 'nginx' Pod (this is a deployment):
+
+kubectl run nginx --image=nginx --port=80
+kubectl get deploy
+kubectl get pods
+
+So far we do not have a service to access this. It is just a Pod, which is part of the deployment. You can verify this by typing:
+kubectl get svc
+
+So let expose that deployment. The `expose` command it automatically creates a service. We are going to use type 'NodePort'. This means that this _svc_ is going to be available in every node:
+
+kubectl expose deployment nginx --target-port=80 --type=NodePort
+kubectl get svc
+# name    cluster-ip      external-ip   port
+# nginx   10.58.254.253   <nodes>       80:31117/TCP
+
+We see that the nginx service is becoming available on **every node** at port `31117`. So the external IP is the IP of any node. Basically we cannot do anything with that because we cannot access the NodePort directly; we are running in the public cloud. So it is time to create our first Ingress Controller to abstract the backend nginx deployment:
+
+vi nginx-ingress.yml
+
+```yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+spec:
+  backend:
+    serviceName: nginx
+    servicePort: 80
+```
+
+It starts with an API extention. This means you need to check that your k8s deployment supports this. If you are running minikube or a local bare metal setup, it is a little bit complex because you need to configure nginx ingress before-hand but it becomes much more simpler to understand if you are dealing with the public cloud -- this is because ingress will be wrapped
+around a LoadBalancer and that gives you a nice mechanism to play around. So, if you plan to test this with your minikube or your local-cluster, then search for the documentation or guides of using nginx locally as an ingress. The ingress is already configured and GKE comes with an Ingress controller already wrapped around a load-balancer.
+
+Next we define the API object of k8s as Ingress (see `kind`). Then the metadata, we just give it an arbitrary name, lets call it `nginx-ingress`. Then the spec where we are creating some kind of a rule that says: Look for the name of the service called 'nginx'. This is how ingress points into 'nginx' service and the service internal port is 80. This is internally exposed, not publically. So, lets go and create this ingress:
+
+kubectl apply -f nginx-ingress.yml
+# open 35.190.40.172 <-- this IP gets assigned by GKE's LoadBalancer automatically
+```
+
+At this point lets switch to the google cloud console, that is `console.cloud.google.com`. From the drop-down menu, go to `Networking` > `Load Balancing`. Over there we should be able
+to watch a **new** LoadBalancer going up in a few minutes. This is going to take a while because we also have to wait for the internal DNS. Once this is created it gets automatically and IP address. You can also test the creation of the ingress by typing:
+
+kubectl get ing
+
+```
+# NAME         HOSTS   ADDRESS        PORTS
+nginx-ingress   *      35.190.30.18     80
+```
+
+So this is the address of it. For the *hosts* there is a start `*` because we did not put any rule for the hosts. Also we can learn more information about, by `describe`: kubectl describe ing nginx-ingress. This is going to tell us a lot of information. The ingress controller is creating a LoadBalancer that is pointing to the backend nginx IP (10.56.2.6:80). So basically kubernetes has negotiated with the underlying Google cloud stack infrastructure and created the forwarding rules and it also it has gone ahead to wire the LoadBalancer to the port 31117. You could see that at the GKE console:
+
+`
+Service default backend set to nginx:31117
+`
+
+This port (31117) is actually what is available as the nodeport. To test this you can actually use something like `curl`:
+
+kubectl get ing
+# see the public ip address: 35.190.30.18
+
+curl 35.190.30.18
+# you might see 404 because it takes a while
+# for the records and the internal DNS to sync
+# you should end up in the end seeing the nginx home page
+
+So now we have a very good and clean mechanism because we do not have to put the nodeport address to access our webserver. To answer your question: Why to use an ingress instead of loadbalancer for exposing our service? How is this different? If you are creating a loadbalancer (and not an ingress) you will end up creating a new loadbalancer for every service of your deployment. Obviously you have to put a LoadBalancer as a type of service. That action will end up with more physical LoadBalancers, and this will **cost you money**, because Google charges you per LoadBalancer. So it is not very efficient to use a LoadBalancer in public clouds -- you should actually use an ingress wrapped around a LoadBalancer, so you pay for once LB in total (instead of one LB per service).
+
+So to sum up, once again, our ingress is mapping the external IP address (kubectl get ing) to the internal Pod (kubectl get pods) that is running our service using NodePort (get svc). Deploying an ingress in the PublicCloud it's awesome because it uses the underlying infrastructure -- meaning a LB gets created and wrapps our ingress, providing a public facing IP.
+
+Use Case 2
+~~~~~~~~~~
+
+The next step is to go ahead and create a static IP Address, because our LoadBalancer has an ephemeral IP. That might change for some reason, if you delete the ingress, and then you
+will endup with a new IP address. As result your CNAME will break, your A Records and lot of things will break. So, let us first ask GCP to create a static IP:
+
+```bash
+gcloud compute addresses create nginx1-static-ip --global
+gcloud compute addresses list
+# NAME                  ADDRESS         STATUS
+nginx1-static-ip      35.190.46.239     RESERVED
+```
+
+We will use the static IP address for our ingress. It is very straightforward. All we have to do is to add an `annotation`:
+
+vi nginx-ingress-ip.yml
+
+```yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: nginx1-static-ip
+spec:
+  backend:
+    serviceName: nginx
+    servicePort: 80
+```
+
+Let us wire-up the static IP we have just created with the ingress controller:
+kubectl apply -f nginx-ingress-ip.yml
+
+
+So now this is configured. If you come back and do a `describe`:
+kubectl describe ing nginx-ingress
+
+This is going to show us an update for the ip. That is:
+
+`
+CREATE ip 35.190.46.239
+`
+
+So now we can grab this and do a `curl`. We are going to see a *404* because it takes some minutes to get updated and after that what we will have is a static IP that is pointing
+to the LoadBalancer. The LoadBalancer is pointing to the service, and the service is pointing into a set of Pods which are part of the deployment. In other words, you can buy a domain name pointing to this IP. The GKE LB will be providing this static IP and redirecting all the traffic to ingress.
+
+Use Case 3:
+~~~~~~~~~~~
+
+In this scenario is where the ingress becomes extremely powerful. Now I am going to launch another Pod and another service. But I do **not** want to create another ingress, simply because
+this will create another new loadbalancer. There are two issues with that:
+
+1. It is going to cost me MORE money. I do not want to spin a new LoadBalancer, I want to minimize the cost of the resources. So I want to have just one LoadBalancer.
+
+2. I want to have one domain. For example an wordpress instance running as a Pod, exposed as a service and I have my core front-end running as a service. Basically all of the '/order', '/blog' etc, are running separately as services.
+
+So now we need to deploy all these microservices, creating an external facing NodePort and then use exactly **one** Ingress to drive the traffic to any of the Pods. So when I actually say '/blog' I want my ingress to route my traffic into a wordpress Pod. When I say '/shopping-card' it should be a UI exposed through the Pod service. To emulate that, I am going to use another Pod, called `echoserver`:
+
+kubectl run echoserver --image=gcr.io/google_containers/echoserver:1.4 --port=8080
+
+This command is going to create a new Pod (deployment) -- see `kubectl get pods`. And then we are going to expose this as a service via NodePort:
+
+kubectl expose deployment echoserver --target-port=8080 --type=NodePort
+
+Because we are running on the public cloud, even NodePort is not directly accessible. So we have so far exposed *echoserver* and *nginx*: `kubectl get svc`. What I want to do
+is to use one ingress to expose both of those microservices. To do that, we need to create a new Ingress definition, using a *fan-out* pattern. It is called like that because if you
+visuallize the traffic that will hit the ingress it looks like fan-out to multiple microservice end-point.
+
+vi fanout-ingress.yml
+
+```yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: fanout-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: nginx
+          servicePort: 80
+      - path: /echo
+        backend:
+          serviceName: echoserver
+          servicePort: 8080
+```
+
+So if the path is '/' hit the `nginx`. If the path is '/echo' hit the `echoserver`. So lets apply this:
+kubectl create -f fanout-infress.yml
+
+This is going to create one additional load-balancer, so we are going to see one loadbalancer to be responsible for both the services. So we can delete the previous one. So you can have multiple services and bring them under the umbrella of one ingress controller. The user will never realize that they are talking to a k8s cluster.
+
+The full tutorial can be found at:
+https://cloud.google.com/kubernetes-engine/docs/tutorials/http-balancer
+
+In order to make sure that your *fanout-ingress* has been correctly deployed, you can ask for `describe`: kubectl describe ing fanout-ingress. Over there you should see the paths and the their backend mapped Pod.
+</screen>
 </chapter>
