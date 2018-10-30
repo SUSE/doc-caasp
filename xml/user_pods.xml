@@ -59,11 +59,26 @@ spec:
     ports:
     - containerPort: 80</screen>
   </example>
+  <para>
+   Then apply the YAML file with <command>kubectl create -f
+   <replaceable>YAML_FILE</replaceable></command>.
+  </para>
  </sect1>
  <sect1 xml:id="sec.user.pods.remove">
-  <title>Removing Pods</title>
+  <title>Killing Pods</title>
   <para>
-
+   To kill a running pod, use <command>kubectl delete pod
+   <replaceable>POD_NAME</replaceable></command>. The
+   <replaceable>POD_NAME</replaceable> refers to the
+   <literal>name</literal> value of the <literal>metadata</literal>
+   section. By default, the pod is granted a grace period of 30 seconds
+   to shut down. After that, it will be killed.
+  </para>
+ </sect1>
+ <sect1 xml:id="sec.user.pods.list">
+  <title>List Running Pods</title>
+  <para>
+   To list running pods, run <command>kubectl get pods</command>.
   </para>
  </sect1>
 </chapter>
