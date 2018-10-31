@@ -21,19 +21,58 @@
  <sect1 xml:id="sec.user.services.overview">
   <title>Overview</title>
   <para>
-
+   &kube; services provide an abstraction layer to access network
+   services, for example provided by pods. It is possible to manually
+   assign IP addresses. Services can be exposed outside the cluster,
+   for example to provide a service to the WAN or internet.
+  </para>
+  <para>
+   For details, refer to <link xlink:href=
+   "https://v1-9.docs.kubernetes.io/docs/concepts/services-networking/service/"
+   />.
   </para>
  </sect1>
  <sect1 xml:id="sec.user.services.create">
-  <title>Creating Pods</title>
+  <title>Creating Services</title>
   <para>
-
+   To create a service, specify it in a YAML file. The following example
+   YAML file is a very basic service definition. It forwards incoming
+   network packages on port <literal>80</literal> to all pods with the
+   label <literal>MyApp</literal> on port <literal>9376</literal>.
+  </para>
+  <example>
+   <title>Basic Service Definition</title>
+<screen>kind: Service
+apiVersion: v1
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: MyApp
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 9376</screen>
+  </example>
+  <para>
+   Apply the YAML file with <command>kubectl create -f
+   <replaceable>YAML_FILE</replaceable></command>.
+  </para>
+  <para>
+   The IP address can be retrieved with the command <command>kubectl
+   describe services my-service</command>. Additionally, a DNS record
+   will be created with the schema
+   <systemitem><replaceable>SERVICE_NAME</replaceable>.
+   <replaceable>NAMESPACE_NAME</replaceable></systemitem>. If the the
+   example above is created in the namespace <literal>my-ns</literal>,
+   the DNS record would be <literal>my-service.my-ns</literal>.
   </para>
  </sect1>
  <sect1 xml:id="sec.user.services.remove">
-  <title>Removing Pods</title>
+  <title>Removing Services</title>
   <para>
-
+   To delete a service, use <command>kubectl delete service
+   <replaceable>SERVICE_NAME</replaceable></command>.
   </para>
  </sect1>
 </chapter>
