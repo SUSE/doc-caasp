@@ -48,22 +48,6 @@
   </para>
 
 <screen>
-Current:
-* Deploy RMT external, warm it
-* Deploy RMT internal
-* Transfer RMT cache to internal
-* Deploy external container registry mirror
-* Deploy internal container registry mirror
-* Set up CaaSP on single node to get access to patched docker
-* Put the patched docker daemon config on the caasp node to talk to external registry mirror
-* Deploy internal helm chart repository mirror
-* Manually warm helm chart repo mirror
-* Manually define the images you need by trial and error (or magic)
-* Manually warm the external container cache through patched docker with your list of images
-* Transfer the registry cache to the internal mirror
-* Deploy CaaSP cluster in internal network
-
-Future:
 * Deploy RMT external, warm it
 * Deploy RMT internal
 * Transfer RMT cache to internal
@@ -73,7 +57,7 @@ Future:
 * Have cache warming tool that downloads the helm charts, extracts the images, downloads and caches the images on external registry mirror
 * Yet undiscussed method to run helm chart mirror (update)
 * Transfer the registry cache to the internal mirror
-* Deploy CaaSP1 cluster in internal network
+* Deploy CaaSP cluster in internal network
   </screen>
 
   <important>
@@ -111,19 +95,19 @@ Future:
     </listitem>
     <listitem>
      <para>
-      Container images
-     </para>
-     <para>
-      Provided by the &suse; container registry (https://registry.suse.com)
-     </para>
-    </listitem>
-    <listitem>
-     <para>
       Helm installation charts
      </para>
      <para>
       Provided by the &suse; helm chart repository
       (https://kubernetes-charts.suse.com/)
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Container images
+     </para>
+     <para>
+      Provided by the &suse; container registry (https://registry.suse.com)
      </para>
     </listitem>
    </itemizedlist>
@@ -202,7 +186,7 @@ Future:
   <sect2 xml:id="sec.deploy.scenarios.airgap.machines">
    <title>Mirror Servers</title>
    <para>
-    You will need to provide and maintain at least two machines in addition to
+    You will need to provide and maintain at least four machines in addition to
     your &productname; cluster. These mirror servers will reside on the
     external part of your network and the internal (airgapped) network
     respectively.
@@ -228,14 +212,14 @@ Future:
      <term>External</term>
      <listitem>
       <para>
-       This machine will host the <literal>&rmtool;</literal> for RPM packages
+       These machines will host the <literal>&rmtool;</literal> for RPM packages
        and the <literal>Docker Pull-Trough Cache</literal> for container
        images.
       </para>
       <itemizedlist>
        <listitem>
         <para>
-         <literal>1</literal> Host machine for the mirror servers.
+         <literal>2</literal> Host machines for the mirror servers.
         </para>
         <itemizedlist>
          <listitem>
@@ -267,15 +251,15 @@ Future:
      <term>Internal</term>
      <listitem>
       <para>
-       This machine will host the <literal>&rmtool;</literal> for RPM packages,
-       the <literal>Docker Container Registry</literal> for container images
-       and a webserver hosting the <literal>Helm Chart Repository</literal>
+       These machines will host the <literal>&rmtool;</literal> for RPM packages,
+       and <literal>Docker Container Registry</literal> for container images
+       as well as a webserver hosting the <literal>Helm Chart Repository</literal>
        files.
       </para>
       <itemizedlist>
        <listitem>
         <para>
-         <literal>1</literal> Host machine for the mirror servers.
+         <literal>2</literal> Host machines for the mirror servers.
         </para>
         <itemizedlist>
          <listitem>
@@ -427,6 +411,96 @@ Future:
      Follow the procedure in
      <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/sec_rmt_mirroring_export_import.html" />.
     </para>
+   </sect3>
+  </sect2>
+
+  <sect2 xml:id="sec.deploy.scenarios.airgap.helm-charts">
+   <title>Helm Chart Repository Mirror</title>
+   <para>
+    Helm Charts provide a simple way to deploy entire application stacks
+    including all their dependencies and configurations. The repository consists
+    of chart packages that contain the necessary information and an index file.
+   </para>
+   <para>
+    The helm charts will require images available from a registry mirror. The
+    following steps will aid you in mirroring all images required by the &suse;
+    provided helm charts. To make use of the helm charts, you must complete
+    <xref linkend="sec.deploy.scenarios.airgap.container-registry"/>.
+   </para>
+   <sect3>
+    <title>Mirror Configuration</title>
+    <para>
+     Set up an internal Helm chart mirror. This can be any webserver capable of
+     hosting static files. We recommend providing the webserver on your internal
+     container image registry mirror.
+    </para>
+    <para>
+     You do not need a Helm chart repository mirror on the external
+     network. You will perform the steps required for pulling and mirroring
+     charts and container images on your external container image registry
+     mirror.
+    </para>
+    <para>
+     You must have a working container image registry mirror in place inside
+     the air gapped network.
+    </para>
+   </sect3>
+   <sect3>
+    <title>Client Configuration</title>
+    <para>
+     Add the webserver as a repo to <command>helm</command> on the admin node.
+     </para>
+<screen>&prompt.user;<command>helm repo add SUSE-MIRROR <replaceable>&lt;internal-mirror.hostname&gt;</replaceable></command>
+   </screen>
+   </sect3>
+   <sect3 xml:id="sec.deploy.scenarios.airgap.helm-charts.update">
+    <title>Updating The Mirror</title>
+    <para>
+     To update the repository, you simply use <command>helm mirror</command> to
+     refresh the chart definitions on the server.
+    </para>
+    <procedure>
+     <step>
+      <para>
+      Install the
+      <link xlink:href="https://github.com/openSUSE/helm-mirror">helm-mirror</link>
+      plugin from the <filename>Containers</filename> module.
+     </para>
+<screen>&prompt.sudo;<command>zypper in helm-mirror</command>
+      </screen>
+      </step>
+      <step>
+       <para>
+      Download all charts from the repository.
+     </para>
+<screen>&prompt.user;<command>helm mirror https://kubernetes-charts.suse.com <replaceable>/charts/</replaceable></command>
+      </screen>
+     </step>
+     <step>
+      <para>
+       Transfer the contents of <filename>/charts/</filename> to the webserver
+       and unpack it to the desired location. The <filename>index.yaml</filename> file
+       must be in the root directory for your webserver.
+      </para>
+     </step>
+     <step>
+      <para>
+       Update the repository information on the &productname; admin node.
+      </para>
+<screen>&prompt.user;<command>helm repo update</command>
+       </screen>
+     </step>
+    </procedure>
+    <important>
+     <title>Refresh Container Images</title>
+     <para>
+      To use the mirrored Helm charts, you must also mirror the referenced
+      container images.
+     </para>
+      <para>
+       Refer to <xref linkend="sec.deploy.scenarios.airgap.container-registry.update"/>.
+     </para>
+    </important>
    </sect3>
   </sect2>
 
@@ -775,92 +849,7 @@ http:
    </sect3>
   </sect2>
 
-  <sect2 xml:id="sec.deploy.scenarios.airgap.helm-charts">
-   <title>Helm Chart Repository Mirror</title>
-   <para>
-    Helm Charts provide a simple way to deploy entire application stacks
-    including all their dependencies and configurations. The repository consists
-    of chart packages that contain the necessary information and an index file.
-   </para>
-   <sect3>
-    <title>Mirror Configuration</title>
-    <para>
-     Set up an internal Helm chart mirror. This can be any webserver capable of
-     hosting static files.
-    </para>
-    <para>
-     You do not need a Helm chart repository mirror on the external
-     network.
-    </para>
-   </sect3>
-   <sect3>
-    <title>Client Configuration</title>
-    <para>
-     Add the webserver as a repo to <command>helm</command> on the admin node.
-     </para>
-<screen>&prompt.user;<command>helm repo add SUSE-MIRROR <replaceable>&lt;internal-mirror.hostname&gt;</replaceable></command>
-   </screen>
-   </sect3>
-   <sect3 xml:id="sec.deploy.scenarios.airgap.helm-charts.update">
-    <title>Updating The Mirror</title>
-    <para>
-     To update the repository, you simply download the helm chart repository
-     data from the upstream source and transfer it to your trusted storage.
-     Then you transfer the data onto the webserver in your airgapped network.
-    </para>
-    <procedure>
-     <title>Download Helm Charts From Suse Repository</title>
-     <step>
-      <para>
-       On the external network, log in to your external mirror or any Linux
-       workstation with internet access.
-      </para>
-     </step>
-     <step>
-      <para>
-       Move to your desired working directory and create a new sub-directory
-       <filename>suse-charts</filename>. Enter this directory.
-      </para>
-<screen>
-&prompt.user;<command>mkdir suse-charts</command>
-&prompt.user;<command>cd suse-charts</command>
-     </screen>
-     </step>
-     <step>
-      <para>
-       Download the <filename>index.yaml</filename> file from the &suse; Helm
-       Chart Repository. Then use the file to download the Helm charts.
-      </para>
-<screen>
-&prompt.user;<command>curl -O https://kubernetes-charts.suse.com/index.yaml</command>
-&prompt.user;<command>grep 'https' index.yaml | awk {'print $2'} | xargs -d "\n" -i curl -O {}</command>
-    </screen>
-     </step>
-     <step>
-      <para>
-       Package the index file and the charts in an archive.
-      </para>
-<screen>
-&prompt.user;<command>tar czvf suse-charts-`date +%F`.tar.gz *</command>
-    </screen>
-     </step>
-     <step>
-      <para>
-       Transfer <filename>suse-charts-*</filename> to the webserver and unpack
-       it to the desired location. The <filename>index.yaml</filename> file
-       must be in the root directory for your webserver.
-      </para>
-     </step>
-     <step>
-      <para>
-       Update the repository information on the &productname; admin node.
-      </para>
-<screen>&prompt.user;<command>helm repo update</command>
-       </screen>
-     </step>
-    </procedure>
-   </sect3>
-  </sect2>
+
 
   <sect2 xml:id="sec.deploy.scenarios.airgap.caasp-deployment">
    <title>Airgapped &productname; Deployment</title>
