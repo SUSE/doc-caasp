@@ -489,4 +489,19 @@ https://cloud.google.com/kubernetes-engine/docs/tutorials/http-balancer
 
 In order to make sure that your *fanout-ingress* has been correctly deployed, you can ask for `describe`: kubectl describe ing fanout-ingress. Over there you should see the paths and the their backend mapped Pod.
 </screen>
+<screen>
+ I just want to put right a small thing, Ingress are not only for
+Nodeport services, I would even say this is quite the opposite.
+
+For example, let's say you want to offload SSL termination for a service
+with an ingress rule, if you expose that service with a Nodeport, the
+unsecured service is reachable on the Nodeport port range, it is
+definitely not necessary. A better solution is just to create a
+ClusterIP service and then an Ingress rule so the unsecured service is
+not publicly exposed.
+
+Eventually, the only publicly exposed service (with LoadBalancer or a
+Nodeport) is the Nginx ingress controller, all the other services
+reachable through the ingress are ClusterIP.
+ </screen>
 </chapter>
