@@ -16,10 +16,10 @@
   </dm:docmanager>
  </info>
  <sect1 xml:id="sec.admin.monitoring.cluster">
-  <title>Cluster Monitoring</title>
+  <title>Monitoring Concepts</title>
 
   <para>
-   There are three basic ways how you can monitor your cluster:
+   There are two basic ways how you can monitor your cluster:
   </para>
 
   <itemizedlist>
@@ -30,71 +30,698 @@
      ADDRESS</replaceable>:4194/containers/</literal>.
     </para>
     <para>
-     The <emphasis>cAdvisor</emphasis> runs on worker nodes by default.
+     The <emphasis>cAdvisor</emphasis> runs on all worker nodes by default.
     </para>
    </listitem>
    <listitem>
     <para>
-     By using <emphasis>Heapster</emphasis>, for details refer to
-     <xref linkend="sec.admin.monitoring.cluster.heapster"/>.
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     By using <emphasis>Grafana</emphasis>, for details refer to
-     <xref linkend="sec.admin.monitoring.cluster.grafana"/>.
+     By using <emphasis>prometheus</emphasis> and <emphasis>Grafana</emphasis>,
+     for details refer to <xref linkend="sec.admin.monitoring.stack"/>.
     </para>
    </listitem>
   </itemizedlist>
-
-  <sect2 xml:id="sec.admin.monitoring.cluster.heapster">
-   <title>Monitoring with Heapster</title>
-   <para>
-    <emphasis>Heapster</emphasis> is a tool that collects and interprets
-    various signals from your cluster. <emphasis>Heapster</emphasis>
-    communicates directly with the <emphasis>cAdvisor</emphasis>. The signals
-    from the cluster are then exported using REST endpoints.
-   </para>
-   <para>
-    To deploy <emphasis>Heapster</emphasis>, run the following command:
-   </para>
-<screen>&prompt.user;<command>kubectl apply -f \
-https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/heapster/heapster.yaml</command></screen>
-   <para>
-    <emphasis>Heapster</emphasis> can store data in
-    <emphasis>InfluxDB</emphasis>, which can be then used by other tools.
-   </para>
-  </sect2>
-
-  <sect2 xml:id="sec.admin.monitoring.cluster.grafana">
-   <title>Monitoring with Grafana</title>
-   <para>
-    <emphasis>Grafana</emphasis> is an analytics platform that processes data
-    stored in <emphasis>InfluxDB</emphasis> and displays the data graphically.
-    You can deploy <emphasis>Grafana</emphasis> by running the following
-    commands:
-   </para>
-<screen>&prompt.user;<command>kubectl apply -f \
-https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/heapster/heapster.yaml</command>
-&prompt.user;<command>kubectl apply -f \
-https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/influxdb.yaml</command>
-&prompt.user;<command>kubectl apply -f \
-https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-config/influxdb/grafana-deployment.yaml</command>
-&prompt.user;<command>curl https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-config/influxdb/grafana-service.yaml -o grafana-service.yaml</command></screen>
-   <para>
-    Then open the file <filename>grafana-service.yaml</filename>:
-   </para>
-<screen>&prompt.user;<command>vi grafana-service.yaml</command></screen>
-   <para>
-    In the file uncomment the line with the <literal>NodePort</literal> type.
-   </para>
-   <para>
-    To finish the <emphasis>Grafana</emphasis> installation, apply the
-    configuration by running:
-   </para>
-<screen>&prompt.root;<command>kubectl apply -f grafana-service.yaml</command></screen>
-  </sect2>
  </sect1>
+
+ <sect1 xml:id="sec.admin.monitoring.stack">
+   <title>Monitoring Stack On Kubernetes</title>
+   <para>
+     This documentation aim to document Monitoring in a kubernetes
+     environment.
+   </para>
+   <para>
+     <emphasis role="strong">Prometheus Server &amp;
+     Alertmanager</emphasis>
+   </para>
+   <para>
+     Prometheus is an open-source monitoring system with a dimensional
+     data model, flexible query language, efficient time series database
+     and modern alerting approach.
+   </para>
+   <para>
+     <emphasis role="strong">Grafana</emphasis>
+   </para>
+   <para>
+     Grafana is an open-source system for querying, analysing and
+     visualizing metrics.
+   </para>
+   <para>
+     <emphasis role="strong">Nginx Ingress Controller</emphasis>
+   </para>
+   <para>
+     Deploying Nginx Ingress Controller allows us to provide TLS
+     termination to our services and to provide basic authentication to
+     Prometheus Expression browser/API.
+   </para>
+   <para>
+     We have two networking configuration possible:
+   </para>
+   <itemizedlist spacing="compact">
+     <listitem>
+       <para>
+         <emphasis role="strong">NodePort</emphasis>: Our services will
+         be publicly exposed on each node of the cluster, including
+         master nodes, at port 30080 for HTTP and 30443 for HTTPS.
+       </para>
+     </listitem>
+     <listitem>
+       <para>
+         <emphasis role="strong">ClusterIP with external
+         IP(s)</emphasis>: Our services will be exposed on specific nodes
+         of the cluster, at port 80 for HTTP and 443 for HTTPS.
+       </para>
+     </listitem>
+   </itemizedlist>
+   <sect2 xml:id="prerequisites">
+     <title>Prerequisites</title>
+     <orderedlist numeration="arabic" spacing="compact">
+       <listitem>
+         <para>
+           Monitoring namespace
+         </para>
+       </listitem>
+     </orderedlist>
+     <para>
+       We will deploy our monitoring stack in its own namespace:
+     </para>
+     <programlisting>
+ $ kubectl create namespace monitoring
+ </programlisting>
+     <orderedlist numeration="arabic" spacing="compact">
+       <listitem override="2">
+         <para>
+           Create DNS entries
+         </para>
+       </listitem>
+     </orderedlist>
+     <para>
+       In this example, we will use the a worker node with IP
+       10.84.152.113 to expose our services.
+     </para>
+     <programlisting>
+ monitoring.example.com                      IN  A       10.84.152.113
+ prometheus.example.com                      IN  CNAME   monitoring.example.com
+ prometheus-alertmanager.example.com         IN  CNAME   monitoring.example.com
+ grafana.example.com                         IN  CNAME   monitoring.example.com
+ </programlisting>
+     <para>
+       Or add this entry to /etc/hosts
+     </para>
+     <programlisting>
+ 10.84.152.113 prometheus.example.com prometheus-alertmanager.example.com grafana.example.com
+ </programlisting>
+     <orderedlist numeration="arabic" spacing="compact">
+       <listitem override="3">
+         <para>
+           Create certificates
+         </para>
+       </listitem>
+     </orderedlist>
+     <para>
+       SSL certificates are required for the domains
+       prometheus.example.com, prometheus-alertmanager.example.com and
+       grafana.example.com
+     </para>
+   </sect2>
+   <sect2 xml:id="nginx-ingress-controller">
+     <title>Nginx Ingress Controller</title>
+     <orderedlist numeration="arabic" spacing="compact">
+       <listitem>
+         <para>
+           Choose a network configuration
+         </para>
+       </listitem>
+     </orderedlist>
+     <para>
+       <emphasis role="strong">NodePort</emphasis>
+     </para>
+     <para>
+       Create a configuration file
+       <emphasis>nginx-ingress-config-values.yaml</emphasis>
+     </para>
+     <programlisting language="yaml">
+ # Enable the creation of pod security policy
+ podSecurityPolicy:
+   enabled: true
+
+ # Create a specific service account
+ serviceAccount:
+   create: true
+   name: nginx-ingress
+
+ # Publish services on port HTTP/30080
+ # Publish services on port HTTPS/30443
+ # These services are exposed on each node
+ controller:
+   service:
+     type: NodePort
+     nodePorts:
+       http: 30080
+       https: 30443
+ </programlisting>
+     <para>
+       <emphasis role="strong">ClusterIP with external IP(s)</emphasis>
+     </para>
+     <para>
+       Create a configuration file
+       <emphasis>nginx-ingress-config-values.yaml</emphasis>
+     </para>
+     <programlisting language="yaml">
+ # Enable the creation of pod security policy
+ podSecurityPolicy:
+   enabled: true
+
+ # Create a specific service account
+ serviceAccount:
+   create: true
+   name: nginx-ingress
+
+ # Publish services on port HTTP/80
+ # Publish services on port HTTPS/443
+ # These services are exposed on the node with IP 10.84.152.113
+ controller:
+   service:
+     externalIPs:
+       - 10.84.152.113
+ </programlisting>
+     <orderedlist numeration="arabic" spacing="compact">
+       <listitem override="2">
+         <para>
+           Deploy
+         </para>
+       </listitem>
+     </orderedlist>
+     <para>
+       Deploy the upstream helm chart and pass our configuration values
+       file.
+     </para>
+     <programlisting>
+ $ helm install --name nginx-ingress stable/nginx-ingress \
+   --namespace monitoring \
+   --values nginx-ingress-config-values.yaml
+ </programlisting>
+     <para>
+       =&gt; we need two pods running
+     </para>
+     <programlisting>
+ $ kubectl -n monitoring get po
+ NAME                                             READY     STATUS    RESTARTS   AGE
+ nginx-ingress-controller-74cffccfc-p8xbb         1/1       Running   0          4s
+ nginx-ingress-default-backend-6b9b546dc8-mfkjk   1/1       Running   0          4s
+ </programlisting>
+</sect2>
+   <sect2 xml:id="tls">
+     <title>TLS</title>
+     <para>
+       The next step explains how to create a self-signed certificate if
+       you don’t have a Certificate Authority, this is not recommended as
+       this is subject to MITM attacks. When deploying for production,
+       get the certificates from your company CA and skip this step.
+     </para>
+     <itemizedlist spacing="compact">
+       <listitem>
+         <para>
+           self-signed certificate generation (optional)
+         </para>
+       </listitem>
+     </itemizedlist>
+     <para>
+       This certificate uses Subject Alternative Names so it can be used
+       for Prometheus and Grafana.
+     </para>
+     <itemizedlist spacing="compact">
+       <listitem>
+         <para>
+           Create a file <emphasis>openssl.conf</emphasis> with the
+           appropriate values (optional)
+         </para>
+       </listitem>
+     </itemizedlist>
+     <programlisting>
+ [req]
+ distinguished_name = req_distinguished_name
+ req_extensions = v3_req
+ default_md = sha256
+ default_bits = 4096
+ prompt=no
+
+ [req_distinguished_name]
+ C = CZ
+ ST = CZ
+ L = Prague
+ O = example
+ OU = monitoring
+ CN = example.com
+ emailAddress = admin@example.com
+
+ [ v3_req ]
+ basicConstraints = CA:FALSE
+ keyUsage = keyEncipherment, dataEncipherment
+ extendedKeyUsage = serverAuth
+ subjectAltName = @alt_names
+
+ [alt_names]
+ DNS.1 = prometheus.example.com
+ DNS.2 = prometheus-alertmanager.example.com
+ DNS.3 = grafana.example.com
+ </programlisting>
+     <itemizedlist spacing="compact">
+       <listitem>
+         <para>
+           Generate certificate (optional)
+         </para>
+       </listitem>
+     </itemizedlist>
+     <programlisting>
+ $ openssl req -x509 -nodes -days 365 -newkey rsa:4096 -keyout ./monitoring.key -out ./monitoring.crt -config ./openssl.conf -extensions 'v3_req'
+ </programlisting>
+     <orderedlist numeration="arabic" spacing="compact">
+       <listitem>
+         <para>
+           Create the TLS secret in Kubernetes
+         </para>
+       </listitem>
+     </orderedlist>
+     <para>
+       If you use one certificate per service, do not forget to create a
+       secret for each certificate and to change the secret name in the
+       TLS ingress configuration of the service.
+     </para>
+     <programlisting>
+ $ kubectl create -n monitoring secret tls monitoring-tls  \
+   --key  ./monitoring.key \
+   --cert ./monitoring.crt
+ </programlisting>
+</sect2>
+   <sect2 xml:id="prometheus">
+     <title>Prometheus</title>
+     <para>
+       Deploying Prometheus Pushgateway is out of the scope of this
+       document.
+     </para>
+     <orderedlist numeration="arabic" spacing="compact">
+       <listitem>
+         <para>
+           Manage permissions
+         </para>
+       </listitem>
+     </orderedlist>
+     <para>
+       <emphasis role="strong">DEPRECATED IN 7.3.0, use
+       podSecurityPolicy</emphasis>
+     </para>
+     <para>
+       Prometheus node-exporter is in charge of getting the host metrics,
+       to do so, it needs access to /proc or /sys path on the host. This
+       is achieve with the use of HostPath in the pod specs, however
+       using HostPath is forbidden by default in CaaSP so we need to
+       assign the privileged PodSecurityPolicy to the node-exporter
+       ServiceAccount, this ServiceAccount will be in charge of creating
+       the pods.
+     </para>
+     <programlisting>
+ $ kubectl create rolebinding node-exporter-psp-privileged \
+   --namespace monitoring \
+   --clusterrole=suse:caasp:psp:privileged \
+   --serviceaccount=monitoring:prometheus-node-exporter
+ </programlisting>
+     <orderedlist numeration="arabic" spacing="compact">
+       <listitem override="2">
+         <para>
+           Deploy
+         </para>
+       </listitem>
+     </orderedlist>
+     <para>
+       We need to configure the storage for our deployment.
+     </para>
+     <para>
+       Choose among the options and uncomment the line in the config
+       file.
+     </para>
+     <para>
+       <emphasis role="strong">Mandatory for production: Persistent
+       Storage</emphasis>
+     </para>
+     <itemizedlist>
+       <listitem>
+         <para>
+           Use an existing PersistentVolumeClaim
+         </para>
+       </listitem>
+       <listitem>
+         <para>
+           Use a StorageClass
+           <emphasis role="strong">(prefered)</emphasis>
+         </para>
+       </listitem>
+       <listitem>
+         <para>
+           Create a file
+           <emphasis>prometheus-config-values.yaml</emphasis> with the
+           appropriate values.
+         </para>
+       </listitem>
+     </itemizedlist>
+     <programlisting language="yaml">
+ # Alertmanager configuration
+ alertmanager:
+   enabled: true
+   ingress:
+     enabled: true
+     hosts:
+     -  prometheus-alertmanager.example.com
+     annotations:
+       kubernetes.io/ingress.class: nginx
+       nginx.ingress.kubernetes.io/auth-type: basic
+       nginx.ingress.kubernetes.io/auth-secret: prometheus-basic-auth
+       nginx.ingress.kubernetes.io/auth-realm: &quot;Authentication Required&quot;
+     tls:
+       - hosts:
+         - prometheus-alertmanager.example.com
+         secretName: monitoring-tls
+   persistentVolume:
+     enabled: true
+     ## Use a StorageClass
+     storageClass: my-storage-class
+     ## Create a PersistentVolumeClaim of 2Gi
+     size: 2Gi
+     ## Use an existing PersistentVolumeClaim (my-pvc)
+     #existingClaim: my-pvc
+
+ ## AlertManager is configured through alertmanager.yml. This file and any others
+ ## listed in alertmanagerFiles will be mounted into the alertmanager pod.
+ ## See configuration options https://prometheus.io/docs/alerting/configuration/
+ #alertmanagerFiles:
+ #  alertmanager.yml:
+
+ # Create a specific service account
+ serviceAccounts:
+   nodeExporter:
+     name: prometheus-node-exporter
+
+ # Allow scheduling of node-exporter on master nodes
+ nodeExporter:
+   hostNetwork: false
+   hostPID: false
+   podSecurityPolicy:
+     enabled: true
+   tolerations:
+     - key: node-role.kubernetes.io/master
+       operator: Exists
+       effect: NoSchedule
+
+ # Disable Pushgateway
+ pushgateway:
+   enabled: false
+
+ # Prometheus configuration
+ server:
+   ingress:
+     enabled: true
+     hosts:
+     - prometheus.example.com
+     annotations:
+       kubernetes.io/ingress.class: nginx
+       nginx.ingress.kubernetes.io/auth-type: basic
+       nginx.ingress.kubernetes.io/auth-secret: prometheus-basic-auth
+       nginx.ingress.kubernetes.io/auth-realm: &quot;Authentication Required&quot;
+     tls:
+       - hosts:
+         - prometheus.example.com
+         secretName: monitoring-tls
+   persistentVolume:
+     enabled: true
+     ## Use a StorageClass
+     storageClass: my-storage-class
+     ## Create a PersistentVolumeClaim of 8Gi
+     size: 8Gi
+     ## Use an existing PersistentVolumeClaim (my-pvc)
+     #existingClaim: my-pvc
+
+ ## Prometheus is configured through prometheus.yml. This file and any others
+ ## listed in serverFiles will be mounted into the server pod.
+ ## See configuration options
+ ## https://prometheus.io/docs/prometheus/latest/configuration/configuration/
+ #serverFiles:
+ #  prometheus.yml:
+ </programlisting>
+     <itemizedlist spacing="compact">
+       <listitem>
+         <para>
+           Deploy the upstream helm chart and pass our configuration
+           values file.
+         </para>
+       </listitem>
+     </itemizedlist>
+     <programlisting>
+ $ helm install --name prometheus stable/prometheus \
+   --namespace monitoring \
+   --values prometheus-config-values.yaml
+ </programlisting>
+     <para>
+       =&gt; We need these pods running (3 node-exporter pods because we
+       have 3 nodes)
+     </para>
+     <programlisting>
+ $ kubectl -n monitoring get po | grep prometheus
+ NAME                                             READY     STATUS    RESTARTS   AGE
+ prometheus-alertmanager-5487596d54-kcdd6         2/2       Running   0          2m
+ prometheus-kube-state-metrics-566669df8c-krblx   1/1       Running   0          2m
+ prometheus-node-exporter-jnc5w                   1/1       Running   0          2m
+ prometheus-node-exporter-qfwp9                   1/1       Running   0          2m
+ prometheus-node-exporter-sc4ls                   1/1       Running   0          2m
+ prometheus-server-6488f6c4cd-5n9w8               2/2       Running   0          2m
+ </programlisting>
+     <orderedlist numeration="arabic" spacing="compact">
+       <listitem override="3">
+         <para>
+           Configure Authentication
+         </para>
+       </listitem>
+     </orderedlist>
+     <para>
+       We need to create a basic-auth secret so the Nginx Ingress
+       Controller can perform authentication.
+     </para>
+     <itemizedlist spacing="compact">
+       <listitem>
+         <para>
+           Install htpasswd
+         </para>
+       </listitem>
+     </itemizedlist>
+     <programlisting>
+ $ sudo zypper in apache2-utils
+ </programlisting>
+     <itemizedlist spacing="compact">
+       <listitem>
+         <para>
+           Create secret file <emphasis>auth</emphasis>
+         </para>
+       </listitem>
+     </itemizedlist>
+     <programlisting>
+ htpasswd -c auth admin
+ New password:
+ Re-type new password:
+ Adding password for user admin
+ </programlisting>
+     <itemizedlist spacing="compact">
+       <listitem>
+         <para>
+           Create secret in Kubernetes
+         </para>
+       </listitem>
+     </itemizedlist>
+     <programlisting>
+ $ kubectl create secret generic -n monitoring prometheus-basic-auth --from-file=auth
+ </programlisting>
+     <para>
+       It is very important that the file name is
+       <emphasis role="strong">auth</emphasis> so the key in the secret
+       will be name auth because the ingress controller will look for
+       that key.
+     </para>
+     <para>
+       =&gt; At this stage, the Prometheus Expression browser/API is
+       accessible, depending on you network configuration at
+       https://prometheus.example.com or
+       https://prometheus.example.com:30443
+     </para>
+   </sect2>
+   <sect2 xml:id="grafana">
+     <title>Grafana</title>
+     <orderedlist numeration="arabic" spacing="compact">
+       <listitem>
+         <para>
+           Configure provisoning
+         </para>
+       </listitem>
+     </orderedlist>
+     <para>
+       Starting from Grafana 5.0, it is possible to dynamically provision
+       the data sources and dashbords via files. In Kubernetes, these
+       files are provided via the utilization of ConfigMap, editing a
+       ConfigMap will result by the modification of the configuration
+       without having to delete/recreate the pod.
+     </para>
+     <itemizedlist spacing="compact">
+       <listitem>
+         <para>
+           Create the default datasource configuration file
+           <emphasis>grafana-datasources.yaml</emphasis> which point to
+           our Prometheus server
+         </para>
+       </listitem>
+     </itemizedlist>
+     <programlisting language="yaml">
+ ---
+ kind: ConfigMap
+ apiVersion: v1
+ metadata:
+   name: grafana-datasources
+   namespace: monitoring
+   labels:
+      grafana_datasource: &quot;1&quot;
+ data:
+   datasource.yaml: |-
+     apiVersion: 1
+     deleteDatasources:
+       - name: Prometheus
+         orgId: 1
+     datasources:
+     - name: Prometheus
+       type: prometheus
+       url: http://prometheus-server.monitoring.svc.cluster.local:80
+       access: proxy
+       orgId: 1
+       isDefault: true
+ </programlisting>
+     <itemizedlist spacing="compact">
+       <listitem>
+         <para>
+           Create the ConfigMap in Kubernetes
+         </para>
+       </listitem>
+     </itemizedlist>
+     <programlisting>
+ $ kubectl create -f grafana-datasources.yaml
+ </programlisting>
+     <itemizedlist spacing="compact">
+       <listitem>
+         <para>
+           This repo provides a demo dashboard to visualize the resources
+           of the Kubernetes nodes leveraging Prometheus node-exporter
+           metrics only. (optional)
+         </para>
+       </listitem>
+     </itemizedlist>
+     <programlisting>
+ $ cat grafana-dashboards-caasp* | kubectl apply -f -
+ </programlisting>
+     <orderedlist numeration="arabic" spacing="compact">
+       <listitem override="2">
+         <para>
+           Deploy stack
+         </para>
+       </listitem>
+     </orderedlist>
+     <para>
+       We need to configure the storage for our deployment.
+     </para>
+     <para>
+       Choose among the options and uncomment the line in the config
+       file.
+     </para>
+     <para>
+       <emphasis role="strong">Mandatory for production: Persistent
+       Storage</emphasis>
+     </para>
+     <itemizedlist>
+       <listitem>
+         <para>
+           Use an existing PersistentVolumeClaim
+         </para>
+       </listitem>
+       <listitem>
+         <para>
+           Use a StorageClass
+           <emphasis role="strong">(prefered)</emphasis>
+         </para>
+       </listitem>
+       <listitem>
+         <para>
+           Create a file <emphasis>grafana-config-values.yaml</emphasis>
+           with the appropriate values.
+         </para>
+       </listitem>
+     </itemizedlist>
+     <programlisting language="yaml">
+ # Configure admin password
+ adminPassword: 3357b57b-25a1-4780-ac78-8b77fd7ed9e1
+
+ # Ingress configuration
+ ingress:
+   enabled: true
+   annotations:
+     kubernetes.io/ingress.class: nginx
+   hosts:
+     - grafana.example.com
+   tls:
+     - hosts:
+       - grafana.example.com
+       secretName: monitoring-tls
+
+ # Configure persistent storage
+ persistence:
+   enabled: true
+   accessModes:
+     - ReadWriteOnce
+   ## Use a StorageClass
+   storageClassName: my-storage-class
+   ## Create a PersistentVolumeClaim of 10Gi
+   size: 10Gi
+   ## Use an existing PersistentVolumeClaim (my-pvc)
+   #existingClaim: my-pvc
+
+ # Enable sidecar for provisioning
+ sidecar:
+   datasources:
+     enabled: true
+     label: grafana_datasource
+   dashboards:
+     enabled: true
+     label: grafana_dashboard
+ </programlisting>
+     <itemizedlist spacing="compact">
+       <listitem>
+         <para>
+           Deploy the upstream helm chart and pass our configuration
+           values file.
+         </para>
+       </listitem>
+     </itemizedlist>
+     <programlisting>
+ $ helm install --name grafana stable/grafana \
+   --namespace monitoring \
+   --values grafana-config-values.yaml
+ </programlisting>
+     <para>
+       =&gt; We need this pod running
+     </para>
+     <programlisting>
+ $ kubectl -n monitoring get po | grep grafana
+ NAME                                             READY     STATUS    RESTARTS   AGE
+ grafana-dbf7ddb7d-fxg6d                          3/3       Running   0          2m
+ </programlisting>
+     <para>
+       =&gt; At this stage, Grafana is accessible, depending on you
+       network configuration at https://grafana.example.com or
+       https://grafana.example.com:30443
+     </para>
+   </sect2>
+ </sect1>
+
  <sect1 xml:id="sec.admin.monitoring.health">
   <title>Health Checking</title>
 
@@ -483,10 +1110,8 @@ tiller-deploy   1         1         1            1           7d
      These probes will be executed every <literal>periodSeconds</literal> starting from
      <literal>initialDelaySeconds</literal>.
     </para>
-
-
-
    </sect3>
+
    <sect3 xml:id="sec.admin.monitoring.health.service.readinessprobe">
     <title>readinessProbe</title>
     <para>
