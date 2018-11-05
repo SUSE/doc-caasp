@@ -42,8 +42,8 @@
   </itemizedlist>
  </sect1>
 
- <sect1 xml:id="sec.admin.monitoring.stack">
-   <title>Monitoring Stack On Kubernetes</title>
+ <sect1 xml:id="monitoring-stack-on-kubernetes.">
+   <title>Monitoring stack on Kubernetes.</title>
    <para>
      This documentation aim to document Monitoring in a kubernetes
      environment.
@@ -549,6 +549,122 @@
        https://prometheus.example.com:30443
      </para>
    </sect2>
+   <sect2 xml:id="alertmanager-configuration">
+     <title>Alertmanager configuration</title>
+     <para>
+       This is an <emphasis role="strong">example</emphasis> of how and
+       where to configure Prometheus Alertmanager.
+     </para>
+     <para>
+       The configuration set one receiver to get notified by email when a
+       node meets one of these conditions:
+     </para>
+     <itemizedlist spacing="compact">
+       <listitem>
+         <para>
+           Node is unschedulable.
+         </para>
+       </listitem>
+       <listitem>
+         <para>
+           Node becomes out of disk.
+         </para>
+       </listitem>
+       <listitem>
+         <para>
+           Node has memory pressure.
+         </para>
+       </listitem>
+       <listitem>
+         <para>
+           Node has disk pressure.
+         </para>
+       </listitem>
+     </itemizedlist>
+     <para>
+       The first two ones are critical because the node can’t accept new
+       pods, the last one are just warnings.
+     </para>
+     <para>
+       The configuration file can be added in the section below (see the
+       official doc https://prometheus.io/docs/alerting/configuration)
+     </para>
+     <programlisting>
+ alertmanagerFiles:
+   alertmanager.yml:
+     global:
+       # The smarthost and SMTP sender used for mail notifications.
+       smtp_from: alertmanager@example.com
+       smtp_smarthost: smtp.example.com:587
+       smtp_auth_username: admin@example.com
+       smtp_auth_password: &lt;password&gt;
+       smtp_require_tls: true
+
+     route:
+       # The labels by which incoming alerts are grouped together.
+       group_by: ['node']
+
+       # When a new group of alerts is created by an incoming alert, wait at
+       # least 'group_wait' to send the initial notification.
+       # This way ensures that you get multiple alerts for the same group that start
+       # firing shortly after another are batched together on the first
+       # notification.
+       group_wait: 30s
+
+       # When the first notification was sent, wait 'group_interval' to send a batch
+       # of new alerts that started firing for that group.
+       group_interval: 5m
+
+       # If an alert has successfully been sent, wait 'repeat_interval' to
+       # resend them.
+       repeat_interval: 3h
+
+       # A default receiver
+       receiver: admin-example
+
+     receivers:
+     - name: 'admin-example'
+       email_configs:
+       - to: 'admin@example.com'
+ </programlisting>
+     <para>
+       Replace the empty set of rules <literal>rules: {}</literal> in
+       <literal>serverFiles</literal> section of the configuration file.
+     </para>
+     <programlisting>
+ serverFiles:
+   alerts: {}
+   rules:
+     groups:
+     - name: caasp.node.rules
+       rules:
+       - alert: NodeIsNotReady
+         expr: kube_node_status_condition{condition=&quot;Ready&quot;,status=&quot;false&quot;} == 1
+         for: 1m
+         labels:
+           severity: critical
+         annotations:
+           description: '{{ $labels.node }} is not ready'
+       - alert: NodeIsOutOfDisk
+         expr: kube_node_status_condition{condition=&quot;OutOfDisk&quot;,status=&quot;true&quot;} == 1
+         labels:
+           severity: critical
+         annotations:
+           description: '{{ $labels.node }} has insufficient free disk space'
+       - alert: NodeHasDiskPressure
+         expr: kube_node_status_condition{condition=&quot;DiskPressure&quot;,status=&quot;true&quot;} == 1
+         labels:
+           severity: warning
+         annotations:
+           description: '{{ $labels.node }} has insufficient available disk space'
+       - alert: NodeHasInsufficientMemory
+         expr: kube_node_status_condition{condition=&quot;MemoryPressure&quot;,status=&quot;true&quot;} == 1
+         labels:
+           severity: warning
+         annotations:
+           description: '{{ $labels.node }} has insufficient available memory'
+ </programlisting>
+</sect2>
    <sect2 xml:id="grafana">
      <title>Grafana</title>
      <orderedlist numeration="arabic" spacing="compact">
