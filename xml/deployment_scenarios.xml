@@ -48,16 +48,37 @@
   </para>
 
 <screen>
-* Deploy RMT external, warm it
-* Deploy RMT internal
-* Transfer RMT cache to internal
-* Deploy external container registry mirror
-* Deploy internal container registry mirror
-* Deploy internal helm chart repository mirror
-* Have cache warming tool that downloads the helm charts, extracts the images, downloads and caches the images on external registry mirror
-* Yet undiscussed method to run helm chart mirror (update)
-* Transfer the registry cache to the internal mirror
-* Deploy CaaSP cluster in internal network
+ Requirements:
+ * Needs 4 servers (SLE15, default specs, at least 200GB storage for registries)
+ ** 2 in external network (can access internet freely or at least on SUSE ports)
+ *** `external1`
+ *** `external2`
+ ** 2 in airgapped network (must be accessible from CaaSP cluster on SUSE ports)
+ *** `airgap1`
+ *** `airgap2`
+ * Needs secure storage `secure_drive` at least 128GB
+
+ Procedure:
+ * Set up mirror servers on external network
+ * Set up mirror servers on airgapped network
+ * Install RMT on `external1`
+ * Register `external1` against SCC, pull updates
+ * Install RMT on `airgap1`
+ * Install helm-mirror on `external2`
+ * Install helm-mirror on `airgap2`
+ * Install webserver on `airgap2`
+ * Install docker-registry on `external2`
+ * Install docker-registry on `airgap2`
+ * Run helm-mirror on `external2` and retrieve all charts
+ * Run helm-mirror on `external2` and retrieve all images
+ * Copy all images / charts to `secure_drive`
+ * Connect `secure_drive` to `airgap2` and transfer data
+ * Refresh webserver on `airgap2` if necessary
+
+Using mirrors in CaaSP:
+ * Register CaaSP nodes to RMT on `airgap1`
+ * Configure helm on CaaSP admin node to read from `airgap2`
+ * Configure registry mirror in velum to `airgap2`
   </screen>
 
   <important>
