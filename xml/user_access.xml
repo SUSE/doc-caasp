@@ -16,10 +16,18 @@
   </dm:docmanager>
  </info>
  <para>
-  The core functionality of &productname; is provided by &kube;. Use the
-  <command>kubectl</command> command to communicate with &kube;.
-  &kube; requires a valid authentication. Each authenticated user then
-  has a set of privileges assigned.
+  &productname; manages your workloads as containers on a cluster of
+  computer nodes. The computer nodes can be physical or virtualized
+  machines. The core software component of this cluster is &kube;.
+  &kube; takes care of balancing the workloads, starting and stopping
+  applications in containers, configuring network access, and many other
+  things.
+ </para>
+ <para>
+  Users interact with &kube; via an REST API. <command>kubectl</command>
+  is an easy to use command line tool for this API. To run workloads on
+  &productname;, you need to authenticate against the cluster and your
+  user needs to be granted the required privileges.
  </para>
  <sect1 xml:id="sec.user.access.credentials">
   <title>Gaining Cluster Access</title>
@@ -33,9 +41,10 @@
   <procedure>
    <step>
     <para>
-     Get your credentials consisting of an e-mail address and a password
-     from your cluster administrator. You also need the FQDN to the
-     admin node.
+     Get your credentials consisting of an e-mail address and a
+     password from your cluster administrator. You also need the
+     <emphasis>fully qualified domain name</emphasis>
+     (<emphasis>FQDN</emphasis>) of the admin node.
     </para>
    </step>
    <step>
