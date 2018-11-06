@@ -17,11 +17,9 @@
  </info>
  <sect1 xml:id="sec.admin.monitoring.cluster">
   <title>Monitoring Concepts</title>
-
   <para>
    There are two basic ways how you can monitor your cluster:
   </para>
-
   <itemizedlist>
    <listitem>
     <para>
@@ -35,22 +33,25 @@
    </listitem>
    <listitem>
     <para>
-     By using <emphasis>prometheus</emphasis> and <emphasis>Grafana</emphasis>,
+     By using <link xlink:href="https://prometheus.io/docs/introduction/overview/">Prometheus</link>
+     and <link xlink:href="http://docs.grafana.org/guides/getting_started/">Grafana</link>,
      for details refer to <xref linkend="sec.admin.monitoring.stack"/>.
     </para>
    </listitem>
   </itemizedlist>
  </sect1>
 
- <sect1 xml:id="monitoring-stack-on-kubernetes.">
-   <title>Monitoring stack on Kubernetes.</title>
+ <sect1 xml:id="sec.admin.monitoring.stack">
+   <title>Monitoring Stack On Kubernetes</title>
    <para>
-     This documentation aim to document Monitoring in a kubernetes
-     environment.
+     This document aims to describe monitoring in a &kube; environment.
    </para>
    <para>
-     <emphasis role="strong">Prometheus Server &amp;
-     Alertmanager</emphasis>
+    The monitoring stack consists of a metrics server, a visualization platform,
+    and an ingress controller for authentication.
+   </para>
+   <para>
+     <emphasis role="strong">Prometheus Server &amp; Alertmanager</emphasis>
    </para>
    <para>
      Prometheus is an open-source monitoring system with a dimensional
@@ -61,257 +62,294 @@
      <emphasis role="strong">Grafana</emphasis>
    </para>
    <para>
-     Grafana is an open-source system for querying, analysing and
-     visualizing metrics.
+     Grafana is an open-source system for querying, analysing and visualizing
+     metrics.
    </para>
    <para>
-     <emphasis role="strong">Nginx Ingress Controller</emphasis>
+     <emphasis role="strong">NGINX Ingress Controller</emphasis>
    </para>
    <para>
-     Deploying Nginx Ingress Controller allows us to provide TLS
-     termination to our services and to provide basic authentication to
+     Deploying NGINX Ingress Controller allows us to provide TLS
+     termination to our services and to provide basic authentication to the
      Prometheus Expression browser/API.
    </para>
    <para>
-     We have two networking configuration possible:
+     We have two networking configuration options:
    </para>
-   <itemizedlist spacing="compact">
-     <listitem>
-       <para>
-         <emphasis role="strong">NodePort</emphasis>: Our services will
-         be publicly exposed on each node of the cluster, including
-         master nodes, at port 30080 for HTTP and 30443 for HTTPS.
-       </para>
-     </listitem>
-     <listitem>
-       <para>
-         <emphasis role="strong">ClusterIP with external
-         IP(s)</emphasis>: Our services will be exposed on specific nodes
-         of the cluster, at port 80 for HTTP and 443 for HTTPS.
-       </para>
-     </listitem>
-   </itemizedlist>
+
    <sect2 xml:id="prerequisites">
      <title>Prerequisites</title>
-     <orderedlist numeration="arabic" spacing="compact">
-       <listitem>
-         <para>
-           Monitoring namespace
-         </para>
-       </listitem>
-     </orderedlist>
-     <para>
-       We will deploy our monitoring stack in its own namespace:
-     </para>
-     <programlisting>
- $ kubectl create namespace monitoring
- </programlisting>
-     <orderedlist numeration="arabic" spacing="compact">
-       <listitem override="2">
-         <para>
-           Create DNS entries
-         </para>
-       </listitem>
-     </orderedlist>
-     <para>
-       In this example, we will use the a worker node with IP
-       10.84.152.113 to expose our services.
-     </para>
-     <programlisting>
- monitoring.example.com                      IN  A       10.84.152.113
- prometheus.example.com                      IN  CNAME   monitoring.example.com
- prometheus-alertmanager.example.com         IN  CNAME   monitoring.example.com
- grafana.example.com                         IN  CNAME   monitoring.example.com
- </programlisting>
-     <para>
-       Or add this entry to /etc/hosts
-     </para>
-     <programlisting>
- 10.84.152.113 prometheus.example.com prometheus-alertmanager.example.com grafana.example.com
- </programlisting>
-     <orderedlist numeration="arabic" spacing="compact">
-       <listitem override="3">
-         <para>
-           Create certificates
-         </para>
-       </listitem>
-     </orderedlist>
-     <para>
-       SSL certificates are required for the domains
-       prometheus.example.com, prometheus-alertmanager.example.com and
-       grafana.example.com
-     </para>
+     <procedure>
+      <step>
+       <para>
+         Monitoring namespace
+       </para>
+       <para>
+         We will deploy our monitoring stack in its own namespace and therefore
+         create one.
+       </para>
+<screen>&prompt.user;<command>kubectl create namespace monitoring</command>
+  </screen>
+      </step>
+
+      <step>
+       <para>
+         Create DNS entries
+       </para>
+       <para>
+        In this example, we will use the a worker node with IP
+        <literal>10.84.152.113</literal> to expose our services.
+       </para>
+       <para>
+        You should configure proper DNS names in any production environment. These
+        values are only for example purposes.
+       </para>
+<screen>
+monitoring.example.com                      IN  A       10.84.152.113
+prometheus.example.com                      IN  CNAME   monitoring.example.com
+prometheus-alertmanager.example.com         IN  CNAME   monitoring.example.com
+grafana.example.com                         IN  CNAME   monitoring.example.com
+      </screen>
+      <para>
+        Or add this entry to /etc/hosts
+      </para>
+<screen>
+10.84.152.113 prometheus.example.com prometheus-alertmanager.example.com grafana.example.com
+      </screen>
+     </step>
+     <step>
+      <para>
+        Create certificates
+      </para>
+      <para>
+       You will need SSL certificates for the shared resources. If you are
+       deploying in a pre-defined network environment, please get proper
+       certificates from your network administrator. In this example, the
+       domains are named after the components they represent.
+       <literal>prometheus.example.com</literal>,
+       <literal>prometheus-alertmanager.example.com</literal> and
+       <literal>grafana.example.com</literal>
+      </para>
+     </step>
+    </procedure>
    </sect2>
+
    <sect2 xml:id="nginx-ingress-controller">
-     <title>Nginx Ingress Controller</title>
-     <orderedlist numeration="arabic" spacing="compact">
-       <listitem>
-         <para>
-           Choose a network configuration
-         </para>
-       </listitem>
-     </orderedlist>
-     <para>
-       <emphasis role="strong">NodePort</emphasis>
-     </para>
-     <para>
-       Create a configuration file
-       <emphasis>nginx-ingress-config-values.yaml</emphasis>
-     </para>
-     <programlisting language="yaml">
- # Enable the creation of pod security policy
- podSecurityPolicy:
-   enabled: true
+     <title>NGINX Ingress Controller</title>
+     <!-- FIXME mnapp 2018-11-06 Uncomment this once the section for ingress is ready
+      <para>
+      For more information on the <literal>NGINX Ingress Controller</literal>,
+      refer to: <xref linkend="book.user.ingress"/>
+     </para> -->
+     <procedure>
+      <title>Configure And Deploy NGINX Ingress Controller</title>
+      <step>
+       <para>
+        Choose which networking configuration the Ingress
+        controller should have. Create a file
+        <filename>nginx-ingress-config-values.yaml</filename> with one of the
+        following examples as content.
+       </para>
+       <itemizedlist spacing="compact">
+         <listitem>
+           <para>
+             <emphasis role="strong">NodePort</emphasis>: The services will
+             be publicly exposed on each node of the cluster, including
+             master nodes, at port <literal>30080</literal> for
+             <literal>HTTP</literal> and <literal>30443</literal> for
+             <literal>HTTPS</literal>.
+           </para>
+<screen language="yaml">
+# Enable the creation of pod security policy
+podSecurityPolicy:
+  enabled: true
 
- # Create a specific service account
- serviceAccount:
-   create: true
-   name: nginx-ingress
+# Create a specific service account
+serviceAccount:
+  create: true
+  name: nginx-ingress
 
- # Publish services on port HTTP/30080
- # Publish services on port HTTPS/30443
- # These services are exposed on each node
- controller:
-   service:
-     type: NodePort
-     nodePorts:
-       http: 30080
-       https: 30443
- </programlisting>
-     <para>
-       <emphasis role="strong">ClusterIP with external IP(s)</emphasis>
-     </para>
-     <para>
-       Create a configuration file
-       <emphasis>nginx-ingress-config-values.yaml</emphasis>
-     </para>
-     <programlisting language="yaml">
- # Enable the creation of pod security policy
- podSecurityPolicy:
-   enabled: true
+# Publish services on port HTTP/30080
+# Publish services on port HTTPS/30443
+# These services are exposed on each node
+controller:
+  service:
+    type: NodePort
+    nodePorts:
+      http: 30080
+      https: 30443
+       </screen>
+         </listitem>
+         <listitem>
+           <para>
+             <emphasis role="strong">ClusterIP with external IP(s)</emphasis>:
+             The services will be exposed on specific nodes of the cluster, at
+             port <literal>80</literal> for <literal>HTTP</literal> and port
+             <literal>443</literal> for <literal>HTTPS</literal>.
+           </para>
+<screen language="yaml">
+# Enable the creation of pod security policy
+podSecurityPolicy:
+  enabled: true
 
- # Create a specific service account
- serviceAccount:
-   create: true
-   name: nginx-ingress
+# Create a specific service account
+serviceAccount:
+  create: true
+  name: nginx-ingress
 
- # Publish services on port HTTP/80
- # Publish services on port HTTPS/443
- # These services are exposed on the node with IP 10.84.152.113
- controller:
-   service:
-     externalIPs:
-       - 10.84.152.113
- </programlisting>
-     <orderedlist numeration="arabic" spacing="compact">
-       <listitem override="2">
-         <para>
-           Deploy
-         </para>
-       </listitem>
-     </orderedlist>
-     <para>
-       Deploy the upstream helm chart and pass our configuration values
-       file.
-     </para>
-     <programlisting>
- $ helm install --name nginx-ingress stable/nginx-ingress \
-   --namespace monitoring \
-   --values nginx-ingress-config-values.yaml
- </programlisting>
-     <para>
-       =&gt; we need two pods running
-     </para>
-     <programlisting>
- $ kubectl -n monitoring get po
- NAME                                             READY     STATUS    RESTARTS   AGE
- nginx-ingress-controller-74cffccfc-p8xbb         1/1       Running   0          4s
- nginx-ingress-default-backend-6b9b546dc8-mfkjk   1/1       Running   0          4s
- </programlisting>
+# Publish services on port HTTP/80
+# Publish services on port HTTPS/443
+# These services are exposed on the node with IP 10.84.152.113
+controller:
+  service:
+    externalIPs:
+      - 10.84.152.113
+       </screen>
+         </listitem>
+       </itemizedlist>
+       </step>
+       <step>
+        <para>
+         Deploy the upstream helm chart and pass along our configuration values
+         file.
+        </para>
+ <screen>
+&prompt.user;<command>helm install --name nginx-ingress stable/nginx-ingress \
+--namespace monitoring \
+--values nginx-ingress-config-values.yaml</command>
+   </screen>
+   <para>
+     The result should be two running pods:
+   </para>
+   <screen>
+&prompt.user;<command>kubectl -n monitoring get po</command>
+NAME                                             READY     STATUS    RESTARTS   AGE
+nginx-ingress-controller-74cffccfc-p8xbb         1/1       Running   0          4s
+nginx-ingress-default-backend-6b9b546dc8-mfkjk   1/1       Running   0          4s
+</screen>
+       </step>
+      </procedure>
+
 </sect2>
    <sect2 xml:id="tls">
-     <title>TLS</title>
+     <title>Configure TLS</title>
      <para>
-       The next step explains how to create a self-signed certificate if
-       you don’t have a Certificate Authority, this is not recommended as
-       this is subject to MITM attacks. When deploying for production,
-       get the certificates from your company CA and skip this step.
+      You must configure your certificates for the components as secrets in
+      &kube;. Get certificates from your local certificate authority. In this
+      example we are using a single certificate for the shared domain
+      <literal>monitoring.example.com</literal>.
      </para>
-     <itemizedlist spacing="compact">
-       <listitem>
-         <para>
-           self-signed certificate generation (optional)
-         </para>
-       </listitem>
-     </itemizedlist>
+     <note>
+      <title>Create Individual Secrets For Components</title>
+      <para>
+       Should you choose to secure
+       each service with an individual certificate, you must repeat the step
+       below for each component and adjust the name for the individual secret
+       each time.
+      </para>
+      <para>
+       In this example the name is <literal>monitoring-tls</literal>.
+      </para>
+     </note>
+
+     <important>
+      <title>Note Down Secret Names For Configuration</title>
+      <para>
+       Please note down the names of the secrets you have created. Later
+       configuration steps require secret names to be specified.
+     </para>
+    </important>
+
+     <procedure>
+      <title>Create TLS secrets in Kubernetes</title>
+      <step>
+<screen>&prompt.user;<command>kubectl create -n monitoring secret tls <replaceable>monitoring-tls</replaceable>  \
+--key  ./monitoring.key \
+--cert ./monitoring.crt</command>
+ </screen>
+</step>
+     </procedure>
+
+     <sect3>
+     <title>Using Self-signed Certificates (optional)</title>
      <para>
+      In some cases you will want to create self-signed certificates for testing
+      of the stack. This is not recommended. If you are using proper CA signed
+      certificates, you must skip this entirely.
+    </para>
+
+    <procedure>
+     <title>Create Self-signed Certificates</title>
+     <step>
+      <important>
+       <para>
+        Do not use self-signed certificates in production environments. There
+        is severe risk of Man-in-the-middle attacks. Use proper certificates
+        signed by your CA.
+       </para>
+      </important>
+     </step>
+     <step>
+      <para>
+       Create a file <emphasis>openssl.conf</emphasis> with the
+       appropriate values
+      </para>
+<screen>
+[req]
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+default_md = sha256
+default_bits = 4096
+prompt=no
+
+[req_distinguished_name]
+C = CZ
+ST = CZ
+L = Prague
+O = example
+OU = monitoring
+CN = example.com
+emailAddress = admin@example.com
+
+[ v3_req ]
+basicConstraints = CA:FALSE
+keyUsage = keyEncipherment, dataEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = prometheus.example.com
+DNS.2 = prometheus-alertmanager.example.com
+DNS.3 = grafana.example.com
+</screen>
+      <para>
        This certificate uses Subject Alternative Names so it can be used
        for Prometheus and Grafana.
-     </para>
-     <itemizedlist spacing="compact">
-       <listitem>
-         <para>
-           Create a file <emphasis>openssl.conf</emphasis> with the
-           appropriate values (optional)
-         </para>
-       </listitem>
-     </itemizedlist>
-     <programlisting>
- [req]
- distinguished_name = req_distinguished_name
- req_extensions = v3_req
- default_md = sha256
- default_bits = 4096
- prompt=no
-
- [req_distinguished_name]
- C = CZ
- ST = CZ
- L = Prague
- O = example
- OU = monitoring
- CN = example.com
- emailAddress = admin@example.com
-
- [ v3_req ]
- basicConstraints = CA:FALSE
- keyUsage = keyEncipherment, dataEncipherment
- extendedKeyUsage = serverAuth
- subjectAltName = @alt_names
-
- [alt_names]
- DNS.1 = prometheus.example.com
- DNS.2 = prometheus-alertmanager.example.com
- DNS.3 = grafana.example.com
- </programlisting>
-     <itemizedlist spacing="compact">
-       <listitem>
-         <para>
-           Generate certificate (optional)
-         </para>
-       </listitem>
-     </itemizedlist>
-     <programlisting>
- $ openssl req -x509 -nodes -days 365 -newkey rsa:4096 -keyout ./monitoring.key -out ./monitoring.crt -config ./openssl.conf -extensions 'v3_req'
- </programlisting>
-     <orderedlist numeration="arabic" spacing="compact">
-       <listitem>
-         <para>
-           Create the TLS secret in Kubernetes
-         </para>
-       </listitem>
-     </orderedlist>
-     <para>
-       If you use one certificate per service, do not forget to create a
-       secret for each certificate and to change the secret name in the
-       TLS ingress configuration of the service.
-     </para>
-     <programlisting>
- $ kubectl create -n monitoring secret tls monitoring-tls  \
-   --key  ./monitoring.key \
-   --cert ./monitoring.crt
- </programlisting>
+      </para>
+     </step>
+     <step>
+      <para>
+        Generate certificate
+      </para>
+<screen>
+&prompt.user;<command>openssl req -x509 -nodes -days 365 -newkey rsa:4096 \
+-keyout ./monitoring.key -out ./monitoring.crt \
+-config ./openssl.conf -extensions 'v3_req'</command>
+      </screen>
+     </step>
+  <step>
+   <para>
+    Add TLS secret to Kubernetes
+   </para>
+<screen>&prompt.user;<command>kubectl create -n monitoring secret tls <replaceable>monitoring-tls</replaceable>  \
+--key  ./monitoring.key \
+--cert ./monitoring.crt</command>
+    </screen>
+   </step>
+ </procedure>
+</sect3>
 </sect2>
+
    <sect2 xml:id="prometheus">
      <title>Prometheus</title>
      <para>
@@ -338,12 +376,12 @@
        ServiceAccount, this ServiceAccount will be in charge of creating
        the pods.
      </para>
-     <programlisting>
- $ kubectl create rolebinding node-exporter-psp-privileged \
+     <screen>
+ &prompt.user;kubectl create rolebinding node-exporter-psp-privileged \
    --namespace monitoring \
    --clusterrole=suse:caasp:psp:privileged \
    --serviceaccount=monitoring:prometheus-node-exporter
- </programlisting>
+ </screen>
      <orderedlist numeration="arabic" spacing="compact">
        <listitem override="2">
          <para>
@@ -382,7 +420,7 @@
          </para>
        </listitem>
      </itemizedlist>
-     <programlisting language="yaml">
+     <screen language="yaml">
  # Alertmanager configuration
  alertmanager:
    enabled: true
@@ -464,7 +502,7 @@
  ## https://prometheus.io/docs/prometheus/latest/configuration/configuration/
  #serverFiles:
  #  prometheus.yml:
- </programlisting>
+ </screen>
      <itemizedlist spacing="compact">
        <listitem>
          <para>
@@ -473,17 +511,17 @@
          </para>
        </listitem>
      </itemizedlist>
-     <programlisting>
- $ helm install --name prometheus stable/prometheus \
+     <screen>
+ &prompt.user;helm install --name prometheus stable/prometheus \
    --namespace monitoring \
    --values prometheus-config-values.yaml
- </programlisting>
+ </screen>
      <para>
        =&gt; We need these pods running (3 node-exporter pods because we
        have 3 nodes)
      </para>
-     <programlisting>
- $ kubectl -n monitoring get po | grep prometheus
+     <screen>
+ &prompt.user;kubectl -n monitoring get po | grep prometheus
  NAME                                             READY     STATUS    RESTARTS   AGE
  prometheus-alertmanager-5487596d54-kcdd6         2/2       Running   0          2m
  prometheus-kube-state-metrics-566669df8c-krblx   1/1       Running   0          2m
@@ -491,7 +529,7 @@
  prometheus-node-exporter-qfwp9                   1/1       Running   0          2m
  prometheus-node-exporter-sc4ls                   1/1       Running   0          2m
  prometheus-server-6488f6c4cd-5n9w8               2/2       Running   0          2m
- </programlisting>
+ </screen>
      <orderedlist numeration="arabic" spacing="compact">
        <listitem override="3">
          <para>
@@ -500,7 +538,7 @@
        </listitem>
      </orderedlist>
      <para>
-       We need to create a basic-auth secret so the Nginx Ingress
+       We need to create a basic-auth secret so the NGINX Ingress
        Controller can perform authentication.
      </para>
      <itemizedlist spacing="compact">
@@ -510,9 +548,9 @@
          </para>
        </listitem>
      </itemizedlist>
-     <programlisting>
- $ sudo zypper in apache2-utils
- </programlisting>
+     <screen>
+ &prompt.sudo;zypper in apache2-utils
+ </screen>
      <itemizedlist spacing="compact">
        <listitem>
          <para>
@@ -520,12 +558,12 @@
          </para>
        </listitem>
      </itemizedlist>
-     <programlisting>
+     <screen>
  htpasswd -c auth admin
  New password:
  Re-type new password:
  Adding password for user admin
- </programlisting>
+ </screen>
      <itemizedlist spacing="compact">
        <listitem>
          <para>
@@ -533,9 +571,9 @@
          </para>
        </listitem>
      </itemizedlist>
-     <programlisting>
- $ kubectl create secret generic -n monitoring prometheus-basic-auth --from-file=auth
- </programlisting>
+     <screen>
+ &prompt.user;kubectl create secret generic -n monitoring prometheus-basic-auth --from-file=auth
+ </screen>
      <para>
        It is very important that the file name is
        <emphasis role="strong">auth</emphasis> so the key in the secret
@@ -589,7 +627,7 @@
        The configuration file can be added in the section below (see the
        official doc https://prometheus.io/docs/alerting/configuration)
      </para>
-     <programlisting>
+     <screen>
  alertmanagerFiles:
    alertmanager.yml:
      global:
@@ -626,12 +664,12 @@
      - name: 'admin-example'
        email_configs:
        - to: 'admin@example.com'
- </programlisting>
+ </screen>
      <para>
        Replace the empty set of rules <literal>rules: {}</literal> in
        <literal>serverFiles</literal> section of the configuration file.
      </para>
-     <programlisting>
+     <screen>
  serverFiles:
    alerts: {}
    rules:
@@ -663,7 +701,7 @@
            severity: warning
          annotations:
            description: '{{ $labels.node }} has insufficient available memory'
- </programlisting>
+ </screen>
 </sect2>
    <sect2 xml:id="grafana">
      <title>Grafana</title>
@@ -690,7 +728,7 @@
          </para>
        </listitem>
      </itemizedlist>
-     <programlisting language="yaml">
+     <screen language="yaml">
  ---
  kind: ConfigMap
  apiVersion: v1
@@ -712,7 +750,7 @@
        access: proxy
        orgId: 1
        isDefault: true
- </programlisting>
+ </screen>
      <itemizedlist spacing="compact">
        <listitem>
          <para>
@@ -720,9 +758,9 @@
          </para>
        </listitem>
      </itemizedlist>
-     <programlisting>
- $ kubectl create -f grafana-datasources.yaml
- </programlisting>
+     <screen>
+ &prompt.user;kubectl create -f grafana-datasources.yaml
+ </screen>
      <itemizedlist spacing="compact">
        <listitem>
          <para>
@@ -732,9 +770,9 @@
          </para>
        </listitem>
      </itemizedlist>
-     <programlisting>
- $ cat grafana-dashboards-caasp* | kubectl apply -f -
- </programlisting>
+     <screen>
+ &prompt.user;cat grafana-dashboards-caasp* | kubectl apply -f -
+ </screen>
      <orderedlist numeration="arabic" spacing="compact">
        <listitem override="2">
          <para>
@@ -772,7 +810,7 @@
          </para>
        </listitem>
      </itemizedlist>
-     <programlisting language="yaml">
+     <screen language="yaml">
  # Configure admin password
  adminPassword: 3357b57b-25a1-4780-ac78-8b77fd7ed9e1
 
@@ -808,7 +846,7 @@
    dashboards:
      enabled: true
      label: grafana_dashboard
- </programlisting>
+ </screen>
      <itemizedlist spacing="compact">
        <listitem>
          <para>
@@ -817,19 +855,19 @@
          </para>
        </listitem>
      </itemizedlist>
-     <programlisting>
- $ helm install --name grafana stable/grafana \
+     <screen>
+ &prompt.user;helm install --name grafana stable/grafana \
    --namespace monitoring \
    --values grafana-config-values.yaml
- </programlisting>
+ </screen>
      <para>
        =&gt; We need this pod running
      </para>
-     <programlisting>
- $ kubectl -n monitoring get po | grep grafana
+     <screen>
+ &prompt.user;kubectl -n monitoring get po | grep grafana
  NAME                                             READY     STATUS    RESTARTS   AGE
  grafana-dbf7ddb7d-fxg6d                          3/3       Running   0          2m
- </programlisting>
+ </screen>
      <para>
        =&gt; At this stage, Grafana is accessible, depending on you
        network configuration at https://grafana.example.com or
