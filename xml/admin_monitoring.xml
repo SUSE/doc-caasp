@@ -59,6 +59,11 @@
      and modern alerting approach.
    </para>
    <para>
+    <link xlink:href="https://prometheus.io/docs/alerting/alertmanager/">Prometheus Alertmanager</link>
+    handles client alerts, sanitizes duplicates and noise and routes them to
+    configuratble receivers.
+   </para>
+   <para>
      <emphasis role="strong">Grafana</emphasis>
    </para>
    <para>
@@ -232,7 +237,7 @@ nginx-ingress-default-backend-6b9b546dc8-mfkjk   1/1       Running   0          
 
 </sect2>
    <sect2 xml:id="tls">
-     <title>Configure TLS</title>
+     <title>TLS</title>
      <para>
       You must configure your certificates for the components as secrets in
       &kube;. Get certificates from your local certificate authority. In this
@@ -352,356 +357,337 @@ DNS.3 = grafana.example.com
 
    <sect2 xml:id="prometheus">
      <title>Prometheus</title>
-     <para>
-       Deploying Prometheus Pushgateway is out of the scope of this
-       document.
-     </para>
-     <orderedlist numeration="arabic" spacing="compact">
-       <listitem>
-         <para>
-           Manage permissions
-         </para>
-       </listitem>
-     </orderedlist>
-     <para>
-       <emphasis role="strong">DEPRECATED IN 7.3.0, use
-       podSecurityPolicy</emphasis>
-     </para>
-     <para>
-       Prometheus node-exporter is in charge of getting the host metrics,
-       to do so, it needs access to /proc or /sys path on the host. This
-       is achieve with the use of HostPath in the pod specs, however
-       using HostPath is forbidden by default in CaaSP so we need to
-       assign the privileged PodSecurityPolicy to the node-exporter
-       ServiceAccount, this ServiceAccount will be in charge of creating
-       the pods.
-     </para>
-     <screen>
- &prompt.user;kubectl create rolebinding node-exporter-psp-privileged \
-   --namespace monitoring \
-   --clusterrole=suse:caasp:psp:privileged \
-   --serviceaccount=monitoring:prometheus-node-exporter
- </screen>
-     <orderedlist numeration="arabic" spacing="compact">
-       <listitem override="2">
-         <para>
-           Deploy
-         </para>
-       </listitem>
-     </orderedlist>
-     <para>
-       We need to configure the storage for our deployment.
-     </para>
-     <para>
-       Choose among the options and uncomment the line in the config
-       file.
-     </para>
-     <para>
-       <emphasis role="strong">Mandatory for production: Persistent
-       Storage</emphasis>
-     </para>
-     <itemizedlist>
-       <listitem>
-         <para>
-           Use an existing PersistentVolumeClaim
-         </para>
-       </listitem>
-       <listitem>
-         <para>
-           Use a StorageClass
-           <emphasis role="strong">(prefered)</emphasis>
-         </para>
-       </listitem>
-       <listitem>
-         <para>
-           Create a file
-           <emphasis>prometheus-config-values.yaml</emphasis> with the
-           appropriate values.
-         </para>
-       </listitem>
-     </itemizedlist>
-     <screen language="yaml">
- # Alertmanager configuration
- alertmanager:
-   enabled: true
-   ingress:
-     enabled: true
-     hosts:
-     -  prometheus-alertmanager.example.com
-     annotations:
-       kubernetes.io/ingress.class: nginx
-       nginx.ingress.kubernetes.io/auth-type: basic
-       nginx.ingress.kubernetes.io/auth-secret: prometheus-basic-auth
-       nginx.ingress.kubernetes.io/auth-realm: &quot;Authentication Required&quot;
-     tls:
-       - hosts:
-         - prometheus-alertmanager.example.com
-         secretName: monitoring-tls
-   persistentVolume:
-     enabled: true
-     ## Use a StorageClass
-     storageClass: my-storage-class
-     ## Create a PersistentVolumeClaim of 2Gi
-     size: 2Gi
-     ## Use an existing PersistentVolumeClaim (my-pvc)
-     #existingClaim: my-pvc
+     <note>
+      <title>Prometheus Pushgateway</title>
+      <para>
+        Deploying Prometheus <link xlink:href="https://prometheus.io/docs/practices/pushing/">Pushgateway</link>
+        is out of the scope of this document.
+      </para>
+     </note>
 
- ## AlertManager is configured through alertmanager.yml. This file and any others
- ## listed in alertmanagerFiles will be mounted into the alertmanager pod.
- ## See configuration options https://prometheus.io/docs/alerting/configuration/
- #alertmanagerFiles:
- #  alertmanager.yml:
+     <procedure>
+      <step>
+      <para>
+        Prometheus node-exporter is in charge of getting the host metrics,
+        to do so, it needs access to <filename>/proc</filename> or
+        <filename>/sys</filename> path on the host. This is achieved with the use
+        of <literal>HostPath</literal> in the pod specs, however
+        using <literal>HostPath</literal> is forbidden by default in &productname;.
+        We need to assign the privileged <literal>PodSecurityPolicy</literal> to
+        the node-exporter ServiceAccount, this ServiceAccount will be in charge
+        of creating the pods.
+      </para>
+<screen>&prompt.user;<command>kubectl create rolebinding node-exporter-psp-privileged \
+--namespace monitoring \
+--clusterrole=suse:caasp:psp:privileged \
+--serviceaccount=monitoring:prometheus-node-exporter</command>
+</screen>
+      </step>
+      <step>
+       <para>
+         Create configuration file <filename>prometheus-config-values.yaml</filename>
+       </para>
+       <para>
+         We need to configure the storage for our deployment. Choose among the
+         options and uncomment the line in the config file. In production
+         environments you must configure persistent storage.
+       </para>
+       <itemizedlist>
+         <listitem>
+           <para>
+             Use an existing PersistentVolumeClaim
+           </para>
+         </listitem>
+         <listitem>
+           <para>
+             Use a StorageClass
+             <emphasis role="strong">(preferred)</emphasis>
+           </para>
+         </listitem>
+       </itemizedlist>
+       <screen language="yaml">
+# Alertmanager configuration
+alertmanager:
+  enabled: true
+  ingress:
+    enabled: true
+    hosts:
+    -  prometheus-alertmanager.example.com
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/auth-type: basic
+      nginx.ingress.kubernetes.io/auth-secret: prometheus-basic-auth
+      nginx.ingress.kubernetes.io/auth-realm: &quot;Authentication Required&quot;
+    tls:
+      - hosts:
+        - prometheus-alertmanager.example.com
+        secretName: monitoring-tls
+  persistentVolume:
+    enabled: true
+    ## Use a StorageClass
+    storageClass: my-storage-class
+    ## Create a PersistentVolumeClaim of 2Gi
+    size: 2Gi
+    ## Use an existing PersistentVolumeClaim (my-pvc)
+    #existingClaim: my-pvc
 
- # Create a specific service account
- serviceAccounts:
-   nodeExporter:
-     name: prometheus-node-exporter
+## AlertManager is configured through alertmanager.yml. This file and any others
+## listed in alertmanagerFiles will be mounted into the alertmanager pod.
+## See configuration options https://prometheus.io/docs/alerting/configuration/
+#alertmanagerFiles:
+#  alertmanager.yml:
 
- # Allow scheduling of node-exporter on master nodes
- nodeExporter:
-   hostNetwork: false
-   hostPID: false
-   podSecurityPolicy:
-     enabled: true
-   tolerations:
-     - key: node-role.kubernetes.io/master
-       operator: Exists
-       effect: NoSchedule
+# Create a specific service account
+serviceAccounts:
+  nodeExporter:
+    name: prometheus-node-exporter
 
- # Disable Pushgateway
- pushgateway:
-   enabled: false
+# Allow scheduling of node-exporter on master nodes
+nodeExporter:
+  hostNetwork: false
+  hostPID: false
+  podSecurityPolicy:
+    enabled: true
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+      effect: NoSchedule
 
- # Prometheus configuration
- server:
-   ingress:
-     enabled: true
-     hosts:
-     - prometheus.example.com
-     annotations:
-       kubernetes.io/ingress.class: nginx
-       nginx.ingress.kubernetes.io/auth-type: basic
-       nginx.ingress.kubernetes.io/auth-secret: prometheus-basic-auth
-       nginx.ingress.kubernetes.io/auth-realm: &quot;Authentication Required&quot;
-     tls:
-       - hosts:
-         - prometheus.example.com
-         secretName: monitoring-tls
-   persistentVolume:
-     enabled: true
-     ## Use a StorageClass
-     storageClass: my-storage-class
-     ## Create a PersistentVolumeClaim of 8Gi
-     size: 8Gi
-     ## Use an existing PersistentVolumeClaim (my-pvc)
-     #existingClaim: my-pvc
+# Disable Pushgateway
+pushgateway:
+  enabled: false
 
- ## Prometheus is configured through prometheus.yml. This file and any others
- ## listed in serverFiles will be mounted into the server pod.
- ## See configuration options
- ## https://prometheus.io/docs/prometheus/latest/configuration/configuration/
- #serverFiles:
- #  prometheus.yml:
- </screen>
-     <itemizedlist spacing="compact">
-       <listitem>
-         <para>
-           Deploy the upstream helm chart and pass our configuration
-           values file.
-         </para>
-       </listitem>
-     </itemizedlist>
-     <screen>
- &prompt.user;helm install --name prometheus stable/prometheus \
-   --namespace monitoring \
-   --values prometheus-config-values.yaml
- </screen>
-     <para>
-       =&gt; We need these pods running (3 node-exporter pods because we
-       have 3 nodes)
-     </para>
-     <screen>
- &prompt.user;kubectl -n monitoring get po | grep prometheus
- NAME                                             READY     STATUS    RESTARTS   AGE
- prometheus-alertmanager-5487596d54-kcdd6         2/2       Running   0          2m
- prometheus-kube-state-metrics-566669df8c-krblx   1/1       Running   0          2m
- prometheus-node-exporter-jnc5w                   1/1       Running   0          2m
- prometheus-node-exporter-qfwp9                   1/1       Running   0          2m
- prometheus-node-exporter-sc4ls                   1/1       Running   0          2m
- prometheus-server-6488f6c4cd-5n9w8               2/2       Running   0          2m
- </screen>
-     <orderedlist numeration="arabic" spacing="compact">
-       <listitem override="3">
-         <para>
-           Configure Authentication
-         </para>
-       </listitem>
-     </orderedlist>
-     <para>
-       We need to create a basic-auth secret so the NGINX Ingress
-       Controller can perform authentication.
-     </para>
-     <itemizedlist spacing="compact">
-       <listitem>
-         <para>
-           Install htpasswd
-         </para>
-       </listitem>
-     </itemizedlist>
-     <screen>
- &prompt.sudo;zypper in apache2-utils
- </screen>
-     <itemizedlist spacing="compact">
-       <listitem>
-         <para>
-           Create secret file <emphasis>auth</emphasis>
-         </para>
-       </listitem>
-     </itemizedlist>
-     <screen>
- htpasswd -c auth admin
- New password:
- Re-type new password:
- Adding password for user admin
- </screen>
-     <itemizedlist spacing="compact">
-       <listitem>
-         <para>
-           Create secret in Kubernetes
-         </para>
-       </listitem>
-     </itemizedlist>
-     <screen>
- &prompt.user;kubectl create secret generic -n monitoring prometheus-basic-auth --from-file=auth
- </screen>
-     <para>
-       It is very important that the file name is
-       <emphasis role="strong">auth</emphasis> so the key in the secret
-       will be name auth because the ingress controller will look for
-       that key.
-     </para>
-     <para>
-       =&gt; At this stage, the Prometheus Expression browser/API is
-       accessible, depending on you network configuration at
-       https://prometheus.example.com or
-       https://prometheus.example.com:30443
-     </para>
+# Prometheus configuration
+server:
+  ingress:
+    enabled: true
+    hosts:
+    - prometheus.example.com
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/auth-type: basic
+      nginx.ingress.kubernetes.io/auth-secret: prometheus-basic-auth
+      nginx.ingress.kubernetes.io/auth-realm: &quot;Authentication Required&quot;
+    tls:
+      - hosts:
+        - prometheus.example.com
+        secretName: monitoring-tls
+  persistentVolume:
+    enabled: true
+    ## Use a StorageClass
+    storageClass: my-storage-class
+    ## Create a PersistentVolumeClaim of 8Gi
+    size: 8Gi
+    ## Use an existing PersistentVolumeClaim (my-pvc)
+    #existingClaim: my-pvc
+
+## Prometheus is configured through prometheus.yml. This file and any others
+## listed in serverFiles will be mounted into the server pod.
+## See configuration options
+## https://prometheus.io/docs/prometheus/latest/configuration/configuration/
+#serverFiles:
+#  prometheus.yml:
+   </screen>
+      </step>
+      <step>
+       <para>
+         Deploy the upstream helm chart and pass our configuration
+         values file.
+       </para>
+<screen>&prompt.user;<command>helm install --name prometheus stable/prometheus \
+--namespace monitoring \
+--values prometheus-config-values.yaml</command>
+   </screen>
+       <para>
+         There need to be 3 pods running (3 node-exporter pods because we
+         have 3 nodes).
+       </para>
+<screen>&prompt.user;kubectl -n monitoring get po | grep prometheus
+NAME                                             READY     STATUS    RESTARTS   AGE
+prometheus-alertmanager-5487596d54-kcdd6         2/2       Running   0          2m
+prometheus-kube-state-metrics-566669df8c-krblx   1/1       Running   0          2m
+prometheus-node-exporter-jnc5w                   1/1       Running   0          2m
+prometheus-node-exporter-qfwp9                   1/1       Running   0          2m
+prometheus-node-exporter-sc4ls                   1/1       Running   0          2m
+prometheus-server-6488f6c4cd-5n9w8               2/2       Running   0          2m
+   </screen>
+      </step>
+      <step>
+       <para>
+         Configure Authentication
+       </para>
+       <para>
+        We need to create a <literal>basic-auth</literal> secret so the NGINX
+        Ingress Controller can perform authentication.
+       </para>
+       <para>
+         Install <command>htpasswd</command> on your local workstation
+       </para>
+       <screen>&prompt.sudo;<command>zypper in apache2-utils</command>
+   </screen>
+   <para>
+     Create the secret file <filename>auth</filename>
+   </para>
+   <important>
+    <para>
+      It is very important that the filename is <filename>auth</filename>.
+      During creation, a key in the configuration containing the secret is
+      created that is named after the used filename. The ingress controller will
+      expect a key named <literal>auth</literal>.
+    </para>
+   </important>
+   <screen>
+htpasswd -c auth admin
+New password:
+Re-type new password:
+Adding password for user admin
+</screen>
+      <para>
+        Create secret in Kubernetes
+      </para>
+<screen>&prompt.user;<command>kubectl create secret generic -n monitoring prometheus-basic-auth --from-file=auth</command>
+  </screen>
+      </step>
+      <step>
+       <para>
+         At this stage, the Prometheus Expression browser/API should be
+         accessible, depending on your network configuration at
+         <literal>https://prometheus.example.com</literal> or
+         <literal>https://prometheus.example.com:30443</literal>.
+       </para>
+      </step>
+     </procedure>
+
    </sect2>
    <sect2 xml:id="alertmanager-configuration">
-     <title>Alertmanager configuration</title>
+     <title>Alertmanager Configuration Example</title>
      <para>
-       This is an <emphasis role="strong">example</emphasis> of how and
-       where to configure Prometheus Alertmanager.
-     </para>
-     <para>
-       The configuration set one receiver to get notified by email when a
+       The configuration sets one "receiver" to get notified by email when a
        node meets one of these conditions:
      </para>
      <itemizedlist spacing="compact">
        <listitem>
          <para>
-           Node is unschedulable.
+           Node is unschedulable
          </para>
        </listitem>
        <listitem>
          <para>
-           Node becomes out of disk.
+           Node runs out of disk space
          </para>
        </listitem>
        <listitem>
          <para>
-           Node has memory pressure.
+           Node has memory pressure
          </para>
        </listitem>
        <listitem>
          <para>
-           Node has disk pressure.
+           Node has disk pressure
          </para>
        </listitem>
      </itemizedlist>
      <para>
-       The first two ones are critical because the node can’t accept new
-       pods, the last one are just warnings.
+       The first two are critical because the node can not accept new
+       pods, the last two are just warnings.
      </para>
      <para>
-       The configuration file can be added in the section below (see the
-       official doc https://prometheus.io/docs/alerting/configuration)
+       The Alertmanager configuration can be added to <filename>prometheus-config-values.yaml</filename>
+       by adding the <literal>alertmanagerFiles</literal> section.
+      </para>
+      <para>
+       For more information on how to configure Alertmanager, refer to <link xlink:href="https://prometheus.io/docs/alerting/configuration">Prometheus: Alerting - Configuration</link>.
      </para>
-     <screen>
- alertmanagerFiles:
-   alertmanager.yml:
-     global:
-       # The smarthost and SMTP sender used for mail notifications.
-       smtp_from: alertmanager@example.com
-       smtp_smarthost: smtp.example.com:587
-       smtp_auth_username: admin@example.com
-       smtp_auth_password: &lt;password&gt;
-       smtp_require_tls: true
 
-     route:
-       # The labels by which incoming alerts are grouped together.
-       group_by: ['node']
+     <procedure>
+      <title>Configuring Alertmanager</title>
+      <step>
+       <para>
+        Add the <literal>alertmanagerFiles</literal> section to your Prometheus
+        configuration.
+       </para>
+       <screen>
+alertmanagerFiles:
+  alertmanager.yml:
+    global:
+      # The smarthost and SMTP sender used for mail notifications.
+      smtp_from: alertmanager@example.com
+      smtp_smarthost: smtp.example.com:587
+      smtp_auth_username: admin@example.com
+      smtp_auth_password: &lt;password&gt;
+      smtp_require_tls: true
 
-       # When a new group of alerts is created by an incoming alert, wait at
-       # least 'group_wait' to send the initial notification.
-       # This way ensures that you get multiple alerts for the same group that start
-       # firing shortly after another are batched together on the first
-       # notification.
-       group_wait: 30s
+    route:
+      # The labels by which incoming alerts are grouped together.
+      group_by: ['node']
 
-       # When the first notification was sent, wait 'group_interval' to send a batch
-       # of new alerts that started firing for that group.
-       group_interval: 5m
+      # When a new group of alerts is created by an incoming alert, wait at
+      # least 'group_wait' to send the initial notification.
+      # This way ensures that you get multiple alerts for the same group that start
+      # firing shortly after another are batched together on the first
+      # notification.
+      group_wait: 30s
 
-       # If an alert has successfully been sent, wait 'repeat_interval' to
-       # resend them.
-       repeat_interval: 3h
+      # When the first notification was sent, wait 'group_interval' to send a batch
+      # of new alerts that started firing for that group.
+      group_interval: 5m
 
-       # A default receiver
-       receiver: admin-example
+      # If an alert has successfully been sent, wait 'repeat_interval' to
+      # resend them.
+      repeat_interval: 3h
 
-     receivers:
-     - name: 'admin-example'
-       email_configs:
-       - to: 'admin@example.com'
+      # A default receiver
+      receiver: admin-example
+
+    receivers:
+    - name: 'admin-example'
+      email_configs:
+      - to: 'admin@example.com'
  </screen>
-     <para>
-       Replace the empty set of rules <literal>rules: {}</literal> in
-       <literal>serverFiles</literal> section of the configuration file.
-     </para>
-     <screen>
- serverFiles:
-   alerts: {}
-   rules:
-     groups:
-     - name: caasp.node.rules
-       rules:
-       - alert: NodeIsNotReady
-         expr: kube_node_status_condition{condition=&quot;Ready&quot;,status=&quot;false&quot;} == 1
-         for: 1m
-         labels:
-           severity: critical
-         annotations:
-           description: '{{ $labels.node }} is not ready'
-       - alert: NodeIsOutOfDisk
-         expr: kube_node_status_condition{condition=&quot;OutOfDisk&quot;,status=&quot;true&quot;} == 1
-         labels:
-           severity: critical
-         annotations:
-           description: '{{ $labels.node }} has insufficient free disk space'
-       - alert: NodeHasDiskPressure
-         expr: kube_node_status_condition{condition=&quot;DiskPressure&quot;,status=&quot;true&quot;} == 1
-         labels:
-           severity: warning
-         annotations:
-           description: '{{ $labels.node }} has insufficient available disk space'
-       - alert: NodeHasInsufficientMemory
-         expr: kube_node_status_condition{condition=&quot;MemoryPressure&quot;,status=&quot;true&quot;} == 1
-         labels:
-           severity: warning
-         annotations:
-           description: '{{ $labels.node }} has insufficient available memory'
- </screen>
+      </step>
+      <step>
+       <para>
+        Replace the empty set of rules <literal>rules: {}</literal> in the
+        <literal>serverFiles</literal> section of the configuration file.
+       </para>
+       <para>
+         For more information on how to configure alerts, refer to: <link xlink:href="https://prometheus.io/docs/alerting/notification_examples/">Prometheus: Alerting - Notification Template Examples</link>
+       </para>
+       <screen>
+serverFiles:
+  alerts: {}
+  rules:
+    groups:
+    - name: caasp.node.rules
+      rules:
+      - alert: NodeIsNotReady
+        expr: kube_node_status_condition{condition=&quot;Ready&quot;,status=&quot;false&quot;} == 1
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          description: '{{ $labels.node }} is not ready'
+      - alert: NodeIsOutOfDisk
+        expr: kube_node_status_condition{condition=&quot;OutOfDisk&quot;,status=&quot;true&quot;} == 1
+        labels:
+          severity: critical
+        annotations:
+          description: '{{ $labels.node }} has insufficient free disk space'
+      - alert: NodeHasDiskPressure
+        expr: kube_node_status_condition{condition=&quot;DiskPressure&quot;,status=&quot;true&quot;} == 1
+        labels:
+          severity: warning
+        annotations:
+          description: '{{ $labels.node }} has insufficient available disk space'
+      - alert: NodeHasInsufficientMemory
+        expr: kube_node_status_condition{condition=&quot;MemoryPressure&quot;,status=&quot;true&quot;} == 1
+        labels:
+          severity: warning
+        annotations:
+          description: '{{ $labels.node }} has insufficient available memory'
+        </screen>
+       </step>
+      </procedure>
 </sect2>
    <sect2 xml:id="grafana">
      <title>Grafana</title>
@@ -729,27 +715,27 @@ DNS.3 = grafana.example.com
        </listitem>
      </itemizedlist>
      <screen language="yaml">
- ---
- kind: ConfigMap
- apiVersion: v1
- metadata:
-   name: grafana-datasources
-   namespace: monitoring
-   labels:
-      grafana_datasource: &quot;1&quot;
- data:
-   datasource.yaml: |-
-     apiVersion: 1
-     deleteDatasources:
-       - name: Prometheus
-         orgId: 1
-     datasources:
-     - name: Prometheus
-       type: prometheus
-       url: http://prometheus-server.monitoring.svc.cluster.local:80
-       access: proxy
-       orgId: 1
-       isDefault: true
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: grafana-datasources
+  namespace: monitoring
+  labels:
+     grafana_datasource: &quot;1&quot;
+data:
+  datasource.yaml: |-
+    apiVersion: 1
+    deleteDatasources:
+      - name: Prometheus
+        orgId: 1
+    datasources:
+    - name: Prometheus
+      type: prometheus
+      url: http://prometheus-server.monitoring.svc.cluster.local:80
+      access: proxy
+      orgId: 1
+      isDefault: true
  </screen>
      <itemizedlist spacing="compact">
        <listitem>
@@ -758,8 +744,7 @@ DNS.3 = grafana.example.com
          </para>
        </listitem>
      </itemizedlist>
-     <screen>
- &prompt.user;kubectl create -f grafana-datasources.yaml
+<screen>&prompt.user;kubectl create -f grafana-datasources.yaml
  </screen>
      <itemizedlist spacing="compact">
        <listitem>
@@ -770,8 +755,7 @@ DNS.3 = grafana.example.com
          </para>
        </listitem>
      </itemizedlist>
-     <screen>
- &prompt.user;cat grafana-dashboards-caasp* | kubectl apply -f -
+<screen>&prompt.user;cat grafana-dashboards-caasp* | kubectl apply -f -
  </screen>
      <orderedlist numeration="arabic" spacing="compact">
        <listitem override="2">
@@ -811,41 +795,41 @@ DNS.3 = grafana.example.com
        </listitem>
      </itemizedlist>
      <screen language="yaml">
- # Configure admin password
- adminPassword: 3357b57b-25a1-4780-ac78-8b77fd7ed9e1
+# Configure admin password
+adminPassword: 3357b57b-25a1-4780-ac78-8b77fd7ed9e1
 
- # Ingress configuration
- ingress:
-   enabled: true
-   annotations:
-     kubernetes.io/ingress.class: nginx
-   hosts:
-     - grafana.example.com
-   tls:
-     - hosts:
-       - grafana.example.com
-       secretName: monitoring-tls
+# Ingress configuration
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  hosts:
+    - grafana.example.com
+  tls:
+    - hosts:
+      - grafana.example.com
+      secretName: monitoring-tls
 
- # Configure persistent storage
- persistence:
-   enabled: true
-   accessModes:
-     - ReadWriteOnce
-   ## Use a StorageClass
-   storageClassName: my-storage-class
-   ## Create a PersistentVolumeClaim of 10Gi
-   size: 10Gi
-   ## Use an existing PersistentVolumeClaim (my-pvc)
-   #existingClaim: my-pvc
+# Configure persistent storage
+persistence:
+  enabled: true
+  accessModes:
+    - ReadWriteOnce
+  ## Use a StorageClass
+  storageClassName: my-storage-class
+  ## Create a PersistentVolumeClaim of 10Gi
+  size: 10Gi
+  ## Use an existing PersistentVolumeClaim (my-pvc)
+  #existingClaim: my-pvc
 
- # Enable sidecar for provisioning
- sidecar:
-   datasources:
-     enabled: true
-     label: grafana_datasource
-   dashboards:
-     enabled: true
-     label: grafana_dashboard
+# Enable sidecar for provisioning
+sidecar:
+  datasources:
+    enabled: true
+    label: grafana_datasource
+  dashboards:
+    enabled: true
+    label: grafana_dashboard
  </screen>
      <itemizedlist spacing="compact">
        <listitem>
@@ -856,17 +840,17 @@ DNS.3 = grafana.example.com
        </listitem>
      </itemizedlist>
      <screen>
- &prompt.user;helm install --name grafana stable/grafana \
-   --namespace monitoring \
-   --values grafana-config-values.yaml
+&prompt.user;helm install --name grafana stable/grafana \
+  --namespace monitoring \
+  --values grafana-config-values.yaml
  </screen>
      <para>
        =&gt; We need this pod running
      </para>
      <screen>
- &prompt.user;kubectl -n monitoring get po | grep grafana
- NAME                                             READY     STATUS    RESTARTS   AGE
- grafana-dbf7ddb7d-fxg6d                          3/3       Running   0          2m
+&prompt.user;<command>kubectl -n monitoring get po | grep grafana</command>
+NAME                                             READY     STATUS    RESTARTS   AGE
+grafana-dbf7ddb7d-fxg6d                          3/3       Running   0          2m
  </screen>
      <para>
        =&gt; At this stage, Grafana is accessible, depending on you
@@ -1134,7 +1118,6 @@ tiller-deploy   1         1         1            1           7d
     </para>
    </sect3>
    </sect2>
-
 
   <sect2 xml:id="sec.admin.monitoring.health.service">
    <title>Service/Application Health Checks</title>
