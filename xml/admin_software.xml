@@ -126,12 +126,36 @@
    </para>
    <variablelist>
     <varlistentry>
-     <term><literal>up</literal>
+     <term><literal>pkg in/install</literal></term>
+     <listitem>
+      <para>
+       Installs a specific package from the available channels using the
+       <command>zypper install</command> command. Please note that the changes to
+       the base filesystem only become permanent after a reboot.
+      </para>
+<screen>&prompt.root;<command>transactional-update pkg install <replaceable>&lt;packagename&gt;</replaceable></command>
+     </screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>pkg rm/remove</literal></term>
+     <listitem>
+      <para>
+       Removes a specific package from the available channels using the
+       <command>zypper remove</command> command. Please note that the changes to
+       the base filesystem only become permanent after a reboot.
+      </para>
+<screen>&prompt.root;<command>transactional-update pkg install <replaceable>&lt;packagename&gt;</replaceable></command>
+     </screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>up/update</literal>
      </term>
      <listitem>
       <para>
        If there are new updates available, a new snapshot is created and
-       <command>zypper up</command> is used to update the snapshot. The
+       <command>zypper up/update</command> is used to update the snapshot. The
        snapshot is activated afterwards and is used as the new root file system
        after reboot.
       </para>
@@ -723,6 +747,104 @@ retcode:
    instructions on how to install and configure &helm;, the &kube; package
    manager.
   </para>
+
+  <sect2 xml:id="sec.admin.software.toolchain">
+   <title>Building Kernel Modules</title>
+   <para>
+    Some vendors will only provide certain kernel drivers or modules via DKMS.
+    In order to use these modules you must build them on the machine they are
+    required on. We provide a <filename>caasp-toolchain</filename>
+    module that includes all necessary tools to generate kernel modules.
+   </para>
+   <para>
+    A full list of tools and packages available through the module can be found
+    in the <link xlink:href="https://scc.suse.com/packages?name=SUSE%20CaaS%20Platform&amp;version=3.0&amp;arch=x86_64&amp;query=&amp;module=1752">&scc;</link>.
+   </para>
+   <important>
+    <title>Reboot Required For Toolchain</title>
+     <para>
+      The toolchain module must be enabled through <command>transactional-update</command>.
+      Due to the nature of transactional updates, the machine must reboot at
+      least twice. First to activate the module and a second time to start the
+      machine from the new snapshot that incorporates the installed tools,
+      packages, and libraries.
+     </para>
+     <para>
+      Please plan for maintenance windows when setting up toolchain usage.
+     </para>
+    </important>
+   <procedure>
+    <title>Enabling <literal>caasp-toolchain</literal> Module</title>
+    <step>
+     <para>
+      Log in to the machine where you wish to use the toolchain
+     </para>
+    </step>
+    <step>
+     <para>
+      Register the <literal>caasp-toolchain</literal> module
+     </para>
+<screen>&prompt.root;<command>transactional-update reboot register -p caasp-toolchain/3.0/x86_64</command>
+    </screen>
+    <para>
+     The machine will reboot to incorporate the module into the read-only
+     filesystem and start from the new snapshot.
+    </para>
+    </step>
+    <step>
+     <important>
+      <title>Avoid Reboots By Installing Multiple Packages</title>
+      <para>
+       If you wish to install multiple packages, you should install them all in
+       a single operation. Each time <command>transactional-update</command> is
+       run, it creates a new snapshot and discards all previous changes. The
+       changes can only be persisted by starting from the new snapshot through
+       reboot.
+      </para>
+     </important>
+     <para>
+      Use <command>transactional-update</command> to install the desired
+      packages from the toolchain module
+    </para>
+<screen>&prompt.root;<command>transactional-update reboot pkg in <replaceable>binutils kernel-devel kernel-default-devel kernel-syms kernel-macros</replaceable></command>
+     </screen>
+     <para>
+      After the operation is finished the machine will reboot and start from
+      the new snapshots with the packages installed.
+     </para>
+    </step>
+   </procedure>
+
+   <procedure>
+    <title>Disabling <literal>caasp-toolchain</literal> Module</title>
+    <para>
+     After you are done using the toolchain module, you can free up space by
+     uninstalling the tools you no longer need and disable the toolchain module.
+    </para>
+    <step>
+     <para>
+      Uninstall the packages you no longer need
+     </para>
+<screen>&prompt.root;<command>transactional-update reboot pkg rm <replaceable>binutils kernel-devel kernel-default-devel kernel-syms kernel-macros</replaceable></command>
+          </screen>
+     <para>
+      The machine will reboot and start from the new snapshot without these
+      packages.
+     </para>
+    </step>
+    <step>
+     <para>
+     Disable the toolchain module
+    </para>
+<screen>&prompt.root;<command>transactional-update reboot register -d -p caasp-toolchain/3.0/x86_64</command>
+   </screen>
+   <para>
+    The machine will reboot and start from the new snapshot without the
+    module registered.
+   </para>
+    </step>
+   </procedure>
+  </sect2>
 
   <sect2 xml:id="sec.admin.software.helm">
    <title>Deploying &helm; and &tiller;</title>
