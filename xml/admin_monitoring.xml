@@ -17,9 +17,11 @@
  </info>
  <sect1 xml:id="sec.admin.monitoring.cluster">
   <title>Monitoring Concepts</title>
+
   <para>
    There are two basic ways how you can monitor your cluster:
   </para>
+
   <itemizedlist>
    <listitem>
     <para>
@@ -33,137 +35,145 @@
    </listitem>
    <listitem>
     <para>
-     By using <link xlink:href="https://prometheus.io/docs/introduction/overview/">Prometheus</link>
-     and <link xlink:href="http://docs.grafana.org/guides/getting_started/">Grafana</link>,
+     By using
+     <link xlink:href="https://prometheus.io/docs/introduction/overview/">Prometheus</link>
+     and
+     <link xlink:href="http://docs.grafana.org/guides/getting_started/">Grafana</link>,
      for details refer to <xref linkend="sec.admin.monitoring.stack"/>.
     </para>
    </listitem>
   </itemizedlist>
  </sect1>
-
  <sect1 xml:id="sec.admin.monitoring.stack">
-   <title>Monitoring Stack On Kubernetes</title>
-   <para>
-     This document aims to describe monitoring in a &kube; environment.
-   </para>
-   <para>
-    The monitoring stack consists of a metrics server, a visualization platform,
-    and an ingress controller for authentication.
-   </para>
-   <para>
-     <emphasis role="strong">Prometheus Server &amp; Alertmanager</emphasis>
-   </para>
-   <para>
-     Prometheus is an open-source monitoring system with a dimensional
-     data model, flexible query language, efficient time series database
-     and modern alerting approach.
-   </para>
-   <para>
-    <link xlink:href="https://prometheus.io/docs/alerting/alertmanager/">Prometheus Alertmanager</link>
-    handles client alerts, sanitizes duplicates and noise and routes them to
-    configuratble receivers.
-   </para>
-   <para>
-     <emphasis role="strong">Grafana</emphasis>
-   </para>
-   <para>
-     Grafana is an open-source system for querying, analysing and visualizing
-     metrics.
-   </para>
-   <para>
-     <emphasis role="strong">NGINX Ingress Controller</emphasis>
-   </para>
-   <para>
-     Deploying NGINX Ingress Controller allows us to provide TLS
-     termination to our services and to provide basic authentication to the
-     Prometheus Expression browser/API.
-   </para>
-   <para>
-     We have two networking configuration options:
-   </para>
+  <title>Monitoring Stack On &kube;</title>
 
-   <sect2 xml:id="prerequisites">
-     <title>Prerequisites</title>
-     <procedure>
-      <step>
-       <para>
-         Monitoring namespace
-       </para>
-       <para>
-         We will deploy our monitoring stack in its own namespace and therefore
-         create one.
-       </para>
+  <para>
+   This document aims to describe monitoring in a &kube; environment.
+  </para>
+
+  <para>
+   The monitoring stack consists of a metrics server, a visualization platform,
+   and an ingress controller for authentication.
+  </para>
+
+  <para>
+   <emphasis role="strong">Prometheus Server &amp; Alertmanager</emphasis>
+  </para>
+
+  <para>
+   Prometheus is an open-source monitoring system with a dimensional data
+   model, flexible query language, efficient time series database and modern
+   alerting approach.
+  </para>
+
+  <para>
+   <link xlink:href="https://prometheus.io/docs/alerting/alertmanager/">Prometheus
+   Alertmanager</link> handles client alerts, sanitizes duplicates and noise
+   and routes them to configuratble receivers.
+  </para>
+
+  <para>
+   <emphasis role="strong">Grafana</emphasis>
+  </para>
+
+  <para>
+   Grafana is an open-source system for querying, analysing and visualizing
+   metrics.
+  </para>
+
+  <para>
+   <emphasis role="strong">NGINX Ingress Controller</emphasis>
+  </para>
+
+  <para>
+   Deploying NGINX Ingress Controller allows us to provide TLS termination to
+   our services and to provide basic authentication to the Prometheus
+   Expression browser/API.
+  </para>
+
+  <para>
+   We have two networking configuration options:
+  </para>
+
+  <sect2 xml:id="prerequisites">
+   <title>Prerequisites</title>
+   <procedure>
+    <step>
+     <para>
+      Monitoring namespace
+     </para>
+     <para>
+      We will deploy our monitoring stack in its own namespace and therefore
+      create one.
+     </para>
 <screen>&prompt.user;<command>kubectl create namespace monitoring</command>
   </screen>
-      </step>
-
-      <step>
-       <para>
-         Create DNS entries
-       </para>
-       <para>
-        In this example, we will use the a worker node with IP
-        <literal>10.84.152.113</literal> to expose our services.
-       </para>
-       <para>
-        You should configure proper DNS names in any production environment. These
-        values are only for example purposes.
-       </para>
+    </step>
+    <step>
+     <para>
+      Create DNS entries
+     </para>
+     <para>
+      In this example, we will use the a worker node with IP
+      <literal>10.84.152.113</literal> to expose our services.
+     </para>
+     <para>
+      You should configure proper DNS names in any production environment.
+      These values are only for example purposes.
+     </para>
 <screen>
 monitoring.example.com                      IN  A       10.84.152.113
 prometheus.example.com                      IN  CNAME   monitoring.example.com
 prometheus-alertmanager.example.com         IN  CNAME   monitoring.example.com
 grafana.example.com                         IN  CNAME   monitoring.example.com
       </screen>
-      <para>
-        Or add this entry to /etc/hosts
-      </para>
+     <para>
+      Or add this entry to /etc/hosts
+     </para>
 <screen>
 10.84.152.113 prometheus.example.com prometheus-alertmanager.example.com grafana.example.com
       </screen>
-     </step>
-     <step>
-      <para>
-        Create certificates
-      </para>
-      <para>
-       You will need SSL certificates for the shared resources. If you are
-       deploying in a pre-defined network environment, please get proper
-       certificates from your network administrator. In this example, the
-       domains are named after the components they represent.
-       <literal>prometheus.example.com</literal>,
-       <literal>prometheus-alertmanager.example.com</literal> and
-       <literal>grafana.example.com</literal>
-      </para>
-     </step>
-    </procedure>
-   </sect2>
+    </step>
+    <step>
+     <para>
+      Create certificates
+     </para>
+     <para>
+      You will need SSL certificates for the shared resources. If you are
+      deploying in a pre-defined network environment, please get proper
+      certificates from your network administrator. In this example, the
+      domains are named after the components they represent.
+      <literal>prometheus.example.com</literal>,
+      <literal>prometheus-alertmanager.example.com</literal> and
+      <literal>grafana.example.com</literal>
+     </para>
+    </step>
+   </procedure>
+  </sect2>
 
-   <sect2 xml:id="nginx-ingress-controller">
-     <title>NGINX Ingress Controller</title>
-     <!-- FIXME mnapp 2018-11-06 Uncomment this once the section for ingress is ready
+  <sect2 xml:id="nginx-ingress-controller">
+   <title>NGINX Ingress Controller</title>
+<!-- FIXME mnapp 2018-11-06 Uncomment this once the section for ingress is ready
       <para>
       For more information on the <literal>NGINX Ingress Controller</literal>,
       refer to: <xref linkend="book.user.ingress"/>
      </para> -->
-     <procedure>
-      <title>Configure And Deploy NGINX Ingress Controller</title>
-      <step>
+   <procedure>
+    <title>Configure And Deploy NGINX Ingress Controller</title>
+    <step>
+     <para>
+      Choose which networking configuration the Ingress controller should have.
+      Create a file <filename>nginx-ingress-config-values.yaml</filename> with
+      one of the following examples as content.
+     </para>
+     <itemizedlist spacing="compact">
+      <listitem>
        <para>
-        Choose which networking configuration the Ingress
-        controller should have. Create a file
-        <filename>nginx-ingress-config-values.yaml</filename> with one of the
-        following examples as content.
+        <emphasis role="strong">NodePort</emphasis>: The services will be
+        publicly exposed on each node of the cluster, including master nodes,
+        at port <literal>30080</literal> for <literal>HTTP</literal> and
+        <literal>30443</literal> for <literal>HTTPS</literal>.
        </para>
-       <itemizedlist spacing="compact">
-         <listitem>
-           <para>
-             <emphasis role="strong">NodePort</emphasis>: The services will
-             be publicly exposed on each node of the cluster, including
-             master nodes, at port <literal>30080</literal> for
-             <literal>HTTP</literal> and <literal>30443</literal> for
-             <literal>HTTPS</literal>.
-           </para>
 <screen language="yaml">
 # Enable the creation of pod security policy
 podSecurityPolicy:
@@ -184,14 +194,14 @@ controller:
       http: 30080
       https: 30443
        </screen>
-         </listitem>
-         <listitem>
-           <para>
-             <emphasis role="strong">ClusterIP with external IP(s)</emphasis>:
-             The services will be exposed on specific nodes of the cluster, at
-             port <literal>80</literal> for <literal>HTTP</literal> and port
-             <literal>443</literal> for <literal>HTTPS</literal>.
-           </para>
+      </listitem>
+      <listitem>
+       <para>
+        <emphasis role="strong">ClusterIP with external IP(s)</emphasis>: The
+        services will be exposed on specific nodes of the cluster, at port
+        <literal>80</literal> for <literal>HTTP</literal> and port
+        <literal>443</literal> for <literal>HTTPS</literal>.
+       </para>
 <screen language="yaml">
 # Enable the creation of pod security policy
 podSecurityPolicy:
@@ -210,79 +220,74 @@ controller:
     externalIPs:
       - 10.84.152.113
        </screen>
-         </listitem>
-       </itemizedlist>
-       </step>
-       <step>
-        <para>
-         Deploy the upstream helm chart and pass along our configuration values
-         file.
-        </para>
- <screen>
+      </listitem>
+     </itemizedlist>
+    </step>
+    <step>
+     <para>
+      Deploy the upstream helm chart and pass along our configuration values
+      file.
+     </para>
+<screen>
 &prompt.user;<command>helm install --name nginx-ingress stable/nginx-ingress \
 --namespace monitoring \
 --values nginx-ingress-config-values.yaml</command>
    </screen>
-   <para>
-     The result should be two running pods:
-   </para>
-   <screen>
+     <para>
+      The result should be two running pods:
+     </para>
+<screen>
 &prompt.user;<command>kubectl -n monitoring get po</command>
 NAME                                             READY     STATUS    RESTARTS   AGE
 nginx-ingress-controller-74cffccfc-p8xbb         1/1       Running   0          4s
 nginx-ingress-default-backend-6b9b546dc8-mfkjk   1/1       Running   0          4s
 </screen>
-       </step>
-      </procedure>
+    </step>
+   </procedure>
+  </sect2>
 
-</sect2>
-   <sect2 xml:id="tls">
-     <title>TLS</title>
-     <para>
-      You must configure your certificates for the components as secrets in
-      &kube;. Get certificates from your local certificate authority. In this
-      example we are using a single certificate for the shared domain
-      <literal>monitoring.example.com</literal>.
-     </para>
-     <note>
-      <title>Create Individual Secrets For Components</title>
-      <para>
-       Should you choose to secure
-       each service with an individual certificate, you must repeat the step
-       below for each component and adjust the name for the individual secret
-       each time.
-      </para>
-      <para>
-       In this example the name is <literal>monitoring-tls</literal>.
-      </para>
-     </note>
-
-     <important>
-      <title>Note Down Secret Names For Configuration</title>
-      <para>
-       Please note down the names of the secrets you have created. Later
-       configuration steps require secret names to be specified.
-     </para>
-    </important>
-
-     <procedure>
-      <title>Create TLS secrets in Kubernetes</title>
-      <step>
+  <sect2 xml:id="tls">
+   <title>TLS</title>
+   <para>
+    You must configure your certificates for the components as secrets in
+    &kube;. Get certificates from your local certificate authority. In this
+    example we are using a single certificate for the shared domain
+    <literal>monitoring.example.com</literal>.
+   </para>
+   <note>
+    <title>Create Individual Secrets For Components</title>
+    <para>
+     Should you choose to secure each service with an individual certificate,
+     you must repeat the step below for each component and adjust the name for
+     the individual secret each time.
+    </para>
+    <para>
+     In this example the name is <literal>monitoring-tls</literal>.
+    </para>
+   </note>
+   <important>
+    <title>Note Down Secret Names For Configuration</title>
+    <para>
+     Please note down the names of the secrets you have created. Later
+     configuration steps require secret names to be specified.
+    </para>
+   </important>
+   <procedure>
+    <title>Create TLS secrets in &kube;</title>
+    <step>
 <screen>&prompt.user;<command>kubectl create -n monitoring secret tls <replaceable>monitoring-tls</replaceable>  \
 --key  ./monitoring.key \
 --cert ./monitoring.crt</command>
  </screen>
-</step>
-     </procedure>
-
-     <sect3>
-     <title>Using Self-signed Certificates (optional)</title>
-     <para>
-      In some cases you will want to create self-signed certificates for testing
-      of the stack. This is not recommended. If you are using proper CA signed
-      certificates, you must skip this entirely.
+    </step>
+   </procedure>
+   <sect3>
+    <title>Using Self-signed Certificates (optional)</title>
+    <para>
+     In some cases you will want to create self-signed certificates for testing
+     of the stack. This is not recommended. If you are using proper CA signed
+     certificates, you must skip this entirely.
     </para>
-
     <procedure>
      <title>Create Self-signed Certificates</title>
      <step>
@@ -296,8 +301,8 @@ nginx-ingress-default-backend-6b9b546dc8-mfkjk   1/1       Running   0          
      </step>
      <step>
       <para>
-       Create a file <emphasis>openssl.conf</emphasis> with the
-       appropriate values
+       Create a file <emphasis>openssl.conf</emphasis> with the appropriate
+       values
       </para>
 <screen>
 [req]
@@ -328,13 +333,13 @@ DNS.2 = prometheus-alertmanager.example.com
 DNS.3 = grafana.example.com
 </screen>
       <para>
-       This certificate uses Subject Alternative Names so it can be used
-       for Prometheus and Grafana.
+       This certificate uses Subject Alternative Names so it can be used for
+       Prometheus and Grafana.
       </para>
      </step>
      <step>
       <para>
-        Generate certificate
+       Generate certificate
       </para>
 <screen>
 &prompt.user;<command>openssl req -x509 -nodes -days 365 -newkey rsa:4096 \
@@ -342,70 +347,70 @@ DNS.3 = grafana.example.com
 -config ./openssl.conf -extensions 'v3_req'</command>
       </screen>
      </step>
-  <step>
-   <para>
-    Add TLS secret to Kubernetes
-   </para>
+     <step>
+      <para>
+       Add TLS secret to &kube;
+      </para>
 <screen>&prompt.user;<command>kubectl create -n monitoring secret tls <replaceable>monitoring-tls</replaceable>  \
 --key  ./monitoring.key \
 --cert ./monitoring.crt</command>
     </screen>
-   </step>
- </procedure>
-</sect3>
-</sect2>
+     </step>
+    </procedure>
+   </sect3>
+  </sect2>
 
-   <sect2 xml:id="prometheus">
-     <title>Prometheus</title>
-     <note>
-      <title>Prometheus Pushgateway</title>
-      <para>
-        Deploying Prometheus <link xlink:href="https://prometheus.io/docs/practices/pushing/">Pushgateway</link>
-        is out of the scope of this document.
-      </para>
-     </note>
-
-     <procedure>
-      <step>
-      <para>
-        Prometheus node-exporter is in charge of getting the host metrics,
-        to do so, it needs access to <filename>/proc</filename> or
-        <filename>/sys</filename> path on the host. This is achieved with the use
-        of <literal>HostPath</literal> in the pod specs, however
-        using <literal>HostPath</literal> is forbidden by default in &productname;.
-        We need to assign the privileged <literal>PodSecurityPolicy</literal> to
-        the node-exporter ServiceAccount, this ServiceAccount will be in charge
-        of creating the pods.
-      </para>
+  <sect2 xml:id="prometheus">
+   <title>Prometheus</title>
+   <note>
+    <title>Prometheus Pushgateway</title>
+    <para>
+     Deploying Prometheus
+     <link xlink:href="https://prometheus.io/docs/practices/pushing/">Pushgateway</link>
+     is out of the scope of this document.
+    </para>
+   </note>
+   <procedure>
+    <step>
+     <para>
+      Prometheus node-exporter is in charge of getting the host metrics, to do
+      so, it needs access to <filename>/proc</filename> or
+      <filename>/sys</filename> path on the host. This is achieved with the use
+      of <literal>HostPath</literal> in the pod specs, however using
+      <literal>HostPath</literal> is forbidden by default in &productname;. We
+      need to assign the privileged <literal>PodSecurityPolicy</literal> to the
+      node-exporter ServiceAccount, this ServiceAccount will be in charge of
+      creating the pods.
+     </para>
 <screen>&prompt.user;<command>kubectl create rolebinding node-exporter-psp-privileged \
 --namespace monitoring \
 --clusterrole=suse:caasp:psp:privileged \
 --serviceaccount=monitoring:prometheus-node-exporter</command>
 </screen>
-      </step>
-      <step>
+    </step>
+    <step>
+     <para>
+      Create a configuration file
+      <filename>prometheus-config-values.yaml</filename>
+     </para>
+     <para>
+      We need to configure the storage for our deployment. Choose among the
+      options and uncomment the line in the config file. In production
+      environments you must configure persistent storage.
+     </para>
+     <itemizedlist>
+      <listitem>
        <para>
-         Create configuration file <filename>prometheus-config-values.yaml</filename>
+        Use an existing <literal>PersistentVolumeClaim</literal>
        </para>
+      </listitem>
+      <listitem>
        <para>
-         We need to configure the storage for our deployment. Choose among the
-         options and uncomment the line in the config file. In production
-         environments you must configure persistent storage.
+        Use a <literal>StorageClass</literal> (preferred)
        </para>
-       <itemizedlist>
-         <listitem>
-           <para>
-             Use an existing PersistentVolumeClaim
-           </para>
-         </listitem>
-         <listitem>
-           <para>
-             Use a StorageClass
-             <emphasis role="strong">(preferred)</emphasis>
-           </para>
-         </listitem>
-       </itemizedlist>
-       <screen language="yaml">
+      </listitem>
+     </itemizedlist>
+<screen language="yaml">
 # Alertmanager configuration
 alertmanager:
   enabled: true
@@ -488,20 +493,19 @@ server:
 #serverFiles:
 #  prometheus.yml:
    </screen>
-      </step>
-      <step>
-       <para>
-         Deploy the upstream helm chart and pass our configuration
-         values file.
-       </para>
+    </step>
+    <step>
+     <para>
+      Deploy the upstream helm chart and pass our configuration values file.
+     </para>
 <screen>&prompt.user;<command>helm install --name prometheus stable/prometheus \
 --namespace monitoring \
 --values prometheus-config-values.yaml</command>
    </screen>
-       <para>
-         There need to be 3 pods running (3 node-exporter pods because we
-         have 3 nodes).
-       </para>
+     <para>
+      There need to be 3 pods running (3 node-exporter pods because we have 3
+      nodes).
+     </para>
 <screen>&prompt.user;kubectl -n monitoring get po | grep prometheus
 NAME                                             READY     STATUS    RESTARTS   AGE
 prometheus-alertmanager-5487596d54-kcdd6         2/2       Running   0          2m
@@ -511,102 +515,104 @@ prometheus-node-exporter-qfwp9                   1/1       Running   0          
 prometheus-node-exporter-sc4ls                   1/1       Running   0          2m
 prometheus-server-6488f6c4cd-5n9w8               2/2       Running   0          2m
    </screen>
-      </step>
-      <step>
-       <para>
-         Configure Authentication
-       </para>
-       <para>
-        We need to create a <literal>basic-auth</literal> secret so the NGINX
-        Ingress Controller can perform authentication.
-       </para>
-       <para>
-         Install <command>htpasswd</command> on your local workstation
-       </para>
-       <screen>&prompt.sudo;<command>zypper in apache2-utils</command>
+    </step>
+    <step>
+     <para>
+      Configure Authentication
+     </para>
+     <para>
+      We need to create a <literal>basic-auth</literal> secret so the NGINX
+      Ingress Controller can perform authentication.
+     </para>
+     <para>
+      Install <command>htpasswd</command> on your local workstation
+     </para>
+<screen>&prompt.sudo;<command>zypper in apache2-utils</command>
    </screen>
-   <para>
-     Create the secret file <filename>auth</filename>
-   </para>
-   <important>
-    <para>
-      It is very important that the filename is <filename>auth</filename>.
-      During creation, a key in the configuration containing the secret is
-      created that is named after the used filename. The ingress controller will
-      expect a key named <literal>auth</literal>.
-    </para>
-   </important>
-   <screen>
+     <para>
+      Create the secret file <filename>auth</filename>
+     </para>
+     <important>
+      <para>
+       It is very important that the filename is <filename>auth</filename>.
+       During creation, a key in the configuration containing the secret is
+       created that is named after the used filename. The ingress controller
+       will expect a key named <literal>auth</literal>.
+      </para>
+     </important>
+<screen>
 htpasswd -c auth admin
 New password:
 Re-type new password:
 Adding password for user admin
 </screen>
-      <para>
-        Create secret in Kubernetes
-      </para>
+     <para>
+      Create secret in &kube;
+     </para>
 <screen>&prompt.user;<command>kubectl create secret generic -n monitoring prometheus-basic-auth --from-file=auth</command>
   </screen>
-      </step>
-      <step>
-       <para>
-         At this stage, the Prometheus Expression browser/API should be
-         accessible, depending on your network configuration at
-         <literal>https://prometheus.example.com</literal> or
-         <literal>https://prometheus.example.com:30443</literal>.
-       </para>
-      </step>
-     </procedure>
+    </step>
+    <step>
+     <para>
+      At this stage, the Prometheus Expression browser/API should be
+      accessible, depending on your network configuration at
+      <literal>https://prometheus.example.com</literal> or
+      <literal>https://prometheus.example.com:30443</literal>.
+     </para>
+    </step>
+   </procedure>
+  </sect2>
 
-   </sect2>
-   <sect2 xml:id="alertmanager-configuration">
-     <title>Alertmanager Configuration Example</title>
+  <sect2 xml:id="alertmanager-configuration">
+   <title>Alertmanager Configuration Example</title>
+   <para>
+    The configuration sets one "receiver" to get notified by email when a node
+    meets one of these conditions:
+   </para>
+   <itemizedlist spacing="compact">
+    <listitem>
      <para>
-       The configuration sets one "receiver" to get notified by email when a
-       node meets one of these conditions:
+      Node is unschedulable
      </para>
-     <itemizedlist spacing="compact">
-       <listitem>
-         <para>
-           Node is unschedulable
-         </para>
-       </listitem>
-       <listitem>
-         <para>
-           Node runs out of disk space
-         </para>
-       </listitem>
-       <listitem>
-         <para>
-           Node has memory pressure
-         </para>
-       </listitem>
-       <listitem>
-         <para>
-           Node has disk pressure
-         </para>
-       </listitem>
-     </itemizedlist>
+    </listitem>
+    <listitem>
      <para>
-       The first two are critical because the node can not accept new
-       pods, the last two are just warnings.
+      Node runs out of disk space
      </para>
+    </listitem>
+    <listitem>
      <para>
-       The Alertmanager configuration can be added to <filename>prometheus-config-values.yaml</filename>
-       by adding the <literal>alertmanagerFiles</literal> section.
-      </para>
-      <para>
-       For more information on how to configure Alertmanager, refer to <link xlink:href="https://prometheus.io/docs/alerting/configuration">Prometheus: Alerting - Configuration</link>.
+      Node has memory pressure
      </para>
-
-     <procedure>
-      <title>Configuring Alertmanager</title>
-      <step>
-       <para>
-        Add the <literal>alertmanagerFiles</literal> section to your Prometheus
-        configuration.
-       </para>
-       <screen>
+    </listitem>
+    <listitem>
+     <para>
+      Node has disk pressure
+     </para>
+    </listitem>
+   </itemizedlist>
+   <para>
+    The first two are critical because the node can not accept new pods, the
+    last two are just warnings.
+   </para>
+   <para>
+    The Alertmanager configuration can be added to
+    <filename>prometheus-config-values.yaml</filename> by adding the
+    <literal>alertmanagerFiles</literal> section.
+   </para>
+   <para>
+    For more information on how to configure Alertmanager, refer to
+    <link xlink:href="https://prometheus.io/docs/alerting/configuration">Prometheus:
+    Alerting - Configuration</link>.
+   </para>
+   <procedure>
+    <title>Configuring Alertmanager</title>
+    <step>
+     <para>
+      Add the <literal>alertmanagerFiles</literal> section to your Prometheus
+      configuration.
+     </para>
+<screen>
 alertmanagerFiles:
   alertmanager.yml:
     global:
@@ -644,16 +650,18 @@ alertmanagerFiles:
       email_configs:
       - to: 'admin@example.com'
  </screen>
-      </step>
-      <step>
-       <para>
-        Replace the empty set of rules <literal>rules: {}</literal> in the
-        <literal>serverFiles</literal> section of the configuration file.
-       </para>
-       <para>
-         For more information on how to configure alerts, refer to: <link xlink:href="https://prometheus.io/docs/alerting/notification_examples/">Prometheus: Alerting - Notification Template Examples</link>
-       </para>
-       <screen>
+    </step>
+    <step>
+     <para>
+      Replace the empty set of rules <literal>rules: {}</literal> in the
+      <literal>serverFiles</literal> section of the configuration file.
+     </para>
+     <para>
+      For more information on how to configure alerts, refer to:
+      <link xlink:href="https://prometheus.io/docs/alerting/notification_examples/">Prometheus:
+      Alerting - Notification Template Examples</link>
+     </para>
+<screen>
 serverFiles:
   alerts: {}
   rules:
@@ -686,35 +694,31 @@ serverFiles:
         annotations:
           description: '{{ $labels.node }} has insufficient available memory'
         </screen>
-       </step>
-      </procedure>
-</sect2>
-   <sect2 xml:id="grafana">
-     <title>Grafana</title>
-     <orderedlist numeration="arabic" spacing="compact">
-       <listitem>
-         <para>
-           Configure provisoning
-         </para>
-       </listitem>
-     </orderedlist>
+    </step>
+   </procedure>
+  </sect2>
+
+  <sect2 xml:id="grafana">
+   <title>Grafana</title>
+   <para>
+    Starting from Grafana 5.0, it is possible to dynamically provision the data
+    sources and dashbords via files. In &kube;, these files are provided via
+    the utilization of <literal>ConfigMap</literal>, editing a
+    <literal>ConfigMap</literal> will result by the modification of the
+    configuration without having to delete/recreate the pod.
+   </para>
+   <procedure>
+    <title>Configuring Grafana</title>
+    <step>
      <para>
-       Starting from Grafana 5.0, it is possible to dynamically provision
-       the data sources and dashbords via files. In Kubernetes, these
-       files are provided via the utilization of ConfigMap, editing a
-       ConfigMap will result by the modification of the configuration
-       without having to delete/recreate the pod.
+      Configure provisoning
      </para>
-     <itemizedlist spacing="compact">
-       <listitem>
-         <para>
-           Create the default datasource configuration file
-           <emphasis>grafana-datasources.yaml</emphasis> which point to
-           our Prometheus server
-         </para>
-       </listitem>
-     </itemizedlist>
-     <screen language="yaml">
+     <para>
+      Create the default datasource configuration file
+      <emphasis>grafana-datasources.yaml</emphasis> which point to our
+      Prometheus server
+     </para>
+<screen language="yaml">
 ---
 kind: ConfigMap
 apiVersion: v1
@@ -736,67 +740,44 @@ data:
       access: proxy
       orgId: 1
       isDefault: true
- </screen>
-     <itemizedlist spacing="compact">
-       <listitem>
-         <para>
-           Create the ConfigMap in Kubernetes
-         </para>
-       </listitem>
-     </itemizedlist>
-<screen>&prompt.user;kubectl create -f grafana-datasources.yaml
- </screen>
-     <itemizedlist spacing="compact">
-       <listitem>
-         <para>
-           This repo provides a demo dashboard to visualize the resources
-           of the Kubernetes nodes leveraging Prometheus node-exporter
-           metrics only. (optional)
-         </para>
-       </listitem>
-     </itemizedlist>
-<screen>&prompt.user;cat grafana-dashboards-caasp* | kubectl apply -f -
- </screen>
-     <orderedlist numeration="arabic" spacing="compact">
-       <listitem override="2">
-         <para>
-           Deploy stack
-         </para>
-       </listitem>
-     </orderedlist>
+        </screen>
+    </step>
+    <step>
      <para>
-       We need to configure the storage for our deployment.
+      Create the ConfigMap in &kube;
+     </para>
+<screen>&prompt.user;<command>kubectl create -f grafana-datasources.yaml</command>
+        </screen>
+    </step>
+    <step>
+     <para>
+      Configure storage for the deployment
      </para>
      <para>
-       Choose among the options and uncomment the line in the config
-       file.
-     </para>
-     <para>
-       <emphasis role="strong">Mandatory for production: Persistent
-       Storage</emphasis>
+      Choose among the options and uncomment the line in the config file. In
+      production environments you must configure persistent storage.
      </para>
      <itemizedlist>
-       <listitem>
-         <para>
-           Use an existing PersistentVolumeClaim
-         </para>
-       </listitem>
-       <listitem>
-         <para>
-           Use a StorageClass
-           <emphasis role="strong">(prefered)</emphasis>
-         </para>
-       </listitem>
-       <listitem>
-         <para>
-           Create a file <emphasis>grafana-config-values.yaml</emphasis>
-           with the appropriate values.
-         </para>
-       </listitem>
+      <listitem>
+       <para>
+        Use an existing PersistentVolumeClaim
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        Use a StorageClass (preferred)
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        Create a file <emphasis>grafana-config-values.yaml</emphasis> with the
+        appropriate values
+       </para>
+      </listitem>
      </itemizedlist>
-     <screen language="yaml">
+<screen>
 # Configure admin password
-adminPassword: 3357b57b-25a1-4780-ac78-8b77fd7ed9e1
+adminPassword: &lt;password&gt;
 
 # Ingress configuration
 ingress:
@@ -830,36 +811,48 @@ sidecar:
   dashboards:
     enabled: true
     label: grafana_dashboard
- </screen>
-     <itemizedlist spacing="compact">
-       <listitem>
-         <para>
-           Deploy the upstream helm chart and pass our configuration
-           values file.
-         </para>
-       </listitem>
-     </itemizedlist>
-     <screen>
-&prompt.user;helm install --name grafana stable/grafana \
-  --namespace monitoring \
-  --values grafana-config-values.yaml
- </screen>
+   </screen>
+    </step>
+    <step>
      <para>
-       =&gt; We need this pod running
+      Deploy the upstream helm chart and pass our configuration values file
      </para>
-     <screen>
-&prompt.user;<command>kubectl -n monitoring get po | grep grafana</command>
+<screen>&prompt.user;<command>helm install --name grafana stable/grafana \
+--namespace monitoring \
+--values grafana-config-values.yaml</command>
+   </screen>
+    </step>
+    <step>
+     <para>
+      The result should be a running Grafana pod
+     </para>
+<screen>&prompt.user;<command>kubectl -n monitoring get po | grep grafana</command>
 NAME                                             READY     STATUS    RESTARTS   AGE
 grafana-dbf7ddb7d-fxg6d                          3/3       Running   0          2m
- </screen>
+   </screen>
      <para>
-       =&gt; At this stage, Grafana is accessible, depending on you
-       network configuration at https://grafana.example.com or
-       https://grafana.example.com:30443
+      At this stage, Grafana should be accessible, depending on your network
+      configuration at <literal>https://grafana.example.com</literal> or
+      <literal>https://grafana.example.com:30443</literal>
      </para>
-   </sect2>
+    </step>
+    <step>
+     <para>
+      (Optional) Install Grafana dashboards
+     </para>
+     <para>
+      You can find a couple of
+      <link xlink:href="https://github.com/kubic-project/caasp-monitoring">dashboard
+      examples for &productname; on GitHub</link>. This repo provides
+      dashboards to visualize the resources of the &kube; nodes leveraging
+      Prometheus node-exporter metrics only.
+     </para>
+<screen>&prompt.user;<command>cat grafana-dashboards-caasp* | kubectl apply -f -</command>
+    </screen>
+    </step>
+   </procedure>
+  </sect2>
  </sect1>
-
  <sect1 xml:id="sec.admin.monitoring.health">
   <title>Health Checking</title>
 
@@ -911,13 +904,13 @@ grafana-dbf7ddb7d-fxg6d                          3/3       Running   0          
     </listitem>
     <listitem>
      <para>
-      Is there at least one &kube; master fully working? Even if the
-      deployment is configured to be highly available, it's useful to know if
-      <literal>kube-controller-manager</literal> is down on one of the machines.
+      Is there at least one &kube; master fully working? Even if the deployment
+      is configured to be highly available, it's useful to know if
+      <literal>kube-controller-manager</literal> is down on one of the
+      machines.
      </para>
     </listitem>
    </itemizedlist>
-
    <note>
     <title>Understanding cluster health</title>
     <para>
@@ -926,13 +919,12 @@ grafana-dbf7ddb7d-fxg6d                          3/3       Running   0          
      Troubleshoot Clusters</link>
     </para>
    </note>
-
    <sect3 xml:id="sec.admin.monitoring.health.cluster.kubernetes">
     <title>&kube; master</title>
     <para>
-     All components in &kube; expose a <literal>/healthz</literal> endpoint. The
-     expected (healthy) response is a <literal>200 HTTP</literal> and
-     a response body containing <literal>ok</literal>.
+     All components in &kube; expose a <literal>/healthz</literal> endpoint.
+     The expected (healthy) response is a <literal>200 HTTP</literal> and a
+     response body containing <literal>ok</literal>.
     </para>
     <para>
      The minimal services for the master to work properly are:
@@ -941,82 +933,85 @@ grafana-dbf7ddb7d-fxg6d                          3/3       Running   0          
      <varlistentry>
       <term>kube-apiserver</term>
       <listitem>
-      <para>
-       The component that receives your requests from <command>kubectl</command>
-       and from the rest of the &kube; components.
-      </para>
-      <para>
-       Endpoint: <literal>https://<replaceable>MASTER NODE FQDN</replaceable>:6444/healthz</literal> (HTTPS)
-      </para>
+       <para>
+        The component that receives your requests from
+        <command>kubectl</command> and from the rest of the &kube; components.
+       </para>
+       <para>
+        Endpoint: <literal>https://<replaceable>MASTER NODE
+        FQDN</replaceable>:6444/healthz</literal> (HTTPS)
+       </para>
 <screen>&prompt.user;<command>curl -i https://localhost:6444/healthz</command>
 ok
       </screen>
-     </listitem>
-    </varlistentry>
-    <varlistentry>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
       <term>kube-controller-manager</term>
       <listitem>
-      <para>
-       The component that contains the control loop, driving current state to
-       the desired state.
-      </para>
-      <para>
-       Endpoint: <literal>http://<replaceable>MASTER NODE FQDN</replaceable>:10252/healthz</literal> (HTTP)
-      </para>
+       <para>
+        The component that contains the control loop, driving current state to
+        the desired state.
+       </para>
+       <para>
+        Endpoint: <literal>http://<replaceable>MASTER NODE
+        FQDN</replaceable>:10252/healthz</literal> (HTTP)
+       </para>
 <screen>&prompt.user;<command>curl -i http://localhost:10252/healthz</command>
 ok
       </screen>
-     </listitem>
-    </varlistentry>
+      </listitem>
+     </varlistentry>
      <varlistentry>
       <term>kube-scheduler</term>
       <listitem>
-      <para>
-       The component that schedules workloads to nodes.
-      </para>
-      <para>
-       Endpoint: <literal>http://<replaceable>MASTER NODE FQDN</replaceable>:10251/healthz</literal> (HTTP)
-      </para>
+       <para>
+        The component that schedules workloads to nodes.
+       </para>
+       <para>
+        Endpoint: <literal>http://<replaceable>MASTER NODE
+        FQDN</replaceable>:10251/healthz</literal> (HTTP)
+       </para>
 <screen>&prompt.user;<command>curl -i http://localhost:10251/healthz</command>
 ok
       </screen>
-     </listitem>
-    </varlistentry>
-   </variablelist>
-
-   <note>
-    <title>High-Availability Environments</title>
-    <para>
-     In a HA environment you can monitor <literal>kube-apiserver</literal> on
-     <literal>https://<replaceable>MASTER NODE LOADBALANCER</replaceable>:6443/healthz</literal>.
-    </para>
-    <para>
-     If any master node is running correctly you will receive a valid response.
-    </para>
-    <para>
-     This does, however, not mean that all master nodes necessarily work
-     correctly. To ensure that all master nodes work properly, the health checks
-     must be repeated individually for each master node deployed.
-    </para>
-    <para>
-     This endpoint will return a successful HTTP response if the cluster is
-     operational; otherwise it will fail. It will for example check that it can
-     access <literal>etcd</literal> too. This should not be used to infer that
-     the overall cluster health is ideal. It will return a a successful response
-     even when only minimal operational cluster health exists.
-    </para>
-    <para>
-     To probe for full cluster health, you must perform individual health
-     checking for all machines individually.
-    </para>
-   </note>
-  </sect3>
-
+      </listitem>
+     </varlistentry>
+    </variablelist>
+    <note>
+     <title>High-Availability Environments</title>
+     <para>
+      In a HA environment you can monitor <literal>kube-apiserver</literal> on
+      <literal>https://<replaceable>MASTER NODE
+      LOADBALANCER</replaceable>:6443/healthz</literal>.
+     </para>
+     <para>
+      If any master node is running correctly you will receive a valid
+      response.
+     </para>
+     <para>
+      This does, however, not mean that all master nodes necessarily work
+      correctly. To ensure that all master nodes work properly, the health
+      checks must be repeated individually for each master node deployed.
+     </para>
+     <para>
+      This endpoint will return a successful HTTP response if the cluster is
+      operational; otherwise it will fail. It will for example check that it
+      can access <literal>etcd</literal> too. This should not be used to infer
+      that the overall cluster health is ideal. It will return a a successful
+      response even when only minimal operational cluster health exists.
+     </para>
+     <para>
+      To probe for full cluster health, you must perform individual health
+      checking for all machines individually.
+     </para>
+    </note>
+   </sect3>
    <sect3 xml:id="sec.admin.monitoring.cluster.health.etcd">
     <title><literal>etcd</literal> Cluster</title>
     <para>
-     Check that all machines that have the <literal>etcd</literal> role on the cluster see the
-     etcd cluster as healthy.
+     Check that all machines that have the <literal>etcd</literal> role on the
+     cluster see the etcd cluster as healthy.
     </para>
 <screen>&prompt.user;<command>docker exec -it $(docker ps -q -f name="salt-master") salt -G 'roles:etcd' \
 cmd.run 'set -a; source /etc/sysconfig/etcdctl; etcdctl cluster-health'</command>
@@ -1037,11 +1032,11 @@ ab040b25c2584bc8904971c0acbb250f:
     member fe9b5ee9e1cc3cf7 is healthy: got healthy result from https://caasp-worker-2:2379
     cluster is healthy
    </screen>
-   <para>
-    More information on etcd cluster health can be found in <xref linkend="sec.admin.nodes.graceful_shutdown.etcd"/>.
-   </para>
+    <para>
+     More information on etcd cluster health can be found in
+     <xref linkend="sec.admin.nodes.graceful_shutdown.etcd"/>.
+    </para>
    </sect3>
-
    <sect3 xml:id="sec.admin.monitoring.cluster.health.components">
     <title>Running Components</title>
     <para>
@@ -1049,7 +1044,7 @@ ab040b25c2584bc8904971c0acbb250f:
     </para>
 <screen>&prompt.user;<command>kubectl cluster-info</command>
 
-Kubernetes master is running at https://api.infra.caasp.local:6443
+&kube; master is running at https://api.infra.caasp.local:6443
 Dex is running at https://api.infra.caasp.local:6443/api/v1/namespaces/kube-system/services/dex:dex/proxy
 KubeDNS is running at https://api.infra.caasp.local:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
 Tiller is running at https://api.infra.caasp.local:6443/api/v1/namespaces/kube-system/services/tiller:tiller/proxy
@@ -1070,7 +1065,6 @@ To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
     <literal>kubelet</literal> and the CNI (Container Networking Interface) are
     working properly.
    </para>
-
    <sect3 xml:id="sec.admin.monitoring.health.node.kubelet">
     <title><literal>kubelet</literal></title>
     <para>
@@ -1079,18 +1073,19 @@ To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
     <para>
      The <literal>kubelet</literal> has a port exposed <literal>10250</literal>
      on all machines; it's possible to perform an HTTP request to the endpoint
-     to find out if the kubelet is healthy on that machine. The
-     expected (healthy) response is a <literal>200 HTTP</literal> and
-     a response body containing <literal>ok</literal>.
+     to find out if the kubelet is healthy on that machine. The expected
+     (healthy) response is a <literal>200 HTTP</literal> and a response body
+     containing <literal>ok</literal>.
     </para>
     <para>
-     Endpoint: <literal>https://<replaceable>NODE</replaceable>:10250/healthz</literal> (HTTPS)
+     Endpoint:
+     <literal>https://<replaceable>NODE</replaceable>:10250/healthz</literal>
+     (HTTPS)
     </para>
 <screen>&prompt.user;<command>curl -i https://localhost:10250/healthz</command>
 ok
     </screen>
    </sect3>
-
    <sect3 xml:id="sec.admin.monitoring.health.node.cni">
     <title><literal>CNI</literal></title>
     <para>
@@ -1104,27 +1099,27 @@ dex             3         3         3            3           7d
 kube-dns        3         3         3            3           7d
 tiller-deploy   1         1         1            1           7d
     </screen>
-
     <para>
-     If kube-dns is running and you are able to create pods then you can be certain
-     that CNI and your CNI plugin are working correctly.
+     If kube-dns is running and you are able to create pods then you can be
+     certain that CNI and your CNI plugin are working correctly.
     </para>
     <para>
      There's also the
-     <link xlink:href="https://kubernetes.io/docs/tasks/debug-application-cluster/monitor-node-health/">Monitor Node Health</link>
-     check. This is a <literal>DaemonSet</literal> that runs on every node, and
-     reports to the <literal>apiserver</literal> back as
+     <link xlink:href="https://kubernetes.io/docs/tasks/debug-application-cluster/monitor-node-health/">Monitor
+     Node Health</link> check. This is a <literal>DaemonSet</literal> that runs
+     on every node, and reports to the <literal>apiserver</literal> back as
      <literal>NodeCondition</literal> and <literal>Events</literal>.
     </para>
    </sect3>
-   </sect2>
+  </sect2>
 
   <sect2 xml:id="sec.admin.monitoring.health.service">
    <title>Service/Application Health Checks</title>
    <para>
     If the deployed services contain a health endpoint, or if they contain an
     endpoint that can be used to determine if the service is up, you can use
-    <literal>livenessProbes</literal> and/or <literal>readinessProbes</literal>.
+    <literal>livenessProbes</literal> and/or
+    <literal>readinessProbes</literal>.
    </para>
    <note>
     <title>Health check endpoints vs. functional endpoints</title>
@@ -1139,12 +1134,10 @@ tiller-deploy   1         1         1            1           7d
      desired state.
     </para>
    </note>
-
    <para>
     <literal>livenessProbes</literal> and <literal>readinessProbes</literal>
     share configuration options and probe types.
    </para>
-
    <variablelist>
     <varlistentry>
      <term>initialDelaySeconds</term>
@@ -1164,28 +1157,27 @@ tiller-deploy   1         1         1            1           7d
      </listitem>
     </varlistentry>
    </variablelist>
-
-    <variablelist>
-     <varlistentry>
-      <term>successThreshold</term>
+   <variablelist>
+    <varlistentry>
+     <term>successThreshold</term>
      <listitem>
       <para>
-        Number of minimum consecutive successes for the probe to be considered
-        successful (Default: 1).
+       Number of minimum consecutive successes for the probe to be considered
+       successful (Default: 1).
       </para>
      </listitem>
     </varlistentry>
-     <varlistentry>
-      <term>failureThreshold</term>
+    <varlistentry>
+     <term>failureThreshold</term>
      <listitem>
       <para>
-        Number of times this probe is allowed to fail in order to assume that
-        the service is not responding (Default: 3).
+       Number of times this probe is allowed to fail in order to assume that
+       the service is not responding (Default: 3).
       </para>
      </listitem>
     </varlistentry>
-     <varlistentry>
-      <term>timeoutSeconds</term>
+    <varlistentry>
+     <term>timeoutSeconds</term>
      <listitem>
       <para>
        Number of seconds after which the probe times out (Default: 1).
@@ -1200,79 +1192,79 @@ tiller-deploy   1         1         1            1           7d
     <varlistentry>
      <term>Command</term>
      <listitem>
-     <para>
-      A command executed within a container; a retcode of 0 means success.
-     </para>
+      <para>
+       A command executed within a container; a retcode of 0 means success.
+      </para>
       <para>
        All other return codes mean failure.
-     </para>
-    </listitem>
+      </para>
+     </listitem>
     </varlistentry>
     <varlistentry>
      <term>TCP</term>
      <listitem>
-     <para>
-      If a TCP connection can be established is considered success.
-     </para>
-    </listitem>
+      <para>
+       If a TCP connection can be established is considered success.
+      </para>
+     </listitem>
     </varlistentry>
     <varlistentry>
      <term>HTTP</term>
      <listitem>
-     <para>
-      Any HTTP response between <literal>200</literal> and <literal>400</literal>
-      indicates success.
-     </para>
-    </listitem>
+      <para>
+       Any HTTP response between <literal>200</literal> and
+       <literal>400</literal> indicates success.
+      </para>
+     </listitem>
     </varlistentry>
    </variablelist>
-
    <sect3 xml:id="sec.admin.monitoring.health.service.livenessprobe">
     <title>livenessProbe</title>
     <para>
      <link xlink:href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/">livenessProbes</link>
-     are used to detect running but misbehaving pods/a service that
-     might be running (the process didn't die), but that is not responding as
-     expected.
+     are used to detect running but misbehaving pods/a service that might be
+     running (the process didn't die), but that is not responding as expected.
     </para>
     <para>
-     Probes are executed by each <literal>kubelet</literal> against the pods that define them
-     and that are running in that specific node.
+     Probes are executed by each <literal>kubelet</literal> against the pods
+     that define them and that are running in that specific node.
     </para>
     <para>
-     When a <literal>livenessProbe</literal> fails, &kube; will automatically restart the
-     pod and increase the <literal>RESTARTS</literal> count for that pod.
+     When a <literal>livenessProbe</literal> fails, &kube; will automatically
+     restart the pod and increase the <literal>RESTARTS</literal> count for
+     that pod.
     </para>
     <para>
-     These probes will be executed every <literal>periodSeconds</literal> starting from
-     <literal>initialDelaySeconds</literal>.
+     These probes will be executed every <literal>periodSeconds</literal>
+     starting from <literal>initialDelaySeconds</literal>.
     </para>
    </sect3>
-
    <sect3 xml:id="sec.admin.monitoring.health.service.readinessprobe">
     <title>readinessProbe</title>
     <para>
      <link xlink:href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#define-readiness-probes">readinessProbes</link>
-     are used to wait for processes that take some time to start. Despite
-     the container running, it might be performing some time consuming
-     initializatoin operations. During this time, you don't want &kube; to route
-     traffic to that specific pod; also, you don't want that container to be
-     restarted because it will appear unresponsive.
+     are used to wait for processes that take some time to start. Despite the
+     container running, it might be performing some time consuming
+     initializatoin operations. During this time, you don't want &kube; to
+     route traffic to that specific pod; also, you don't want that container to
+     be restarted because it will appear unresponsive.
     </para>
     <para>
      These probes will be executed every <literal>periodSeconds</literal>
-     starting from <literal>initialDelaySeconds</literal> until the service is ready.
+     starting from <literal>initialDelaySeconds</literal> until the service is
+     ready.
     </para>
     <para>
-     They support the same kind of probes as the <literal>livenessProbe</literal>
+     They support the same kind of probes as the
+     <literal>livenessProbe</literal>
     </para>
-
     <para>
      Both probe types can be used at the same time. The
      <literal>livenessProbe</literal> will ensure that if a service is running
-     yet misbehaving, it will be restarted, and <literal>readinessProbe</literal>
-     will ensure that &kube; won't route traffic to that specific pod until it's
-     considered to be fully functional and running.
+     yet misbehaving, it will be restarted, and
+     <literal>readinessProbe</literal> will ensure that &kube; won't route
+     traffic to that specific pod until it's considered to be fully functional
+     and running.
     </para>
    </sect3>
   </sect2>
@@ -1280,11 +1272,12 @@ tiller-deploy   1         1         1            1           7d
   <sect2 xml:id="sec.admin.monitoring.health.general">
    <title>General Health Checks</title>
    <para>
-    We recommend to apply other best practices from system administration
-    to your monitoring and health checking approach. These steps are not
-    specific to &productname; and are beyond the scope of this document. To
-    simplify performing tasks like disk usage checks, you can use <literal>salt</literal>.
-    For more information see: <xref linkend="sec.admin.salt"/>
+    We recommend to apply other best practices from system administration to
+    your monitoring and health checking approach. These steps are not specific
+    to &productname; and are beyond the scope of this document. To simplify
+    performing tasks like disk usage checks, you can use
+    <literal>salt</literal>. For more information see:
+    <xref linkend="sec.admin.salt"/>
    </para>
   </sect2>
  </sect1>
