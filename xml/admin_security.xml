@@ -81,17 +81,52 @@
   </para>
  </sect1>
 
- <sect1 xml:id="sec.admin.security.users">
-  <title>Managing Users and Groups</title>
-
+ <sect1 xml:id="sec.admin.security.admin">
+  <title>Administrator Accounts</title>
   <para>
-   User information is stored in <phrase role="productname">OpenLDAP</phrase>
-   running in a container on your &productname; &admin_node;. You can use
-   standard LDAP administration tools for managing these users remotely. To do
-   so, install the <package>openldap2</package> package on a computer in your
-   network and make sure that computer can connect to the &admin_node; on port
-   <literal>389</literal>.
+   By default there are two administrator accounts added to openLDAP:
   </para>
+
+  <variablelist>
+   <varlistentry>
+    <term>openLDAP admin user</term>
+    <listitem>
+     <para>
+      <literal>cn=admin,dc=infra,dc=caasp,dc=local</literal>
+     </para>
+     <para>
+      This is the "root" user for openLDAP and has full permissions to change
+      credentials.
+     </para>
+     <para>
+      When the instructions in this section ask for <literal>LDAP_ADMIN_PASSWORD</literal>
+      they require the openLDAP admin password.
+     </para>
+     <para>
+      You can retrieve the current password from the admin node.
+     </para>
+<screen>&prompt.user;<command>cat /var/lib/misc/infra-secrets/openldap-password</command>
+c88a9c67056a74e0357befdff93f87bbe0904214
+     </screen>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>&dashboard; admin user</term>
+    <listitem>
+     <para>
+      <literal>uid=test,ou=People,dc=infra,dc=caasp,dc=local</literal>
+      </para>
+      <para>
+       This account does not have privileges to change administrator passwords
+       in openLDAP.
+      </para>
+      <para>
+       The account is created by the user on first login to &dashboard;
+       and consequently for configuring &productname;.
+      </para>
+    </listitem>
+   </varlistentry>
+   </variablelist>
 
   <sect2 xml:id="sec.admin.security.users.ldap_preparation">
    <title>Preparing LDAP Authentication</title>
@@ -130,6 +165,127 @@ cat /etc/openldap/pki/ca.crt > ~/ca.pem</command>
     </step>
    </procedure>
   </sect2>
+
+  <sect2 xml:id="sec.admin.security.admin.ldap_password">
+   <title>Changing openLDAP Admin User Password</title>
+   <procedure>
+    <title>Changing openLDAP Admin User Password</title>
+    <step>
+     <para>
+      Log in to the admin node via SSH.
+     </para>
+    </step>
+    <step>
+     <para>
+      Change the openLDAP admin password in the file
+      <filename>/var/lib/misc/infra-secrets/openldap-password</filename>.
+     </para>
+<screen>&prompt.user;<command>echo <replaceable>new_password</replaceable> > /var/lib/misc/infra-secrets/openldap-password</command>
+    </screen>
+    </step>
+    <step>
+     <para>
+      Restart openLDAP to activate the changes.
+     </para>
+<screen>&prompt.user;<command>docker stop $(docker ps -q -f name=ldap)</command>
+</screen>
+     <para>
+      After about <literal>20</literal> seconds, the OpenLDAP container will be
+      automatically restarted with the new root password. This will only replace
+      the credentials for the openLDAP admin user and not affect any other
+      user configurations.
+     </para>
+    </step>
+   </procedure>
+  </sect2>
+
+  <sect2 xml:id="sec.admin.security.admin.velum_admin_password">
+   <title>Changing &dashboard; Admin Password</title>
+   <para>
+    Changing the &dashboard; admin password must be done in the openLDAP
+    container running on the admin node. You will need the openLDAP admin
+    password that is stored on the admin node itself.
+   </para>
+  <procedure>
+   <title>Changing &dashboard; Admin Password</title>
+   <step>
+    <para>
+     Log in to the admin node via SSH.
+    </para>
+   </step>
+   <step>
+    <para>
+     Retrieve the openLDAP admin password from
+     <filename>/var/lib/misc/infra-secrets/openldap-password</filename> on the
+     admin node. You will need this in the final step.
+    </para>
+<screen>&prompt.user;<command>cat /var/lib/misc/infra-secrets/openldap-password</command>
+c88a9c67056a74e0357befdff93f87bbe0904214
+    </screen>
+   </step>
+   <step>
+    <para>
+     Open a shell session on the openLDAP container.
+    </para>
+<screen>&prompt.user;<command>docker exec -it $(docker ps -q -f name=ldap) /bin/bash</command>
+    </screen>
+   </step>
+   <step>
+    <para>
+     Use <command>slappasswd</command> to generate a hashed and salted password
+     string.
+    </para>
+<screen>&prompt.user;<command>slappasswd -n -s <replaceable>password</replaceable></command>
+{SSHA}mU7vDqF+cyNQlnQ2bZyvY4oFfjX9uDm3
+    </screen>
+    <note>
+     <para>
+      By ommitting the <literal>-s &lt;password&gt;</literal> parameter, you
+      will be prompted to enter a new secret instead of providing it through the
+      input.
+     </para>
+    </note>
+   </step>
+   <step>
+    <para>
+     Generate an LDIF file <filename>velum.ldif</filename> with the new user
+     information. Replace <literal>userPassword</literal> with the string you
+     generated in the previous step.
+    </para>
+    <screen>
+dn: uid=test,ou=People,dc=infra,dc=caasp,dc=local
+changetype: modify
+replace: userPassword
+userPassword: {SSHA}mU7vDqF+cyNQlnQ2bZyvY4oFfjX9uDm3
+</screen>
+<screen>&prompt.user;<command>`echo "dn: uid=test,ou=People,dc=infra,dc=caasp,dc=local" > /tmp/velum.ldif`</command>
+<command>`echo "changetype: modify" >> /tmp/velum.ldif`</command>
+<command>`echo "replace: userPassword" >> /tmp/velum.ldif`</command>
+<command>`echo "userPassword: {SSHA}mU7vDqF+cyNQlnQ2bZyvY4oFfjX9uDm3" >> /tmp/velum.ldif`</command>
+</screen>
+   </step>
+   <step>
+    <para>
+     Apply the LDIF to openLDAP.
+    </para>
+<screen>&prompt.user;<command>ldapmodify -H ldaps:// -D "cn=admin,dc=infra,dc=caasp,dc=local" \
+-w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f /tmp/velum.ldif</command></screen>
+   </step>
+  </procedure>
+ </sect2>
+ </sect1>
+
+ <sect1 xml:id="sec.admin.security.users">
+  <title>Managing Users and Groups</title>
+
+  <para>
+   User information is stored in <phrase role="productname">OpenLDAP</phrase>
+   running in a container on your &productname; &admin_node;. You can use
+   standard LDAP administration tools for managing these users remotely. To do
+   so, install the <package>openldap2</package> package on a computer in your
+   network and make sure that computer can connect to the &admin_node; on port
+   <literal>389</literal>.
+  </para>
 
   <sect2 xml:id="sec.admin.security.users.add">
    <title>Adding New User</title>
@@ -213,7 +369,7 @@ mail: <replaceable>E-MAIL_ADDRESS</replaceable> <co xml:id="co.admin.security.us
     -b uid=<replaceable>USERID</replaceable>,ou=People,dc=infra,dc=caasp,dc=local</command></screen>
   </sect2>
 
-  <sect2 xml:id="sec.admin.security.users.change">
+  <sect2 xml:id="sec.admin.security.users.change.group">
    <title>Changing User</title>
    <para>
     The following procedure details how to modify a user in the
@@ -251,9 +407,9 @@ userPassword: <replaceable>PASSWORD</replaceable><co xml:id="co.admin.security.u
      <example xml:id="ex.admin.security.users.change_group">
       <title>Add User to Administrators Group</title>
 <screen>dn: cn=Administrators,ou=Groups,dc=infra,dc=caasp,dc=local
-  changetype: modify
-  add: uniqueMember
-  uniqueMember: uid=<replaceable>USERID</replaceable><co xml:id="co.admin.security.users.add.admin"/>,ou=People,dc=infra,dc=caasp,dc=local</screen>
+changetype: modify
+add: uniqueMember
+uniqueMember: uid=<replaceable>USERID</replaceable><co xml:id="co.admin.security.users.add.admin"/>,ou=People,dc=infra,dc=caasp,dc=local</screen>
       <calloutlist>
        <callout arearefs="co.admin.security.users.add.admin">
         <para>
@@ -268,7 +424,7 @@ userPassword: <replaceable>PASSWORD</replaceable><co xml:id="co.admin.security.u
       Execute <command>ldapmodify</command>.
      </para>
 <screen>&prompt.user;<command>ldapmodify -H ldap://<replaceable>ADMIN_NODE</replaceable>:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local \
-    -w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f <replaceable>LDIF_FILE</replaceable></command></screen>
+-w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f <replaceable>LDIF_FILE</replaceable></command></screen>
     </step>
    </procedure>
   </sect2>
@@ -293,7 +449,7 @@ changetype: delete</screen>
        Execute <command>ldapmodify</command>.
       </para>
 <screen>&prompt.user;<command>ldapmodify -H ldap://<replaceable>ADMIN_NODE</replaceable>:389 -ZZ -D uid=<replaceable>USER_ID</replaceable>,ou=People,dc=infra,dc=caasp,dc=local \
-    -w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f <replaceable>LDIF_DELETE</replaceable></command></screen>
+-w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f <replaceable>LDIF_DELETE</replaceable></command></screen>
      </step>
     </procedure>
   </sect2>
