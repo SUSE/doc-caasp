@@ -128,6 +128,7 @@ c88a9c67056a74e0357befdff93f87bbe0904214
    </varlistentry>
    </variablelist>
 
+<<<<<<< HEAD
   <sect2 xml:id="sec.admin.security.users.ldap_preparation">
    <title>Preparing LDAP Authentication</title>
    <para>
@@ -166,6 +167,8 @@ cat /etc/openldap/pki/ca.crt > ~/ca.pem</command>
    </procedure>
   </sect2>
 
+=======
+>>>>>>> Rework structure of document
   <sect2 xml:id="sec.admin.security.admin.ldap_password">
    <title>Changing openLDAP Admin User Password</title>
    <procedure>
@@ -275,9 +278,46 @@ userPassword: {SSHA}mU7vDqF+cyNQlnQ2bZyvY4oFfjX9uDm3
  </sect2>
  </sect1>
 
+ <sect1 xml:id="sec.admin.security.ldap_preparation">
+  <title>Preparing LDAP Authentication</title>
+  <para>
+   To perform administrative tasks from a
+   <replaceable>WORKSTATION</replaceable> on the <phrase role=
+   "productname">LDAP</phrase> directory, retrieve the <phrase
+   role="productname">OpenLDAP</phrase> administrator password and
+   install the LDAP certificate.
+  </para>
+  <procedure>
+   <step>
+    <para>
+     Retrieve the LDAP admin password. Note the password for later use.
+    </para>
+<screen>&prompt.root.admin;<command>cat /var/lib/misc/infra-secrets/openldap-password</command></screen>
+   </step>
+   <step>
+    <para>
+     Import the LDAP certificate to your local trusted certificate
+     storage. On the &admin_node;, run:
+    </para>
+<screen>&prompt.root.admin;<command>docker exec -it $(docker ps | grep openldap | \
+awk '{print $1}') cat /etc/openldap/pki/ca.crt > ~/ca.pem</command>
+&prompt.root.admin;<command>scp ~/ca.pem root@<replaceable>WORKSTATION</replaceable>:/usr/share/pki/trust/anchors/ca-caasp.crt.pem</command></screen>
+    <para>
+     Replace <replaceable>WORKSTATION</replaceable> with the appropriate
+     hostname for the workstation where you wish to run the LDAP queries.
+    </para>
+   </step>
+   <step>
+    <para>
+     Then, on that workstation, run:
+    </para>
+<screen>&prompt.root;<command>update-ca-certificates</command></screen>
+   </step>
+  </procedure>
+ </sect1>
+
  <sect1 xml:id="sec.admin.security.users">
   <title>Managing Users and Groups</title>
-
   <para>
    User information is stored in <phrase role="productname">OpenLDAP</phrase>
    running in a container on your &productname; &admin_node;. You can use
