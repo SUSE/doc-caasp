@@ -123,7 +123,7 @@ caasp3-worker-4   Ready     &lt;none&gt;    1d        v1.9.8</screen>
   <para>
    Log in to the admin node and run:
   </para>
-<screen>&prompt.user;<command>docker exec -it $(docker ps -q -f name=salt-master) \
+<screen>&prompt.user;<command>docker exec -it $(docker ps -q -f name="salt-master") \
 salt -P 'roles:(admin|kube-master|kube-minion)' \
 cmd.run "<replaceable>df -h</replaceable>"</command>
 </screen>
@@ -467,7 +467,7 @@ cmd.run "<replaceable>df -h</replaceable>"</command>
        specified node from the cluster without confirmation.
       </para>
      </warning>
-<screen>&prompt.root;<command>docker exec -it $(docker ps | grep "velum-dashboard" | awk '{print $1}') \
+<screen>&prompt.root;<command>docker exec -it $(docker ps -q -f name="velum-dashboard") \
 entrypoint.sh bundle exec rails runner 'puts Minion.find_by(minion_id: "<replaceable>$ID_FROM_UNASSIGNED_QUEUE</replaceable>").destroy'</command>
     </screen>
    </step>
@@ -553,14 +553,14 @@ entrypoint.sh bundle exec rails runner 'puts Minion.find_by(minion_id: "<replace
       <para>
        Gracefully shut down all worker nodes.
       </para>
-<screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name=salt-master) \
+<screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name="salt-master") \
 salt --async -G 'roles:kube-minion' cmd.run 'systemctl poweroff'</command></screen>
      </step>
      <step>
       <para>
        Gracefully shut down all master nodes.
       </para>
-<screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name=salt-master) \
+<screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name="salt-master") \
 salt --async -G 'roles:kube-master' cmd.run 'systemctl poweroff'</command></screen>
      </step>
      <step>

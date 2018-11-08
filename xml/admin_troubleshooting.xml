@@ -85,7 +85,7 @@
     <para>
      Retry bootstrapping from &admin_node; console.
     </para>
-<screen>&prompt.root.admin;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
+<screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name="salt-master") \
     salt-run -l debug state.orchestrate orch.kubernetes > salt-orchestration.logs</command></screen>
    </step>
    <step>
@@ -298,7 +298,7 @@
      Manually run the salt orchestration on the &admin_node;. This may
      take some time.
     </para>
-<screen>&prompt.root.admin;<command>docker exec -it $(docker ps | grep salt-master | awk '{print $1}') \
+<screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name="salt-master") \
     bash -c "salt-run state.orchestrate orch.kubernetes" 2&amp;>1 > salt-run.log</command></screen>
    </step>
    <step>

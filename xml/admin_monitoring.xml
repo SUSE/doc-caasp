@@ -253,7 +253,7 @@ ok
      Check that all machines that have the <literal>etcd</literal> role on the cluster see the
      etcd cluster as healthy.
     </para>
-<screen>&prompt.user;<command>docker exec -it $(docker ps -q -f name=salt-master) salt -G 'roles:etcd' \
+<screen>&prompt.user;<command>docker exec -it $(docker ps -q -f name="salt-master") salt -G 'roles:etcd' \
 cmd.run 'set -a; source /etc/sysconfig/etcdctl; etcdctl cluster-health'</command>
 
 f69e7af2880f42d68dca26ca892cb945:

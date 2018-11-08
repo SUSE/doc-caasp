@@ -254,7 +254,7 @@
    <para>
     Retrieve the <literal>salt-master</literal> logs.
    </para>
-<screen>&prompt.user;<command>docker exec -it $(docker ps -q -f name=salt-master) \
+<screen>&prompt.user;<command>docker exec -it $(docker ps -q -f name="salt-master") \
 cat /var/log/salt/master</command>
     </screen>
   </sect2>
@@ -271,7 +271,7 @@ cat /var/log/salt/master</command>
     by reading the <filename>/var/log/salt/minion</filename> file.
    </para>
 <screen>
-&prompt.user;<command>docker exec -it $(docker ps -q -f name=salt-master) \
+&prompt.user;<command>docker exec -it $(docker ps -q -f name="salt-master") \
 salt '*' cmd.run "cat /var/log/salt/minion"</command>
     </screen>
   </sect2>
@@ -381,7 +381,7 @@ salt '*' cmd.run "cat /var/log/salt/minion"</command>
      <literal>salt-master</literal> container, like:
     </para>
 <screen>
-<command>docker rm -f $(docker ps -q -f name=salt-master)</command>.
+<command>docker rm -f $(docker ps -q -f name="salt-master")</command>.
      </screen>
     <para>
      After deleting this container, the <literal>kubelet</literal> will bring
@@ -390,7 +390,7 @@ salt '*' cmd.run "cat /var/log/salt/minion"</command>
      <literal>debug</literal> loglevel.
     </para>
 <screen>
-<command>docker logs -f $(docker ps -q -f name=salt-master)</command>
+<command>docker logs -f $(docker ps -q -f name="salt-master")</command>
    </screen>
    </sect3>
   </sect2>
@@ -424,7 +424,7 @@ salt '*' cmd.run "cat /var/log/salt/minion"</command>
   </para>
 
 <screen>
-&prompt.user;<command>docker exec -it $(docker ps -q -f name=salt-master) \
+&prompt.user;<command>docker exec -it $(docker ps -q -f name="salt-master") \
 salt -P 'roles:(admin|kube-master|kube-minion)' \
 cmd.run "journalctl -u transactional-update"</command>
  </screen>
@@ -608,7 +608,7 @@ cmd.run "journalctl -u transactional-update"</command>
       <para>
        Change the log level value in the Salt pillar.
       </para>
-<screen>&prompt.user;<command>docker exec -it $(docker ps | grep dashboard | awk '{print $1}') \
+<screen>&prompt.user;<command>docker exec -it $(docker ps -q -f name="dashboard") \
 entrypoint.sh bundle exec rake "velum:create_pillar['kube_log_level', '5']"</command>
 </screen>
      </step>
@@ -617,7 +617,7 @@ entrypoint.sh bundle exec rake "velum:create_pillar['kube_log_level', '5']"</com
        Then run Salt orchestration to rebuild the configuration across the
        cluster.
       </para>
-<screen>&prompt.user;<command>docker exec -it $(docker ps -q -f name=salt-master) \
+<screen>&prompt.user;<command>docker exec -it $(docker ps -q -f name="salt-master") \
 salt-run state.orchestrate orch.kubernetes</command>
    </screen>
      </step>

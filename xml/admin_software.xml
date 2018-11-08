@@ -414,28 +414,28 @@
      <para>
       Reboot all nodes.
      </para>
-<screen>&prompt.root.admin;<command>docker exec -it $(docker ps | grep salt-master | \
-    awk '{print $1}') salt '*' system.reboot</command></screen>
+<screen>&prompt.root.admin;<command>exec -it $(docker ps -q -f name="salt-master") \
+salt '*' system.reboot</command></screen>
     </step>
     <step>
      <para>
       On the &admin_node; run
      </para>
-<screen>&prompt.root.admin;<command>docker exec -it $(docker ps | grep salt-master | \
-    awk '{print $1}') salt "*" cmd.run "transactional-update cleanup reboot dup"</command></screen>
+<screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name="salt-master") \
+ salt "*" cmd.run "transactional-update cleanup reboot dup"</command></screen>
     </step>
     <step>
      <para>
       Reboot all nodes again.
      </para>
-<screen>&prompt.root.admin;<command>docker exec -it $(docker ps | grep salt-master | \
-    awk '{print $1}') salt '*' system.reboot</command></screen>
+<screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name="salt-master") \
+salt '*' system.reboot</command></screen>
     </step>
     <step>
      <para>
       Start the update with debug output.
      </para>
-<screen>&prompt.root.admin;<command>docker exec -it $(docker ps | grep salt-master | \
+<screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name="salt-master") \
     awk '{print $1}') salt-run -l debug state.orchestrate orch.update</command></screen>
     </step>
     <step>
@@ -552,7 +552,7 @@
    </para>
 
    <screen>
-&prompt.user;<command>docker exec -i  $(docker ps -q -f name=salt-master) \
+&prompt.user;<command>docker exec -i  $(docker ps -q -f name="salt-master") \
 salt --batch 10 -P "roles:(admin|kube-(master|minion))" \
 cmd.run "rpm -q SUSEConnect"</command>
 
@@ -601,7 +601,7 @@ retcode:
     <literal>transactional-update.timer</literal>.
     </para>
     <screen>
-&prompt.user;<command>docker exec -i $(docker ps -q -f name=salt-master) \
+&prompt.user;<command>docker exec -i $(docker ps -q -f name="salt-master") \
 salt --batch 10 -P "roles:(admin|kube-(master|minion))" \
 cmd.run "systemctl disable --now transactional-update.timer"</command>
 
@@ -658,7 +658,7 @@ retcode:
      </para>
     </note>
     <screen>
-&prompt.user;<command>docker exec -i $(docker ps -q -f name=salt-master) \
+&prompt.user;<command>docker exec -i $(docker ps -q -f name="salt-master") \
 salt --batch <replaceable>10</replaceable> -P "roles:(admin|kube-(master|minion))" \
 cmd.run "transactional-update salt migration -n" \
 | tee transactional-update-migration.log</command>
