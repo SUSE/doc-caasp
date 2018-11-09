@@ -888,9 +888,9 @@ helm-2.6.1-1.6.x86_64
    <screen>&prompt.user;<command>helm init --client-only</command></screen>
 
    <para>
-    The &tiller; version that ships with &productname; is supported by &suse;. While
-    &suse; does not provide support for third-party &helm; charts, you can easily
-    use them if necessary.
+    The &tiller; version that ships with &productname; is supported by &suse;.
+    While &suse; does not provide support for third-party &helm; charts, you can
+    easily use them if necessary.
    </para>
   </sect2>
 
@@ -945,6 +945,87 @@ heapster-default  1  Fri Jun 29 10:48:45 2018  DEPLOYED  heapster-0.2.7  kube-sy
      </step>
     </procedure>
   </sect2>
+ </sect1>
+
+ <sect1 xml:id="installing.kube.dashboard">
+  <title>Installing &kube; Dashboard</title>
+
+  <important>
+   <title>Technology Preview</title>
+   <para>
+    Even though you can install and use the community &kube; dashboard,
+    &productname; currently fully supports only &dashboard;.
+   </para>
+  </important>
+
+  <itemizedlist>
+  <title>Requirements</title>
+  <listitem>
+  <para>
+  Heapster version 1.3.0 or later needs to be installed on the cluster
+  </para>
+  </listitem>
+  <listitem>
+  <para>
+  Helm version 2.7.2+ and kubectl version 1.8.0+ recommended
+  </para>
+  </listitem>
+  </itemizedlist>
+
+  <procedure>
+   <title>Installation of &kube; Dashboard</title>
+   <step>
+<screen><command>helm install --name heapster-default \
+--namespace=kube-system stable/heapster \
+--version=0.2.7 --set rbac.create=true</command>
+     </screen>
+   </step>
+   <step>
+<screen><command>helm install --namespace=kube-system \
+--name=kubernetes-dashboard stable/kubernetes-dashboard \
+--version=0.6.1</command>
+     </screen>
+   </step>
+   <step>
+    <para>
+      Connect to any cluster node using SSH.
+    </para>
+   </step>
+   <step>
+    <para>
+      Visit <literal>http://127.0.0.1:8081/</literal> in your browser.
+      You will be greeted with by a welcome page containing a dialog to configure authentication.
+    </para>
+   </step>
+   <step>
+    <para>
+      Select <guimenu>token</guimenu> authentication. To retrieve your token refer to the value in your kubeconfig file by running the command:
+    </para>
+<screen><command>grep "id-token" /path/to/kubeconfig  | awk '{print $2}'</command>
+    </screen>
+   </step>
+   <step>
+    <para>
+      On login cluster resources and basic metrics are populated.
+    </para>
+   </step>
+  </procedure>
+
+  <procedure>
+   <title>Exposing the Dashboard</title>
+   <step>
+<screen><command>helm upgrade kubernetes-dashboard stable/kubernetes-dashboard --set service.type=NodePort</command>
+</screen>
+   </step>
+   <step>
+    <para>
+      Now you may visit the dashboard at
+      <literal>https://<replaceable>WORKER_NODE_ADDRESS</replaceable>:<replaceable>NODE_PORT</replaceable></literal>
+      in your browser from outside of your cluster.
+    </para>
+   </step>
+  </procedure>
+
  </sect1>
 
 </chapter>
