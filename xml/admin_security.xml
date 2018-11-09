@@ -128,47 +128,6 @@ c88a9c67056a74e0357befdff93f87bbe0904214
    </varlistentry>
    </variablelist>
 
-<<<<<<< HEAD
-  <sect2 xml:id="sec.admin.security.users.ldap_preparation">
-   <title>Preparing LDAP Authentication</title>
-   <para>
-    To perform administrative tasks from a
-    <replaceable>WORKSTATION</replaceable> on the <phrase role=
-    "productname">LDAP</phrase> directory, retrieve the <phrase
-    role="productname">OpenLDAP</phrase> administrator password and
-    install the LDAP certificate.
-   </para>
-   <procedure>
-    <step>
-     <para>
-      Retrieve the LDAP admin password. Note the password for later use.
-     </para>
-<screen>&prompt.root.admin;<command>cat /var/lib/misc/infra-secrets/openldap-password</command></screen>
-    </step>
-    <step>
-     <para>
-      Import the LDAP certificate to your local trusted certificate
-      storage. On the &admin_node;, run:
-     </para>
-<screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name="openldap") \
-cat /etc/openldap/pki/ca.crt > ~/ca.pem</command>
-&prompt.root.admin;<command>scp ~/ca.pem root@<replaceable>WORKSTATION</replaceable>:/usr/share/pki/trust/anchors/ca-caasp.crt.pem</command></screen>
-     <para>
-      Replace <replaceable>WORKSTATION</replaceable> with the appropriate
-      hostname for the workstation where you wish to run the LDAP queries.
-     </para>
-    </step>
-    <step>
-     <para>
-      Then, on that workstation, run:
-     </para>
-<screen>&prompt.root;<command>update-ca-certificates</command></screen>
-    </step>
-   </procedure>
-  </sect2>
-
-=======
->>>>>>> Rework structure of document
   <sect2 xml:id="sec.admin.security.admin.ldap_password">
    <title>Changing openLDAP Admin User Password</title>
    <procedure>
@@ -218,16 +177,6 @@ cat /etc/openldap/pki/ca.crt > ~/ca.pem</command>
    </step>
    <step>
     <para>
-     Retrieve the openLDAP admin password from
-     <filename>/var/lib/misc/infra-secrets/openldap-password</filename> on the
-     admin node. You will need this in the final step.
-    </para>
-<screen>&prompt.user;<command>cat /var/lib/misc/infra-secrets/openldap-password</command>
-c88a9c67056a74e0357befdff93f87bbe0904214
-    </screen>
-   </step>
-   <step>
-    <para>
      Open a shell session on the openLDAP container.
     </para>
 <screen>&prompt.user;<command>docker exec -it $(docker ps -q -f name=ldap) /bin/bash</command>
@@ -251,28 +200,14 @@ c88a9c67056a74e0357befdff93f87bbe0904214
    </step>
    <step>
     <para>
-     Generate an LDIF file <filename>velum.ldif</filename> with the new user
-     information. Replace <literal>userPassword</literal> with the string you
-     generated in the previous step.
+     Set the new password. Replace <literal>new_password</literal>
+     with the string you generated in the previous step.
     </para>
-    <screen>
-dn: uid=test,ou=People,dc=infra,dc=caasp,dc=local
-changetype: modify
-replace: userPassword
-userPassword: {SSHA}mU7vDqF+cyNQlnQ2bZyvY4oFfjX9uDm3
+
+<screen>&prompt.user;<command>ldappasswd -H ldaps:// -D "cn=admin,dc=infra,dc=caasp,dc=local" \
+-w $(cat /var/lib/misc/infra-secrets/openldap-password) \
+uid=test,ou=People,dc=infra,dc=caasp,dc=local -s <replaceable>new_password</password></command>
 </screen>
-<screen>&prompt.user;<command>`echo "dn: uid=test,ou=People,dc=infra,dc=caasp,dc=local" > /tmp/velum.ldif`</command>
-<command>`echo "changetype: modify" >> /tmp/velum.ldif`</command>
-<command>`echo "replace: userPassword" >> /tmp/velum.ldif`</command>
-<command>`echo "userPassword: {SSHA}mU7vDqF+cyNQlnQ2bZyvY4oFfjX9uDm3" >> /tmp/velum.ldif`</command>
-</screen>
-   </step>
-   <step>
-    <para>
-     Apply the LDIF to openLDAP.
-    </para>
-<screen>&prompt.user;<command>ldapmodify -H ldaps:// -D "cn=admin,dc=infra,dc=caasp,dc=local" \
--w <replaceable>LDAP_ADMIN_PASSWORD</replaceable> -f /tmp/velum.ldif</command></screen>
    </step>
   </procedure>
  </sect2>
