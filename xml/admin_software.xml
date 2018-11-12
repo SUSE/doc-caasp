@@ -414,7 +414,7 @@
      <para>
       Reboot all nodes.
      </para>
-<screen>&prompt.root.admin;<command>exec -it $(docker ps -q -f name="salt-master") \
+<screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name="salt-master") \
 salt '*' system.reboot</command></screen>
     </step>
     <step>
