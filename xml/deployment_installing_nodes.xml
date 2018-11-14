@@ -23,14 +23,16 @@
  </para>
  <sect1 xml:id="sec.deploy.nodes.admin_install">
   <title>Installing the &Admin_Node;</title>
+
   <para>
-   The procedure for installing the &admin_node; is identical whether or not
-   you use &ay; for the rest of the cluster.
+   Use the following procedure to install the &admin_node; on bare metal
+   booting from the network or a flsh disk.
   </para>
+
   <procedure xml:id="pro.deploy.nodes.admin_install">
    <step>
     <para>
-     Connect or insert the &productname; installation media, then reboot the
+     Connect or insert the &productname; installation media and boot the
      computer to start the installation program. On machines with a
      traditional BIOS, you will see the graphical boot screen shown below.
      The boot screen on machines equipped with UEFI is slightly different.
@@ -56,112 +58,17 @@
       </imageobject>
      </mediaobject>
     </informalfigure>
-   </step>
-   <step>
+
     <para>
      Select <guimenu>Installation</guimenu> on the boot screen, then press
-     <keycap
-      function="enter"
-     />. This boots the system and
-     loads the &productname; installer.
+     <keycap function="enter" />.
     </para>
    </step>
    <step>
-<!-- <para>
-      Read the License Agreement. It is presented in the language you have
-      chosen on the boot screen. <guimenu>License Translations</guimenu> are
-      available. You need to accept the agreement by checking <guimenu>I Agree
-      to the License Terms</guimenu> to install &productname;. Proceed with
-      <guimenu>Next</guimenu>.
-      </para>  -->
     <para>
-     Configure the following mandatory settings on the <guimenu>Installation
-     Overview</guimenu> screen.
+     The system is booted and the &productname; installer loads the
+     <guimenu>Installation Overview</guimenu> screen:
     </para>
-    <note>
-     <title>Help and Release Notes</title>
-     <para>
-      From this point on, a brief help document and the Release Notes can be
-      viewed from any screen during the installation process by selecting
-      <guimenu>Help</guimenu> or <guimenu>Release Notes</guimenu>
-      respectively.
-     </para>
-    </note>
-    <variablelist>
-     <varlistentry>
-      <term>Keyboard Layout</term>
-      <listitem>
-       <para>
-        The <guimenu>Keyboard Layout</guimenu> is initialized with the
-        language settings you have chosen on the boot screen. Change it here,
-        if necessary.
-       </para>
-      </listitem>
-     </varlistentry>
-     <varlistentry>
-      <term>Password for &rootuser;</term>
-      <listitem>
-       <para>
-        Type a password for the system administrator account (called the
-        &rootuser; user) and confirm it.
-       </para>
-       <warning>
-        <title>Do not forget the &rootuser; Password</title>
-        <para>
-         You must not lose the &rootuser; password! After you enter it here,
-         the password cannot be retrieved. For more information, see
-         <link
-          xlink:href="https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_user_root.html"
-         />.
-        </para>
-       </warning>
-      </listitem>
-     </varlistentry>
-     <varlistentry>
-      <term>Registration Code or SMT Server URL</term>
-      <listitem>
-       <para>
-        Enter the <guimenu>Registration Code or SMT Server
-        URL</guimenu>. SMT Server URLs should use
-        <literal>https</literal> or <literal>http</literal>; other
-        protocols are not supported. Fill this field to enable
-        installing current updates during the installation process.
-        Alternatively, the machine can be registered at the &scc; or a
-        &smt; server at any later point in time with
-        <command>SUSEConnect</command>. For details about registering
-        with <command>SUSEConnect</command> and using an authenticated
-        proxy server for registration, see <xref
-        linkend="sec.configuration.suseconnect" />.
-       </para>
-      </listitem>
-     </varlistentry>
-     <varlistentry>
-      <term>System Role</term>
-      <listitem>
-       <para>
-        From the <guimenu>System Role</guimenu> menu, choose <guimenu>
-        Administration Node (Dashboard)</guimenu>.
-       </para>
-      </listitem>
-     </varlistentry>
-     <varlistentry>
-      <term>NTP Servers</term>
-      <listitem>
-       <para>
-        Enter the host names or IP addresses of one or more <guimenu>NTP
-        Servers</guimenu> for the node, separated by colons or white space. A
-        single time server is sufficient, but for optimal precision and
-        reliability, nodes should use at least three.
-       </para>
-       <para>
-        For more information about <literal>NTP</literal>, refer to
-        <link
-         xlink:href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_netz_xntp.html"
-        />
-       </para>
-      </listitem>
-     </varlistentry>
-    </variablelist>
     <informalfigure>
      <mediaobject>
       <imageobject role="fo">
@@ -172,14 +79,119 @@
       </imageobject>
      </mediaobject>
     </informalfigure>
+
     <para>
-     Optionally, you can customize the following settings. If you do not make
-     any changes, defaults are used. A brief summary of the settings is
-     displayed below the respective settings option.
+     Configuring the following settings is mandatory:
+    </para>
+
+    <variablelist>
+     <varlistentry>
+      <term><guimenu>Language</guimenu></term>
+      <listitem>
+       <para>
+        The system language. Set to what you have chosen on the boot screen, or
+        else to <guimenu>English (US)</guimenu>. Change it here, if
+        necessary. A corresponding keyboard layout will automatically be
+        chosen.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><guimenu>Keyboard Layout</guimenu></term>
+      <listitem>
+       <para>
+        The <guimenu>Keyboard Layout</guimenu> is automatically set to fit the
+        chosen kanguage. Change it here, if necessary.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><guimenu>Password for root User</guimenu></term>
+      <listitem>
+       <para>
+        Type a password for the system administrator account (called the
+        &rootuser; user) and confirm it.
+       </para>
+       <warning>
+        <title>Do not forget the &rootuser; Password</title>
+        <para>
+         You must not lose the &rootuser; password! After you enter it here,
+         the password cannot be retrieved.
+        </para>
+       </warning>
+       <tip>
+        <title>Passwords and Keyboard Layout</title>
+        <para>
+         It is recommended to only use characters that are available on an
+         English keyboard. In case of a system error or when you need to start
+         your system in rescue mode a localized keyboard might not be
+         available.
+        </para>
+       </tip>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><guimenu>Registration Code or SMT Server URL</guimenu></term>
+      <listitem>
+       <para>
+        Enter the registration code you retrived with your copy of
+        &productname; to register the system at the &scc;. In case your
+        organization provides a local registration server (&smtool;) you may
+        alternatively enter its URL.
+       </para>
+       <para>
+        Although not strictly mandatory, registering your system at this point
+        is highly recommended, since it ensures that the latest security
+        updates and product enhancements get automatically installed. If you
+        choose not to register your system now, you can do so from the
+        installed system as described in <xref
+        linkend="sec.configuration.suseconnect" />.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><guimenu>System Role</guimenu></term>
+      <listitem>
+       <para>
+        Choose <guimenu>Administration Node (Dashboard)</guimenu>.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><guimenu>NTP Servers</guimenu></term>
+      <listitem>
+       <para>
+        Enter the host names or IP addresses of one or more network time
+        protocol servers. Separate multiple entries by colons or white space. A
+        single time server is sufficient, but for optimal precision and
+        reliability, nodes should use at least three.
+       </para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+    <tip>
+     <title>For More Information</title>
+     <para>
+      More information on how to fill out the <guimenu>Installation
+      Overview</guimenu> screen is available when choosing
+      <guimenu>Help</guimenu>. Detailed information about the system can be
+      displayed by choosing <guimenu>System Information</guimenu>.
+     </para>
+     <para>
+      Important last minute information about &productname; are available from
+      the <guimenu>Release Notes</guimenu>. Reading this document is strongly
+      recommended.
+     </para>
+    </tip>
+   </step>
+   <step>
+    <para>
+     Settings in the left column define partitioning, booting and network
+     setup. They come with reasonable defaults, changing them is optional.
     </para>
     <variablelist>
      <varlistentry>
-      <term>Partitioning</term>
+      <term><guimenu>Partitioning</guimenu></term>
       <listitem>
        <para>
         Review the partition setup proposed by the system and change it if
@@ -187,7 +199,7 @@
        </para>
        <variablelist>
         <varlistentry>
-         <term>Select a hard disk</term>
+         <term><guimenu>Select a Hard Disk</guimenu></term>
          <listitem>
           <para>
            Select a disk on to which to install &productname; with the
@@ -207,30 +219,30 @@
           <warning>
            <title>For Experts only</title>
            <para>
-            As the name suggests, the <guimenu>Expert Partitioner</guimenu>
-            is for experts only. Custom partitioning schemes that do not meet
-            the requirements of &productname; are not supported.
+            As the name suggests, the <guimenu>Expert Partitioner</guimenu> is
+            for experts only. Custom partitioning schemes that do not meet the
+            requirements of &productname; are not supported.
            </para>
            <itemizedlist>
             <title>Requirements for custom partitioning schemes</title>
             <listitem>
              <para>
-              &productname; only supports the &btrfs; file system with
-              OverlayFS. A read-only &btrfs; file system is used for the root
-              file system, which enables transactional updates.
+             &productname; only supports the &btrfs; file system with
+             OverlayFS. A read-only &btrfs; file system is used for the root
+             file system, which enables transactional updates.
              </para>
             </listitem>
             <listitem>
              <para>
-              For snapshots, partitions should have a capacity of at least 11
-              GB.
+              The root partition needs to have a capacity of at least 11
+              GB to properly support snapshots.
              </para>
             </listitem>
             <listitem>
              <para>
               Depending on the number and size of your containers, you will
               need sufficient space under the <filename>/var</filename> mount
-              point.
+              point. Log files from all nodes will be aggregated here.
              </para>
             </listitem>
            </itemizedlist>
@@ -238,20 +250,15 @@
          </listitem>
         </varlistentry>
        </variablelist>
-       <para>
-        To accept the proposed setup without any changes, choose
-        <guimenu>Next</guimenu> to proceed.
-       </para>
       </listitem>
      </varlistentry>
      <varlistentry>
       <term>Booting</term>
       <listitem>
        <para>
-        This section shows the boot loader configuration. Changing the
-        defaults is only recommended if really needed. For details, refer to
-        <link
-         xlink:href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_grub2.html"
+        This section shows the boot loader configuration. Changing the defaults
+        is only recommended if really needed. For details, refer to <link
+        xlink:href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_grub2.html"
         />.
        </para>
       </listitem>
@@ -260,11 +267,11 @@
       <term>Network Configuration</term>
       <listitem>
        <para>
-        If the network could not be configured automatically while starting
-        the installation system, you should manually configure the
-        <guimenu>Network Settings</guimenu>. Please make sure at least one
-        network interface is connected to the Internet in order to register
-        your product.
+        If the network could not be configured automatically via DHCP while
+        starting the installation system, or if you want to apply a static IP
+        address, you need to manually configure the <guimenu>Network
+        Settings</guimenu>. Please make sure at least one network interface is
+        connected to the Internet in order to register your product.
        </para>
        <para>
         By default, the installer requests a host name from the DHCP server.
@@ -306,41 +313,17 @@
          </listitem>
          <listitem>
           <para>
-           Disable &kdump; completely.
+           Disable &kdump;.
           </para>
          </listitem>
         </orderedlist>
        </warning>
       </listitem>
      </varlistentry>
-     <varlistentry>
-      <term>System Information</term>
-      <listitem>
-       <para>
-        View detailed hardware information by clicking <guimenu>System
-        Information</guimenu>. In this screen you can also change
-        <guimenu>Kernel Settings</guimenu>. See
-        <link
-         xlink:href="https://www.suse.com/documentation/sles-12/book_sle_tuning/data/cha_tuning_io.html"
-        />
-        for more information.
-       </para>
-      </listitem>
-     </varlistentry>
     </variablelist>
     <para>
      Proceed with <guimenu>Next</guimenu>.
     </para>
-    <tip>
-     <title>Installing Product Patches at Installation Time</title>
-     <para>
-      If &productname; has been successfully registered at the &scc;, you are
-      asked whether to install the latest available online updates during the
-      installation. If you choose <guimenu>Yes</guimenu>, the system will be
-      installed with the most current packages without having to apply the
-      updates after installation. Activating this option is recommended.
-     </para>
-    </tip>
    </step>
    <step>
     <para>
@@ -348,10 +331,6 @@
      <guimenu>Installation Overview</guimenu> screen, click
      <guimenu>Install</guimenu>. Up to this point no changes have been made
      to your system.
-    </para>
-    <para>
-     Click <guimenu>Install</guimenu> a second time to start the installation
-     process.
     </para>
     <informalfigure>
      <mediaobject>
@@ -363,6 +342,10 @@
       </imageobject>
      </mediaobject>
     </informalfigure>
+    <para>
+     Click <guimenu>Install</guimenu> a second time to start the installation
+     process.
+    </para>
    </step>
    <step>
     <para>
@@ -399,12 +382,11 @@
    </para>
   </important>
   <para>
-   Use SSH to log into the admin node and run the
-   <command>caasp-admin-setup</command> executable as the
-   <literal>root</literal>user.
+   Use SSH to log in to the &admin_node; and run the
+   command <command>caasp-admin-setup</command> as user &rootuser;.
   </para>
   <para>
-   By default the <command>caasp-admin-setup</command> executable operates in
+   By default the <command>caasp-admin-setup</command> command operates in
    <literal>wizard</literal> mode, walking you through the necessary steps.
    During this process your &scc; credentials will be requested. Registration
    with &scc; can be skipped. If this step is skipped during setup the admin node
@@ -602,56 +584,9 @@
        </para>
       </listitem>
      </varlistentry>
-     <varlistentry>
-      <term>Overlay network settings</term>
-      <listitem>
-       <warning>
-        <title>Adjust overlay network to avoid collision with existing services</title>
-        <para>
-         The overlay network settings have to be verified and adjusted so that
-         they do not collide with any services / addresses in the infrastructure
-         that potentially need to be reached from any node or
-         service running within the &productname; cluster.
-        </para>
-        <para>
-         For example, an oracle database is running on <literal>172.16.4.5</literal>
-         in the existing infrastructure and a pod in the cluster needs to
-         contact that database. Then, the defaults be adjusted to provide a
-         different overlay network. Another example would be an NFS server or
-         a SES/Ceph cluster running anywhere in the network
-         <literal>172.16.0.0/13</literal> and where persistent storage access
-         of the CaaSP cluster should be hosted on.
-        </para>
-       </warning>
-       <para>
-        Describes the settings used by <literal>flannel</literal> to create
-        the overlay network used by all the &kube; pods and services. With
-        this change, the default settings are exposed to the user for fine
-        tuning. The most common reason to change them is to avoid clashes
-        between the default subnetwork we picked up and an already
-        existing one.
-       </para>
-      </listitem>
-     </varlistentry>
-     <varlistentry>
-      <term>Proxy Settings</term>
-      <listitem>
-       <para>
-        If enabled, you can set proxy servers for <literal>HTTP</literal> and
-        <literal>HTTPS</literal>. You may also configure exceptions and
-        choose whether to apply the settings only to the container engine or
-        to all processes running on the cluster nodes.
-       </para>
-      </listitem>
-     </varlistentry>
-     <varlistentry>
-      <term>SUSE registry mirror</term>
-      <listitem>
-       <para>
-        Options for SUSE registry mirror.
-       </para>
-      </listitem>
-     </varlistentry>
+     &overlay_network;
+     &proxy_settings;
+     &suse_registry;
      <varlistentry>
       <term>Cloud provider integration</term>
       <listitem>

@@ -277,6 +277,69 @@
 <!ENTITY prompt.sudo     "<prompt xmlns='http://docbook.org/ns/docbook'>&exampleuserid; &gt; sudo </prompt>">
 <!ENTITY prompt.bash     "<prompt xmlns='http://docbook.org/ns/docbook'>bash-4.3 # </prompt>">
 
+<!-- ============================================================ -->
+<!-- Text snippets used more than once                            -->
+<!-- ============================================================ -->
+
+<!ENTITY overlay_network '<varlistentry xmlns="http://docbook.org/ns/docbook">
+      <term>Overlay network settings</term>
+      <listitem>
+       <para>
+        Describes the settings used by <literal>flannel</literal> to create
+        the overlay network used by all the &kube; pods and services. With
+        this change, the default settings are exposed to the user for fine
+        tuning. The most common reason to change them is to avoid clashes
+        between the default subnetwork we picked up and an already
+        existing one.
+       </para>
+       <warning>
+        <title>Adjust overlay network to avoid collision with existing services</title>
+        <para>
+         The overlay network settings have to be verified and adjusted so that
+         they do not collide with any services / addresses in the infrastructure
+         that potentially need to be reached from any node or
+         service running within the &productname; cluster.
+        </para>
+        <para>
+         For example, an oracle database is running on <literal>172.16.4.5</literal>
+         in the existing infrastructure and a pod in the cluster needs to
+         contact that database. Then, the defaults need to be adjusted to
+	 provide a different overlay network. Another example would be an NFS
+	 server or an SES/Ceph cluster running anywhere in the network
+         <literal>172.16.0.0/13</literal> and where persistent storage access
+         of the CaaSP cluster should be hosted on.
+        </para>
+       </warning>
+      </listitem>
+     </varlistentry>'>
+
+<!ENTITY proxy_settings '<varlistentry xmlns="http://docbook.org/ns/docbook">
+      <term>Proxy Settings</term>
+      <listitem>
+       <para>
+        If enabled, you can set proxy servers for <literal>HTTP</literal> and
+        <literal>HTTPS</literal>. You may also configure exceptions and
+        choose whether to apply the settings only to the container engine or
+        to all processes running on the cluster nodes.
+       </para>
+      </listitem>
+     </varlistentry>'>
+
+<!ENTITY suse_registry '<varlistentry xmlns="http://docbook.org/ns/docbook">
+      <term>SUSE registry mirror</term>
+      <listitem>
+       <para>
+	&suse; runs its own instance providing container images, called
+	<quote>&suse; Registry</quote>. If you want to mirror it to provide the
+	images within the &productname; network, <guimenu>Enbale</guimenu> this
+	function. 
+	<remark condition="clarity">
+	 2018-11-12 - fs: Does that make sense??
+	</remark>
+       </para>
+      </listitem>
+     </varlistentry>'>
+
 
 <!-- ============================================================= -->
 <!-- Do not change                                                 -->

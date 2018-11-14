@@ -1,0 +1,1018 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<chapter version="5.0" xml:id="cha.deploy.install_public_cloud"
+ xmlns="http://docbook.org/ns/docbook"
+ xmlns:xi="http://www.w3.org/2001/XInclude"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <info>
+  <title>Public Cloud Installation</title>
+  <dm:docmanager xmlns:dm="urn:x-suse:ns:docmanager">
+   <dm:bugtracker/>
+   <dm:translation>yes</dm:translation>
+  </dm:docmanager>
+ </info>
+ <para>
+  This chapter is about installing &productname; in a public cloud,
+  for example <emphasis>Microsoft Azure</emphasis>*,
+  <emphasis>Amazon Web Services</emphasis>* and <emphasis>Google Compute
+  Engine</emphasis>*.
+ </para>
+ <para>
+  On public clouds, you only need to launch the &admin_node; instance via the
+  public cloud toolchain. The cluster nodes are automatically launched and
+  installed via the &dashboard; dashboard.
+ </para>
+ <para>
+  Before you start, make sure you have read the <xref
+  linkend="sec.deploy.requirements.network" xrefstyle="select:title"/> section
+  to have a properly configured VPC and subnet(s). The VPC configuration should
+  allow you to connect to the instances from the outside and also needs to take
+  care of DNS resolution and external hostnames. The subnet(s) need to provide
+  a sufficient number of IP addresses for all cluster. Also make sure that
+  fixed external IP addresses are available&mdash;the &admin_node; and the
+  &master_node; each require such an address.
+ </para>
+
+ <procedure>
+  <title>Overview: Public Cloud Installation</title>
+  <step>
+   <para>
+    Prepare the installation by setting up and configuring the &admin_node;
+    instance as described in <xref
+    linkend="sec.deploy.install_public_cloud.admin"/>.
+   </para>
+  </step>
+  <step>
+   <para>
+    Install the &admin_node; by running <command>caasp-admin-setup</command>.
+    For details, see <xref linkend="sec.deploy.install_public_cloud.admin_install" />.
+   </para>
+  </step>
+  <step>
+   <para>
+    Connect to the &dashboard; dashboard to configure the &admin_node; and
+    deploy the cluster nodes as described in <xref
+    linkend="sec.deploy.install_public_cloud.bootstrap"/>..
+   </para>
+  </step>
+ </procedure>
+
+ <sect1 xml:id="sec.deploy.install_public_cloud.admin">
+  <title>Launching the &Admin_Node;</title>
+  <para>
+   The &productname; image for the &admin_node; published by &suse; are located
+   under <menuchoice><guimenu>Community AMIs</guimenu> <guimenu>SUSE
+   Linux</guimenu></menuchoice> in Amazon Web Services, the Marketplace in
+   Microsoft Azure, and are launch-able from the suse-byos-cloud project in
+   Google Compute Engine. The name starts with
+   <literal>suse-caasp-<replaceable>VERSION</replaceable>-admin</literal>. Images
+   labeled with the <literal>cluster</literal> designation in the name are not
+   intended to be started directly; they are deployed by the &admin_node;.
+  </para>
+  <para>
+   The image is provided as <literal>Bring Your Own Subscription
+   (BYOS)</literal> images. &productname; instances therefore need to be
+   registered with the &scc; in order to receive bugfixes and security updates
+  </para>
+
+  <itemizedlist>
+   <listitem>
+    <!--  Amazon Web Services -->
+    <para>
+     <xref linkend="sec.deploy.install_public_cloud.admin.aws"
+           xrefstyle="select:title"/>
+    </para>
+   </listitem>
+   <listitem>
+    <!-- Microsoft Azure -->
+    <para>
+     <xref linkend="sec.deploy.install_public_cloud.admin.azure"
+           xrefstyle="select:title"/>
+    </para>
+   </listitem>
+   <listitem>
+    <!-- Google Compute Engine -->
+    <para>
+     <xref linkend="sec.deploy.install_public_cloud.admin.google"
+           xrefstyle="select:title"/>
+    </para>
+   </listitem>
+  </itemizedlist>
+
+  <important>
+   <title>Requirements</title>
+   <para>
+    Before you start provisioning the nodes, make sure to read the system
+    requirements for public cloud installations in <xref
+    linkend="sec.deploy.requirements.environment.public_cloud"/> and the
+    network requirements at <xref linkend="sec.deploy.requirements.environment.public_cloud"/>.
+   </para>
+  </important>
+
+  <sect2 xml:id="sec.deploy.install_public_cloud.admin.aws">
+   <title>Launching an Amazon Web Services Installation</title>
+   <para>
+    To launch an Amazon Web Services (AWS) installation follow the steps
+    below. See the <link
+    xlink:href="https://aws.amazon.com/documentation/vpc/"> Amazon Virtual
+    Private Cloud Documentation</link>for more information.
+   </para>
+   <procedure>
+    <step>
+     <para>
+      Log in to the AWS management console and launch a new EC2
+      instance.
+     </para>
+    </step>
+    <step>
+     <para>
+      Choose the machine image by clicking <menuchoice> <guimenu>Community
+      AMIs</guimenu> <guimenu>SUSE Linux</guimenu> </menuchoice> and browsing
+      the list for
+      <literal>suse-caasp-<replaceable>VERSION</replaceable>-admin-byos-v<replaceable>DATE</replaceable>-*</literal>. In
+      case more than one image is listed, choose the one with the latest date.
+     </para>
+    </step>
+    <step>
+     <para>
+      Select a proper instance type. Make sure to meet at least the minimum
+      system requirements outlined in <xref
+      linkend="sec.deploy.requirements.hardware"/>.
+     </para>
+    </step>
+    <step>
+     <para>
+      The following configuration options are required in EC2:
+     </para>
+     <variablelist>
+      <varlistentry>
+       <term><guimenu>Network</guimenu></term>
+       <listitem>
+        <para>
+         Choose an existing VPC or create a new one. Make sure it is set up in
+         a way that grants you access from outside the AWS. Also enable DNS
+         resolutions and DNS hostnames.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term><guimenu>Subnet</guimenu></term>
+       <listitem>
+        <para>
+         Choose an existing subnet or create a new one. It needs to contain a
+         default route.  In case you plan to use different subnets for the
+         &admin_node; and the rest of the cluster, make sure the second subnet
+         is available. It needs to allow communication between all cluster
+         nodes, including the &admin_node;.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>Auto-assign Public IP</term>
+       <listitem>
+        <para>
+         The &admin_node; needs to be configured with a public IP. If your
+         subnet settings have it disabled by default, choose
+         <guimenu>Enable</guimenu>. It is strongly recommended to use an
+         elastic (static) IP address for the &admin_node;.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>IAM role</term>
+       <listitem>
+        <para>
+         Choose an existing IAM role or create a new one. The role needs to
+         allow full access to the EC2 API.
+        </para>
+       </listitem>
+      </varlistentry>
+     </variablelist>
+    </step>
+    <step>
+     <para>
+      Add storage to your instance. Refer to <xref
+      linkend="sec.deploy.requirements.hardware"/> for minimum requirements on
+      size and speed. Note that log files for all nodes get aggregated on the
+      &admin_node;, so the larger the cluster, the more disk space is required.
+     </para>
+    </step>
+    <step>
+     <para>
+      Optionally, add tags for the instance.
+     </para>
+    </step>
+    <step>
+<!--
+Security groups configuration for master, admin, and worker:
+https://gitlab.suse.de/docker/k8s-aws/blob/master/terraform/security.tf
+-->
+     <para>
+      Choose an  existing security group or create a new one. Rules to allow
+      incoming traffic for SSH (port 22) and HTTPS (port 443) are required.
+      <remark condition="clarity">
+       2018-10-18 - fs: What about LADP (389) for the admin node (optionally)?
+      </remark>
+      <remark condition="clarity">
+       2018-10-18 - fs: What about rules for cluster nodes? Should one use
+       multiple security roles (e.g. different ones for worker, master, and
+       admin)? From what I understood, the master nodes need to allow ingress
+       traffic on ports 6443 - 6444 (API) and 32000 (DEX), the worker nodes on port
+       32000 (DEX).
+      </remark>
+      <remark condition="clarity">
+       2018-10-18 - fs: SSH is only required on the admin node, because it is
+       configured as an SSH jump host. Correct?
+      </remark>
+     </para>
+    </step>
+    <step>
+     <para>
+      Review your settings and <guimenu>Launch</guimenu> the instance. Continue
+      with <xref linkend="sec.deploy.install_public_cloud.admin_install"/>.
+     </para>
+    </step>
+   </procedure>
+  </sect2>
+
+  <sect2 xml:id="sec.deploy.install_public_cloud.admin.azure">
+   <title>Launching a Microsoft Azure Installation</title>
+   <para>
+    To prepare a Microsoft Azure installation follow the steps below. See the
+    <link xlink:href="https://docs.microsoft.com/en-us/azure">Microsoft Azure
+    Documentation</link> for more information.
+    <remark condition="clarity">
+     2018-10-19 - fs: I rewrote the complete section because launching an
+     instance via the Dashboard from the Azure Portal differs significantly
+     from what was originally described here. I wonder whether the original
+     description was simply wrong, outdated, or referred to something
+     completely different.
+    </remark>
+   </para>
+
+   <procedure>
+    <step>
+     <para>
+      Log in to the Microsoft Azure Portal and launch a new instance.
+     </para>
+    </step>
+    <step>
+     <para>
+      Choose the machine image by typing <literal>SUSE CaaS</literal> in the
+      search box. Create the instance using the <guimenu>Resource
+      Manager</guimenu> deployment model.
+     </para>
+    </step>
+    <step>
+     <para>
+      In the <guimenu>Basics</guimenu> configuration step, provide at least the
+      following data:
+     </para>
+     <variablelist>
+      <varlistentry>
+       <term><guimenu>Name</guimenu></term>
+       <listitem>
+        <para>
+         Name of your instance, for example <literal>CaaSAdmin</literal>.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term><guimenu>VM Disk type</guimenu></term>
+       <listitem>
+        <para>
+         Choose a hard disk type. Refer to <xref
+         linkend="sec.deploy.requirements.hardware"/> for minimum requirements
+         on size and speed.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>Login Credentials</term>
+       <listitem>
+        <para>
+         Specify a user name and a login method (password or SSH key) for the
+         account that should log in to the instance.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term><guimenu>Subscription</guimenu></term>
+       <listitem>
+        <para>
+         The subscription ID of your Azure account.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>Resource Group</term>
+       <listitem>
+        <para>
+         Choose an existing resource group or create a new one. See <link
+         xlink:href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-overview"/>
+         for more information about the Azure Resource Manager and resource
+         groups.
+        </para>
+       </listitem>
+      </varlistentry>
+     </variablelist>
+    </step>
+    <step>
+     <para>
+      Select a proper instance type in the <guimenu>Size</guimenu> step. Make
+      sure to meet at least the minimum system requirements outlined in <xref
+      linkend="sec.deploy.requirements.hardware"/>.
+     </para>
+    </step>
+    <step>
+     <para>
+      In the <guimenu>Settings</guimenu> step, provide at least the
+      following data:
+     </para>
+     <variablelist>
+      <varlistentry>
+       <term>Storage Account</term>
+       <listitem>
+        <para>
+         The Storage Account that will be used for storing the cluster node OS
+         disks. See
+         <link
+           xlink:href="https://docs.microsoft.com/en-us/azure/storage/common/storage-create-storage-account"/>
+         for more information about Azure Storage Accounts.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term><guimenu>Virtual Network</guimenu></term>
+       <listitem>
+        <para>
+         Adjust the virtual network settings. Make sure it is set up in
+         a way that external hostnames can be resolved and set and that it
+         grants you access from outside Azure. See
+         <link xlink:href="https://docs.microsoft.com/en-us/azure/virtual-network/"/>
+         for more information about Azure Virtual Networks.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term><guimenu>Subnet</guimenu></term>
+       <listitem>
+        <para>
+         Adjust the subnet settings. In case you plan to use different subnets
+         for the &admin_node; and the rest of the cluster, make sure the second
+         subnet is available. It needs to allow communication between all
+         cluster nodes, including the &admin_node;.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term><guimenu>Public IP Address</guimenu></term>
+       <listitem>
+        <para>
+         It is strongly recommended to use a static IP address for the
+         &admin_node;.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term><guimenu>Security Group</guimenu></term>
+       <listitem>
+        <para>
+<!--
+Security groups configuration for master, admin, and worker:
+https://gitlab.suse.de/docker/k8s-aws/blob/master/terraform/security.tf
+-->
+         Adjust the security group settings. Rules to allow incoming traffic
+         for SSH (port 22) and HTTPS (port 443) are required.
+        </para>
+       </listitem>
+      </varlistentry>
+     </variablelist>
+    </step>
+    <step>
+     <para>
+      Review your settings and Launch the instance. Continue
+      with <xref linkend="sec.deploy.install_public_cloud.admin_install"/>.
+     </para>
+    </step>
+   </procedure>
+  </sect2>
+  <sect2 xml:id="sec.deploy.install_public_cloud.admin.google">
+   <title>Preparing a Google Cloud Platform Installation</title>
+   <para>
+    To prepare a Google Cloud Platform (GCP) installation follow the steps
+    below. See the <link xlink:href="https://cloud.google.com/docs/">Google
+    Cloud Platform Documentation</link> for more information.
+
+
+    <remark condition="clarity">
+     2018-10-19 - fs: HELP NEEDED
+     This section should contain a procedure similar to the ones for AWS and
+     Azure. However, the GCP console is much more complicated than AWS and
+     Azure and I am not sure what data needs to be provided as a
+     minimum. Network/Subnetwork creation for example seems to be different and
+     I did not found how to customize the security group.
+     Also,  I wasn't able to find the SUSE CaaS image. Neither in the Boot
+     disk dialog described above nor in the Marketplace. Where to find it?
+    </remark>
+
+   </para>
+
+<!--
+
+   <procedure>
+    <step>
+     <para>
+      Login to the GCP console and navigate to the <guimenu>VM
+      Instances</guimenu> dialog by clicking the main menu and choosing
+      <menuchoice> <guimenu>Compute </guimenu><guimenu>Compute Engine</guimenu>
+      <guimenu>VM Instances</guimenu> </menuchoice>. From here you can
+      <guimenu>Create</guimenu> an new instance.
+     </para>
+    </step>
+    <step>
+     <para>
+      On the <guimenu>Create an Instance</guimenu> dialog, provide at least the
+      following data:
+     </para>
+     <variablelist>
+      <varlistentry>
+       <term><guimenu>Name</guimenu></term>
+       <listitem>
+        <para>
+         Name of your instance, for example <literal>CaaSAdmin</literal>.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term><guimenu>Machine type</guimenu></term>
+       <listitem>
+        <para>
+         Configure the virtual hardware. Make sure to meet at least the
+         minimum system requirements outlined in <xref
+         linkend="sec.deploy.requirements.hardware"/>.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term><guimenu>Boot Disk</guimenu></term>
+       <listitem>
+        <para>
+         Choose the SUSE CaaS Platform machine image here by clicking
+         <guimenu>Change</guimenu>.
+
+         <remark condition="clarity">
+          2018-10-19 - fs: I wasn't able to find the SUSE CaaS image. Neither
+          in the dialog described above nor in the Marketplace. Where to find
+          it?
+         </remark>
+
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term><guimenu>Identity and API access</guimenu></term>
+       <listitem>
+        <para>
+         Select <guimenu>Allow full access to all Cloud APIs</guimenu>.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>Firewall</term>
+       <listitem>
+        <para>
+         Select <guimenu>Allow HTTPS traffic</guimenu>.
+        </para>
+       </listitem>
+      </varlistentry>
+     </variablelist>
+    </step>
+    <step>
+     <para>
+      Click <guimenu> Management, security, disks, networking, sole
+      tenancy</guimenu> to provide at least the following data:
+     </para>
+    </step>
+-->
+
+
+    <procedure>
+     <step>
+     <para>
+      Select proper instance types. You may select from one of the predefined
+      instance types, hand select for general container workloads, or choose
+      <guimenu>Other types...</guimenu> and enter any <guimenu>machine
+      type</guimenu>, defined at <link
+      xlink:href="https://cloud.google.com/compute/docs/machine-types/"/>.
+     </para>
+    </step>
+    <step>
+     <para>
+      Two configuration options are required in GCE:
+     </para>
+     <variablelist>
+      <varlistentry>
+       <term>Network</term>
+       <listitem>
+        <para>
+         The name of the virtual network the cluster nodes will run within.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>Subnet</term>
+       <listitem>
+        <para>
+         If you created a custom network, you must specify the name of the
+         subnet within which the cluster nodes will run.
+        </para>
+       </listitem>
+      </varlistentry>
+     </variablelist>
+     <para>
+      See the <link xlink:href="https://cloud.google.com/vpc/docs/vpc">GCE
+      Network Documentation</link> for more information.
+     </para>
+    </step>
+   </procedure>
+  </sect2>
+ </sect1>
+
+
+ <sect1 xml:id="sec.deploy.install_public_cloud.admin_install">
+  <title>Installing the &Admin_Node;</title>
+  <para>
+   The &admin_node; installation is done by running the command line wizard
+   <command>caasp-admin-setup</command> on the &admin_node;. The general
+   purpose of <command>caasp-admin-setup</command> is to collect all
+   information needed to successfully start the &productname; containers on the
+   &admin_node; and to provide access to the &dashboard; dashboard.
+  </para>
+  <para>
+   By default, <command>caasp-admin-setup</command> runs in wizard mode. The
+   following instructions assume that you run it that way. However, you may
+   optionally set the required data with individual commands. Run
+   <command>sudo /usr/sbin/caasp-admin-setup --help</command> for more
+   information.
+  </para>
+  <note>
+   <title>Start-Up Delay</title>
+   <para>
+    When <command>caasp-admin-setup</command> is executed, it determines which
+    cluster node image to use for setting up the &worker_node;s and the
+    &master_node;(s). For this operation to succeed outgoing traffic on port
+    <literal>443</literal> to the Internet must be permitted. The code will
+    access the <literal>Public Cloud Information Tracker</literal> service
+    operated by SUSE. This service provides information about all images ever
+    released to the Public Cloud by SUSE. The latest available cluster node
+    image for this version of &productname; will be used. This initial outreach
+    and image filtering introduces a small startup delay before the command
+    line options are processed or the wizard mode starts.
+   </para>
+  </note>
+
+  <para>
+   To start the installation of the &admin_node;, proceed as follows:
+  </para>
+  <procedure>
+   <title>
+    Running <command>caasp-admin-setup</command> to set up the &admin_node;
+   </title>
+   <step>
+    <para>
+     Log in to the admin node via SSH. To do so, obtain the IP address or the
+     public name of the instance from the cloud vendor's console or
+     dashboard. Which user name to use and whether to login via password or
+     key file, depends on the cloud vendor or the instance configuration. Refer
+     to the cloud vendor's documentation for details.
+    </para>
+    <para>
+     Make sure to read the messages that appear after having logged in. They
+     contain important instructions and last minute information.
+    </para>
+
+    <important>
+     <title>No root login</title>
+     <para>
+      Logging in as user &rootuser; is disabled. In case commands require
+      &rootuser; permissions, use <command>sudo</command>
+     </para>
+    </important>
+   </step>
+   <step>
+    <para>
+     Start the configuration wizard:
+    </para>
+    <screen>sudo /usr/sbin/caasp-admin-setup</screen>
+   </step>
+   <step>
+    <para>
+     First, decide which SSL certificate to use for the &dashboard;
+     dashboard. By default (answer <literal>n</literal>), a self-signed
+     certificate is generated. In case you rather want to provide your own
+     certificate and key, answer with <literal>y</literal>. Upload both files
+     (for example via <command>scp</command> from a second terminal) and tell
+     the wizard where to find them. Refer to the cloud vendor's documentation
+     on how to upload files for more information.
+    </para>
+   </step>
+   <step>
+    <para>
+     With the next two questions you provide the administrative login
+     credentials for the &dashboard; dashboard. Please do not forget the values
+     you enter, as they cannot be recovered.
+    </para>
+   </step>
+   <step>
+    <para>
+     Last, register your system with the &scc;. Registration with &scc; is
+     optional but strongly recommended. Without registration, the system will
+     not receive any updates unless specifically setup to receive updates via a
+     different route such as a private &smt; server. Registration after the
+     initial setup also requires an explicit registration of each node in the
+     cluster. For registering your nodes after the installation, refer to
+    <xref linkend="sec.configuration.suseconnect" />.
+    </para>
+   </step>
+   <step>
+    <para>
+     When all information is collected, accept your selections with
+     <literal>y</literal> to complete the initial setup. Now all &productname;
+     services will be launched. If you did not provide your own certificate, a
+     certificate was generated for you and the fingerprint will be written to
+     the terminal. When accessing the &dashboard; dashboard with your browser,
+     you can compare it with the fingerprint of the certificate shown in the
+     browser to establish the chain of trust.
+    </para>
+   </step>
+   <step>
+    <para>
+     Proceed with <xref linkend="sec.deploy.install_public_cloud.bootstrap"/>
+     to launch the &worker_node;s and the &master_node;s.
+   </para>
+   </step>
+  </procedure>
+</sect1>
+<sect1 xml:id="sec.deploy.install_public_cloud.bootstrap">
+  <title>Setting up the Cluster</title>
+  <para>
+   Provisioning the &master_node;(s) and the &worker_node;s is done from the
+   &dashboard; dashboard. You can choose the number of nodes and their flavor
+   from the respective configuration screen in &dashboard;. The respective
+   image required to start the nodes and the node's parameters are automatically
+   applied. Do not manually spawn instances using the cloud vendor's
+   interface.
+  </para>
+  <para>
+   The following example installation was done using Amazon Web Services. If
+   you are using a different cloud provider, the dialogs to launch the nodes
+   may slightly differ.
+  </para>
+  <example>
+   <title>Setting up the Cluster on AWS</title>
+   <procedure>
+    <step>
+     <para>
+      Open a browser and point it to
+      https://<replaceable>ADMIN_NODE</replaceable>/. Note that the HTTPS
+      protocol is required, HTTP will not work. Replace
+      <replaceable>ADMIN_NODE</replaceable> with either the
+      <emphasis>public</emphasis> name (FQDN) or the
+      <emphasis>public</emphasis> IP address of your &admin_node;. The
+      respective value can be obtained from your cloud provider's console when
+      requesting detailed information on the &admin_node;.
+     </para>
+     <figure>
+      <title>The &dashboard; Login Screen</title>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="velum_login_public_cloud.png" width="75%" format="png"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="velum_login_public_cloud.png" width="75%" format="png"/>
+       </imageobject>
+      </mediaobject>
+     </figure>
+     <para>
+      Log in to the &dashboard; dashboard using the administrative credentials
+      provided during the &admin_node; setup.
+     </para>
+    </step>
+    <step>
+     <para>
+      The <guimenu>Initial CaaS Platform Configuration</guimenu> dialog
+      launches, where you need to provide basic settings.
+
+      <remark condition="clarity">
+       2018-11-12 - fs: Can any of these settings be changed later?
+      </remark>
+
+     </para>
+     <figure>
+      <title>Initial CaaS Platform Configuration</title>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="velum_setup1_public_cloud.png" width="75%" format="png"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="velum_setup1_public_cloud.png" width="75%" format="png"/>
+       </imageobject>
+      </mediaobject>
+     </figure>
+     <variablelist>
+      <varlistentry>
+       <term><guimenu>Internal Dashboard Location</guimenu></term>
+       <listitem>
+        <para>
+         The <emphasis>internal</emphasis> host name (FQDN) of the
+         &admin_node;.  The respective value can be obtained from your cloud
+         provider's console when requesting detailed information on the
+         &admin_node;. Providing this value is mandatory.
+
+         <remark condition="clarity">
+          2018-11-12 - fs: FQDN or IP address?? Any preference or recommendations?
+         </remark>
+
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term><guimenu>Install Tiller (Helm's Server Component)</guimenu></term>
+       <listitem>
+        <para>
+         If you intend to deploy &scf; on &productname;, or any other software
+         that is installed with &helm; (the &kube; package manager), check the
+         box to install &tiller;.
+        </para>
+       </listitem>
+      </varlistentry>
+      &overlay_network;
+      &proxy_settings;
+      &suse_registry;
+     </variablelist>
+     <para>
+      Proceed with <guimenu>Next</guimenu>.
+     </para>
+    </step>
+    <step>
+     <para>
+      Now that the &admin_node; is fully configured, you need to launch the
+      rest of the cluster nodes.
+     </para>
+     <figure>
+      <title>Bootstrap Your CaaS Platform</title>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="velum_bootstrap_public_cloud.png" width="75%" format="png"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="velum_bootstrap_public_cloud.png" width="75%" format="png"/>
+       </imageobject>
+      </mediaobject>
+     </figure>
+
+     <para>
+      Launch the &master_node; and &worker_node; instances in this dialog. Note
+      that you initially need at least one &master_node; and two
+      &worker_node;s. You can launch more instances when the cluster is running.
+      <remark condition="clarity">
+       2018-11-12 - fs: How to do this? Is it recommended to launch all nodes
+       at this point? Why? Why not?
+      </remark>
+     </para>
+     <variablelist>
+      <varlistentry>
+       <term><guimenu>Instance Type</guimenu></term>
+       <listitem>
+        <para>
+         Choose an instance type. All nodes will be launched using this same
+         type. You may either choose one of the listed types or manually
+         specify one by selecting <guimenu>Other types...</guimenu>. Make sure
+         the type you choose matches the requirements, see <xref
+         linkend="sec.deploy.requirements.hardware"/> for details.
+        </para>
+        <para>
+         Refer to the link in the <guimenu>Tip</guimenu> section for more
+         information on the instance types your cloud provider is offering.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term><guimenu>Cluster Size</guimenu></term>
+       <listitem>
+        <para>
+         Choose the number of cluster nodes you want to launch. Note that this
+         includes at least one &master_node;.
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term><guimenu>Networking</guimenu></term>
+       <listitem>
+        <para>
+         Specify the <guimenu>Subnet ID</guimenu> and the <guimenu>Security
+         Group ID</guimenu> in this section. Note that you need to provide the
+         <emphasis>IDs</emphasis>, not the respective names!
+        </para>
+        <para>
+         If you specify a different subnet than the one for the &admin_node;,
+         make sure both subnets can communicate with each other.
+        </para>
+        <important>
+         <title>IP Addresses Must be Available</title>
+         <para>
+          Each node that gets launched needs to get an
+          <emphasis>internal</emphasis> IP address. Make sure the subnet you
+          specify has got enough free IP addresses, otherwise launching the
+          nodes will fail.
+         </para>
+        </important>
+       </listitem>
+      </varlistentry>
+     </variablelist>
+     <para>
+      Proceed with <guimenu>Next</guimenu>.
+     </para>
+    </step>
+    <step>
+     <para>
+      It will take some time until the instances that have just been launched
+      become available. Wait until <emphasis>all</emphasis> nodes are ready
+      before you proceed.
+     </para>
+     <figure>
+      <title>Waiting for the Nodes to Become Available</title>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="velum_pending_node_public_cloud.png" width="75%" format="png"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="velum_pending_node_public_cloud.png" width="75%" format="png"/>
+       </imageobject>
+      </mediaobject>
+     </figure>
+     <para>
+      In case of errors, a warning message will be displayed. To check what
+      caused the error, log in to the &admin_node; via SSH and check the
+      respective log file by running the following command:
+     </para>
+     <screen>sudo less /var/log/salt/minion</screen>
+     <para>
+      Choose your browser's <guimenu>Back</guimenu> button to return to the
+      <guimenu>Bootstrap your CaaS Platform</guimenu> dialog and restart the
+      process.
+      <remark condition="clarity">
+       2018-11-12 - fs: Does this work?
+      </remark>
+     </para>
+    </step>
+    <step>
+     <para>
+      <emphasis>Before</emphasis> you choose any roles for the nodes, visit the
+      console of your cloud provider and assign a public IP address and a
+      public name to one of the instances that were just launched. Make a note
+      of its identifier and internal hostname. This instance is the one that
+      will become the &master_node; in the next step. A public name and IP
+      address for the &master_node; is mandatory, otherwise the deployment will
+      fail.
+      <remark condition="clarity">
+       2018-11-14 - fs: How to set up multiple master nodes?
+      </remark>
+
+     </para>
+    </step>
+    <step>
+     <para>
+      When all nodes show up in the <guimenu>Select Nodes and Roles</guimenu>
+      dialog, apply the <guimenu>Master</guimenu> role to the node you applied
+      a public IP address and a public host name to in the previous step. You
+      should be able to identify it by <guimenu>ID</guimenu> and/or
+      <guimenu>Hostname</guimenu> (note that the host name shown in this list
+      is the <emphasis>internal</emphasis> host name).
+
+      <remark condition="clarity">
+       2018-11-14 - fs: What to choose in case of multiple master nodes?
+      </remark>
+
+     </para>
+
+     <figure>
+      <title>All Nodes are Ready</title>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="velum_select_nodes_public_cloud.png" width="75%" format="png"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="velum_select_nodes_public_cloud.png" width="75%" format="png"/>
+       </imageobject>
+      </mediaobject>
+     </figure>
+
+     <para>
+      Apply the <guimenu>Worker</guimenu> role to the rest of the nodes. In
+      case you do not want to deploy all nodes now, you may leave them in state
+      <guimenu>Unused</guimenu>, you can assign them the
+      <guimenu>Worker</guimenu> any time later when the cluster is already
+      running. Note that you need to at least deploy two &worker_node;s now.
+      Continue with <guimenu>Next</guimenu>.
+     </para>
+    </step>
+    <step>
+     <para>
+      Before the bootstrapping process can be started, you need to provide two
+      fully qualified domain names:
+     </para>
+     <figure>
+      <title>Confirm Bootstrapping</title>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="velum_setup4.png" width="75%" format="png"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="velum_setup4.png" width="75%" format="png"/>
+       </imageobject>
+      </mediaobject>
+     </figure>
+     <variablelist>
+      <varlistentry>
+       <term>
+        <guimenu>External Kubernetes API FQDN</guimenu>
+       </term>
+       <listitem>
+        <para>
+         The name (FQDN) used to reach the node running the Kubernetes API
+         server. In a deployment with a single master node, this will be the
+         <emphasis>external</emphasis> name of the node that was selected as
+         the master node during bootstrapping of the cluster.
+
+         <remark condition="clarity">
+          2018-11-14 - fs: What to enter in case of multiple master nodes?
+         </remark>
+
+        </para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>
+        <guimenu>External Dashboard FQDN</guimenu>
+       </term>
+       <listitem>
+        <para>
+         The <emphasis>external</emphasis> name (FQDN) of the &admin_node;.
+        </para>
+       </listitem>
+      </varlistentry>
+     </variablelist>
+     <para>
+      Select <guimenu>Bootstrap Cluster</guimenu> to start the respective
+      process. It will take a while to finish.
+     </para>
+    </step>
+    <step>
+     <para>
+      When the bootstrapping process has successfully finished, the
+      <guimenu>Cluster Status page</guimenu> lists all nodes in the
+      <guimenu>Nodes</guimenu> table.
+     </para>
+     <figure>
+      <title>Bootstrapping Finished</title>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="velum_cluster_final0_public_cloud.png" width="75%" format="png"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="velum_cluster_final0_public_cloud.png" width="75%" format="png"/>
+       </imageobject>
+      </mediaobject>
+     </figure>
+     <para>
+      You will also see a warning on a Velum API connection error. This is
+      normal and due to the fact that the certificate was updated. Please
+      follow the on-screen instructions for mitigation.
+     </para>
+    </step>
+    <step>
+     <para>
+      Now that the installation is finished, the cluster is fully operational.
+     </para>
+     <figure>
+      <title>The Installation is Finished</title>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="velum_cluster_final1_public_cloud.png" width="75%" format="png"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="velum_cluster_final1_public_cloud.png" width="75%" format="png"/>
+       </imageobject>
+      </mediaobject>
+     </figure>
+    </step>
+   </procedure>
+  </example>
+ </sect1>
+</chapter>
