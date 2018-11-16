@@ -667,7 +667,7 @@ suse_caasp:
       After the cluster has been started and the cluster overview shows
       <guimenu>Create Complete</guimenu>, you need to find the external IP
       address for the admin node of your cluster (here:
-      <literal>10.86.1.72</literal>). Now visit that IP address in your browser.
+      <literal>192.168.1.72</literal>). Now visit that IP address in your browser.
       You should see the &dashboard; login page and can continue with
       <xref linkend="sec.deploy.nodes.admin_configuration"/>.
      </para>
@@ -748,10 +748,10 @@ suse_caasp:
     <step>
      <para>
       Find out which (external) IP address was assigned to the admin node
-      of your &productname; cluster (here: <literal>10.81.1.51</literal>).
+      of your &productname; cluster (here: <literal>192.168.1.51</literal>).
      </para>
      <screen>&prompt.user;<command>openstack server list --name "admin" | awk 'FNR > 3 {print $4 $5 $9}'</command>
-caasp3-stack-admin|10.81.1.51</screen>
+caasp3-stack-admin|192.168.1.51</screen>
      </step>
      <step>
       <para>
