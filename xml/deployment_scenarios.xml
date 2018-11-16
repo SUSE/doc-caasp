@@ -396,6 +396,15 @@ Using mirrors in CaaSP:
     automatically or can be forced via the CLI. You can then copy this data to
     your trusted storage at any point and update the internal mirror.
    </para>
+   <note>
+    <title>Required Modules</title>
+    <para>
+     &rmtool; provides software in so called modules. You must enable all the
+     default modules for &sle; and in addition the <literal>Containers</literal>
+     module. This module needs to be mirrored inside the airgapped network
+     in order to provide all necessary software for other parts of this scenario.
+    </para>
+   </note>
    <sect3>
     <title>Mirror Configuration</title>
     <note>
@@ -499,9 +508,9 @@ Using mirrors in CaaSP:
      </step>
      <step>
       <para>
-       Transfer the contents of <filename>/charts/</filename> to the webserver
-       and unpack it to the desired location. The <filename>index.yaml</filename> file
-       must be in the root directory for your webserver.
+       Transfer the contents of <filename>/charts/</filename> to the to the
+       desired location on the webserver . The <filename>index.yaml</filename>
+       file must be in the root directory for your webserver.
       </para>
      </step>
      <step>
