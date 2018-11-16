@@ -93,14 +93,14 @@
      </para>
      <para>
       In this example, we will use a worker node with IP
-      <literal>10.84.152.113</literal> to expose our services.
+      <literal>192.168.1.113</literal> to expose our services.
      </para>
      <para>
       You should configure proper DNS names in any production environment.
       These values are only for example purposes.
      </para>
 <screen>
-monitoring.example.com                      IN  A       10.84.152.113
+monitoring.example.com                      IN  A       192.168.1.113
 prometheus.example.com                      IN  CNAME   monitoring.example.com
 prometheus-alertmanager.example.com         IN  CNAME   monitoring.example.com
 grafana.example.com                         IN  CNAME   monitoring.example.com
@@ -109,7 +109,7 @@ grafana.example.com                         IN  CNAME   monitoring.example.com
       Or add this entry to /etc/hosts
      </para>
 <screen>
-10.84.152.113 prometheus.example.com prometheus-alertmanager.example.com grafana.example.com
+192.168.1.113 prometheus.example.com prometheus-alertmanager.example.com grafana.example.com
       </screen>
     </step>
     <step>
@@ -192,11 +192,11 @@ serviceAccount:
 
 # Publish services on port HTTP/80
 # Publish services on port HTTPS/443
-# These services are exposed on the node with IP 10.84.152.113
+# These services are exposed on the node with IP 192.168.1.113
 controller:
   service:
     externalIPs:
-      - 10.84.152.113
+      - 192.168.1.113
        </screen>
       </listitem>
      </itemizedlist>
