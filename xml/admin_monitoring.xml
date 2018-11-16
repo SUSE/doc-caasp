@@ -392,6 +392,11 @@ Adding password for user admin
       Create a configuration file
       <filename>prometheus-config-values.yaml</filename>
      </para>
+     <!-- <para>
+      You can find a full example of the <filename>prometheus-config-values.yaml</filename>;
+      with all options for this deployment in the
+      <link xlink:href="https://github.com/kubic-project/monitoring/blob/master/prometheus-config-values.yaml">Kubic GitHub project</link>.
+     </para> -->
      <para>
       We need to configure the storage for our deployment. Choose among the
       options and uncomment the line in the config file. In production
@@ -807,6 +812,13 @@ grafana-dbf7ddb7d-fxg6d                          3/3       Running   0          
     </step>
     <step>
      <para>
+      Now you can deploy an existing
+      <link xlink:href="https://grafana.com/dashboards">Grafana dashboard</link>
+      or build your own.
+     </para>
+    </step>
+    <!-- <step>
+     <para>
       (Optional) Install Grafana dashboards
      </para>
      <para>
@@ -818,7 +830,7 @@ grafana-dbf7ddb7d-fxg6d                          3/3       Running   0          
      </para>
 <screen>&prompt.user;<command>cat grafana-dashboards-caasp* | kubectl apply -f -</command>
     </screen>
-    </step>
+    </step> -->
    </procedure>
   </sect2>
  </sect1>
