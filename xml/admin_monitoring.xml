@@ -353,20 +353,39 @@ DNS.3 = grafana.example.com
    <procedure>
     <step>
      <para>
-      Prometheus node-exporter is in charge of getting the host metrics, to do
-      so, it needs access to <filename>/proc</filename> or
-      <filename>/sys</filename> path on the host. This is achieved with the use
-      of <literal>HostPath</literal> in the pod specs, however using
-      <literal>HostPath</literal> is forbidden by default in &productname;. We
-      need to assign the privileged <literal>PodSecurityPolicy</literal> to the
-      node-exporter ServiceAccount, this ServiceAccount will be in charge of
-      creating the pods.
+      Configure Authentication
      </para>
-<screen>&prompt.user;<command>kubectl create rolebinding node-exporter-psp-privileged \
---namespace monitoring \
---clusterrole=suse:caasp:psp:privileged \
---serviceaccount=monitoring:prometheus-node-exporter</command>
+     <para>
+      We need to create a <literal>basic-auth</literal> secret so the NGINX
+      Ingress Controller can perform authentication.
+     </para>
+     <para>
+      Install <command>htpasswd</command> on your local workstation
+     </para>
+<screen>&prompt.sudo;<command>zypper in apache2-utils</command>
+   </screen>
+     <para>
+      Create the secret file <filename>auth</filename>
+     </para>
+     <important>
+      <para>
+       It is very important that the filename is <filename>auth</filename>.
+       During creation, a key in the configuration containing the secret is
+       created that is named after the used filename. The ingress controller
+       will expect a key named <literal>auth</literal>.
+      </para>
+     </important>
+<screen>
+htpasswd -c auth admin
+New password:
+Re-type new password:
+Adding password for user admin
 </screen>
+     <para>
+      Create secret in &kube;
+     </para>
+<screen>&prompt.user;<command>kubectl create secret generic -n monitoring prometheus-basic-auth --from-file=auth</command>
+  </screen>
     </step>
     <step>
      <para>
@@ -495,42 +514,6 @@ prometheus-node-exporter-qfwp9                   1/1       Running   0          
 prometheus-node-exporter-sc4ls                   1/1       Running   0          2m
 prometheus-server-6488f6c4cd-5n9w8               2/2       Running   0          2m
    </screen>
-    </step>
-    <step>
-     <para>
-      Configure Authentication
-     </para>
-     <para>
-      We need to create a <literal>basic-auth</literal> secret so the NGINX
-      Ingress Controller can perform authentication.
-     </para>
-     <para>
-      Install <command>htpasswd</command> on your local workstation
-     </para>
-<screen>&prompt.sudo;<command>zypper in apache2-utils</command>
-   </screen>
-     <para>
-      Create the secret file <filename>auth</filename>
-     </para>
-     <important>
-      <para>
-       It is very important that the filename is <filename>auth</filename>.
-       During creation, a key in the configuration containing the secret is
-       created that is named after the used filename. The ingress controller
-       will expect a key named <literal>auth</literal>.
-      </para>
-     </important>
-<screen>
-htpasswd -c auth admin
-New password:
-Re-type new password:
-Adding password for user admin
-</screen>
-     <para>
-      Create secret in &kube;
-     </para>
-<screen>&prompt.user;<command>kubectl create secret generic -n monitoring prometheus-basic-auth --from-file=auth</command>
-  </screen>
     </step>
     <step>
      <para>
