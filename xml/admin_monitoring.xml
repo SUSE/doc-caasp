@@ -229,8 +229,10 @@ nginx-ingress-default-backend-6b9b546dc8-mfkjk   1/1       Running   0          
    <para>
     You must configure your certificates for the components as secrets in
     &kube;. Get certificates from your local certificate authority. In this
-    example we are using a single certificate for the shared domain
-    <literal>monitoring.example.com</literal>.
+    example we are using a single certificate shared by the components
+    <literal>prometheus.example.com</literal>,
+    <literal>prometheus-alertmanager.example.com</literal> and
+    <literal>grafana.example.com</literal>.
    </para>
    <note>
     <title>Create Individual Secrets For Components</title>
