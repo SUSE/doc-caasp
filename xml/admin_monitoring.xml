@@ -817,23 +817,122 @@ grafana-dbf7ddb7d-fxg6d                          3/3       Running   0          
       or build your own.
      </para>
     </step>
-    <!-- <step>
-     <para>
-      (Optional) Install Grafana dashboards
-     </para>
-     <para>
-      You can find a couple of
-      <link xlink:href="https://github.com/kubic-project/monitoring">dashboard
-      examples for &productname; on GitHub</link>. This repo provides
-      dashboards to visualize the resources of the &kube; nodes leveraging
-      Prometheus node-exporter metrics only.
-     </para>
-<screen>&prompt.user;<command>cat grafana-dashboards-caasp* | kubectl apply -f -</command>
-    </screen>
-    </step> -->
+
    </procedure>
+   <sect3>
+    <title>Adding Grafana Dashboards</title>
+    <para>
+     There are two ways to add dashboards to Grafana:
+    </para>
+    <itemizedlist>
+     <listitem>
+      <para>
+       Deploy an existing dashboard from
+       <link xlink:href="https://grafana.com/dashboards">grafana.com</link>
+      </para>
+      <procedure>
+       <step>
+        <para>
+         Open the deployed Grafana in your browser and log in.
+        </para>
+       </step>
+       <step>
+        <para>
+         On the home page of Grafana, hover your mousecursor over the
+         <guimenu>+</guimenu> button on the left sidebar and click on the
+         <guimenu>import</guimenu> menuitem.
+        </para>
+       </step>
+       <step>
+        <para>
+         Select an existing dashboard for your purpose from
+         <link xlink:href="https://grafana.com/dashboards">https://grafana.com/dashboards</link>.
+         Copy the URL to the clipboard.
+        </para>
+       </step>
+       <step>
+        <para>
+         Paste the URL (for example) <literal>https://grafana.com/dashboards/3131</literal>
+         into the first input field to import the "Kubernetes All Nodes"
+         Grafana Dashboard. After pasting in the url, the view will change to
+         another form.
+        </para>
+       </step>
+       <step>
+        <para>
+         Now select the "Prometheus" datasource in the <literal>prometheus</literal>
+         field and click on the <guimenu>import</guimenu> button.
+        </para>
+       </step>
+       <step>
+        <para>
+         The browser will redirect you to your newly created dashboard.
+        </para>
+       </step>
+      </procedure>
+      </listitem>
+     </itemizedlist>
+     <itemizedlist>
+      <listitem>
+       <para>
+        Deploy a configuration file containing the dashboard definition.
+       </para>
+       <procedure>
+        <step>
+         <para>
+          Create your dashboard defintion file as a <literal>ConfigMap</literal>,
+          for example <filename>grafana-dashboards-caasp-cluster.yaml</filename>.
+         </para>
+<screen>
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards-caasp-cluster
+  namespace: monitoring
+  labels:
+     grafana_dashboard: "1"
+data:
+  caasp-cluster.json: |-
+    {
+      "__inputs": [
+        {
+          "name": "DS_PROMETHEUS",
+          "label": "Prometheus",
+          "description": "",
+          "type": "datasource",
+          "pluginId": "prometheus",
+          "pluginName": "Prometheus"
+        }
+      ],
+      "__requires": [
+        {
+          "type": "grafana",
+[...]
+continues with definition of dashboard JSON
+[...]
+         </screen>
+        </step>
+        <step>
+         <para>
+          Apply the <literal>ConfigMap</literal> to the cluster.
+         </para>
+<screen>&prompt.user;<command>kubectl apply -f <replaceable>grafana-dashboards-caasp-cluster.yaml</replaceable></command>
+        </screen>
+        </step>
+       </procedure>
+       <para>
+        You can find a couple of dashboard examples for &productname; in the
+        <link xlink:href="https://github.com/kubic-project/monitoring">Kubic project</link>
+        on GitHub. This repo provides dashboards to visualize the resources of
+        the &kube; nodes leveraging Prometheus node-exporter metrics only.
+       </para>
+       </listitem>
+      </itemizedlist>
+   </sect3>
   </sect2>
  </sect1>
+
  <sect1 xml:id="sec.admin.monitoring.health">
   <title>Health Checking</title>
 
