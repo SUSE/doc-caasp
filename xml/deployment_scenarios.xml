@@ -212,7 +212,7 @@ Using mirrors in CaaSP:
     (&sls; 12) or <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/book_rmt.html">&rmtool;</link>
     (&sls; 15). These tools provide functionality that mirror the upstream
     &suse; package repositories on the local network. This is intended to
-    minimize reliance on &SUSE; infrastructure for updating large volumes of
+    minimize reliance on &suse; infrastructure for updating large volumes of
     machines. The airgapped deployment uses the same technology to provide the
     packages locally for the airgapped environment.
    </para>
@@ -570,6 +570,15 @@ Using mirrors in CaaSP:
 
     <procedure>
      <title>Set Up The External Mirror</title>
+     <step>
+      <para>
+       Create basic authentication credentials for registry.
+      </para>
+      <screen>&prompt.user;<command>mkdir auth</command>
+&prompt.user;<command>docker run --entrypoint htpasswd \
+registry:2.6.2 -Bbn <replaceable>testuser testpassword</replaceable> > auth/htpasswd</command>
+ </screen>
+     </step>
      <step>
       <para>
        <filename>/etc/docker/registry/config.yml</filename> Configuration file for Docker registry.
