@@ -36,49 +36,44 @@
   </informalfigure>
  </sect1>
  <sect1 xml:id="sec.deploy.scenarios.airgap">
-  <title>Airgapped Installation</title>
-
+  <title>Airgapped Deployment</title>
   <para>
    An airgapped deployment can not have any direct connection to the Internet
    or external networks.
   </para>
-
   <para>
    All data must be transferred into the airgapped network in a secure fashion.
   </para>
-
 <screen>
  Requirements:
- * Needs 4 servers (SLE15, default specs, at least 200GB storage for registries)
- ** 2 in external network (can access internet freely or at least on SUSE ports)
- *** `external1`
- *** `external2`
- ** 2 in airgapped network (must be accessible from CaaSP cluster on SUSE ports)
- *** `airgap1`
- *** `airgap2`
- * Needs secure storage `secure_drive` at least 128GB
+ * Needs 2 servers (SLE12, default specs, at least 200GB storage for registries)
+ ** 1 in external network (can access internet freely or at least on SUSE ports)
+ *** `external`
+ ** 1 in airgapped network (must be accessible from CaaSP cluster on SUSE ports)
+ *** `airgap`
+ * Needs secure storage `secure_drive` at least 128GB, btrfs
 
  Procedure:
  * Set up mirror servers on external network
  * Set up mirror servers on airgapped network
- * Install RMT on `external1`
- * Register `external1` against SCC, pull updates
- * Install RMT on `airgap1`
- * Install helm-mirror on `external2`
- * Install helm-mirror on `airgap2`
- * Install webserver on `airgap2`
- * Install docker-registry on `external2`
- * Install docker-registry on `airgap2`
- * Run helm-mirror on `external2` and retrieve all charts
- * Run helm-mirror on `external2` and retrieve all images
+ * Install RMT on `external`
+ * Register `external` against SCC, pull updates
+ * Install RMT on `airgap`
+ * Install helm-mirror on `external`
+ * Install helm-mirror on `airgap`
+ * Install webserver on `airgap`
+ * Install docker-registry on `external`
+ * Install docker-registry on `airgap`
+ * Run helm-mirror on `external` and retrieve all charts
+ * Run helm-mirror on `external` and retrieve all images
  * Copy all images / charts to `secure_drive`
- * Connect `secure_drive` to `airgap2` and transfer data
- * Refresh webserver on `airgap2` if necessary
+ * Connect `secure_drive` to `airgap` and transfer data
+ * Refresh webserver on `airgap` if necessary
 
 Using mirrors in CaaSP:
- * Register CaaSP nodes to RMT on `airgap1`
- * Configure helm on CaaSP admin node to read from `airgap2`
- * Configure registry mirror in velum to `airgap2`
+ * Register CaaSP nodes to RMT on `airgap`
+ * Configure helm on CaaSP admin node to read from `airgap`
+ * Configure registry mirror in velum to `airgap`
   </screen>
 
   <important>
@@ -103,65 +98,11 @@ Using mirrors in CaaSP:
     inside the trusted network.
    </para>
    <para>
-    The three main sources that must be replaced are:
-   </para>
-   <itemizedlist>
-    <listitem>
-     <para>
-      &suse; &mos; RPM packages
-     </para>
-     <para>
-      Provided by the &suse; package repositories
-     </para>
-    </listitem>
-    <listitem>
-     <para>
-      Helm installation charts
-     </para>
-     <para>
-      Provided by the &suse; helm chart repository
-      (https://kubernetes-charts.suse.com/)
-     </para>
-    </listitem>
-    <listitem>
-     <para>
-      Container images
-     </para>
-     <para>
-      Provided by the &suse; container registry (https://registry.suse.com)
-     </para>
-    </listitem>
-   </itemizedlist>
-   <para>
     You will need to create mirror servers inside the airgapped network which
     act as the replacement for the default sources.
    </para>
-   <para>
-    These internal mirrors must be updated with data retrieved from the
-    original upstream sources; in a trusted and secure fashion. To achieve
-    this, you will need an additional set of mirroring servers outside of the
-    airgapped network which act as first stage mirrors.
-   </para>
-   <para>
-    Updating of mirrors happens in three stages.
-   </para>
-   <orderedlist>
-    <listitem>
-     <para>
-      Update the external mirror from upstream.
-     </para>
-    </listitem>
-    <listitem>
-     <para>
-      Transfer the updated data onto a trusted storage device.
-     </para>
-    </listitem>
-    <listitem>
-     <para>
-      Update the internal mirror from the trusted storage device.
-     </para>
-    </listitem>
-   </orderedlist>
+   <sect3>
+    <title>Network Separation</title>
    <informalfigure>
     <mediaobject>
      <imageobject role="fo">
@@ -198,208 +139,311 @@ Using mirrors in CaaSP:
      </listitem>
     </varlistentry>
    </variablelist>
+  </sect3>
+  <sect3>
+   <title>Mirrored Resources</title>
    <para>
-    Once the replacement sources are in place, the key components are
-    reconfigured to use the mirrors as their main sources.
-   </para>
-  </sect2>
-
-  <sect2 xml:id="sec.deploy.scenarios.airgap.machines">
-   <title>Mirror Servers</title>
-   <para>
-    You will need to provide and maintain at least four machines in addition to
-    your &productname; cluster. These mirror servers will reside on the
-    external part of your network and the internal (airgapped) network
-    respectively.
-   </para>
-   <note>
-    <title>Shared Mirror Server</title>
-    <para>
-     You can have multiple mirror services share a single machine. The
-     specifications mentioned here are only basic minimum requirements.
-    </para>
-    <para>
-     If you have multiple clusters or a very large amount of nodes accessing
-     these mirrors, you should increase CPU/RAM.
-    </para>
-    <para>
-     Storage sizing depends on your intended update frequency and data
-     retention model. If you want to keep snapshots or images of repository
-     states at various points, you must increase storage size accordingly.
-    </para>
-   </note>
-   <variablelist>
-    <varlistentry>
-     <term>External</term>
-     <listitem>
-      <para>
-       These machines will host the <literal>&rmtool;</literal> for RPM packages
-       and the <literal>Docker Pull-Trough Cache</literal> for container
-       images.
-      </para>
-      <itemizedlist>
-       <listitem>
-        <para>
-         <literal>2</literal> Host machines for the mirror servers.
-        </para>
-        <itemizedlist>
-         <listitem>
-          <para>
-           SLES 15
-          </para>
-         </listitem>
-         <listitem>
-          <para>
-           2 (v)CPU
-          </para>
-         </listitem>
-         <listitem>
-          <para>
-           8 GB RAM
-          </para>
-         </listitem>
-         <listitem>
-          <para>
-           500 GB Storage
-          </para>
-         </listitem>
-        </itemizedlist>
-       </listitem>
-      </itemizedlist>
-     </listitem>
-    </varlistentry>
-    <varlistentry>
-     <term>Internal</term>
-     <listitem>
-      <para>
-       These machines will host the <literal>&rmtool;</literal> for RPM packages,
-       and <literal>Docker Container Registry</literal> for container images
-       as well as a webserver hosting the <literal>Helm Chart Repository</literal>
-       files.
-      </para>
-      <itemizedlist>
-       <listitem>
-        <para>
-         <literal>2</literal> Host machines for the mirror servers.
-        </para>
-        <itemizedlist>
-         <listitem>
-          <para>
-           SLES 15
-          </para>
-         </listitem>
-         <listitem>
-          <para>
-           2 (v)CPU
-          </para>
-         </listitem>
-         <listitem>
-          <para>
-           8 GB RAM
-          </para>
-         </listitem>
-         <listitem>
-          <para>
-           500 GB Storage
-          </para>
-         </listitem>
-        </itemizedlist>
-       </listitem>
-      </itemizedlist>
-     </listitem>
-    </varlistentry>
-   </variablelist>
-   <important>
-    <title>Adjust Number Of Mirror Servers</title>
-    <para>
-     This scenario description does not contain any fallback contingencies for
-     the mirror servers. Add additional mirror servers behind a loadbalancer if
-     you require additional reliability/availability.
-    </para>
-   </important>
-  </sect2>
-
-  <sect2 xml:id="sec.deploy.scenarios.airgap.network">
-   <title>Networking</title>
-   <para>
-    All members of the &productname; cluster must be able to communicate with
-    the internal mirror server(s) within the airgapped network.
-   </para>
-   <para>
-    Ports:
+    The three main sources that must be replaced are:
    </para>
    <itemizedlist>
     <listitem>
      <para>
-      80 HTTP - RMT Server and Helm Chart Repository Mirror
+      &suse; &mos; RPM packages
+     </para>
+     <para>
+      Provided by the &suse; package repositories
      </para>
     </listitem>
     <listitem>
      <para>
-      443 HTTPS - RMT Server and Helm Chart Repository Mirror
+      Helm installation charts
+     </para>
+     <para>
+      Provided by the &suse; helm chart repository
+      (https://kubernetes-charts.suse.com/)
      </para>
     </listitem>
     <listitem>
      <para>
-      5000 HTTP - Docker Registry
+      Container images
+     </para>
+     <para>
+      Provided by the &suse; container registry (https://registry.suse.com)
      </para>
     </listitem>
    </itemizedlist>
-   <note>
-    <title>Additional Port Configuration</title>
+   <para>
+    These internal mirrors must be updated with data retrieved from the
+    original upstream sources; in a trusted and secure fashion. To achieve
+    this, you will need an additional set of mirroring servers outside of the
+    airgapped network which act as first stage mirrors.
+   </para>
+   <para>
+    Updating of mirrors happens in three stages.
+   </para>
+   <orderedlist>
+    <listitem>
+     <para>
+      Update the external mirror from upstream.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Transfer the updated data onto a trusted storage device.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Update the internal mirror from the trusted storage device.
+     </para>
+    </listitem>
+   </orderedlist>
+   <para>
+    Once the replacement sources are in place, the key components are
+    reconfigured to use the mirrors as their main sources.
+   </para>
+  </sect3>
+
+  <sect3>
+   <title>RPM Package Repository Mirroring</title>
+   <para>
+    Mirroring of the RPM repositories is handled by either
+    <link xlink:href="https://www.suse.com/documentation/sles-12/book_smt/data/book_smt.html">&smtool;</link>
+    (&sls; 12) or <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/book_rmt.html">&rmtool;</link>
+    (&sls; 15). These tools provide functionality that mirror the upstream
+    &suse; package repositories on the local network. This is intended to
+    minimize reliance on &SUSE; infrastructure for updating large volumes of
+    machines. The airgapped deployment uses the same technology to provide the
+    packages locally for the airgapped environment.
+   </para>
+   <para>
+    SMT/RMT will provide a repository server that holds the packages
+    and related metadata for &mos;; to install them like from the upstream
+    repository. Data is synchronized once a day to the external mirror
+    automatically or can be forced via the CLI.
+   </para>
+   <para>
+    You can copy this data to your trusted storage at any point
+    and update the internal mirror.
+   </para>
+  </sect3>
+
+   <sect3>
+    <title>Helm Chart and Container Image Mirroring</title>
     <para>
-     If you choose to add more Docker registries to your internal network,
-     these must run on different ports than the standard
-     <literal>5000</literal>.
+     &productname; uses <link xlink:href="https://www.helm.sh/">Helm</link> as
+     one method to install additional software on the cluster. The logic behind
+     this relies on <literal>Charts</literal>, which are configuration files
+     that tell the container engine how to deploy software and its dependencies
+     and how to configure it. The actual software installed using this method is
+     delivered as <literal>Container images</literal>.
     </para>
-   </note>
+    <para>
+     We provide <link xlink:href="https://github.com/openSUSE/helm-mirror">helm-mirror</link>
+     to allow downloading all charts present in a chart repository at once and
+     moreover to extract all container image URLs from the charts. You can then
+     use <link xlink:href="https://github.com/containers/skopeo">skopeo</link> to
+     download all the images. This approach vastly simplifies the task of copying
+     charts and their related images.
+    </para>
+   </sect3>
   </sect2>
 
-  <sect2 xml:id="sec.deploy.scenarios.airgap.storage">
-   <title>Trusted Storage</title>
-   <para>
-    Transferring data from the external network mirror to the internal mirror
-    can be performed in many ways. The most common way is portable storage (USB
-    keys or external hard drives).
-   </para>
-   <para>
-    Sizing of the storage is dependent on the number of data sources that need
-    to be stored. Container images can easily measure several Gigabytes per
-    item; although they are generally smaller for Kubernetes related
-    applications. The overall size of any given RPM repository is at least tens
-    of Gigabytes.
-   </para>
-   <para>
-    At the time of writing, the package repository for &sls; alone contains
-    <literal>36GB</literal> of data.
-   </para>
-   <para>
-    We recommend external storage with at least <literal>128GB</literal>.
-   </para>
-   <note>
-    <title>Handling Of Trusted Storage</title>
+  <sect2 xml:id="sec.deploy.scenarios.airgap.requirements">
+   <title>Requirements</title>
+   <sect3 xml:id="sec.deploy.scenarios.airgap.requirements.machines">
+    <title>Mirror Servers</title>
     <para>
-     Data integrity checks, duplication, backup, and secure handling procedures
-     of trusted storage are beyond the scope of this document.
+     You will need to provide and maintain at least four machines in addition to
+     your &productname; cluster. These mirror servers will reside on the
+     external part of your network and the internal (airgapped) network
+     respectively.
     </para>
-   </note>
+    <note>
+     <title>Shared Mirror Server</title>
+     <para>
+      You can have multiple mirror services share a single machine. The
+      specifications mentioned here are only basic minimum requirements.
+     </para>
+     <para>
+      If you have multiple clusters or a very large amount of nodes accessing
+      these mirrors, you should increase CPU/RAM.
+     </para>
+     <para>
+      Storage sizing depends on your intended update frequency and data
+      retention model. If you want to keep snapshots or images of repository
+      states at various points, you must increase storage size accordingly.
+     </para>
+    </note>
+    <variablelist>
+     <varlistentry>
+      <term>External</term>
+      <listitem>
+       <para>
+        These machines will host the <literal>&smtool;</literal> for RPM packages
+        and the <literal>Docker registry</literal> for container
+        images.
+       </para>
+       <itemizedlist>
+        <listitem>
+         <para>
+          <literal>1</literal> Host machines for the mirror servers.
+         </para>
+         <itemizedlist>
+          <listitem>
+           <para>
+            SLES 12
+           </para>
+          </listitem>
+          <listitem>
+           <para>
+            2 (v)CPU
+           </para>
+          </listitem>
+          <listitem>
+           <para>
+            8 GB RAM
+           </para>
+          </listitem>
+          <listitem>
+           <para>
+            500 GB Storage
+           </para>
+          </listitem>
+         </itemizedlist>
+        </listitem>
+       </itemizedlist>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>Internal</term>
+      <listitem>
+       <para>
+        These machines will host the <literal>&smtool;</literal> for RPM packages,
+        and <literal>Docker registry</literal> for container images
+        as well as a webserver hosting the <literal>Helm Chart Repository</literal>
+        files.
+       </para>
+       <itemizedlist>
+        <listitem>
+         <para>
+          <literal>1</literal> Host machines for the mirror servers.
+         </para>
+         <itemizedlist>
+          <listitem>
+           <para>
+            SLES 12
+           </para>
+          </listitem>
+          <listitem>
+           <para>
+            2 (v)CPU
+           </para>
+          </listitem>
+          <listitem>
+           <para>
+            8 GB RAM
+           </para>
+          </listitem>
+          <listitem>
+           <para>
+            500 GB Storage
+           </para>
+          </listitem>
+         </itemizedlist>
+        </listitem>
+       </itemizedlist>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+    <important>
+     <title>Adjust Number Of Mirror Servers</title>
+     <para>
+      This scenario description does not contain any fallback contingencies for
+      the mirror servers. Add additional mirror servers inside the airgapped
+      network (behind a loadbalancer) if you require additional
+      reliability/availability.
+     </para>
+    </important>
+   </sect3>
+
+   <sect3 xml:id="sec.deploy.scenarios.airgap.requirements.network">
+    <title>Networking</title>
+    <para>
+     All members of the &productname; cluster must be able to communicate with
+     the internal mirror server(s) within the airgapped network.
+    </para>
+    <para>
+     Ports:
+    </para>
+    <itemizedlist>
+     <listitem>
+      <para>
+       80 HTTP - RMT Server and Helm Chart Repository Mirror
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       443 HTTPS - RMT Server and Helm Chart Repository Mirror
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       5000 HTTP - Docker Registry
+      </para>
+     </listitem>
+    </itemizedlist>
+    <note>
+     <title>Additional Port Configuration</title>
+     <para>
+      If you choose to add more Docker registries to your internal network,
+      these must run on different ports than the standard
+      <literal>5000</literal>.
+     </para>
+    </note>
+   </sect3>
+
+   <sect3 xml:id="sec.deploy.scenarios.airgap.requirements.storage">
+    <title>Trusted Storage</title>
+    <para>
+     Transferring data from the external network mirror to the internal mirror
+     can be performed in many ways. The most common way is portable storage (USB
+     keys or external hard drives).
+    </para>
+    <para>
+     Sizing of the storage is dependent on the number of data sources that need
+     to be stored. Container images can easily measure several Gigabytes per
+     item; although they are generally smaller for Kubernetes related
+     applications. The overall size of any given RPM repository is at least tens
+     of Gigabytes.
+    </para>
+    <para>
+     The storage must be formatted to a filesystem type supporting files larger
+     than 4GB. We recommend <literal>btrfs</literal>.
+    </para>
+    <para>
+     At the time of writing, the package repository for &sls; alone contains
+     <literal>36GB</literal> of data.
+    </para>
+    <para>
+     We recommend external storage with at least <literal>128GB</literal>.
+    </para>
+    <note>
+     <title>Handling Of Trusted Storage</title>
+     <para>
+      Data integrity checks, duplication, backup, and secure handling procedures
+      of trusted storage are beyond the scope of this document.
+     </para>
+    </note>
+   </sect3>
   </sect2>
 
   <sect2 xml:id="sec.deploy.scenarios.airgap.rpm-repository">
    <title>RPM Repository Mirror</title>
-   <para>
-    Providing RPM packages is handled by the
-    <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/book_rmt.html">&rmtool;
-    (RMT)</link>. RMT will provide a repository server that holds the packages
-    and related metadata for &mos;; to install them like from the upstream
-    repository. Data is synchronized once a day to the external mirror
-    automatically or can be forced via the CLI. You can then copy this data to
-    your trusted storage at any point and update the internal mirror.
-   </para>
    <note>
     <title>Required Modules</title>
     <para>
-     &rmtool; provides software in so called modules. You must enable all the
+     SMT/RMT provides software in so called modules. You must enable all the
      default modules for &sle; and in addition the <literal>Containers</literal>
      module. This module needs to be mirrored inside the airgapped network
      in order to provide all necessary software for other parts of this scenario.
@@ -422,7 +466,7 @@ Using mirrors in CaaSP:
     </note>
     <para>
      Set up two
-     <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/cha_rmt_installation.html">RMT
+     <link xlink:href="https://www.suse.com/documentation/sles-12/book_smt/data/smt_installation.html">RMT
      mirrors</link>. One in the external network and one in the airgapped
      network.
     </para>
@@ -431,8 +475,8 @@ Using mirrors in CaaSP:
     <title>Client Configuration</title>
     <para>
      Configure all &productname; nodes to
-     <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/sec_rmt_client_clientsetupscript.html">get
-     updates from the internal RMT server</link>.
+     <link xlink:href="https://www.suse.com/documentation/sles-12/book_smt/data/smt_client.html">get
+     updates from the internal SMT server</link>.
     </para>
    </sect3>
    <sect3>
@@ -441,6 +485,281 @@ Using mirrors in CaaSP:
      Follow the procedure in
      <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/sec_rmt_mirroring_export_import.html" />.
     </para>
+   </sect3>
+  </sect2>
+
+  <sect2 xml:id="sec.deploy.scenarios.airgap.container-registry">
+   <title>Container Registry Mirror</title>
+
+   <para>
+    Container image registries are provided by SUSE, Docker, and other sources.
+    The &suse; container registry is used to update the &productname;
+    components.
+   </para>
+   <para>
+    Once configured, nothing has to be changed inside of Dockerfile(s),
+    Kubernetes manifest files, Helm charts or custom scripts, etc. All images
+    with a prefix <literal>registry.suse.com/</literal> will be automatically
+    pulled from the internal mirror.
+   </para>
+   <para>
+    Images that are located on other registries must be mirrored separately on
+    the airgapped network.
+   </para>
+
+   <sect3 xml:id="sec.deploy.scenarios.airgap.container-registry.configuration">
+    <title>Mirror Configuration</title>
+
+    <para>
+     The external and internal mirrors have slightly different configurations.
+    </para>
+     <para>
+     The internal mirror acts as a container registry mirror that provides the
+     images to the &productname; cluster nodes. You can host images from
+     multiple registries here but only one per specific software.
+    </para>
+    <para>
+     Nothing has to be changed inside of Dockerfile(s), Kubernetes manifest
+     files, Helm charts, custom scripts, etc. All images using a prefix that
+     was configured as a remote registry/mirror (for example <literal>registry.suse.com/</literal>)
+     will be automatically pulled from the air-gapped mirror(s).
+     </para>
+     <note>
+      <title>Registry Mirrors Are Read Only</title>
+      <para>
+       For security reasons, both the registry mirrors are configured in
+       <literal>read-only</literal> mode. Therefore, pushing container images to
+       these mirrors will not be possible. They can only serve images that were
+       previously pulled and cached by the external mirror and then uploaded to
+       the internal mirror.
+      </para>
+      <para>
+       If you need the ability to store modified container images, you will have
+       to create a new registry that will hold these images. The steps needed
+       to run your own full container image registry are not part of this
+       document.
+      </para>
+       <para>
+       For more information you can refer to:
+       <link xlink:href="https://docs.docker.com/registry/">Docker Registry</link>.
+      </para>
+     </note>
+
+     <procedure>
+      <title>Set Up Mirror Servers</title>
+      <step>
+       <para>
+        <link xlink:href="https://www.suse.com/documentation/sles-12/book_quickstarts/data/art_sle_installquick.html">Set
+        up two &sls; 12 machine</link> one on the airgapped network and one in
+        the external network.
+       </para>
+       <para>
+        Make sure you have
+        <link xlink:href="https://www.suse.com/documentation/sles-15/book_sles_docker/data/preparation.html">enabled
+        the <filename>containers</filename> module</link> on each server using the method with YaST or SUSEConnect.
+       </para>
+      </step>
+      <step>
+       <para>
+        Install the <filename>docker-distribution-registry</filename> package:
+       </para>
+ <screen>&prompt.sudo;<command>zypper in docker-distribution-registry</command>
+ </screen>
+      </step>
+     </procedure>
+
+    <procedure>
+     <title>Set Up The External Mirror</title>
+     <step>
+      <para>
+       <filename>/etc/docker/registry/config.yml</filename> Configuration file for Docker registry.
+      </para>
+<screen>
+version: 0.1
+log:
+  fields:
+    service: registry
+storage:
+  cache:
+    blobdescriptor: inmemory
+  filesystem:
+    rootdirectory: /var/lib/registry
+http:
+  addr: :5000
+  headers:
+    X-Content-Type-Options: [nosniff]
+auth:
+  htpasswd:
+    realm: basic-realm
+    path: /etc/registry
+health:
+  storagedriver:
+    enabled: true
+    interval: 10s
+threshold: 3
+</screen>
+     </step>
+     <step>
+      <para>
+       <filename>/var/lib/registry/docker-compose.yml</filename> Docker compose file to run registry.
+      </para>
+<screen>
+registry:
+  restart: always
+  image: registry:2.6.2
+  container_name: registry
+  ports:
+    - 443:443
+  environment:
+    REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
+    REGISTRY_HTTP_TLS_KEY: /certs/domain.key
+    REGISTRY_HTTP_ADDR: 0.0.0.0:443
+    REGISTRY_AUTH: htpasswd
+    REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+    REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+  volumes:
+    - ./certs:/certs
+    - ./auth:/auth
+    - /tmp/registry:/var/lib/registry
+    - /config.yml:/etc/docker/registry/config.yml
+      </screen>
+     </step>
+    </procedure>
+
+    <procedure>
+     <title>Set Up Internal Mirror</title>
+     <step>
+      <para>
+       <link xlink:href="https://www.suse.com/documentation/sles-12/book_quickstarts/data/art_sle_installquick.html">Set
+       up a &sls; 12 machine</link> on the airgapped network.
+      </para>
+      <para>
+       Make sure you have
+       <link xlink:href="https://www.suse.com/documentation/sles-15/book_sles_docker/data/preparation.html">enabled
+       the <filename>containers</filename> module</link> using the method with YaST or SUSEConnect.
+      </para>
+     </step>
+     <step>
+      <para>
+       Install the <filename>docker-distribution-registry</filename> package:
+      </para>
+<screen>&prompt.sudo;<command>zypper in docker-distribution-registry</command>
+</screen>
+     </step>
+     <step>
+      <para>
+      </para>
+      <para>
+       <filename>/var/lib/registry/docker-compose.yml</filename> Docker compose file to run registry.
+      </para>
+<screen>
+registry:
+  restart: always
+  image: registry:2.6.2
+  container_name: registry
+  ports:
+    - 443:443
+  environment:
+    REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
+    REGISTRY_HTTP_TLS_KEY: /certs/domain.key
+    REGISTRY_HTTP_ADDR: 0.0.0.0:443
+    REGISTRY_STORAGE_MAINTENANCE_READONLY='enabled: true'
+  volumes:
+    - ./certs:/certs
+    - ./auth:/auth
+    - /tmp/registry:/var/lib/registry
+    - /config.yml:/etc/docker/registry/config.yml
+       </screen>
+      <para>
+       For more details on the configuration, refer to:
+       <link xlink:href="https://docs.docker.com/registry/configuration/">Docker
+       Registry: Configuration</link>
+      </para>
+      <para>
+       <filename>/etc/docker/registry/config.yml</filename> Configuration file for Docker registry.
+      </para>
+<screen>
+version: 0.1
+log:
+  fields:
+    service: registry
+storage:
+  cache:
+    blobdescriptor: inmemory
+  filesystem:
+    rootdirectory: /var/lib/registry
+http:
+  addr: :5000
+  headers:
+    X-Content-Type-Options: [nosniff]
+auth:
+  htpasswd:
+    realm: basic-realm
+    path: /etc/registry
+health:
+  storagedriver:
+    enabled: true
+    interval: 10s
+threshold: 3
+         </screen>
+     </step>
+     <step>
+      <para>
+       Now start the registry service and enable it at boot time:
+      </para>
+<screen>
+&prompt.sudo;<command>systemctl enable --now registry.service</command>
+         </screen>
+     </step>
+    </procedure>
+    <para>
+     Now you should have the registries set up and listening on port
+     <literal>5000</literal>.
+    </para>
+<!-- FIXME mnapp 18.9.18 Shouldn't we explain how to provide this default auth/security? -->
+   </sect3>
+
+   <sect3 xml:id="sec.deploy.scenarios.airgap.container-registry.clients">
+    <title>Client Configuration</title>
+    <para>
+     Using the air-gapped mirror works exactly like using a traditional
+     on-premise mirror. You must configure the internal registry mirror in
+     &dashboard;.
+    </para>
+    <procedure>
+     <title>Configuring Registry Mirror</title>
+     <step>
+      <para>
+       Log in to &dashboard; on the &productname; admin node.
+      </para>
+     </step>
+     <step>
+      <para>
+       Navigate to <guimenu>Settings &rarr; Mirrors</guimenu> and create a
+       definition for your internal registry mirror as described in
+       <xref linkend="sec.admin.velum.mirror"/>.
+      </para>
+     </step>
+    </procedure>
+   </sect3>
+
+   <sect3 xml:id="sec.deploy.scenarios.airgap.container-registry.update">
+    <title>Updating The Mirror</title>
+    <note>
+     <title>Live Update Of Registry</title>
+     <para>
+      There is no need to stop the registry services while doing the backup and
+      restore procedures.
+     </para>
+    </note>
+    <procedure>
+     <title>Update Container Registry Mirror</title>
+     <step>
+      <para>
+
+      </para>
+     </step>
+    </procedure>
    </sect3>
   </sect2>
 
@@ -460,20 +779,34 @@ Using mirrors in CaaSP:
    <sect3>
     <title>Mirror Configuration</title>
     <para>
-     Set up an internal Helm chart mirror. This can be any webserver capable of
-     hosting static files. We recommend providing the webserver on your internal
-     container image registry mirror.
-    </para>
-    <para>
-     You do not need a Helm chart repository mirror on the external
-     network. You will perform the steps required for pulling and mirroring
-     charts and container images on your external container image registry
-     mirror.
-    </para>
-    <para>
      You must have a working container image registry mirror in place inside
-     the air gapped network.
+     the air gapped network. This can be any webserver capable of
+     hosting static files. We recommend providing the webserver on your internal
+     mirror server.
     </para>
+    <procedure>
+     <title>Setting Up Chart Repository Mirror</title>
+     <step>
+      <para>
+       Install and configure a webserver
+       (for example <link xlink:href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_apache2.html">Apache</link>)
+       as described in the &sls; documentation on your airgapped mirror server.
+      </para>
+     </step>
+     <step>
+      <para>
+       SSH into your mirror server on the <literal>external</literal> network.
+      </para>
+     </step>
+     <step>
+      <para>
+       Download all helm charts from the helm chart repository using
+       <command>helm-mirror</command>.
+      </para>
+<screen>&prompt.user;helm-mirror https://kubernetes-charts.suse.com /chartserver/charts
+      </screen>
+     </step>
+    </procedure>
    </sect3>
    <sect3>
     <title>Client Configuration</title>
@@ -534,355 +867,8 @@ Using mirrors in CaaSP:
    </sect3>
   </sect2>
 
-  <sect2 xml:id="sec.deploy.scenarios.airgap.container-registry">
-   <title>Container Registry Mirror</title>
-   <para>
-    Container image registries are provided by SUSE, Docker, and other sources.
-    The &suse; container registry is used to update the &productname;
-    components.
-   </para>
-   <para>
-    Once configured, nothing has to be changed inside of Dockerfile(s),
-    Kubernetes manifest files, Helm charts or custom scripts, etc. All images
-    with a prefix <literal>registry.suse.com/</literal> will be automatically
-    pulled from the internal mirror.
-   </para>
-   <para>
-    Images that are located on other registries must be mirrored separately on
-    the airgapped network.
-   </para>
-
-   <sect3 xml:id="sec.deploy.scenarios.airgap.container-registry.configuration">
-    <title>Mirror Configuration</title>
-    <important>
-     <title>This example does not provide any security measures</title>
-     <para>
-      The default configuration is not using certificates to secure the
-      communication between this registry and all the nodes communicating with
-      it. There is also no authentication and authorization in place.
-     </para>
-     <para>
-      For production usage, we highly recommend deploying the registry using
-      TLS certificates and implementing authentication and authorization by
-      deploying a Portus instance.
-     </para>
-     <para>
-      In addition: access to the container image registries is not restricted
-      in any way. If you need to secure the registry specifically please refer
-      to:
-      <link xlink:href="https://docs.docker.com/registry/deploying/#restricting-access">Docker
-      Registry: Restricting Access</link>.
-     </para>
-    </important>
-
-    <para>
-     The external and internal mirrors have slightly different configurations.
-    </para>
-    <para>
-     The external mirror is configured and acts as a
-     <link xlink:href="https://docs.docker.com/registry/recipes/mirror/">"pull
-     through"-cache</link>. It connects to the upstream registry and any attempt
-     to pull an image from this registry is routed through this mirror. All
-     images pulled through this mirror will be stored in the cache. This cache
-     is the the data you need to transfer to the internal mirror.
-    </para>
-    <para>
-     The internal mirror acts as a container registry mirror that provides the
-     images to the &productname; cluster nodes. You can host multiple registries
-     on one internal mirror but they need to run on different ports. Each
-     respective container registry mirror must be available to the &productname;
-     cluster nodes at the configured port (Default: <literal>5000</literal>).
-    </para>
-    <para>
-     Nothing has to be changed inside of Dockerfile(s), Kubernetes manifest
-     files, Helm charts, custom scripts, etc. All images using a prefix that
-     was configured as a remote registry/mirror (for example <literal>registry.suse.com/</literal>)
-     will be automatically pulled from the air-gapped mirror(s).
-     </para>
-     <note>
-      <title>Registry Mirrors Are Read Only</title>
-      <para>
-       For security reasons, both the registry mirrors are configured in
-       <literal>read-only</literal> mode. Therefore, pushing container images to
-       these mirrors will not be possible. They can only serve images that were
-       previously pulled and cached by the external mirror and then uploaded to
-       the internal mirror.
-      </para>
-      <para>
-       If you need the ability to store modified container images, you will have
-       to create a new registry that will hold these images. The steps needed
-       to run your own full container image registry are not part of this
-       document.
-      </para>
-       <para>
-       For more information you can refer to:
-       <link xlink:href="https://docs.docker.com/registry/">Docker
-       Registry</link>.
-      </para>
-     </note>
-
-    <procedure>
-     <title>Set Up The External Mirror</title>
-     <step>
-      <para>
-       <link xlink:href="https://www.suse.com/documentation/sles-15/book_quickstarts/data/sec_sle_installquick.html">Set
-       up a &sls; 15 machine</link> on the external network.
-      </para>
-      <para>
-       Make sure you have
-       <link xlink:href="https://www.suse.com/documentation/sles-15/book_quickstarts/data/sec_modules_installing.html">enabled
-       the <filename>containers</filename> module</link>.
-      </para>
-     </step>
-     <step>
-      <para>
-       Install the <filename>docker-distribution-registry</filename> package:
-      </para>
-<screen>&prompt.sudo;<command>zypper in docker-distribution-registry</command>
-</screen>
-     </step>
-     <step>
-      <para>
-       The registry package provides a default configuration file:
-       <filename>/etc/registry/config.yml</filename>. Fill in the necessary
-       configuration details. For example: Add the <literal>remoteurl</literal>
-       of the registry you wish to connect to.
-      </para>
-<screen>
-proxy:
-  remoteurl: https://registry.suse.de
-      </screen>
-     </step>
-     <step>
-      <para>
-       In <filename>/etc/registry/config.yml</filename>, identify the
-       <literal>storage</literal> section and add the following lines:
-      </para>
-<screen>
-maintenance:
-  readonly:
-    enabled: true
-       </screen>
-      <para>
-       These lines will make the registry read-only, preventing its images from
-       being overwritten by the clients. The complete file should look like:
-      </para>
-<screen>
-version: 0.1
-log:
-  level: info
-storage:
-  filesystem:
-    rootdirectory: /var/lib/docker-registry
-  maintenance:
-    readonly:
-      enabled: true
-http:
-  addr: 0.0.0.0:5000
-proxy:
-  remoteurl: https://registry.suse.de
-          </screen>
-      <para>
-       For more details on the configuration, refer to:
-       <link xlink:href="https://docs.docker.com/registry/configuration/">Docker
-       Registry: Configuration</link>
-      </para>
-     </step>
-     <step>
-      <para>
-       Now start the registry service and enable it at boot time:
-      </para>
-<screen>
-&prompt.sudo;<command>systemctl enable --now registry.service</command>
-         </screen>
-     </step>
-    </procedure>
-    <procedure>
-     <title>Set Up Internal Mirror</title>
-     <step>
-      <para>
-       <link xlink:href="https://www.suse.com/documentation/sles-15/book_quickstarts/data/sec_sle_installquick.html">Set
-       up a &sls; 15 machine</link> on the airgapped network.
-      </para>
-      <para>
-       Make sure you have
-       <link xlink:href="https://www.suse.com/documentation/sles-15/book_quickstarts/data/sec_modules_installing.html">enabled
-       the <filename>containers</filename> module</link>.
-      </para>
-     </step>
-     <step>
-      <para>
-       Install the <filename>docker-distribution-registry</filename> package:
-      </para>
-<screen>&prompt.sudo;<command>zypper in docker-distribution-registry</command>
-</screen>
-     </step>
-     <step>
-      <para>
-       In the default configuration file
-       <filename>/etc/registry/config.yml</filename>, identify the
-       <literal>storage</literal> section and add the following lines:
-      </para>
-<screen>
-maintenance:
-  readonly:
-    enabled: true
-       </screen>
-      <para>
-       For more details on the configuration, refer to:
-       <link xlink:href="https://docs.docker.com/registry/configuration/">Docker
-       Registry: Configuration</link>
-      </para>
-      <para>
-       These lines will make the registry read-only, preventing its images from
-       being overwritten by the clients. The complete file should look like:
-      </para>
-<screen>
-version: 0.1
-log:
-  level: info
-storage:
-  filesystem:
-    rootdirectory: /var/lib/docker-registry
-  maintenance:
-    readonly:
-      enabled: true
-http:
-  addr: 0.0.0.0:5000
-         </screen>
-      <important>
-       <title>Do Not Configure The <literal>proxy</literal> Section For The Internal Mirror</title>
-       <para>
-        Do not add the “proxy” section like you must do on the external
-        on-premise mirror. This is not needed and would cause the registry
-        service to refuse to start since the airgapped network can not reach
-        the specified proxy.
-       </para>
-      </important>
-     </step>
-     <step>
-      <para>
-       Now start the registry service and enable it at boot time:
-      </para>
-<screen>
-&prompt.sudo;<command>systemctl enable --now registry.service</command>
-         </screen>
-     </step>
-    </procedure>
-    <para>
-     Now you should have the registries set up and listening on port
-     <literal>5000</literal>.
-    </para>
-<!-- FIXME mnapp 18.9.18 Shouldn't we explain how to provide this default auth/security? -->
-   </sect3>
-
-   <sect3 xml:id="sec.deploy.scenarios.airgap.container-registry.clients">
-    <title>Client Configuration</title>
-    <para>
-     Using the air-gapped mirror works exactly like using a traditional
-     on-premise mirror. You must configure the internal registry mirror in
-     &dashboard;.
-    </para>
-    <procedure>
-     <title>Configuring Registry Mirror</title>
-     <step>
-      <para>
-       Log in to &dashboard; on the &productname; admin node.
-      </para>
-     </step>
-     <step>
-      <para>
-       Navigate to <guimenu>Settings &rarr; Mirrors</guimenu> and create a
-       definition for your internal registry mirror as described in
-       <xref linkend="sec.admin.velum.mirror"/>.
-      </para>
-     </step>
-    </procedure>
-   </sect3>
-
-   <sect3 xml:id="sec.deploy.scenarios.airgap.container-registry.update">
-    <title>Updating The Mirror</title>
-    <note>
-     <title>Live Update Of Registry</title>
-     <para>
-      There is no need to stop the registry services while doing the backup and
-      restore procedures.
-     </para>
-    </note>
-    <procedure>
-     <title>Update Container Registry Mirror</title>
-     <step>
-      <para>
-       Pull all the desired images
-      </para>
-     </step>
-     <step>
-      <para>
-       Attach your trusted storage to the external mirror as <filename>/mnt/usbdisk</filename>
-       and copy all the contents of <filename>/var/lib/docker-registry</filename>
-       onto the drive.
-      </para>
-<screen>&prompt.sudo;<command>rsync -aP --delete /var/lib/docker-registry <replaceable>/mnt/usbdisk</replaceable></command>
-        </screen>
-      </step>
-      <step>
-       <para>
-        Transport the trusted storage to the airgapped network and attach it
-        to the internal container registry mirror in the same way.
-        </para>
-        </step>
-        <step>
-         <para>
-          Copy the data from the trusted storage onto the internal mirror.
-          </para>
-<screen>&prompt.sudo;<command>rsync -aP --delete <replaceable>/mnt/usbdisk</replaceable>/docker-registry/ /var/lib/docker-registry/</command>
-                  </screen>
-          </step>
-    </procedure>
-<screen>
-     Container images:
-
-     . Update external container registry mirrors from upstream
-     . Copy registry data onto data storage
-     . Connect storage to internal instance and upload data
-     </screen>
-<screen>
-     Synchronizing contents
-     This procedure illustrates how to synchronize the air-gapped registry with the traditional on-premise one.
-
-         1. Attach an external hard drive to “mirror.local.lan” and copy all the contents of “/var/lib/docker-registry” to it:
-
-     sudo rsync -aP --delete /var/lib/docker-registry /mnt/usbdisk
-
-         2. Attach the external hard drive to “mirror.secure.lan” and import the contents into the registry:
-
-     sudo rsync -aP --delete /mnt/usbdisk/docker-registry/ /var/lib/docker-registry/
-
-     Additional security steps can be introduced between step #1 and #2; for example scanning the exported data using corporate tools before introducing them inside of the air-gapped network.
-
-     Using the mirror
-
-
-
-         </screen>
-    <note>
-     <title>Configuring Additional External Registries</title>
-     <para>
-      Configure &kube; to use this internal registry. <guimenu>Velum &rarr;
-      Settings &rarr; Remote Registries</guimenu>.
-     </para>
-     <para>
-      Configure &productname; to rewrite external registry requests to that
-      mirror <guimenu>Velum &rarr; Settings &rarr; Mirrors</guimenu>.
-     </para>
-    </note>
-   </sect3>
-  </sect2>
-
-
-
   <sect2 xml:id="sec.deploy.scenarios.airgap.caasp-deployment">
-   <title>Airgapped &productname; Deployment</title>
+   <title>Deploying &productname;</title>
    <sect3>
     <title>Using the ISO</title>
     <para>
