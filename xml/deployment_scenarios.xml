@@ -579,19 +579,22 @@ version: 0.1
 log:
   fields:
     service: registry
+auth:
+  htpasswd:
+    realm: basic-realm
+    path: /auth/htpasswd
 storage:
   cache:
     blobdescriptor: inmemory
   filesystem:
     rootdirectory: /var/lib/registry
 http:
-  addr: :5000
+  addr: 0.0.0.0:443
   headers:
     X-Content-Type-Options: [nosniff]
-auth:
-  htpasswd:
-    realm: basic-realm
-    path: /etc/registry
+  tls:
+    certificate: /certs/domain.crt
+    key: /certs/domain.key
 health:
   storagedriver:
     enabled: true
@@ -688,14 +691,16 @@ storage:
     blobdescriptor: inmemory
   filesystem:
     rootdirectory: /var/lib/registry
+  maintenance:
+    readonly:
+      enabled: true
 http:
-  addr: :5000
+  addr: 0.0.0.0:443
   headers:
     X-Content-Type-Options: [nosniff]
-auth:
-  htpasswd:
-    realm: basic-realm
-    path: /etc/registry
+  tls:
+    certificate: /certs/domain.crt
+    key: /certs/domain.key
 health:
   storagedriver:
     enabled: true
