@@ -546,20 +546,36 @@ Using mirrors in CaaSP:
 
   <sect2 xml:id="sec.deploy.scenarios.airgap.container-registry">
    <title>Container Registry Mirror</title>
+   <note>
+    <title>Mirroring Multiple Image Registries / Chart Repositories</title>
+    <para>
+     You can mirror images and charts from multiple registries in one shared
+     internal registry. Do note, however, that you must manually resolve
+     conflicts due to duplicate charts and container images.
+    </para>
+    <para>
+     We highly recommend running separate helm chart and container registry
+     mirrors for each source registry.
+    </para>
+   </note>
    <para>
     Container image registries are provided by SUSE, Docker, and other sources.
     The &suse; container registry is used to update the &productname;
     components.
    </para>
    <para>
-    Once configured, nothing has to be changed inside of Dockerfile(s),
-    Kubernetes manifest files, Helm charts or custom scripts, etc. All images
-    with a prefix <literal>registry.suse.com/</literal> will be automatically
-    pulled from the internal mirror.
+    Once configured, you will not have to modify Dockerfile(s),
+    Kubernetes manifest files, Helm charts or custom scripts to use the mirrors.
+    The requests are passed through the container engine which forwards them to
+    the configured mirrors. For example: All images with a prefix
+    <literal>registry.suse.com/</literal> will be automatically pulled from the
+    internal mirror.
    </para>
+
    <para>
-    Images that are located on other registries must be mirrored separately on
-    the airgapped network.
+    For further information on registry mirror configuration, refer to
+    <xref linkend="sec.admin.velum.registry" /> and
+    <xref linkend="sec.admin.velum.mirror" />.
    </para>
 
    <sect3 xml:id="sec.deploy.scenarios.airgap.container-registry.configuration">
