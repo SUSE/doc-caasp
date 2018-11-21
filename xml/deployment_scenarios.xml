@@ -19,7 +19,7 @@
   <title>Default Scenario</title>
 
   <para>
-   In the default scenario &productname; is deployed in such a way, that its
+   In the default scenario &productname; is deployed in such a way that its
    components have access (either direct or via proxy) to resources on the
    internet.
   </para>
@@ -42,7 +42,8 @@
    or external networks.
   </para>
   <para>
-   All data must be transferred into the airgapped network in a secure fashion.
+   All data in or out of the airgapped network must be transferred in a secure
+   fashion.
   </para>
 <screen>
  Requirements:
@@ -254,7 +255,7 @@ Using mirrors in CaaSP:
    <sect3 xml:id="sec.deploy.scenarios.airgap.requirements.machines">
     <title>Mirror Servers</title>
     <para>
-     You will need to provide and maintain at least four machines in addition to
+     You will need to provide and maintain at least two machines in addition to
      your &productname; cluster. These mirror servers will reside on the
      external part of your network and the internal (airgapped) network
      respectively.
@@ -280,7 +281,7 @@ Using mirrors in CaaSP:
       <term>External</term>
       <listitem>
        <para>
-        These machines will host the <literal>&smtool;</literal> for RPM packages
+        This machine will host the <literal>&smtool;</literal> for RPM packages
         and the <literal>Docker registry</literal> for container
         images.
        </para>
@@ -319,7 +320,7 @@ Using mirrors in CaaSP:
       <term>Internal</term>
       <listitem>
        <para>
-        These machines will host the <literal>&smtool;</literal> for RPM packages,
+        This machine will host the <literal>&smtool;</literal> for RPM packages,
         and <literal>Docker registry</literal> for container images
         as well as a webserver hosting the <literal>Helm Chart Repository</literal>
         files.
@@ -360,9 +361,8 @@ Using mirrors in CaaSP:
      <title>Adjust Number Of Mirror Servers</title>
      <para>
       This scenario description does not contain any fallback contingencies for
-      the mirror servers. Add additional mirror servers inside the airgapped
-      network (behind a loadbalancer) if you require additional
-      reliability/availability.
+      the mirror servers. Add additional mirror servers (behind a loadbalancer)
+      if you require additional reliability/availability.
      </para>
     </important>
    </sect3>
@@ -379,17 +379,17 @@ Using mirrors in CaaSP:
     <itemizedlist>
      <listitem>
       <para>
-       80 HTTP - RMT Server and Helm Chart Repository Mirror
+       80 HTTP - SMT/RMT Server and Helm chart repository mirror
       </para>
      </listitem>
      <listitem>
       <para>
-       443 HTTPS - RMT Server and Helm Chart Repository Mirror
+       443 HTTPS - SMT/RMT Server, Docker registry and Helm chart repository mirror
       </para>
      </listitem>
      <listitem>
       <para>
-       5000 HTTP - Docker Registry
+       5000 HTTP - Docker registry
       </para>
      </listitem>
     </itemizedlist>
@@ -397,8 +397,8 @@ Using mirrors in CaaSP:
      <title>Additional Port Configuration</title>
      <para>
       If you choose to add more Docker registries to your internal network,
-      these must run on different ports than the standard
-      <literal>5000</literal>.
+      these must run on different ports than the standard registry running on
+      <literal>443</literal>.
      </para>
     </note>
    </sect3>
@@ -469,6 +469,9 @@ Using mirrors in CaaSP:
      <link xlink:href="https://www.suse.com/documentation/sles-12/book_smt/data/smt_installation.html">RMT
      mirrors</link>. One in the external network and one in the airgapped
      network.
+    </para>
+    <para>
+     https://www.suse.com/documentation/sles-12/book_smt/data/smt_disconnected.html
     </para>
    </sect3>
    <sect3>
@@ -598,7 +601,7 @@ storage:
   filesystem:
     rootdirectory: /var/lib/registry
 http:
-  addr: 0.0.0.0:443
+  addr: 0.0.0.0:5000
   headers:
     X-Content-Type-Options: [nosniff]
   tls:
@@ -621,11 +624,11 @@ registry:
   image: registry:2.6.2
   container_name: registry
   ports:
-    - 443:443
+    - 5000:5000
   environment:
     REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
     REGISTRY_HTTP_TLS_KEY: /certs/domain.key
-    REGISTRY_HTTP_ADDR: 0.0.0.0:443
+    REGISTRY_HTTP_ADDR: 0.0.0.0:5000
     REGISTRY_AUTH: htpasswd
     REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
     REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
@@ -652,11 +655,11 @@ registry:
   image: registry:2.6.2
   container_name: registry
   ports:
-    - 443:443
+    - 5000:5000
   environment:
     REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
     REGISTRY_HTTP_TLS_KEY: /certs/domain.key
-    REGISTRY_HTTP_ADDR: 0.0.0.0:443
+    REGISTRY_HTTP_ADDR: 0.0.0.0:5000
     REGISTRY_STORAGE_MAINTENANCE_READONLY='enabled: true'
   volumes:
     - ./certs:/certs
@@ -686,7 +689,7 @@ storage:
     readonly:
       enabled: true
 http:
-  addr: 0.0.0.0:443
+  addr: 0.0.0.0:5000
   headers:
     X-Content-Type-Options: [nosniff]
   tls:
