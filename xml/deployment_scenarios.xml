@@ -440,21 +440,23 @@ Using mirrors in CaaSP:
 
   <sect2 xml:id="sec.deploy.scenarios.airgap.rpm-repository">
    <title>RPM Repository Mirror</title>
-   <note>
-    <title>Required Modules</title>
-    <para>
-     SMT/RMT provides software in so called modules. You must enable all the
-     default modules for &sle; and in addition the <literal>Containers</literal>
-     module. This module needs to be mirrored inside the airgapped network
-     in order to provide all necessary software for other parts of this scenario.
-    </para>
-   </note>
+   <para>
+    &sls; bundles software packages in so called modules. You must enable all
+    the default modules for &sle; and in addition the <literal>Containers</literal>
+    module. All modules need to be mirrored inside the airgapped network
+    in order to provide the necessary software for other parts of this scenario.
+   </para>
+
    <sect3>
     <title>Mirror Configuration</title>
+    <para>
+     Set up two servers. One in the external network and one in the airgapped
+     network.
+    </para>
     <note>
      <title>If Possible, Deploy The Mirror Before &productname; Cluster Deployment</title>
      <para>
-      The mirror on the internal network should be running and populated before
+      The mirror on the airgapped network should be running and populated before
       deploying &productname;, this makes rolling out much easier; since you
       can configure the nodes during installation to use the correct internal
       mirror.
@@ -464,36 +466,86 @@ Using mirrors in CaaSP:
       reconfigure all nodes manually.
      </para>
     </note>
+    <variablelist>
+     <varlistentry>
+     <term>&sls; 12</term>
+     <listitem>
+      <para>
+       <link xlink:href="https://www.suse.com/documentation/sles-12/book_smt/data/smt_disconnected.html">Follow these instructions</link>.
+      </para>
+     </listitem>
+     </varlistentry>
+     <varlistentry>
+     <term>&sls; 15</term>
+     <listitem>
+      <para>
+       <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/cha_rmt_installation.html">Follow these instructions</link>.
+      </para>
+     </listitem>
+     </varlistentry>
+    </variablelist>
     <para>
-     Set up two
-     <link xlink:href="https://www.suse.com/documentation/sles-12/book_smt/data/smt_installation.html">RMT
-     mirrors</link>. One in the external network and one in the airgapped
-     network.
-    </para>
-    <para>
-     https://www.suse.com/documentation/sles-12/book_smt/data/smt_disconnected.html
+
     </para>
    </sect3>
    <sect3>
     <title>Client Configuration</title>
     <para>
-     Configure all &productname; nodes to
-     <link xlink:href="https://www.suse.com/documentation/sles-12/book_smt/data/smt_client.html">get
-     updates from the internal SMT server</link>.
+     Configure all CaaSP nodes to use the package repository mirror server in
+     the airgapped network.
     </para>
+    <variablelist>
+     <varlistentry>
+     <term>&sls; 12</term>
+     <listitem>
+      <para>
+       <link xlink:href="https://www.suse.com/documentation/sles-12/book_smt/data/smt_client.html">Follow these instructions</link>.
+      </para>
+     </listitem>
+     </varlistentry>
+     <varlistentry>
+     <term>&sls; 15</term>
+     <listitem>
+      <para>
+       <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/cha_rmt_client.html">Follow these instructions</link>.
+      </para>
+     </listitem>
+     </varlistentry>
+    </variablelist>
    </sect3>
    <sect3>
     <title>Updating The Mirror</title>
-    <para>
-     Follow the procedure in
-     <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/sec_rmt_mirroring_export_import.html" />.
-    </para>
+    <variablelist>
+     <varlistentry>
+     <term>&sls; 12</term>
+     <listitem>
+      <para>
+       Follow the instructions in <link xlink:href="https://www.suse.com/documentation/sles-12/book_smt/data/smt_disconnected.html">"Daily External SMT Server Operation"</link>
+       to update the current information on the external server and download the
+       updated repository to an external storage device.
+      </para>
+      <para>
+       Then, follow the instructions in <link xlink:href="https://www.suse.com/documentation/sles-12/book_smt/data/smt_disconnected.html">"Daily Internal SMT Server Operation"</link>
+       to update the airgapped server with this information.
+      </para>
+     </listitem>
+     </varlistentry>
+     <varlistentry>
+     <term>&sls; 15</term>
+     <listitem>
+      <para>
+       <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/sec_rmt_mirroring_export_import.html">Follow the instructions</link>
+       update the external server, transfer the data to a storage device, and
+       use that device to update the airgapped server.
+      </para>
+     </listitem>
+     </varlistentry>
+    </variablelist>
    </sect3>
   </sect2>
 
   <sect2 xml:id="sec.deploy.scenarios.airgap.container-registry">
    <title>Container Registry Mirror</title>
-
    <para>
     Container image registries are provided by SUSE, Docker, and other sources.
     The &suse; container registry is used to update the &productname;
