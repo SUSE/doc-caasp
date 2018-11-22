@@ -644,21 +644,9 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
    <para>
     A sequential reboot of cluster segments is a way to completely
     avoid the downtime of services or at least reduce it as much as
-    possible. However, downtime of services occurs if:
+    possible. However, downtime of services occurs if all pods of a
+    service are forced on one node.
    </para>
-   <itemizedlist>
-    <listitem>
-     <para>
-      All pods of a service are forced on one node
-     </para>
-    </listitem>
-    <listitem>
-     <para>
-      A pod has only one replica
-     </para>
-    </listitem>
-   </itemizedlist>
-
    <sect3 xml:id="sec.admin.nodes.graceful_shutdown.segmented.worker">
     <title>Rebooting Worker Nodes</title>
     <para>
