@@ -21,9 +21,50 @@
  <sect1 xml:id="sec.user.deployments.overview">
   <title>Overview</title>
   <para>
+   Deployments can be used for declarative updates of Pods and
+   ReplicaSets. The desired state is described in a Deployment object
+   and the Deployment controller then changes the state in a controlled
+   rate.
+  </para>
+  <para>
    For details, refer to <link xlink:href=
    "&kubedoc;concepts/workloads/controllers/deployment/"
    />.
+  </para>
+ </sect1>
+ <sect1>
+  <title>Creating a Deployment</title>
+  <para>
+   The following example illustrates a basic Deployment:
+  </para>
+<screen>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.7.9
+        ports:
+        - containerPort: 80</screen>
+  <para>
+   To create a Deployment from a YAML file, use <command>kubectl create
+   -f <replaceable>FILE_NAME</replaceable></command>.
+  </para>
+  <para>
+   To delete a Deployment, use <command>kubectl delete
+   <replaceable>DEPLOYMENT_NAME</replaceable></command>.
   </para>
  </sect1>
 </chapter>
