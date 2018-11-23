@@ -120,9 +120,29 @@
    </varlistentry>
   </variablelist>
   <para>
+   Instead of running <command>kubectl</command> multiplice times to
+   performa all required changes, all changes can be collected in JSON
+   or YAML files and applied at once. This is done with the following
+   syntax:
+  </para>
+  <screen>&prompt.user;<command>kubectl <replaceable>ACTION</replaceable> -f <replaceable>FILE_NAME</replaceable></command></screen>
+  <para>
+   Replace <replaceable>ACTION</replaceable> with
+   <literal>create</literal>, <literal>replace</literal>,
+   <literal>delete</literal>, or <literal>get</literal>. Replace
+   <replaceable>FILE_NAME</replaceable> with the path to the YAML or
+   JSON file or containing directory.
+  </para>
+  <para>
    For more details about <command>kubectl</command>, refer to
    <command>kubectl --help</command> and
    <link xlink:href="&kubedoc;reference/kubectl/overview/" />.
+  </para>
+  <para>
+   <command>kubectl</command> supports different modes: an imperative
+   and a declarative mode. For details, refer to <link xlink:href=
+   "&kubedoc;concepts/overview/object-management-kubectl/declarative-config/"
+   />.
   </para>
  </sect1>
 </chapter>
