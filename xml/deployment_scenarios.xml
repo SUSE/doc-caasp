@@ -55,39 +55,11 @@
    or external networks.
   </para>
   <para>
-   All data in or out of the airgapped network must be transferred in a secure
-   fashion.
+   All data flowing into or out of the airgapped network must be transferred in
+   a secure fashion.
   </para>
 <!-- <screen>
- Requirements:
- * Needs 2 servers (SLE15, default specs, at least 200GB storage for registries)
- ** 1 in external network (can access internet freely or at least on SUSE ports)
- *** `external`
- ** 1 in airgapped network (must be accessible from CaaSP cluster on SUSE ports)
- *** `airgap`
- * Needs secure storage `secure_drive` at least 128GB, btrfs
 
- Procedure:
- * Set up mirror server on external network
- * Set up mirror server on airgapped network
- * Install RMT on `external`
- * Register `external` against SCC, pull updates
- * Install RMT on `airgap`
- * Install helm-mirror on `external`
- * Install helm-mirror on `airgap`
- * Install webserver on `airgap`
- * Install docker-registry on `external`
- * Install docker-registry on `airgap`
- * Run helm-mirror on `external` and retrieve all charts
- * Run helm-mirror on `external` and retrieve all images
- * Copy all images / charts to `secure_drive`
- * Connect `secure_drive` to `airgap` and transfer data
- * Refresh webserver on `airgap` if necessary
-
-Using mirrors in CaaSP:
- * Register CaaSP nodes to RMT on `airgap`
- * Configure helm on CaaSP admin node to read from `airgap`
- * Configure registry mirror in velum to `airgap`
   </screen> -->
 
   <sect2 xml:id="sec.deploy.scenarios.airgap.concepts">
@@ -253,18 +225,35 @@ Using mirrors in CaaSP:
      &productname; uses <link xlink:href="https://www.helm.sh/">Helm</link> as
      one method to install additional software on the cluster. The logic behind
      this relies on <literal>Charts</literal>, which are configuration files
-     that tell the container engine how to deploy software and its dependencies
+     that tell &kube; how to deploy software and its dependencies
      and how to configure it. The actual software installed using this method is
      delivered as <literal>Container images</literal>. The location of the
      container image is stored inside the Helm chart.
     </para>
     <para>
+     Helm charts and container images are provided by SUSE, Docker, and others on
+     so called registries. The &suse; container registry is used to update the
+     &productname; components.
+    </para>
+    <para>
      We provide <link xlink:href="https://github.com/openSUSE/helm-mirror">helm-mirror</link>
      to allow downloading all charts present in a chart repository in bulk and
      moreover to extract all container image URLs from the charts. You can then
-     use <link xlink:href="https://github.com/containers/skopeo">skopeo</link> to
-     download all the images. This approach vastly simplifies the task of copying
-     charts and their related images.
+     use <link xlink:href="https://github.com/containers/skopeo">skopeo</link>
+     to download all the images from their respective registry. This approach
+     vastly simplifies the task of copying charts and their related images.
+    </para>
+    <para>
+     Once mirroring is configured, you will not have to modify Dockerfile(s) or
+     Kubernetes manifests to use the mirrors. The requests are passed through
+     the container engine which forwards them to the configured mirrors. For
+     example: All images with a prefix <literal>registry.suse.com/</literal>
+     will be automatically pulled from the configured (internal) mirror instead.
+    </para>
+    <para>
+     For further information on registry mirror configuration, refer to
+     <xref linkend="sec.admin.velum.registry" /> and
+     <xref linkend="sec.admin.velum.mirror" />.
     </para>
    </sect3>
   </sect2>
@@ -522,14 +511,15 @@ Using mirrors in CaaSP:
 
     </para>
    </sect3>
-   <sect3 xml:id="sec.deploy.scenarios.airgap.rpm-repository.update">
-    <title>Updating The Mirror</title>
-    <para>
-     <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/sec_rmt_mirroring_export_import.html">Follow these instructions</link>
-     to update the external server, transfer the data to a storage device, and
-     use that device to update the airgapped server.
-    </para>
-   </sect3>
+  </sect2>
+
+  <sect2 xml:id="sec.deploy.scenarios.airgap.rpm-repository.update">
+   <title>Updating RPM Repository Mirror</title>
+   <para>
+    <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/sec_rmt_mirroring_export_import.html">Follow these instructions</link>
+    to update the external server, transfer the data to a storage device, and
+    use that device to update the airgapped server.
+   </para>
   </sect2>
 
   <sect2 xml:id="sec.deploy.scenarios.airgap.container-registry">
@@ -546,23 +536,6 @@ Using mirrors in CaaSP:
      mirrors for each source registry.
     </para>
    </note>
-   <para>
-    Container image registries are provided by SUSE, Docker, and other sources.
-    The &suse; container registry is used to update the &productname;
-    components.
-   </para>
-   <para>
-    Once configured, you will not have to modify Dockerfile(s) or Kubernetes
-    manifests to use the mirrors. The requests are passed through the container
-    engine which forwards them to the configured mirrors. For example: All
-    images with a prefix <literal>registry.suse.com/</literal> will be
-    automatically pulled from the configured (internal) mirror.
-   </para>
-   <para>
-    For further information on registry mirror configuration, refer to
-    <xref linkend="sec.admin.velum.registry" /> and
-    <xref linkend="sec.admin.velum.mirror" />.
-   </para>
 
    <sect3 xml:id="sec.deploy.scenarios.airgap.container-registry.mirror">
     <title>Mirror Configuration</title>
@@ -696,13 +669,6 @@ registry:
 
     <procedure>
      <title>Set Up Internal Mirror</title>
-     <step>
-      <para>
-       Install <filename>helm-mirror</filename> and <filename>skopeo</filename>.
-      </para>
-<screen>&prompt.root;zypper in helm-mirror skopeo
-      </screen>
-     </step>
      <step>
       <para>
        Install the <filename>docker-distribution-registry</filename> package:
@@ -840,7 +806,7 @@ threshold: 3
      <title>Setting Up Chart Repository Mirror</title>
      <step>
       <para>
-       Install and configure a webserver (for example <link xlink:href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_apache2.html">Apache</link>)
+       Install and configure a webserver (for example <link xlink:href="https://www.suse.com/documentation/sles-15/book_sle_admin/data/cha_apache2.html">Apache</link>)
        on your airgapped mirror server.
       </para>
      </step>
@@ -867,119 +833,169 @@ threshold: 3
 <screen>&prompt.user;<command>helm repo add SUSE-MIRROR <replaceable>&lt;internal-mirror.hostname&gt;</replaceable></command>
    </screen>
    </sect3>
+  </sect2>
 
-   <sect3 xml:id="sec.deploy.scenarios.airgap.update">
-    <title>Updating Registry Mirror And Helm Charts</title>
-    <note>
-     <title>Live Update Of Registry</title>
-     <para>
-      There is no need to stop the Docker registry services while doing the
-      backup and restore procedures. All changed images will be re-indexed
-      automatically.
-     </para>
-    </note>
+  <sect2 xml:id="sec.deploy.scenarios.airgap.update">
+   <title>Updating Registry Mirror And Helm Charts</title>
+   <note>
+    <title>Live Update Of Registry</title>
     <para>
-     Helm charts and container images must be refreshed in the same procedure,
-     otherwise charts might refer to image versions that are not mirrored or you
-     are mirroring outdated image versions that cause the chart deployment to
-     fail.
+     There is no need to stop the Docker registry services while doing the
+     backup and restore procedures. All changed images will be re-indexed
+     automatically.
     </para>
+   </note>
+   <para>
+    Helm charts and container images must be refreshed in the same procedure,
+    otherwise charts might refer to image versions that are not mirrored or you
+    are mirroring outdated image versions that cause the chart deployment to
+    fail.
+   </para>
 
-    <procedure>
-     <title>Pull Data From Upstream Sources</title>
-     <step>
-      <para>
-       SSH into the mirror server on the external network.
-      </para>
-     </step>
-     <step>
-      <para>
-      Download all charts from the repository to the filesystem
-      (e.g. <filename>/tmp/charts</filename>).
-      </para>
-<screen>&prompt.user;<command>helm-mirror https://kubernetes-charts.suse.com <replaceable>/tmp/charts</replaceable></command>
-     </screen>
+   <procedure>
+    <title>Pull Data From Upstream Sources</title>
+    <step>
+     <para>
+      SSH into the mirror server on the external network.
+     </para>
     </step>
     <step>
      <para>
-      Translate the chart information into the <literal>skopeo</literal> format.
+     Download all charts from the repository to the filesystem
+     (e.g. <filename>/tmp/charts</filename>).
      </para>
+<screen>&prompt.user;<command>mkdir <replaceable>/tmp/charts</replaceable></command></screen>
+<screen>&prompt.user;<command>cd <replaceable>/tmp/charts</replaceable></command></screen>
+<screen>&prompt.user;<command>helm-mirror https://kubernetes-charts.suse.com <replaceable>/tmp/charts</replaceable></command></screen>
+   </step>
+   <step>
+    <para>
+     Translate the chart information into the <literal>skopeo</literal> format.
+    </para>
+<screen>&prompt.user;<command>mkdir <replaceable>/tmp/skopeodata</replaceable></command></screen>
 <screen>&prompt.user;<command>helm-mirror inspect-images <replaceable>/tmp/charts</replaceable> -o skopeo --file-name <replaceable>sync.yaml</replaceable></command></screen>
-    </step>
-    <step>
-     <para>
-      Download all the referenced images using <command>skopeo</command>
-     </para>
-<screen>&prompt.user;<command>skopeo sync --source-yaml <replaceable>sync.yaml</replaceable> dir:<replaceable>/tmp/skopeodata</replaceable></command>
-     </screen>
-     <para>
-      <command>skopeo</command> will automatically create a directory named
-      after the hostname of the registry from which you are downloading the
-      images. The final path will be something like <filename>/tmp/skopeodata/registry.suse.com/</filename>.
-     </para>
-    </step>
-    <step>
-     <para>
-      Populate the local registry with the downloaded data.
-     </para>
-     <para>
-      For <literal>--dest-creds</literal> you must use the credentials you
-      created during <xref linkend="sec.deploy.scenarios.airgap.container-registry.mirror" />.
-     </para>
+   </step>
+   <step>
+    <para>
+     Download all the referenced images using <command>skopeo</command>.
+    </para>
+<screen>&prompt.user;<command>cd /tmp/skopeodata/</command></screen>
+<screen>&prompt.user;<command>skopeo sync --source-yaml <replaceable>sync.yaml</replaceable> dir:<replaceable>/tmp/skopeodata</replaceable></command></screen>
+    <para>
+     <command>skopeo</command> will automatically create a directory named
+     after the hostname of the registry from which you are downloading the
+     images. The final path will be something like <filename>/tmp/skopeodata/registry.suse.com/</filename>.
+    </para>
+   </step>
+   <step>
+    <para>
+     Populate the local registry with the downloaded data.
+    </para>
+    <para>
+     For <literal>--dest-creds</literal> you must use the credentials you
+     created during <xref linkend="sec.deploy.scenarios.airgap.container-registry.mirror" />.
+    </para>
 <screen>&prompt.user;<command>skopeo sync --dest-creds <replaceable>USERNAME:PASSWORD</replaceable> \
-dir:<replaceable>/tmp/skopeodata/registry.suse.com/</replaceable> <replaceable>docker://myregistry.local</replaceable></command>
-      </screen>
-    </step>
-    <step>
-     <para>
-      Replace the charts download URL in the index file for the charts
-      repository and rename the file back to <filename>index.yaml</filename>.
-     </para>
-     <screen>
+dir:<replaceable>/tmp/skopeodata/registry.suse.com/</replaceable> <replaceable>docker://myregistry.local:5000</replaceable></command>
+     </screen>
+   </step>
+   <step>
+    <para>
+     After the synchronization is done, you can remove the <filename>skopeodata</filename>
+     directory.
+    </para>
+<screen>&prompt.user;<command>rm -rf /tmp/skopeodata</command></screen>
+   </step>
+   <step>
+    <para>
+     Replace the charts download URL in the index file for the charts
+     repository and rename the file back to <filename>index.yaml</filename>.
+    </para>
+    <screen>
 &prompt.user;<command>cd /tmp/charts</command>
 </screen><screen>
-&prompt.user;<command>sed -i -e 's/https:\/\/kubernetes-charts.suse.com/https:\/\/<replaceable>&lt;internal-mirror.hostname&gt;</replaceable>\/charts/g' \
+&prompt.user;<command>sed -i -e 's/https:\/\/kubernetes-charts.suse.com/https:\/\/<replaceable>myregistry.local</replaceable>\/charts/g' \
 downloaded-index.yaml</command>
 </screen><screen>
 &prompt.user;<command>mv downloaded-index.yaml index.yaml</command>
+    </screen>
+   </step>
+  </procedure>
+
+   <procedure>
+    <title>Transfer Data To Secure Storage</title>
+    <step>
+     <para>
+      Connect the trusted storage to the external mirror. We will assume the
+      device is mounted at <filename>/mnt/storage</filename>.
+     </para>
+    </step>
+    <step>
+     <para>
+      Transfer the container image data to the trusted storage. This will remove
+      all files and directories that are no longer present on the external host
+      from the trusted storage.
+     </para>
+<screen>&prompt.user;<command>rsync -av /tmp/skopeodata/registry.suse.com/ <replaceable>/mnt/storage/container-images/</replaceable> --delete</command>
+     </screen>
+    </step>
+    <step>
+     <para>
+      Transfer the helm chart data to the trusted storage.
+     </para>
+<screen>&prompt.user;<command>rsync -av <replaceable>/tmp/charts/</replaceable> <replaceable>/mnt/storage/charts</replaceable> --delete</command>
      </screen>
     </step>
    </procedure>
 
-    <procedure>
-     <title>Prepare And Transfer Data To Secure Storage</title>
-     <step>
-      <para>
+   <procedure>
+    <title>Update Internal Mirror</title>
+    <step>
+     <para>
+      Connect the trusted storage to the internal mirror. We will assume the
+      device is mounted at <filename>/mnt/storage</filename>.
+     </para>
+    </step>
+    <step>
+     <para>
+      Transfer the container image data to the internal mirror. This will remove
+      all files and directories that are no longer present on the trusted storage
+      from the internal mirror. If you have added any images to the registry
+      manually, please back up these first and restore after the sync from
+      the trusted storage is done.
+     </para>
+     <para>
+      The target directory must be the same directory you have configured during
+      the setup of the container registry. Here <filename>/tmp/registry</filename>.
+     </para>
+<screen>&prompt.user;<command>rsync -av <replaceable>/mnt/storage/container-images/</replaceable> <replaceable>/tmp/registry/</replaceable>  --delete</command>
+     </screen>
+    </step>
+    <step>
+     <para>
+      Transfer the helm chart data to the trusted storage.
+     </para>
+<screen>&prompt.user;<command>rsync -av <replaceable>/tmp/charts/</replaceable> <replaceable>/mnt/storage/charts</replaceable> --delete</command>
+     </screen>
+    </step>
+   </procedure>
 
-      </para>
-     </step>
-    </procedure>
-
-    <procedure>
-     <title>Update Internal Mirror</title>
-     <step>
-      <para>
-
-      </para>
-     </step>
-    </procedure>
-
-    <procedure>
-     <title>Refresh information on the &productname; cluster</title>
-     <step>
-      <para>
-       Update the repository information on the &productname; admin node.
-      </para>
+   <procedure>
+    <title>Refresh information on the &productname; cluster</title>
+    <step>
+     <para>
+      Update the repository information on the machine on which you are using
+      Helm to install software to the cluster.
+     </para>
 <screen>&prompt.user;<command>helm repo update</command>
-       </screen>
-     </step>
-    </procedure>
+      </screen>
+    </step>
+   </procedure>
 
-    <para>
-     You can now deploy additional software on your &productname;. Refer to:
-     <xref linkend="sec.admin.software.install" />.
-    </para>
-   </sect3>
+   <para>
+    You can now deploy additional software on your &productname;. Refer to:
+    <xref linkend="sec.admin.software.install" />.
+   </para>
   </sect2>
 
   <sect2 xml:id="sec.deploy.scenarios.airgap.caasp-deployment">
@@ -1008,6 +1024,7 @@ downloaded-index.yaml</command>
      way as a regular SLE machine: via SUSEConnect.
     </para>
    </sect3>
+
    <sect3>
     <title>Existing unregistered running node</title>
     <para>
