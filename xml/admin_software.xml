@@ -600,6 +600,10 @@ retcode:
     <command>salt</command> command across the nodes to disable the
     <literal>transactional-update.timer</literal>.
     </para>
+    <para>
+     The automatic update timer will be re-enabled automatically after the
+     migration procedure.
+    </para>
     <screen>
 &prompt.user;<command>docker exec -i $(docker ps -q -f name="salt-master") \
 salt --batch 10 -P "roles:(admin|kube-(master|minion))" \
@@ -671,7 +675,7 @@ Executing run on ['5f6688bbeac94d2ab5c4330dc7043fb2',
 5bf346291a18406290886c2e2f7c3e3f:
 
 
-    Executing 'zypper --root /tmp/tmp.vbaqUwrLIh --non-interactive  refresh'
+    Executing 'zypper --root /tmp/tmp.vbaqUwrLIh --non-interactive refresh'
 
     Retrieving repository 'SUSE-CAASP-ALL-Pool' metadata [...done]
     Building repository 'SUSE-CAASP-ALL-Pool' cache [....done]
