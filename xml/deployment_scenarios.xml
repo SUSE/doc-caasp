@@ -698,6 +698,13 @@ threshold: 3
      </step>
      <step>
       <para>
+       Load the registry container image into the local docker instance.
+      </para>
+<screen>&prompt.user;<command>docker load -i /etc/docker/registry/registry.tar</command>
+       </screen>
+     </step>
+     <step>
+      <para>
        Create the <filename>/etc/docker/registry/config.airgapped.yml</filename>
        configuration file for Docker registry.
       </para>
