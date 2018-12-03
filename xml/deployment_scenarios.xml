@@ -225,15 +225,20 @@
      &productname; uses <link xlink:href="https://www.helm.sh/">Helm</link> as
      one method to install additional software on the cluster. The logic behind
      this relies on <literal>Charts</literal>, which are configuration files
-     that tell &kube; how to deploy software and its dependencies
-     and how to configure it. The actual software installed using this method is
-     delivered as <literal>Container images</literal>. The location of the
-     container image is stored inside the Helm chart.
+     that tell &kube; how to deploy software and its dependencies. The actual
+     software installed using this method is delivered as
+     <literal>container images</literal>. The location of the container image
+     is stored inside the Helm chart.
     </para>
     <para>
-     Helm charts and container images are provided by SUSE, Docker, and others on
+     Container images are provided by SUSE, Docker, and others on
      so called registries. The &suse; container registry is used to update the
      &productname; components.
+    </para>
+    <para>
+     Helm charts are provided independently from container images and can be
+     developed by any number of sources. Please make sure that you trust
+     the origin of container images referenced in the helm charts.
     </para>
     <para>
      We provide <link xlink:href="https://github.com/openSUSE/helm-mirror">helm-mirror</link>
@@ -430,11 +435,15 @@
      item; although they are generally smaller for Kubernetes related
      applications. The overall size of any given RPM repository is at least tens
      of Gigabytes. For example: At the time of writing, the package repository
-     for &sls; contains approximately <literal>36GB</literal> of data.
+     for &sls; contains approximately <literal>36 GB</literal> of data.
     </para>
     <para>
      The storage must be formatted to a filesystem type supporting files larger
-     than 4GB. We recommend <literal>btrfs</literal>.
+     than <literal>4 GB</literal>.
+    </para>
+    <para>
+     The type of filesystem used for the storage depends on your requirements.
+     We recommend <literal>btrfs</literal>.
     </para>
     <para>
      We recommend external storage with at least <literal>128GB</literal>.
@@ -539,6 +548,11 @@
 
    <sect3 xml:id="sec.deploy.scenarios.airgap.container-registry.mirror">
     <title>Mirror Configuration</title>
+    <para>
+     The docker container registry is provided as a container image itself.
+     You must download the registry container from SUSE and run it on the
+     respective server.
+    </para>
     <note>
      <title>Internal Registry Mirror Is Read Only</title>
      <para>
@@ -560,12 +574,13 @@
      </para>
     </note>
 
-    <para>
-     On the external mirror server perform the following steps.
-    </para>
-
     <procedure>
      <title>Set Up The External Mirror</title>
+     <step>
+      <para>
+       SSH into the external mirror server.
+      </para>
+     </step>
      <step>
       <para>
        Install <filename>helm-mirror</filename> and <filename>skopeo</filename>.
@@ -575,9 +590,25 @@
      </step>
      <step>
       <para>
-       Install the <filename>docker-distribution-registry</filename> package:
+       Pull the docker registry container image.
       </para>
-<screen>&prompt.root;<command>zypper in docker-distribution-registry</command>
+<screen>&prompt.user;<command>docker pull registry.suse.com/sles12/registry:2.6.2</command>
+   </screen>
+     </step>
+     <step>
+      <para>
+       Save the pulled image to a <literal>.tar</literal> file.
+      </para>
+<screen>&prompt.user;<command>docker save -o /tmp/registry.tar registry.suse.com/sles12/registry:2.6.2</command>
+      </screen>
+     </step>
+     <step>
+      <para>
+       Connect the trusted storage to the external mirror. We will assume the
+       device is mounted at <filename>/mnt/storage</filename>. Copy the
+       registry image onto the storage.
+      </para>
+<screen>&prompt.user;<command>cp <replaceable>/tmp/registry.tar</replaceable> <replaceable>/mnt/storage/registry.tar</replaceable></command>
    </screen>
      </step>
      <step>
@@ -587,13 +618,18 @@
        proper credentials of your choosing.
       </para>
 <screen>&prompt.user;<command>mkdir auth</command>
-&prompt.user;<command>docker run --entrypoint htpasswd registry:2.6.2 -Bbn <replaceable>USERNAME PASSWORD</replaceable> > auth/htpasswd</command>
+&prompt.user;<command>docker run --entrypoint htpasswd sles12/registry:2.6.2 -Bbn <replaceable>USERNAME PASSWORD</replaceable> > auth/htpasswd</command>
  </screen>
      </step>
      <step>
       <para>
-       Modify the <filename>/etc/docker/registry/config.yml</filename>
+       Create the <filename>/etc/docker/registry/config.secure.yml</filename>
        configuration file for Docker registry.
+      </para>
+      <para>
+       For more details on the configuration, refer to:
+       <link xlink:href="https://docs.docker.com/registry/configuration/">Docker
+       Registry: Configuration</link>
       </para>
       <para>
        Replace <filename>/certs/domain.crt</filename> and
@@ -630,40 +666,22 @@ threshold: 3
      </step>
      <step>
       <para>
-       Create the Docker compose file <filename>/var/lib/registry/docker-compose.yml</filename>.
+       Start the docker service and enable it at boot time:
       </para>
-      <para>
-       Replace <filename>/certs/domain.crt</filename> and
-       <filename>/certs/domain.key</filename> with the appropriate certificate
-       files for your organization.
-      </para>
-<screen>
-registry:
-  restart: always
-  image: registry:2.6.2
-  container_name: registry
-  ports:
-    - 5000:5000
-  environment:
-    REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
-    REGISTRY_HTTP_TLS_KEY: /certs/domain.key
-    REGISTRY_HTTP_ADDR: 0.0.0.0:5000
-    REGISTRY_AUTH: htpasswd
-    REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
-    REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
-  volumes:
-    - ./certs:/certs
-    - ./auth:/auth
-    - /tmp/registry:/var/lib/registry
-    - /config.yml:/etc/docker/registry/config.yml
-      </screen>
+<screen>&prompt.root;<command>systemctl enable --now docker.service</command>
+         </screen>
      </step>
      <step>
       <para>
-       Now start the registry service and enable it at boot time:
+       Start the registry container.
       </para>
-<screen>&prompt.root;<command>systemctl enable --now registry.service</command>
-         </screen>
+<screen>&prompt.user;<command>cd /etc/docker/registry</command>
+&prompt.user;<command>docker run -d -p 5000:5000 --restart=always --name registry \
+-v `pwd`<replaceable>/config.secure.yml</replaceable>:/etc/docker/registry/config.yml \
+-v `pwd`/auth:/auth \
+-v `pwd`/certs:/certs \
+-v <replaceable>/registry</replaceable>:/var/lib/registry sles12/registry:2.6.2</command>
+       </screen>
      </step>
     </procedure>
 
@@ -671,45 +689,22 @@ registry:
      <title>Set Up Internal Mirror</title>
      <step>
       <para>
-       Install the <filename>docker-distribution-registry</filename> package:
+       Connect the trusted storage to the internal mirror. We will assume the
+       device is mounted at <filename>/mnt/storage</filename>. Copy the registry
+       container image to the internal mirror.
       </para>
-<screen>&prompt.root;<command>zypper in docker-distribution-registry</command>
+<screen>&prompt.user;<command>cp /mnt/storage/registry.tar /etc/docker/registry/registry.tar</command>
    </screen>
      </step>
      <step>
       <para>
-       <filename>/var/lib/registry/docker-compose.yml</filename> Docker compose file to run registry.
+       Create the <filename>/etc/docker/registry/config.airgapped.yml</filename>
+       configuration file for Docker registry.
       </para>
-      <para>
-       Replace <filename>/certs/domain.crt</filename> and
-       <filename>/certs/domain.key</filename> with the appropriate certificate
-       files for your organization.
-      </para>
-<screen>
-registry:
-  restart: always
-  image: registry:2.6.2
-  container_name: registry
-  ports:
-    - 5000:5000
-  environment:
-    REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
-    REGISTRY_HTTP_TLS_KEY: /certs/domain.key
-    REGISTRY_HTTP_ADDR: 0.0.0.0:5000
-    REGISTRY_STORAGE_MAINTENANCE_READONLY='enabled: true'
-  volumes:
-    - ./certs:/certs
-    - ./auth:/auth
-    - /tmp/registry:/var/lib/registry
-    - /config.yml:/etc/docker/registry/config.yml
-       </screen>
       <para>
        For more details on the configuration, refer to:
        <link xlink:href="https://docs.docker.com/registry/configuration/">Docker
        Registry: Configuration</link>
-      </para>
-      <para>
-       Create the Docker compose file <filename>/var/lib/registry/docker-compose.yml</filename>.
       </para>
       <para>
        Replace <filename>/certs/domain.crt</filename> and
@@ -745,10 +740,22 @@ threshold: 3
      </step>
      <step>
       <para>
-       Now start the registry service and enable it at boot time:
+       Start the docker service and enable it at boot time:
       </para>
-<screen>&prompt.root;<command>systemctl enable --now registry.service</command>
+<screen>&prompt.root;<command>systemctl enable --now docker.service</command>
          </screen>
+     </step>
+     <step>
+      <para>
+       Start the registry container.
+      </para>
+<screen>&prompt.user;<command>cd /etc/docker/registry</command>
+&prompt.user;<command>docker run -d -p 5000:5000 --restart=always --name registry \
+-v `pwd`<replaceable>/config.airgapped.yml</replaceable>:/etc/docker/registry/config.yml \
+-v `pwd`/auth:/auth \
+-v `pwd`/certs:/certs \
+-v <replaceable>/registry</replaceable>:/var/lib/registry sles12/registry:2.6.2</command>
+       </screen>
      </step>
     </procedure>
 
@@ -936,14 +943,14 @@ downloaded-index.yaml</command>
       all files and directories that are no longer present on the external host
       from the trusted storage.
      </para>
-<screen>&prompt.user;<command>rsync -av /tmp/skopeodata/registry.suse.com/ <replaceable>/mnt/storage/container-images/</replaceable> --delete</command>
+<screen>&prompt.user;<command>rsync -aP /tmp/skopeodata/registry.suse.com/ <replaceable>/mnt/storage/container-images/</replaceable> --delete</command>
      </screen>
     </step>
     <step>
      <para>
       Transfer the helm chart data to the trusted storage.
      </para>
-<screen>&prompt.user;<command>rsync -av <replaceable>/tmp/charts/</replaceable> <replaceable>/mnt/storage/charts</replaceable> --delete</command>
+<screen>&prompt.user;<command>rsync -aP <replaceable>/tmp/charts/</replaceable> <replaceable>/mnt/storage/charts</replaceable> --delete</command>
      </screen>
     </step>
    </procedure>
@@ -968,14 +975,17 @@ downloaded-index.yaml</command>
       The target directory must be the same directory you have configured during
       the setup of the container registry. Here <filename>/tmp/registry</filename>.
      </para>
-<screen>&prompt.user;<command>rsync -av <replaceable>/mnt/storage/container-images/</replaceable> <replaceable>/tmp/registry/</replaceable>  --delete</command>
+<screen>&prompt.user;<command>rsync -aP <replaceable>/mnt/storage/container-images/</replaceable> <replaceable>/tmp/registry/</replaceable>  --delete</command>
      </screen>
     </step>
     <step>
      <para>
-      Transfer the helm chart data to the trusted storage.
+      Transfer the helm chart data to the internal mirror. This will remove
+      all charts that do not exist on the trusted storage. If you have added
+      any charts to the location manually, please back up these first and
+      restore after the sync from the trusted storage is done.
      </para>
-<screen>&prompt.user;<command>rsync -av <replaceable>/tmp/charts/</replaceable> <replaceable>/mnt/storage/charts</replaceable> --delete</command>
+<screen>&prompt.user;<command>rsync -aP <replaceable>/mnt/storage/charts</replaceable> <replaceable>/tmp/charts/</replaceable> --delete</command>
      </screen>
     </step>
    </procedure>
