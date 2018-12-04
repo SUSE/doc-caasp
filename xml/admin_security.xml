@@ -184,16 +184,6 @@ c88a9c67056a74e0357befdff93f87bbe0904214
    </step>
    <step>
     <para>
-     Find the distinguished name (DN) user string for the administrator user.
-    </para>
-<screen>&prompt.user;<command>slaptcat -n1 | grep uniqueMember</command></screen>
-<screen>
-bash-4.3# slapcat -n1 | grep uniqueMember
-uniqueMember: uid=user,ou=People,dc=infra,dc=caasp,dc=local
-</screen>
-   </step>
-   <step>
-    <para>
      Use <command>slappasswd</command> to generate a hashed and salted password
      string.
     </para>
@@ -210,14 +200,20 @@ uniqueMember: uid=user,ou=People,dc=infra,dc=caasp,dc=local
    </step>
    <step>
     <para>
+     Find the distinguished name (DN) user string for the administrator user.
+    </para>
+<screen>&prompt.user;<command>UNAME=$(slapcat -n1 | grep uniqueMember | cut -d': ' -f2)</command></screen>
+   </step>
+   <step>
+    <para>
      Set the new password. Replace <literal>new_password</literal>
      with the string you generated in the previous step. Replace
-     &lt;USER STRING&gt; with the DN from a previous step
+     $UNAME will replace it with the DN from the previous step
      (e.g. <literal>uid=user,ou=People,dc=infra,dc=caasp,dc=local</literal>).
     </para>
 <screen>&prompt.user;<command>ldappasswd -H ldaps:// -D "cn=admin,dc=infra,dc=caasp,dc=local" \
 -w $(cat /var/lib/misc/infra-secrets/openldap-password) \
-<replaceable>&lt;USER STRING&gt;</replaceable> -s <replaceable>new_password</replaceable></command>
+$UNAME -s <replaceable>new_password</replaceable></command>
 </screen>
    </step>
   </procedure>
