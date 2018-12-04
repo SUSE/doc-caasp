@@ -58,9 +58,88 @@
    All data flowing into or out of the airgapped network must be transferred in
    a secure fashion.
   </para>
-<!-- <screen>
 
-  </screen> -->
+  <sect2>
+   <title>Process Checklist</title>
+   <procedure>
+    <step>
+     <para>
+      Read the concepts section.
+     </para>
+     <para>
+      <xref linkend="sec.deploy.scenarios.airgap.concepts"/>
+     </para>
+    </step>
+    <step>
+     <para>
+      Deploy mirror servers on external and internal networks.
+     </para>
+     <para>
+      <xref linkend="sec.deploy.scenarios.airgap.requirements.machines"/>
+     </para>
+    </step>
+    <step>
+     <para>
+      Configure &rmtool; on servers.
+     </para>
+     <para>
+      <xref linkend="sec.deploy.scenarios.airgap.rpm-repository"/>
+     </para>
+    </step>
+    <step>
+     <para>
+      Configure Docker registry on servers.
+     </para>
+     <para>
+      <xref linkend="sec.deploy.scenarios.airgap.container-registry"/>
+     </para>
+    </step>
+    <step>
+     <para>
+      Configure Helm Chart repository on internal mirror.
+     </para>
+     <para>
+      <xref linkend="sec.deploy.scenarios.airgap.helm-charts"/>
+     </para>
+    </step>
+    <step>
+     <para>
+      Perform the &rmtool; update procedure to populate the RPM repository.
+     </para>
+     <para>
+      <xref linkend="sec.deploy.scenarios.airgap.rpm-repository.update"/>
+     </para>
+    </step>
+    <step>
+     <para>
+      Perform the shared update procedure to populate the Helm chart repository
+      and registry services.
+     </para>
+     <para>
+      <xref linkend="sec.deploy.scenarios.airgap.rpm-repository.update"/>
+     </para>
+    </step>
+    <step>
+     <para>
+      Deploy CaaSP platform and configure the nodes to use the respective
+      services on the internal network.
+     </para>
+     <para>
+      <xref linkend="sec.deploy.scenarios.airgap.caasp-deployment"/>
+     </para>
+     <para>
+      RPM Packages: <xref linkend="sec.deploy.scenarios.airgap.rpm-repository.client"/>
+     </para>
+     <para>
+      Helm Charts: <xref linkend="sec.deploy.scenarios.airgap.helm-charts.client"/>
+     </para>
+     <para>
+      Container Images: <xref linkend="sec.deploy.scenarios.airgap.container-registry.client"/>
+     </para>
+    </step>
+   </procedure>
+
+  </sect2>
 
   <sect2 xml:id="sec.deploy.scenarios.airgap.concepts">
    <title>Concepts</title>
@@ -227,13 +306,18 @@
      this relies on <literal>Charts</literal>, which are configuration files
      that tell &kube; how to deploy software and its dependencies. The actual
      software installed using this method is delivered as
-     <literal>container images</literal>. The location of the container image
-     is stored inside the Helm chart.
+     <literal>container images</literal>. The download location of the container
+     image is stored inside the Helm chart.
     </para>
     <para>
      Container images are provided by SUSE, Docker, and others on
      so called registries. The &suse; container registry is used to update the
      &productname; components.
+    </para>
+    <para>
+     To mirror container images inside the airgapped environment, you will run
+     two Docker registry services that are used to pull and in turn serve these
+     images. The registry service is shipped as a container image itself.
     </para>
     <para>
      Helm charts are provided independently from container images and can be
@@ -243,10 +327,14 @@
     <para>
      We provide <link xlink:href="https://github.com/openSUSE/helm-mirror">helm-mirror</link>
      to allow downloading all charts present in a chart repository in bulk and
-     moreover to extract all container image URLs from the charts. You can then
-     use <link xlink:href="https://github.com/containers/skopeo">skopeo</link>
-     to download all the images from their respective registry. This approach
-     vastly simplifies the task of copying charts and their related images.
+     moreover to extract all container image URLs from the charts.
+     <link xlink:href="https://github.com/containers/skopeo">skopeo</link> is
+     used to download all the images referred to in the Helm charts from their
+     respective registry.
+    </para>
+    <para>
+     Helm charts will be provided to the internal network by a webserver and
+     refer to the container images hosted on the internal registry mirror.
     </para>
     <para>
      Once mirroring is configured, you will not have to modify Dockerfile(s) or
@@ -270,8 +358,8 @@
     <note>
      <title>Shared Mirror Server</title>
      <para>
-      If you have multiple clusters or a very large amount of nodes accessing
-      these mirrors, you should increase the sizing of CPU/RAM.
+      If you have multiple &productname; clusters or a very large amount of
+      nodes accessing the mirrors, you should increase the sizing of CPU/RAM.
      </para>
      <para>
       Storage sizing depends on your intended update frequency and data
@@ -284,16 +372,6 @@
      your &productname; cluster. These mirror servers will reside on the
      external part of your network and the internal (airgapped) network
      respectively.
-    </para>
-    <para>
-     <link xlink:href="https://www.suse.com/documentation/sles-15/book_quickstarts/data/art_sle_installquick.html">Set
-     up two &sls; 15 machines</link> one on the internal network and one on
-     the airgapped network.
-    </para>
-    <para>
-     Make sure you have
-     <link xlink:href="https://www.suse.com/documentation/sles-15/book_sles_docker/data/preparation.html">enabled
-     the <filename>Containers</filename> module</link> on each server.
     </para>
     <variablelist>
      <varlistentry>
@@ -384,6 +462,30 @@
       if you require additional reliability/availability.
      </para>
     </important>
+    <procedure>
+     <title>Provision Mirror Servers</title>
+     <step>
+      <para>
+       <link xlink:href="https://www.suse.com/documentation/sles-15/book_quickstarts/data/art_sle_installquick.html">Set
+       up two &sls; 15 machines</link> one on the internal network and one on
+       the airgapped network.
+      </para>
+     </step>
+     <step>
+      <para>
+       Make sure you have
+       <link xlink:href="https://www.suse.com/documentation/sles-15/book_sles_docker/data/preparation.html">enabled
+       the <filename>Containers</filename> module</link> on each server.
+      </para>
+     </step>
+     <step>
+      <para>
+       You will need SSL/TLS certificates to secure services on each server.
+       Make sure the certificates are available system wide so they can be used
+       by the deployed components.
+      </para>
+     </step>
+    </procedure>
    </sect3>
 
    <sect3 xml:id="sec.deploy.scenarios.airgap.requirements.network">
@@ -412,12 +514,18 @@
       </para>
      </listitem>
     </itemizedlist>
+    <para>
+     The external mirror server must be able to communicate with upstream
+     sources on the internet. The minimal required ports are <literal>80</literal>
+     and <literal>443</literal>.
+    </para>
     <note>
      <title>Additional Port Configuration</title>
      <para>
       If you choose to add more Docker registries to your internal network,
       these must run on different ports than the standard registry running on
-      <literal>5000</literal>.
+      <literal>5000</literal>. Configure your network to allow for this
+      communication accordingly.
      </para>
     </note>
    </sect3>
@@ -446,8 +554,17 @@
      We recommend <literal>btrfs</literal>.
     </para>
     <para>
-     We recommend external storage with at least <literal>128GB</literal>.
+     We recommend external storage with at least <literal>128 GB</literal>.
     </para>
+    <important>
+     <title>Mount Point For Storage In Examples</title>
+     <para>
+      In the following procedures, we will assume the storage (when connected)
+      is mounted on <filename>/mnt/storage</filename>. Please make sure to
+      adjust the mountpoint in the respective command to where the device is
+      actually available.
+     </para>
+    </important>
     <note>
      <title>Handling Of Trusted Storage</title>
      <para>
@@ -472,31 +589,34 @@
      </para>
      <para>
       If the cluster is deployed before the mirror is running, you must
-      reconfigure all nodes manually.
+      reconfigure all existing nodes manually.
      </para>
     </note>
-    <para>
-     Set up &rmtool; on the two mirror servers.
-    </para>
-    <para>
-     <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/cha_rmt_installation.html">Follow these instructions</link>
-    </para>
+    <procedure>
+     <title>Configure &rmtool; On The Mirror Servers</title>
+     <step>
+      <para>
+       Configure the &rmtool; on both mirror servers as described in
+       <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/cha_rmt_installation.html">these instructions</link>.
+      </para>
+     </step>
+     </procedure>
     <procedure>
      <title>Configure The External Mirror</title>
      <step>
      <para>
-      Connect the external mirror to &scc; as described in <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/sec_rmt_mirroring_credentials.html">these instructions</link>.
+      Connect the external mirror to &scc; as described in
+      <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/sec_rmt_mirroring_credentials.html">these instructions</link>.
      </para>
     </step>
     </procedure>
-
     <procedure>
      <title>Configure The Internal Mirror</title>
      <step>
       <para>
        You need to disable the automatic repository sync on the internal server.
-       This will attempt to download information from &scc; which can not be
-       reached from inside the airgapped network.
+       Otherwise it will attempt to download information from &scc; which can
+       not be reached from inside the airgapped network.
       </para>
       <screen>&prompt.root;systemctl disable rmt-server-sync.timer
       </screen>
@@ -538,7 +658,7 @@
     <para>
      You can mirror images and charts from multiple registries in one shared
      internal registry. Do note, however, that you must manually resolve
-     conflicts due to duplicate charts and container images.
+     conflicts due to duplicate charts and container images and their namespaces.
     </para>
     <para>
      We highly recommend running separate helm chart and container registry
@@ -563,10 +683,12 @@
       the internal mirror.
      </para>
      <para>
-      If you need the ability to store modified container images, you will have
-      to create a new registry that will hold these images. The steps needed
-      to run your own full container image registry are not part of this
-      document.
+      You can modify and store your own container images on the external
+      registry and transfer them with the other container images using the same
+      process. If you need to be able to modify and store container images on
+      the internal network, we recommend to create a new registry that will hold
+      these images. The steps needed to run your own full container image
+      registry are not part of this document.
      </para>
       <para>
       For more information you can refer to:
@@ -590,7 +712,7 @@
      </step>
      <step>
       <para>
-       Pull the docker registry container image.
+       Pull the docker registry container image from the &suse; registry.
       </para>
 <screen>&prompt.user;<command>docker pull registry.suse.com/sles12/registry:2.6.2</command>
    </screen>
@@ -604,8 +726,7 @@
      </step>
      <step>
       <para>
-       Connect the trusted storage to the external mirror. We will assume the
-       device is mounted at <filename>/mnt/storage</filename>. Copy the
+       Connect the trusted storage to the external mirror. Copy the
        registry image onto the storage.
       </para>
 <screen>&prompt.user;<command>cp <replaceable>/tmp/registry.tar</replaceable> <replaceable>/mnt/storage/registry.tar</replaceable></command>
@@ -613,8 +734,10 @@
      </step>
      <step>
       <para>
-       Create basic authentication credentials for registry. Replace
-       <literal>USERNAME</literal> and <literal>PASSWORD</literal> with
+       Create basic authentication credentials for the Docker registry.
+      </para>
+      <para>
+       Replace <literal>USERNAME</literal> and <literal>PASSWORD</literal> with
        proper credentials of your choosing.
       </para>
 <screen>&prompt.user;<command>mkdir auth</command>
@@ -625,11 +748,6 @@
       <para>
        Create the <filename>/etc/docker/registry/config.secure.yml</filename>
        configuration file for Docker registry.
-      </para>
-      <para>
-       For more details on the configuration, refer to:
-       <link xlink:href="https://docs.docker.com/registry/configuration/">Docker
-       Registry: Configuration</link>
       </para>
       <para>
        Replace <filename>/certs/domain.crt</filename> and
@@ -663,6 +781,11 @@ health:
     interval: 10s
 threshold: 3
 </screen>
+      <para>
+       For more details on the configuration, refer to:
+       <link xlink:href="https://docs.docker.com/registry/configuration/">Docker
+       Registry: Configuration</link>
+      </para>
      </step>
      <step>
       <para>
@@ -685,13 +808,22 @@ threshold: 3
      </step>
     </procedure>
 
+    <para>
+     Now we will move on to the internal server in the airgapped network and
+     perform a nearly identical procedure there.
+    </para>
+
     <procedure>
      <title>Set Up Internal Mirror</title>
      <step>
       <para>
-       Connect the trusted storage to the internal mirror. We will assume the
-       device is mounted at <filename>/mnt/storage</filename>. Copy the registry
-       container image to the internal mirror.
+       SSH into the internal mirror server.
+      </para>
+     </step>
+     <step>
+      <para>
+       Connect the trusted storage to the internal mirror and copy the registry
+       container image to local filesystem.
       </para>
 <screen>&prompt.user;<command>cp /mnt/storage/registry.tar /etc/docker/registry/registry.tar</command>
    </screen>
@@ -707,11 +839,6 @@ threshold: 3
       <para>
        Create the <filename>/etc/docker/registry/config.airgapped.yml</filename>
        configuration file for Docker registry.
-      </para>
-      <para>
-       For more details on the configuration, refer to:
-       <link xlink:href="https://docs.docker.com/registry/configuration/">Docker
-       Registry: Configuration</link>
       </para>
       <para>
        Replace <filename>/certs/domain.crt</filename> and
@@ -744,6 +871,11 @@ health:
     interval: 10s
 threshold: 3
          </screen>
+      <para>
+       For more details on the configuration, refer to:
+       <link xlink:href="https://docs.docker.com/registry/configuration/">Docker
+       Registry: Configuration</link>
+      </para>
      </step>
      <step>
       <para>
@@ -767,16 +899,12 @@ threshold: 3
     </procedure>
 
     <para>
-     Now you should have the registries set up and listening on port
+     Now, you should have the registries set up and listening on port
      <literal>5000</literal> on their respective servers.
-    </para>
-    <para>
-     You must now perform the shared update procedure to populate the registry.
-     Refer to: <xref linkend="sec.deploy.scenarios.airgap.update"/>.
     </para>
    </sect3>
 
-   <sect3 xml:id="sec.deploy.scenarios.airgap.container-registry.clients">
+   <sect3 xml:id="sec.deploy.scenarios.airgap.container-registry.client">
     <title>Client Configuration</title>
     <para>
      Using the airgapped mirror works exactly like using a traditional
@@ -803,48 +931,57 @@ threshold: 3
 
   <sect2 xml:id="sec.deploy.scenarios.airgap.helm-charts">
    <title>Helm Chart Repository Mirror</title>
+   <important>
+    <para>
+     To make use of the helm charts, you must complete
+     <xref linkend="sec.deploy.scenarios.airgap.container-registry"/>.
+    </para>
+   </important>
    <para>
     The helm charts will require images available from a registry mirror. The
-    following steps will aid you in mirroring all images required by the &suse;
-    provided helm charts. To make use of the helm charts, you must complete
-    <xref linkend="sec.deploy.scenarios.airgap.container-registry"/>.
+    charts themselves are served on a simple webserver and do not require any
+    particular configuration apart from basic networking availability and a
+    hostname.
    </para>
    <sect3>
     <title>Mirror Configuration</title>
-    <para>
-     You must have a working container image registry mirror in place inside
-     the air gapped network. This can be any webserver capable of hosting static
-     files. We recommend providing the webserver on your internal mirror server.
-    </para>
     <procedure>
      <title>Setting Up Chart Repository Mirror</title>
      <step>
       <para>
        Install and configure a webserver (for example <link xlink:href="https://www.suse.com/documentation/sles-15/book_sle_admin/data/cha_apache2.html">Apache</link>)
-       on your airgapped mirror server.
+       on your internal network. You can just deploy a webserver onto the
+       internal mirror.
       </para>
      </step>
      <step>
       <para>
-       SSH into your mirror server on the <literal>external</literal> network.
+       Configure a hostname that will be used as the helm chart repository
+       address inside the internal network. This hostname must point to the
+       configured webserver. If you provide the webserver on the internal
+       mirror, we recommend configuring the webserver to be available at
+       <literal>/charts</literal> to avoid confusion with the image registry
+       endpoint. The Helm chart repository would then be accessible at
+       <literal>https://myregistry.local:443/charts/</literal>.
+       </para>
+       <para>
+        You will need the configured hostname to replace the original
+        chart repository address in the index file of your repository.
       </para>
-     </step>
-     <step>
-      <para>
-       Download all helm charts from the helm chart repository using
-       <command>helm-mirror</command>.
-      </para>
-<screen>&prompt.user;helm-mirror https://kubernetes-charts.suse.com /chartserver/charts
-      </screen>
      </step>
     </procedure>
+    <para>
+     Update the Helm chart repository by following the shared update procedure
+     <xref linkend="sec.deploy.scenarios.airgap.update"/>.
+    </para>
    </sect3>
-   <sect3>
+
+   <sect3 xml:id="sec.deploy.scenarios.airgap.helm-charts.client">
     <title>Client Configuration</title>
     <para>
      Add the webserver as a repo to <command>helm</command> on the admin node.
      </para>
-<screen>&prompt.user;<command>helm repo add SUSE-MIRROR <replaceable>&lt;internal-mirror.hostname&gt;</replaceable></command>
+<screen>&prompt.user;<command>helm repo add SUSE-MIRROR <replaceable>&lt;myregistry.local&gt;/charts</replaceable></command>
    </screen>
    </sect3>
   </sect2>
@@ -940,8 +1077,7 @@ downloaded-index.yaml</command>
     <title>Transfer Data To Secure Storage</title>
     <step>
      <para>
-      Connect the trusted storage to the external mirror. We will assume the
-      device is mounted at <filename>/mnt/storage</filename>.
+      Connect the trusted storage to the external mirror.
      </para>
     </step>
     <step>
@@ -966,8 +1102,7 @@ downloaded-index.yaml</command>
     <title>Update Internal Mirror</title>
     <step>
      <para>
-      Connect the trusted storage to the internal mirror. We will assume the
-      device is mounted at <filename>/mnt/storage</filename>.
+      Connect the trusted storage to the internal mirror.
      </para>
     </step>
     <step>
@@ -1017,6 +1152,11 @@ downloaded-index.yaml</command>
 
   <sect2 xml:id="sec.deploy.scenarios.airgap.caasp-deployment">
    <title>Deploying &productname;</title>
+   <para>
+    Use <xref linkend="book.caasp.deployment"/> to deploy &productname;
+    as usual. Some of the considerations below apply depending of the chosen
+    installation medium.
+    </para>
    <sect3>
     <title>Using the ISO</title>
     <para>
