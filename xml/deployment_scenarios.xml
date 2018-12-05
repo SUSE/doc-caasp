@@ -1015,9 +1015,15 @@ threshold: 3
      Download all charts from the repository to the filesystem
      (e.g. <filename>/tmp/charts</filename>).
      </para>
+     <para>
+      This action will download all charts and overwrite the existing Helm
+      chart repository URL. Replace <literal>https://myregistry.local/charts</literal>
+      with the hostname of the webserver providing the Helm chart repository on
+      the internal network.
+     </para>
 <screen>&prompt.user;<command>mkdir <replaceable>/tmp/charts</replaceable></command></screen>
 <screen>&prompt.user;<command>cd <replaceable>/tmp/charts</replaceable></command></screen>
-<screen>&prompt.user;<command>helm-mirror https://kubernetes-charts.suse.com <replaceable>/tmp/charts</replaceable></command></screen>
+<screen>&prompt.user;<command>helm-mirror --new-root-url <replaceable>https://myregistry.local/charts</replaceable> https://kubernetes-charts.suse.com <replaceable>/tmp/charts</replaceable></command></screen>
    </step>
    <step>
     <para>
@@ -1153,9 +1159,9 @@ downloaded-index.yaml</command>
   <sect2 xml:id="sec.deploy.scenarios.airgap.caasp-deployment">
    <title>Deploying &productname;</title>
    <para>
-    Use <xref linkend="book.caasp.deployment"/> to deploy &productname;
-    as usual. Some of the considerations below apply depending of the chosen
-    installation medium.
+    Use the &productname; <xref linkend="book.caasp.deployment"/> as usual.
+    Some of the considerations below apply; depending of the chosen installation
+    medium.
     </para>
    <sect3>
     <title>Using the ISO</title>
