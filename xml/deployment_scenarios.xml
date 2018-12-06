@@ -580,16 +580,13 @@
    <sect3 xml:id="sec.deploy.scenarios.airgap.rpm-repository.mirror">
     <title>Mirror Configuration</title>
     <note>
-     <title>If Possible, Deploy The Mirror Before &productname; Cluster Deployment</title>
+     <title>Deploy The Mirror Before &productname; Cluster Deployment</title>
      <para>
-      The mirror on the airgapped network should be running and populated before
-      deploying &productname;, this makes rolling out much easier; since you
-      can configure the nodes during installation to use the correct internal
-      mirror.
-     </para>
-     <para>
-      If the cluster is deployed before the mirror is running, you must
-      reconfigure all existing nodes manually.
+      The mirror on the airgapped network must be running and populated before
+      deploying &productname;. Starting with &productname; v4 many components
+      will no longer be shipped with the install media and must be fetched
+      from the repository. For v3 this significantly simplifies deployment since
+      you don't have to reconfigure all existing nodes manually.
      </para>
     </note>
     <procedure>
@@ -657,12 +654,16 @@
     <title>Mirroring Multiple Image Registries / Chart Repositories</title>
     <para>
      You can mirror images and charts from multiple registries in one shared
-     internal registry. Do note, however, that you must manually resolve
-     conflicts due to duplicate charts and container images and their namespaces.
+     internal registry. We do not recommend mirroring multiple registries in a
+     shared registry due to the potential conflicts.
     </para>
     <para>
      We highly recommend running separate helm chart and container registry
      mirrors for each source registry.
+    </para>
+    <para>
+     Additional mirror registries must be run on separate mirror servers for
+     technical reasons.
     </para>
    </note>
 
@@ -954,7 +955,16 @@ threshold: 3
    <sect3 xml:id="sec.deploy.scenarios.airgap.helm-charts.client">
     <title>Client Configuration</title>
     <para>
-     Add the webserver as a repo to <command>helm</command> on the admin node.
+     Add the webserver as a repo to <command>helm</command>.
+     </para>
+     <para>
+      This step needs to be performed on a machine where Helm is installed and
+      configured to talk to the Tiller server in the &productname; cluster.
+      Refer to, <xref linkend="sec.admin.software.helm"/>.
+     </para>
+     <para>
+      <literal>SUSE-MIRROR</literal> will be the name for this repository listed
+      by Helm and can be freely defined.
      </para>
 <screen>&prompt.user;<command>helm repo add SUSE-MIRROR <replaceable>&lt;mymirror.local&gt;/charts</replaceable></command>
    </screen>
