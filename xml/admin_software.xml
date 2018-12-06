@@ -992,13 +992,15 @@ heapster-default  1  Fri Jun 29 10:48:45 2018  DEPLOYED  heapster-0.2.7  kube-sy
    </step>
    <step>
     <para>
-      Connect to any cluster node using SSH.
+      Run <command>kubectl proxy</command> to expose the cluster on your local
+      workstation.
     </para>
    </step>
    <step>
     <para>
-      Visit <literal>http://127.0.0.1:8081/</literal> in your browser.
-      You will be greeted with by a welcome page containing a dialog to configure authentication.
+      Visit <literal>http://127.0.0.1:8081/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/</literal>
+      in your browser. You will be greeted with by a welcome page containing a
+      dialog to configure authentication.
     </para>
    </step>
    <step>
