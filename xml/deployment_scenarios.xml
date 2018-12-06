@@ -505,7 +505,7 @@
      </listitem>
      <listitem>
       <para>
-       443 HTTPS - &rmtool; Server and Helm chart repository mirror
+       443 HTTPS - &rmtool; Server
       </para>
      </listitem>
      <listitem>
@@ -733,8 +733,8 @@
      </step>
      <step>
       <para>
-       Connect the trusted storage to the external mirror. Copy the
-       registry image onto the storage.
+       Connect the trusted storage to the external mirror. Copy the registry
+       image onto the storage.
       </para>
 <screen>&prompt.user;<command>cp <replaceable>/tmp/registry.tar</replaceable> <replaceable>/mnt/storage/registry.tar</replaceable></command>
    </screen>
@@ -747,18 +747,19 @@
        Replace <literal>USERNAME</literal> and <literal>PASSWORD</literal> with
        proper credentials of your choosing.
       </para>
-<screen>&prompt.user;<command>mkdir auth</command>
-&prompt.user;<command>docker run --entrypoint htpasswd registry.suse.com/sles12/registry:2.6.2 -Bbn <replaceable>USERNAME PASSWORD</replaceable> > auth/htpasswd</command>
+<screen>&prompt.user;<command>mkdir /etc/docker/registry/auth</command>
+&prompt.user;<command>docker run --entrypoint htpasswd registry.suse.com/sles12/registry:2.6.2 -Bbn <replaceable>USERNAME PASSWORD</replaceable> \
+> /etc/docker/registry/auth/htpasswd</command>
  </screen>
      </step>
      <step>
       <para>
-       Create the <filename>/etc/docker/registry/config.secure.yml</filename>
+       Create the <filename>/etc/docker/registry/config.yml</filename>
        configuration file.
       </para>
       <para>
-       Replace <filename>/certs/domain.crt</filename> and
-       <filename>/certs/domain.key</filename> with the appropriate certificate
+       Replace <filename>/etc/docker/registry/certs/domain.crt</filename> and
+       <filename>/etc/docker/registry/certs/domain.key</filename> with the appropriate certificate
        files for your organization.
       </para>
 <screen>
@@ -769,7 +770,7 @@ log:
 auth:
   htpasswd:
     realm: basic-realm
-    path: /auth/htpasswd
+    path: /etc/docker/registry/htpasswd
 storage:
   cache:
     blobdescriptor: inmemory
@@ -780,8 +781,8 @@ http:
   headers:
     X-Content-Type-Options: [nosniff]
   tls:
-    certificate: /certs/domain.crt
-    key: /certs/domain.key
+    certificate: /etc/docker/registry/certs/domain.crt
+    key: /etc/docker/registry/certs/domain.key
 health:
   storagedriver:
     enabled: true
@@ -800,10 +801,8 @@ threshold: 3
       </para>
 <screen>&prompt.user;<command>cd /etc/docker/registry</command>
 &prompt.user;<command>docker run -d -p 5000:5000 --restart=always --name registry \
--v `pwd`<replaceable>/config.secure.yml</replaceable>:/etc/docker/registry/config.yml:ro \
--v `pwd`/auth:/auth:ro \
--v `pwd`/certs:/certs:ro \
--v <replaceable>/registry</replaceable>:/var/lib/registry registry.suse.com/sles12/registry:2.6.2</command>
+-v /etc/docker/registry:/etc/docker/registry:ro \
+-v <replaceable>/var/lib/registry</replaceable>:/var/lib/registry registry.suse.com/sles12/registry:2.6.2</command>
        </screen>
      </step>
     </procedure>
@@ -829,27 +828,20 @@ threshold: 3
      </step>
      <step>
       <para>
-       Connect the trusted storage to the internal mirror and copy the registry
-       container image to local filesystem.
+       Connect the trusted storage to the internal mirror and load the registry
+       container image to the local filesystem.
       </para>
-<screen>&prompt.user;<command>cp /mnt/storage/registry.tar /etc/docker/registry/registry.tar</command>
-   </screen>
-     </step>
-     <step>
-      <para>
-       Load the registry container image into the local docker instance.
-      </para>
-<screen>&prompt.user;<command>docker load -i /etc/docker/registry/registry.tar</command>
+<screen>&prompt.user;<command>docker load -i /mnt/storage/registry.tar</command>
        </screen>
      </step>
      <step>
       <para>
-       Create the <filename>/etc/docker/registry/config.airgapped.yml</filename>
+       Create the <filename>/etc/docker/registry/config.yml</filename>
        configuration file.
       </para>
       <para>
-       Replace <filename>/certs/domain.crt</filename> and
-       <filename>/certs/domain.key</filename> with the appropriate certificate
+       Replace <filename>/etc/docker/registry/certs/domain.crt</filename> and
+       <filename>/etc/docker/registry/certs/domain.key</filename> with the appropriate certificate
        files for your organization.
       </para>
 <screen>
@@ -870,8 +862,8 @@ http:
   headers:
     X-Content-Type-Options: [nosniff]
   tls:
-    certificate: /certs/domain.crt
-    key: /certs/domain.key
+    certificate: /etc/docker/registry/certs/domain.crt
+    key: /etc/docker/registry/certs/domain.key
 health:
   storagedriver:
     enabled: true
@@ -890,10 +882,8 @@ threshold: 3
       </para>
 <screen>&prompt.user;<command>cd /etc/docker/registry</command>
 &prompt.user;<command>docker run -d -p 5000:5000 --restart=always --name registry \
--v `pwd`<replaceable>/config.airgapped.yml</replaceable>:/etc/docker/registry/config.yml:ro \
--v `pwd`/auth:/auth:ro \
--v `pwd`/certs:/certs:ro \
--v <replaceable>/registry</replaceable>:/var/lib/registry registry.suse.com/sles12/registry:2.6.2</command>
+-v /etc/docker/registry:/etc/docker/registry:ro \
+-v <replaceable>/var/lib/registry</replaceable>:/var/lib/registry registry.suse.com/sles12/registry:2.6.2</command>
        </screen>
      </step>
     </procedure>
@@ -949,22 +939,10 @@ threshold: 3
      <title>Setting Up Chart Repository Mirror</title>
      <step>
       <para>
-       Install and configure a webserver (for example
-       <link xlink:href="https://www.suse.com/documentation/sles-15/book_sle_admin/data/cha_apache2.html">Apache</link>)
-       on your internal network. You can just deploy a webserver onto the
-       internal mirror.
+       We will re-use the webserver that is shipped with &rmtool; to create
+       a virtual host for the chart repository. The repository will be available
+       at <literal>http://mymirror.local:80/charts</literal>.
       </para>
-     </step>
-     <step>
-      <para>
-       Configure a hostname that will be used as the helm chart repository
-       address inside the internal network. This hostname must point to the
-       configured webserver. If you provide the webserver on the internal
-       mirror, we recommend configuring the webserver to be available at
-       <literal>/charts</literal> to avoid confusion with the image registry
-       endpoint. The Helm chart repository would then be accessible at
-       <literal>https://myregistry.local:443/charts/</literal>.
-       </para>
      </step>
     </procedure>
     <para>
@@ -978,7 +956,7 @@ threshold: 3
     <para>
      Add the webserver as a repo to <command>helm</command> on the admin node.
      </para>
-<screen>&prompt.user;<command>helm repo add SUSE-MIRROR <replaceable>&lt;myregistry.local&gt;/charts</replaceable></command>
+<screen>&prompt.user;<command>helm repo add SUSE-MIRROR <replaceable>&lt;mymirror.local&gt;/charts</replaceable></command>
    </screen>
    </sect3>
   </sect2>
@@ -1013,13 +991,13 @@ threshold: 3
      </para>
      <para>
       This action will download all charts and overwrite the existing Helm
-      chart repository URL. Replace <literal>https://myregistry.local/charts</literal>
+      chart repository URL. Replace <literal>https://mymirror.local/charts</literal>
       with the hostname of the webserver providing the Helm chart repository on
       the internal network.
      </para>
 <screen>&prompt.user;<command>mkdir <replaceable>/tmp/charts</replaceable></command></screen>
 <screen>&prompt.user;<command>cd <replaceable>/tmp/charts</replaceable></command></screen>
-<screen>&prompt.user;<command>helm-mirror --new-root-url <replaceable>https://myregistry.local/charts</replaceable> https://kubernetes-charts.suse.com <replaceable>/tmp/charts</replaceable></command></screen>
+<screen>&prompt.user;<command>helm-mirror --new-root-url <replaceable>https://mymirror.local/charts</replaceable> https://kubernetes-charts.suse.com <replaceable>/tmp/charts</replaceable></command></screen>
    </step>
    <step>
     <para>
@@ -1049,7 +1027,7 @@ threshold: 3
      created during <xref linkend="sec.deploy.scenarios.airgap.container-registry.mirror" />.
     </para>
 <screen>&prompt.user;<command>skopeo sync --dest-creds <replaceable>USERNAME:PASSWORD</replaceable> \
-dir:<replaceable>/tmp/skopeodata/registry.suse.com/</replaceable> <replaceable>docker://myregistry.local:5000</replaceable></command>
+dir:<replaceable>/tmp/skopeodata/registry.suse.com/</replaceable> <replaceable>docker://mymirror.local:5000</replaceable></command>
      </screen>
    </step>
    <step>
@@ -1074,7 +1052,7 @@ dir:<replaceable>/tmp/skopeodata/registry.suse.com/</replaceable> <replaceable>d
       all files and directories that are no longer present on the external host
       from the trusted storage.
      </para>
-<screen>&prompt.user;<command>rsync -aP /tmp/skopeodata/registry.suse.com/ <replaceable>/mnt/storage/container-images/</replaceable> --delete</command>
+<screen>&prompt.user;<command>rsync -aP /tmp/skopeodata/registry.suse.com/ <replaceable>/mnt/storage/registry/</replaceable> --delete</command>
      </screen>
     </step>
     <step>
@@ -1100,10 +1078,9 @@ dir:<replaceable>/tmp/skopeodata/registry.suse.com/</replaceable> <replaceable>d
       from the internal mirror.
      </para>
      <para>
-      The target directory must be the same directory you have configured during
-      the setup of the container registry. Here <filename>/tmp/registry</filename>.
+      The target directory is <filename>/var/lib/registry</filename>.
      </para>
-<screen>&prompt.user;<command>rsync -aP <replaceable>/mnt/storage/container-images/</replaceable> <replaceable>/tmp/registry/</replaceable>  --delete</command>
+<screen>&prompt.user;<command>rsync -aP <replaceable>/mnt/storage/registry/</replaceable> <replaceable>/var/lib/registry/</replaceable> --delete</command>
      </screen>
     </step>
     <step>
@@ -1113,7 +1090,7 @@ dir:<replaceable>/tmp/skopeodata/registry.suse.com/</replaceable> <replaceable>d
       any charts to the location manually, please back up these first and
       restore after the sync from the trusted storage is done.
      </para>
-<screen>&prompt.user;<command>rsync -aP <replaceable>/mnt/storage/charts</replaceable> <replaceable>/tmp/charts/</replaceable> --delete</command>
+<screen>&prompt.user;<command>rsync -aP <replaceable>/mnt/storage/charts</replaceable> <replaceable>/srv/www/htdocs/charts/</replaceable> --delete</command>
      </screen>
     </step>
    </procedure>
