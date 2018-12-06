@@ -310,7 +310,7 @@
      image is stored inside the Helm chart.
     </para>
     <para>
-     Container images are provided by SUSE and others on
+     Container images are provided by &suse; and others on
      so called registries. The &suse; container registry is used to update the
      &productname; components.
     </para>
@@ -505,11 +505,6 @@
      </listitem>
      <listitem>
       <para>
-       443 HTTPS - &rmtool; Server
-      </para>
-     </listitem>
-     <listitem>
-      <para>
        5000 HTTPS - Container image registry
       </para>
      </listitem>
@@ -556,7 +551,7 @@
     <para>
      We recommend external storage with at least <literal>128 GB</literal>.
     </para>
-    <important>
+    <note>
      <title>Mount Point For Storage In Examples</title>
      <para>
       In the following procedures, we will assume the storage (when connected)
@@ -564,7 +559,7 @@
       adjust the mountpoint in the respective command to where the device is
       actually available.
      </para>
-    </important>
+    </note>
     <note>
      <title>Handling Of Trusted Storage</title>
      <para>
@@ -671,7 +666,7 @@
     <title>Mirror Configuration</title>
     <para>
      The container image registry is provided as a container image itself.
-     You must download the registry container from SUSE and run it on the
+     You must download the registry container from &suse; and run it on the
      respective server.
     </para>
     <note>
@@ -722,7 +717,7 @@
       <para>
        Pull the registry container image from &suse;.
       </para>
-<screen>&prompt.user;<command>docker pull registry.suse.com/sles12/registry:2.6.2</command>
+<screen>&prompt.root;<command>docker pull registry.suse.com/sles12/registry:2.6.2</command>
    </screen>
      </step>
      <step>
@@ -749,7 +744,7 @@
        proper credentials of your choosing.
       </para>
 <screen>&prompt.user;<command>mkdir /etc/docker/registry/auth</command>
-&prompt.user;<command>docker run --entrypoint htpasswd registry.suse.com/sles12/registry:2.6.2 -Bbn <replaceable>USERNAME PASSWORD</replaceable> \
+&prompt.root;<command>docker run --entrypoint htpasswd registry.suse.com/sles12/registry:2.6.2 -Bbn <replaceable>USERNAME PASSWORD</replaceable> \
 > /etc/docker/registry/auth/htpasswd</command>
  </screen>
      </step>
@@ -800,8 +795,7 @@ threshold: 3
       <para>
        Start the registry container.
       </para>
-<screen>&prompt.user;<command>cd /etc/docker/registry</command>
-&prompt.user;<command>docker run -d -p 5000:5000 --restart=always --name registry \
+<screen>&prompt.user;<command>docker run -d -p 5000:5000 --restart=always --name registry \
 -v /etc/docker/registry:/etc/docker/registry:ro \
 -v <replaceable>/var/lib/registry</replaceable>:/var/lib/registry registry.suse.com/sles12/registry:2.6.2</command>
        </screen>
@@ -1001,13 +995,13 @@ threshold: 3
      </para>
      <para>
       This action will download all charts and overwrite the existing Helm
-      chart repository URL. Replace <literal>https://mymirror.local/charts</literal>
+      chart repository URL. Replace <literal>http://mymirror.local/charts</literal>
       with the hostname of the webserver providing the Helm chart repository on
       the internal network.
      </para>
 <screen>&prompt.user;<command>mkdir <replaceable>/tmp/charts</replaceable></command></screen>
 <screen>&prompt.user;<command>cd <replaceable>/tmp/charts</replaceable></command></screen>
-<screen>&prompt.user;<command>helm-mirror --new-root-url <replaceable>https://mymirror.local/charts</replaceable> https://kubernetes-charts.suse.com <replaceable>/tmp/charts</replaceable></command></screen>
+<screen>&prompt.user;<command>helm-mirror --new-root-url <replaceable>http://mymirror.local/charts</replaceable> https://kubernetes-charts.suse.com <replaceable>/tmp/charts</replaceable></command></screen>
    </step>
    <step>
     <para>
@@ -1161,7 +1155,7 @@ dir:<replaceable>/tmp/skopeodata/registry.suse.com/</replaceable> <replaceable>d
    <sect3>
     <title>Skopeo Fails Because Of Self Signed Certificate</title>
     <para>
-     If you are using a self-signed certificate for the registry you can use
+     If you are using a self-signed certificate for the registry you can use the
      <literal>--dest-cert-dir /path/to/the/cert</literal>
      parameter to provide the certificate.
     </para>
