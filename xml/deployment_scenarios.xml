@@ -492,10 +492,9 @@
     <title>Networking</title>
     <para>
      All members of the &productname; cluster must be able to communicate with
-     the internal mirror server(s) within the airgapped network.
-    </para>
-    <para>
-     Ports:
+     the internal mirror server(s) within the airgapped network. You must
+     configure at least these ports in all firewalls between the cluster and
+     the internal mirror:
     </para>
     <itemizedlist>
      <listitem>
@@ -510,9 +509,8 @@
      </listitem>
     </itemizedlist>
     <para>
-     The external mirror server must be able to communicate with upstream
-     sources on the internet. The minimal required ports are <literal>80</literal>
-     and <literal>443</literal>.
+     The external mirror server must be able to exchange outgoing traffic with
+     upstream sources on ports <literal>80</literal> and <literal>443</literal>.
     </para>
     <note>
      <title>Additional Port Configuration</title>
@@ -701,17 +699,18 @@
      </step>
      <step>
       <para>
+       Install <filename>docker</filename>, <filename>helm-mirror</filename>
+       and <filename>skopeo</filename>.
+      </para>
+<screen>&prompt.root;zypper in docker helm-mirror skopeo
+      </screen>
+     </step>
+     <step>
+      <para>
        Start the docker service and enable it at boot time:
       </para>
 <screen>&prompt.root;<command>systemctl enable --now docker.service</command>
          </screen>
-     </step>
-     <step>
-      <para>
-       Install <filename>helm-mirror</filename> and <filename>skopeo</filename>.
-      </para>
-<screen>&prompt.root;zypper in helm-mirror skopeo
-      </screen>
      </step>
      <step>
       <para>
@@ -813,6 +812,13 @@ threshold: 3
       <para>
        SSH into the internal mirror server.
       </para>
+     </step>
+     <step>
+      <para>
+       Install <filename>docker</filename>.
+      </para>
+<screen>&prompt.root;zypper in docker
+      </screen>
      </step>
      <step>
       <para>
