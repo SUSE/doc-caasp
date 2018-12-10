@@ -743,7 +743,7 @@
        Replace <literal>USERNAME</literal> and <literal>PASSWORD</literal> with
        proper credentials of your choosing.
       </para>
-<screen>&prompt.root;<command>mkdir /etc/docker/registry/auth</command>
+<screen>&prompt.root;<command>mkdir -p /etc/docker/registry/{auth,certs}</command>
 &prompt.root;<command>docker run --entrypoint htpasswd registry.suse.com/sles12/registry:2.6.2 -Bbn <replaceable>USERNAME PASSWORD</replaceable> \
 > /etc/docker/registry/auth/htpasswd</command>
  </screen>
@@ -766,7 +766,7 @@ log:
 auth:
   htpasswd:
     realm: basic-realm
-    path: /etc/docker/registry/htpasswd
+    path: /etc/docker/registry/auth/htpasswd
 storage:
   cache:
     blobdescriptor: inmemory
@@ -795,7 +795,7 @@ threshold: 3
       <para>
        Start the registry container.
       </para>
-<screen>&prompt.user;<command>docker run -d -p 5000:5000 --restart=always --name registry \
+<screen>&prompt.root;<command>docker run -d -p 5000:5000 --restart=always --name registry \
 -v /etc/docker/registry:/etc/docker/registry:ro \
 -v <replaceable>/var/lib/registry</replaceable>:/var/lib/registry registry.suse.com/sles12/registry:2.6.2</command>
        </screen>
@@ -875,8 +875,7 @@ threshold: 3
       <para>
        Start the registry container.
       </para>
-<screen>&prompt.user;<command>cd /etc/docker/registry</command>
-&prompt.user;<command>docker run -d -p 5000:5000 --restart=always --name registry \
+<screen>&prompt.root;<command>docker run -d -p 5000:5000 --restart=always --name registry \
 -v /etc/docker/registry:/etc/docker/registry:ro \
 -v <replaceable>/var/lib/registry</replaceable>:/var/lib/registry registry.suse.com/sles12/registry:2.6.2</command>
        </screen>
@@ -1039,7 +1038,7 @@ dir:<replaceable>/tmp/skopeodata/registry.suse.com/</replaceable> <replaceable>d
      After the synchronization is done, you can remove the <filename>skopeodata</filename>
      directory.
     </para>
-<screen>&prompt.user;<command>rm -rf /tmp/skopeodata</command></screen>
+<screen>&prompt.user;<command>rm -rf <replaceable>/tmp/skopeodata</replaceable></command></screen>
    </step>
   </procedure>
 
@@ -1056,7 +1055,7 @@ dir:<replaceable>/tmp/skopeodata/registry.suse.com/</replaceable> <replaceable>d
       all files and directories that are no longer present on the external host
       from the trusted storage.
      </para>
-<screen>&prompt.user;<command>rsync -aP /tmp/skopeodata/registry.suse.com/ <replaceable>/mnt/storage/registry/</replaceable> --delete</command>
+<screen>&prompt.user;<command>rsync -aP /var/lib/registry/ <replaceable>/mnt/storage/registry/</replaceable> --delete</command>
      </screen>
     </step>
     <step>
@@ -1094,7 +1093,7 @@ dir:<replaceable>/tmp/skopeodata/registry.suse.com/</replaceable> <replaceable>d
       any charts to the location manually, please back up these first and
       restore after the sync from the trusted storage is done.
      </para>
-<screen>&prompt.user;<command>rsync -aP <replaceable>/mnt/storage/charts</replaceable> <replaceable>/srv/www/htdocs/charts/</replaceable> --delete</command>
+<screen>&prompt.user;<command>rsync -aP <replaceable>/mnt/storage/charts/</replaceable> <replaceable>/srv/www/htdocs/charts/</replaceable> --delete</command>
      </screen>
     </step>
    </procedure>
