@@ -724,7 +724,7 @@
       <para>
        Save the pulled image to a <literal>.tar</literal> file.
       </para>
-<screen>&prompt.user;<command>docker save -o /tmp/registry.tar registry.suse.com/sles12/registry:2.6.2</command>
+<screen>&prompt.root;<command>docker save -o /tmp/registry.tar registry.suse.com/sles12/registry:2.6.2</command>
       </screen>
      </step>
      <step>
@@ -732,7 +732,7 @@
        Connect the trusted storage to the external mirror. Copy the registry
        image onto the storage.
       </para>
-<screen>&prompt.user;<command>cp <replaceable>/tmp/registry.tar</replaceable> <replaceable>/mnt/storage/registry.tar</replaceable></command>
+<screen>&prompt.user;<command>mv <replaceable>/tmp/registry.tar</replaceable> <replaceable>/mnt/storage/registry.tar</replaceable></command>
    </screen>
      </step>
      <step>
@@ -743,7 +743,7 @@
        Replace <literal>USERNAME</literal> and <literal>PASSWORD</literal> with
        proper credentials of your choosing.
       </para>
-<screen>&prompt.user;<command>mkdir /etc/docker/registry/auth</command>
+<screen>&prompt.root;<command>mkdir /etc/docker/registry/auth</command>
 &prompt.root;<command>docker run --entrypoint htpasswd registry.suse.com/sles12/registry:2.6.2 -Bbn <replaceable>USERNAME PASSWORD</replaceable> \
 > /etc/docker/registry/auth/htpasswd</command>
  </screen>
@@ -826,7 +826,7 @@ threshold: 3
        Connect the trusted storage to the internal mirror and load the registry
        container image to the local filesystem.
       </para>
-<screen>&prompt.user;<command>docker load -i /mnt/storage/registry.tar</command>
+<screen>&prompt.root;<command>docker load -i /mnt/storage/registry.tar</command>
        </screen>
      </step>
      <step>
