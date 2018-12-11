@@ -373,6 +373,10 @@
      external part of your network and the internal (airgapped) network
      respectively.
     </para>
+    <para>
+     For more information on the requirements of a &sle; 15 server, refer to:
+     <link xlink:href="https://www.suse.com/documentation/sles-15/singlehtml/book_sle_deployment/book_sle_deployment.html#part.prep">Installation Preparation</link>.
+    </para>
     <variablelist>
      <varlistentry>
       <term>External</term>
@@ -400,12 +404,12 @@
           </listitem>
           <listitem>
            <para>
-            8 GB RAM
+            4 GB RAM
            </para>
           </listitem>
           <listitem>
            <para>
-            500 GB Storage
+            250 GB Storage
            </para>
           </listitem>
          </itemizedlist>
@@ -543,10 +547,6 @@
      than <literal>4 GB</literal>.
     </para>
     <para>
-     The type of filesystem used for the storage depends on your requirements.
-     We recommend <literal>btrfs</literal>.
-    </para>
-    <para>
      We recommend external storage with at least <literal>128 GB</literal>.
     </para>
     <note>
@@ -576,10 +576,10 @@
      <title>Deploy The Mirror Before &productname; Cluster Deployment</title>
      <para>
       The mirror on the airgapped network must be running and populated before
-      deploying &productname;. Starting with &productname; v4 many components
+      <!-- deploying &productname;. Starting with &productname; v4 many components
       will no longer be shipped with the install media and must be fetched
       from the repository. For v3 this significantly simplifies deployment since
-      you don't have to reconfigure all existing nodes manually.
+      you don't have to reconfigure all existing nodes manually. -->
      </para>
     </note>
     <procedure>
