@@ -36,7 +36,7 @@
   </informalfigure>
  </sect1>
  <sect1 xml:id="sec.deploy.scenarios.airgap">
-  <title>Airgapped Deployment</title>
+  <title>Air gapped Deployment</title>
   <important>
    <title>Scope Of This Document</title>
    <para>
@@ -51,11 +51,11 @@
    </para>
   </important>
   <para>
-   An airgapped deployment can not have any direct connection to the Internet
+   An air gapped deployment can not have any direct connection to the Internet
    or external networks.
   </para>
   <para>
-   All data flowing into or out of the airgapped network must be transferred in
+   All data flowing into or out of the air gapped network must be transferred in
    a secure fashion.
   </para>
 
@@ -146,7 +146,7 @@
    <sect3>
     <title>Network Separation</title>
     <para>
-     For an airgapped scenario we assume a network separation into three logical
+     For an air gapped scenario we assume a network separation into three logical
      parts.
     </para>
    <informalfigure>
@@ -172,7 +172,7 @@
      <term>External</term>
      <listitem>
       <para>
-       Inside the controlled network, outside the airgapped network.
+       Inside the controlled network, outside the air gapped network.
       </para>
      </listitem>
     </varlistentry>
@@ -180,7 +180,7 @@
      <term>Internal</term>
      <listitem>
       <para>
-       Inside the airgapped network.
+       Inside the air gapped network.
       </para>
      </listitem>
     </varlistentry>
@@ -188,7 +188,7 @@
    <para>
     The following instructions will use these three terms to refer to parts of
     the infrastructure. For example: "internal mirror" refers to the mirroring
-    server on the airgapped network. The terms <literal>airgapped</literal> and
+    server on the air gapped network. The terms <literal>air gapped</literal> and
     <literal>internal</literal> will be used interchangeably.
    </para>
   </sect3>
@@ -197,7 +197,7 @@
    <para>
     In order to disconnect &productname; from the external network, we provide
     ways for the components to retrieve data from alternative sources
-    inside the internal (airgapped) network.
+    inside the internal (air gapped) network.
    </para>
    <para>
     You will need to create a mirror server inside the internal network; which
@@ -235,12 +235,12 @@
    </itemizedlist>
    <para>
     You will provide replacements for these resources on a dedicated server
-    inside your internal (airgapped) network.
+    inside your internal (air gapped) network.
    </para>
    <para>
     The internal mirror must be updated with data retrieved from the original
     upstream sources; in a trusted and secure fashion. To achieve this, you will
-    need an additional mirroring server outside of the airgapped network which
+    need an additional mirroring server outside of the air gapped network which
     acts as a first stage mirror and allows retrieving data from the internet.
    </para>
    <para>
@@ -277,14 +277,15 @@
     for &sls; 15. The tool provides functionality that mirrors the upstream
     &suse; package repositories on the local network. This is intended to
     minimize reliance on &suse; infrastructure for updating large volumes of
-    machines. The airgapped deployment uses the same technology to provide the
-    packages locally for the airgapped environment.
+    machines. The air gapped deployment uses the same technology to provide the
+    packages locally for the air gapped environment.
    </para>
    <para>
-    &sls; bundles software packages in so called modules. You must enable all
-    the default modules for &sle; and in addition the <literal>Containers</literal>
-    module. All enabled modules need to be mirrored inside the airgapped network
-    in order to provide the necessary software for other parts of this scenario.
+    &sls; bundles software packages into so called modules. You must enable the
+    <literal>Containers</literal> module in addition to the modules enabled by
+    default. All enabled modules need to be mirrored inside the air gapped
+    network in order to provide the necessary software for other parts of this
+    scenario.
    </para>
    <para>
     &rmtool; will provide a repository server that holds the packages
@@ -315,7 +316,7 @@
      &productname; components.
     </para>
     <para>
-     To mirror container images inside the airgapped environment, you will run
+     To mirror container images inside the air gapped environment, you will run
      two container image registry services that are used to pull and in turn serve these
      images. The registry service is shipped as a container image itself.
     </para>
@@ -370,7 +371,7 @@
     <para>
      You will need to provide and maintain at least two machines in addition to
      your &productname; cluster. These mirror servers will reside on the
-     external part of your network and the internal (airgapped) network
+     external part of your network and the internal (air gapped) network
      respectively.
     </para>
     <para>
@@ -418,7 +419,7 @@
       </listitem>
      </varlistentry>
      <varlistentry>
-      <term>Internal (Airgapped)</term>
+      <term>Internal (Air gapped)</term>
       <listitem>
        <para>
         This machine will host the <literal>&rmtool;</literal> for RPM packages,
@@ -472,7 +473,7 @@
       <para>
        <link xlink:href="https://www.suse.com/documentation/sles-15/book_quickstarts/data/art_sle_installquick.html">Set
        up two &sls; 15 machines</link> one on the internal network and one on
-       the airgapped network.
+       the air gapped network.
       </para>
      </step>
      <step>
@@ -485,6 +486,7 @@
      <step>
       <para>
        You will need SSL/TLS certificates to secure services on each server.
+       Retrieve appropriate certificates from your network administrator.
        Make sure the certificates are available system wide so they can be used
        by the deployed components.
       </para>
@@ -496,7 +498,7 @@
     <title>Networking</title>
     <para>
      All members of the &productname; cluster must be able to communicate with
-     the internal mirror server(s) within the airgapped network. You must
+     the internal mirror server(s) within the air gapped network. You must
      configure at least these ports in all firewalls between the cluster and
      the internal mirror:
     </para>
@@ -575,7 +577,7 @@
     <note>
      <title>Deploy The Mirror Before &productname; Cluster Deployment</title>
      <para>
-      The mirror on the airgapped network must be running and populated before
+      The mirror on the air gapped network must be running and populated before
       <!-- deploying &productname;. Starting with &productname; v4 many components
       will no longer be shipped with the install media and must be fetched
       from the repository. For v3 this significantly simplifies deployment since
@@ -606,7 +608,7 @@
       <para>
        You need to disable the automatic repository sync on the internal server.
        Otherwise it will attempt to download information from &scc; which can
-       not be reached from inside the airgapped network.
+       not be reached from inside the air gapped network.
       </para>
       <screen>&prompt.root;systemctl disable rmt-server-sync.timer
       </screen>
@@ -624,7 +626,7 @@
     <para>
      <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/cha_rmt_client.html">Follow these instructions</link>
      to configure all &productname; nodes to use the package repository mirror server in
-     the airgapped network.
+     the air gapped network.
     </para>
     <para>
 
@@ -637,7 +639,7 @@
    <para>
     <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/sec_rmt_mirroring_export_import.html">Follow these instructions</link>
     to update the external server, transfer the data to a storage device, and
-    use that device to update the airgapped server.
+    use that device to update the air gapped server.
    </para>
   </sect2>
 
@@ -802,7 +804,7 @@ threshold: 3
     </procedure>
 
     <para>
-     Now we will move on to the internal server in the airgapped network and
+     Now we will move on to the internal server in the air gapped network and
      perform a nearly identical procedure there.
     </para>
 
@@ -897,7 +899,7 @@ threshold: 3
    <sect3 xml:id="sec.deploy.scenarios.airgap.container-registry.client">
     <title>Client Configuration</title>
     <para>
-     Using the airgapped mirror works exactly like using a traditional
+     Using the air gapped mirror works exactly like using a traditional
      on-premise mirror. You must configure the internal registry mirror in
      &dashboard;.
     </para>
@@ -1131,10 +1133,11 @@ dir:<replaceable>/tmp/skopeodata/registry.suse.com/</replaceable> <replaceable>d
    <sect3>
     <title>Using the ISO</title>
     <para>
-     From YaST register the node against the &rmtool; server. This will ensure
-     the final node zypper repositories are pointed against &rmtool;, moreover
-     all the available updates are going to be installed (-> no need to run a
-     transactional-update right after the installation -> way faster).
+     From &yast; register the node against the &rmtool; server. This will ensure
+     the node zypper repositories are pointed against &rmtool;. Moreover,
+     all the available updates are going to be installed and there is no need to
+     install updates using <command>transactional-update</para> right after the
+     installation.
     </para>
    </sect3>
    <sect3>
@@ -1142,7 +1145,7 @@ dir:<replaceable>/tmp/skopeodata/registry.suse.com/</replaceable> <replaceable>d
     <para>
      Ensure the admin node is registered against &rmtool;, that will ensure the
      nodes that are provisioned by AutoYaST are registered against &rmtool; to
-     have all the updates applied
+     have all the updates applied.
     </para>
    </sect3>
    <sect3>
