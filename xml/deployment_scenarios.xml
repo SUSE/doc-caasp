@@ -591,6 +591,16 @@
        Install the &rmtool; on both mirror servers as described in
        <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/cha_rmt_installation.html">these instructions</link>.
       </para>
+      <important>
+       <title>Mirror Registration</title>
+       <para>
+        During the installation of &rmtool; you will be asked for login
+        credentials. On the external mirror, you need to enter your &scc; login
+        credentials to register. On the internal mirror, you can enter any
+        random characters since the registration will not be possible without
+        an internet connection to &scc;.
+       </para>
+      </important>
      </step>
      </procedure>
     <procedure>
@@ -1016,7 +1026,7 @@ threshold: 3
      Translate the chart information into the <literal>skopeo</literal> format.
     </para>
 <screen>&prompt.user;<command>mkdir <replaceable>/tmp/skopeodata</replaceable></command></screen>
-<screen>&prompt.user;<command>helm-mirror inspect-images <replaceable>/tmp/charts</replaceable> -o skopeo --file-name <replaceable>sync.yaml</replaceable></command></screen>
+<screen>&prompt.user;<command>helm-mirror inspect-images <replaceable>/tmp/charts</replaceable> -o skopeo=<replaceable>sync.yaml</replaceable></command></screen>
    </step>
    <step>
     <para>
