@@ -539,9 +539,15 @@
      <title>SSL Certificates</title>
      <para>
       You will need SSL/TLS certificates to secure services on each server.
-      Retrieve a wildcard certificate for the hostnames from your network
-      administrator. Certificates need to cover the hostname of your server and
-      possible subdomains.
+     </para>
+     <para>
+      On the air gapped network, certificates need to cover the hostname of your
+      server and the subdomains for the registry (<literal>registry.</literal>)
+      and helm chart repository (<literal>charts.</literal>).
+      You must add corresponding aliases to the certificate.
+     </para>
+     <para>
+      You can use wildcard certificates to cover the entire hostname.
      </para>
      <para>
       The certificates will replace the self-signed certificate created by
@@ -623,39 +629,40 @@
        Install the &rmtool; on both mirror servers as described in
        <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/cha_rmt_installation.html">these instructions</link>.
       </para>
-      <important>
-       <title>Mirror Registration</title>
-       <para>
-        During the installation of &rmtool; you will be asked for login
-        credentials. On the external mirror, you need to enter your &scc; login
-        credentials to register. On the internal mirror, you can enter any
-        random characters since the registration will not be possible without
-        an internet connection to &scc;.
-       </para>
-      </important>
      </step>
      </procedure>
-    <procedure>
-     <title>Configure The External Mirror</title>
-     <step>
-     <para>
-      Connect the external mirror to &scc; as described in
-      <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/sec_rmt_mirroring_credentials.html">these instructions</link>.
-     </para>
-    </step>
-    </procedure>
-    <procedure>
-     <title>Configure The Internal Mirror</title>
-     <step>
-      <para>
-       You need to disable the automatic repository sync on the internal server.
-       Otherwise it will attempt to download information from &scc; which can
-       not be reached from inside the air gapped network.
-      </para>
-      <screen>&prompt.root;systemctl disable rmt-server-sync.timer
-      </screen>
-     </step>
-    </procedure>
+     <procedure>
+      <title>Configure The External Mirror</title>
+      <step>
+       <para>
+        Connect the external mirror to &scc; as described in
+        <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/sec_rmt_mirroring_credentials.html">these instructions</link>.
+       </para>
+       <important>
+        <title>Mirror Registration</title>
+        <para>
+         During the installation of &rmtool; you will be asked for login
+         credentials. On the external mirror, you need to enter your &scc; login
+         credentials to register. On the internal mirror, you can enter any
+         random characters since the registration will not be possible without
+         an internet connection to &scc;.
+        </para>
+       </important>
+      </step>
+     </procedure>
+     <procedure>
+      <title>Configure The Internal Mirror</title>
+      <step>
+       <para>
+        You need to disable the automatic repository sync on the internal server.
+        Otherwise it will attempt to download information from &scc; which can
+        not be reached from inside the air gapped network.
+       </para>
+ <screen>&prompt.root;systemctl disable rmt-server-sync.timer
+       </screen>
+      </step>
+     </procedure>
+
     <para>
      Now you need to perform the update procedure to do an initial sync of data
      between the upstream sources and the external mirror and the external and
@@ -733,6 +740,86 @@
       <link xlink:href="https://www.suse.com/documentation/sles-15/book_sles_docker/data/sec_docker_registry_definition.html">SLES15 - Docker Open Source Engine Guide: What is Docker Registry?</link>.
      </para>
     </note>
+
+    <para>
+     We will re-use the nginx webserver that is running as part of &rmtool; to
+     act as a reverse proxy for the container image registry service and to
+     serve the chart repository files. This step is not necessary for the
+     external host.
+    </para>
+
+    <procedure>
+     <title>Set Up Reverse Proxy and Virtual Host</title>
+     <step>
+      <para>
+       SSH into the internal mirror server.
+      </para>
+     </step>
+     <step>
+      <para>
+       Create a virtual host configuration file
+       <filename>/etc/nginx/vhosts.d/registry-server-https.conf</filename>.
+      </para>
+      <para>
+       Replace <literal>mymirror.local</literal> with the hostname of your
+       mirror server for which you created the SSL certificates.
+      </para>
+<screen>
+upstream docker-registry {
+    server 127.0.0.1:5000;
+}
+
+map $upstream_http_docker_distribution_api_version $docker_distribution_api_version {
+  '' 'registry/2.0';
+}
+
+server {
+    listen 443   ssl;
+    server_name  registry.<replaceable>mymirror.local</replaceable> charts.<replaceable>mymirror.local</replaceable>;
+
+    access_log  /var/log/nginx/registry_https_access.log;
+    error_log   /var/log/nginx/registry_https_error.log;
+    root        /usr/share/rmt/public;
+
+    ssl_certificate     /etc/rmt/ssl/rmt-server.crt;
+    ssl_certificate_key /etc/rmt/ssl/rmt-server.key;
+    ssl_protocols       TLSv1.2 TLSv1.3;
+
+    # disable any limits to avoid HTTP 413 for large image uploads
+    client_max_body_size 0;
+
+    location /v2/ {
+      # Do not allow connections from docker 1.5 and earlier
+      # docker pre-1.6.0 did not properly set the user agent on ping, catch "Go *" user agents
+      if ($http_user_agent ~ "^(docker\/1\.(3|4|5(?!\.[0-9]-dev))|Go ).*$" ) {
+        return 404;
+      }
+
+      ## If $docker_distribution_api_version is empty, the header is not added.
+      ## See the map directive above where this variable is defined.
+      add_header 'Docker-Distribution-Api-Version' $docker_distribution_api_version always;
+
+      proxy_pass                          http://docker-registry;
+      proxy_set_header  Host              $http_host;   # required for docker client's sake
+      proxy_set_header  X-Real-IP         $remote_addr; # pass on real client's IP
+      proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+      proxy_set_header  X-Forwarded-Proto $scheme;
+      proxy_read_timeout                  900;
+    }
+
+    location /charts {
+      autoindex on;
+    }
+}
+        </screen>
+     </step>
+     <step>
+      <para>
+       Restart nginx for the changes to take effect.
+     </para>
+<screen>&prompt.root;<command>systemctl restart nginx</command></screen>
+     </step>
+    </procedure>
 
     <procedure>
      <title>Set Up The External Mirror</title>
@@ -845,11 +932,6 @@ threshold: 3
      </step>
     </procedure>
 
-    <para>
-     Now we will move on to the internal server in the air gapped network and
-     perform a nearly identical procedure there.
-    </para>
-
     <procedure>
      <title>Set Up Internal Mirror</title>
      <step>
@@ -932,7 +1014,6 @@ threshold: 3
        </screen>
      </step>
     </procedure>
-
     <para>
      Now, you should have the registries set up and listening on port
      <literal>5000</literal> on their respective servers.
@@ -980,83 +1061,10 @@ threshold: 3
    </para>
    <sect3>
     <title>Mirror Configuration</title>
-    <procedure>
-     <title>Setting Up Chart Repository Mirror</title>
-     <step>
-      <para>
-       We will re-use the <literal>nginx</literal> webserver that is running as
-       part of &rmtool; to serve the chart repository. The repository will be
-       available at <literal>http://charts.mymirror.local:80/</literal>.
-      </para>
-     </step>
-     <step>
-      <para>
-       SSH into the internal mirror server.
-      </para>
-     </step>
-     <step>
-      <para>
-       Add a new virtual host to the nginx configuration by creating the file
-       <filename>/etc/nginx/vhosts.d/helm-charts-registry-http.conf</filename>.
-       This will configure access via HTTP.
-      </para>
-      <para>
-       Replace <literal>&lt;mymirror.local&gt;</literal> with the FQDN of your
-       mirror server.
-      </para>
-<screen>
-server {
-    listen 80;
-    server_name charts.&lt;mymirror.local&gt;;
-    access_log  /var/log/nginx/helm_charts_registry_http_access.log;
-    error_log   /var/log/nginx/helm_charts_registry_http_error.log;
-    root        /srv/www/charts;
+    <para>
 
-    location / {
-     autoindex off;
-     }
-}
-</screen>
-     </step>
-     <step>
-      <para>
-       Add a new virtual host to the nginx configuration by creating the file
-       <filename>/etc/nginx/vhosts.d/helm-charts-registry-http.conf</filename>.
-       This will configure access via HTTPS.
-      </para>
-      <para>
-       Replace <literal>&lt;mymirror.local&gt;</literal> with the FQDN of your
-       mirror server, <literal>&lt;path_to_certificate&gt;</literal> with the
-       location of the SSL certificate, and
-       <literal>&lt;path_to_certificate_key&gt;</literal> with the corresponding
-       key file location.
-      </para>
-<screen>
-server {
-    listen 443   ssl;
-    server_name charts.&lt;mymirror.local&gt;;
+    </para>
 
-    access_log  /var/log/nginx/helm_charts_registry_https_access.log;
-    error_log   /var/log/nginx/helm_charts_registry_https_error.log;
-    root        /srv/www/charts;
-
-    ssl_certificate     /etc/rmt/ssl/rmt-server.cert;
-    ssl_certificate_key /etc/rmt/ssl/rmt-server.key;
-    ssl_protocols       TLSv1.2 TLSv1.3;
-
-    location / {
-        autoindex off;
-    }
-}
-</screen>
-     </step>
-     <step>
-      <para>
-       Restart nginx for the changes to take effect.
-      </para>
-<screen>&prompt.root;<command>systemctl restart nginx</command></screen>
-     </step>
-    </procedure>
     <para>
      Update the Helm chart repository by following the shared update procedure
      <xref linkend="sec.deploy.scenarios.airgap.update"/>.
@@ -1210,8 +1218,17 @@ dir:<replaceable>/tmp/skopeodata/registry.suse.com/</replaceable> <replaceable>d
       any charts to the location manually, please back up these first and
       restore after the sync from the trusted storage is done.
      </para>
-<screen>&prompt.user;<command>rsync -aP <replaceable>/mnt/storage/charts/</replaceable> <replaceable>/srv/www/charts/</replaceable> --delete</command>
+<screen>&prompt.user;<command>rsync -aP <replaceable>/mnt/storage/charts/</replaceable> <replaceable>/usr/share/rmt/public/charts/</replaceable> --delete</command>
      </screen>
+    </step>
+    <step>
+     <para>
+      Set the file permissions and ownership to <literal>555</literal> and
+     <literal>nginx:nginx</literal>.
+     </para>
+<screen>&prompt.root;<command>chown -R nginx:nginx /usr/share/rmt/public/charts</command>
+&prompt.root;<command>chmod -R 555 /usr/share/rmt/public/charts/</command>
+</screen>
     </step>
    </procedure>
 
