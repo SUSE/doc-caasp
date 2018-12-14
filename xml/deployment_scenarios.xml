@@ -424,8 +424,7 @@
        <para>
         This machine will host the <literal>&rmtool;</literal> for RPM packages,
         and <literal>container image registry</literal> for container images
-        as well as a webserver hosting the <literal>Helm chart repository</literal>
-        files.
+        as well as the <literal>Helm chart repository</literal> files.
        </para>
        <itemizedlist>
         <listitem>
@@ -952,9 +951,9 @@ threshold: 3
      <title>Setting Up Chart Repository Mirror</title>
      <step>
       <para>
-       We will re-use the webserver that is shipped with &rmtool; to create
-       a virtual host for the chart repository. The repository will be available
-       at <literal>http://mymirror.local:80/charts</literal>.
+       We will re-use the <literal>nginx</literal> webserver that is running as
+       part of &rmtool; to serve the chart repository. The repository will be
+       available at <literal>http://mymirror.local:80/charts</literal>.
       </para>
      </step>
     </procedure>
