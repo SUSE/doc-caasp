@@ -479,15 +479,7 @@
       <para>
        Make sure you have
        <link xlink:href="https://www.suse.com/documentation/sles-15/book_sles_docker/data/preparation.html">enabled
-       the <filename>Containers</filename> module</link> on each server.
-      </para>
-     </step>
-     <step>
-      <para>
-       You will need SSL/TLS certificates to secure services on each server.
-       Retrieve appropriate certificates from your network administrator.
-       Make sure the certificates are available system wide so they can be used
-       by the deployed components.
+       the <filename>Containers</filename> module</link> on both servers.
       </para>
      </step>
     </procedure>
@@ -495,28 +487,6 @@
 
    <sect3 xml:id="sec.deploy.scenarios.airgap.requirements.network">
     <title>Networking</title>
-    <para>
-     All members of the &productname; cluster must be able to communicate with
-     the internal mirror server(s) within the air gapped network. You must
-     configure at least these ports in all firewalls between the cluster and
-     the internal mirror:
-    </para>
-    <itemizedlist>
-     <listitem>
-      <para>
-       80 HTTP - &rmtool; Server and Helm chart repository mirror
-      </para>
-     </listitem>
-     <listitem>
-      <para>
-       5000 HTTPS - Container image registry
-      </para>
-     </listitem>
-    </itemizedlist>
-    <para>
-     The external mirror server must be able to exchange outgoing traffic with
-     upstream sources on ports <literal>80</literal> and <literal>443</literal>.
-    </para>
     <note>
      <title>Additional Port Configuration</title>
      <para>
@@ -526,6 +496,69 @@
       this communication accordingly.
      </para>
     </note>
+    <sect4>
+     <title>Ports</title>
+     <para>
+      The external mirror server must be able to exchange outgoing traffic with
+      upstream sources on ports <literal>80</literal> and <literal>443</literal>.
+     </para>
+     <para>
+      All members of the &productname; cluster must be able to communicate with
+      the internal mirror server(s) within the air gapped network. You must
+      configure at least these ports in all firewalls between the cluster and
+      the internal mirror:
+     </para>
+     <itemizedlist>
+      <listitem>
+       <para>
+        80 HTTP - &rmtool; Server and Helm chart repository mirror
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        443 HTTPS - &rmtool; Server and Helm chart repository mirror
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        5000 HTTPS - Container image registry
+       </para>
+      </listitem>
+     </itemizedlist>
+    </sect4>
+    <sect4>
+     <title>Hostnames / FQDN</title>
+     <para>
+      You need to define fully qualified domain names (FQDN) for both of the
+      mirror servers in their respective network. These hostnames are the basis
+      for the required SSL certificates and are used by the components to access
+      the respective mirror sources.
+     </para>
+    </sect4>
+    <sect4>
+     <title>SSL Certificates</title>
+     <para>
+      You will need SSL/TLS certificates to secure services on each server.
+      Retrieve a wildcard certificate for the hostnames from your network
+      administrator. Certificates need to cover the hostname of your server and
+      possible subdomains.
+     </para>
+     <para>
+      The certificates will replace the self-signed certificate created by
+      &rmtool; during the setup of the mirror servers.
+     </para>
+     <para>
+      Place the certificate, CA certificate and key file in
+      <filename>/etc/rmt/ssl/</filename> as <filename>rmt-server.cert</filename>, <filename>rmt-ca.cert</filename>, and <filename>rmt-server.key</filename>.
+      These certificates will be re-used by all three mirror services.
+     </para>
+     <para>
+      Make sure the CA certificate is available to &productname; system wide; so
+      they can be used by the deployed components. You can add system wide
+      certificates in &dashboard;
+      <guimenu>Settings &rarr; System wide certificates</guimenu>.
+     </para>
+    </sect4>
    </sect3>
 
    <sect3 xml:id="sec.deploy.scenarios.airgap.requirements.storage">
@@ -763,11 +796,11 @@
        Create the <filename>/etc/docker/registry/config.yml</filename>
        configuration file.
       </para>
-      <para>
+      <!-- <para>
        Replace <filename>/etc/docker/registry/certs/domain.crt</filename> and
        <filename>/etc/docker/registry/certs/domain.key</filename> with the appropriate certificate
        files for your organization.
-      </para>
+      </para> -->
 <screen>
 version: 0.1
 log:
@@ -787,8 +820,8 @@ http:
   headers:
     X-Content-Type-Options: [nosniff]
   tls:
-    certificate: /etc/docker/registry/certs/domain.crt
-    key: /etc/docker/registry/certs/domain.key
+    certificate: /etc/rmt/ssl/rmt-server.cert
+    key: /etc/rmt/ssl/rmt-server.key
 health:
   storagedriver:
     enabled: true
@@ -851,11 +884,11 @@ threshold: 3
        Create the <filename>/etc/docker/registry/config.yml</filename>
        configuration file.
       </para>
-      <para>
+      <!-- <para>
        Replace <filename>/etc/docker/registry/certs/domain.crt</filename> and
        <filename>/etc/docker/registry/certs/domain.key</filename> with the appropriate certificate
        files for your organization.
-      </para>
+      </para> -->
 <screen>&prompt.root;<command>mkdir -p /etc/docker/registry/</command></screen>
 <screen>
 version: 0.1
@@ -875,8 +908,8 @@ http:
   headers:
     X-Content-Type-Options: [nosniff]
   tls:
-    certificate: /etc/docker/registry/certs/domain.crt
-    key: /etc/docker/registry/certs/domain.key
+    certificate: /etc/rmt/ssl/rmt-server.cert
+    key: /etc/rmt/ssl/rmt-server.key
 health:
   storagedriver:
     enabled: true
@@ -953,8 +986,75 @@ threshold: 3
       <para>
        We will re-use the <literal>nginx</literal> webserver that is running as
        part of &rmtool; to serve the chart repository. The repository will be
-       available at <literal>http://mymirror.local:80/charts</literal>.
+       available at <literal>http://charts.mymirror.local:80/</literal>.
       </para>
+     </step>
+     <step>
+      <para>
+       SSH into the internal mirror server.
+      </para>
+     </step>
+     <step>
+      <para>
+       Add a new virtual host to the nginx configuration by creating the file
+       <filename>/etc/nginx/vhosts.d/helm-charts-registry-http.conf</filename>.
+       This will configure access via HTTP.
+      </para>
+      <para>
+       Replace <literal>&lt;mymirror.local&gt;</literal> with the FQDN of your
+       mirror server.
+      </para>
+<screen>
+server {
+    listen 80;
+    server_name charts.&lt;mymirror.local&gt;;
+    access_log  /var/log/nginx/helm_charts_registry_http_access.log;
+    error_log   /var/log/nginx/helm_charts_registry_http_error.log;
+    root        /srv/www/charts;
+
+    location / {
+     autoindex off;
+     }
+}
+</screen>
+     </step>
+     <step>
+      <para>
+       Add a new virtual host to the nginx configuration by creating the file
+       <filename>/etc/nginx/vhosts.d/helm-charts-registry-http.conf</filename>.
+       This will configure access via HTTPS.
+      </para>
+      <para>
+       Replace <literal>&lt;mymirror.local&gt;</literal> with the FQDN of your
+       mirror server, <literal>&lt;path_to_certificate&gt;</literal> with the
+       location of the SSL certificate, and
+       <literal>&lt;path_to_certificate_key&gt;</literal> with the corresponding
+       key file location.
+      </para>
+<screen>
+server {
+    listen 443   ssl;
+    server_name charts.&lt;mymirror.local&gt;;
+
+    access_log  /var/log/nginx/helm_charts_registry_https_access.log;
+    error_log   /var/log/nginx/helm_charts_registry_https_error.log;
+    root        /srv/www/charts;
+
+    ssl_certificate     /etc/rmt/ssl/rmt-server.cert;
+    ssl_certificate_key /etc/rmt/ssl/rmt-server.key;
+    ssl_protocols       TLSv1.2 TLSv1.3;
+
+    location / {
+        autoindex off;
+    }
+}
+</screen>
+     </step>
+     <step>
+      <para>
+       Restart nginx for the changes to take effect.
+      </para>
+<screen>&prompt.root;<command>systemctl restart nginx</command></screen>
      </step>
     </procedure>
     <para>
@@ -1110,7 +1210,7 @@ dir:<replaceable>/tmp/skopeodata/registry.suse.com/</replaceable> <replaceable>d
       any charts to the location manually, please back up these first and
       restore after the sync from the trusted storage is done.
      </para>
-<screen>&prompt.user;<command>rsync -aP <replaceable>/mnt/storage/charts/</replaceable> <replaceable>/srv/www/htdocs/charts/</replaceable> --delete</command>
+<screen>&prompt.user;<command>rsync -aP <replaceable>/mnt/storage/charts/</replaceable> <replaceable>/srv/www/charts/</replaceable> --delete</command>
      </screen>
     </step>
    </procedure>
