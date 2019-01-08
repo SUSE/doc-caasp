@@ -887,6 +887,7 @@ roleRef:
  <sect1 xml:id="sec.admin.security.certs">
   <title>Certificates</title>
   <para>
+<<<<<<< HEAD
    During the installation of &productname;, a CA (Certificate Authority)
    certificate is generated; that is then used to authenticate and verify all
    communications. The process also creates and distributes client certificates
@@ -910,8 +911,23 @@ roleRef:
    <para>
     The CA certificate is valid for <literal>3650</literal> days (10 years)
     by default.
+=======
+   &productname; enforces TLS encryption of all communications.  Administrators have the option
+   to use the default self-signed CA (Certificate Authority) certificate or supply their own
+   trust chain - CA certificate(s), client SSL certificate(s) and matching private key(s) - to secure
+   all external communication with the cluster.
+  </para>
+
+
+  <sect2 xml:id="sec.admin.security.certs.suse_certs">
+   <title>SUSE-Provided Certificates</title>
+   <para>By default, &productname; generates a self-signed CA certificate during installation
+   which is used to authenticate and verify all communications.
+   The process also creates and distributes client certificates for the components.
+>>>>>>> 849671f... Fix image tags, minor formatting
    </para>
    <para>
+<<<<<<< HEAD
     The client certificates are valid for <literal>365</literal> days (1 year)
     by default.
    </para>
@@ -978,6 +994,56 @@ roleRef:
      the respective alternatives.
     </para>
    </note>
+=======
+   &productname; administrators can opt to supply their own trust chain which
+   includes CA certificate(s), SSL certificate(s) and matching private key(s).
+   This is meant to secure all external administrative communication via &dashboard;,
+   the Kubernetes API, and Dex (authentication service).
+   </para>
+    <sect3  xml:id="sec.admin.security.certs.usercerts.ca">
+     <title>Upload CA Certificate(s)</title>
+      <para>
+       CA certificate(s) must first be supplied in &dashboard; at
+       <guimenu>Settings &rarr; External Certificates</guimenu>; this can be a
+       root CA from a public Certificate Authority and any necessary Intermediate Certificates, or a organization's self-signed CA certificate and any
+       necessary Intermediate Certificates. After saving the CA certificate, the
+       user must apply this update by clicking the "Apply changes" button at
+       top-right.
+      </para>
+    </sect3>
+    <sect3>
+     <title>Upload SSL Certificate(s) and Private Key(s)</title>
+      <para>
+       SSL Certificates and Private Keys can be uploaded in &dashboard; at
+       <guimenu>Settings &rarr; External Certificates</guimenu>. Certificate/key
+       pairs can be uploaded for each of the 3 administrative external endpoints:
+       &dashboard;, Kubernetes API, and Dex. Thus there are 3 pairs of "browse" fields
+       for each of the 3 services. Certificates and keys must be uploaded in
+       matching pairs (i.e. &dashboard; certificate and key must be uploaded
+       simultaneously).
+      </para>
+      <para>
+       The certificate format must be X509, PEM-encoded, and ASCII armored
+       (contains <literal>-----BEGIN XXXXX-----</literal> header and
+       <literal>-----END XXXXX-----</literal> footer).
+      </para>
+      <para>
+       During upload, the SSL certificate is validated, matched with the
+       supplied key, and verified against the trust chain (supplied in 
+       <xref linkend="sec.admin.security.certs.usercerts.ca"/>).
+      </para>
+      <informalfigure>
+       <mediaobject>
+        <imageobject role="fo">
+         <imagedata fileref="external_cert_velum.png" format="PNG" width="100%"/>
+        </imageobject>
+        <imageobject role="html">
+         <imagedata fileref="external_cert_velum.png" format="PNG" width="100%"/>
+        </imageobject>
+       </mediaobject>
+      </informalfigure>
+    </sect3>
+>>>>>>> 849671f... Fix image tags, minor formatting
   </sect2>
  </sect1>
 
