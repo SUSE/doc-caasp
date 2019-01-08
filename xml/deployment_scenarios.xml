@@ -775,7 +775,7 @@ map $upstream_http_docker_distribution_api_version $docker_distribution_api_vers
 
 server {
     listen 443   ssl;
-    server_name  registry.<replaceable>mymirror.local</replaceable> charts.<replaceable>mymirror.local</replaceable>;
+    server_name  registry.<replaceable>mymirror.local</replaceable>;
 
     access_log  /var/log/nginx/registry_https_access.log;
     error_log   /var/log/nginx/registry_https_error.log;
@@ -806,12 +806,36 @@ server {
       proxy_set_header  X-Forwarded-Proto $scheme;
       proxy_read_timeout                  900;
     }
-
-    location /charts {
-      autoindex on;
-    }
 }
         </screen>
+     </step>
+     <step>
+      <para>
+       Create a virtual host configuration file
+        <filename>/etc/nginx/vhosts.d/charts-server-https.conf</filename>.
+      </para>
+      <para>
+       Replace <literal>mymirror.local</literal> with the hostname of your
+       mirror server for which you created the SSL certificates.
+      </para>
+<screen>
+server {
+  listen 443   ssl;
+  server_name  charts.<replaceable>mymirror.local</replaceable>;
+
+  access_log  /var/log/nginx/charts_https_access.log;
+  error_log   /var/log/nginx/charts_https_error.log;
+  root        /srv/www/;
+
+  ssl_certificate     /etc/rmt/ssl/rmt-server.crt;
+  ssl_certificate_key /etc/rmt/ssl/rmt-server.key;
+  ssl_protocols       TLSv1.2 TLSv1.3;
+
+  location /charts {
+    autoindex on;
+  }
+}
+</screen>
      </step>
      <step>
       <para>
@@ -1085,7 +1109,7 @@ threshold: 3
       <literal>SUSE-MIRROR</literal> will be the name for this repository listed
       by Helm and can be freely defined.
      </para>
-<screen>&prompt.user;<command>helm repo add SUSE-MIRROR <replaceable>&lt;mymirror.local&gt;/charts</replaceable></command>
+<screen>&prompt.user;<command>helm repo add SUSE-MIRROR <replaceable>https://&lt;charts.mymirror.local&gt;</replaceable></command>
    </screen>
    </sect3>
   </sect2>
@@ -1120,13 +1144,13 @@ threshold: 3
      </para>
      <para>
       This action will download all charts and overwrite the existing Helm
-      chart repository URL. Replace <literal>http://mymirror.local/charts</literal>
+      chart repository URL. Replace <literal>http://charts.mymirror.local</literal>
       with the hostname of the webserver providing the Helm chart repository on
       the internal network.
      </para>
 <screen>&prompt.user;<command>mkdir <replaceable>/tmp/charts</replaceable></command></screen>
 <screen>&prompt.user;<command>cd <replaceable>/tmp/charts</replaceable></command></screen>
-<screen>&prompt.user;<command>helm-mirror --new-root-url <replaceable>http://mymirror.local/charts</replaceable> https://kubernetes-charts.suse.com <replaceable>/tmp/charts</replaceable></command></screen>
+<screen>&prompt.user;<command>helm-mirror --new-root-url <replaceable>http://charts.mymirror.local</replaceable> https://kubernetes-charts.suse.com <replaceable>/tmp/charts</replaceable></command></screen>
    </step>
    <step>
     <para>
@@ -1218,7 +1242,7 @@ dir:<replaceable>/tmp/skopeodata/registry.suse.com/</replaceable> <replaceable>d
       any charts to the location manually, please back up these first and
       restore after the sync from the trusted storage is done.
      </para>
-<screen>&prompt.user;<command>rsync -aP <replaceable>/mnt/storage/charts/</replaceable> <replaceable>/usr/share/rmt/public/charts/</replaceable> --delete</command>
+<screen>&prompt.user;<command>rsync -aP <replaceable>/mnt/storage/charts/</replaceable> <replaceable>/srv/www/charts/</replaceable> --delete</command>
      </screen>
     </step>
     <step>
@@ -1226,8 +1250,8 @@ dir:<replaceable>/tmp/skopeodata/registry.suse.com/</replaceable> <replaceable>d
       Set the file permissions and ownership to <literal>555</literal> and
      <literal>nginx:nginx</literal>.
      </para>
-<screen>&prompt.root;<command>chown -R nginx:nginx /usr/share/rmt/public/charts</command>
-&prompt.root;<command>chmod -R 555 /usr/share/rmt/public/charts/</command>
+<screen>&prompt.root;<command>chown -R nginx:nginx /srv/www/charts</command>
+&prompt.root;<command>chmod -R 555 /srv/www/charts/</command>
 </screen>
     </step>
    </procedure>
