@@ -130,11 +130,13 @@
      <listitem>
       <para>
        Installs a specific package from the available channels using the
-       <command>zypper install</command> command. Please note that the changes to
-       the base filesystem only become permanent after a reboot.
+       <command>zypper install</command> command. This command can also be used to
+       install a PTF RPM file. Please note that the changes to the base filesystem
+       only become permanent after a reboot.
       </para>
-<screen>&prompt.root;<command>transactional-update pkg install <replaceable>&lt;packagename&gt;</replaceable></command>
-     </screen>
+      <screen>&prompt.root;<command>transactional-update pkg install <replaceable>&lt;packagename&gt;</replaceable></command></screen>
+      <para>or</para>
+      <screen>&prompt.root;<command>transactional-update pkg install <replaceable>&lt;RPM1 RPM2&gt;</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -142,11 +144,13 @@
      <listitem>
       <para>
        Removes a specific package from the available channels using the
-       <command>zypper remove</command> command. Please note that the changes to
-       the base filesystem only become permanent after a reboot.
+       <command>zypper remove</command> command. This command can also be used to
+       remove a PTF RPM file. Please note that the changes to the base filesystem
+       only become permanent after a reboot.
       </para>
-<screen>&prompt.root;<command>transactional-update pkg remove <replaceable>&lt;packagename&gt;</replaceable></command>
-     </screen>
+      <screen>&prompt.root;<command>transactional-update pkg remove <replaceable>&lt;packagename&gt;</replaceable></command></screen>
+      <para>or</para>
+      <screen>&prompt.root;<command>transactional-update pkg install <replaceable>&lt;RPM1 RPM2&gt;</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -186,26 +190,6 @@
        after reboot.
       </para>
 <screen>&prompt.root;<command>transactional-update patch</command></screen>
-     </listitem>
-    </varlistentry>
-    <varlistentry>
-     <term><literal>ptf install</literal>
-     </term>
-     <listitem>
-      <para>
-       The command installs the specified RPMs:
-      </para>
-<screen>&prompt.root;<command>transactional-update ptf install <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
-     </listitem>
-    </varlistentry>
-    <varlistentry>
-     <term><literal>ptf remove</literal>
-     </term>
-     <listitem>
-      <para>
-       The command removes the specified RPMs from the system:
-      </para>
-<screen>&prompt.root;<command>transactional-update ptf remove <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
