@@ -154,6 +154,9 @@
         reliability, nodes should use at least three.
        </para>
        <para>
+        We recommend providing a dedicated NTP server from your local network.
+       </para>
+       <para>
         For more information about <literal>NTP</literal>, refer to
         <link
          xlink:href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_netz_xntp.html"
@@ -1106,6 +1109,13 @@
     supplied by the &dashboard; dashboard on the &admin_node;.
    </para>
    <note>
+    <title>Using a modified &ay; control file</title>
+    <para>
+     You can customize various aspects of your installation by modifying the
+     default &ay; control file. Refer to: <xref linkend="sec.deploy.autoyast" />.
+    </para>
+   </note>
+   <note>
     <title>&rootuser; Password</title>
     <para>
      When nodes are installed using &ay;, there is no opportunity to specify
@@ -1151,7 +1161,12 @@
         <para>
          Path to the &ay; file. It is in the form of a URL built from the
          FQDN of the &admin_node;, followed the path to the &ay; file. For
-         example, <literal>http://admin.example.com/autoyast</literal>
+         example, <literal>http://caasp-admin.example.com/autoyast</literal>
+        </para>
+        <para>
+         If you are using a customized &ay; control file, you must substitute the
+         default address from the &productname; cluster with the webserver URL
+         that you are hosting the modified control file on.
         </para>
         <para>
          For more information, refer to
