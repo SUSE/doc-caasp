@@ -16,6 +16,47 @@
   </dm:docmanager>
  </info>
 
+ <sect1 xml:id="sec.admin.misc.timezone">
+  <title>Configuring Timezone</title>
+  <para>
+   To configure the timezone during deployment you can use
+   <command>cloud-init</command> or <command>&ay;</command> during the initial
+   installation procedure. If you wish to change the timezone for an existing
+   cluster, you must update it manually using <command>Salt</command>.
+  </para>
+  <sect2>
+   <title>New Deployment</title>
+   <sect3>
+    <title>Using cloud-init</title>
+    <para>
+     <xref linkend="sec.deploy.cloud-init.user-data.timezone" />
+    </para>
+   </sect3>
+   <sect3>
+    <title>Using &ay;</title>
+    <para>
+     Use a modified &ay; control file as described in
+     <xref linkend="sec.deploy.autoyast" />.
+    </para>
+   </sect3>
+  </sect2>
+
+  <sect2>
+   <title>Existing Deployment</title>
+   <para>
+    To change the timezone on an existing cluster you must use
+    <command>Salt</command> to remove the <filename>/etc/localtime</filename>
+    symlink and replace it with the desired timezone file from <filename>/usr/share/zoneinfo</filename>
+    in its place. SSH into the Admin node and run:
+   </para>
+<screen>
+&prompt.user;<command>docker exec -it $(docker ps -q -f name="salt-master") \
+salt -P 'roles:(admin|kube-master|kube-minion)' \
+cmd.run "ln -sf <replaceable>/usr/share/zoneinfo/Europe/Berlin</replaceable> /etc/localtime"</command>
+   </screen>
+  </sect2>
+ </sect1>
+
  <sect1 xml:id="sec.admin.misc.issue-generator">
   <title>The <command>issue-generator</command> Command</title>
   <para>
