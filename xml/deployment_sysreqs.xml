@@ -446,6 +446,13 @@
    </listitem>
    <listitem>
     <para>
+     All nodes in the cluster must be assigned static IP addresses. Using
+     dynamically assigned IPs will break cluster functionality after
+     update/reboot.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
      The admin node and the &kube; API master must have valid Fully-Qualified
      Domain Names (FQDNs), which can be resolved both by all other nodes and
      from other networks which need to access the cluster.
@@ -453,12 +460,6 @@
     <para>
      Admin node and &kube; API master node should be configured as CNAME records
      in the local DNS. This improves portability for disaster recovery.
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     A DHCP server to dynamically provide IP addresses and host names for the
-     nodes in your cluster (unless you configure all nodes statically).
     </para>
    </listitem>
    <listitem>
