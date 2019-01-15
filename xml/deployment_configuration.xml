@@ -685,9 +685,12 @@ resolv_conf:
    <sect3 xml:id="sec.deploy.cloud-init.user-data.ntp-server">
     <title>NTP Server Configuration</title>
     <para>
-     You can also configure the NTP server. The following snippet configures
-     three NTP servers during the first boot and the NTP service is enabled and
-     started:
+     You can also configure the NTP server.
+    </para>
+    <para>
+     We recommend providing a dedicated NTP server from your local network.
+     The following snippet configures three NTP servers during the first boot
+     and the NTP service is enabled and started:
     </para>
 <screen>ntp:
   enabled: true
@@ -763,6 +766,51 @@ runcmd:
     The format is the same as used for <filename>user-data</filename>.
    </para>
   </sect2>
+ </sect1>
+
+ <sect1 xml:id="sec.deploy.autoyast">
+  <title>Customizing Configuration with &ay;</title>
+  <para>
+   &productname; will generate a default &ay; configuration control file during
+   the initial setup that can be used to configure nodes. If you wish to modify
+   specific parts of this configuration to deviate from the default
+   configuration (timezone, language, keys, etc.), you can retrieve the control
+   file, modify it, and serve the modified version to be used by the nodes for
+   setup instead.
+  </para>
+  <procedure>
+   <step>
+    <para>
+     Start the setup in &dashboard; and follow the instructions
+     until you reach the &ay; info screen.
+    </para>
+   </step>
+   <step>
+    <para>
+     Download the default control file.
+    </para>
+<screen>
+&prompt.user;<command>curl https://caasp-admin.example.com/autoyast</command>
+     </screen>
+   </step>
+   <step>
+    <para>
+     Modify the downloaded control file.
+    </para>
+    <para>
+     Information on the possible configuration values can be found in the
+     <link xlink:href="https://www.suse.com/documentation/sles-15/singlehtml/book_autoyast/book_autoyast.html">&ay; Guide</link>.
+    </para>
+   </step>
+   <step>
+    <para>
+     Upload the modified <filename>autoyast</filename> file to a static
+     webserver that is reachable by the nodes you wish to configure. Specify the
+     replacement URL in the <guimenu>Boot Options</guimenu> of the installer
+     instead of the default URL.
+    </para>
+   </step>
+  </procedure>
  </sect1>
 
  <sect1 xml:id="sec.configuration.suseconnect">
