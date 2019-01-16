@@ -632,6 +632,10 @@
        <warning>
         <title>Adjust overlay network to avoid collision with existing services</title>
         <para>
+         Per default the overlay network reserves a <literal>/13</literal>
+         subnet and reserves a <literal>/23</literal> slive for each node.
+        </para>
+        <para>
          The overlay network settings have to be verified and adjusted so that
          they do not collide with any services / addresses in the infrastructure
          that potentially need to be reached from any node or
@@ -652,7 +656,8 @@
          <term>Cluster CIDR</term>
          <listitem>
           <para>
-           Classless Inter-Domain Routing subnet used for the cluster
+           Classless Inter-Domain Routing subnet size used for the cluster
+           (Default: <literal>/13</literal>)
           </para>
          </listitem>
         </varlistentry>
@@ -682,10 +687,11 @@
          </listitem>
         </varlistentry>
         <varlistentry>
-         <term>Service CIDR</term>
+         <term>Services CIDR</term>
          <listitem>
           <para>
-           Classless Inter-Domain Routing subnet used for services
+           Classless Inter-Domain Routing subnet size used for services
+           (Default: <literal>/16</literal>)
           </para>
          </listitem>
         </varlistentry>
