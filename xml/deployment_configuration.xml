@@ -685,21 +685,24 @@ resolv_conf:
    <sect3 xml:id="sec.deploy.cloud-init.user-data.ntp-server">
     <title>NTP Server Configuration</title>
     <para>
-     You can also configure the NTP server.
+     You must configure at least one NTP server.
     </para>
     <para>
      We recommend providing a dedicated NTP server from your local network.
      The following snippet configures three NTP servers during the first boot
-     and the NTP service is enabled and started:
+     and the NTP service is enabled and started. You must choose an NTP client.
+     <command>chrony</command> or <command>systemd_timesyncd</command>.
     </para>
-<screen>ntp:
+<screen>
+ntp:
   enabled: true
+  ntp_client: systemd_timesyncd
   servers:
     - ntp1.example.com
     - ntp2.example.com
     - ntp3.example.com
 runcmd:
-  - /usr/bin/systemctl enable --now ntpd</screen>
+  - /usr/bin/systemctl enable --now systemd-timesyncd</screen>
    </sect3>
    <sect3 xml:id="sec.deploy.cloud-init.user-data.salt-minion">
     <title>&sminion; Configuration</title>
@@ -735,16 +738,16 @@ runcmd:
   role: admin</screen>
     <para>
      If the cluster node is assigned the &admin_node;, all required containers
-     are imported and started. Bear in mind, that an NTP server must be
-     configured on that machine.
+     are imported and started.
     </para>
     <para>
      To other cluster nodes you assign the role <literal>cluster</literal>. The
-     machine will register itself as &sminion; on the &admin_node; and
-     configure a timesync service with &admin_node; as a reference. You do not
-     have to install any NTP server, but if you need to use one, you need to
-     disable the <command>systemd-timesyncd</command> first. An example of the
-     <literal>cluster</literal> role assignment follows:
+     machine will register itself as &sminion; on the &admin_node;. Bear in mind,
+     you must configure NTP clients for all cluster nodes.
+     Refer to: <xref linkend="sec.deploy.cloud-init.user-data.ntp-server" />.
+    </para>
+    <para>
+     An example of the <literal>cluster</literal> role assignment follows:
     </para>
 <screen>suse_caasp:
   role: cluster
