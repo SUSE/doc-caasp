@@ -173,26 +173,26 @@
     <para>
      Install the PTF manually.
     </para>
-    <screen>&prompt.root;<command>transactional-update reboot <replaceable>PTF_FILE</replaceable>.rpm install
+<screen>&prompt.root;<command>transactional-update reboot pkg install <replaceable>PTF_FILE</replaceable>.rpm
 </command></screen>
    </step>
    <step>
     <para>
      As soon as the node has restarted, verify that the RPM is installed.
     </para>
-    <screen>&prompt.root;<command>rpm -qa | grep PTF</command></screen>
+<screen>&prompt.root;<command>rpm -qa | grep PTF</command></screen>
    </step>
    <step>
     <para>
      Create a <command>zypper</command> lock for this RPM.
     </para>
-    <screen>&prompt.root;<command>zypper al <replaceable>PTF_PACKAGE_NAME</replaceable></command></screen>
+<screen>&prompt.root;<command>zypper al <replaceable>PTF_PACKAGE_NAME</replaceable></command></screen>
    </step>
    <step>
     <para>
      Verify that the lock is created.
     </para>
-    <screen>&prompt.root;<command>zypper ll</command></screen>
+<screen>&prompt.root;<command>zypper ll</command></screen>
    </step>
   </procedure>
  </sect1>
