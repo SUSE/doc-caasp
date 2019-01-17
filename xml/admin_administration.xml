@@ -894,7 +894,7 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
    following on the &admin_node;:
   </para>
 <screen>&prompt.root;<command>echo "worker_threads: 20" > /etc/caasp/salt-master-custom.conf</command>
-&prompt.root;<command>docker restart $(docker ps | grep salt-master | awk '{print $1}')</command></screen>
+&prompt.root;<command>docker restart $(docker ps -q -f name="salt-master")</command></screen>
   <para>
    &smaster; will be automatically restarted by kubelet.
   </para>
@@ -902,8 +902,8 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
    Following bootstrapping failure, you can check if Salt
    worker_threads is too low.
   </para>
-<screen>&prompt.root;<command>docker logs $(docker ps | grep salt-master | \
-    awk '{print $1}') 2>&amp;1 | grep -i worker_threads</command></screen>
+<screen>&prompt.root;<command>docker logs $(docker ps -q -f name="salt-master") \
+    | grep -i worker_threads</command></screen>
  </sect1>
 
  <sect1 xml:id="sec.admin.velum.registry">

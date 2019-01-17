@@ -241,8 +241,8 @@ $UNAME -s <replaceable>new_password</replaceable></command>
      Import the LDAP certificate to your local trusted certificate
      storage. On the &admin_node;, run:
     </para>
-<screen>&prompt.root.admin;<command>docker exec -it $(docker ps | grep openldap | \
-awk '{print $1}') cat /etc/openldap/pki/ca.crt > ~/ca.pem</command>
+<screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name=ldap) \
+cat /etc/openldap/pki/ca.crt > ~/ca.pem</command>
 &prompt.root.admin;<command>scp ~/ca.pem root@<replaceable>WORKSTATION</replaceable>:/usr/share/pki/trust/anchors/ca-caasp.crt.pem</command></screen>
     <para>
      Replace <replaceable>WORKSTATION</replaceable> with the appropriate
