@@ -70,7 +70,7 @@
     <para>
      Check the logs from Velum dashboard. Execute on the &admin_node;:
     </para>
-    <screen>&prompt.root.admin;<command>docker logs $(docker ps | grep "velum-dashboard" | awk '{print $1}')</command></screen>
+    <screen>&prompt.root.admin;<command>docker logs $(docker ps -q -f name="velum-dashboard")</command></screen>
    </step>
    <step>
     <para>
