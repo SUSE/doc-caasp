@@ -650,6 +650,22 @@
          <literal>172.16.0.0/13</literal> and where persistent storage access
          of the CaaSP cluster should be hosted on.
         </para>
+        <para>
+         If you need to adjust the overlay network because it collides with an
+         existing network, you must also manually adjust the container bridge
+         network on the &admin_node;. To do so, modify the
+         <filename>/etc/docker/daemon.json</filename> file with the desired
+         network specification. For example:
+        </para>
+<screen>
+{
+  "bip": "172.26.0.1/16"
+}
+        </screen>
+        <para>
+         You must then restart the container service.
+        </para>
+<screen>&prompt.root;<command>systemctl restart docker</command></screen>
        </warning>
        <variablelist>
         <varlistentry>
