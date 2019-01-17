@@ -415,7 +415,7 @@ salt '*' system.reboot</command></screen>
       Start the update with debug output.
      </para>
 <screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name="salt-master") \
-    awk '{print $1}') salt-run -l debug state.orchestrate orch.update</command></screen>
+    salt-run -l debug state.orchestrate orch.update</command></screen>
     </step>
     <step>
      <para>
