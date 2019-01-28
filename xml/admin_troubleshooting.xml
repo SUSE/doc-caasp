@@ -57,6 +57,124 @@
   </para>
  </sect1>
 
+
+ <sect1 xml:id="sec.admin.troubleshooting.node_acceptance">
+  <title>New Nodes Not Showing In &dashboard;</title>
+  <para>
+   All &productname; nodes must have a <filename>/etc/salt/minion.d/master.conf</filename>
+   configuration file that contains the IP address or the FQDN of (one of) the
+   Salt master(s) in the cluster. During the installation you must provide the
+   IP/FQDN of the Salt master (typically the admin node).
+  </para>
+  <para>
+   To become part of the cluster, the node must be (manually) accepted.
+   &dashboard; shows a list of Salt minions that are known to the Salt master
+   and can be accepted.
+  </para>
+  <sect2>
+   <title>Nodes Not Showing In "Pending Nodes"</title>
+   <para>
+    You have added a new machine to the cluster but there is no new node key
+    displayed in the <guimenu>Pending Nodes</guimenu> list.
+   </para>
+
+   <itemizedlist>
+    <listitem>
+     <para>
+      Check that the configured value in the <filename>master.conf</filename> of
+      the machine is correct and it is communicating with the admin node.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Check if the &admin_node; has enough free memory. In some situations
+      &kube; will intermittently shut down containers to conserve resources. If
+      any of <literal>salt-master</literal>, <literal>salt-api</literal> or other
+      critical services are affected, this could lead to this kind of issues.
+     </para>
+    </listitem>
+   </itemizedlist>
+  </sect2>
+
+  <sect2>
+   <title>Accepted Nodes Not Showing In "Nodes" List</title>
+   <para>
+    If the accepted node does not show up in the  <guimenu>Nodes</guimenu>list,
+    you can log in to the &admin_node; via SSH and perform the following checks:
+   </para>
+
+  <itemizedlist>
+   <listitem>
+   <para>
+    Check that the minion ID has been actually accepted:
+   </para>
+<screen>&prompt.user;<command>docker exec -it $(docker ps --filter=name=salt-master -q) salt-key</command>
+Accepted Keys:
+admin
+ca
+231bb41553ac4102bb8fda8b2fd9d60d
+Denied Keys:
+Unaccepted Keys:
+bbaf54654d5649f68a0af5f1914ecedf
+db79f30700974971b5e32d62ba0d5d76
+Rejected Keys:
+</screen>
+    <para>
+     The minion ID of the node should appear on the "Accepted Keys" list.
+    </para>
+    <para>
+     If the node does not appear on this "Accepted Keys" list, the acceptance
+     request didn't reach the backend and/or the Salt API. Check with
+     <command>docker ps</command> that containers on the &admin_node; have
+     approximately the same age. If there is a large age differences, it's likely
+     that the &admin_node; is under memory pressure and is shutting down
+     containers. This can lead to multiple problems respective of which
+     container is not available. For example: MariaDB could have been down when
+     Salt tried to insert events into the database etc..
+    </para>
+    <para>
+     Adjust workloads accordingly to restore available memory and retry
+     accepting the node from &dashboard;.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     Check that the event processor is running on the &admin_node;:
+    </para>
+<screen>&prompt.user;<command>docker ps -q -f name=event-processor</command></screen>
+    <para>
+     If it's not running or has a significantly different age from the other
+     containers, make sure the admin node is not under memory pressure.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+    Check if the event processor is lagging behind processing events:
+    </para>
+    <para>
+    If there was a previous problem with the event processor, it's possible
+    that salt continued creating events while it wasn't running for a long time,
+    causing it to lag behind processing events. Check the number of events in the
+    processing queue.
+   </para>
+<screen>&prompt.user;<command>docker exec -it $(docker ps -q -f name=dashboard) \
+entrypoint.sh bundle exec rails runner \
+'puts "Number of events to process: #{SaltEvent.not_processed.count}"'</command>
+</screen>
+   </listitem>
+   <listitem>
+    <para>
+     Check if Salt couldn't introduce an important event on the database
+    </para>
+
+    <para>
+     Make sure there's enough free space on the &admin_node;.
+    </para>
+   </listitem>
+  </itemizedlist>
+ </sect2>
+ </sect1>
+
  <sect1 xml:id="sec.admin.troubleshooting.failed_bootstrap">
   <title>Debugging Failed Bootstrap</title>
   <para>
