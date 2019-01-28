@@ -958,10 +958,10 @@ heapster-default  1  Fri Jun 29 10:48:45 2018  DEPLOYED  heapster-0.2.7  kube-sy
   <procedure>
    <title>Installation of &kube; Dashboard</title>
    <step>
-<screen><command>helm install --name heapster-default \
---namespace=kube-system stable/heapster \
---version=0.2.7 --set rbac.create=true</command>
-     </screen>
+    <para>
+     If <literal>heapster</literal> is not installed, refer to
+     <xref linkend="sec.admin.software.helm.installing-heapster"/>.
+    </para>
    </step>
    <step>
 <screen><command>helm install --namespace=kube-system \
