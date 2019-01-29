@@ -158,78 +158,76 @@
   <itemizedlist mark="bullet" spacing="normal">
    <listitem>
     <para>
-     All nodes should to be on the same network. It is important that the nodes
-     can communicate without interruptions.
+     All the nodes on the cluster must be on a the same network and be able to
+     communicate directly with one another.
+    </para>
+    <important>
+     <title>Reliable Networking</title>
+     <para>
+      Please make sure all nodes can communicate without interruptions.
+     </para>
+    </important>
+   </listitem>
+   <listitem>
+    <para>
+     All nodes in the cluster must be assigned static IP addresses. Using
+     dynamically assigned IPs will break cluster functionality after
+     update/reboot.
     </para>
    </listitem>
    <listitem>
     <para>
-     A DHCP server to dynamically provide IP addresses and host names for the
-     nodes in your cluster (unless you configure all nodes statically).
+     The admin node and the &kube; API master must have valid Fully-Qualified
+     Domain Names (FQDNs), which can be resolved both by all other nodes and
+     from other networks which need to access the cluster.
+    </para>
+    <para>
+     Admin node and &kube; API master node should be configured as CNAME records
+     in the local DNS. This improves portability for disaster recovery.
     </para>
    </listitem>
    <listitem>
     <para>
-     It is recommended to let the DHCP server provide not only the IP addresses
-     but also the host names of the cluster nodes.
+     A DNS server to resolve host names. If you are using host names to
+     specify nodes, please make sure you have reliable DNS resolution at all
+     times, especially in combination with DHCP.
+    </para>
+    <important>
+     <title>Unique Host Names</title>
+     <para>
+      Host names must be unique. It is recommended to let the DHCP server
+      provide not only IP addresses but also host names of the cluster nodes.
+     </para>
+    </important>
+   </listitem>
+   <listitem>
+    <para>
+     On the same network, a separate computer with a Web browser is required
+     in order to complete bootstrap of the cluster.
     </para>
    </listitem>
    <listitem>
     <para>
-     A DNS server to resolve host names. Please make sure you have reliable DNS
-     resolution at all times, especially in combination with DHCP.
+     We recommend that &productname; is setup to run in two subnets in
+     one network segment, also referred to as VPC or VNET. The
+     &admin_node; should run in a subnet that is not accessible to the
+     outside world and should be connected to your network via VPN or
+     other means. Consider a security group/firewall that only allows
+     ingress traffic on ports 22 (SSH) and 443 (https) for the
+     Administrative node from outside the VPC. All nodes must have
+     access to the Internet through some route in order to connect to
+     &scc; and receive updates, or be otherwise configured to receive
+     updates, for example through &smt;.
     </para>
-   </listitem>
-   <listitem>
     <para>
-     The &admin_node; and &kube; API server; must both have valid
-     fully-qualified domain names (FQDN). If the cluster has a single &master_node;,
-     then this is the &kube; API server.
+     Depending on the applications running in your cluster you may
+     consider exposing the subnet for the cluster nodes to the outside
+     world. Use a security group/firewall that only allows incoming
+     traffic on ports served by your workload. For example, a
+     containerized application providing the backend for REST based
+     services with content served over https should only allow ingress
+     traffic on port 443.
     </para>
-   </listitem>
-   <listitem>
-    <para>
-     Both these FQDNs are required during installation. They cannot
-     subsequently be added or changed.
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     The &admin_node; must be visible from a separate machine on your
-     organization's network, and accessible via a web browser, in order to
-     complete the  installation.
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     All nodes must be able to resolve the name of the &admin_node;. It is not
-     required for &worker_node;s to have resolvable names, although this is not
-     problematic and may aid troubleshooting.
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     For clusters with multiple &master_node;s:
-    </para>
-    <itemizedlist>
-     <listitem>
-      <para>
-       There must be an odd number of &master_node;s.
-      </para>
-     </listitem>
-     <listitem>
-      <para>
-       All &master_node;s must be accessible via a single FQDN.
-      </para>
-     </listitem>
-     <listitem>
-      <para>
-       If the FQDN only points to a single &master_node; and it is removed,
-       cluster functionality will degrade. For this reason, using
-       load-balancing is recommended.
-      </para>
-     </listitem>
-    </itemizedlist>
    </listitem>
   </itemizedlist>
 
