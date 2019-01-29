@@ -14,9 +14,9 @@
       </dm:docmanager>
     </info>
     <para/>
- <sect1 xml:id="deployment.appendix">
+ <sect1 xml:id="deployment.appendix.admin_node">
   <title>Installing an &Admin_Node; using &ay;</title>
-  
+
   <para/>
 
   <para>
@@ -34,9 +34,9 @@
   <screen>
 <xi:include href="autoyast_example_adminnode.xml" parse="text"/>
   </screen>
-  
+
   <para/>
-  
+
   <para>
    Copy the above and paste it into a file named <literal>autoyast.xml</literal>,
    then edit it as appropriate for your configuration. After you have prepared
@@ -48,12 +48,142 @@
    &worker_node; in <xref linkend="sec.deploy.nodes.worker_install.manual.autoyast"/>.
   </para>
   <para>
-   For more information about using and customizing &ay;, refer to 
+   For more information about using and customizing &ay;, refer to
    <link xlink:href="https://www.suse.com/documentation/sles-12/book_autoyast/data/invoking_autoinst.html#commandline_ay"/>.
   </para>
   <para>
-   For more information about using pre-hashed passwords, refer to 
+   For more information about using pre-hashed passwords, refer to
    <xref linkend="sec.deploy.cloud-init.user-data.password"/>.
   </para>
+ </sect1>
+ <sect1 xml:id="deployment.appendix.cilium">
+  <title>Installing &cilium;</title>
+
+  <para />
+
+  <para>
+   &cilium; is a &cni; plugin and daemon which uses &ebpf; in-kernel virtual
+   machine for implementing &net_pols;. It's introduced in &productname; v4 as
+   a tech preview feature.
+  </para>
+  <para>
+   &flannel;, which is a default CNI plugin in &productname; does not support
+   &net_pols;.
+  </para>
+  <sect2 xml:id="deployment.appendix.cilium.disclaimers">
+   <title>Disclaimers</title>
+   <para>
+    This document describes temporary way of &cilium; deployment. Before
+    releasing &productname; v4, &cilium; deployment will be supported by
+    &dashboard;.
+   </para>
+   <para>
+    All steps need to be done <emphasis role="strong">before</emphasis> the
+    cluster is deployed with &dashboard;.
+   </para>
+   <para>
+    The current implementation of &cilium; deployment in &productname; does not
+    allow yet to use L7 network policies (only L3 and L4).
+    <!-- The support of L7
+    policies will be enabled when &envoy; will be packaged and shipped in
+    &opensuse; and &sle;. &envoy; will also bring a possibility of creating a
+    &svc_mesh; with &istio;. -->
+   </para>
+   <para>
+    &productname; provides &cilium; in version 1.2.
+   </para>
+  </sect2>
+  <sect2 xml:id="deployment.appendix.cilium.image">
+   <title>Pre-loading of the &cilium; container image</title>
+   <para>
+    If all your cluster nodes have access to the Internet / external network,
+    please skip this section.
+   </para>
+   <para>
+    &cilium; container image is stored in the &opensuse; registry. The full
+    name of the image is <literal>&cilium_image;</literal>. If your cluster
+    nodes do not have access to the external network, the image needs to be
+    downloaded and copied to each node.
+   </para>
+   <procedure>
+    <title>Pre-loading of the &cilium; container image</title>
+    <!-- <step>
+     <para>
+      On a machine running docker, connected to the internet, perform:
+<screen>&prompt.root;<command>docker pull &cilium_image;</command>
+&prompt.root;<command>docker save &cilium_image; -o cilium.tar</command></screen>
+     </para>
+     <para>
+      This will save the image in <filename>cilium.tar</filename> file.
+     </para>
+    </step> -->
+    <step>
+     <para>
+      Copy <filename>caasp-cilium-image-beta1.tar</filename> to each node of the cluster.
+     </para>
+    </step>
+    <step>
+     <para>
+      On each node of the cluster perform the following command:
+     </para>
+<screen>&prompt.root;<command>docker load -i caasp-cilium-image-beta1.tar</command></screen>
+    </step>
+   </procedure>
+
+  </sect2>
+  <sect2 xml:id="deployment.appendix.cilium.salt-conf">
+   <title>Configuring of &smaster; to deploy &cilium;</title>
+   <procedure>
+    <title>Change &smaster; configuration to choose &cilium; as a &cni; plugin</title>
+    <step>
+     <para>
+      Connect to the &Admin_Node; and execute the following command:
+     </para>
+     <screen>&prompt.root;<command>transactional update shell</command></screen>
+     <para>
+      You will find yourself into a new shell prompt.
+     </para>
+    </step>
+    <step>
+     <para>
+      From this shell edit the
+      <filename>/usr/share/salt/kubernetes/pillar/cni.sls</filename> file.
+      Remove the whole <literal>flannel</literal> section. Inside
+      <literal>cni</literal> section, change the <literal>plugin</literal> from
+      <literal>flannel</literal> to <literal>cilium</literal>.
+     </para>
+     <para>
+      The file should look like that:
+     </para>
+<screen>cilium:
+  <!-- image:  'registry.opensuse.org/devel/caasp/kubic-container/container/kubic/cilium:1.2' -->
+  image:  'caasp/cilium:1.2'
+
+cni:
+  plugin: 'cilium'
+  dirs:
+    bin:  '/var/lib/kubelet/cni/bin'
+    conf: '/etc/cni/net.d'
+   </screen>
+    </step>
+    <step>
+     <para>
+      Once the file contents are changed, exit from the shell and reboot the
+      system:
+     </para>
+<screen>&prompt.root;<command>exit</command>
+&prompt.root;<command>reboot</command></screen>
+    </step>
+   </procedure>
+  </sect2>
+  <sect2 xml:id="deployment.appendix.cilium.deploying">
+   <title>Deploying the cluster</title>
+   <para>
+    After the successful reboot, go to &dashboard; web interface and
+    proceed with the deployment of the cluster. Feel free to change the
+    networking settings on the bootstrap page (i.e. <literal>CIDR</literal>);
+    all these settings are going to be used by &cilium;.
+   </para>
+  </sect2>
  </sect1>
 </appendix>
