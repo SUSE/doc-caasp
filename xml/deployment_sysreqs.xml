@@ -31,6 +31,23 @@
    The minimum supported cluster size is four nodes: a single &admin_node;, one
    &master_node;, and two &worker_node;s.
   </para>
+  <important>
+   <title>Cluster Update Reserves</title>
+   <para>
+    You should always size your cluster to accomodate your expected workloads and
+    contingency resources for updates. During updates, worker nodes will become
+    temporarily unavailable to process workloads and their assigned load must
+    be shifted somewhere else in the cluster.
+   </para>
+   <para>
+    As a general rule of thumb: Your cluster utilization should not exceed 70%
+    and must not exceed 80%.
+   </para>
+   <para>
+    You can make use of <link xlink:href="https://kubernetes.io/docs/concepts/policy/resource-quotas/">Resource Quotas</link>
+    to limit the resources user workloads can take up in the cluster.
+   </para>
+  </important>
   <note>
    <title>Test and Proof-of-Concept Clusters</title>
    <para>
