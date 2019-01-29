@@ -16,7 +16,7 @@
     <para/>
  <sect1 xml:id="deployment.appendix.admin_node">
   <title>Installing an &Admin_Node; using &ay;</title>
-  
+
   <para/>
 
   <para>
@@ -34,9 +34,9 @@
   <screen>
 <xi:include href="autoyast_example_adminnode.xml" parse="text"/>
   </screen>
-  
+
   <para/>
-  
+
   <para>
    Copy the above and paste it into a file named <literal>autoyast.xml</literal>,
    then edit it as appropriate for your configuration. After you have prepared
@@ -48,11 +48,11 @@
    &worker_node; in <xref linkend="sec.deploy.nodes.worker_install.manual.autoyast"/>.
   </para>
   <para>
-   For more information about using and customizing &ay;, refer to 
+   For more information about using and customizing &ay;, refer to
    <link xlink:href="https://www.suse.com/documentation/sles-12/book_autoyast/data/invoking_autoinst.html#commandline_ay"/>.
   </para>
   <para>
-   For more information about using pre-hashed passwords, refer to 
+   For more information about using pre-hashed passwords, refer to
    <xref linkend="sec.deploy.cloud-init.user-data.password"/>.
   </para>
  </sect1>
@@ -83,14 +83,14 @@
    </para>
    <para>
     The current implementation of &cilium; deployment in &productname; does not
-    allow yet to use L7 network policies (only L3 and L4). The support of L7
+    allow yet to use L7 network policies (only L3 and L4).
+    <!-- The support of L7
     policies will be enabled when &envoy; will be packaged and shipped in
     &opensuse; and &sle;. &envoy; will also bring a possibility of creating a
-    &svc_mesh; with &istio;.
+    &svc_mesh; with &istio;. -->
    </para>
    <para>
-    For now &opensuse; and &sle; provide &cilium; in version 1.2, but it is
-    going to be upgraded to version 1.4.
+    &productname; provides &cilium; in version 1.2.
    </para>
   </sect2>
   <sect2 xml:id="deployment.appendix.cilium.image">
@@ -107,7 +107,7 @@
    </para>
    <procedure>
     <title>Pre-loading of the &cilium; container image</title>
-    <step>
+    <!-- <step>
      <para>
       On a machine running docker, connected to the internet, perform:
 <screen>&prompt.root;<command>docker pull &cilium_image;</command>
@@ -116,19 +116,20 @@
      <para>
       This will save the image in <filename>cilium.tar</filename> file.
      </para>
-    </step>
+    </step> -->
     <step>
      <para>
-      Copy <filename>cilium.tar</filename> to each node of the cluster.
+      Copy <filename>caasp-cilium-image-beta1.tar</filename> to each node of the cluster.
      </para>
     </step>
     <step>
      <para>
       On each node of the cluster perform the following command:
-<screen>&prompt.root;<command>docker load -i cilium.tar</command></screen>
      </para>
+<screen>&prompt.root;<command>docker load -i caasp-cilium-image-beta1.tar</command></screen>
     </step>
    </procedure>
+
   </sect2>
   <sect2 xml:id="deployment.appendix.cilium.salt-conf">
    <title>Configuring of &smaster; to deploy &cilium;</title>
@@ -153,23 +154,25 @@
      </para>
      <para>
       The file should look like that:
+     </para>
 <screen>cilium:
-  image:  'registry.opensuse.org/devel/caasp/kubic-container/container/kubic/cilium:1.2'
+  <!-- image:  'registry.opensuse.org/devel/caasp/kubic-container/container/kubic/cilium:1.2' -->
+  image:  'caasp/cilium:1.2'
 
 cni:
   plugin: 'cilium'
   dirs:
     bin:  '/var/lib/kubelet/cni/bin'
-    conf: '/etc/cni/net.d'</screen>
-     </para>
+    conf: '/etc/cni/net.d'
+   </screen>
     </step>
     <step>
      <para>
       Once the file contents are changed, exit from the shell and reboot the
       system:
+     </para>
 <screen>&prompt.root;<command>exit</command>
 &prompt.root;<command>reboot</command></screen>
-     </para>
     </step>
    </procedure>
   </sect2>
