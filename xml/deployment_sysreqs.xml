@@ -474,6 +474,19 @@
      Domain Names (FQDNs), which can be resolved both by all other nodes and
      from other networks which need to access the cluster.
     </para>
+    <important>
+     <title>Hostname 64 Character Limit</title>
+     <para>
+      &productname; generates SSL certificates for the cluster.
+      The <literal>Common Name (CN)</literal> field is derived from the
+      supplied hostnames. The <literal>CN</literal> field is limited to 64
+      characters.
+     </para>
+     <para>
+      Your hostnames must not exceed this limit or they will fail to be added
+      to the cluster.
+     </para>
+    </important>
     <para>
      Admin node and &kube; API master node should be configured as CNAME records
      in the local DNS. This improves portability for disaster recovery.
