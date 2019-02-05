@@ -63,6 +63,17 @@
    The new snapshot, once completely updated, is then marked as active and will
    be used as the new default after the next reboot of the system.
   </para>
+  <note>
+   <para>
+    For each "transaction" performed by <command>transactional-updates</command>
+    a new snapshot is generated and requires a reboot to incorporate the
+    changes. If another transaction is run before the reboot, only the latest
+    snapshot is used and changes might be lost. If you perform manual updates
+    or installation on your nodes, please make sure to reboot after each
+    transaction. Refer to:
+    <xref linkend="sec.admin.software.transactional-updates.installation.manual"/>.
+   </para>
+  </note>
 
   <para>
    &dashboard; will show a list of nodes that have new updates
@@ -201,6 +212,24 @@
      </listitem>
     </varlistentry>
     <varlistentry>
+     <term><literal>reboot</literal>
+     </term>
+     <listitem>
+      <para>
+       This parameter triggers a reboot after the action is completed.
+       </para>
+       <para>
+        For cluster nodes this will set a Salt grain to show the updated node in
+        &dashboard; as requiring reboot.
+       </para>
+       <para>
+        For nodes outside of the cluster this will trigger a machine reboot
+        after the action is done.
+       </para>
+<screen>&prompt.root;<command>transactional-update <replaceable>dup</replaceable> reboot</command></screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
      <term><literal>--help</literal>
      </term>
      <listitem>
@@ -208,25 +237,6 @@
        The option outputs possible options and subcommands.
       </para>
 <screen>&prompt.root;<command>transactional-update --help</command></screen>
-     </listitem>
-    </varlistentry>
-    <varlistentry>
-     <term><literal>reboot</literal>
-     </term>
-     <listitem>
-      <warning>
-       <title>Never use reboot on cluster nodes</title>
-       <para>
-        The <literal>reboot</literal> parameter must only be used with nodes
-        that are not accepted into the cluster. All other nodes will be handled
-        by the internal &productname; orchestration. Refer to:
-        <xref linkend="sec.admin.software.transactional-updates.installation"/>.
-       </para>
-      </warning>
-      <para>
-       This parameter forces the node to reboot after the action is completed.
-      </para>
-<screen>&prompt.root;<command>transactional-update <replaceable>dup</replaceable> reboot</command></screen>
      </listitem>
     </varlistentry>
    </variablelist>
@@ -343,32 +353,22 @@
     </step>
    </procedure>
 
-   <sect3>
-    <title>Applying Updates Manually (Cluster Nodes)</title>
+   <sect3 xml:id="sec.admin.software.transactional-updates.installation.manual">
+    <title>Applying Updates Manually</title>
     <para>
-     You can use <command>transactional-update</command> to apply updates manually
-     or install PTF files. The node on which you perform the changes is marked
-     for reboot via a Salt grain and must then be rebooted through &dashboard;
-     for the changes to take effect. Refer to:
-     <xref linkend="sec.admin.software.transactional-updates.installation" />.
+     You can use <command>transactional-update</command> to apply updates
+     or install PTF files manually.
     </para>
-   </sect3>
-
-   <sect3>
-    <title>Applying Updates Manually (Non-Cluster Nodes)</title>
+<screen>&prompt.root;<command>transactional-update pkg install <replaceable>&lt;packagename&gt;</replaceable> reboot</command></screen>
     <para>
-     If you have nodes that are not accepted into the cluster and therefore can
-     not be rebooted through &dashboard;, use the <literal>reboot</literal>
-     parameter with <command>transactional-update</command> to force an immediate
-     restart of the node after the action is complete.
+     If your node is accepted to the cluster, it will have been configured to
+     use Salt orchestration to reboot. The updated node will show in
+     &dashboard; requiring a reboot.
     </para>
- <screen>&prompt.root;<command>transactional-update pkg install <replaceable>&lt;packagename&gt;</replaceable> reboot</command></screen>
-   <warning>
     <para>
-     Never use the <literal>reboot</literal> parameter with nodes that are added
-     to the &productname; cluster!
+     If your node is not (yet) accepted into the cluster it will reboot
+     after the transactional-update has finished.
     </para>
-   </warning>
    </sect3>
   </sect2>
 
