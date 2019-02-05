@@ -220,12 +220,9 @@
        This parameter triggers a reboot after the action is completed.
        </para>
        <para>
-        For cluster nodes this will set a Salt grain to show the updated node in
-        &dashboard; as requiring reboot.
-       </para>
-       <para>
-        For nodes outside of the cluster this will trigger a machine reboot
-        after the action is done.
+        How the reboot is done depends on how <command>transactional-update</command>
+        is configured. For cluster nodes this will set a Salt grain to show the
+        updated node in &dashboard; as requiring reboot.
        </para>
 <screen>&prompt.root;<command>transactional-update <replaceable>dup</replaceable> reboot</command></screen>
      </listitem>
