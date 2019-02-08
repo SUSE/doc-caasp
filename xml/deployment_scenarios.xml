@@ -1102,10 +1102,11 @@ threshold: 3
       Refer to, <xref linkend="sec.admin.software.helm"/>.
      </para>
      <para>
-      <literal>SUSE-MIRROR</literal> will be the name for this repository listed
-      by Helm and can be freely defined.
+      <literal>suse-mirror</literal> will be the user-defined name for this
+      repository listed by Helm. The name of the repository must adhere to
+      <link xlink:href="https://docs.helm.sh/chart_best_practices/#chart-names">Helm Chart naming conventions</link>.
      </para>
-<screen>&prompt.user;<command>helm repo add SUSE-MIRROR <replaceable>https://&lt;charts.mymirror.local&gt;</replaceable></command>
+<screen>&prompt.user;<command>helm repo add suse-mirror <replaceable>https://&lt;charts.mymirror.local&gt;</replaceable></command>
    </screen>
    </sect3>
   </sect2>
@@ -1144,9 +1145,6 @@ threshold: 3
       with the hostname of the webserver providing the Helm chart repository on
       the internal network.
      </para>
-     <note>
-      <title>
-     </note>
 <screen>&prompt.user;<command>mkdir <replaceable>/tmp/charts</replaceable></command></screen>
 <screen>&prompt.user;<command>cd <replaceable>/tmp/charts</replaceable></command></screen>
 <screen>&prompt.user;<command>helm-mirror --new-root-url <replaceable>http://charts.mymirror.local</replaceable> https://kubernetes-charts.suse.com <replaceable>/tmp/charts</replaceable></command></screen>
