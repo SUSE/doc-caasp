@@ -124,7 +124,7 @@ caasp3-worker-4   Ready     &lt;none&gt;    1d        v1.9.8</screen>
    Log in to the admin node and run:
   </para>
 <screen>&prompt.user;<command>docker exec -it $(docker ps -q -f name="salt-master") \
-salt -P 'roles:(admin|kube-master|kube-minion)' \
+salt -P 'roles:(admin|kube-(master|minion)' \
 cmd.run "<replaceable>df -h</replaceable>"</command>
 </screen>
   <para>
