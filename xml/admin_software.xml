@@ -63,6 +63,18 @@
    The new snapshot, once completely updated, is then marked as active and will
    be used as the new default after the next reboot of the system.
   </para>
+  <note>
+   <title>Snapshot Activation</title>
+   <para>
+    For each "transaction" performed by <command>transactional-updates</command>
+    a new snapshot is generated and requires a reboot to incorporate the
+    changes. If another transaction is run before the reboot, only the latest
+    snapshot is used and changes might be lost. If you perform manual updates
+    or installation on your nodes, please make sure to reboot after each
+    transaction. Refer to:
+    <xref linkend="sec.admin.software.transactional-updates.installation.manual"/>.
+   </para>
+  </note>
 
   <para>
    &dashboard; will show a list of nodes that have new updates
@@ -72,29 +84,6 @@
    services on the nodes, apply new snapshots, rewrite configurations and then
    bring the services and nodes back up.
   </para>
-
-  <important>
-   <title>Always Use &dashboard; To Update Nodes</title>
-  <para>
-   It is paramount that you never "hard reboot" nodes in the cluster after
-   transactional updates. This will omit reconfiguring services and applications
-   and will leave nodes in unhealthy, if not unsusable, states. If you have nodes
-   with pending transactional updates follow
-   <xref linkend="sec.admin.software.transactional-updates.installation"/>.
-  </para>
- </important>
-
-  <note>
-   <title>General Notes to the Updates Installation</title>
-   <para>
-    Only packages that are part of the snapshot of the root file system can be
-    updated. If packages contain files that are not part of the snapshot, the
-    update could fail or break the system.
-   </para>
-   <para>
-    RPMs that require a license to be accepted cannot be updated.
-   </para>
-  </note>
 
   <sect2 xml:id="sec.admin.software.transactional-updates.command">
    <title>The <command>transactional-update</command> Command</title>
@@ -224,6 +213,21 @@
      </listitem>
     </varlistentry>
     <varlistentry>
+     <term><literal>reboot</literal>
+     </term>
+     <listitem>
+      <para>
+       This parameter triggers a reboot after the action is completed.
+       </para>
+       <para>
+        How the reboot is done depends on how <command>transactional-update</command>
+        is configured. For cluster nodes this will set a Salt grain to show the
+        updated node in &dashboard; as requiring reboot.
+       </para>
+<screen>&prompt.root;<command>transactional-update <replaceable>dup</replaceable> reboot</command></screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
      <term><literal>--help</literal>
      </term>
      <listitem>
@@ -254,6 +258,27 @@
 
   <sect2 xml:id="sec.admin.software.transactional-updates.installation">
    <title>Applying Updates</title>
+   <para>
+    It is paramount that you never "hard reboot" nodes in the cluster after
+    transactional updates. This will omit reconfiguring services and applications
+    and will leave nodes in unhealthy, if not unsusable, states.
+   </para>
+   <para>
+    Updates are typically applied to nodes automatically and will be flagged in
+    &dashboard; for reboot. If you have nodes with pending transactional updates
+    follow the steps below.
+   </para>
+   <note>
+    <title>General Notes to the Updates Installation</title>
+    <para>
+     Only packages that are part of the snapshot of the root file system can be
+     updated. If packages contain files that are not part of the snapshot, the
+     update could fail or break the system.
+    </para>
+    <para>
+     RPMs that require a license to be accepted cannot be updated.
+    </para>
+   </note>
    <para>
     After the <command>transactional-update</command> script has run on all
     nodes, &dashboard; displays any nodes in your cluster running outdated
@@ -325,6 +350,24 @@
      </informalfigure>
     </step>
    </procedure>
+
+   <sect3 xml:id="sec.admin.software.transactional-updates.installation.manual">
+    <title>Applying Updates Manually</title>
+    <para>
+     You can use <command>transactional-update</command> to apply updates
+     or install PTF files manually.
+    </para>
+<screen>&prompt.root;<command>transactional-update <replaceable>pkg install &lt;packagename&gt;</replaceable> reboot</command></screen>
+    <para>
+     If your node is accepted to the cluster, it will have been configured to
+     use Salt orchestration to reboot. The updated node will show in
+     &dashboard; requiring a reboot.
+    </para>
+    <para>
+     If your node is not (yet) accepted into the cluster it will reboot
+     after the transactional-update has finished.
+    </para>
+   </sect3>
   </sect2>
 
   <sect2 xml:id="sec.admin.software.transactional-updates.recovering">
