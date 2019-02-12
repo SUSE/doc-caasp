@@ -425,7 +425,7 @@ salt '*' cmd.run "cat /var/log/salt/minion"</command>
 
 <screen>
 &prompt.user;<command>docker exec -it $(docker ps -q -f name="salt-master") \
-salt -P 'roles:(admin|kube-master|kube-minion)' \
+salt -P 'roles:(admin|kube-(master|minion)' \
 cmd.run "journalctl -u transactional-update"</command>
  </screen>
  </sect1>
