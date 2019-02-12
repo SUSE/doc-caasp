@@ -437,28 +437,28 @@
       Reboot all nodes.
      </para>
 <screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name="salt-master") \
-salt '*' system.reboot</command></screen>
+salt -P "roles:(admin|kube-(master|minion))" system.reboot</command></screen>
     </step>
     <step>
      <para>
       On the &admin_node; run
      </para>
 <screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name="salt-master") \
- salt "*" cmd.run "transactional-update cleanup reboot dup"</command></screen>
+ salt -P "roles:(admin|kube-(master|minion))" cmd.run "transactional-update cleanup reboot dup"</command></screen>
     </step>
     <step>
      <para>
       Reboot all nodes again.
      </para>
 <screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name="salt-master") \
-salt '*' system.reboot</command></screen>
+salt -P "roles:(admin|kube-(master|minion))" system.reboot</command></screen>
     </step>
     <step>
      <para>
       Start the update with debug output.
      </para>
 <screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name="salt-master") \
-    salt-run -l debug state.orchestrate orch.update</command></screen>
+salt-run -l debug state.orchestrate orch.update</command></screen>
     </step>
     <step>
      <para>
