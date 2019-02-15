@@ -19,7 +19,7 @@
  <sect1 xml:id="sec.admin.assumptions">
   <title>Assumptions</title>
   <important>
-   <title>Backup Scenario</title>
+   <title>Scope</title>
    <para>
     The backup scenario assumes that the underlying &productname; cluster is
     healthy at the time of backup.
@@ -108,7 +108,7 @@
     <title>Backup procedure</title>
     <step>
      <para>
-      SSH into the &admin_node;
+      SSH into the &admin_node;.
      </para>
     </step>
     <step>
@@ -117,7 +117,7 @@
       important data into a tar file archive:
      </para>
 <screen>&prompt.root;<command>
-tar czf backup-admin-node-$( date +'%Y-%m-%d' ).tgz -C / \
+tar czf <replaceable>backup-admin-node-$( date +'%Y-%m-%d' ).tgz</replaceable> -C / \
     var/lib/misc/salt-master-credentials \
     usr/share/salt \
     etc/pki usr/share/caasp-container-manifests \
@@ -141,13 +141,13 @@ tar czf backup-admin-node-$( date +'%Y-%m-%d' ).tgz -C / \
      </para>
  <screen>&prompt.root;<command>docker exec $(docker ps -qf name="velum-mariadb") mysqldump \
  --password=$(cat /var/lib/misc/infra-secrets/mariadb-root-password) \
- velum_production | gzip > /var/tmp/db-backup-$(date+'%Y-%m-%d').sql.gz</command>
+ velum_production | gzip > <replaceable>/var/tmp/db-backup-[$(date+'%Y-%m-%d')].sql.gz</replaceable></command>
  </screen>
     </step>
     <step>
      <para>
-      Finally, copy the created files <filename>backup-admin-node-$(date+'%Y-%m-%d').tgz</filename>
-      and <filename>/var/tmp/db-backup-$(date+'%Y-%m-%d').sql.gz</filename> to
+      Finally, copy the created files <filename>backup-admin-node-[date].tgz</filename>
+      and <filename>/var/tmp/db-backup-[date].sql.gz</filename> to
       a location of your choosing; in accordance with your best practices for
       backup files.
      </para>
@@ -166,35 +166,65 @@ tar czf backup-admin-node-$( date +'%Y-%m-%d' ).tgz -C / \
    <title>Restore Procedure</title>
    <procedure>
     <step>
-    <para>
-     Set up a new machine for the &admin_node; by following
-     <xref linkend="sec.deploy.nodes.admin_install"/>. There is no need to
-     complete the configuration steps in &dashboard;.
-    </para>
-   </step>
-   <step>
-    <para>
-     copy the <filename>backup-admin-node-[date].tgz</filename> and <filename>db-backup-[date].sql.gz</filename> of the most recent backups onto the newly created &admin_node;
-    </para>
-   </step>
-   <step>
-    <para>
-     Run <command>tar xzf backup-admin-node-[date].tgz -C /</command>
-     and <command>zcat db-backup-[date].sql.gz | docker exec -i $(docker ps -qf name="velum-mariadb") mysql --password=$(cat /var/lib/misc/infra-secrets/mariadb-root-password) velum_production`</command>
-    </para>
+     <para>
+      Set up a new machine for the &admin_node; by following
+      <xref linkend="sec.deploy.nodes.admin_install" />.
+     </para>
+     <para>
+      There is no need to complete the configuration steps in &dashboard;.
+     </para>
+    </step>
+    <step>
+     <para>
+      Copy the <filename>backup-admin-node-[date].tgz</filename> and
+      <filename>db-backup-[date].sql.gz</filename> of the most recent backups
+      onto the newly created &admin_node; machine. Make sure to replace
+      <literal>[date]</literal> with the actual date subsituted during the
+      backup procedure.
+     </para>
+    </step>
+    <step>
+     <para>
+      SSH into the new &admin_node; machine and switch to the location where
+      you have stored the backup files.
+     </para>
+    </step>
+    <step>
+     <para>
+      Run the following command to unpack the data backup:
+     </para>
+<screen>&prompt.root;<command>tar xzf <replaceable>backup-admin-node-[date].tgz</replaceable> -C /</command></screen>
+     <para>
+      Run the following command to load the database backup into the MariaDB
+      container. Make sure to replace <literal>[date]</literal> with the actual
+      date subsituted during the backup procedure.
+     </para>
+<screen>&prompt.root;<command>zcat <replaceable>db-backup-[date].sql.gz</replaceable> | \
+docker exec -i $(docker ps -qf name="velum-mariadb") \
+mysql --password=$(cat /var/lib/misc/infra-secrets/mariadb-root-password) velum_production</command></screen>
      <note>
       <para>
-       Note: these instructions assume that all cluster member node hostnames
-       are resolvable by one another via DNS Reboot node.
+       Note: These instructions assume that all cluster member node hostnames
+       are resolvable by one another via DNS.
       </para>
      </note>
-   </step>
-   <step>
-    <para>
-     The &dashboard; web interface should become available to you shortly.
-    </para>
-   </step>
-  </procedure>
+    </step>
+    <step>
+     <para>
+      Once the files have been unpacked successfully, reboot the node.
+     </para>
+    <screen>&prompt.root;<command>reboot now</command></screen>
+    </step>
+    <step>
+     <para>
+      The &dashboard; web interface should become available to you once the new
+      &admin_node; has finished booting. You can then access it as usual by
+      opening the hostname of your &admin_node; in a browser. You should be
+      able to log in with the credentials you created during the original
+      installation of the cluster.
+     </para>
+    </step>
+   </procedure>
   </sect2>
  </sect1>
 
@@ -253,18 +283,18 @@ tar czf backup-admin-node-$( date +'%Y-%m-%d' ).tgz -C / \
     </listitem>
    </itemizedlist>
 
-   <note>
-    <title><command>etcd</command> Fault Tolerance</title>
+   <important>
+    <title><literal>etcd</literal> Fault Tolerance</title>
     <para>
-     Note: Recovering from loss of <command>etcd</command> Master nodes beyond
+     Recovering from loss of <literal>etcd</literal> Master nodes beyond
      the fault tolerance is not in scope for this document. If you have lost
      quorum and have surpassed fault tolerance, please contact SUSE Support.
     </para>
     <para>
-     <command>etcd</command> quorum and fault tolerance limits are described in
+     <literal>etcd</literal> quorum and fault tolerance limits are described in
      <xref linkend="sec.deploy.requirements.system.cluster.etcd_cluster_size"/>.
     </para>
-   </note>
+   </important>
 
    <para>
     &productname; will consider failed Master nodes as "unreachable" but still
