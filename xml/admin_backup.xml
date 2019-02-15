@@ -17,87 +17,105 @@
  </info>
 
  <sect1 xml:id="sec.admin.assumptions">
- <title>Assumptions</title>
- <para>
-  A word of warning.
- </para>
- <screen>
-  (Marek Counts another thing not on this list..: this does not backup/restore persistent volumes/storage and they should be backuped/restored separately.)
-
-1) adding workers
-
-Force Remove, add new worker via Velum
-
-2) adding masters
-
-Force Remove, add new master via Velum
-
-3) we are not worried about etcd losing quorum (aka, losing multiple masters quickly)
-
-You will not be able to backup existing workloads
-
-4) we are worried about only v3 for this epic (not stated as far as I read)
-
-→ Needs task to "update for v4" whatever that means
-
-5) for admin we are worried about bare metal AND we assume the rest of the cluster is OK and running. We just need to start up a new Admin server, restore it and join it back to the cluster.
-
-If master quorum is broken, you're screwed
-
-6) etcd is etcd is etcd and backing up and restoring it is outside this epic.
-
-See No. 3
-
-(Marek Counts : Nuno Santos I apologize for the confusion. I don't know where this idiom comes from but I meant, Etcd is it's own thing, we are not covering it here, it's hard, it complicated and everything related to it should be covered somewhere else, not here. I am not saying we should not provide a solution, just not for this epic, this pass. Effectively, for this pass, we are letting etcd be etcd and not worrying about it. While this post is similar to 3 it was to further state we are not worried about etcd at all, while 3 only refers to the quorum of etcd that does not necessarily need backup and restore to resolve. but could make more work if it was lost and could cause issues with the admin.)
-
-7) when we say "dead" we mean we bring a new VM or hardware box.
-
-Explicitly state "recovering" of broken nodes is unsupported and not advised, throw away broken nodes and replace with new instances/machines
-
-(Marek Counts I am not sure I would go this far. I'm just clarifying that "turning it back on" is not the recovery we are looking for. If they want to fix the old hardware and power it back up that is fine. but they should not need instructions for that unless the hard drive died, and in that case it is a new install anyhow.)
-
-→ Nodes that had a networking failure should start working as normal once the fault is fixed. Total loss of a node after hard disk failure should be fixed by "force remove" and adding a new node to take it's place.
-
-8) worker with work load and without is the same to us. that is kubernetes' job and we should not have different instructions.
-
-Make sure you always have a well sized cluster so you can shift workloads around even during an outage (CA-361)
-
-9) assuming that the "backup" of the admin is the same config as when it died aka, they don't make a lot of changes and not back it up.
-
-(Marek Counts You should continuously backup (aka, nightly or whatever your standard procedure is.) I'm not entirely sure if it would work if you made cluster configuration changes after your backup and then tried to restore to that backup. This could work... but would need further testing and documentation. )
-
-There is no incremental backup, one shot backup take it or leave it, restore all. Later changes must be reproduced manually.
-
-10) for both master and worker, there is not backup step as you are just adding new ones.
-
-(Marek Counts Because we only support high availability (HA) that means running more than 3 masters. in the case of losing one, nothing is lost and is all stored on the remaining masters. once a new one is added all the setting are automatically synced with the new one. )
-
-Always use Salt to customize master / worker nodes or lose changes during restore.
-
-11) when you add a new master, we should ensure that etcd expands too it?
-
-that should happen automatically. If it fails, file a bug and move on. Not in scope here.
-
-12) never are we testing or writing instructions on losing etcd AND admin and an entire cluster recovery is outside the domain of this epic
-
-Customer must be aware that these instructions are not yet suitable to prevent loss of workloads or allow "disaster recovery", wasn't in scope of this effort.
-
-→ P.O. must decide how much deeper we will dive into this
- </screen>
+  <title>Assumptions</title>
+  <important>
+   <title>Backup Scenario</title>
+   <para>
+    The backup scenario assumes that the underlying &productname; cluster is
+    healthy at the time of backup.
+   </para>
+   <para>
+    This document does not describe recovery from a multi node cluster failure.
+   </para>
+   <para>
+    The scenario described in this document does not cover backup for persistent
+    data. It is supposed to allow restoring cluster functionality after node
+    failure. Please apply best practices to ensure proper retention of
+    persistent data.
+   </para>
+   <para>
+    Depending on the type of failure scenario, workloads are likely to be
+    recovered in Kubernetes but must be expected to be restarted in many
+    scenarios.
+   </para>
+   <para>
+    Always make sure your cluster has sufficient redundant capacity to
+    temporarily shift workloads to other workers during upgrades or failures.
+   </para>
+   <para>
+    The described approach is not suited for incremental backups.
+   </para>
+  </important>
  </sect1>
 
  <sect1 xml:id="sec.admin.backup">
- <title>Backup Procedure</title>
-  <procedure>
-   <step>
-    <para>
-     SSH onto admin node
-    </para>
-   </step>
-   <step>
-    <para>
-     in the `/var/tmp` directory run
-    </para>
+ <title>Backup Scenarios</title>
+ <note>
+  <title>Recovering Failed Nodes</title>
+  <para>
+   In some failure scenarios (network disconnect, simple hardware failure) nodes
+   can be recovered without additional action. Simply bringing the machines back
+   online will suffice to return them to the cluster.
+  </para>
+  <para>
+   In case of severe hardware failure (loss of hard drive, data corruption),
+   generally speaking, a replacement is advised and nodes should be replaced
+   with fresh (virtual) machines.
+  </para>
+ </note>
+
+  <sect2 xml:id="sec.admin.backup.admin">
+   <title>Admin Node Failure</title>
+   <para>
+    We assume:
+   </para>
+
+    <itemizedlist>
+     <listitem>
+      <para>
+       The &admin_node; has failed and is unrecoverable
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       The rest of the cluster is unaffected
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       The IP address / hostname for the replacement node will be identical
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       A backup of the &admin_node; has been taken from a healthy cluster state
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       The backup procedure is performed regularly
+      </para>
+     </listitem>
+    </itemizedlist>
+
+   <para>
+    The <xref linkend="sec.admin.backup.admin.restore"/> will involve deploying
+    a new &admin_node; machine and restoring the previous data onto it.
+    &productname; will then resume management of the cluster. Existing workloads
+    should not be affected.
+   </para>
+   <procedure>
+    <title>Backup procedure</title>
+    <step>
+     <para>
+      SSH into the &admin_node;
+     </para>
+    </step>
+    <step>
+     <para>
+      Change to the <filename>/var/tmp</filename> directory and package
+      important data into a tar file archive:
+     </para>
 <screen>&prompt.root;<command>
 tar czf backup-admin-node-$( date +'%Y-%m-%d' ).tgz -C / \
     var/lib/misc/salt-master-credentials \
@@ -115,71 +133,230 @@ tar czf backup-admin-node-$( date +'%Y-%m-%d' ).tgz -C / \
     var/lib/misc/infra-secrets \
     etc/salt/pillar \
     var/lib/misc/velum-secrets</command>
-</screen>
-   </step>
-   <step>
+ </screen>
+    </step>
+    <step>
+     <para>
+      Then, export the MariaDB database and archive it:
+     </para>
+ <screen>&prompt.root;<command>docker exec $(docker ps -qf name="velum-mariadb") mysqldump \
+ --password=$(cat /var/lib/misc/infra-secrets/mariadb-root-password) \
+ velum_production | gzip > /var/tmp/db-backup-$(date+'%Y-%m-%d').sql.gz</command>
+ </screen>
+    </step>
+    <step>
+     <para>
+      Finally, copy the created files <filename>backup-admin-node-$(date+'%Y-%m-%d').tgz</filename>
+      and <filename>/var/tmp/db-backup-$(date+'%Y-%m-%d').sql.gz</filename> to
+      a location of your choosing; in accordance with your best practices for
+      backup files.
+     </para>
+     <important>
+      <title>Sensitive Data</title>
+      <para>
+       Please note that the data backup files contain senstive information that
+       allow full cluster access and must be handled securely.
+      </para>
+     </important>
+    </step>
+   </procedure>
+  </sect2>
+
+  <sect2 xml:id="sec.admin.backup.admin.restore">
+   <title>Restore Procedure</title>
+   <procedure>
+    <step>
     <para>
-     and run
+     Set up a new machine for the &admin_node; by following
+     <xref linkend="sec.deploy.nodes.admin_install"/>. There is no need to
+     complete the configuration steps in &dashboard;.
     </para>
-<screen>&prompt.root;<command>docker exec $(docker ps -qf name="velum-mariadb") mysqldump \
---password=$(cat /var/lib/misc/infra-secrets/mariadb-root-password) \
-velum_production | gzip > /var/tmp/db-backup-$(date+'%Y-%m-%d').sql.gz</command>
-</screen>
    </step>
    <step>
     <para>
-     then copy the created files <filename>backup-admin-node-$(date+'%Y-%m-%d').tgz</filename>
-     and <filename>/var/tmp/db-backup-$(date+'%Y-%m-%d').sql.gz</filename> off the
-     admin node and store according to your best practices for backup files
+     copy the <filename>backup-admin-node-[date].tgz</filename> and <filename>db-backup-[date].sql.gz</filename> of the most recent backups onto the newly created &admin_node;
+    </para>
+   </step>
+   <step>
+    <para>
+     Run <command>tar xzf backup-admin-node-[date].tgz -C /</command>
+     and <command>zcat db-backup-[date].sql.gz | docker exec -i $(docker ps -qf name="velum-mariadb") mysql --password=$(cat /var/lib/misc/infra-secrets/mariadb-root-password) velum_production`</command>
+    </para>
+     <note>
+      <para>
+       Note: these instructions assume that all cluster member node hostnames
+       are resolvable by one another via DNS Reboot node.
+      </para>
+     </note>
+   </step>
+   <step>
+    <para>
+     The &dashboard; web interface should become available to you shortly.
     </para>
    </step>
   </procedure>
+  </sect2>
  </sect1>
 
- <sect1 xml:id="sec.admin.restore">
- <title>Restore Procedure</title>
- <para>
-  On the machine that is going to be your new admin follow steps on installing a new Admin instructions found in 5.1. There is no need to complete steps past 5.1.
-  <xref linkend="sec.deploy.nodes.admin_install"/>.
-  copy the `backup-admin-node-[date].tgz` and `db-backup-[date].sql.gz` of the most recent backups onto the newly created admin node
-  Run `tar xzf backup-admin-node-[date].tgz -C /`
-  and
-  `zcat db-backup-[date].sql.gz | docker exec -i $(docker ps -qf name="velum-mariadb") mysql --password=$(cat /var/lib/misc/infra-secrets/mariadb-root-password) velum_production`
-  Note: these instructions assume that all cluster member node hostnames are resolvable by one another via DNS
-  Reboot node
-  The Velum web interface should become available to you shortly.
- </para>
- </sect1>
-
- <sect1 xml:id="sec.admin.recover">
-  <title>Recovering Nodes</title>
+ <sect1 xml:id="sec.admin.backup.general">
+  <title>General Node Recovery</title>
   <note>
-   <title>Forced Removal</title>
+   <title>Force Removal Of Nodes</title>
    <para>
-    Failed nodes other than the admin will be required to be forced removed as the standard removal process requires updating the node.
-    To force remove a node, just click the remove button as you would normally, If the hardware has failed, this removal will also fail, giving you the option to force remove the node.
-    Click "Force Remove". Hardware that is forced removed can no longer join the cluster and must be reinstalled, see [Force Removal of node]
+    Failed nodes other than the &admin_node; will need to be "forcefully"
+    removed as the standard removal process requires communicating with the
+    node.
+   </para>
+   <para>
+    To "force remove" a node, click the <guimenu>Remove</guimenu> button in
+    &dashboard;. If the hardware has failed, this removal will also fail because there
+    is no communication with the services on the failed node. Once regular
+    removal has failed, you will be given the option to force remove the node by
+    clicking the <guimenu>Force Remove</guimenu> button that appears in the same
+    place.
    </para>
   </note>
-
-  <sect2 xml:id="sec.admin.restore.master">
-   <title>Recovering A Master Node</title>
+  <important>
+   <title>Force Removal Is Final</title>
    <para>
-    First remove the failed master node, once it is removed it will be possible to
-    add a new master back into the cluster by following the standard steps for
-    adding a master node.
+    Nodes that have been "forcefully" removed can no longer join the cluster
+    and must be reinstalled.
+   </para>
+  </important>
+
+  <sect2 xml:id="sec.admin.backup.general.master">
+   <title>Master Node Failure</title>
+   <para>
+    We assume:
+   </para>
+
+   <itemizedlist>
+    <listitem>
+     <para>
+      One or more Master node has failed and is unrecoverable
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      The remaining Master nodes still retain quorum
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      The Worker nodes are not affected
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      The &admin_node; is not affected
+     </para>
+    </listitem>
+   </itemizedlist>
+
+   <note>
+    <title><command>etcd</command> Fault Tolerance</title>
+    <para>
+     Note: Recovering from loss of <command>etcd</command> Master nodes beyond
+     the fault tolerance is not in scope for this document. If you have lost
+     quorum and have surpassed fault tolerance, please contact SUSE Support.
+    </para>
+    <para>
+     <command>etcd</command> quorum and fault tolerance limits are described in
+     <xref linkend="sec.deploy.requirements.system.cluster.etcd_cluster_size"/>.
+    </para>
+   </note>
+
+   <para>
+    &productname; will consider failed Master nodes as "unreachable" but still
+    counting towards quorum. You must remove the failed nodes without losing the
+    quorum majority.
+   </para>
+
+   <para>
+    As long as you are within the fault tolerance. You must "force remove" the
+    failed nodes through &dashboard; and add new Master nodes until you reach
+    your desired number of master nodes.
+   </para>
+   <para>
+    The <xref linkend="sec.admin.backup.general.restore"/> is the same as for Worker nodes but
+    you must consider quorum in any case.
    </para>
   </sect2>
 
-  <sect2 xml:id="sec.admin.restore.worker">
-   <title>Recovering A Worker Node</title>
+  <sect2 xml:id="sec.admin.backup.general.worker">
+   <title>Worker Node Failure</title>
    <para>
-    If a worker node becomes unavailable this is fine. Kubernetes will schedule
-    the workloads that were running on it on another node. You can then add a new
-    worker node following the standard directions and new work will be scheduled
-    on it automatically. You can observe the status of the new nodes in the velum
-    dashboard.
+    We assume:
    </para>
+
+   <itemizedlist>
+    <listitem>
+     <para>
+      One or more Worker node has failed and is unrecoverable
+     </para>
+     <itemizedlist>
+      <listitem>
+       <para>
+        Kubernetes will schedule the workloads that were running on it on another node
+       </para>
+       </listitem>
+       <listitem>
+        <para>
+         There is enough free capacity in the cluster to take existing workloads
+        </para>
+        </listitem>
+      </itemizedlist>
+    </listitem>
+    <listitem>
+     <para>
+      Workloads must shift to other available nodes during this process.
+     </para>
+    </listitem>
+   </itemizedlist>
+   <para>
+    Worker nodes should be treated as disposable. &productname; will schedule
+    workloads across the other available nodes.
+   </para>
+  </sect2>
+
+  <sect2 xml:id="sec.admin.backup.general.restore">
+   <title>Restore Procedure</title>
+   <para>
+    The restoration procedure does not concern itself with data stored on the
+    actual Master or Worker node. You will be forcing the broken nodes out of
+    the cluster and adding full replacements.
+   </para>
+   <procedure>
+    <step>
+     <para>
+     Remove the failed node: <xref linkend="sec.admin.nodes.remove" />
+     </para>
+    </step>
+    <step>
+     <para>
+     Verify the node is removed from the node list in Velum
+     </para>
+    </step>
+    <step>
+     <para>
+      Add a new master/worker node: <xref linkend="sec.deploy.nodes.worker_install" />
+     </para>
+     <para>
+      Since you already have an Admin node in place you can ignore the warning
+      box.
+     </para>
+    </step>
+    <step>
+     <para>
+      Verify the node is shown in the nodes list
+    </para>
+   </step>
+  </procedure>
+  <para>
+   You can observe the status of the new nodes in the velum dashboard nodes
+   list. Work will be scheduled automatically once the nodes are configured and
+   added to the cluster (indicated by a green checkmark icon).
+  </para>
   </sect2>
  </sect1>
 </chapter>
