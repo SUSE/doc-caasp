@@ -437,28 +437,28 @@
       Reboot all nodes.
      </para>
 <screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name="salt-master") \
-salt '*' system.reboot</command></screen>
+salt -P "roles:(admin|kube-(master|minion))" system.reboot</command></screen>
     </step>
     <step>
      <para>
       On the &admin_node; run
      </para>
 <screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name="salt-master") \
- salt "*" cmd.run "transactional-update cleanup reboot dup"</command></screen>
+ salt -P "roles:(admin|kube-(master|minion))" cmd.run "transactional-update cleanup reboot dup"</command></screen>
     </step>
     <step>
      <para>
       Reboot all nodes again.
      </para>
 <screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name="salt-master") \
-salt '*' system.reboot</command></screen>
+salt -P "roles:(admin|kube-(master|minion))" system.reboot</command></screen>
     </step>
     <step>
      <para>
       Start the update with debug output.
      </para>
 <screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name="salt-master") \
-    salt-run -l debug state.orchestrate orch.update</command></screen>
+salt-run -l debug state.orchestrate orch.update</command></screen>
     </step>
     <step>
      <para>
@@ -1020,7 +1020,7 @@ heapster-default  1  Fri Jun 29 10:48:45 2018  DEPLOYED  heapster-0.2.7  kube-sy
    </step>
    <step>
     <para>
-      Visit <literal>http://127.0.0.1:8081/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/</literal>
+      Visit <literal>http://127.0.0.1:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/</literal>
       in your browser. You will be greeted with by a welcome page containing a
       dialog to configure authentication.
     </para>
