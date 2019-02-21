@@ -583,7 +583,7 @@
      for &sls; contains approximately <literal>36 GB</literal> of data.
     </para>
     <para>
-     The storage must be formatted to a filesystem type supporting files larger
+     The storage must be formatted to a file system type supporting files larger
      than <literal>4 GB</literal>.
     </para>
     <para>
@@ -924,7 +924,7 @@ auth:
 storage:
   cache:
     blobdescriptor: inmemory
-  filesystem:
+  file system:
     rootdirectory: /var/lib/registry
 http:
   addr: 0.0.0.0:5000
@@ -980,7 +980,7 @@ threshold: 3
      <step>
       <para>
        Connect the trusted storage to the internal mirror and load the registry
-       container image to the local filesystem.
+       container image to the local file system.
       </para>
 <screen>&prompt.root;<command>docker load -i /mnt/storage/registry.tar</command>
        </screen>
@@ -1004,7 +1004,7 @@ log:
 storage:
   cache:
     blobdescriptor: inmemory
-  filesystem:
+  file system:
     rootdirectory: /var/lib/registry
   maintenance:
     readonly:
@@ -1136,7 +1136,7 @@ threshold: 3
     </step>
     <step>
      <para>
-     Download all charts from the repository to the filesystem
+     Download all charts from the repository to the file system
      (e.g. <filename>/tmp/charts</filename>).
      </para>
      <para>
