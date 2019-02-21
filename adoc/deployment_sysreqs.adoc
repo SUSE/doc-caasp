@@ -1,0 +1,391 @@
+[[_deployment.sysreqs]]
+= {productname} System Requirements
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:sourcedir: .
+:imagesdir: ./images
+= SUSE CaaS Platform System Requirements
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:imagesdir: ./images
+
+
+This chapter specifies the requirements to install and operate {productname}
+. 
+
+[[_sec.caasp.installquick.sysreqs]]
+== System Requirements
+
+
+Before you begin the installation, please make sure your system meets all requirements listed below. 
+
+[[_sec.caasp.installquick.clusreqs]]
+=== Cluster Requirements
+
+{productname}
+is a cluster operating system.
+It requires a group of physical or virtual machines in order to operate.
+The minimum supported cluster size is four nodes: one {admin_node}
+, one {master_node}
+, and two {worker_node}
+s. 
+
+.Test and Proof-of-Concept Clusters
+[NOTE]
+====
+For proof-of-concept and test deployments, it is possible to bootstrap a three-node cluster with a single {worker_node}
+, but this configuration is not supported and should not be used in production. 
+====
+
+
+To improve performance and reliability, additional {master_node}
+s may be added, so long as there is always an odd number of {master_node}
+s. 
+
+There is no limit on the number of worker nodes except the maximum cluster size. 
+
+At this time, {suse}
+supports clusters of up to 150 nodes. 
+
+[[_sec.caasp.installquick.env]]
+=== Supported Environments
+
+
+Regarding deployment scenarios, {suse}
+supports {productname}
+running in the following environments: 
+
+* {productname} only supports x86_64 hardware. 
+* Aside from this, the same platforms as {sle} 12 SP3 are supported. 
+* On bare metal: any server hardware certified for {sle} Server. 
+* Virtualized{mdash} running under the following hypervisors: 
+** KVM 
+*** on {sle} 11 SP4 
+*** on {sle} 12 SP1 
+*** on {sle} 12 SP2 
+*** on {sle} 12 SP3 
+** Xen 
+*** same host platforms as for KVM 
+*** full virtualization 
+*** paravirtualization 
+*** Citrix XenServer 6.5 
+** VMware 
+*** ESX 5.5 
+*** ESXi 6.0 
+*** ESXi 6.5 
+** Hyper-V 
+*** Windows Server 2008 SP2+ 
+*** Windows Server 2008 R2 SP1+ 
+*** Windows Server 2012+ 
+*** Windows Server 2012 R2+ 
+*** Windows Server 2016 
+** Oracle VM 3.3 
+* Private and Public Cloud Environments 
+** {soc} 7 
+** Amazon AWS 
+** Microsoft Azure 
+** Google Compute Engine 
+
+
+[[_intro.requirements.storage]]
+=== Container Data Storage
+
+
+Storage can be provided using: 
+
+* {ses} . 
+* NFS. 
+* [command]``hostpath``. 
++
+.`hostpath` Deprecated
+NOTE: Storage using `hostpath` is still supported, but use is now discouraged and by default it is disabled by ``PodSecurityPolicies``. 
++
+
+
+
+[[_sec.caasp.installquick.hwreqs]]
+=== Minimum Node Specification
+
+
+Each node in the cluster must meet the following minimum specifications. 
+
+* Any AMD64/Intel* EM64T processor (quad-core processors are recommended). 32-bit processors are not supported. 
+* Minimum RAM: 8 GB. 
++ 
+NOTE: {kube}
+does not support swap and any existing swap partition will be disabled during installation.
+Although it may be possible to install {productname}
+on nodes with less RAM, if the operating system runs out of available memory, the cluster may fail. 
+* Minimum disk space: 40 GB (as Btrfs with snapshots) for the root file system. 
++ 
+Additional disk space may be required, depending on the count and size of container images you intend to run. 
+
+
+[[_sec.caasp.installquick.netreqs]]
+=== Network Requirements
+
+* All the nodes on the cluster must be on a the same network and be able to communicate directly with one another. 
++
+.Reliable Networking
+IMPORTANT: Please make sure all nodes can communicate without interruptions. 
++
+
+* The admin node and the {kube} API master must have valid Fully-Qualified Domain Names (FQDNs), which can be resolved both by other nodes and from other networks which need to access the cluster. 
+* A DHCP server to dynamically provide IP addresses and host names for the nodes in your cluster (unless you configure all nodes statically). 
+* A DNS server to resolve host names. If you are using host names to specify nodes, please make sure you have reliable DNS resolution at all times, especially in combination with DHCP. 
++
+.Unique Host Names
+IMPORTANT: Host names must be unique.
+It is recommended to let the DHCP server provide not only IP addresses but also host names of the cluster nodes. 
++
+
+* On the same network, a separate computer with a Web browser is required in order to complete bootstrap of the cluster. 
+* In a {productname} cluster, internal TCP/IP ports are managed using `iptables` controlled by `Salt` and so need not be manually configured. However, for reference and for environments where there are existing security policies, the following are the standard ports in use. 
++
+
+[[_sec.caasp.installquick.ports]]
+.Node types and open ports
+[cols="1,1,1,1,1,1", options="header"]
+|===
+| 
+          
+           Node
+          
+         
+| 
+          
+           Port
+          
+         
+| 
+          
+           Internal / External
+          
+         
+| 
+          
+           Open after orchestration
+          
+         
+| 
+          
+           Description
+          
+         
+| 
+          
+           Notes
+          
+         
+
+|
+
+All nodes 
+|
+
+22 
+|
+
+Internal 
+|
+
+No 
+|
+
+ssh 
+|
+
+Useful but not essential 
+
+.5+.^|
+
+Admin 
+|
+
+80 
+|
+
+External 
+|
+
+No 
+|
+
+HTTP 
+|
+
+|
+
+389 
+|
+
+External 
+|
+
+No 
+|
+
+LDAP 
+|
+
+User management 
+
+|
+
+443 
+|
+
+External 
+|
+
+No 
+|
+
+HTTPS 
+|
+
+|
+
+2379 
+|
+
+Internal 
+|
+
+No 
+|
+
+`etcd` discovery 
+|
+
+|
+
+4505 - 4506 
+|
+
+Internal 
+|
+
+No 
+|
+
+Salt 
+|
+
+.3+.^|
+
+Masters 
+|
+
+2380 
+|
+
+Internal 
+|
+
+Yes 
+|
+
+`etcd` control 
+|
+
+Peer-to-peer `etcd` traffic 
+
+|
+
+4789 
+|
+
+Internal 
+|
+
+No 
+|
+
+VXLAN traffic 
+|
+
+Used by Flannel 
+
+|
+
+6443 
+|
+
+Both 
+|
+
+Yes 
+|
+
+{kube}
+API server 
+|
+
+.3+.^|
+
+Workers 
+|
+
+2380 
+|
+
+Internal 
+|
+
+Yes 
+|
+
+`etcd` control 
+|
+
+Peer-to-peer `etcd` traffic 
+
+|
+
+4789 
+|
+
+Internal 
+|
+
+No 
+|
+
+VXLAN traffic 
+|
+
+Used by Flannel 
+
+|
+
+10250 
+|
+
+Internal 
+|
+
+No 
+|
+
+Kubelet 
+|
+|===
+
+
+When some additional ingress mechanism is used, additional ports would also be open. 
+
+[[_sec.caasp.installquick.limits]]
+=== Limitations
+
+* {empty}
++ 
+{productname}{productnumber}
+does not support remote installations with ``Virtual Network Computing (VNC)``. 
+* {productname} is a dedicated cluster operating system and does not support dual-booting with other operating systems. Ensure that all drives in all cluster nodes are empty and contain no other operating systems before beginning installation. 
