@@ -250,7 +250,7 @@ For more information on transactional-update, see: <<_sec.admin.software.transac
 
 ----
 {prompt.user}``docker exec -it $(docker ps -q -f name="salt-master") \
-salt -P 'roles:(admin|kube-master|kube-minion)' \
+salt -P 'roles:(admin|kube-(master|minion)' \
 cmd.run "journalctl -u transactional-update"`` 
 ----
 

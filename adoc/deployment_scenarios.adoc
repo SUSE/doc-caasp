@@ -320,7 +320,7 @@ The overall size of any given RPM repository is at least tens of Gigabytes.
 For example: At the time of writing, the package repository for {sls}
 contains approximately `36 GB` of data. 
 
-The storage must be formatted to a filesystem type supporting files larger than ``4 GB``. 
+The storage must be formatted to a file system type supporting files larger than ``4 GB``. 
 
 We recommend external storage with at least ``128 GB``. 
 
@@ -572,7 +572,7 @@ auth:
 storage:
   cache:
     blobdescriptor: inmemory
-  filesystem:
+  file system:
     rootdirectory: /var/lib/registry
 http:
   addr: 0.0.0.0:5000
@@ -614,7 +614,7 @@ Registry: Configuration]
 ----
 {prompt.root}``systemctl enable --now docker.service`` 
 ----
-. Connect the trusted storage to the internal mirror and load the registry container image to the local filesystem. 
+. Connect the trusted storage to the internal mirror and load the registry container image to the local file system. 
 +
 
 ----
@@ -636,7 +636,7 @@ log:
 storage:
   cache:
     blobdescriptor: inmemory
-  filesystem:
+  file system:
     rootdirectory: /var/lib/registry
   maintenance:
     readonly:
@@ -731,7 +731,7 @@ Helm charts and container images must be refreshed in the same procedure, otherw
 
 .Procedure: Pull Data From Upstream Sources
 . SSH into the mirror server on the external network. 
-. Download all charts from the repository to the filesystem (e.g. [path]``/tmp/charts`` ). 
+. Download all charts from the repository to the file system (e.g. [path]``/tmp/charts`` ). 
 + 
 This action will download all charts and overwrite the existing Helm chart repository URL.
 Replace `http://charts.mymirror.local` with the hostname of the webserver providing the Helm chart repository on the internal network. 

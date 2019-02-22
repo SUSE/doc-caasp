@@ -44,7 +44,7 @@ SSH into the Admin node and run:
 
 ----
 {prompt.user}``docker exec -it $(docker ps -q -f name="salt-master") \
-salt -P 'roles:(admin|kube-master|kube-minion)' \
+salt -P 'roles:(admin|kube-(master|minion)' \
 cmd.run "ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime"`` 
 ----
 

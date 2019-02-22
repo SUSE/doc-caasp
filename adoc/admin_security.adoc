@@ -217,7 +217,7 @@ dn: uid=`USERID` <1>,ou=People,dc=infra,dc=caasp,dc=local
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: top
-uid:`USERID`userPassword:`PASSWORD_HASH` <2>givenname:`FIRST_NAME` <3>sn:`SURNAME` <4>cn:`FULL_NAME` <5>mail:`E-MAIL_ADDRESS` <6>
+uid:`USERID`<<_co.admin.security.users.add.uid>>userPassword:`PASSWORD_HASH` <2>givenname:`FIRST_NAME` <3>sn:`SURNAME` <4>cn:`FULL_NAME` <5>mail:`E-MAIL_ADDRESS` <6>
 ----
 <1>
          User ID (UID) of the new user. Needs to be unique.
@@ -363,9 +363,9 @@ Then execute the following procedure.
 dn: cn=`group name` <10>,ou=Groups,dc=infra,dc=caasp,dc=local
 objectclass: top
 objectclass: groupOfUniqueNames
-cn:`group name`uniqueMember: uid=`member1`, <11>ou=People,dc=infra,dc=caasp,dc=local
-uniqueMember: uid=`member2`,ou=People,dc=infra,dc=caasp,dc=local
-uniqueMember: uid=`member3`,ou=People,dc=infra,dc=caasp,dc=local
+cn:`group name`<<_co.admin.security.groups.cn>>uniqueMember: uid=`member1`, <11>ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=`member2`,<<_co.admin.security.groups.member>>ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=`member3`,<<_co.admin.security.groups.member>>ou=People,dc=infra,dc=caasp,dc=local
 ----
 <10>
          The group's name.
@@ -486,7 +486,8 @@ https://v1-11.docs.kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 
 Roles are defined in YAML files.
 To apply role definitions to {kube}
-, use [command]``kubectl apply -f [replaceable]``YAML_FILE````.
+, use [command]``kubectl apply -f
+    [replaceable]``YAML_FILE````.
 The following examples provide an overview about different use cases of roles. 
 
 .Simple Role for Core Resource
@@ -577,7 +578,8 @@ metadata:
 
 
 To bind a group or user to a rule, create a YAML file that contains the role binding description.
-Then apply the binding with [command]``kubectl apply -f [replaceable]``YAML_FILE````.
+Then apply the binding with [command]``kubectl apply -f
+    [replaceable]``YAML_FILE````.
 The following examples provide an overview about different use cases of role bindings. 
 
 [[_ex.admin.security.groups.role]]
@@ -617,21 +619,10 @@ roleRef:
 [[_sec.admin.security.certs]]
 == Certificates
 
-{productname}
-enforces TLS encryption of all communications.
-Administrators have the option to use the default self-signed CA (Certificate Authority) certificate or supply their own trust chain - CA certificate(s), client SSL certificate(s) and matching private key(s) - to secure all external communication with the cluster. 
 
-[[_sec.admin.security.certs.suse_certs]]
-=== SUSE-Provided Certificates
-
-
-By default, {productname}
-generates a self-signed CA certificate during installation which is used to authenticate and verify all communications.
+During the installation of {productname}
+, a CA (Certificate Authority) certificate is generated; that is then used to authenticate and verify all communications.
 The process also creates and distributes client certificates for the components. 
-
-[[_sec.admin.security.certs.renewal]]
-==== Certificate Renewal
-
 
 Communication is secured with TLS v1.2 using the `AES 128 CBC` cipher. 
 
@@ -639,6 +630,10 @@ All client certificates are 4096 Bit RSA encrypted.
 
 Certificates are located in [path]``/etc/pki``
  on each cluster node. 
+
+[[_sec.admin.security.certs.renewal]]
+=== Certificate Renewal
+
 
 The CA certificate is valid for `3650` days (10 years) by default. 
 
@@ -664,7 +659,7 @@ Refer to: <<_sec.admin.troubleshooting.replace_certificates>>.
 ====
 
 [[_sec.admin.security.certs.installing_rootca]]
-==== Obtaining and Installing Root CA Certificate
+=== Obtaining and Installing Root CA Certificate
 
 
 . Obtain the root CA certificate from any node in your cluster with [command]``scp``. 
@@ -695,42 +690,6 @@ The location of the trust store anchors directory or the command to refresh the 
 Please consult the official documentation for your operating system to find the respective alternatives. 
 ====
 
-[[_sec.admin.security.certs.usercerts]]
-=== User-Provided Certificates
-
-{productname}
-administrators can opt to supply their own trust chain which includes CA certificate(s), SSL certificate(s) and matching private key(s). This is meant to secure all external administrative communication via {dashboard}
-, the Kubernetes API, and Dex (authentication service). 
-
-[[_sec.admin.security.certs.usercerts.ca]]
-==== Upload CA Certificate(s)
-
-
-CA certificate(s) must first be supplied in {dashboard}
-at menu:Settings → External Certificates[]
-; this can be a root CA from a public Certificate Authority and any necessary Intermediate Certificates, or a organization's self-signed CA certificate and any necessary Intermediate Certificates.
-After saving the CA certificate, the user must apply this update by clicking the "Apply changes" button at top-right. 
-
-==== Upload SSL Certificate(s) and Private Key(s)
-
-
-SSL Certificates and Private Keys can be uploaded in {dashboard}
-at menu:Settings → External Certificates[]
-.
-Certificate/key pairs can be uploaded for each of the 3 administrative external endpoints: {dashboard}
-, Kubernetes API, and Dex.
-Thus there are 3 pairs of "browse" fields for each of the 3 services.
-Certificates and keys must be uploaded in matching pairs (i.e. {dashboard}
- certificate and key must be uploaded simultaneously). 
-
-The certificate format must be X509, PEM-encoded, and ASCII armored (contains `-----BEGIN XXXXX-----` header and `-----END XXXXX-----` footer). 
-
-During upload, the SSL certificate is validated, matched with the supplied key, and verified against the trust chain (supplied in <<_sec.admin.security.certs.usercerts.ca>>). 
-
-
-image::external_cert_velum.png[scaledwidth=100%]
-
-
 [[_sec.admin.security.pod_policies]]
 == Pod Security Policies
 
@@ -760,7 +719,8 @@ This example details how to define a privileged DaemonSet with a new default ser
 
 
 To create new policies, you can adapt the provided example policies to your needs.
-Then copy them into a YAML file and apply the definition by executing [command]``kubectl apply -f [replaceable]``YAML_FILE````. 
+Then copy them into a YAML file and apply the definition by executing [command]``kubectl apply -f
+   [replaceable]``YAML_FILE````. 
 
 Detailed information is available at https://v1-11.docs.kubernetes.io/docs/concepts/policy/pod-security-policy/. 
 
@@ -844,11 +804,11 @@ spec:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: suse:caasp:psp:unprivilegedrules:
+  name: suse:caasp:psp:unprivileged<<_co.admin.security.pod_policies.unprivileged.name>>rules:
   - apiGroups: ['extensions']
     resources: ['podsecuritypolicies']
     verbs: ['use']
-resourceNames: ['suse.caasp.psp.unprivileged']
+resourceNames: ['suse.caasp.psp.unprivileged']<<_co.admin.security.pod_policies.unprivileged.name>>
 ----
 <25>
       Make sure to change the policy and role name when adapting the
@@ -930,11 +890,11 @@ spec:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: suse:caasp:psp:privilegedrules:
+  name: suse:caasp:psp:privileged<<_co.admin.security.pod_policies.privileged.name>>rules:
   - apiGroups: ['extensions']
     resources: ['podsecuritypolicies']
     verbs: ['use']
-resourceNames: ['suse.caasp.psp.privileged']
+resourceNames: ['suse.caasp.psp.privileged']<<_co.admin.security.pod_policies.privileged.name>>
 ----
 <26>
       Make sure to change the policy and role name when adapting the

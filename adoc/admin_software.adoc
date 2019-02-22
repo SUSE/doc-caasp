@@ -34,7 +34,7 @@ Transactional updates are managed by the [command]``transactional-update`` scrip
 The script checks if any updates are available.
 If there are any updates to be applied, a new snapshot of the root file system is created in the background and is updated from the release channels.
 All updates released to this point are applied.
-The running filesystem/machine state is left untouched. 
+The running file system/machine state is left untouched. 
 
 The new snapshot, once completely updated, is then marked as active and will be used as the new default after the next reboot of the system. 
 
@@ -78,36 +78,38 @@ If the current root file system is identical to the active root file system (aft
 Other options of the command are the following: 
 
 `pkg in/install`::
-Installs a specific package from the available channels using the [command]``zypper install`` command.
-This command can also be used to install a PTF RPM file.
-Please note that the changes to the base filesystem only become permanent after a reboot. 
+Installs individual packages from the available channels using the [command]``zypper install`` command.
+This command can also be used to install PTF RPM files.
+Please note that the changes to the base file system only become permanent after a reboot. 
 +
 
 ----
-{prompt.root}``transactional-update pkg install <packagename>`` 
+{prompt.root}``transactional-update pkg install PACKAGE_NAME`` 
 ----
 +
 or
 +
 
 ----
-{prompt.root}``transactional-update pkg install <RPM1 RPM2>`` 
+{prompt.root}``transactional-update pkg install RPM1 RPM2`` 
 ----
 `pkg rm/remove`::
-Removes a specific package from the available channels using the [command]``zypper remove`` command.
-This command can also be used to remove a PTF RPM file.
-Please note that the changes to the base filesystem only become permanent after a reboot. 
+Removes individual packages from the active snapshot using the [command]``zypper remove`` command.
+This command can also be used to remove PTF RPM files.
+Please note that the changes to the base file system only become permanent after a reboot. 
 +
 
 ----
-{prompt.root}``transactional-update pkg remove <packagename>`` 
+{prompt.root}``transactional-update pkg remove PACKAGE_NAME`` 
 ----
-+
-or
+`pkg up/update`::
+Updates individual packages from the active snapshot using the [command]``zypper update`` command.
+This command can also be used to update PTF RPM files.
+Please note that only packages that are part of the snapshot of the base file system can be updated and changes only become permanent after a reboot. 
 +
 
 ----
-{prompt.root}``transactional-update pkg install <RPM1 RPM2>`` 
+{prompt.root}``transactional-update pkg remove PACKAGE_NAME`` 
 ----
 `up/update`::
 If there are new updates available, a new snapshot is created and [command]``zypper up/update`` is used to update the snapshot.
@@ -246,7 +248,7 @@ image::velum_update_nodes.png[scaledwidth=100%]
 You can use [command]``transactional-update`` to apply updates or install PTF files manually. 
 
 ----
-{prompt.root}``transactional-update pkg install <packagename> reboot`` 
+{prompt.root}``transactional-update pkg install PACKAGE_NAME reboot`` 
 ----
 
 
@@ -304,28 +306,28 @@ The following procedure can help in some situations.
 
 ----
 {prompt.root.admin}``docker exec -it $(docker ps -q -f name="salt-master") \
-salt '*' system.reboot`` 
+salt -P "roles:(admin|kube-(master|minion))" system.reboot`` 
 ----
 . On the {admin_node} run 
 +
 
 ----
 {prompt.root.admin}``docker exec -it $(docker ps -q -f name="salt-master") \
- salt "*" cmd.run "transactional-update cleanup reboot dup"`` 
+ salt -P "roles:(admin|kube-(master|minion))" cmd.run "transactional-update cleanup reboot dup"`` 
 ----
 . Reboot all nodes again. 
 +
 
 ----
 {prompt.root.admin}``docker exec -it $(docker ps -q -f name="salt-master") \
-salt '*' system.reboot`` 
+salt -P "roles:(admin|kube-(master|minion))" system.reboot`` 
 ----
 . Start the update with debug output. 
 +
 
 ----
 {prompt.root.admin}``docker exec -it $(docker ps -q -f name="salt-master") \
-    salt-run -l debug state.orchestrate orch.update`` 
+salt-run -l debug state.orchestrate orch.update`` 
 ----
 . If there is any ongoing problem, look at all the {salt} grains of all nodes in [path]``/etc/salt/grains`` . This file contains the status if the update is ongoing, and is therefore providing the "Update Retry" in Velum. 
 
@@ -590,7 +592,7 @@ Please plan for maintenance windows when setting up toolchain usage.
 {prompt.root}``transactional-update reboot register -p caasp-toolchain/3.0/x86_64`` 
 ----
 +
-The machine will reboot to incorporate the module into the read-only filesystem and start from the new snapshot. 
+The machine will reboot to incorporate the module into the read-only file system and start from the new snapshot. 
 . {empty}
 +
 .Avoid Reboots By Installing Multiple Packages
@@ -764,7 +766,7 @@ currently fully supports only {dashboard}
 --version=0.6.1`` 
 ----
 . Run [command]``kubectl proxy`` to expose the cluster on your local workstation. 
-. Visit `http://127.0.0.1:8081/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/` in your browser. You will be greeted with by a welcome page containing a dialog to configure authentication. 
+. Visit `http://127.0.0.1:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/` in your browser. You will be greeted with by a welcome page containing a dialog to configure authentication. 
 . Select menu:token[] authentication. To retrieve your token refer to the value in your kubeconfig file by running the command: 
 +
 

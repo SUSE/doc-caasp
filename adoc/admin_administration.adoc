@@ -100,7 +100,7 @@ Log in to the admin node and run:
 
 ----
 {prompt.user}``docker exec -it $(docker ps -q -f name="salt-master") \
-salt -P 'roles:(admin|kube-master|kube-minion)' \
+salt -P 'roles:(admin|kube-(master|minion)' \
 cmd.run "df -h"`` 
 ----
 
@@ -240,6 +240,8 @@ As each node in the cluster runs also an instance of ``etcd``, {productname}
  has to ensure that removing of several nodes does not break the `etcd` cluster.
 In case you have, for example, three nodes in the `etcd` and you delete two of them, {productname}
  deletes one node, recovers the cluster and only if the recovery is successful, allows the next node to be removed.
+Refer to: <<_sec.deploy.requirements.system.cluster.etcd_cluster_size>>. 
+
 If a node runs just an ``etcd-proxy``, there is nothing special that has to be done, as deleting any amount of `etcd-proxy` cannot break the `etcd` cluster. 
 ====
 
@@ -478,53 +480,8 @@ For larger batches than two, certain cluster services, for example ``dex``, coul
 [[_sec.admin.nodes.graceful_shutdown.etcd]]
 === Behavior of `etcd`
 
-`etcd` is a distributed key-value store.
-Some nodes on the cluster run `etcd` members that sync with other peers in order to provide a fault-tolerant storage that {kube}
- uses for persistence. 
-
-`etcd` is the central component where {kube}
- reads and writes in order to have global knowledge about the cluster status and desired state. 
-
-It's very important to note that `etcd` automatically recovers from temporary failures like machine reboots. 
-
-`etcd` knows how many peers conform the `etcd` cluster; based on this information the `etcd` cluster can be in three different states: healthy, degraded or unavailable. 
-
-Healthy::
-All `etcd` members are working as expected. 
-
-Degraded::
-Some `etcd` members are not working as expected, but there's still a majority in the working ones.
-This still means the cluster is working, because it has quorum. 
-
-Unavailable::
-There is no working majority of peers.
-The cluster is not available and cannot be used because the quorum is lost. 
-
-
-Whether `etcd` is available or not depends on how many `etcd` members are available/not available at a given moment.
-It is important to differentiate between transient and permanent failures.
-Transient failures happen when a member is temporarily not available, for example when a machine running one `etcd` member is rebooting.
-Permanent failures happen when a member was irrevocably lost, for example a machine hard disk failure.
-The `etcd` cluster can tolerate up to (N - 1) / 2 permanent failures, where N is the number of `etcd` members; a subset of masters and possibly workers.
-The number of etcd nodes must always maintain `Majority` quorum. 
-
-`Majority` means that the number of available etcd cluster members must never be lower or equal to the number of unavailable nodes.
-If, for example, you have only `1` or `2` etcd members, the cluster has a fault tolerance of `0` because `0` nodes can be faulty for the cluster to maintain ``Majority``. 
-
-If you have `6` nodes, a maximum of `2` nodes can become faulty for the cluster to remain in degraded but working state.
-If `3` or more nodes fail, there is no longer a majority of nodes working, therefore the cluster becomes unavailable. 
-
-For example: The fault tolerance of a cluster with `7` nodes is ``3``, because you need at least `4` active nodes to maintain majority. 
-
-
-When (N - 1) / 2 or fewer permanent failures happen in a given `etcd` cluster, the cluster still has a quorum.
-It is then possible to remove the faulty members and add new ones.
-The new members will synchronize with the existing ones.
-This does not require an explicit backup/restore procedure, as it is normal `etcd` operation. 
-
-When more than (N - 1) / 2 permanent failures happen in a given `etcd` cluster, the quorum is lost irrevocably.
-That means that there is no way to recover from that situation, because it is no longer possible to remove faulty members or add new members.
-In this case, it is necessary to start a new `etcd` cluster from a backup, and grow it. 
+[command]``etcd`` requires special considerations for maintaining cluster health and integrtiy.
+Refer to: <<_sec.deploy.requirements.system.cluster.etcd_cluster_size>>. 
 
 [[_sec.admin.scale_cluster]]
 == Scaling the Cluster
@@ -648,14 +605,14 @@ Will only be shown if the `URL` field contains ``https:``.
 +
 Provide the body of the (self-signed) SSL certificate for the registry. 
 . You will be shown a summary of the details of the registry you have just created. 
-+
++ 
 If you have to adjust the registry click menu:Edit[]
 to return to the editing dialog. 
-+
++ 
 Click menu:Delete[]
 if you made a mistake and wish to remove the registry.
 You can always remove the registry from the overview later. 
-+
++ 
 If you wish to define a mirror for this registry you can click on menu:Add Mirror[]
 to do so.
 For details, refer to <<_sec.admin.velum.mirror>>

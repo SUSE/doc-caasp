@@ -54,7 +54,7 @@ Deploying NGINX Ingress Controller allows us to provide TLS termination to our s
 
 
 . Monitoring namespace 
-+
++ 
 We will deploy our monitoring stack in its own namespace and therefore create one. 
 +
 
@@ -62,9 +62,9 @@ We will deploy our monitoring stack in its own namespace and therefore create on
 {prompt.user}``kubectl create namespace monitoring`` 
 ----
 . Create DNS entries 
-+
++ 
 In this example, we will use a worker node with IP `192.168.1.113` to expose our services. 
-+
++ 
 You should configure proper DNS names in any production environment.
 These values are only for example purposes. 
 +
@@ -83,7 +83,7 @@ Or add this entry to /etc/hosts
 192.168.1.113 prometheus.example.com prometheus-alertmanager.example.com grafana.example.com
 ----
 . Create certificates 
-+
++ 
 You will need SSL certificates for the shared resources.
 If you are deploying in a pre-defined network environment, please get proper certificates from your network administrator.
 In this example, the domains are named after the components they represent. ``prometheus.example.com``, `prometheus-alertmanager.example.com` and `grafana.example.com`
@@ -269,9 +269,9 @@ Deploying Prometheus https://prometheus.io/docs/practices/pushing/[Pushgateway] 
 
 
 . Configure Authentication 
-+
++ 
 We need to create a `basic-auth` secret so the NGINX Ingress Controller can perform authentication. 
-+
++ 
 Install [command]``htpasswd`` on your local workstation 
 +
 
@@ -304,7 +304,7 @@ Create secret in {kube}
 {prompt.user}``kubectl create secret generic -n monitoring prometheus-basic-auth --from-file=auth`` 
 ----
 . Create a configuration file [path]``prometheus-config-values.yaml``
-+
++ 
 We need to configure the storage for our deployment.
 Choose among the options and uncomment the line in the config file.
 In production environments you must configure persistent storage. 
@@ -489,7 +489,7 @@ alertmanagerFiles:
       - to: 'admin@example.com'
 ----
 . Replace the empty set of rules `rules: {}` in the `serverFiles` section of the configuration file. 
-+
++ 
 For more information on how to configure alerts, refer to: https://prometheus.io/docs/alerting/notification_examples/[Prometheus:
 Alerting - Notification Template Examples]
 +
@@ -540,7 +540,7 @@ In {kube}
 
 .Procedure: Configuring Grafana
 . Configure provisoning 
-+
++ 
 Create the default datasource configuration file _grafana-datasources.yaml_ which point to our Prometheus server 
 +
 
@@ -574,7 +574,7 @@ data:
 {prompt.user}``kubectl create -f grafana-datasources.yaml`` 
 ----
 . Configure storage for the deployment 
-+
++ 
 Choose among the options and uncomment the line in the config file.
 In production environments you must configure persistent storage. 
 ** Use an existing PersistentVolumeClaim 

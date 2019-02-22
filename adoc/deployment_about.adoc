@@ -1,4 +1,4 @@
-[[_deployment.about]]
+[[_cha.deploy.about]]
 = About {productname}
 :doctype: book
 :sectnums:
@@ -15,51 +15,76 @@
 :experimental:
 :imagesdir: ./images
 
-{suse}{reg}
-CaaS (Container as a Service) Platform is a platform designed for fast deployment of container-based applications.
-You can deploy {productname}
-onto physical servers or use it on virtual machines.
-After deployment, it is ready to run out of the box and provides a highly-scalable cluster. 
+{suse}{productname}
+is a Cloud-Native Computing Foundation (CNCF) certified {kube}
+distribution on top of {suse}{mos}
+. {suse}{mos}
+is a minimalist operating system based on {sle}
+, dedicated to hosting containers. {suse}{mos}
+inherits the benefits of {sle}
+in the form of a smaller, simpler, and more robust operating system, optimized for large, clustered deployments.
+It also features an atomic, transactional update mechanism, making the system more resilient against software-update-related problems. 
 
 {productname}
-was designed to simplify the transformation of applications into __application containers__.
-Creating clouds with containers is much easier than installing those applications directly onto the underlying operating system, as it eliminates problems with inter-application  compatibility and dependencies.
-To enable the most rapid application deployment possible, a container orchestration framework, e.g. {kube}
-, helps considerably. 
+automates the orchestration and management of containerized applications and services with powerful {kube}
+capabilities, including: 
+
+* Workload scheduling optimizes hardware utilization while taking the container requirements into account. 
+* Service proxies provide single IP addresses for services and distribute the load between containers. 
+* Application scaling up and down accommodates changing loads. 
+* Non-disruptive rollout/rollback of new applications and updates enables frequent changes without downtime. 
+* Health monitoring and management supports application self-healing and ensures application availability. 
+
+
+In addition, {productname}
+simplifies the platform operator`'s experience, with everything you need to get up and running quickly, and to manage the environment effectively in production.
+It provides: 
+
+* A complete container execution environment, including a purpose-built container host operating system ({suse}{mos} ), container runtime, and container image registries. 
+* Enhanced datacenter integration features that enable you to plug {kube} into new or existing infrastructure, systems, and processes. 
+* Application ecosystem support with {sle} container base images, and access to tools and services offered by {suse} Ready for CaaS Platform partners and the {kube} community. 
+* End-to-End security, implemented holistically across the full stack. 
+* Advanced platform management that simplifies platform installation, configuration, re-configuration, monitoring, maintenance, updates, and recovery. 
+* Enterprise hardening including comprehensive interoperability testing, support for thousands of platforms, and world-class platform maintenance and technical support. 
+
+
+You can deploy {productname}
+onto physical servers or use it on virtual machines.
+After deployment, it is immediately ready to run and provides a highly-scalable cluster. 
 
 While {productname}
 inherits benefits of {sle}
-and uses tools and technologies well-known to system administrators{mdash}
-such as ``cloud-init``, Kubernetes, and SaltStack{mdash}
-the main innovation (compared to {sls}
-) comes with **transactional
-  updates**.
+and uses tools and technologies well-known to system administrators such as `cloud-init` and Salt, the main innovation (compared to {sls}
+) comes with **transactional updates**.
 A transactional update is an update that can be installed when the system is running without any down-time.
-A transaction update can be rolled back, so if the upgdate fails or is not compatible with your infrastructure, you can restore the previous system state. 
+A transactional update can be rolled back, so if the update fails or is not compatible with your infrastructure, you can restore the previous system state. 
 
 {productname}
 uses the {btrfs}
 file system with the following characteristics: 
 
-* The root filesystem and its snapshots are read-only. 
+* The root file system and its snapshots are read-only. 
 * Sub-volumes for data sharing are read-write. 
 * {productname} introduces overlays of the `/etc` directories used by `cloud-init` and {salt} . 
 
 
-[[_caasp.architecture]]
-== {productname} Architecture
+For more information, including a list of the various components which make up {productname}
+please refer to the Release Notes on https://www.suse.com/releasenotes/. 
+
+[[_sec.deploy.architecture]]
+== Architectural Overview
 
 
 A typical {productname}
 cluster consists of several types of nodes: 
 
-* The _{admin_node}_ is a {smaster} which assigns roles to {sminion} s. This node runs the Velum Web-based dashboard for managing the whole cluster. For details, refer to <<_administration_dashboard>>. 
+* The _{admin_node}_ is a {smaster} which assigns roles to {sminion} s. This node runs the {dash} Web-based dashboard for managing the whole cluster. For details, refer to <<_sec.deploy.architecture.administration_node>>. 
 * Each {cluster_node} is a {sminion} which can have one of the following roles: 
 ** {kube} master: _{master_node} s_ manage the worker nodes. 
-** {kube} worker: _{worker_node} s_ run the application containers which are the main workload of the cluster.
+** {kube} worker: _{worker_node} s_ run the application containers with the main workload of the cluster.
 
 
-In large-scale clusters, there are other nodes that can help you to manage and run the cluster: 
+In large-scale clusters, there are other types of node that can help you to manage and run the cluster: 
 
 * a local _{smt} server_ that manages subscriptions for workers and so decreases the traffic to the {scc} . 
 * a _log server_ that stores the cluster nodes' logs. 
@@ -67,44 +92,76 @@ In large-scale clusters, there are other nodes that can help you to manage and r
 
 The following figure illustrates the interactions of the nodes. 
 
-.{productname}Nodes Architecture [[_caasp.architecture.cluster]]
+.{productname}Nodes Architecture [[_fig.deploy.architecture.cluster]]
 
-image::caasp_generic_scheme.png[scaledwidth=100%]
+image::caasp_generic_scheme.png[SUSE CaaS Platform Nodes Architecture,scaledwidth=100%]
+
+
+[[_sec.deploy.components]]
+== Software Components
 
 
 To run the whole cluster, {productname}
 uses various technologies such as {salt}
-Stack, Flannel networking, the `etcd` distributed key- store database, a controller, a scheduler, ``kubelet``, a choice of two container runtime engines, and a {kube}
- API Server. 
+, Flannel networking, the `etcd` distributed key- store database, a controller, a scheduler, ``kubelet``, a {kube}
+ API Server, and a choice of two container runtime engines, Docker or CRI-O. 
+
+* {empty}
++
+
+.Docker
+This is the leading open-source format for application containers.
+It is fully supported by {suse}
+. 
++
+For more information, see https://www.docker.com/. 
+* {empty}
++
+
+.CRI-O
+Designed specifically for {kube}
+, CRI-O is an implementation of CRI, the Container Runtime Interface.
+A lightweight alternative to Docker or Moby, it supports Open Container Initiative (OCI) images. 
++
+For more information, see http://cri-o.io/. 
++
+.Container Engine Support Status
+NOTE: CRI-O is included as an __unsupported technology
+       preview__, to allow customers to evaluate the new technology.
+It is _not_ supported for use in production deployments. 
++
+
 
 {salt}
-is used to manage deployment and administration of the cluster.
-The `{salt}
+is used to manage deployment and administration of the cluster. `{salt}
 -api` is used to distribute commands from {dashboard}
  to the `salt-master` daemon.
-The `salt-master` daemon stores events in _MariaDB_ (the database is also used to store {dashboard}
- data). The `salt-minion` daemon on the {admin_node}
- is used to generate required certificates, and on the {sminion}
-s the daemons communicate with the {admin_node}
+The `salt-master` daemon stores events in __MariaDB__, which is also used to store {dashboard}
+ data.
+The `salt-minion` daemon on the {admin_node}
+ generates the required certificates, and {sminion}
+s on the {worker_node}
+s communicate with the {admin_node}
 . 
 
-As there can be several containers running on each host machine, each container is assigned an IP address that is used for communication with other containers on the same host machine.
-Containers might need to have a unique IP address exposed for network communication, thus flannel networking is used.
-Flannel gives each host an IP sub net from which the container engine can allocate IP addresses for containers.
-The mapping of IP addresses is stored by using ``etcd``.
-The `flanneld` is used to manage routing of packets and mapping of IP addresses. 
+As there can be several containers running on each host machine, each container is assigned an IP address that is used for communication with other containers on the same host.
+Containers might need to have a unique IP address exposed for network communications, thus Flannel networking is used.
+Flannel gives each host an IP subnet from which the container engine can allocate IP addresses to containers.
+The mapping of IP addresses is stored by ``etcd``.
+The `flanneld` daemon manages routing of packets and mapping of IP addresses. 
 
 Within the cluster there are several instances of ``etcd``, each with a different purpose.
-The `etcd discovery` running on the {admin_node}
- is used to bootstrap instances of `etcd` running on other nodes and is not part of the `etcd` cluster on other nodes.
+The `etcd discovery` daemon running on the {admin_node}
+ is used to bootstrap instances of `etcd` on other nodes and is not part of the `etcd` cluster on the other nodes.
 The `etcd` instance on the {master_node}
- stores events from the API Server.
+ stores events from the {kube}
+ API Server.
 The `etcd` instance on {worker_node}
 s runs as a proxy that forwards clients to the `etcd` on the {master_node}
 . 
 
 {kube}
-is used to manage containers orchestration.
+is used to manage container orchestration.
 The following services and daemons are used by {kube}
 : 
  kubelet::
@@ -123,19 +180,19 @@ This runs on each node and is used to distribute loads and reach services.
 
 Now let's focus on a more detailed view of the cluster that involves also services running on each node type. 
 
-.Services on nodes [[_caasp.architecture.services]]
+.Services on nodes [[_fig.deploy.architecture.services]]
 
-image::caasp_nodes_architecture.png[scaledwidth=90%]
+image::caasp_nodes_architecture.svg[Services on nodes,scaledwidth=100%]
 
 
-[[_administration_dashboard]]
-=== The Administration Node
+[[_sec.deploy.architecture.administration_node]]
+== The Administration Node
 
 
 The {admin_node}
 manages the cluster and runs several applications required for proper functioning of the cluster.
 Because it is integral to the  operation of {productname}
-,the {admin_node}
+, the {admin_node}
 must have a fully-qualified  domain name (FQDN) which can be resolved from outside the cluster. 
 
 The {admin_node}
@@ -153,8 +210,8 @@ are managed by `kubelet` as a static pod.
 Bear in mind that this `kubelet` does not manage the cluster nodes.
 Each cluster node has its own running instance of ``kubelet``. 
 
-[[_master_node]]
-=== Master Nodes
+[[_sec.deploy.architecture.master_nodes]]
+== Master Nodes
 
 {productname}{master_node}
 s monitor and control the {worker_node}
@@ -174,10 +231,10 @@ must have a resolvable FQDN.
 For {dashboard}
 to function correctly, it must always be able to resolve the  IP address of a {master_node}
 , so if there are multiple {master_node}
-s, they must all share the same FQDN, meaning that some form of DNS load-balancing, such as a round-robin DNS server, should be configured. 
+s, they must all share the same FQDN, meaning that load-balancing should be configured. 
 
-[[_worker_node]]
-=== Worker Nodes
+[[_sec.deploy.architecture.worker_node]]
+== Worker Nodes
 
 
 The {worker_node}
