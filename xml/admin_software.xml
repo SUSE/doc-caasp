@@ -57,7 +57,7 @@
    available. If there are any updates to be applied, a new snapshot of the root
    file system is created in the background and is updated from the release
    channels. All updates released to this point are applied. The running
-   filesystem/machine state is left untouched.
+   file system/machine state is left untouched.
   </para>
   <para>
    The new snapshot, once completely updated, is then marked as active and will
@@ -118,28 +118,39 @@
      <term><literal>pkg in/install</literal></term>
      <listitem>
       <para>
-       Installs a specific package from the available channels using the
+       Installs individual packages from the available channels using the
        <command>zypper install</command> command. This command can also be used to
-       install a PTF RPM file. Please note that the changes to the base filesystem
+       install PTF RPM files. Please note that the changes to the base file system
        only become permanent after a reboot.
       </para>
-<screen>&prompt.root;<command>transactional-update pkg install <replaceable>&lt;packagename&gt;</replaceable></command></screen>
+<screen>&prompt.root;<command>transactional-update pkg install <replaceable>PACKAGE_NAME</replaceable></command></screen>
       <para>or</para>
-<screen>&prompt.root;<command>transactional-update pkg install <replaceable>&lt;RPM1 RPM2&gt;</replaceable></command></screen>
+<screen>&prompt.root;<command>transactional-update pkg install <replaceable>RPM1 RPM2</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>pkg rm/remove</literal></term>
      <listitem>
       <para>
-       Removes a specific package from the available channels using the
+       Removes individual packages from the active snapshot using the
        <command>zypper remove</command> command. This command can also be used to
-       remove a PTF RPM file. Please note that the changes to the base filesystem
+       remove PTF RPM files. Please note that the changes to the base file system
        only become permanent after a reboot.
       </para>
-<screen>&prompt.root;<command>transactional-update pkg remove <replaceable>&lt;packagename&gt;</replaceable></command></screen>
-      <para>or</para>
-<screen>&prompt.root;<command>transactional-update pkg remove <replaceable>&lt;RPM1 RPM2&gt;</replaceable></command></screen>
+<screen>&prompt.root;<command>transactional-update pkg remove <replaceable>PACKAGE_NAME</replaceable></command></screen>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>pkg up/update</literal></term>
+     <listitem>
+      <para>
+       Updates individual packages from the active snapshot using the
+       <command>zypper update</command> command. This command can also be used
+       to update PTF RPM files. Please note that only packages that are part of
+       the snapshot of the base file system can be updated and changes only
+       become permanent after a reboot.
+      </para>
+      <screen>&prompt.root;<command>transactional-update pkg remove <replaceable>PACKAGE_NAME</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -357,7 +368,7 @@
      You can use <command>transactional-update</command> to apply updates
      or install PTF files manually.
     </para>
-<screen>&prompt.root;<command>transactional-update <replaceable>pkg install &lt;packagename&gt;</replaceable> reboot</command></screen>
+<screen>&prompt.root;<command>transactional-update pkg install <replaceable>PACKAGE_NAME</replaceable> reboot</command></screen>
     <para>
      If your node is accepted to the cluster, it will have been configured to
      use Salt orchestration to reboot. The updated node will show in
@@ -814,7 +825,7 @@ retcode:
     </screen>
     <para>
      The machine will reboot to incorporate the module into the read-only
-     filesystem and start from the new snapshot.
+     file system and start from the new snapshot.
     </para>
     </step>
     <step>
