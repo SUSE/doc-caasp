@@ -1,0 +1,217 @@
+= Format Test: The subtitle
+:author: L. Orem Ipsum
+:revnumber: 1.2.3
+:revdate: 01/01/1970
+:sectnums:
+:toclevels: 5
+:sectnumlevels: 5
+:source-highlighter: rouge
+:imagesdir: ../_images/
+
+== Heading Level 1
+
+*bold*
+
+_italic_
+
+*_bold-italic_*
+
+^superscript^
+
+link:https://www.google.com[Link]
+
+`Literal`
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. _Praesent eu orci_ nec justo pulvinar aliquet et vel metus. Fusce **lacinia justo sodales ipsum** suscipit, nec link:http://www.lipsum.com/feed/html[maximus massa] aliquam. Suspendisse non porta odio. *_Quisque condimentum_*, ipsum at porta ullamcorper, ante velit fermentum lectus, at dictum turpis dui eu ante. Aenean in est eu sem pulvinar dictum. Quisque nunc velit, tincidunt ac tincidunt elementum, varius ac eros. `Aliquam egestas pulvinar massa et hendrerit`.
+
+* Maecenas porta posuere vestibulum.
+** Quisque _maximus enim_ nec cursus mollis.
+*** Ut id *tortor* a leo aliquet lacinia sed quis mi.
+
+- Quisque dignissim lacus eu eros malesuada euismod.
+- Sed efficitur, link:https://ipsum.com[quam nec aliquet] convallis,
++
+----
+neque mi suscipit quam, ac euismod tellus tortor a nisi.
+----
+- Cras bibendum imperdiet tincidunt. Aliquam imperdiet, ante sed tempus ullamcorper, felis ipsum mattis ex, quis ullamcorper metus eros eget nunc. Ut ut magna lacus.
+
+<<<
+
+=== Heading Level 2
+
+[options="header",cols="2"]
+|===
+|First Cell
+|Second Cell
+
+|Odd Row, Cell One
+|Odd Row, Cell Two
+
+|Even Row, Cell One
+|Even Row, Cell Two
+
+|image:smile.png[Smile,width=40]
+|A smile
+|===
+
+<<<
+
+==== Heading Level 3
+
+[source,java]
+----
+final class MonoJust<T>
+extends Mono<T>
+    implements Fuseable.ScalarCallable<T>, Fuseable {
+
+  final T value; // <1>
+
+  MonoJust(T value) {
+    this.value = Objects.requireNonNull(value, "value");
+  }..}
+----
+<1> This is a code callout.
+
+===== Heading Level 4
+
+TIP: This is a tip
+
+NOTE: This is a note
+
+IMPORTANT: This is important
+
+WARNING: This is a warning
+
+CAUTION: Use caution
+
+<<<
+
+====== Heading Level 5
+
+
+[quote, L. Orem Ipsum]
+Nunc congue posuere nibh ut eleifend. In ac ante at felis interdum pretium at et lectus. Sed pulvinar ornare imperdiet. Nulla tincidunt, elit fermentum porta molestie, lacus tellus porttitor augue, at tristique turpis nulla vitae nisi. Nunc imperdiet arcu sit amet iaculis accumsan. Vivamus feugiat blandit volutpat. Etiam est lectus, venenatis ac mi sed, tincidunt ullamcorper eros. Nulla ac odio eu dolor porttitor aliquam non sit amet ligula. Duis sodales rhoncus ornare. Praesent ultricies nisl sed ipsum elementum, et varius nunc porttitor. Proin eu odio mollis, ultricies libero feugiat, ornare dui.
+
+image::smile.png[Smile]
+
+
+Nulla laoreet lobortis image:smile.png[smile,width=30] congue. Nam mauris mauris, pharetra non nunc sed, euismod mollis ligula. Nam lobortis diam non purus bibendum, lacinia eleifend felis mollis. Integer nec dui consequat, blandit lorem sit amet, faucibus tellus. Vestibulum a mauris vel tellus faucibus volutpat. Nulla non mattis elit. Sed commodo gravida sapien at convallis.
+
+Integer elementum erat tortor::
+  nec facilisis nisl mattis vitae.
+
+Aliquam::
+  erat volutpat.
+
+== Diagram
+
+[ditaa,standard,png]
+....
++-------------+  /+------------------------------------------------------------------------------------+\
+|             |  +                                                                                      +
+| HIRO System |  |                                 HIRO Standard Installation                           |
+|  cBLU       |  |                                     (Three Machines)                                 |
++-------------+  |                               cBLU                                                   |
+                 |                                                                                      |
++-------------+  |  /+----------------------+\ /+------------------------+\ /+----------------------+\  |
+|             |  |  +                        + +                          + +                        +  |
+| Machine     |  |  |     Graph Node         | |     Engine Node          | |      IAM Node          |  |
+|  cGRE       |  |  |     cGRE               | |     cGRE                 | |      cGRE              |  |
++-------------+  |  |  +------------------+  | |   +-------------------+  | |   +-----------------+  |  |
+                 |  |  |                  |  | |   |                   |  | |   |                 |  |  |
+                 |  |  |    HIRO Graph    |  | |   |    HIRO Engine    |  | |   |    HIRO IAM     |  |  |
+                 |  |  |                  |  | |   |                   |  | |   |                 |  |  |
+                 |  |  |  o GraphDB       |  | |   |   o HIRO Engine   |  | |   |  o WSO2IS       |  |  |
+                 |  |  |  o Cassandra     |  | |   |                   |  | |   |  o SSL          |  |  |
+                 |  |  |  o ZooKeeper     |  | |   |                   |  | |   |                 |  |  |
+                 |  |  |  o Hadoop        |  | |   |                   |  | |   |                 |  |  |
+                 |  |  +                  +  | |   |                   |  | |   |                 |  |  |
+                 |  +  \+----------------+/  + +   +-------------------+  + +   +-----------------+  +  |
+                 |  \+----------------------+/ \+------------------------+/ \+----------------------+/  |
+                 +                                                                                      +
+                 \+------------------------------------------------------------------------------------+/
+....
+
+[ditaa,single,png]
+....
++------------------+
+|                  |          /+---------+\    /+---------+\
+|         ^        |          +   iam_1   +    +   iam_2   +
+|         |        |          |cGRE       +----+cGRE       |
+|         |        |          + o WSO2IS  +    + o WSO2IS  +
+|         |        |          \+----+----+/    \+----+----+/
+|         |        |                ^                ^
+|         |        |                |  ^LB Failo^er^ |
+|         |        |         +------+---------+------+---------+^------------+
+|         |        |         |                |                |             |
+|         +        |  /+-----+-----+\   /+----+------+\  /+----+------+\     |
+|                  |  +{s} db_1     +   +{s} db_2     +  +{s} db_3     +     |
+|       HIRO       |  |cGRE         |   |cGRE         |  |cGRE         |     |
+|       Stack      |  | o GraphDB   +---+ o GraphDB   +--+ o GraphDB   |     |
+|                  |  | o Cassandra |   | o Cassandra |  | o Cassandra |     |
+|       cBLU       |  | o Zookeeper |   | o Zookeeper |  | o Zookeeper |     |
+|                  |  + o H.Master  +   + o H.Worker  +  + o H.Worker  +     |
+|         +        |  \+-----+-----+/   \+-----+-----+/  \+-----+-----+/     |
+|         |        |         ^                 ^                ^            |
+|         |        |         |  LB round robin | for GraphDB    |            |
+|         |        |         +-------+---------+------+---------+            |
+|         |        |                 |                |                      |
+|         |        |          /+-----+-----+\  /+-----+-----+\               |
+|         |        |          +   engine_1  +  +   engine_2  +               |
+|         |        |          |cGRE         +--+cGRE         +---------------+
+|         v        |          + o Engine    +  + o Engine    +
+|                  |          \+-----------+/  \+-----------+/
++------------------+
+
++------------------+
+|                  |
+|     Machines     |
+|  cGRE            |
++------------------+
+....
+
+[ditaa,dual,png]
+....
++-----------------+
+|                 |                                                         :
+|        ^        |                           /+---------+\                 :               /+---------+\
+|        |        |                           +   iam_1   +                 :               +   iam_2   +
+|        |        |                           |cGRE       +---------------------------------+cGRE       |
+|        |        |                           + o WSO2IS  +                 :               + o WSO2IS  +
+|        |        |                           \+---------+/                 :               \+---------+/
+|        |        |                           ^                             :                ^
+|        |        |                           |               LB failover   :                |
+|        |        |                           +-----+--------------------------------------+-+
+|        |        |                                 |                       :              |
+|        |        |         +----------------+------+---------+^---------+  :  +----------^-----------------+----------------+
+|        |        |         |                |                |          |  :  |           |                |                |
+|        +        |  /+-----+-----+\  /+-----+-----+\  /+-----+-----+\   |  :  |   /+------+----+\  /+------+----+\  /+------+----+\
+|                 |  +{s}db_1.1    +  +{s}db_1.2    +  +{s}db_1.3    +   |  :  |   +{s}db_2.1    +  +{s}db_2.2    +  +{s}db_2.3    +
+|    HIRO Stack   |  |cGRE         |  |cGRE         |  |cGRE         |   |  :  |   |cGRE         |  |cGRE         |  |cGRE         |
+|                 |  | o GraphDB   +--+ o GraphDB   +--+ o GraphDB   |   |  :  |   | o GraphDB   +--+ o GraphDB   +--+ o GraphDB   |
+|    cBLU         |  | o Cassandra |  | o Cassandra |  | o Cassandra |   |  :  |   | o Cassandra |  | o Cassandra |  | o Cassandra |
+|                 |  | o Zookeeper |  | o Zookeeper |  | o Zookeeper |   |  :  |   | o Zookeeper |  | o Zookeeper |  | o Zookeeper |
+|        +        |  + o H.Master  +  + o H.Worker  +  + o H.Worker  +   |  :  |   + o H.Worker  +  + o H.Worker  +  + o H.Worker  +
+|        |        |  \+-----+-----+/  \+-----+-----+/  \+-----+-----+/   |  :  |   \+-----+-----+/  \+-----+-----+/  \+-----+-----+/
+|        |        |         ^                ^                ^          |  :  |          ^                ^                ^
+|        |        |         | LB round robin | for site 1     |          |  :  |          | LB round robin | for site 2     |
+|        |        |         +---------------------------------+          |  :  |          +---------------------------------+
+|        |        |                          |                           |  :  |                           |
+|        |        |                   /+-----+-----+\                    |  :  |                    /+-----+-----+\
+|        |        |                   +  engine_1   +--------------------+  :  +--------------------+  engine_2   +
+|        |        |                   |cGRE         |                       :                       |cGRE         |
+|        |        |                   + o Engine    +-----------------------------------------------+ o Engine    +
+|        |        |                   \+-----------+/                       :                       \+-----------+/
+|        |        |                                                         :
+|        v        |                                                         :
+|                 |                       Site 1                            :                            Site 2
++-----------------+
+
++-----------------+
+|                 |
+|     Machines    |
+|     cGRE        |
++-----------------+
+
+....
