@@ -1,6 +1,7 @@
 #!/bin/bash
 
 asciidoctor-pdf \
+-a toc-title=Contents \
 -a pdf-style=suse \
 -a pdf-stylesdir=$SUSEDOC/pdf_template \
 -a icons=font \
