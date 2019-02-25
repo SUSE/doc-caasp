@@ -2,6 +2,7 @@
 
 asciidoctor-pdf \
 -a toc-title=Contents \
+-a chapter-label= \
 -a pdf-style=suse \
 -a pdf-stylesdir=$SUSEDOC/pdf_template \
 -a icons=font \
