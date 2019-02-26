@@ -7,20 +7,9 @@
 :experimental:
 :sourcedir: .
 :imagesdir: ./images
-= Security
 
-[abstract]
---
-This section introduces the security features of {productname}
-.
-This includes authentication, management of users and groups, and the configuration of audit log files. 
---
-:doctype: book
-:sectnums:
-:toc: left
-:icons: font
-:experimental:
-:imagesdir: ./images
+This section introduces the security features of {productname}.
+This includes authentication, management of users and groups, and the configuration of audit log files.
 
 [[_sec.admin.security.auth.kubeconfig]]
 == Access Control Overview
@@ -29,7 +18,7 @@ This includes authentication, management of users and groups, and the configurat
 provides role-based access control (RBAC) to perform authentication and authorization of activities performed against a {kube}
 cluster. {kube}
 uses several steps for access control.
-The steps in processing order are: 
+The steps in processing order are:
 
 Authentication::
 The authentication confirms the identity of an user.
@@ -37,7 +26,7 @@ The _OpenID Connect_ (__OIDC__) implementation `dex` is used as an authenticatio
 . `dex` connects to an LDAP server to look up user information.
 To authenticate against the cluster, the [path]``kubeconfig``
 file is used.
-For details, refer to <<_sec.admin.kubernetes.install_kubectl>>. 
+For details, refer to <<_sec.admin.kubernetes.install_kubectl>>.
 
 Authorization::
 {productname}
@@ -47,31 +36,31 @@ Groups and users, called _subjects_ in {kube}
 , are managed with LDAP.
 For details, refer to <<_sec.admin.security.users>>.
 To define which operations, called _verbs_ in {kube}
-, are allowed for subjects, refer to <<_sec.admin.security.role>>. 
+, are allowed for subjects, refer to <<_sec.admin.security.role>>.
 
 Admission::
 Admission controllers in {kube}
 can mutate and validate requests.
-For details, refer to https://v1-11.docs.kubernetes.io/docs/reference/access-authn-authz/admission-controllers/. 
+For details, refer to https://v1-11.docs.kubernetes.io/docs/reference/access-authn-authz/admission-controllers/.
 
 
 For details about access control in {kube}
-, refer to https://v1-11.docs.kubernetes.io/docs/reference/access-authn-authz/controlling-access/. 
+, refer to https://v1-11.docs.kubernetes.io/docs/reference/access-authn-authz/controlling-access/.
 
 [[_sec.admin.security.admin]]
 == Administrator Accounts
 
 
-By default there are two administrator accounts added to openLDAP: 
+By default there are two administrator accounts added to openLDAP:
 
 openLDAP admin user::
 `cn=admin,dc=infra,dc=caasp,dc=local`
 +
-This is the "root" user for openLDAP and has full permissions to change credentials. 
+This is the "root" user for openLDAP and has full permissions to change credentials.
 +
-When the instructions in this section ask for `LDAP_ADMIN_PASSWORD` they require the openLDAP admin password. 
+When the instructions in this section ask for `LDAP_ADMIN_PASSWORD` they require the openLDAP admin password.
 +
-You can retrieve the current password from the admin node. 
+You can retrieve the current password from the admin node.
 +
 
 ----
@@ -80,33 +69,33 @@ You can retrieve the current password from the admin node.
 {dashboard} admin user::
 `uid=test,ou=People,dc=infra,dc=caasp,dc=local`
 +
-This account does not have privileges to change administrator passwords in openLDAP. 
+This account does not have privileges to change administrator passwords in openLDAP.
 +
 The account is created by the user on first login to {dashboard}
 and consequently for configuring {productname}
-. 
+.
 
 
 [[_sec.admin.security.admin.ldap_password]]
 === Changing openLDAP Admin User Password
 
 .Procedure: Changing openLDAP Admin User Password
-. Log in to the admin node via SSH. 
-. Change the openLDAP admin password in the file [path]``/var/lib/misc/infra-secrets/openldap-password`` . 
+. Log in to the admin node via SSH.
+. Change the openLDAP admin password in the file [path]``/var/lib/misc/infra-secrets/openldap-password`` .
 +
 
 ----
-{prompt.user}``echo new_password > /var/lib/misc/infra-secrets/openldap-password`` 
+{prompt.user}``echo new_password > /var/lib/misc/infra-secrets/openldap-password``
 ----
-. Restart openLDAP to activate the changes. 
+. Restart openLDAP to activate the changes.
 +
 
 ----
-{prompt.user}``docker stop $(docker ps -q -f name=ldap)`` 
+{prompt.user}``docker stop $(docker ps -q -f name=ldap)``
 ----
 +
 After about `20` seconds, the OpenLDAP container will be automatically restarted with the new root password.
-This will only replace the credentials for the openLDAP admin user and not affect any other user configurations. 
+This will only replace the credentials for the openLDAP admin user and not affect any other user configurations.
 
 
 [[_sec.admin.security.admin.velum_admin_password]]
@@ -115,39 +104,39 @@ This will only replace the credentials for the openLDAP admin user and not affec
 
 Changing the {dashboard}
 admin password must be done in the openLDAP container running on the admin node.
-You will need the openLDAP admin password that is stored on the admin node itself. 
+You will need the openLDAP admin password that is stored on the admin node itself.
 
 .Procedure: Changing {dashboard}Admin Password
-. Log in to the admin node via SSH. 
-. Open a shell session on the openLDAP container. 
+. Log in to the admin node via SSH.
+. Open a shell session on the openLDAP container.
 +
 
 ----
-{prompt.user}``docker exec -it $(docker ps -q -f name=ldap) /bin/bash`` 
+{prompt.user}``docker exec -it $(docker ps -q -f name=ldap) /bin/bash``
 ----
-. Use [command]``slappasswd`` to generate a hashed and salted password string. 
+. Use [command]``slappasswd`` to generate a hashed and salted password string.
 +
 
 ----
 {prompt.user}``slappasswd -n -s password`` {SSHA}mU7vDqF+cyNQlnQ2bZyvY4oFfjX9uDm3
 ----
 +
-NOTE: By ommitting the `-s <password>` parameter, you will be prompted to enter a new secret instead of providing it through the input. 
+NOTE: By ommitting the `-s <password>` parameter, you will be prompted to enter a new secret instead of providing it through the input.
 +
 
-. Find the distinguished name (DN) user string for the administrator user. 
+. Find the distinguished name (DN) user string for the administrator user.
 +
 
 ----
-{prompt.user}``UNAME=$(slapcat -n1 | grep uniqueMember | cut -d': ' -f2)`` 
+{prompt.user}``UNAME=$(slapcat -n1 | grep uniqueMember | cut -d': ' -f2)``
 ----
-. Set the new password. Replace `new_password` with the string you generated in the previous step. Replace $UNAME will replace it with the DN from the previous step (e.g. ``uid=user,ou=People,dc=infra,dc=caasp,dc=local``). 
+. Set the new password. Replace `new_password` with the string you generated in the previous step. Replace $UNAME will replace it with the DN from the previous step (e.g. ``uid=user,ou=People,dc=infra,dc=caasp,dc=local``).
 +
 
 ----
 {prompt.user}``ldappasswd -H ldaps:// -D "cn=admin,dc=infra,dc=caasp,dc=local" \
 -w $(cat /var/lib/misc/infra-secrets/openldap-password) \
-$UNAME -s new_password`` 
+$UNAME -s new_password``
 ----
 
 
@@ -157,29 +146,29 @@ $UNAME -s new_password``
 
 To perform administrative tasks from a [replaceable]``WORKSTATION`` on the [productname]##LDAP##
  directory, retrieve the [productname]##OpenLDAP##
- administrator password and install the LDAP certificate. 
+ administrator password and install the LDAP certificate.
 
 
-. Retrieve the LDAP admin password. Note the password for later use. 
+. Retrieve the LDAP admin password. Note the password for later use.
 +
 
 ----
-{prompt.root.admin}``cat /var/lib/misc/infra-secrets/openldap-password`` 
+{prompt.root.admin}``cat /var/lib/misc/infra-secrets/openldap-password``
 ----
-. Import the LDAP certificate to your local trusted certificate storage. On the {admin_node} , run: 
+. Import the LDAP certificate to your local trusted certificate storage. On the {admin_node} , run:
 +
 
 ----
 {prompt.root.admin}``docker exec -it $(docker ps -q -f name=ldap) \
-cat /etc/openldap/pki/ca.crt > ~/ca.pem`` {prompt.root.admin}``scp ~/ca.pem root@WORKSTATION:/usr/share/pki/trust/anchors/ca-caasp.crt.pem`` 
+cat /etc/openldap/pki/ca.crt > ~/ca.pem`` {prompt.root.admin}``scp ~/ca.pem root@WORKSTATION:/usr/share/pki/trust/anchors/ca-caasp.crt.pem``
 ----
 +
-Replace [replaceable]``WORKSTATION`` with the appropriate hostname for the workstation where you wish to run the LDAP queries. 
-. Then, on that workstation, run: 
+Replace [replaceable]``WORKSTATION`` with the appropriate hostname for the workstation where you wish to run the LDAP queries.
+. Then, on that workstation, run:
 +
 
 ----
-{prompt.root}``update-ca-certificates`` 
+{prompt.root}``update-ca-certificates``
 ----
 
 
@@ -193,7 +182,7 @@ User information is stored in [productname]##OpenLDAP##
 You can use standard LDAP administration tools for managing these users remotely.
 To do so, install the [package]#openldap2#
  package on a computer in your network and make sure that computer can connect to the {admin_node}
- on port ``389``. 
+ on port ``389``.
 
 [[_sec.admin.security.users.add]]
 === Adding New User
@@ -203,64 +192,46 @@ By default, when you create the first user in {dashboard}
 during bootstrap of your cluster, that user is granted `Cluster
     Administrator` privileges within {kube}
 .
-You can add additional users with these rights by adding new entries into the LDAP directory. 
+You can add additional users with these rights by adding new entries into the LDAP directory.
 
 
-. To add a new user, create a LDIF file like this: 
+. To add a new user, create a LDIF file like this:
 +
 
 [[_ex.admin.security.users.add]]
 .LDIF File For a New User
 ====
 ----
-dn: uid=`USERID` <1>,ou=People,dc=infra,dc=caasp,dc=local
+dn: uid=`USERID`,ou=People,dc=infra,dc=caasp,dc=local // <1>
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: top
-uid:`USERID`<<_co.admin.security.users.add.uid>>userPassword:`PASSWORD_HASH` <2>givenname:`FIRST_NAME` <3>sn:`SURNAME` <4>cn:`FULL_NAME` <5>mail:`E-MAIL_ADDRESS` <6>
+uid:`USERID`<<_co.admin.security.users.add.uid>>userPassword:`PASSWORD_HASH` givenname:`FIRST_NAME` sn:`SURNAME` cn:`FULL_NAME` mail:`E-MAIL_ADDRESS` <2> <3> <4> <5> <6>
 ----
-<1>
-         User ID (UID) of the new user. Needs to be unique.
-        
-<2>
-         The user's hashed password. Use [command]``/usr/sbin/slappasswd``
+<1> User ID (UID) of the new user. Needs to be unique.
+<2> The user's hashed password. Use [command]``/usr/sbin/slappasswd`` to generate the hash.
+<3> The user's first name
+<4> The user's last name
+<5> The user's full name
+<6> The user's e-mail address. It is used as the login name to {dashboard} and {kube}.
 
-         to generate the hash.
-        
-<3>
-         The user's first name
-        
-<4>
-         The user's last name
-        
-<5>
-         The user's full name
-        
-<6>
-         The user's e-mail address. It is used as the login name to {dashboard}
-
-         and {kube}
-.
-        
 ====
-. Populate your OpenLDAP server with this LDIF file: 
+. Populate your OpenLDAP server with this LDIF file:
 +
 
 ----
 {prompt.user}``ldapadd -H ldap://ADMINISTRATION_NODE_FQDN:389 -ZZ \
--D cn=admin,dc=infra,dc=caasp,dc=local -w LDAP_ADMIN_PASSWORD -f LDIF_FILE`` 
+-D cn=admin,dc=infra,dc=caasp,dc=local -w LDAP_ADMIN_PASSWORD -f LDIF_FILE``
 ----
-
 
 === Showing User Attributes
 
-
-To show the attributes of a user, use the [command]``ldapsearch`` command. 
+To show the attributes of a user, use the [command]``ldapsearch`` command.
 
 ----
 {prompt.user}``ldapsearch -H ldap://ADMINISTRATION_NODE_FQDN:389 -ZZ \
     -D cn=admin,dc=infra,dc=caasp,dc=local -w LDAP_ADMIN_PASSWORD \
-    -b uid=USERID,ou=People,dc=infra,dc=caasp,dc=local`` 
+    -b uid=USERID,ou=People,dc=infra,dc=caasp,dc=local``
 ----
 
 [[_sec.admin.security.users.change.group]]
@@ -269,32 +240,24 @@ To show the attributes of a user, use the [command]``ldapsearch`` command.
 
 The following procedure details how to modify a user in the LDAP directory.
 The example LDIF files detail how to change a user password and add a user to the `Administrators` group.
-To modify other fields, use the the password example and replace `userPassword` with other field names. 
+To modify other fields, use the the password example and replace `userPassword` with other field names.
 
 
-. Create a LDIF file that contains the change to the LDAP directory. 
+. Create a LDIF file that contains the change to the LDAP directory.
 +
 
 [[_ex.admin.security.users.change_password]]
 .Change User Password
 ====
 ----
-dn: uid=`USERID` <7>,ou=People,dc=infra,dc=caasp,dc=local
+dn: uid=`USERID`,ou=People,dc=infra,dc=caasp,dc=local // <7>
 changetype: modify
 replace: userPassword
-userPassword:`PASSWORD` <8>
+userPassword:`PASSWORD` // <8>
 ----
-<7>
-         [replaceable]``USERID``
- with the user's ID.
-        
-<8>
-         [replaceable]``PASSWORD``
- with the user's new hashed
-         password. Use [command]``/usr/sbin/slappasswd``
- to
-         generate the hash.
-        
+<7> [replaceable]``USERID`` with the user's ID.
+<8> [replaceable]``PASSWORD`` With the user's new hashed password. Use [command]``/usr/sbin/slappasswd`` to generate the hash.
+
 ====
 +
 
@@ -305,19 +268,18 @@ userPassword:`PASSWORD` <8>
 dn: cn=Administrators,ou=Groups,dc=infra,dc=caasp,dc=local
 changetype: modify
 add: uniqueMember
-uniqueMember: uid=`USERID` <9>,ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=`USERID` ,ou=People,dc=infra,dc=caasp,dc=local // <9>
 ----
-<9>
-         [replaceable]``USERID``
+<9> [replaceable]``USERID``
  with the user's ID.
-        
+
 ====
-. Execute [command]``ldapmodify``. 
+. Execute [command]``ldapmodify``.
 +
 
 ----
 {prompt.user}``ldapmodify -H ldap://ADMIN_NODE:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local \
--w LDAP_ADMIN_PASSWORD -f LDIF_FILE`` 
+-w LDAP_ADMIN_PASSWORD -f LDIF_FILE``
 ----
 
 
@@ -325,22 +287,22 @@ uniqueMember: uid=`USERID` <9>,ou=People,dc=infra,dc=caasp,dc=local
 === Deleting User
 
 
-The following procedure details how to delete a user from the LDAP database. 
+The following procedure details how to delete a user from the LDAP database.
 
 
-. Create an LDIF file that contains that specifies the distinguished name of the entry and a deletion command. 
+. Create an LDIF file that contains that specifies the distinguished name of the entry and a deletion command.
 +
 
 ----
 dn: uid=`USER_ID`,ou=People,dc=infra,dc=caasp,dc=local
 changetype: delete
 ----
-. Execute [command]``ldapmodify``. 
+. Execute [command]``ldapmodify``.
 +
 
 ----
 {prompt.user}``ldapmodify -H ldap://ADMIN_NODE:389 -ZZ -D uid=USER_ID,ou=People,dc=infra,dc=caasp,dc=local \
--w LDAP_ADMIN_PASSWORD -f LDIF_DELETE`` 
+-w LDAP_ADMIN_PASSWORD -f LDIF_DELETE``
 ----
 
 
@@ -350,10 +312,10 @@ changetype: delete
 
 To grant users access to manage a single namespace in {kube}
 , first create your users as mentioned in <<_sec.admin.security.users.add>>.
-Then execute the following procedure. 
+Then execute the following procedure.
 
 
-. Create a LDIF file for a new group: 
+. Create a LDIF file for a new group:
 +
 
 [[_ex.admin.security.groups]]
@@ -369,19 +331,19 @@ uniqueMember: uid=`member3`,<<_co.admin.security.groups.member>>ou=People,dc=inf
 ----
 <10>
          The group's name.
-        
+
 <11>
          Members of the group. Repeat the `uniqueMember`
 
          attribute for every member of this group.
-        
+
 ====
-. Populate your [productname]##OpenLDAP## server with the LDIF file: 
+. Populate your [productname]##OpenLDAP## server with the LDIF file:
 +
 
 ----
 {prompt.user}``ldapadd -H ldap://ADMINISTRATION_NODE_FQDN:389 -ZZ \
--D cn=admin,dc=infra,dc=caasp,dc=local -w LDAP_ADMIN_PASSWORD -f LDIF_FILE`` 
+-D cn=admin,dc=infra,dc=caasp,dc=local -w LDAP_ADMIN_PASSWORD -f LDIF_FILE``
 ----
 
 
@@ -393,49 +355,49 @@ uses _role-based access control_ authorization for {kube}
 .
 Roles define, which _subjects_ (users or groups) can use which _verbs_ (operations) on __resources__.
 The following sections provide an overview of resources, verbs and how to create roles.
-Roles can then be assigned to users and groups. 
+Roles can then be assigned to users and groups.
 
 [[_sec.admin.security.role.verb]]
 === List of Verbs
 
 
 This section provides an overview of the most common _verbs_ (operations) used for defining roles.
-Verbs correspond to sub-commands of [command]``kubectl``. 
+Verbs correspond to sub-commands of [command]``kubectl``.
 
 create::
-Create a resource. 
+Create a resource.
 
 delete::
-Delete resources. 
+Delete resources.
 
 deletecollection::
-Delete a collection of CronJob. 
+Delete a collection of CronJob.
 
 get::
-Display individual resource. 
+Display individual resource.
 
 list::
-Display collections. 
+Display collections.
 
 patch::
-Update an API object in place. 
+Update an API object in place.
 
 proxy::
 Allows running {kubectl}
-in a mode where it acts as a reverse proxy. 
+in a mode where it acts as a reverse proxy.
 
 update::
-Update fields of a resource, for example annotations or labels. 
+Update fields of a resource, for example annotations or labels.
 
 watch::
-Watch resource. 
+Watch resource.
 
 
 [[_sec.admin.security.role.resource]]
 === List of Resources
 
 
-This section provides an overview of the most common _resources_ used for defining roles. 
+This section provides an overview of the most common _resources_ used for defining roles.
 
 Autoscaler::
 https://v1-11.docs.kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
@@ -488,11 +450,11 @@ Roles are defined in YAML files.
 To apply role definitions to {kube}
 , use [command]``kubectl apply -f
     [replaceable]``YAML_FILE````.
-The following examples provide an overview about different use cases of roles. 
+The following examples provide an overview about different use cases of roles.
 
 .Simple Role for Core Resource
 ====
-This example allows to ``get``, `watch` and `list` all `pods` in the namespace ``default``. 
+This example allows to ``get``, `watch` and `list` all `pods` in the namespace ``default``.
 
 ----
 kind: Role
@@ -505,13 +467,13 @@ metadata:
          Name of the role. This is required to associate the rule with
          a group or user. For details, refer to <<_sec.admin.security.role.create_binding>>
 .
-        
+
 <13>
          Namespace the new group should be allowed to access. Use
          `default`
  for {kube}
 ' default namespace.
-        
+
 <14>
          {kube}
  API groups. Use `
@@ -519,25 +481,25 @@ metadata:
  for the core group
          ``rbac.authorization.k8s.io``
 .
-        
+
 <15>
          {kube}
  resources. For a list of available resources, refer to
          <<_sec.admin.security.role.resource>>
 .
-        
+
 <16>
          {kube}
  verbs. For a list of available verbs, refer to
          <<_sec.admin.security.role.verb>>
 .
-        
+
 ====
 
 .Clusterwide Creation of Pods
 ====
 This example allows to `create```pods`` clusterwide.
-Note the `ClusterRole` value for [option]``kind``. 
+Note the `ClusterRole` value for [option]``kind``.
 
 ----
 kind: ClusterRole
@@ -550,7 +512,7 @@ metadata:
          Name of the role. This is required to associate the rule with
          a group or user. For details, refer to <<_sec.admin.security.role.create_binding>>
 .
-        
+
 <18>
          {kube}
  API groups. Use `
@@ -558,19 +520,19 @@ metadata:
  for the core group
          ``rbac.authorization.k8s.io``
 .
-        
+
 <19>
          {kube}
  resources. For a list of available resources, refer to
          <<_sec.admin.security.role.resource>>
 .
-        
+
 <20>
          {kube}
  verbs. For a list of available verbs, refer to
          <<_sec.admin.security.role.verb>>
 .
-        
+
 ====
 
 [[_sec.admin.security.role.create_binding]]
@@ -580,12 +542,12 @@ metadata:
 To bind a group or user to a rule, create a YAML file that contains the role binding description.
 Then apply the binding with [command]``kubectl apply -f
     [replaceable]``YAML_FILE````.
-The following examples provide an overview about different use cases of role bindings. 
+The following examples provide an overview about different use cases of role bindings.
 
 [[_ex.admin.security.groups.role]]
 .Binding a Group to a Role
 ====
-This example shows how to bind a group to a defined role. 
+This example shows how to bind a group to a defined role.
 
 ----
 kind: RoleBinding
@@ -600,20 +562,20 @@ roleRef:
 ----
 <21>
        Defines a name for this new role binding.
-      
+
 <22>
        Name of the namespace for which the binding applies.
-      
+
 <24>
        Name of the role used. For defining rules, refer to
        <<_sec.admin.security.role.create>>
 .
-      
+
 <23>
        Name of the LDAP group to which this binding applies. For
        creating groups, refer to <<_sec.admin.security.groups>>
 .
-      
+
 ====
 
 [[_sec.admin.security.certs]]
@@ -622,27 +584,27 @@ roleRef:
 
 During the installation of {productname}
 , a CA (Certificate Authority) certificate is generated; that is then used to authenticate and verify all communications.
-The process also creates and distributes client certificates for the components. 
+The process also creates and distributes client certificates for the components.
 
-Communication is secured with TLS v1.2 using the `AES 128 CBC` cipher. 
+Communication is secured with TLS v1.2 using the `AES 128 CBC` cipher.
 
-All client certificates are 4096 Bit RSA encrypted. 
+All client certificates are 4096 Bit RSA encrypted.
 
 Certificates are located in [path]``/etc/pki``
- on each cluster node. 
+ on each cluster node.
 
 [[_sec.admin.security.certs.renewal]]
 === Certificate Renewal
 
 
-The CA certificate is valid for `3650` days (10 years) by default. 
+The CA certificate is valid for `3650` days (10 years) by default.
 
-The client certificates are valid for `365` days (1 year) by default. 
+The client certificates are valid for `365` days (1 year) by default.
 
 All certificates have a renewal period of `90` days before expiration.
-If orchestration of the cluster is run during that period, the certificates which are about to expire are renewed automatically. 
+If orchestration of the cluster is run during that period, the certificates which are about to expire are renewed automatically.
 
-To manually renew certificates, refer to <<_sec.admin.troubleshooting.replace_certificates>>. 
+To manually renew certificates, refer to <<_sec.admin.troubleshooting.replace_certificates>>.
 
 .Renewing Expired Certificates
 [IMPORTANT]
@@ -652,42 +614,42 @@ and navigate to menu:Settings[]
 .
 Click the menu:Apply changes[]
  button.
-This will force a refresh of the cluster settings and any expired certificates will be renewed. 
+This will force a refresh of the cluster settings and any expired certificates will be renewed.
 
 If this still fails, you can replace the certificates manually.
-Refer to: <<_sec.admin.troubleshooting.replace_certificates>>. 
+Refer to: <<_sec.admin.troubleshooting.replace_certificates>>.
 ====
 
 [[_sec.admin.security.certs.installing_rootca]]
 === Obtaining and Installing Root CA Certificate
 
 
-. Obtain the root CA certificate from any node in your cluster with [command]``scp``. 
+. Obtain the root CA certificate from any node in your cluster with [command]``scp``.
 +
 
 ----
-{prompt.user}``scp NODE:/etc/pki/trust/anchors/SUSE_CaaSP_CA.crt .`` 
+{prompt.user}``scp NODE:/etc/pki/trust/anchors/SUSE_CaaSP_CA.crt .``
 ----
-. Copy the Root CA certificate file into the trust anchors directory [path]``/etc/pki/trust/anchors/`` . 
+. Copy the Root CA certificate file into the trust anchors directory [path]``/etc/pki/trust/anchors/`` .
 +
 
 ----
 {prompt.sudo}cp`SUSE_CaaSP_CA`.crt /etc/pki/trust/anchors/
 ----
-. Update the cache for known CA certificates. 
+. Update the cache for known CA certificates.
 +
 
 ----
-{prompt.sudo}``update-ca-certificates`` 
+{prompt.sudo}``update-ca-certificates``
 ----
 
 
 .Operating System Specific Instructions
 [NOTE]
 ====
-The location of the trust store anchors directory or the command to refresh the CA certificates cache might vary depending on your operating system. 
+The location of the trust store anchors directory or the command to refresh the CA certificates cache might vary depending on your operating system.
 
-Please consult the official documentation for your operating system to find the respective alternatives. 
+Please consult the official documentation for your operating system to find the respective alternatives.
 ====
 
 [[_sec.admin.security.pod_policies]]
@@ -696,33 +658,33 @@ Please consult the official documentation for your operating system to find the 
 
 This section provides an overview of policy settings for pod security.
 By default, pod security policies are already enabled on {productname}
-. 
+.
 
 {productname}
 comes with 2 pre-defined policies.
 These policies are detailed in the examples below, including the required role definitions.
 All authenticated users and service accounts are given the role ``suse:caasp:psp:unprivileged``.
 Other role bindings have to be created manually.
-For details about roles and role bindings, refer to <<_sec.admin.security.role>>. 
+For details about roles and role bindings, refer to <<_sec.admin.security.role>>.
 
 <<_ex.admin.security.pod_policies.unprivileged>>::
 This is the default policy.
 It is a compromise between security and daily needs.
-This policy is bound to the role ``suse:caasp:psp:unprivileged``. 
+This policy is bound to the role ``suse:caasp:psp:unprivileged``.
 
 <<_ex.admin.security.pod_policies.privileged>>::
 This policy has few restrictions and should only be given to highly trusted users.
-This policy is bound to the role ``suse:caasp:psp:privileged``. 
+This policy is bound to the role ``suse:caasp:psp:privileged``.
 
 <<_ex.admin.security.pod_policies.daemonset>>::
-This example details how to define a privileged DaemonSet with a new default service account. 
+This example details how to define a privileged DaemonSet with a new default service account.
 
 
 To create new policies, you can adapt the provided example policies to your needs.
 Then copy them into a YAML file and apply the definition by executing [command]``kubectl apply -f
-   [replaceable]``YAML_FILE````. 
+   [replaceable]``YAML_FILE````.
 
-Detailed information is available at https://v1-11.docs.kubernetes.io/docs/concepts/policy/pod-security-policy/. 
+Detailed information is available at https://v1-11.docs.kubernetes.io/docs/concepts/policy/pod-security-policy/.
 
 [[_ex.admin.security.pod_policies.unprivileged]]
 .Unprivileged Pod Security Policy
@@ -730,7 +692,7 @@ Detailed information is available at https://v1-11.docs.kubernetes.io/docs/conce
 The unprivileged Pod Security Policy is intended to be a reasonable compromise between the reality of {kube}
 workloads and the role ``suse:caasp:psp:privileged``.
 By default, {productname}
- grants this policy to all users and service accounts. 
+ grants this policy to all users and service accounts.
 
 ----
 ---
@@ -813,14 +775,14 @@ resourceNames: ['suse.caasp.psp.unprivileged']<<_co.admin.security.pod_policies.
 <25>
       Make sure to change the policy and role name when adapting the
       example for your own policies.
-     
+
 ====
 
 [[_ex.admin.security.pod_policies.privileged]]
 .Privileged Pod Security Policy
 ====
 The privileged Pod Security Policy is intended to be given only to trusted workloads.
-It provides for as few restrictions as possible and should only be assigned to highly trusted users. 
+It provides for as few restrictions as possible and should only be assigned to highly trusted users.
 
 ----
 ---
@@ -899,13 +861,13 @@ resourceNames: ['suse.caasp.psp.privileged']<<_co.admin.security.pod_policies.pr
 <26>
       Make sure to change the policy and role name when adapting the
       example for your own policies.
-     
+
 ====
 
 [[_ex.admin.security.pod_policies.daemonset]]
 .Privileged DaemonSet
 ====
-This example details how to create a privileged DaemonSet which uses the role ``suse:caasp:psp:privileged``. 
+This example details how to create a privileged DaemonSet which uses the role ``suse:caasp:psp:privileged``.
 
 ----
 ---
@@ -968,21 +930,21 @@ security audit log please see: <<_sec.admin.logging.kubernetes>>
 
 You can configure the cluster to authenticate {dashboard}
 and {kube}
-users against a pre-existing Lightweight Directory Access Protocol (LDAP) server and use https://ldap.com/ldap-filters/[LDAP Filters] to select the scope of users that will be permitted access. 
+users against a pre-existing Lightweight Directory Access Protocol (LDAP) server and use https://ldap.com/ldap-filters/[LDAP Filters] to select the scope of users that will be permitted access.
 
 .Automatic Attributes from LDAP
 [IMPORTANT]
 ====
-Please note that users that belong to the `administrators` group in LDAP will automatically be assigned the role of ``cluster-admin``. 
+Please note that users that belong to the `administrators` group in LDAP will automatically be assigned the role of ``cluster-admin``.
 ====
 
 .Procedure: Configuring External LDAP connector
 . Log in to {dashboard}
-. Access the LDAP configuration settings under menu:Settings → EXTERNAL AUTHENTICATION → LDAP Connectors[] . 
-. Click on menu:Add LDAP connector[] to add a new connector. 
-. Configure the connector. 
-. Test the connector. 
-. Save your connector settings. 
+. Access the LDAP configuration settings under menu:Settings → EXTERNAL AUTHENTICATION → LDAP Connectors[] .
+. Click on menu:Add LDAP connector[] to add a new connector.
+. Configure the connector.
+. Test the connector.
+. Save your connector settings.
 
 
 [[_sec.admin.security.external.ldap.configuration]]
@@ -991,7 +953,7 @@ Please note that users that belong to the `administrators` group in LDAP will au
 .LDAP Anonymous Binding
 [NOTE]
 ====
-Anonymous binding is available, if allowed by the LDAP server. 
+Anonymous binding is available, if allowed by the LDAP server.
 ====
 
 
@@ -999,39 +961,39 @@ image::velum_settings_ldap.png[scaledwidth=100%]
 
 
 Name::
-Name shown to user when selecting a connector 
+Name shown to user when selecting a connector
 
 
 ==== Server
 
 
-Basic settings for the LDAP server host 
+Basic settings for the LDAP server host
 
 Host::
-Host name of LDAP server reachable from the cluster 
+Host name of LDAP server reachable from the cluster
 +
 
 .Provide the hostname as FQDN
 NOTE: The menu:Host[]
- field must use a Fully Qualified Domain Name, as IP address is not allowed with TLS. 
+ field must use a Fully Qualified Domain Name, as IP address is not allowed with TLS.
 +
 
 
 Port::
-The port on which to connect to the host (e.g. ``StartTLS: 389, TLS: 646``) 
+The port on which to connect to the host (e.g. ``StartTLS: 389, TLS: 646``)
 
 StartTLS::
-When enabled use StartTLS otherwise TLS will be used 
+When enabled use StartTLS otherwise TLS will be used
 
 Certificate::
 The menu:Certificate[]
-field must be a Base64-encoded PEM key. 
+field must be a Base64-encoded PEM key.
 
 
 ==== Authentication
 
 Anonymous::
-Use anonymous authentication to do initial user search. 
+Use anonymous authentication to do initial user search.
 +
 Selects if you wish to perform an anonymous bind with the LDAP server.
 If set to menu:False[]
@@ -1039,85 +1001,85 @@ you must provide a menu:DN[]
 and a menu:Password[]
 .
 The latter two are hidden when the slider is set to menu:True[]
-. 
+.
 
 DN::
-Bind DN of user that can do user searches 
+Bind DN of user that can do user searches
 
 Password::
-Password of the user 
+Password of the user
 
 
 ==== User Search
 
 
-Definition of the user search parameters 
+Definition of the user search parameters
 
 Username Prompt::
-Label of LDAP attribute users will enter to identify themselves (e.g. ``username``) 
+Label of LDAP attribute users will enter to identify themselves (e.g. ``username``)
 
 Base DN::
-BaseDN where users are located (e.g. ``cn=users,dc=example,dc=com``) 
+BaseDN where users are located (e.g. ``cn=users,dc=example,dc=com``)
 
 Filter::
-Filter to specify type of user objects (e.g. ``"(objectClass=person)"``) 
+Filter to specify type of user objects (e.g. ``"(objectClass=person)"``)
 
 
 ==== User Attribute Map
 
 
-Definition of the user attribute map 
+Definition of the user attribute map
 
 Username::
-Attribute users will enter to identify themselves 
+Attribute users will enter to identify themselves
 
 ID::
-Attribute used to identify user within the system (e.g. ``uid``) 
+Attribute used to identify user within the system (e.g. ``uid``)
 
 Email::
-Attribute containing email of users 
+Attribute containing email of users
 
 Name::
-Attribute used as username used within OIDC tokens 
+Attribute used as username used within OIDC tokens
 
 
 ==== Group Search
 
 
-Definition of group search parameters 
+Definition of group search parameters
 
 Base DN::
-BaseDN where groups are located (e.g. ``cn=users,dc=example,dc=com``) 
+BaseDN where groups are located (e.g. ``cn=users,dc=example,dc=com``)
 
 Filter::
-Filter to specify type of user objects (e.g. ``"(objectClass=group)"``) 
+Filter to specify type of user objects (e.g. ``"(objectClass=group)"``)
 
 
 ==== Group Attribute Map
 
 
-Definition of group attribute map 
+Definition of group attribute map
 
 User::
-Attribute to map as user (e.g. ``uid``) 
+Attribute to map as user (e.g. ``uid``)
 
 Group::
-Attribute identifying membership (e.g. ``member``) 
+Attribute identifying membership (e.g. ``member``)
 
 Name::
-Attribute to map as name (e.g. ``name``) 
+Attribute to map as name (e.g. ``name``)
 
 
 [[_sec.admin.security.external.ldap.examples]]
 === Examples
 
 
-In both directories, `user-regular1` and `user-regular2` are members of the `k8s-users` group, `user-admin` is a member of the `k8s-admins` group. 
+In both directories, `user-regular1` and `user-regular2` are members of the `k8s-users` group, `user-admin` is a member of the `k8s-admins` group.
 
 For Active Directory, `user-bind` is a simple user which is member of the default `Domain Users` group.
-Hence, we can use it to authenticate because has read-only access to Active Directory. 
+Hence, we can use it to authenticate because has read-only access to Active Directory.
 
-The mail attribute is used to create the RBAC rules. 
+The mail attribute is used to create the RBAC rules.
 
 [[_sec.admin.security.external.ldap.examples.ad]]
 ==== Active Directory
