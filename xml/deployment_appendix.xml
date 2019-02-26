@@ -93,23 +93,6 @@
     &productname; provides &cilium; in version 1.2.
    </para>
   </sect2>
-  <sect2 xml:id="deployment.appendix.cilium.image">
-   <title>Pre-loading of the &cilium; container image</title>
-   <procedure>
-    <step>
-     <para>
-      Copy <filename>caasp-cilium-image.x86_64-1-Build-1.1.docker.tar</filename> to each node of the cluster.
-     </para>
-    </step>
-    <step>
-     <para>
-      On each node of the cluster perform the following command:
-     </para>
-<screen>&prompt.root;<command>docker load -i caasp-cilium-image.x86_64-1-Build-1.1.docker.tar</command></screen>
-    </step>
-   </procedure>
-
-  </sect2>
   <sect2 xml:id="deployment.appendix.cilium.salt-conf">
    <title>Configuring of &smaster; to deploy &cilium;</title>
    <procedure>
@@ -127,16 +110,13 @@
      <para>
       From this shell edit the
       <filename>/usr/share/salt/kubernetes/pillar/cni.sls</filename> file.
-      Remove the whole <literal>flannel</literal> section. Inside
-      <literal>cni</literal> section, change the <literal>plugin</literal> from
-      <literal>flannel</literal> to <literal>cilium</literal>.
+      Inside <literal>cni</literal> section, change the <literal>plugin</literal>
+      from <literal>flannel</literal> to <literal>cilium</literal>.
      </para>
      <para>
-      The file should look like that:
+      The last section of the file should look like that:
      </para>
 <screen>
-cilium:
-  image:  'caasp/v4/cilium:1.2.1'
 cni:
   plugin: 'cilium'
   dirs:
