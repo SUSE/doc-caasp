@@ -117,7 +117,7 @@
       important data into a tar file archive:
      </para>
 <screen>&prompt.root;<command>
-tar czf <replaceable>backup-admin-node-$( date +'%Y-%m-%d' ).tgz</replaceable> -C / \
+tar czf <replaceable>backup-admin-node-$(date +'%Y-%m-%d').tgz</replaceable> -C / \
     var/lib/misc/salt-master-credentials \
     usr/share/salt \
     etc/pki usr/share/caasp-container-manifests \
@@ -139,9 +139,9 @@ tar czf <replaceable>backup-admin-node-$( date +'%Y-%m-%d' ).tgz</replaceable> -
      <para>
       Then, export the MariaDB database and archive it:
      </para>
- <screen>&prompt.root;<command>docker exec $(docker ps -qf name="velum-mariadb") mysqldump \
- --password=$(cat /var/lib/misc/infra-secrets/mariadb-root-password) \
- velum_production | gzip > <replaceable>/var/tmp/db-backup-[$(date+'%Y-%m-%d')].sql.gz</replaceable></command>
+<screen>&prompt.root;<command>docker exec $(docker ps -qf name="velum-mariadb") mysqldump \
+--password=$(cat /var/lib/misc/infra-secrets/mariadb-root-password) \
+velum_production | gzip > <replaceable>/var/tmp/db-backup-$(date +'%Y-%m-%d').sql.gz</replaceable></command>
  </screen>
     </step>
     <step>
@@ -169,6 +169,10 @@ tar czf <replaceable>backup-admin-node-$( date +'%Y-%m-%d' ).tgz</replaceable> -
      <para>
       Set up a new machine for the &admin_node; by following
       <xref linkend="sec.deploy.nodes.admin_install" />.
+     </para>
+     <para>
+      Make sure the &admin_node; is registered against &scc; and has the latest
+      packages installed from the update channel.
      </para>
      <para>
       You must be able to access &dashboard; indicating all containers are
