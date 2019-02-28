@@ -62,13 +62,36 @@
   <para />
 
   <para>
-   &cilium; is a &cni; plugin and daemon which uses &ebpf; in-kernel virtual
-   machine for implementing &net_pols;. It's introduced in &productname; v4 as
-   a tech preview feature.
+   &kube; allows to choose one of many available Network Plugins, which usually
+   come in form of &cni; plugins. By default, &productname; ships &flannel; as
+   a default &cni; plugin. However, &flannel; has one major limitation.
   </para>
   <para>
-   &flannel;, which is a default CNI plugin in &productname; does not support
-   &net_pols;.
+   &kube; provides a specification called &net_pols; which define how groups of
+   pods are allowed to communicate with each other and with other network
+   endpoints. &net_pols; are clustered firewall rules defined with &kube;
+   concepts. But &kube; does not provide &net_pols; implementation on its own.
+   &cni; plugins are supposed to implement &net_pols; on their own.
+  </para>
+  <para>
+   The limination of &flannel; mentioned above is lack of &net_pols; support.
+  </para>
+  <para>
+   &productname; provides an another &cni; plugin as a tech preview feature -
+   &cilium; - which supports &net_pols;.
+  </para>
+  <para>
+   The main characteristic of &cilium; is using &ebpf; as a mechanism for
+   filtering incoming and outgoing packets in containers. &ebpf; (which stands
+   for <emphasis role="bold">extended Berkeley Packet Filter</emphasis>) is a
+   bytecode interpreter inside Linux kernel which allows to write programs to
+   analyze, filter network packets and to monitor system function calls.
+   &cilium; translates &net_pols; into &ebpf; programs which are loaded into
+   the kernel.
+  </para>
+  <para>
+   This section shows how to set up &cilium; on &productname; and check whether
+   it is working.
   </para>
   <sect2 xml:id="deployment.appendix.cilium.disclaimers">
    <title>Disclaimers</title>
@@ -141,6 +164,106 @@ cni:
     proceed with the deployment of the cluster. Feel free to change the
     networking settings on the bootstrap page (i.e. <literal>CIDR</literal>);
     all these settings are going to be used by &cilium;.
+   </para>
+  </sect2>
+  <sect2 xml:id="deployment.appendix.cilium.checking">
+   <title>Checking whether &cilium; works</title>
+   <para>
+    This section is based on the official &cilium; documentation which provides
+    <link xlink:href="http://docs.cilium.io/en/v1.4/gettingstarted/http/">an example for checking &net_pols; in &cilium;</link>.
+   </para>
+   <para>
+    It comes with three microservices applications inspired by Star Wars:
+   </para>
+   <variablelist>
+    <varlistentry>
+     <term>&deathstar;</term>
+     <listitem>
+      <para>
+       An HTTP webservice, which is exposed as a Kubernetes Service. It provides
+       landing services to the Empire's spaceships which can request a landing.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>&tiefighter;</term>
+     <listitem>
+      <para>
+       A pod which serves as a landing-request client. It's Empire's ship.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>&xwing;</term>
+     <listitem>
+      <para>
+       A pod which serves as a landing-request client. It's Alliance's ship.
+      </para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+   <procedure>
+    <title>Checking whether &cilium; works with Star Wars microservices</title>
+    <step>
+     <para>
+      Deploy Star Wars applications with the following command:
+     </para>
+<screen>&prompt.root;<command>kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.2/examples/minikube/http-sw-app.yaml</command>
+service/deathstar created
+deployment.extensions/deathstar created
+pod/tiefighter created
+pod/xwing created</screen>
+    </step>
+    <step>
+     <para>
+      Check the status of pods and services, wait until they are all ready.
+     </para>
+<screen>&prompt.root;<command>kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.2/examples/minikube/http-sw-app.yaml</command>
+NAME                             READY   STATUS    RESTARTS   AGE
+pod/deathstar-6fb5694d48-5hmds   1/1     Running   0          107s
+pod/deathstar-6fb5694d48-fhf65   1/1     Running   0          107s
+pod/tiefighter                   1/1     Running   0          107s
+pod/xwing                        1/1     Running   0          107s
+
+NAME                 TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)   AGE
+service/deathstar    ClusterIP   10.96.110.8   &lt;none&gt;  80/TCP    107s
+service/kubernetes   ClusterIP   10.96.0.1     &lt;none&gt;  443/TCP   3m53s</screen>
+    </step>
+    <step>
+     <para>
+      Check whether both tiefighter and xwing are allowed to connect to deathstar and acces the API. They should, because there was no &net_pol; applied yet.
+     </para>
+     <screen>&prompt.root;<command>kubectl exec xwing -- curl -s -XPOST deathstar.default.svc.cluster.local/v1/request-landing</command>
+Ship landed
+&prompt.root;<command>kubectl exec tiefighter -- curl -s -XPOST deathstar.default.svc.cluster.local/v1/request-landing</command>
+Ship landed</screen>
+    </step>
+    <step>
+     <para>
+      Apply the &net_pol; which allows to connect to deathstar only from
+      endpoints which have label <literal>org: empire</literal>.
+     </para>
+     <screen>&prompt.root;<command>kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.2examples/minikube/sw_l3_l4_policy.yaml</command>
+ciliumnetworkpolicy.cilium.io/rule1 created</screen>
+    </step>
+    <step>
+     <para>
+      Now try to connect to deathstar from tiefighter. It should work.
+     </para>
+     <screen>&prompt.root;<command>kubectl exec tiefighter -- curl -s -XPOST deathstar.default.svc.cluster.local/v1/request-landing</command>
+Ship landed</screen>
+    </step>
+    <step>
+     <para>
+      And then try to connect to deathstar from xwing. The request shold hang
+      forever and pressing Control-C will be needed to kill the curl request.
+     </para>
+     <screen>&prompt.root;<command>kubectl exec xwing -- curl -s -XPOST deathstar.default.svc.cluster.local/v1/request-landing</command></screen>
+    </step>
+   </procedure>
+   <para>
+    If you were able to go through all steps, it means that &cilium;
+    is up and running properly.
    </para>
   </sect2>
  </sect1>
