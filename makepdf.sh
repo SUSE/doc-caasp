@@ -7,5 +7,5 @@ asciidoctor-pdf \
 -a pdf-stylesdir=$SUSEDOC/pdf_template \
 -a icons=font \
 -a pdf-fontsdir=$SUSEDOC/pdf_template/fonts \
--a source-highlighter=coderay \
+-a source-highlighter=rb-pygments \
 $1
