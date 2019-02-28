@@ -1,38 +1,64 @@
-SUSE CaaS Platform v4 - Alpha1 Release Notes                                   
- 11-February-2019                                                              
-                                                                               
+SUSE CaaS Platform v4 - Beta1 Release Notes
+"This is a BETA release and NOT intended for production usage."
+
 This document lists what is coming with SUSE CaaS Platform v4, what are the differences with v3.
-                                                                               
-                                                                               
-# Changes to the underlying operating system                                   
-                                                                               
+Tested Platforms
+
+    VMWare 6.0 (vmdk file)
+    SUSE Openstack Cloud
+
+
+Bare metal was not tested with this version.
+Changes to the underlying operating system:
+New MicroOS
+
 SUSE CaaS Platform is based on MicroOS, which is a special flavor of SUSE Linux Enterprise Server.
-                                                                               
-    * SUSE CaaS Platform v3 was based on SLE 12 SP3, while v4 is based on SLE 15.
-                                                                               
-                                                                               
-# Changes to the Kubernetes stack                                              
-                                                                               
-    * Updated Kubernetes version: v3 shipped 1.10 via the updates channel. V4 ships with Kubernetes 1.13
-    * Container images are distributed using the SUSE container registry instead of being wrapped into RPM packages. This is reducing the size of our installation medias and the amount of disk space required on the nodes of the cluster. Although this doesn't immediately affect the update process, it will also facilitate updates in the future by making reboots obsolete when a container image changes.
-    * Tech preview: Cilium SDN. Cilium is allowing CaaS Platform users to take advantage of Kubernetes Network Policies. Flannel is still fully supported as part of v4.
-        * Advantages of Cilium over flannel:                                     
-            * Supports Kubernetes Network policy                                 
-            * Pure L3 communication with the help of kube-router/external bgp agent
-            * API aware L7 security policy                                       
-            * Identity based application security policy                         
-            * Distributed load balancing using BFP hash table                    
-                                                                               
-                                                                               
-# Known bugs (P1 and P2)                                                       
-                                                                               
-    * NTP Clients no longer configured automatically on the nodes, user must configure themselves using either yast2 installer, cloud-init, autoyast, or manual config via salt (https://bugzilla.suse.com/show_bug.cgi?id=1118473)
-    * Underlying SLE15 system breaks cluster with dynamic IPs, cluster nodes must have static IP (https://bugzilla.suse.com/show_bug.cgi?id=1121797)
-    * vmdk/vhdx images are broken because of partitions/device-mapper-multipath (https://bugzilla.suse.com/show_bug.cgi?id=1121433)
-    * cri-o cluster is broken (https://bugzilla.suse.com/show_bug.cgi?id=1123716)
-    * No mirror configuration for Airgap for v4 (https://bugzilla.suse.com/show_bug.cgi?id=1125018)
-    * Velum shows invalid hostnames after cluster reboot (https://bugzilla.suse.com/show_bug.cgi?id=1117339)
-    * Adding new node to existing cluster fails (https://bugzilla.suse.com/show_bug.cgi?id=1123497)
-    * Critical pod annotations will be deprecated from k8s 1.13 and removed in 1.14 (https://bugzilla.suse.com/show_bug.cgi?id=1122783)
-    * Velum fails to create new user (https://bugzilla.suse.com/show_bug.cgi?id=1121064)
-    * Container images are from release-3.0 branch (https://bugzilla.suse.com/show_bug.cgi?id=1125100)
+
+    SUSE CaaS Platform v3 was based on SLE 12 SP3, while v4 is based on SLE 15.
+
+NTP Client Configuration
+
+NTP Clients no longer configured automatically on the nodes, user must configure themselves using either yast2 installer, cloud-init, autoyast, or manual config via salt (https://bugzilla.suse.com/show_bug.cgi?id=1118473)
+
+    Solution:
+    User must specify NTP servers to be used in (either):
+    YaST installer: specify servers in the "NTP Servers" field
+    cloud-init: https://susedoc.github.io/doc-caasp/develop/caasp-deployment/single-html/#sec.deploy.cloud-init
+    AutoYaST: https://susedoc.github.io/doc-caasp/develop/caasp-deployment/single-html/#sec.deploy.autoyast and https://www.suse.com/documentation/sles-15/singlehtml/book_autoyast/book_autoyast.html#Configuration.Network.Ntp
+
+Changes to the Kubernetes stack:
+
+    Updated Kubernetes version: v3 shipped 1.10 via the updates channel. V4 ships with Kubernetes 1.13
+    Container images are distributed using the SUSE container registry instead of being wrapped into RPM packages. This is reducing the size of our installation medias and the amount of disk space required on the nodes of the cluster. Although this doesn't immediately affect the update process, it will also facilitate updates in the future by making reboots obsolete when a container image changes.
+    Tech preview: Cilium SDN. Cilium is allowing CaaS Platform users to take advantage of Kubernetes Network Policies. Flannel is still fully supported as part of v4.
+        https://susedoc.github.io/doc-caasp/beta/v4/caasp-deployment/single-html/#deployment.appendix.cilium
+        Advantages of Cilium over flannel:
+            Supports Kubernetes Network policy
+            Pure L3 communication with the help of kube-router/external bgp agent
+            API aware L7 security policy
+            Identity based application security policy
+            Distributed load balancing using BPF hash table
+
+Known bugs
+
+    Underlying SLE15 system breaks cluster with dynamic IPs, cluster nodes must have static IP (https://bugzilla.suse.com/show_bug.cgi?id=1121797) TODO ....
+    No mirror configuration for Airgap for v4 (https://bugzilla.suse.com/show_bug.cgi?id=1125018)
+
+    Velum fails to create new user (https://bugzilla.suse.com/show_bug.cgi?id=1121064).
+    Solution:
+
+        This can happen because of slow connection with registry.suse.com and so it takes more time than expected to pull down the images.
+        When this happens, a workaround is to try again, so the second time the image has already been pulled and so the time is shortened.
+
+    OpenStack CPI not available in Velum (https://bugzilla.suse.com/show_bug.cgi?id=1126524)
+
+    Race condition on orchestration-update for minion due to module caasp-hosts (https://bugzilla.suse.com/show_bug.cgi?id=1126474).
+
+        Workaround: retry the orchestration
+
+    Bootstrap fails: Jinja variable No first item, sequence was empty (https://bugzilla.suse.com/show_bug.cgi?id=1124784).
+
+        Workaround: retry the orchestration
+
+    vmdk/vhdx images are broken because of partitions/device-mapper-multipath (https://bugzilla.suse.com/show_bug.cgi?id=1121433): This bug affects only cri-o on vmware. It does not affect docker.
+    Local RMT/SMT mirror out of sync  (https://bugzilla.suse.com/show_bug.cgi?id=1127006)
