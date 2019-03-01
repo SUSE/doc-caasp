@@ -59,35 +59,41 @@
  <sect1 xml:id="deployment.appendix.cilium">
   <title>Installing &cilium;</title>
 
-  <para />
+  <warning>
+   <title>Tech Preview</title>
+   <para>
+    Please note &cilium; is currently only a tech preview. It will work but
+    is not officially supported.
+   </para>
+  </warning>
 
   <para>
    &kube; allows to choose one of many available Network Plugins, which usually
-   come in form of &cni; plugins. By default, &productname; ships &flannel; as
-   a default &cni; plugin. However, &flannel; has one major limitation.
+   come in form of &cni; plugins.
   </para>
   <para>
    &kube; provides a specification called &net_pols; which define how groups of
    pods are allowed to communicate with each other and with other network
    endpoints. &net_pols; are clustered firewall rules defined with &kube;
    concepts. But &kube; does not provide &net_pols; implementation on its own.
-   &cni; plugins are supposed to implement &net_pols; on their own.
   </para>
   <para>
-   The limination of &flannel; mentioned above is lack of &net_pols; support.
+   &cni; plugins are supposed to implement &net_pols; for &kube;. By default,
+   &productname; ships &flannel; as a default &cni; plugin. However, &flannel;
+   does not provide &net_pols; support.
   </para>
   <para>
-   &productname; provides an another &cni; plugin as a tech preview feature -
+   &productname; provides another &cni; plugin as a tech preview feature -
    &cilium; - which supports &net_pols;.
   </para>
   <para>
-   The main characteristic of &cilium; is using &ebpf; as a mechanism for
-   filtering incoming and outgoing packets in containers. &ebpf; (which stands
-   for <emphasis role="bold">extended Berkeley Packet Filter</emphasis>) is a
-   bytecode interpreter inside Linux kernel which allows to write programs to
-   analyze, filter network packets and to monitor system function calls.
-   &cilium; translates &net_pols; into &ebpf; programs which are loaded into
-   the kernel.
+   The main characteristic of &cilium; is using &ebpf;
+   (<link xlink:href="https://opensource.com/article/17/9/intro-ebpf">extended Berkeley Packet Filter</link>)
+   as a mechanism for filtering incoming and outgoing packets in containers.
+   &ebpf; is a bytecode interpreter inside Linux kernel which allows to write
+   programs to analyze, filter network packets and to monitor system function
+   calls. &cilium; translates &net_pols; into &ebpf; programs which are loaded
+   into the kernel.
   </para>
   <para>
    This section shows how to set up &cilium; on &productname; and check whether
@@ -95,11 +101,13 @@
   </para>
   <sect2 xml:id="deployment.appendix.cilium.disclaimers">
    <title>Disclaimers</title>
-   <para>
-    This document describes temporary way of &cilium; deployment. Before
-    releasing &productname; v4, &cilium; deployment will be supported by
-    &dashboard;.
-   </para>
+   <important>
+    <para>
+     This document describes a temporary way of &cilium; deployment. Before
+     releasing &productname; v4, &cilium; deployment will be supported by
+     &dashboard;.
+    </para>
+   </important>
    <para>
     All steps need to be done <emphasis role="strong">before</emphasis> the
     cluster is deployed with &dashboard;.
@@ -126,18 +134,18 @@
      </para>
      <screen>&prompt.root;<command>transactional-update shell</command></screen>
      <para>
-      You will find yourself into a new shell prompt.
+      This will open a <command>transactional-update</command> shell.
      </para>
     </step>
     <step>
      <para>
-      From this shell edit the
+      From this shell, edit the
       <filename>/usr/share/salt/kubernetes/pillar/cni.sls</filename> file.
       Inside <literal>cni</literal> section, change the <literal>plugin</literal>
       from <literal>flannel</literal> to <literal>cilium</literal>.
      </para>
      <para>
-      The last section of the file should look like that:
+      The last section of the file should look like this:
      </para>
 <screen>
 cni:
@@ -262,8 +270,8 @@ Ship landed</screen>
     </step>
    </procedure>
    <para>
-    If you were able to go through all steps, it means that &cilium;
-    is up and running properly.
+    &cilium; is up and running properly when the previous steps all completed
+    except the last one; which should be forbidden by the policy.
    </para>
   </sect2>
  </sect1>
