@@ -1,0 +1,744 @@
+[[_cha.admin]]
+= Cluster Management
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:sourcedir: .
+:imagesdir: ./images
+
+[[_sec.admin.kubernetes.install_kubectl]]
+== Interacting With {kube}
+
+{kube}
+requires the use of `kubectl` for many tasks.
+You can perform most of these actions while logged in to an SSH session on the master node of your {productname}
+ cluster. `kubectl` is a pre-installed component of {productname}
+.
+
+The proxy functionality requires `kubectl` to be installed on your local machine to act as a proxy between the local workstation and the remote cluster.
+
+.{sle}Desktop 12 SP3 / 15.0 - Installation from Packagehub
+[IMPORTANT]
+====
+The use of PackageHub is https://packagehub.suse.com/support/[exempt from commercial support].
+
+If you are using {sle}
+12 SP3 or 15.0, you must https://www.suse.com/documentation/sled-15/book_quickstarts/data/sec_modules_installing.html[enable the PackageHub Extension].
+
+The instructions are identical for both versions.
+====
+
+.Installing [command]``kubectl`` on Non-SUSE OS or Old Release
+[TIP]
+====
+If you are using an operating system other than the current {sle}
+12 SP3/15.0 or {opensuse}
+Tumbleweed/Leap please consult the https://kubernetes.io/docs/tasks/tools/install-kubectl/[
+    installation instructions] from the {kube}
+ project.
+====
+
+.The KUBECONFIG Variable
+[TIP]
+====
+{kubectl}
+uses an environment variable named [var]``KUBECONFIG`` to locate your {kubeconfig}
+ file.
+If this variable is not specified, it defaults to [path]``$HOME/.kube/config``
+.
+To use a different location, run
+
+----
+{prompt.user}``export KUBECONFIG=/PATH/TO/KUBE/CONFIG/FILE``
+----
+====
+
+.Procedure: Install the `kubectl` package
+. Install the [path]``kubectl`` package:
++
+
+----
+{prompt.sudo}``zypper in kubectl``
+----
+. To use kubectl to connect to a local machine you must perform <<_sec.admin.security.auth.kubeconfig>> against the {kube} master node. Download the [path]``.kubeconfig`` file from {dashboard} and place it in [path]``˜/.kube/config`` .
++
+
+
+image::velum_status.png[scaledwidth=100%]
+. Verify that `kubectl` was installed and is configured correctly:
++
+
+----
+{prompt.user}``kubectl get nodes`` NAME                  STATUS    ROLES     AGE       VERSION
+caasp3-master     Ready     master    1d        v1.9.8
+caasp3-worker-1   Ready     <none>    1d        v1.9.8
+caasp3-worker-2   Ready     <none>    1d        v1.9.8
+caasp3-worker-3   Ready     <none>    1d        v1.9.8
+caasp3-worker-4   Ready     <none>    1d        v1.9.8
+----
++
+You should see the list of nodes known to {productname}
+.
+
+
+[[_sec.admin.salt]]
+== Interacting with Salt
+
+
+You can run commands across all nodes in the cluster by running them via ``salt``.
+
+Log in to the admin node and run:
+
+----
+{prompt.user}``docker exec -it $(docker ps -q -f name="salt-master") \
+salt -P 'roles:(admin|kube-(master|minion)' \
+cmd.run "df -h"``
+----
+
+
+This command tells `docker` to find the `salt-master` container and execute the command on all nodes that match the roles ``admin``, ``kube-master``, and `kube-minion` (which is all nodes).
+
+Replace the example [command]``df -h`` with a command of your choice.
+The output will be produced in your current terminal session.
+
+[[_sec.admin.salt.worker_threads]]
+=== Adjusting The Number Of Salt Worker Threads
+
+
+It will sometimes be necessary to resize the {kube}
+cluster to adjust for workloads or other factors.
+Salt will run into problems, if the number of nodes to handle becomes too large without adjusting the number of available Salt worker threads.
+
+For the correct value, refer to <<_sec.deploy.requirements.system.cluster.salt_cluster_size>>.
+
+.Procedure: Adjust The Salt Worker Count
+. Log in to your admin node via SSH.
+. Run the following command to adjust the configured number of workers (here: ``20``).
++
+
+----
+{prompt.root.admin}``echo "worker_threads:20" > /etc/salt/salt-master-custom.conf``
+----
+. Find the ID of the {smaster} container.
++
+
+----
+{prompt.root.admin}``saltid=$(docker ps -q -f salt-master)``
+----
+. And restart the {smaster} .
++
+
+----
+{prompt.root.admin}``docker kill $saltid``
+----
+
+
+Now, Salt will restart and adjust the number of workers in the cluster.
+
+[[_sec.admin.nodes]]
+== Node Management
+
+
+After you complete the deployment and you bootstrap the cluster, you may need to perform additional changes to the cluster.
+By using {dashboard}
+you can add additional nodes to the cluster.
+You can also delete some nodes, but in that case make sure that you do not break the cluster.
+
+[[_sec.admin.nodes.add]]
+=== Adding Nodes
+
+
+You may need to add additional {worker_node}
+s to your cluster.
+The following steps guides you through that procedure:
+
+.Procedure: Adding Nodes to Existing Cluster
+. Prepare the node as described in <<_sec.deploy.nodes.worker_install>>
+. Open {dashboard} in your browser and login.
+. You should see the newly added node as a node to be accepted in menu:Pending Nodes[] . Click on menu:Accept Node[] .
++
+
+
+image::velum_pending_nodes.png[scaledwidth=100%]
+. In the menu:Summary[] you can see the menu:New[] that appears next to menu:New nodes[] . Click the menu:New[] button.
++
+
+
+image::velum_unassigned_nodes.png[scaledwidth=100%]
+. Select the node to be added and click menu:Add nodes[] .
+. The node has been added to your cluster.
+
+
+[[_sec.admin.nodes.create_autoyast_profile]]
+==== The [command]``create_autoyast_profile`` Command
+
+
+The [command]``create_autoyast_profile`` command creates an autoyast profile for fully automatic installation of {productname}
+.
+You can use the following options when invoking the command:
+
+`-o|--output`::
+Specify to which file the command should save the created profile.
++
+
+----
+{prompt.root}``create_autoyast_profile -o FILENAME``
+----
+`--salt-master`::
+Specify the host name of the {smaster}
+.
++
+
+----
+{prompt.root}``create_autoyast_profile --salt-master SALTMASTER``
+----
+`--smt-url`::
+Specify the URL of the SMT server.
++
+
+----
+{prompt.root}``create_autoyast_profile --smt-url SALTMASTER``
+----
+`--regcode`::
+Specify the registration code for {productname}
+.
++
+
+----
+{prompt.root}``create_autoyast_profile --regcode REGISTRATION_CODE``
+----
+`--reg-email`::
+Specify an e-mail address for registration.
++
+
+----
+{prompt.root}``create_autoyast_profile --reg-email E-MAIL_ADRESS``
+----
+
+[[_sec.admin.nodes.remove]]
+=== Removing Nodes
+
+[WARNING]
+====
+If you attempt to remove more nodes than are required for the minimum cluster size (3 nodes: 1 master, 2 workers) {dashboard}
+will display a warning.
+Your cluster will be disfunctional until you add the minimum amount of nodes again.
+====
+
+[NOTE]
+====
+As each node in the cluster runs also an instance of ``etcd``, {productname}
+ has to ensure that removing of several nodes does not break the `etcd` cluster.
+In case you have, for example, three nodes in the `etcd` and you delete two of them, {productname}
+ deletes one node, recovers the cluster and only if the recovery is successful, allows the next node to be removed.
+Refer to: <<_sec.deploy.requirements.system.cluster.etcd_cluster_size>>.
+
+If a node runs just an ``etcd-proxy``, there is nothing special that has to be done, as deleting any amount of `etcd-proxy` cannot break the `etcd` cluster.
+====
+
+[NOTE]
+====
+If you have only one master node configured, {dashboard}
+will not allow you to remove it.
+You must first add a second master node as a replacement.
+====
+
+
+. Log-in to {dashboard} on your {productname} Admin node. Then, click menu:Remove[] next to the node you wish to remove. A dialog will ask you to confirm the removal.
++
+
+
+image::velum_status.png[scaledwidth=100%]
+. The cluster will then attempt to remove the node in a controlled manner. Progress is indicated by a spinning icon and the words `Pending removal` in the location where the menu:Remove[] -button was displayed before.
++
+
+
+image::velum_pending_removal.png[scaledwidth=100%]
+
++
+This should conclude the regular removal process.
+If the node is successfully removed, it will disappear from the list after a few moments.
+. In some cases nodes cannot be removed in a controlled manner and must be forced out of the cluster. A typical scenario is a machine instance was removed externally or has no connectivity. In such cases, the removal will fail. You then get the option to menu:Force remove[] . A dialog will ask you to confirm the removal.
++
+
+
+image::velum_failed_removal.png[scaledwidth=100%]
+
++
+Additionally, a large warning dialog will ask you to confirm the forced removal.
+Click menu:Proceed with forcible removal[]
+if you are sure you wish to force the node out of the cluster.
++
+
+
+image::velum_force_removal.png[scaledwidth=100%]
+
+
+[[_sec.admin.nodes.remove.unassigned]]
+=== Removing Unassigned nodes
+
+
+You might run into the situation where you have (accidentally) added new nodes to a cluster but did not wish to bootstrap them.
+They are now registered against the cluster and show up in "Unassigned nodes". You might have already configured the machine to register with another cluster and want to clean out this entry from the "Unassigned Nodes" view.
+You must perform the following steps:
+
+
+. Find the "Unassigned nodes" line in the overview and click on menu:(new)[] next to the count number. You will be shown the "Unassigned Nodes" view where all the unassigned nodes are listed. Make sure that you first assign all roles to nodes that you wish to keep and proceed with bootstrapping. Once the list only show the nodes you are sure to remove copy the ID of the node you wish to drop.
++
+
+
+image::velum_unassigned_nodes.png[scaledwidth=100%]
+. Log into the Admin node of you cluster via SSH.
+. Run the following command and replace [replaceable]``$ID_FROM_UNASSIGNED_QUEUE`` with the node ID that you copied from the "Unassigned nodes" view in {dashboard} .
++
+WARNING: Make absolutely sure that the node ID you have copied is the one of the node you wish to drop.
+This command is `irreversible` and will remove the specified node from the cluster without confirmation.
++
+
+
++
+
+----
+{prompt.root}``docker exec -it $(docker ps -q -f name="velum-dashboard") \
+entrypoint.sh bundle exec rails runner 'puts Minion.find_by(minion_id: "$ID_FROM_UNASSIGNED_QUEUE").destroy'``
+----
+
+
+[[_sec.admin.nodes.graceful_shutdown]]
+== Graceful Shutdown and Startup
+
+[[_sec.admin.nodes.graceful_shutdown.overview]]
+=== Overview
+
+{kube}
+, being a self-healing solution, tries to keep all pods and services available.
+In general, this is of its core features and desired functions.
+But it is important to take this into account if you are doing a complete shutdown of the infrastructure.
+
+There are two ways of shutting down the whole cluster: Shut down and start all nodes at once or restart them sequentially in segments.
+In both cases, {productname}
+expects that IP addresses do not change after the restart, even when using dynamic IP addresses.
+
+When restarting segments of nodes, it is possible to avoid downtime.
+
+.Deviating from Shutdown and Startup Procedures
+[NOTE]
+====
+The procedures described in this section are recommended to reduce logged errors.
+However, it is possible to not follow this order as long as all nodes are stopped in a graceful way.
+====
+
+[[_sec.admin.nodes.graceful_shutdown.nodes]]
+=== Node Types
+
+
+For shutting down and starting nodes, three different types of nodes are relevant:
+
+* The {admin_node} contains state and needs to be shut down in a graceful way to ensure that all state has been synced to disk in a clean way.
+* Nodes with `etcd` contain state and also need to be shut down in a graceful way. They will usually be a subset of the master nodes. But it can happen that some workers run `etcd` members.
+* The rest (masters and workers not running `etcd` members): These nodes contain local state possibly created by applications running on top of the cluster. They need to be shut down in a graceful way too, when possible.
+
+
+[[_sec.admin.nodes.graceful_shutdown.complete]]
+=== Complete Shutdown
+
+[[_sec.admin.nodes.graceful_shutdown.complete.shutdown]]
+==== Shutting Down
+
+
+All commands are executed on the admin node.
+
+
+. Disable scheduling on the whole cluster. This will avoid {kube} rescheduling jobs while you are shutting down nodes.
++
+
+----
+{prompt.root.admin}``kubectl get nodes -o name | xargs -I{} kubectl cordon {}``
+----
+. Gracefully shut down all worker nodes.
++
+
+----
+{prompt.root.admin}``docker exec -it $(docker ps -q -f name="salt-master") \
+salt --async -G 'roles:kube-minion' cmd.run 'systemctl poweroff'``
+----
+. Gracefully shut down all master nodes.
++
+
+----
+{prompt.root.admin}``docker exec -it $(docker ps -q -f name="salt-master") \
+salt --async -G 'roles:kube-master' cmd.run 'systemctl poweroff'``
+----
+. Shut down the {admin_node} :
++
+
+----
+{prompt.root.admin}``systemctl poweroff``
+----
+
+
+[[_sec.admin.nodes.graceful_shutdown.complete.startup]]
+==== Starting Up
+
+.`kubectl` Needs Master Nodes To Function
+[NOTE]
+====
+[command]``kubectl`` requires use of the {kube}
+ API hosted on the master nodes.
+Therefore, until at least some of the master nodes have started successfully, you will see error messages of the type ``HTTP 503``.
+
+----
+Error from server (InternalError): an error on the server
+("<html><body><h1>503 Service Unavailable</h1>\nNo server is available
+to handle this request.\n</body></html>") has prevented the request
+from succeeding (get nodes)
+----
+====
+
+
+. Start the {admin_node} up. All commands are executed on the {admin_node} .
+. Once that the admin node is up, start the master nodes. Keep checking the status of the master nodes. Continue as soon as all master nodes are ``Ready``.
++
+
+----
+{prompt.root.admin}``kubectl get nodes`` NAME       STATUS                        ROLES     AGE       VERSION
+master-0   Ready,SchedulingDisabled      master    21h       v1.9.8
+master-1   Ready,SchedulingDisabled      master    21h       v1.9.8
+master-2   Ready,SchedulingDisabled      master    21h       v1.9.8
+worker-0   NotReady,SchedulingDisabled   <none>    21h       v1.9.8
+worker-1   NotReady,SchedulingDisabled   <none>    21h       v1.9.8
+worker-2   NotReady,SchedulingDisabled   <none>    21h       v1.9.8
+worker-3   NotReady,SchedulingDisabled   <none>    21h       v1.9.8
+worker-4   NotReady,SchedulingDisabled   <none>    21h       v1.9.8
+----
+. Continue by starting all the worker nodes. Keep checking the status of the nodes. Continue when all nodes are ``Ready``.
++
+
+----
+{prompt.root.admin}``kubectl get nodes`` NAME       STATUS                     ROLES     AGE       VERSION
+master-0   Ready,SchedulingDisabled   master    21h       v1.9.8
+master-1   Ready,SchedulingDisabled   master    21h       v1.9.8
+master-2   Ready,SchedulingDisabled   master    21h       v1.9.8
+worker-0   Ready,SchedulingDisabled   <none>    21h       v1.9.8
+worker-1   Ready,SchedulingDisabled   <none>    21h       v1.9.8
+worker-2   Ready,SchedulingDisabled   <none>    21h       v1.9.8
+worker-3   Ready,SchedulingDisabled   <none>    21h       v1.9.8
+worker-4   Ready,SchedulingDisabled   <none>    21h       v1.9.8
+----
+. Uncordon all nodes so they can receive new workloads:
++
+
+----
+{prompt.root.admin}``kubectl get nodes -o name | xargs -I{} kubectl uncordon {}``
+----
+
+
+[[_sec.admin.nodes.graceful_shutdown.segmented]]
+=== Segmented Reboots
+
+
+A sequential reboot of cluster segments is a way to completely avoid the downtime of services or at least reduce it as much as possible.
+However, downtime of services occurs if all pods of a service are forced on one node.
+
+[[_sec.admin.nodes.graceful_shutdown.segmented.worker]]
+==== Rebooting Worker Nodes
+
+
+The number of worker nodes to reboot at once depends on the number of total worker nodes and their labels.
+
+For example: If there are 5 worker nodes with 2 of them having the label ``diskType: ssd``, then the two nodes with SSDs must not be shut down at the same time.
+
+The size of segments for simultaneous reboots depends on the topology of the cluster and the workload.
+We recommend to use small segment sizes.
+This makes it less likely that all nodes running replicas of the same pod are shut down at the same time.
+
+During this migration time, the worker nodes need to be able to reach the master nodes at all times.
+This includes master nodes that are already or not yet updated.
+
+==== Rebooting Master Nodes
+
+
+Master nodes should not run user workloads.
+This means that the decision to batch the reboots of master nodes depends on whether you want to keep control of the cluster while the reboot is taking place.
+
+If all the master nodes disappear at the same time, the worker nodes continue serving the services they are running.
+No further operation will take place on the worker nodes, since they cannot contact an `apiserver` to discover new workloads or perform any other operations.
+
+It is safe to choose batches as desired.
+Rebooting one by one is the safest, two by two is generally safe too.
+For larger batches than two, certain cluster services, for example ``dex``, could be completely shut down.
+
+[[_sec.admin.nodes.graceful_shutdown.etcd]]
+=== Behavior of `etcd`
+
+[command]``etcd`` requires special considerations for maintaining cluster health and integrtiy.
+Refer to: <<_sec.deploy.requirements.system.cluster.etcd_cluster_size>>.
+
+[[_sec.admin.scale_cluster]]
+== Scaling the Cluster
+
+
+The default maximum number of nodes in a cluster is 40.
+The Salt Master configuration needs to be adjusted to handle installation and updating a of larger cluster:
+
+.Node Count and Salt Worker Threads
+[cols="1,1", options="header"]
+|===
+|
+
+        Nodes
+
+
+|
+
+        Salt Worker Threads
+
+
+
+|
+
+>40
+|
+
+20
+
+|
+
+>60
+|
+
+30
+
+|
+
+>75
+|
+
+40
+
+|
+
+>85
+|
+
+50
+
+|
+
+>95
+|
+
+60
+|===
+
+
+To change the variable in the {smaster}
+configuration, run the following on the {admin_node}
+:
+
+----
+{prompt.root}``echo "worker_threads: 20" > /etc/caasp/salt-master-custom.conf`` {prompt.root}``docker restart $(docker ps -q -f name="salt-master")``
+----
+
+{smaster}
+will be automatically restarted by kubelet.
+
+Following bootstrapping failure, you can check if Salt worker_threads is too low.
+
+----
+{prompt.root}``docker logs $(docker ps -q -f name="salt-master") \
+    | grep -i worker_threads``
+----
+
+[[_sec.admin.velum.registry]]
+== Configuring Remote Container Registry
+
+
+A remote registry allows you to access container images locally.
+This is commonly used in cases where a {productname}
+cluster is not allowed to have direct access to the internet.
+You can create a local registry with the images that you will need and add the information for that registry here.
+If the registry is using a self-signed certificate, it can be added here to create trust between Kubernetes and the registry.
+
+By default, Docker Hub and the {suse}
+container registry are available sources for container images.
+
+
+image::velum_settings_registry_overview.png[scaledwidth=100%]
+
+
+[[_sec.admin.velum.registry.add]]
+=== Adding A Remote Registry
+
+
+. Log in to {dashboard} and navigate to menu:Settings → Remote Registries[] .
+. Click on menu:Add Remote Registry[] to add a new remote registry configuration.
++
+
+
+image::velum_settings_remote_registry.png[scaledwidth=100%]
+. Fill in the options for the new registry.
++
+
+
+image::velum_settings_new_registry.png[scaledwidth=100%]
+
++
+
+Name:::
+Define a name for the registry.
+
+URL:::
+Enter the URL for the registry in the format ``http(s)://<hostname>:<port>``.
+
+Certificate:::
+Will only be shown if the `URL` field contains ``https:``.
++
+Provide the body of the (self-signed) SSL certificate for the registry.
+. You will be shown a summary of the details of the registry you have just created.
++
+If you have to adjust the registry click menu:Edit[]
+to return to the editing dialog.
++
+Click menu:Delete[]
+if you made a mistake and wish to remove the registry.
+You can always remove the registry from the overview later.
++
+If you wish to define a mirror for this registry you can click on menu:Add Mirror[]
+to do so.
+For details, refer to <<_sec.admin.velum.mirror>>
++
+
+
+image::velum_settings_registry_details.png[scaledwidth=100%]
+. If you have further registries to add, repeat the previous steps.
+. Finally, click the menu:Apply Changes[] button on the top of the page. This will update the registry settings across the cluster.
+
+
+[[_sec.admin.velum.registry.modify]]
+=== Modifying A Registry
+
+
+. Log in to {dashboard} and navigate to menu:Settings → Remote Registries[] .
+. Click on the pencil icon in the row of the registry you wish to modify. Perform the changes you wish to make and click "Save".
+. If you have further registries to modify, repeat the previous steps.
+. Finally, click the menu:Apply Changes[] button on the top of the page. This will update the registry settings across the cluster.
+
+
+[[_sec.admin.velum.registry.remove]]
+=== Removing A Registry
+
+
+. Log in to {dashboard} and navigate to menu:Settings → Remote Registries[] .
+. Click on the red trashcan icon in the row of the registry you wish to delete and confirm the popup dialog by clicking menu:OK[] .
+. If you have further registries to remove, repeat the previous steps.
+. Finally, click the menu:Apply Changes[] button on the top of the page. This will update the registry settings across the cluster.
+
+
+[[_sec.admin.velum.mirror]]
+== Configuring A Registry Mirror
+
+
+Similar to the menu:Remote Registries[]
+ page, the menu:Mirrors[]
+ page allows you to add redundant image mirrors to existing registries.
+The internal container engine will use this information to reroute requests from the cluster nodes to the defined mirror address.
+
+
+image::velum_settings_mirror_overview.png[scaledwidth=100%]
+
+
+[[_sec.admin.velum.mirror.add]]
+=== Adding A Mirror
+
+
+. Log in to {dashboard} and navigate to menu:Settings → Mirrors[] .
+. Click on menu:Add Mirror[] to add a new registry mirror configuration.
++
+
+
+image::velum_settings_mirror.png[scaledwidth=100%]
+. Fill in the options for the new mirror.
++
+
+
+image::velum_settings_new_mirror.png[scaledwidth=100%]
+
++
+
+Mirror of:::
+Select one of the configured registries from the menu.
+
+Name:::
+Define a name for the mirror.
+
+URL:::
+Enter the URL for the mirror in the format ``http(s)://<hostname>:<port>``.
+
+Certificate:::
+Will only be shown if the `URL` field contains ``https:``.
++
+Provide the body of the (self-signed) SSL certificate for the registry.
+. {empty}
++
+
+
+image::velum_settings_mirror_details.png[scaledwidth=100%]
+
+
+[[_sec.admin.velum.mirror.modify]]
+=== Modifying A Mirror
+
+
+. Log in to {dashboard} and navigate to menu:Settings → Mirrors[] .
+. Click on the pencil icon in the row of the mirror you wish to modify. Perform the changes you wish to make and click "Save".
+. If you have further mirrors to modify, repeat the previous steps.
+. Finally, click the menu:Apply Changes[] button on the top of the page. This will update the mirror settings across the cluster.
+
+
+[[_sec.admin.velum.mirror.remove]]
+=== Removing A Mirror
+
+
+. Log in to {dashboard} and navigate to menu:Settings → Mirrors[] .
+. Click on the trashcan icon in the row of the mirror you wish to remove and confirm the popup dialog with menu:OK[] .
+. If you have further mirrors to remove, repeat the previous steps.
+. Finally, click the menu:Apply Changes[] button on the top of the page. This will update the mirror settings across the cluster.
+
+
+[[_sec.admin.compute_resources]]
+== Reserving Compute Resources
+
+
+By default, {kube}
+will allocate all available hardware resources of a node to pods.
+This can starve core services of needed resources, which are, for example, required for managing single nodes or the cluster.
+To prevent core services from running out of resources, you can reserve CPU, memory, and disk resources for them.
+
+.Carefully Check Entered Values
+[WARNING]
+====
+Entering invalid values into the input fields may break nodes.
+Carefully check the entered values before selecting the menu:Save[]
+ button.
+====
+
+
+image::velum_settings_compute_resource.png[scaledwidth=100%]
+
+
+To reserve hardware resources, go to the {dashboard}
+dashboard and then proceed to _Settings_ and __Compute
+   Resources Reservation__.
+
+You can reserve resources for {kube}
+services in the box `{kube}
+ core services` and for services running on a single node in ``Host system services``.
+
+In the box ``Eviction threshold``, you can set rules for killing pods when the usage of RAM or storage reaches a defined level.
+This prevents nodes from actually running out of resources, which would then trigger the default out-of-resource-handling.
+
+To activate entered settings, use the menu:Save[]
+ button at the bottom of the page.

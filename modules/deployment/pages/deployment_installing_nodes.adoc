@@ -1,0 +1,805 @@
+[[_cha.deploy.nodes]]
+= Installing and Configuring Nodes
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:sourcedir: .
+:imagesdir: ./images
+= Installing and Configuring Nodes
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:imagesdir: ./images
+
+
+This chapter details the procedures for installing the {admin_node}
+, master nodes and worker nodes.
+Make sure that you prepared the installation according to <<_cha.deployment.preparation>>. 
+
+[[_sec.deploy.nodes.admin_install]]
+== Installing the {Admin_Node}
+
+
+The procedure for installing the {admin_node}
+is identical whether or not you use {ay}
+for the rest of the cluster. 
+
+[[_pro.deploy.nodes.admin_install]]
+
+. Connect or insert the {productname} installation media, then reboot the computer to start the installation program. On machines with a traditional BIOS, you will see the graphical boot screen shown below. The boot screen on machines equipped with UEFI is slightly different. 
++ 
+SecureBoot on UEFI machines _is_ supported. 
++ 
+Use kbd:[F2]
+to change the language for the installer.
+A corresponding keyboard layout is chosen automatically.
+See https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_startup.html for more information about changing boot options. 
++
+
+
+image::install_boot.png[scaledwidth=100%]
+. Select menu:Installation[] on the boot screen, then press kbd:[Enter] . This boots the system and loads the {productname} installer. 
+. {empty}
++ 
+Configure the following mandatory settings on the menu:Installation Overview[]
+screen. 
++
+.Help and Release Notes
+NOTE: From this point on, a brief help document and the Release Notes can be viewed from any screen during the installation process by selecting menu:Help[]
+ or menu:Release Notes[]
+ respectively. 
++
+
+
++
+
+Keyboard Layout:::
+The menu:Keyboard Layout[]
+is initialized with the language settings you have chosen on the boot screen.
+Change it here, if necessary. 
+
+Password for {rootuser}:::
+Type a password for the system administrator account (called the {rootuser}
+user) and confirm it. 
++
+
+.Do not forget the {rootuser}Password
+WARNING: You must not lose the {rootuser}
+password! After you enter it here, the password cannot be retrieved.
+For more information, see https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_user_root.html. 
++
+
+
+Registration Code or SMT Server URL:::
+Enter the menu:Registration Code or SMT Server URL[]
+.
+SMT Server URLs should use `https` or ``http``; other protocols are not supported.
+Fill this field to enable installing current updates during the installation process.
+Alternatively, the machine can be registered at the {scc}
+or a {smt}
+server at any later point in time with [command]``SUSEConnect``.
+For details about registering with [command]``SUSEConnect`` and using an authenticated proxy server for registration, see <<_sec.configuration.suseconnect>>. 
+
+System Role:::
+From the menu:System Role[]
+menu, choose menu: Administration Node (Dashboard)[]
+. 
+
+NTP Servers:::
+Enter the host names or IP addresses of one or more menu:NTP Servers[]
+for the node, separated by colons or white space.
+A single time server is sufficient, but for optimal precision and reliability, nodes should use at least three. 
++
+We recommend providing a dedicated NTP server from your local network. 
++
+For more information about ``NTP``, refer to https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_netz_xntp.html
+
++
+
+
+image::install_overview_admin.png[scaledwidth=100%]
+
++
+Optionally, you can customize the following settings.
+If you do not make any changes, defaults are used.
+A brief summary of the settings is displayed below the respective settings option. 
++
+
+Partitioning:::
+Review the partition setup proposed by the system and change it if necessary.
+You have the following options: 
+
+Select a hard disk::::
+Select a disk on to which to install {productname}
+with the recommended partitioning scheme. 
+
+menu:Custom Partitioning (for Experts)[]::::
+Opens the menu:Expert Partitioner[]
+described in https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_yast2_i_y2_part_expert.html. 
++
+
+.For Experts only
+WARNING: As the name suggests, the menu:Expert Partitioner[]
+ is for experts only.
+Custom partitioning schemes that do not meet the requirements of {productname}
+ are not supported. 
+
+.Requirements for custom partitioning schemes
+**** {productname} only supports the {btrfs} file system with OverlayFS. A read-only {btrfs} file system is used for the root file system, which enables transactional updates. 
+**** For snapshots, partitions should have a capacity of at least 11 GB. 
+**** Depending on the number and size of your containers, you will need sufficient space under the [path]``/var`` mount point. 
+
++
+
+
++
+To accept the proposed setup without any changes, choose menu:Next[]
+to proceed. 
+
+Booting:::
+This section shows the boot loader configuration.
+Changing the defaults is only recommended if really needed.
+For details, refer to https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_grub2.html. 
+
+Network Configuration:::
+If the network could not be configured automatically while starting the installation system, you should manually configure the menu:Network Settings[]
+.
+Please make sure at least one network interface is connected to the Internet in order to register your product. 
++
+By default, the installer requests a host name from the DHCP server.
+If you set a custom name in the menu:Hostname/DNS[]
+tab, make sure that it is unique. 
++
+For more information on configuring network connections, refer to https://www.suse.com/documentation/sles-12/book_sle_admin/data/sec_basicnet_yast.html. 
+
+{kdump}:::
+{kdump}
+saves the memory image ("`core dump`"
+) to the file system in case the kernel crashes.
+This enables you to find the cause of the crash by debugging the dump file.
+For more information, see https://www.suse.com/documentation/sles-12/book_sle_tuning/data/cha_tuning_kdump_basic.html . 
++
+
+.{kdump}with large amounts of RAM
+WARNING: If you have a system with large amounts of RAM or a small hard drive, core dumps may not be able to fit on the disk.
+If the installer warns you about this, there are two options: 
+... Enter the menu:Expert Partitioner[] and increase the size of the root partition so that it can accommodate the size of the core dump. In this case, you will need to decrease the size of the data partition accordingly. Remember to keep all other parameters of the partitioning (e.g. the root file system, mount point of data partition) when doing these changes. 
+... Disable {kdump} completely. 
+
++
+
+
+System Information:::
+View detailed hardware information by clicking menu:System Information[]
+.
+In this screen you can also change menu:Kernel Settings[]
+.
+See https://www.suse.com/documentation/sles-12/book_sle_tuning/data/cha_tuning_io.html for more information. 
+
++
+Proceed with menu:Next[]
+. 
++
+.Installing Product Patches at Installation Time
+TIP: If {productname}
+has been successfully registered at the {scc}
+, you are asked whether to install the latest available online updates during the installation.
+If you choose menu:Yes[]
+, the system will be installed with the most current packages without having to apply the updates after installation.
+Activating this option is recommended. 
++
+
+. After you have finalized the system configuration on the menu:Installation Overview[] screen, click menu:Install[] . Up to this point no changes have been made to your system. 
++ 
+Click menu:Install[]
+a second time to start the installation process. 
++
+
+
+image::install_confirm.png[scaledwidth=100%]
+. During the installation, the progress is shown in detail on the menu:Details[] tab. 
++
+
+
+image::install_perform.png[scaledwidth=100%]
+. After the installation routine has finished, the computer will reboot into the installed system. 
+
+
+[[_sec.deploy.nodes.admin_install_cli]]
+== Installing the {Admin_Node} with Command Line Interface
+
+.Do not use this for datacenter installations
+[IMPORTANT]
+====
+This procedure is intended to be used with public cloud installations only. 
+====
+
+
+Use SSH to log into the admin node and run the [command]``caasp-admin-setup`` executable as the ``root``user. 
+
+By default the [command]``caasp-admin-setup`` executable operates in `wizard` mode, walking you through the necessary steps.
+During this process your {scc}
+ credentials will be requested.
+Registration with {scc}
+ can be skipped.
+If this step is skipped during setup the admin node and the cluster nodes will not receive any updates.
+While registration to {scc}
+ can be performed after the initial setup with ``SUSEConnect``, performing the registration during setup has the advantage that cluster nodes will automatically be registered with {scc}
+ as well.
+If you prefer not to run the ``wizard``, use [command]``caasp-admin-setup --help`` to obtain a list of the available command line arguments. 
+
+Once the `caasp-admin-setup` process is complete all {productname}
+ containers will be launched on the admin node instance.
+Use your web browser to access the Velum dashboard via ``https``.
+If you did not provide your own certificate, a certificate was generated for you and the fingerprint was written to the terminal in which [command]``caasp-admin-setup`` was executed.
+You can compare this fingerprint in your browser to establish the chain of trust. 
+
+=== [command]``caasp-admin-setup`` Details
+
+
+The general purpose of [command]``caasp-admin-setup`` is to collect all information needed to successfully start the {productname}
+ containers. 
+
+When [command]``caasp-admin-setup`` is executed it determines which cluster node image to use according to the cloud framework.
+For this operation to succeed outgoing traffic on port `443` to the Internet must be permitted.
+The code will access the `Public Cloud
+    Information Tracker` service operated by SUSE.
+This service provides information about all images ever released to the Public Cloud by SUSE.
+The latest available cluster node image for this version of {productname}
+ will be used.
+This initial outreach and image filtering introduces a small startup delay before the command line options are processed or the wizard mode starts. 
+
+When all information is collected, accept your selections/input with `y` to complete the initial setup. 
+
+=== Providing SSL Certificate and Key
+
+
+You may choose to supply your own SSL certificate and key for initial access the dashboard, with the `--ssl-crt` and `--ssl-key` options or by answering the question "`Would you like to use your own certificate from a known (public
+    or self signed) Certificate Authority?`"
+ with ``y``. 
+
+In order to use your own SSL certificate and key you must upload the files to the admin node into a location of your choice.
+This location is then provided to the setup code.
+For example, if your certificate is called [path]``my-velum.crt``
+ and you uploaded it to [path]``/tmp``
+ then the [command]``caasp-admin-setup`` code expects [path]``/tmp/my-velum.crt``
+ as the location for the SSL certificate.
+The same concept applies to the SSL key.
+The certificate and key will be placed in the appropriate locations on the admin node. 
+
+=== Velum Administrator Credentials
+
+
+Velum is the name of the administrative dashboard web interface.
+The setup code will ask for an e-mail address and a password if not supplied with the `--admin-email` and `--admin-password` arguments.
+These are the administrative credentials to log into the Velum dashboard.
+The e-mail used does not have to be an e-mail associated with your {scc}
+ account.
+Please do not forget the values you enter, as they cannot be recovered. 
+
+=== Registering with {scc}
+
+
+To register all cluster nodes with {scc}
+, provide your e-mail address and the registration code.
+The registration process requires access to the Internet on port 443.
+Alternatively you may use the `--reg-email` and `--reg-code` arguments.
+Registration with {scc}
+ is optional.
+However, without registration the system will not receive any updates unless specifically setup to receive updates via a different route such as a private {smt}
+ server.
+Registration after the initial setup also requires an explicit registration of each node in the cluster. 
+
+For registering your nodes after the installation, refer to <<_sec.configuration.suseconnect>>. 
+
+[[_sec.deploy.nodes.admin_configuration]]
+== Configuring the {Admin_Node}
+
+
+Before installing the other nodes, it is necessary to configure the {admin_node}
+. 
+
+[[_pro.deploy.install.iso.config]]
+
+. After the {admin_node} has finished booting and you see the login prompt, point a web browser to: 
++ 
+https://caasp-admin.example.com
++ 
+... where `caasp-admin.{exampledomain}` is the host name or IP address of the {admin_node}
+.
+The host name and IP address are both shown on the {admin_node}
+console, above the login prompt. 
++
+. To create an Administrator account, click menu:Create an account[] and provide an e-mail address and a password. Confirm the password and click menu:Create Admin[] . You will be logged into the dashboard automatically. 
++
+
+
+image::velum_register.png[scaledwidth=100%]
+. Fill in the values menu:Internal Dashboard Location[] . If necessary, configure the other settings. 
++
+
+
+image::velum_setup1.png[scaledwidth=100%]
+
++
+.Host Name, FQDN or IP Address 
+NOTE: Generally, FQDNs are preferable to host names. 
+
+For test deployments, you can use IP addresses instead of names for both the dashboard and API server, but this is not recommended for use in production. 
++
+
+
++
+
+Internal Dashboard Location:::
+FQDN or IP of the node running the {dashboard}
+dashboard (reachable from inside the cluster). 
+
+Install Tiller (Helm's Server Component):::
+If you intend to deploy {scf}
+on {productname}
+, or any other software that is installed with {helm}
+(the {kube}
+package manager), check the box to install {tiller}
+. 
+
+Overlay network settings:::
+Describes the settings used by `flannel` to create the overlay network used by all the {kube}
+pods and services.
+With this change, the default settings are exposed to the user for fine tuning.
+The most common reason to change them is to avoid clashes between the default subnetwork we picked up and an already existing one. 
++
+Networks are described in https://searchnetworking.techtarget.com/definition/CIDR[CIDR notation]. 
++
+
+
+image::velum_overlay_net.png[scaledwidth=100%]
++
+.Adjust overlay network to avoid collision with existing services
+WARNING: Per default the overlay network reserves a `/13` subnet and reserves a `/23` slice for each node. 
+
+The overlay network settings have to be verified and adjusted so that they do not collide with any services / addresses in the infrastructure that potentially need to be reached from any node or service running within the {productname}
+cluster. 
+
+For example, an oracle database is running on `172.16.4.5` in the existing infrastructure and a pod in the cluster needs to contact that database.
+Then, the defaults be adjusted to provide a different overlay network.
+Another example would be an NFS server or a SES/Ceph cluster running anywhere in the network `172.16.0.0/13` and where persistent storage access of the CaaSP cluster should be hosted on. 
+
+If you need to adjust the overlay network because it collides with an existing network, you must also manually adjust the container bridge network on the {admin_node}
+.
+To do so, modify the [path]``/etc/docker/daemon.json``
+ file with the desired network specification.
+For example: 
+
+----
+{
+  "bip": "172.26.0.1/16"
+}
+----
+
+You must then restart the container service. 
+
+----
+{prompt.root}``systemctl restart docker`` 
+----
++
+
+
+
+Cluster CIDR::::
+Classless Inter-Domain Routing subnet size used for the cluster (Default: ``/13``) 
+
+Cluster CIDR (lower bound)::::
+Lower boundary for CIDR notation 
+
+Cluster CIDR (upper bound)::::
+Upper boundary for CIDR notation 
+
+Node allocation size (CIDR length per worker node)::::
+Length of CIDR notation length per worker node in Bits (Default: ``23``) 
+
+Services CIDR::::
+Classless Inter-Domain Routing subnet size used for services (Default: ``/16``) 
+
+API IP address::::
+IP address in the CIDR network for the {kube}
+API 
+
+DNS IP address::::
+IP address in the CIDR network for the DNS service 
+
+Proxy Settings:::
+If enabled, you can set proxy servers for `HTTP` and ``HTTPS``.
+You may also configure exceptions and choose whether to apply the settings only to the container engine or to all processes running on the cluster nodes. 
++
+
+
+image::velum_proxy_net.png[scaledwidth=100%]
+
+HTTP Proxy::::
+HTTP Proxy to be used. 
+
+HTTPS Proxy::::
+HTTPS Proxy to be used. 
+
+No-proxy::::
+Comma separated list of hostnames/IP addresses whose traffic should not be routed through the configured proxy. 
+
+Use proxy systemwide::::
+Select if the proxy settings will be applied for the menu:Container engine only[]
+or for the menu:Entire node[]
+communication. 
+
+SUSE registry mirror:::
+Configure a mirror for the SUSE container registry. 
++
+
+
+image::velum_registry_mirror.png[scaledwidth=100%]
+
+URL::::
+URL where the local registry mirror can be reached. 
+
+Certificate::::
+Select menu:No/Yes[]
+if you wish to provide the certificate used to protect your registry mirror.
+Copy the body of the certificate in the text field. 
+
+Cloud provider integration:::
+Cloud provider integration enables you to deploy {productname}
+on {ostack}
+/{soc}
+. 
++
+
+
+image::velum_cpi.png[scaledwidth=100%]
+
+Keystone API URL::::
+Specifies the URL of the Keystone API used to authenticate the user.
+This value can be found in Horizon (the {ostack}
+control panel) under menu:Project → Access and Security → API Access → Credentials[]
+. 
+
+Domain name::::
+(Optional) Used to specify the name of the domain your user belongs to. 
+
+Domain ID::::
+(Optional) Used to specify the name of the domain your user belongs to. 
+
+Project name::::
+(Optional) Used to specify the name of the project where you want to create your resources. 
+
+Project ID::::
+(Optional) Used to specify the name of the project where you want to create your resources. 
+
+Region name::::
+Used to specify the identifier of the region to use when running on a multi-region {ostack}
+cloud.
+A region is a general division of an {ostack}
+deployment. 
+
+Username::::
+Refers to the username of a valid user set in Keystone. 
+
+Password::::
+Refers to the password of a valid user set in Keystone. 
+
+Subnet UUID for CaaS Platform private network::::
+Used to specify the identifier of the subnet you want to create your load balancer on.
+This value can be found on the {ostack}
+control panels, under menu:Project → Network → Networks[]
+.
+Click on the respective network to see its subnets. 
+
+Floating network UUID::::
+(Optional) When specified, will lead to the creation of a floating IP for the load balancer. 
+
+Load balancer monitor max retries::::
+Number of permissible ping failures before changing the load balancer member's status to ``INACTIVE``.
+Must be a number between 1 and 10.
+(Default: [replaceable]``3``) 
+
+Cinder Block Storage API version::::
+Specifies the API version to be used when talking to Cinder.
+Currently: `v2`
+
+Ignore Cinder availability zone::::
+Influence availability zone use when attaching Cinder volumes.
+When Nova and Cinder have different availability zones, this should be set to ``True``. 
+
+Container runtime:::
++
+WARNING: Please note CRI-O is currently only a tech preview.
+It will work but is not officially supported. 
++
+Allows choice between Docker and CRI-O as the main container runtime. 
+
+System wide certificate:::
+Specify a system wide trusted certificate. 
+. Click menu:Next[] . 
+. You will be shown an information screen about {ay} . 
++
+
+
+image::velum_setup2.png[scaledwidth=100%]
+
++
+This is now the time for you to install the master/worker nodes for the cluster. 
++ 
+Continue with <<_sec.deploy.nodes.worker_install>>. 
+
+
+[[_sec.deploy.nodes.worker_install]]
+== Installing Master and Worker Nodes
+
+[WARNING]
+====
+Before you can install the {worker_node}
+s of your new cluster, you need to install and configure the {admin_node}
+.
+Ensure that you have completed the steps in <<_sec.deploy.nodes.admin_install>> and <<_sec.deploy.nodes.admin_configuration>>. 
+====
+
+[[_sec.deploy.nodes.openstack]]
+=== Installation on Cloud services
+
+
+If you are installing on an {ostack}
+based cloud using HEAT templates or using a public cloud service (Azure, EC2, GCE), your machines will be set up automatically. 
+
+.Adjust Salt Worker Threads For More Than 40 Nodes
+[IMPORTANT]
+====
+If you are deploying a cluster with more than `40` overall nodes, you must adjust the number of available Salt worker threads before you continue. 
+
+Refer to: <<_sec.deploy.requirements.system.cluster.salt_cluster_size>>. 
+====
+
+
+You can continue directly to <<_sec.deploy.install.bootstrap>>. 
+
+[[_sec.deploy.nodes.worker_install.manual]]
+=== Manual Installation
+
+[[_pro.deploy.nodes.worker_install.manual]]
+
+. Follow the same procedure as for installing the {admin_node} in <<_sec.deploy.nodes.admin_install>>, up until selection of the menu:System Role[] . 
+. Select `Cluster Node` as menu:System Role[] and enter the host name or IP address of the {admin_node} . 
++
+.Plain System
+NOTE: It is also possible to select a third node type, "plain node". These can be used for testing and debugging purposes, but are not usually needed. 
++
+
+. After you have finalized the system configuration on the menu:Installation Overview[] screen, click menu:Install[] . Up to this point no changes have been made to your system. After you click menu:Install[] a second time, the installation process starts. 
++ 
+After a reboot, the new node should appear in the dashboard and can be added to your cluster. 
++ 
+Repeat this procedure at least twice more to add a minimum of three nodes: one {master_node}
+and two {worker_node}
+s.
+This is the minimum supported size for a {productname}
+cluster. 
+. Once you have installed all desired machines, continue with <<_sec.deploy.install.bootstrap>>. 
++
+.Adjust Salt Worker Threads For More Than 40 Nodes
+IMPORTANT: If you are deploying a cluster with more than `40` overall nodes, you must adjust the number of available Salt worker threads before you continue. 
+
+Refer to: <<_sec.deploy.requirements.system.cluster.salt_cluster_size>>. 
++
+
+
+
+[[_sec.deploy.nodes.worker_install.manual.autoyast]]
+=== Automatic Installation Using {ay}
+
+
+Before installing {worker_node}
+s with {ay}
+, you need to obtain the URL that points to the {ay}
+file on the {admin_node}
+.
+Generally, this will be supplied by the {dashboard}
+dashboard on the {admin_node}
+. 
+
+.Using a modified {ay}control file
+[NOTE]
+====
+You can customize various aspects of your installation by modifying the default {ay}
+control file.
+Refer to: <<_sec.deploy.autoyast>>. 
+====
+
+.{rootuser}Password
+[NOTE]
+====
+When nodes are installed using {ay}
+, there is no opportunity to specify the password for {rootuser}
+.
+However, each node will have [command]``ssh`` keys for {rootuser}
+ on the {admin_node}
+ pre-installed.
+Thus it is possible to access the {worker_node}
+s by opening an [command]``ssh`` session from the {admin_node}
+. 
+====
+
+[[_pro.deploy.nodes.worker_install.manual.autoyast]]
+
+. Insert the {productname} DVD into the drive, then reboot the computer to start the installation program. 
+. {empty}
++
+
+
+image::install_boot_ay.png[scaledwidth=100%]
+
++
+Select menu:Installation[]
+on the boot screen, but _do not_ press kbd:[Enter]
+. 
++ 
+Before proceeding to boot the machine, you should enter the necessary menu:Boot Options[]
+for {ay}
+and networking. 
++ 
+The most important options are: 
++
+
+autoyast:::
+Path to the {ay}
+file.
+It is in the form of a URL built from the FQDN of the {admin_node}
+, followed the path to the {ay}
+file.
+For example, `http://caasp-admin.example.com/autoyast`
++
+If you are using a customized {ay}
+control file, you must substitute the default address from the {productname}
+cluster with the webserver URL that you are hosting the modified control file on. 
++
+For more information, refer to https://www.suse.com/documentation/sles-12/book_autoyast/data/invoking_autoinst.html#commandline_ay. 
+
+ifcfg:::
+Network configuration.
+If you are using DHCP, you can simply enter ``ifcfg=eth0=dhcp``.
+Make sure to replace `eth0` with the actual name of the interface that you want to use DHCP for.
+For manual configuration, refer to https://www.suse.com/documentation/sles-12/book_autoyast/data/ay_adv_network.html. 
++
+If you wish to define a static IP you can also use [command]``ifcfg``.
+For example: 
++
+
+----
+autoyast=http://admin.example.com/autoyast ifcfg=eth0=192.168.100.11/24,192.168.100.1,192.168.100.2,example.com hostname=master1.example.com
+----
+hostname:::
+The host name for the node, if not provided by DHCP.
+If you manually specify a host name, make sure that it is unique. 
+
++
+Press kbd:[Enter]
+.
+This boots the system and loads the {productname}
+installer. 
+. So long as there are no errors, the rest of the installation should complete automatically. After a reboot, the new  node should appear in the dashboard and can be added to your cluster. 
+. Once you have installed all desired machines, continue with <<_sec.deploy.install.bootstrap>>. 
++
+.Adjust Salt Worker Threads For More Than 40 Nodes
+IMPORTANT: If you are deploying a cluster with more than `40` overall nodes, you must adjust the number of available Salt worker threads before you continue. 
+
+Refer to: <<_sec.deploy.requirements.system.cluster.salt_cluster_size>>. 
++
+
+
+
+[[_sec.deploy.install.bootstrap]]
+== Bootstrapping the Cluster
+
+
+To complete the installation of your {productname}
+cluster, it is necessary to bootstrap at least three additional nodes; those will be the {kube}
+master and workers. 
+
+In case of problems, refer to <<_sec.admin.troubleshooting.failed_bootstrap>>. 
+
+[[_pro.deploy.install.bootstrap]]
+
+. Return to your admin node; with the {ay} instructions screen open from before. 
+. Click menu:Next[] . 
+. On the screen menu:Select nodes and roles[] , you will see a list of `salt-minion` IDs under menu:Pending Nodes[] . These are internal IDs for the master/worker nodes you have just set up and which have automatically registered with the admin node in the background. 
+. menu:Accept[] individual nodes into the cluster or click menu:Accept All Nodes[] . 
+. Assign the roles of the added nodes. 
++ 
+By clicking on menu:Select remaining nodes[]
+, all nodes without a selected role will be assigned the `Worker` role. 
++
+
+
+image::velum_setup3.png[scaledwidth=100%]
+
++
+.Minimum cluster size
+IMPORTANT: You must designate at least `1` master node and `2` worker nodes.. 
++
+
+
++
+.Assign Unused Nodes Later
+TIP: Nodes that you do not wish to designate for a role now, can later be assigned one on the {dashboard}
+status page. 
++
+
+. Once you have assigned all desired nodes a role, click menu:Next[] . 
+. The last step is to configure the external FQDNs for dashboard and {kube} API. 
++ 
+These values will determine where the nodes in the cluster will attempt to communicate. 
++
+.Master Node Loadbalancer FQDN
+NOTE: If you are planning a larger cluster with multiple {master_node}
+s, they must all be accessible from a single host name.
+If not, the functionality of {dashboard}
+will degrade if the original {master_node}
+is removed. 
+
+Therefore, you should ensure that there is some form of load-balancing or reverse proxy configured at the location you enter here. 
++
+
+
++
+
+
+image::velum_setup4.png[scaledwidth=100%]
+
++
+
+External Kubernetes API FQDN:::
+Name used to reach the node running the {kube}
+API server. 
++
+In a simple deployment with a single master node, this will be the name of the node that was selected as the {master_node}
+during bootstrapping of the cluster. 
+
+External Dashboard FQDN:::
+Name used to reach the admin node running {dashboard}
+. 
+. Click on menu:Bootstrap cluster[] to finalize the intial setup and start the bootstrapping process. 
++ 
+The status overview will be shown while the nodes are bootstrapped for their respective roles in the background. 
+
+
+[[_sec.deploy.install.vmware_tools]]
+== Installing {vmware} Tools
+
+
+This section is only relevant for deployments on {vmware}
+ESX and ESXi environments.
+This step is not required if you are using virtual disk images as described in <<_sec.deploy.preparation.disk_images>>, because [package]#open-vm-tools#
+ is already installed. 
+
+After the bootstrapping of the cluster is finished, install the {vmware}
+tools on all nodes that are included in the package [package]#open-vm-tools#
+.
+Log in on the {admin_node}
+ and execute: 
+
+
+. Install [package]#open-vm-tools# on all nodes. 
++
+
+----
+{prompt.root.admin}``docker exec $(docker ps -q --filter name=salt-master) \
+salt -P "roles:admin|kube-master|kube-minion" \
+cmd.run 'transactional-update pkg install --no-confirm open-vm-tools'`` 
+----
+. Reboot all nodes using ``salt``. If you are already running a workload, also see <<_sec.admin.nodes.graceful_shutdown>>. 
++
+
+----
+{prompt.root.admin}``docker exec -it $(docker ps -q --filter name=salt-master) salt '*' system.reboot`` 
+----
+. Check status of {vmware} Tools in the ESX / ESXi user interface. 

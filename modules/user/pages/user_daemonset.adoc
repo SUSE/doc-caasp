@@ -1,0 +1,68 @@
+[[_cha.user.daemonset]]
+= Using DaemonSet
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:sourcedir: .
+:imagesdir: ./images
+= Using DaemonSet
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:imagesdir: ./images
+
+
+
+[[_sec.user.daemonset.overview]]
+== Overview
+
+
+A DaemonSet ensures that all nodes are running a copy of a pod.
+If nodes are added or removed, pods will be started or removed from them as well.
+DaemonSets can be used to run required components, like storage daemons or log collectors on all nodes. 
+
+DaemonsSets are started independently of the normal pod scheduler.
+That means that DaemonSets can be used to bootstrap a cluster. 
+
+For details, refer to https://v1-11.docs.kubernetes.io/docs/concepts/workloads/controllers/daemonset/. 
+
+[[_sec.user.daemonset.create]]
+== Creating a DaemonSet
+
+
+The following example illustrates a very basic description of a DaemonSet.
+In this example, a log collector is started on each node to collect all files in [path]``/var/log/``
+. 
+
+----
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluentd-elasticsearch
+spec:
+  template:
+    metadata:
+      labels:
+        app: fluentd-elasticsearch
+    spec:
+      - name: fluentd-elasticsearch
+        image: gcr.io/google-containers/fluentd-elasticsearch:1.20
+        volumeMounts:
+        - name: varlog
+          mountPath: /var/log
+      volumes:
+      - name: varlog
+        hostPath:
+          path: /var/log
+----
+
+[[_sec.user.daemonset.delete]]
+== Deleting a DaemonSet
+
+
+To delete a DaemonSet, use [command]``kubectl delete daemonset
+   [replaceable]``DAEMONSET_NAME````. 

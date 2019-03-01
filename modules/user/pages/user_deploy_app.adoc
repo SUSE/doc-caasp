@@ -1,0 +1,79 @@
+[[_cha.user.deployment]]
+= Deploying Applications
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:sourcedir: .
+:imagesdir: ./images
+= Deploying Applications
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:imagesdir: ./images
+
+[[_sec.user.deployment.kubernetes_dashboard]]
+== Installing {kube} Dashboard
+
+.Technology Preview
+[IMPORTANT]
+====
+Even though you can install and use the community {kube}
+dashboard, {suse}
+currently fully supports only {dashboard}
+. 
+====
+
+.Requirements
+* You need to have Heapster version 1.3.0 or later installed on the cluster. To verify it is installed run: 
++
+
+----
+{prompt.user}``kubectl get pods --all-namespaces=true | grep heapster`` kube-system  heapster-default-heapster-659d4f8787-6vtkq  2/2  Running  0  2m
+----
++
+If you _do not_ get an output like above, you must install heapster first.
+Refer to <<_sec.admin.software.helm.installing_heapster>> for installation instructions. 
+* {suse} recommends Helm version 2.7.2+ and `kubectl` version 1.9.0+. 
+* `kubectl` needs to be installed on the local machine and configured to talk to the remote {kube} API (CaaSP Master node). See <<_sec.admin.kubernetes.install_kubectl>>
+
+
+.Procedure: Installation of {kube}Dashboard
+. Apply the `https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml[kubernetes-dashboard]` manifest from the {kube} GitHub project. This will automatically create the necessary services and RBAC settings to use the dashboard. 
++
+
+----
+{prompt.user}``kubectl apply -f \
+https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml`` secret "kubernetes-dashboard-certs" created
+serviceaccount "kubernetes-dashboard" created
+role.rbac.authorization.k8s.io "kubernetes-dashboard-minimal" created
+rolebinding.rbac.authorization.k8s.io "kubernetes-dashboard-minimal" created
+deployment.apps "kubernetes-dashboard" k8s_dashboard_login
+service "kubernetes-dashboard" created
+----
+. Run the `kubectl proxy` to establish a connection to the cluster. 
++
+
+----
+{prompt.user}``kubectl proxy`` Starting to serve on 127.0.0.1:8001
+----
+. Visit `http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/` in your browser. You will be greeted with by a welcome page containing a dialog to configure authentication. 
++
+
+
+image::k8s_dashboard_login.png[scaledwidth=100%]
+. Retrieve the access token for your {productname} Admin user (the output in the following example has been shortened).. 
++
+
+----
+{prompt.user}``kubectl config view | grep id-token | awk '{ print $2 }'`` eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3[...]
+----
+. Copy the access token, paste it into the input field and click menu:SIGN IN[] . You will be forwarded to your {kube} dashboard. 
+. On login, cluster resources and basic metrics are populated. 
++
+
+
+image::k8s_dashboard_overview.png[scaledwidth=100%]

@@ -1,0 +1,59 @@
+[[_configuration]]
+= Configuration
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:sourcedir: .
+:imagesdir: ./images
+= Configuration
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:imagesdir: ./images
+
+{productname}
+is typically configured in two stages, at first during the installation process and after installation you can configure your cluster by using ``cloud-init``.
+The first stage configuration of {productname}
+ comes as much preconfigured as possible.
+The second stage is typically used for large scales clusters, if you have just several machine, `cloud-init` is not necessary. 
+
+Each configuration stage is described in the following sections. 
+
+[[_installation.configuration]]
+== Configuration
+
+
+The defaults for the first stage configuration are the following: 
+
+*
+
+
+[[_cloud_init.configuration]]
+== ` cloud-init` Configuration
+
+`cloud-init` is used after the installation is complete.
+You then define a set of configuration files that will be applied during the boot phase. 
+
+The `cloud-init` configuration can be loaded from different sources:  
+
+* `LocalDisk`{ndash}``cloud-init`` reads configuration from a local directory: [path]``/cloud-init-config``
+* `NoCloud`{ndash}``cloud-init`` reads configuration from a local directory or from a remote location. 
+
+`cloud-init` uses the following required configuration files: [path]``meta-data``
+, [path]``user-data``
+, and an optional file: [path]``vendor-data``
+.
+Each file is described in the following sections. 
+
+[[_meta_data.config.file]]
+=== The [path]``meta-data`` Configuration File
+
+[[_user_data.config.file]]
+=== The [path]``user-data`` Configuration File
+
+[[_vendor_data.config.file]]
+=== The [path]``vendor-data`` Configuration File

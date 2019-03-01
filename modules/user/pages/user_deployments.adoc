@@ -1,0 +1,63 @@
+[[_cha.user.deployments]]
+= Using Deployments
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:sourcedir: .
+:imagesdir: ./images
+= Using Deployments
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:imagesdir: ./images
+
+
+
+[[_sec.user.deployments.overview]]
+== Overview
+
+
+Deployments can be used for declarative updates of Pods and ReplicaSets.
+The desired state is described in a Deployment object and the Deployment controller then changes the state in a controlled rate. 
+
+For details, refer to https://v1-11.docs.kubernetes.io/docs/concepts/workloads/controllers/deployment/. 
+
+== Creating a Deployment
+
+
+The following example illustrates a basic Deployment: 
+
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.7.9
+        ports:
+        - containerPort: 80
+----
+
+
+To create a Deployment from a YAML file, use [command]``kubectl create
+   -f [replaceable]``FILE_NAME````. 
+
+To delete a Deployment, use [command]``kubectl delete
+   [replaceable]``DEPLOYMENT_NAME````. 
