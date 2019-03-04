@@ -14,7 +14,7 @@ FILENAME ?= suse_caasp
 
 REVDATE ?= "$(shell date +'%Y-%m-%d')"
 CURDIR ?= .
-VERSION ?= antora
+VERSION ?= beta1
 OUTPUT_ADMIN ?= build/$(VERSION)/administration_guide
 OUTPUT_DEPLOY ?= build/$(VERSION)/deployment_guide
 OUTPUT_QUICK ?= build/$(VERSION)/quickstart_guide
@@ -55,7 +55,7 @@ pdf-admin: ## Generate PDF version of the Administration Guide
 		-a revdate=$(REVDATE) \
 		--base-dir . \
 		--out-file $(OUTPUT_ADMIN)/$(FILENAME)_administration_guide.pdf \
-		pdf-constructor/product_administration_guide.adoc
+		modules/administration/nav-administration-guide.adoc
 
 .PHONY: pdf-deployment
 pdf-deployment: ## Generate PDF version of the Administration Guide
