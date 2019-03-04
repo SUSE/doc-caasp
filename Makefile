@@ -68,7 +68,7 @@ pdf-deployment: ## Generate PDF version of the Administration Guide
 		-a revdate=$(REVDATE) \
 		--base-dir . \
 		--out-file $(OUTPUT_DEPLOY)/$(FILENAME)_deployment_guide.pdf \
-		pdf-constructor/product_deployment.adoc
+		modules/deployment/nav-deployment-guide.adoc
 
 .PHONY: pdf-quickstart
 pdf-quickstart: ## Generate PDF version of the Administration Guide
@@ -81,7 +81,7 @@ pdf-quickstart: ## Generate PDF version of the Administration Guide
 		-a revdate=$(REVDATE) \
 		--base-dir . \
 		--out-file $(OUTPUT_QUICK)/$(FILENAME)_quickstart.pdf \
-		pdf-constructor/product_quickstart.adoc
+		modules/quickstart/nav-quickstart-guide.adoc
 
 .PHONY: pdf-user
 pdf-user: ## Generate PDF version of the Administration Guide
@@ -94,4 +94,4 @@ pdf-user: ## Generate PDF version of the Administration Guide
 		-a revdate=$(REVDATE) \
 		--base-dir . \
 		--out-file $(OUTPUT_USER)/$(FILENAME)_user_guide.pdf \
-		pdf-constructor/product_user.adoc
+		modules/user/nav-user-guide.adoc
