@@ -7,84 +7,77 @@
 :experimental:
 :sourcedir: .
 :imagesdir: ./images
-= SUSE CaaS Platform System Requirements
-:doctype: book
-:sectnums:
-:toc: left
-:icons: font
-:experimental:
-:imagesdir: ./images
 
 
-Before you begin the installation, please make sure your system meets all the requirements listed below. 
+Before you begin the installation, please make sure your system meets all the requirements listed below.
 
 [[_sec.quick.requirements.cluster]]
 == Cluster Size Requirements
 
 {productname}
 is a dedicated cluster operating system and only functions in a multi-node configuration.
-It requires a connected group of four or more physical or virtual machines. 
+It requires a connected group of four or more physical or virtual machines.
 
 The minimum supported cluster size is four nodes: a single {admin_node}
 , one {master_node}
 , and two {worker_node}
-s. 
+s.
 
 .Test and Proof-of-Concept Clusters
 [NOTE]
 ====
 It is possible to provision a three-node cluster with only a single {worker_node}
-, but this is not a supported configuration for deployment. 
+, but this is not a supported configuration for deployment.
 ====
 
 
 For improved performance, multiple {master_node}
 s are supported, but there must always be an odd number.
-For cluster reliability, when using multiple master nodes, some form of DNS load-balancing should be used. 
+For cluster reliability, when using multiple master nodes, some form of DNS load-balancing should be used.
 
 Any number of {worker_node}
 s may be added up to the maximum cluster size.
-For the current maximum supported number of nodes, please refer to the Release Notes on https://www.suse.com/releasenotes/. 
+For the current maximum supported number of nodes, please refer to the Release Notes on https://www.suse.com/releasenotes/.
 
 [[_sec.quick.requirements.hardware]]
 == Minimum Node Specification
 
 
 Each node in the cluster must meet the following minimum specifications.
-All these specifications must be adjusted according to the expected load and type of deployments. 
+All these specifications must be adjusted according to the expected load and type of deployments.
 
 (v)CPU::
-** `4 Core` AMD64/Intel* EM64T processor 
-** 32-bit processors are not supported 
+** `4 Core` AMD64/Intel* EM64T processor
+** 32-bit processors are not supported
 
 Memory::
 ** `8 GB`
-+ 
++
 Although it may be possible to install {productname}
-with less memory than recommended, there is a high risk that the operating system will run out of memory and subsequently causes a cluster failure. 
+with less memory than recommended, there is a high risk that the operating system will run out of memory and subsequently causes a cluster failure.
 +
 .Swap partitions
 NOTE: {kube}
-does not support swap. 
+does not support swap.
 
 For technical reasons, an {admin_node}
 installed from an ISO image will have a small swap partition which will be disabled after installation.
 Nodes built using {ay}
-do not have a swap partition. 
+do not have a swap partition.
 +
 
 
 Storage Size::
-** `40 GB` for the root file system with Btrfs and enabled snapshots. 
+** `40 GB` for the root file system with Btrfs and enabled snapshots.
 +
 .Cloud default root volume size
 NOTE: In some Public Cloud frameworks the default root volume size of the images is smaller than 40GB.
-You must resize the root volume before instance launch using the command line tools or the web interface for the framework of your choice. 
+You must resize the root volume before instance launch using the command line tools or the web interface for the framework of your choice.
 +
 
 
 Storage Performance::
-** IOPS: `500` sequential IOPS 
+** IOPS: `500` sequential IOPS
 ** Write Performance: `10MB/s`
 +
 .etcd Storage requirements
@@ -96,38 +89,38 @@ NOTE: Storage performance requirements are tied closely to the https://github.co
 [[_sec.quick.requirements.network]]
 == Network Requirements
 
-* All the nodes on the cluster must be on a the same network and be able to communicate directly with one another. 
+* All the nodes on the cluster must be on a the same network and be able to communicate directly with one another.
 +
 .Reliable Networking
-IMPORTANT: Please make sure all nodes can communicate without interruptions. 
+IMPORTANT: Please make sure all nodes can communicate without interruptions.
 +
 
-* All nodes in the cluster must be assigned static IP addresses. Using dynamically assigned IPs will break cluster functionality after update/reboot. 
-* The admin node and the {kube} API master must have valid Fully-Qualified Domain Names (FQDNs), which can be resolved both by all other nodes and from other networks which need to access the cluster. 
-+ 
+* All nodes in the cluster must be assigned static IP addresses. Using dynamically assigned IPs will break cluster functionality after update/reboot.
+* The admin node and the {kube} API master must have valid Fully-Qualified Domain Names (FQDNs), which can be resolved both by all other nodes and from other networks which need to access the cluster.
++
 Admin node and {kube}
 API master node should be configured as CNAME records in the local DNS.
-This improves portability for disaster recovery. 
-* A DNS server to resolve host names. If you are using host names to specify nodes, please make sure you have reliable DNS resolution at all times, especially in combination with DHCP. 
+This improves portability for disaster recovery.
+* A DNS server to resolve host names. If you are using host names to specify nodes, please make sure you have reliable DNS resolution at all times, especially in combination with DHCP.
 +
 .Unique Host Names
 IMPORTANT: Host names must be unique.
-It is recommended to let the DHCP server provide not only IP addresses but also host names of the cluster nodes. 
+It is recommended to let the DHCP server provide not only IP addresses but also host names of the cluster nodes.
 +
 
-* On the same network, a separate computer with a Web browser is required in order to complete bootstrap of the cluster. 
-* We recommend that {productname} is setup to run in two subnets in one network segment, also referred to as VPC or VNET. The {admin_node} should run in a subnet that is not accessible to the outside world and should be connected to your network via VPN or other means. Consider a security group/firewall that only allows ingress traffic on ports 22 (SSH) and 443 (https) for the Administrative node from outside the VPC. All nodes must have access to the Internet through some route in order to connect to {scc} and receive updates, or be otherwise configured to receive updates, for example through {smt} . 
-+ 
+* On the same network, a separate computer with a Web browser is required in order to complete bootstrap of the cluster.
+* We recommend that {productname} is setup to run in two subnets in one network segment, also referred to as VPC or VNET. The {admin_node} should run in a subnet that is not accessible to the outside world and should be connected to your network via VPN or other means. Consider a security group/firewall that only allows ingress traffic on ports 22 (SSH) and 443 (https) for the Administrative node from outside the VPC. All nodes must have access to the Internet through some route in order to connect to {scc} and receive updates, or be otherwise configured to receive updates, for example through {smt} .
++
 Depending on the applications running in your cluster you may consider exposing the subnet for the cluster nodes to the outside world.
 Use a security group/firewall that only allows incoming traffic on ports served by your workload.
-For example, a containerized application providing the backend for REST based services with content served over https should only allow ingress traffic on port 443. 
+For example, a containerized application providing the backend for REST based services with content served over https should only allow ingress traffic on port 443.
 
 
 .Unique Host Names
 [IMPORTANT]
 ====
 All nodes' host names must be unique.
-If two or more nodes have the same host name, bootstrap of the cluster will fail. 
+If two or more nodes have the same host name, bootstrap of the cluster will fail.
 ====
 
 .Clusters without Fully-Qualified Domain Names
@@ -135,11 +128,11 @@ If two or more nodes have the same host name, bootstrap of the cluster will fail
 ====
 For test purposes, IP addresses can be substituted for the FQDNs for the {admin_node}
 and {master_node}
-, but this is not supported for production deployment. 
+, but this is not supported for production deployment.
 ====
 
 [[_sec.quick.requirements.limits]]
 == Limitations
 
-* {productname}{productnumber} does not support remote installations with ``Virtual Network Computing (VNC).``. 
-* {productname} is a dedicated cluster-node operating system. Dual-booting with other operating systems is not supported. It must be the only operating system installed on each node. 
+* {productname}{productnumber} does not support remote installations with ``Virtual Network Computing (VNC).``.
+* {productname} is a dedicated cluster-node operating system. Dual-booting with other operating systems is not supported. It must be the only operating system installed on each node.
