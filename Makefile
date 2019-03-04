@@ -14,7 +14,7 @@ FILENAME ?= suse_caasp
 
 REVDATE ?= "$(shell date +'%Y-%m-%d')"
 CURDIR ?= .
-VERSION ?= beta1
+VERSION ?= antora
 OUTPUT_ADMIN ?= build/$(VERSION)/administration_guide
 OUTPUT_DEPLOY ?= build/$(VERSION)/deployment_guide
 OUTPUT_QUICK ?= build/$(VERSION)/quickstart_guide
