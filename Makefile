@@ -9,10 +9,8 @@ STYLES_DIR ?= pdf-constructor/resources/themes
 #TODO allow setting the style, productname, and output filename prefix from the CLI
 #STYLE ?= draft
 STYLE ?= suse
-PRODUCTNAME ?= SUSE Manager
-FILENAME ?= suse_manager
-#PRODUCTNAME ?= Uyuni
-#FILENAME ?= uyuni
+PRODUCTNAME ?= SUSE CaaS Platform
+FILENAME ?= suse_caasp
 
 REVDATE ?= "$(shell date +'%Y-%m-%d')"
 CURDIR ?= .
@@ -21,7 +19,6 @@ OUTPUT_ADMIN ?= build/$(VERSION)/administration_guide
 OUTPUT_DEPLOY ?= build/$(VERSION)/deployment_guide
 OUTPUT_QUICK ?= build/$(VERSION)/quickstart_guide
 OUTPUT_USER ?= build/$(VERSION)/user_guide
-
 
 PHONY: help
 help: ## Prints a basic help menu about available targets
@@ -40,16 +37,15 @@ help: ## Prints a basic help menu about available targets
 		printf "%s\n" $$help_info; \
 	done
 
-
 .PHONY: clean
 clean: ## Remove build artifacts from output dir
 	-rm -rf build/
 
 .PHONY: pdf-all
-pdf-all: pdf-administration pdf-deployment pdf-quickstart pdf-user ## Generate PDF versions of all books
+pdf-all: pdf-admin pdf-deployment pdf-quickstart pdf-user ## Generate PDF versions of all books
 
-.PHONY: pdf-administration
-pdf-administration: ## Generate PDF version of the Administration Guide
+.PHONY: pdf-admin
+pdf-admin: ## Generate PDF version of the Administration Guide
 	asciidoctor-pdf \
 		-a pdf-stylesdir=$(STYLES_DIR)/ \
 		-a pdf-style=$(STYLE) \
