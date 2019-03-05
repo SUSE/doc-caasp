@@ -226,7 +226,7 @@ pod/xwing created</screen>
      <para>
       Check the status of pods and services, wait until they are all ready.
      </para>
-<screen>&prompt.root;<command>kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.2/examples/minikube/http-sw-app.yaml</command>
+<screen>&prompt.root;<command>kubectl get pods,svc</command>
 NAME                             READY   STATUS    RESTARTS   AGE
 pod/deathstar-6fb5694d48-5hmds   1/1     Running   0          107s
 pod/deathstar-6fb5694d48-fhf65   1/1     Running   0          107s
@@ -251,7 +251,7 @@ Ship landed</screen>
       Apply the &net_pol; which allows to connect to deathstar only from
       endpoints which have label <literal>org: empire</literal>.
      </para>
-     <screen>&prompt.root;<command>kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.2examples/minikube/sw_l3_l4_policy.yaml</command>
+     <screen>&prompt.root;<command>kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.2/examples/minikube/sw_l3_l4_policy.yaml</command>
 ciliumnetworkpolicy.cilium.io/rule1 created</screen>
     </step>
     <step>
