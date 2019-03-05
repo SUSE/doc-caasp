@@ -1,3 +1,4 @@
+include::ROOT:partial$entities.adoc[]
 [[_cha.quick.install]]
 = Installation
 :doctype: book
@@ -13,50 +14,50 @@
 ====
 This document is meant to give you a quick way to deploy a default installation of {productname}
 .
-The instructions will assume the absolute minimum of configuration. 
+The instructions will assume the absolute minimum of configuration.
 
-If you require any specific configuration for you environment __at all__, this document is not for you and you must consult the full deployment guide. 
+If you require any specific configuration for you environment __at all__, this document is not for you and you must consult the full deployment guide.
 ====
 
 
 This chapter gives a quick overview on how to run through a default installation of {productname}
-onto dedicated physical or virtual machines. 
+onto dedicated physical or virtual machines.
 
 In addition, {productname}
 supports other deployment methods and scenarios, such as from pre-installed disk images and onto {ostack}
-or certain supported public-cloud providers. 
+or certain supported public-cloud providers.
 
 For these and other deployment scenarios, see the {productname}
-Deployment Guide on http://www.suse.com/documentation/. 
+Deployment Guide on http://www.suse.com/documentation/.
 
 [[_sec.quick.install.admin]]
 == Installing The Administration Node
 
 
 The following instructions assume that you are installing onto a dedicated physical or virtual machine, using either an ISO image or a physical removable medium, such as a DVD or bootable USB key.
-The hard disk should not contain any existing partitions. 
+The hard disk should not contain any existing partitions.
 [[_pro.quick.intall.admin]]
 
-. Insert the bootable {productname} installation medium, then reboot the computer to start the installation program. On machines with a traditional BIOS you will see the graphical boot screen shown below. On machines equipped with UEFI, a slightly different boot screen is used. Secure Boot on UEFI machines is supported. 
-+ 
+. Insert the bootable {productname} installation medium, then reboot the computer to start the installation program. On machines with a traditional BIOS you will see the graphical boot screen shown below. On machines equipped with UEFI, a slightly different boot screen is used. Secure Boot on UEFI machines is supported.
++
 Use kbd:[F2]
 to change the language for the installer.
 A corresponding keyboard layout is chosen automatically.
-For more information about changing boot options, see https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_startup.html. 
+For more information about changing boot options, see https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_startup.html.
 +
 
 
 image::install_boot.png[scaledwidth=100%]
-. Select menu:Installation[] on the boot screen, then press kbd:[Enter] . This boots the system and loads the {productname} installer. 
+. Select menu:Installation[] on the boot screen, then press kbd:[Enter] . This boots the system and loads the {productname} installer.
 . {empty}
-+ 
++
 Configure the following mandatory settings on the menu:Installation Overview[]
-screen. 
+screen.
 +
 .Help And Release Notes
 TIP: From this point on, a brief help document and the Release Notes can be viewed from any screen during the installation process by selecting menu:Help[]
  or menu:Release Notes[]
- respectively. 
+ respectively.
 +
 
 
@@ -65,33 +66,33 @@ TIP: From this point on, a brief help document and the Release Notes can be view
 Keyboard Layout:::
 The menu:Keyboard Layout[]
 is initialized with the language settings you have chosen on the boot screen.
-Change it here, if necessary. 
+Change it here, if necessary.
 
 Password for root User :::
 Type a password for the system administrator account (called the {rootuser}
-user) and confirm it. 
+user) and confirm it.
 +
 
 .Do Not Forget The {rootuser}Password
 WARNING: You should ensure that you will not lose the {rootuser}
 password! After you entered it here, the password cannot be retrieved.
-See https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_user_root.html for more information. 
+See https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_user_root.html for more information.
 +
 
 
 Registration Code or SMT Server URL :::
 Enter the menu:Registration Code or SMT Server URL[]
 .
-SMT Server URLs must use `https` or ``http``; other protocols are not supported. 
+SMT Server URLs must use `https` or ``http``; other protocols are not supported.
 
 System Role :::
 As this is the first node in the cluser, you must select `"Administration Node (Dashboard)"` as the menu:System Role[]
-for your system. 
+for your system.
 
 NTP Servers :::
 Enter host names or IP addresses of one or more menu:NTP Servers[]
 for the node, separated by white spaces or colons.
-While a single time server is sufficient, clusters should use at least three for optimal precision and reliability. 
+While a single time server is sufficient, clusters should use at least three for optimal precision and reliability.
 +
 For more information about ``NTP``, refer to https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_netz_xntp.html
 
@@ -103,60 +104,60 @@ image::install_overview_admin.png[scaledwidth=100%]
 +
 Optionally, you can customize the following settings.
 If you do not make any changes, defaults are used.
-A brief summary of the settings is displayed below the respective settings option. 
+A brief summary of the settings is displayed below the respective settings option.
 +
 
 Partitioning :::
 Review the partition setup proposed by the system and change it if necessary.
-You have the following options: 
+You have the following options:
 
 Select a hard disk ::::
 Select a disk to which install {productname}
-to with the recommended partitioning scheme. 
+to with the recommended partitioning scheme.
 
 menu:Custom Partitioning (for Experts)[]::::
 Opens the menu:Expert Partitioner[]
-described in https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_yast2_i_y2_part_expert.html . 
+described in https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_yast2_i_y2_part_expert.html .
 +
 
 .For Experts Only
 WARNING: As the name suggests, the menu:Expert Partitioner[]
  is for experts only.
 Custom partitioning schemes that do not meet the requirements of {productname}
- are not supported. 
+ are not supported.
 
 .Requirements for custom partitioning schemes
-**** {productname} exclusively supports the file system types {btrfs} and OverlayFS. A read-only {btrfs} file system is used for the root file system which enables transactional updates. 
-**** For snapshots, partitions must have a capacity of at least 11 GB. 
-**** Depending on the number and size of your containers, you will need sufficient space under the `/var` mount point. 
+**** {productname} exclusively supports the file system types {btrfs} and OverlayFS. A read-only {btrfs} file system is used for the root file system which enables transactional updates.
+**** For snapshots, partitions must have a capacity of at least 11 GB.
+**** Depending on the number and size of your containers, you will need sufficient space under the `/var` mount point.
 
 +
 
 
 +
 To accept the proposed setup without any changes, choose menu:Next[]
-to proceed. 
+to proceed.
 
 Booting :::
 This section shows the boot loader configuration.
 Changing the defaults is only recommended if really needed.
-Refer to https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_grub2.html for details. 
+Refer to https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_grub2.html for details.
 
 Network Configuration :::
 If the network could not be configured automatically while starting the installation system, you have to manually configure the menu:Network Settings[]
 .
-Please make sure at least one network interface is connected to the Internet in order to register your product. 
+Please make sure at least one network interface is connected to the Internet in order to register your product.
 +
 By default, the installer requests a host name from a DHCP server.
 If you set a custom name in the menu:Hostname/DNS[]
-tab, make sure that it is unique. 
+tab, make sure that it is unique.
 +
-For more information on configuring network connections, refer to https://www.suse.com/documentation/sles-12/book_sle_admin/data/sec_basicnet_yast.html . 
+For more information on configuring network connections, refer to https://www.suse.com/documentation/sles-12/book_sle_admin/data/sec_basicnet_yast.html .
 +
 
 .Reliable Networking
 IMPORTANT: Please make sure all nodes are on the same network and can communicate without interruptions.
-If you are using host names to specify nodes, please make sure you have reliable DNS resolution at all times, especially in combination with DHCP. 
+If you are using host names to specify nodes, please make sure you have reliable DNS resolution at all times, especially in combination with DHCP.
 +
 
 
@@ -164,14 +165,14 @@ Kdump :::
 Kdump saves the memory image ("`core dump`"
 ) to the file system in case the kernel crashes.
 This enables you to find the cause of the crash by debugging the dump file.
-For more information, see https://www.suse.com/documentation/sles-12/book_sle_tuning/data/cha_tuning_kdump_basic.html. 
+For more information, see https://www.suse.com/documentation/sles-12/book_sle_tuning/data/cha_tuning_kdump_basic.html.
 +
 
 .Kdump With Large Amounts Of RAM
 WARNING: If you have a system with large amounts of RAM or a small hard drive, core dumps may not be able to fit on the disk.
-If the installer warns you about this, there are two options: 
-... Enter the menu:Expert Partitioner[] and increase the size of the root partition so that it can accommodate the size of the core dump. In this case, you will need to decrease the size of the data partition accordingly. Remember to keep all other partitioning parameters (e.g. the root file system, the mount point of the data partition) when doing these changes. 
-... Disable kdump completely. 
+If the installer warns you about this, there are two options:
+... Enter the menu:Expert Partitioner[] and increase the size of the root partition so that it can accommodate the size of the core dump. In this case, you will need to decrease the size of the data partition accordingly. Remember to keep all other partitioning parameters (e.g. the root file system, the mount point of the data partition) when doing these changes.
+... Disable kdump completely.
 
 +
 
@@ -181,11 +182,11 @@ View detailed hardware information by clicking menu:System Information[]
 .
 In this screen you can also change menu:Kernel Settings[]
 .
-For more information, see https://www.suse.com/documentation/sles-12/book_sle_tuning/data/cha_tuning_io.html. 
+For more information, see https://www.suse.com/documentation/sles-12/book_sle_tuning/data/cha_tuning_io.html.
 
 +
 Proceed with menu:Next[]
-. 
+.
 +
 .Installing Product Patches At Installation Time
 TIP: If {productname}
@@ -193,20 +194,20 @@ has been successfully registered at the {scc}
 , you are asked whether to install the latest available online updates during the installation.
 If choosing menu:Yes[]
 , the system will be installed with the most current packages without having to apply the updates after installation.
-Activating this option is recommended. 
+Activating this option is recommended.
 +
 
-. After you have finalized the system configuration on the menu:Installation Overview[] screen, click menu:Install[] . Up to this point no changes have been made to your system. After you click menu:Install[] a second time, the installation process starts. 
+. After you have finalized the system configuration on the menu:Installation Overview[] screen, click menu:Install[] . Up to this point no changes have been made to your system. After you click menu:Install[] a second time, the installation process starts.
 +
 
 
 image::install_confirm.png[scaledwidth=100%]
-. During the installation, the progress is shown in detail on the menu:Details[] tab. 
+. During the installation, the progress is shown in detail on the menu:Details[] tab.
 +
 
 
 image::install_perform.png[scaledwidth=100%]
-. After the installation routine has finished, the computer is rebooted into the installed system. 
+. After the installation routine has finished, the computer is rebooted into the installed system.
 
 
 [[_sec.quick.install.conf]]
@@ -214,18 +215,18 @@ image::install_perform.png[scaledwidth=100%]
 
 
 In order to finalize the configuration of the {admin_node}
-, a few additional steps are required. 
+, a few additional steps are required.
 
 [[_pro.quick.install.conf]]
 
-. After the {admin_node} has finished booting and you see the login prompt, point a web browser to https://caasp-admin.example.com , where `caasp-admin.{exampledomain}` is the host name or IP address of the {admin_node} . The IP address is shown above the login prompt. 
+. After the {admin_node} has finished booting and you see the login prompt, point a web browser to https://caasp-admin.example.com , where `caasp-admin.{exampledomain}` is the host name or IP address of the {admin_node} . The IP address is shown above the login prompt.
 +
-. To create an Administrator account, click menu:Create an account[] and provide an e-mail address and a password. Confirm the password and click menu:Create Admin[] . You will be logged into the dashboard automatically. 
+. To create an Administrator account, click menu:Create an account[] and provide an e-mail address and a password. Confirm the password and click menu:Create Admin[] . You will be logged into the dashboard automatically.
 +
 
 
 image::velum_register.png[scaledwidth=100%]
-. Fill in the values for the minimum required options. 
+. Fill in the values for the minimum required options.
 +
 
 
@@ -234,28 +235,28 @@ image::velum_setup1.png[scaledwidth=100%]
 +
 
 Dashboard Location:::
-Host name or IP of the node running this web interface. 
+Host name or IP of the node running this web interface.
 
 Proxy Settings:::
 If enabled, you can set proxy servers for `HTTP` and ``HTTPS``.
-You may also configure exceptions and choose whether to apply the settings only to the container engine or to all processes running on the cluster nodes. 
-. Click menu:Next[] . 
-. You will be shown an information screen about {ay} . 
+You may also configure exceptions and choose whether to apply the settings only to the container engine or to all processes running on the cluster nodes.
+. Click menu:Next[] .
+. You will be shown an information screen about {ay} .
 +
 
 
 image::velum_setup2.png[scaledwidth=100%]
 
 +
-This is now the time for you to install the master/worker nodes for the cluster. 
+This is now the time for you to install the master/worker nodes for the cluster.
 +
 .Leave The Admin Node Configuration Open
-IMPORTANT: If you quit out of the configuration process at this time by closing the browser window/tab, you will lose all input you made to the settings and have to restart the configuration from the beginning. 
+IMPORTANT: If you quit out of the configuration process at this time by closing the browser window/tab, you will lose all input you made to the settings and have to restart the configuration from the beginning.
 
-We recommend you leave the browser window/tab open while you perform the installation of the other nodes in a new window. 
+We recommend you leave the browser window/tab open while you perform the installation of the other nodes in a new window.
 +
 
-. Click menu:Next[] to proceed and install some cluster nodes as described in <<_sec.quick.install.node>>. 
+. Click menu:Next[] to proceed and install some cluster nodes as described in <<_sec.quick.install.node>>.
 
 
 [[_sec.quick.install.node]]
@@ -266,40 +267,40 @@ Cluster nodes can be installed manually, with {ay}
 , or are provisionend automatically on public cloud service.
 Manual installation is only feasible for a small number of workers.
 For larger numbers outside of public cloud service, {ay}
-is recommended. 
+is recommended.
 
 You can start the setup via PXE.
 For the full procedure, refer to the {sle}
-12 Deployment Guide: https://www.suse.com/documentation/sles-12/singlehtml/book_sle_deployment/book_sle_deployment.html#cha.deployment.prep_boot. 
+12 Deployment Guide: https://www.suse.com/documentation/sles-12/singlehtml/book_sle_deployment/book_sle_deployment.html#cha.deployment.prep_boot.
 
 You can directly use the `initrd` and `linux` files from your install media, or install the package [package]#tftpboot-installation-CAASP-3.0#
  on the TFTP server.
 The package provides the required `initrd` and `linux` files in the [path]``/srv/tftpboot/``
  directory.
 You need to modify the paths used in the {sle}
- 12 Deployment Guide to correctly point to the files provided by the package. 
+ 12 Deployment Guide to correctly point to the files provided by the package.
 
 Before you can set up a cluster node, you have to install and bootstrap an {admin_node}
 to run the administration dashboard.
 Refer to <<_sec.quick.install.admin>> for information on how to install the {admin_node}
-. 
+.
 
 [[_sec.quick.install.node.manual]]
 === Manual Installation
 
 [[_pro.quick.install.node.manual]]
 
-. Follow the steps as described in <<_sec.quick.install.admin>>. 
-. In step 3, select `Cluster Node` as menu:System Role[] and enter the host name or IP address of the menu:Administration Node[] . 
+. Follow the steps as described in <<_sec.quick.install.admin>>.
+. In step 3, select `Cluster Node` as menu:System Role[] and enter the host name or IP address of the menu:Administration Node[] .
 +
 .Reliable Networking
 IMPORTANT: Please make sure all nodes are on the same network and can communicate without interruptions.
-If you are using host names to specify nodes, please make sure you have reliable DNS resolution at all times, especially in combination with DHCP. 
+If you are using host names to specify nodes, please make sure you have reliable DNS resolution at all times, especially in combination with DHCP.
 +
 
-. After you have finalized the system configuration on the menu:Installation Overview[] screen, click menu:Install[] . Up to this point no changes have been made to your system. After you click menu:Install[] a second time, the installation process starts. 
-+ 
-After a reboot, the worker should show up in the dashboard and can be added to your cluster. 
+. After you have finalized the system configuration on the menu:Installation Overview[] screen, click menu:Install[] . Up to this point no changes have been made to your system. After you click menu:Install[] a second time, the installation process starts.
++
+After a reboot, the worker should show up in the dashboard and can be added to your cluster.
 
 
 [[_sec.quick.install.node.ay]]
@@ -307,11 +308,11 @@ After a reboot, the worker should show up in the dashboard and can be added to y
 
 
 Please make sure you have finished the initial configuration described in <<_sec.quick.install.conf>> before installing cluster nodes with {ay}
-. 
+.
 
 [[_pro.quick.install.node.ay]]
 
-. Insert the {productname} DVD into the drive, then reboot the computer to start the installation program. 
+. Insert the {productname} DVD into the drive, then reboot the computer to start the installation program.
 . {empty}
 +
 
@@ -323,7 +324,7 @@ Select menu:Installation[]
 on the boot screen.
 Enter the necessary menu:Boot Options[]
 for {ay}
-and networking, namely: 
+and networking, namely:
 +
 
 autoyast:::
@@ -335,18 +336,18 @@ ifcfg:::
 Network configuration.
 If you are using dhcp, you can simply enter ``ifcfg=eth0=dhcp``.
 Make sure to replace `eth0` with the actual name of the interface that you want to use DHCP for.
-For manual configuration, refer to https://www.suse.com/documentation/sles-12/book_autoyast/data/ay_adv_network.html. 
+For manual configuration, refer to https://www.suse.com/documentation/sles-12/book_autoyast/data/ay_adv_network.html.
 
 hostname :::
 The host name for the node, if not provided by DHCP.
-If you manually specify a host name, make sure it is unique. 
+If you manually specify a host name, make sure it is unique.
 
 +
 Press kbd:[Enter]
 .
 This boots the system and loads the {productname}
-installer. 
-. The rest of the installation will run fully automated. After a reboot, the worker should show up in the dashboard and can be added to your cluster. 
+installer.
+. The rest of the installation will run fully automated. After a reboot, the worker should show up in the dashboard and can be added to your cluster.
 
 
 [[_sec.quick.install.bootstrap]]
@@ -355,18 +356,18 @@ installer.
 
 To complete the installation of your {productname}
 cluster, it is necessary to bootstrap at least three additional nodes; those will be the {kube}
-master and workers. 
+master and workers.
 
 [[_pro.quick.install.bootstrap]]
 
-. Return to your admin node; with the {ay} instructions screen open from before. 
-. Click menu:Next[] . 
-. On the screen menu:Select nodes and roles[] , you will see a list of `salt-minion` IDs under menu:Pending Nodes[] . These are internal IDs for the master/worker nodes you have just set up and which have automatically registered with the admin node in the background. 
-. menu:Accept[] individual nodes into the cluster or click menu:Accept All Nodes[] . 
-. Assign the roles of the added nodes. 
-+ 
+. Return to your admin node; with the {ay} instructions screen open from before.
+. Click menu:Next[] .
+. On the screen menu:Select nodes and roles[] , you will see a list of `salt-minion` IDs under menu:Pending Nodes[] . These are internal IDs for the master/worker nodes you have just set up and which have automatically registered with the admin node in the background.
+. menu:Accept[] individual nodes into the cluster or click menu:Accept All Nodes[] .
+. Assign the roles of the added nodes.
++
 By clicking on menu:Select remaining nodes[]
-, all nodes without a selected role will be assigned the `Worker` role. 
+, all nodes without a selected role will be assigned the `Worker` role.
 +
 
 
@@ -374,29 +375,29 @@ image::velum_setup3.png[scaledwidth=100%]
 
 +
 .Minimum Cluster Size
-IMPORTANT: You must designate at least `1` master node and `2` worker nodes.. 
+IMPORTANT: You must designate at least `1` master node and `2` worker nodes..
 +
 
 
 +
 .Assign Unused Nodes Later
 TIP: Nodes that you do not wish to designate for a role now, can later be assigned one on the {dashboard}
-status page. 
+status page.
 +
 
-. Once you have assigned all desired nodes a role, click menu:Next[] . 
-. The last step is to configure the external FQDNs for dashboard and {kube} API. 
-+ 
-These values will determine where the nodes in the cluster will attempt to communicate. 
+. Once you have assigned all desired nodes a role, click menu:Next[] .
+. The last step is to configure the external FQDNs for dashboard and {kube} API.
++
+These values will determine where the nodes in the cluster will attempt to communicate.
 +
 .Master Node Loadbalancer FQDN
 NOTE: If you are planning a larger cluster with multiple {master_node}
 s, they must all be accessible from a single host name.
 If not, the functionality of {dashboard}
 will degrade if the original {master_node}
-is removed. 
+is removed.
 
-Therefore, you should ensure that there is some form of load-balancing or reverse proxy configured at the location you enter here. 
+Therefore, you should ensure that there is some form of load-balancing or reverse proxy configured at the location you enter here.
 +
 
 
@@ -409,14 +410,14 @@ image::velum_setup4.png[scaledwidth=100%]
 
 External Kubernetes API FQDN:::
 Name used to reach the node running the {kube}
-API server. 
+API server.
 +
 In a simple deployment with a single master node, this will be the name of the node that was selected as the {master_node}
-during bootstrapping of the cluster. 
+during bootstrapping of the cluster.
 
 External Dashboard FQDN:::
 Name used to reach the admin node running {dashboard}
-. 
-. Click on menu:Bootstrap cluster[] to finalize the intial setup and start the bootstrapping process. 
-+ 
-The status overview will be shown while the nodes are bootstrapped for their respective roles in the background. 
+.
+. Click on menu:Bootstrap cluster[] to finalize the intial setup and start the bootstrapping process.
++
+The status overview will be shown while the nodes are bootstrapped for their respective roles in the background.
