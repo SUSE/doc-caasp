@@ -95,3 +95,16 @@ pdf-user: ## Generate PDF version of the Administration Guide
 		--base-dir . \
 		--out-file $(OUTPUT_USER)/$(FILENAME)_user_guide.pdf \
 		modules/user/nav-user-guide.adoc
+		
+.PHONY: pdf-test
+pdf-test: ## Generate PDF version of the Administration Guide
+	asciidoctor-pdf \
+		-a pdf-stylesdir=$(STYLES_DIR)/ \
+		-a pdf-style=$(STYLE) \
+		-a pdf-fontsdir=$(FONTS_DIR) \
+		-a examplesdir=modules/ROOT/examples \
+		-a imagesdir=modules/ROOT/assets/images \
+		-a revdate=$(REVDATE) \
+		--base-dir . \
+		--out-file build/format_test.pdf \
+		modules/ROOT/pages/format_test.adoc
