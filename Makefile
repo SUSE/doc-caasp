@@ -50,6 +50,7 @@ pdf-admin: ## Generate PDF version of the Administration Guide
 		-a pdf-stylesdir=$(STYLES_DIR)/ \
 		-a pdf-style=$(STYLE) \
 		-a pdf-fontsdir=$(FONTS_DIR) \
+		-a icons=font \
 		-a examplesdir=modules/administration/examples \
 		-a imagesdir=modules/administration/assets/images \
 		-a revdate=$(REVDATE) \
@@ -63,6 +64,7 @@ pdf-deployment: ## Generate PDF version of the Administration Guide
 		-a pdf-stylesdir=$(STYLES_DIR)/ \
 		-a pdf-style=$(STYLE) \
 		-a pdf-fontsdir=$(FONTS_DIR) \
+		-a icons=font \
 		-a examplesdir=modules/deployment/examples \
 		-a imagesdir=modules/deployment/assets/images \
 		-a revdate=$(REVDATE) \
@@ -76,6 +78,7 @@ pdf-quickstart: ## Generate PDF version of the Administration Guide
 		-a pdf-stylesdir=$(STYLES_DIR)/ \
 		-a pdf-style=$(STYLE) \
 		-a pdf-fontsdir=$(FONTS_DIR) \
+		-a icons=font \
 		-a examplesdir=modules/quickstart/examples \
 		-a imagesdir=modules/quickstart/assets/images \
 		-a revdate=$(REVDATE) \
@@ -89,6 +92,7 @@ pdf-user: ## Generate PDF version of the Administration Guide
 		-a pdf-stylesdir=$(STYLES_DIR)/ \
 		-a pdf-style=$(STYLE) \
 		-a pdf-fontsdir=$(FONTS_DIR) \
+		-a icons=font \
 		-a examplesdir=modules/user/examples \
 		-a imagesdir=modules/user/assets/images \
 		-a revdate=$(REVDATE) \
@@ -102,9 +106,24 @@ pdf-test: ## Generate PDF version of the Administration Guide
 		-a pdf-stylesdir=$(STYLES_DIR)/ \
 		-a pdf-style=$(STYLE) \
 		-a pdf-fontsdir=$(FONTS_DIR) \
+		-a icons=font \
 		-a examplesdir=modules/ROOT/examples \
 		-a imagesdir=modules/ROOT/assets/images \
 		-a revdate=$(REVDATE) \
 		--base-dir . \
 		--out-file build/format_test.pdf \
 		modules/ROOT/pages/format_test.adoc
+		
+# .PHONY: release-notes
+# release-notes: ## Generate PDF version of the Administration Guide
+# 	asciidoctor-pdf \
+# 		-a pdf-stylesdir=$(STYLES_DIR)/ \
+# 		-a pdf-style=$(STYLE) \
+# 		-a pdf-fontsdir=$(FONTS_DIR) \
+# 		-a icons=font \
+# 		-a examplesdir=modules/ROOT/examples \
+# 		-a imagesdir=modules/ROOT/assets/images \
+# 		-a revdate=$(REVDATE) \
+# 		--base-dir . \
+# 		--out-file build/$(PRODUCTNAME)_$(VERSION)_Release_Notes.pdf \
+# 		Release-Notes.adoc
