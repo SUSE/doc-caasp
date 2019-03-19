@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUSE CaaS Platform System Requirements :: SUSE CaaS Platform Documentation</title>
+    <meta name="generator" content="Antora 2.0.0">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="stylesheet" href="../../../_/css/suse.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css">
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css -->
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header" role="banner">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-logo">
+        <img class="logo" src="../../../_/img/suse_logo_reverse.png" />
+      </div>
+      <div class="navbar-item">
+        <a href="https://r0ckarong.github.io">SUSE CaaS Platform</a>
+        <span class="separator">//</span>
+        <a href="../../..">Documentation</a>
+      </div>
+      <div class="navbar-item">
+        <input id="search-input" type="text" placeholder="Search docs">
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">Projects</div>
+          <div class="navbar-dropdown">
+            <div class="navbar-item"><strong>Resources</strong></div>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/tree/antora">Repository</a>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/issues">Issue Tracker</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="main-wrapper">
+<div class="navigation-container" data-component="suse-caasp" data-version="v4-beta1">
+  <aside class="navigation">
+    <div class="panels">
+<div class="navigation-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">SUSE CaaS Platform</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="quick_intro.html">Quickstart Guide</a>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="quick_system_requirements.html">System Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="quick_install.html">Installation and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="quick_configuration.html">Node Configuration</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../administration/admin_intro.html">Administration Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_security.html">Security</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_administration.html">Administration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_software.html">Software Management</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_monitoring.html">Monitoring</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_logging.html">Logging</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_misc.html">Miscellaenous Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_integration_ses.html">SES Integration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_troubleshooting.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../deployment/deployment_intro.html">Deployment Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_about.html">About Deployment Guide</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_scenarios.html">Deployment Scenarios</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_sysreqs.html">System Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_preparation.html">Preparing The Installation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_installing_nodes.html">Installing and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_configuration.html">Node Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="navigation-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">SUSE CaaS Platform</span>
+    <span class="version">v4-beta1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">SUSE CaaS Platform</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">v4-beta1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+  <main class="main">
+<div class="toolbar" role="navigation">
+  <button class="navigation-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="crumbs" aria-label="breadcrumbs">
+  <ul>
+    <li class="crumb"><a href="../index.html">SUSE CaaS Platform</a></li>
+    <li class="crumb"><a href="quick_intro.html">Quickstart Guide</a></li>
+    <li class="crumb"><a href="quick_system_requirements.html">System Requirements</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/mnapp/mydata/software/SUSE/doc-caasp/modules/quickstart/pages/quick_system_requirements.adoc">Edit this Page</a></div>
+</div>
+<article class="doc">
+<h1>SUSE CaaS Platform System Requirements</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_sec.quick.requirements.cluster">1. Cluster Size Requirements</a></li>
+<li><a href="#_sec.quick.requirements.hardware">2. Minimum Node Specification</a></li>
+<li><a href="#_sec.quick.requirements.network">3. Network Requirements</a></li>
+<li><a href="#_sec.quick.requirements.limits">4. Limitations</a></li>
+</ul>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Before you begin the installation, please make sure your system meets all the requirements listed below.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.quick.requirements.cluster"><a class="anchor" href="#_sec.quick.requirements.cluster"></a>1. Cluster Size Requirements</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>SUSE CaaS Platform
+is a dedicated cluster operating system and only functions in a multi-node configuration.
+It requires a connected group of four or more physical or virtual machines.</p>
+</div>
+<div class="paragraph">
+<p>The minimum supported cluster size is four nodes: a single Administration Node
+, one Master Node
+, and two Worker Node
+s.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Test and Proof-of-Concept Clusters</div>
+<div class="paragraph">
+<p>It is possible to provision a three-node cluster with only a single Worker Node
+, but this is not a supported configuration for deployment.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For improved performance, multiple Master Node
+s are supported, but there must always be an odd number.
+For cluster reliability, when using multiple master nodes, some form of DNS load-balancing should be used.</p>
+</div>
+<div class="paragraph">
+<p>Any number of Worker Node
+s may be added up to the maximum cluster size.
+For the current maximum supported number of nodes, please refer to the Release Notes on <a href="https://www.suse.com/releasenotes/" class="bare">https://www.suse.com/releasenotes/</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.quick.requirements.hardware"><a class="anchor" href="#_sec.quick.requirements.hardware"></a>2. Minimum Node Specification</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Each node in the cluster must meet the following minimum specifications.
+All these specifications must be adjusted according to the expected load and type of deployments.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">(v)CPU</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p><code>4 Core</code> AMD64/Intel* EM64T processor</p>
+</li>
+<li>
+<p>32-bit processors are not supported</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">Memory</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p><code>8 GB</code></p>
+<div class="paragraph">
+<p>Although it may be possible to install SUSE CaaS Platform
+with less memory than recommended, there is a high risk that the operating system will run out of memory and subsequently causes a cluster failure.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Swap partitions</div>
+Kubernetes
+does not support swap.
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>For technical reasons, an Administration Node
+installed from an ISO image will have a small swap partition which will be disabled after installation.
+Nodes built using AutoYaST
+do not have a swap partition.</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Storage Size</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p><code>40 GB</code> for the root file system with Btrfs and enabled snapshots.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Cloud default root volume size</div>
+In some Public Cloud frameworks the default root volume size of the images is smaller than 40GB.
+You must resize the root volume before instance launch using the command line tools or the web interface for the framework of your choice.
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">Storage Performance</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>IOPS: <code>500</code> sequential IOPS</p>
+</li>
+<li>
+<p>Write Performance: <code>10MB/s</code></p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">etcd Storage requirements</div>
+Storage performance requirements are tied closely to the <a href="https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware.md#disks">etcd hardware recommendations</a>
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.quick.requirements.network"><a class="anchor" href="#_sec.quick.requirements.network"></a>3. Network Requirements</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>All the nodes on the cluster must be on a the same network and be able to communicate directly with one another.</p>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Reliable Networking</div>
+Please make sure all nodes can communicate without interruptions.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>All nodes in the cluster must be assigned static IP addresses. Using dynamically assigned IPs will break cluster functionality after update/reboot.</p>
+</li>
+<li>
+<p>The admin node and the Kubernetes API master must have valid Fully-Qualified Domain Names (FQDNs), which can be resolved both by all other nodes and from other networks which need to access the cluster.</p>
+<div class="paragraph">
+<p>Admin node and Kubernetes
+API master node should be configured as CNAME records in the local DNS.
+This improves portability for disaster recovery.</p>
+</div>
+</li>
+<li>
+<p>A DNS server to resolve host names. If you are using host names to specify nodes, please make sure you have reliable DNS resolution at all times, especially in combination with DHCP.</p>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Unique Host Names</div>
+Host names must be unique.
+It is recommended to let the DHCP server provide not only IP addresses but also host names of the cluster nodes.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>On the same network, a separate computer with a Web browser is required in order to complete bootstrap of the cluster.</p>
+</li>
+<li>
+<p>We recommend that SUSE CaaS Platform is setup to run in two subnets in one network segment, also referred to as VPC or VNET. The Administration Node should run in a subnet that is not accessible to the outside world and should be connected to your network via VPN or other means. Consider a security group/firewall that only allows ingress traffic on ports 22 (SSH) and 443 (https) for the Administrative node from outside the VPC. All nodes must have access to the Internet through some route in order to connect to SUSE Customer Center and receive updates, or be otherwise configured to receive updates, for example through SMT .</p>
+<div class="paragraph">
+<p>Depending on the applications running in your cluster you may consider exposing the subnet for the cluster nodes to the outside world.
+Use a security group/firewall that only allows incoming traffic on ports served by your workload.
+For example, a containerized application providing the backend for REST based services with content served over https should only allow ingress traffic on port 443.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Unique Host Names</div>
+<div class="paragraph">
+<p>All nodes' host names must be unique.
+If two or more nodes have the same host name, bootstrap of the cluster will fail.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Clusters without Fully-Qualified Domain Names</div>
+<div class="paragraph">
+<p>For test purposes, IP addresses can be substituted for the FQDNs for the Administration Node
+and Master Node
+, but this is not supported for production deployment.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.quick.requirements.limits"><a class="anchor" href="#_sec.quick.requirements.limits"></a>4. Limitations</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>SUSE CaaS Platform3 does not support remote installations with <code>Virtual Network Computing (VNC).</code>.</p>
+</li>
+<li>
+<p>SUSE CaaS Platform is a dedicated cluster-node operating system. Dual-booting with other operating systems is not supported. It must be the only operating system installed on each node.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</article>
+  </main>
+</div>
+<footer class="footer">
+  <p>Copyright (C) 2017-2018 <a href="https://opensource.suse.com/doc-susemanager/">SUSE Manager</a></p>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js -->
+<script>
+function focusSearchInput () { document.querySelector('#search-input').focus() }
+var search = docsearch({
+  appId: 'KIB3CEDKWD',
+  apiKey: '51646b7d454f125193a0ba62253e8e17',
+  indexName: 'manager',
+  inputSelector: '#search-input',
+  autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+  algoliaOptions: { hitsPerPage: 10 }
+}).autocomplete;
+search.on('autocomplete:closed', function () { search.autocomplete.setVal() });
+focusSearchInput();
+window.addEventListener('load', focusSearchInput)
+</script>
+<script src="../../../_/js/site.js"></script>
+<script src="../../../_/js/vendor/highlight.js"></script>
+<script>hljs.initHighlighting()</script>
+  </body>
+</html>

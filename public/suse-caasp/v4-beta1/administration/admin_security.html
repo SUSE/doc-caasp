@@ -1,0 +1,1920 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security :: SUSE CaaS Platform Documentation</title>
+    <meta name="generator" content="Antora 2.0.0">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="stylesheet" href="../../../_/css/suse.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css">
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css -->
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header" role="banner">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-logo">
+        <img class="logo" src="../../../_/img/suse_logo_reverse.png" />
+      </div>
+      <div class="navbar-item">
+        <a href="https://r0ckarong.github.io">SUSE CaaS Platform</a>
+        <span class="separator">//</span>
+        <a href="../../..">Documentation</a>
+      </div>
+      <div class="navbar-item">
+        <input id="search-input" type="text" placeholder="Search docs">
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">Projects</div>
+          <div class="navbar-dropdown">
+            <div class="navbar-item"><strong>Resources</strong></div>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/tree/antora">Repository</a>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/issues">Issue Tracker</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="main-wrapper">
+<div class="navigation-container" data-component="suse-caasp" data-version="v4-beta1">
+  <aside class="navigation">
+    <div class="panels">
+<div class="navigation-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">SUSE CaaS Platform</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../quickstart/quick_intro.html">Quickstart Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_system_requirements.html">System Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_install.html">Installation and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_configuration.html">Node Configuration</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="admin_intro.html">Administration Guide</a>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="admin_security.html">Security</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_administration.html">Administration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_software.html">Software Management</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_monitoring.html">Monitoring</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_logging.html">Logging</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_misc.html">Miscellaenous Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_integration_ses.html">SES Integration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_troubleshooting.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../deployment/deployment_intro.html">Deployment Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_about.html">About Deployment Guide</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_scenarios.html">Deployment Scenarios</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_sysreqs.html">System Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_preparation.html">Preparing The Installation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_installing_nodes.html">Installing and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_configuration.html">Node Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="navigation-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">SUSE CaaS Platform</span>
+    <span class="version">v4-beta1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">SUSE CaaS Platform</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">v4-beta1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+  <main class="main">
+<div class="toolbar" role="navigation">
+  <button class="navigation-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="crumbs" aria-label="breadcrumbs">
+  <ul>
+    <li class="crumb"><a href="../index.html">SUSE CaaS Platform</a></li>
+    <li class="crumb"><a href="admin_intro.html">Administration Guide</a></li>
+    <li class="crumb"><a href="admin_security.html">Security</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/mnapp/mydata/software/SUSE/doc-caasp/modules/administration/pages/admin_security.adoc">Edit this Page</a></div>
+</div>
+<article class="doc">
+<h1>Security</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_sec.admin.security.auth.kubeconfig">1. Access Control Overview</a></li>
+<li><a href="#_sec.admin.security.admin">2. Administrator Accounts</a>
+<ul class="sectlevel2">
+<li><a href="#_sec.admin.security.admin.ldap_password">2.1. Changing openLDAP Admin User Password</a></li>
+<li><a href="#_sec.admin.security.admin.velum_admin_password">2.2. Changing {dashboard} Admin Password</a></li>
+</ul>
+</li>
+<li><a href="#_sec.admin.security.ldap_preparation">3. Preparing LDAP Authentication</a></li>
+<li><a href="#_sec.admin.security.users">4. Managing Users and Groups</a>
+<ul class="sectlevel2">
+<li><a href="#_sec.admin.security.users.add">4.1. Adding New User</a></li>
+<li><a href="#_showing_user_attributes">4.2. Showing User Attributes</a></li>
+<li><a href="#_sec.admin.security.users.change.group">4.3. Changing User</a></li>
+<li><a href="#_sec.admin.security.users.delete">4.4. Deleting User</a></li>
+<li><a href="#_sec.admin.security.groups">4.5. Adding New Group</a></li>
+</ul>
+</li>
+<li><a href="#_sec.admin.security.role">5. Role Management</a>
+<ul class="sectlevel2">
+<li><a href="#_sec.admin.security.role.verb">5.1. List of Verbs</a></li>
+<li><a href="#_sec.admin.security.role.resource">5.2. List of Resources</a></li>
+<li><a href="#_sec.admin.security.role.create">5.3. Create Role</a></li>
+<li><a href="#_sec.admin.security.role.create_binding">5.4. Create Role Bindings</a></li>
+</ul>
+</li>
+<li><a href="#_sec.admin.security.certs">6. Certificates</a>
+<ul class="sectlevel2">
+<li><a href="#_sec.admin.security.certs.renewal">6.1. Certificate Renewal</a></li>
+<li><a href="#_sec.admin.security.certs.installing_rootca">6.2. Obtaining and Installing Root CA Certificate</a></li>
+</ul>
+</li>
+<li><a href="#_sec.admin.security.pod_policies">7. Pod Security Policies</a></li>
+<li><a href="#_sec.admin.security.audit">8. Security Audit Log</a></li>
+<li><a href="#_sec.admin.security.external.ldap">9. Configuring External LDAP Server</a>
+<ul class="sectlevel2">
+<li><a href="#_sec.admin.security.external.ldap.configuration">9.1. LDAP Connector Settings</a></li>
+<li><a href="#_sec.admin.security.external.ldap.examples">9.2. Examples</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section introduces the security features of {productname}.
+This includes authentication, management of users and groups, and the configuration of audit log files.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.security.auth.kubeconfig"><a class="anchor" href="#_sec.admin.security.auth.kubeconfig"></a>1. Access Control Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>{productname}
+provides role-based access control (RBAC) to perform authentication and authorization of activities performed against a {kube}
+cluster. {kube}
+uses several steps for access control.
+The steps in processing order are:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Authentication</dt>
+<dd>
+<p>The authentication confirms the identity of an user.
+The <em>OpenID Connect</em> (<em>OIDC</em>) implementation <code>dex</code> is used as an authentication provider by {kube}</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>dex</code> connects to an LDAP server to look up user information.
+To authenticate against the cluster, the <code class="path">kubeconfig</code>
+file is used.
+For details, refer to <a href="#_sec.admin.kubernetes.install_kubectl">[_sec.admin.kubernetes.install_kubectl]</a>.</p>
+</li>
+</ol>
+</div>
+</dd>
+<dt class="hdlist1">Authorization</dt>
+<dd>
+<p>{productname}
+uses <em>role-based access control</em> (<em>RBAC</em>). For {kube}
+, RBAC defines which subjects can do which operations on API resources.
+Groups and users, called <em>subjects</em> in {kube}
+, are managed with LDAP.
+For details, refer to <a href="#_sec.admin.security.users">Managing Users and Groups</a>.
+To define which operations, called <em>verbs</em> in {kube}
+, are allowed for subjects, refer to <a href="#_sec.admin.security.role">Role Management</a>.</p>
+</dd>
+<dt class="hdlist1">Admission</dt>
+<dd>
+<p>Admission controllers in {kube}
+can mutate and validate requests.
+For details, refer to <a href="https://v1-11.docs.kubernetes.io/docs/reference/access-authn-authz/admission-controllers/" class="bare">https://v1-11.docs.kubernetes.io/docs/reference/access-authn-authz/admission-controllers/</a>.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>For details about access control in {kube}
+, refer to <a href="https://v1-11.docs.kubernetes.io/docs/reference/access-authn-authz/controlling-access/" class="bare">https://v1-11.docs.kubernetes.io/docs/reference/access-authn-authz/controlling-access/</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.security.admin"><a class="anchor" href="#_sec.admin.security.admin"></a>2. Administrator Accounts</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By default there are two administrator accounts added to openLDAP:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">openLDAP admin user</dt>
+<dd>
+<p><code>cn=admin,dc=infra,dc=caasp,dc=local</code></p>
+<div class="paragraph">
+<p>This is the "root" user for openLDAP and has full permissions to change credentials.</p>
+</div>
+<div class="paragraph">
+<p>When the instructions in this section ask for <code>LDAP_ADMIN_PASSWORD</code> they require the openLDAP admin password.</p>
+</div>
+<div class="paragraph">
+<p>You can retrieve the current password from the admin node.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``cat /var/lib/misc/infra-secrets/openldap-password`` c88a9c67056a74e0357befdff93f87bbe0904214</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">{dashboard} admin user</dt>
+<dd>
+<p><code>uid=test,ou=People,dc=infra,dc=caasp,dc=local</code></p>
+<div class="paragraph">
+<p>This account does not have privileges to change administrator passwords in openLDAP.</p>
+</div>
+<div class="paragraph">
+<p>The account is created by the user on first login to {dashboard}
+and consequently for configuring {productname}
+.</p>
+</div>
+</dd>
+</dl>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.security.admin.ldap_password"><a class="anchor" href="#_sec.admin.security.admin.ldap_password"></a>2.1. Changing openLDAP Admin User Password</h3>
+<div class="olist arabic">
+<div class="title">Procedure: Changing openLDAP Admin User Password</div>
+<ol class="arabic">
+<li>
+<p>Log in to the admin node via SSH.</p>
+</li>
+<li>
+<p>Change the openLDAP admin password in the file <code class="path">/var/lib/misc/infra-secrets/openldap-password</code> .</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``echo new_password &gt; /var/lib/misc/infra-secrets/openldap-password``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Restart openLDAP to activate the changes.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``docker stop $(docker ps -q -f name=ldap)``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>After about <code>20</code> seconds, the OpenLDAP container will be automatically restarted with the new root password.
+This will only replace the credentials for the openLDAP admin user and not affect any other user configurations.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.security.admin.velum_admin_password"><a class="anchor" href="#_sec.admin.security.admin.velum_admin_password"></a>2.2. Changing {dashboard} Admin Password</h3>
+<div class="paragraph">
+<p>Changing the {dashboard}
+admin password must be done in the openLDAP container running on the admin node.
+You will need the openLDAP admin password that is stored on the admin node itself.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure: Changing {dashboard}Admin Password</div>
+<ol class="arabic">
+<li>
+<p>Log in to the admin node via SSH.</p>
+</li>
+<li>
+<p>Open a shell session on the openLDAP container.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``docker exec -it $(docker ps -q -f name=ldap) /bin/bash``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Use <code class="command">slappasswd</code> to generate a hashed and salted password string.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``slappasswd -n -s password`` {SSHA}mU7vDqF+cyNQlnQ2bZyvY4oFfjX9uDm3</pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+By ommitting the <code>-s &lt;password&gt;</code> parameter, you will be prompted to enter a new secret instead of providing it through the input.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Find the distinguished name (DN) user string for the administrator user.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``UNAME=$(slapcat -n1 | grep uniqueMember | cut -d': ' -f2)``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Set the new password. Replace <code>new_password</code> with the string you generated in the previous step. Replace $UNAME will replace it with the DN from the previous step (e.g. <code>uid=user,ou=People,dc=infra,dc=caasp,dc=local</code>).</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``ldappasswd -H ldaps:// -D "cn=admin,dc=infra,dc=caasp,dc=local" \
+-w $(cat /var/lib/misc/infra-secrets/openldap-password) \
+$UNAME -s new_password``</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.security.ldap_preparation"><a class="anchor" href="#_sec.admin.security.ldap_preparation"></a>3. Preparing LDAP Authentication</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To perform administrative tasks from a <code class="replaceable">WORKSTATION</code> on the <span class="productname">LDAP</span>
+ directory, retrieve the <span class="productname">OpenLDAP</span>
+ administrator password and install the LDAP certificate.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Retrieve the LDAP admin password. Note the password for later use.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``cat /var/lib/misc/infra-secrets/openldap-password``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Import the LDAP certificate to your local trusted certificate storage. On the {admin_node} , run:</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``docker exec -it $(docker ps -q -f name=ldap) \
+cat /etc/openldap/pki/ca.crt &gt; ~/ca.pem`` {prompt.root.admin}``scp ~/ca.pem root@WORKSTATION:/usr/share/pki/trust/anchors/ca-caasp.crt.pem``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Replace <code class="replaceable">WORKSTATION</code> with the appropriate hostname for the workstation where you wish to run the LDAP queries.</p>
+</div>
+</li>
+<li>
+<p>Then, on that workstation, run:</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``update-ca-certificates``</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.security.users"><a class="anchor" href="#_sec.admin.security.users"></a>4. Managing Users and Groups</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>User information is stored in <span class="productname">OpenLDAP</span>
+ running in a container on your {productname}{admin_node}
+.
+You can use standard LDAP administration tools for managing these users remotely.
+To do so, install the <span class="package">openldap2</span>
+ package on a computer in your network and make sure that computer can connect to the {admin_node}
+ on port <code>389</code>.</p>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.security.users.add"><a class="anchor" href="#_sec.admin.security.users.add"></a>4.1. Adding New User</h3>
+<div class="paragraph">
+<p>By default, when you create the first user in {dashboard}
+during bootstrap of your cluster, that user is granted <code>Cluster
+    Administrator</code> privileges within {kube}
+.
+You can add additional users with these rights by adding new entries into the LDAP directory.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>To add a new user, create a LDIF file like this:</p>
+<div id="_ex.admin.security.users.add" class="exampleblock">
+<div class="title">Example 1. LDIF File For a New User</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>dn: uid=`USERID`,ou=People,dc=infra,dc=caasp,dc=local <i class="conum" data-value="1"></i><b>(1)</b>
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: top
+uid:`USERID`&lt;&lt;_co.admin.security.users.add.uid&gt;&gt;userPassword:`PASSWORD_HASH` givenname:`FIRST_NAME` sn:`SURNAME` cn:`FULL_NAME` mail:`E-MAIL_ADDRESS` <i class="conum" data-value="2"></i><b>(2)</b> <i class="conum" data-value="3"></i><b>(3)</b> <i class="conum" data-value="4"></i><b>(4)</b> <i class="conum" data-value="5"></i><b>(5)</b> <i class="conum" data-value="6"></i><b>(6)</b></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>User ID (UID) of the new user. Needs to be unique.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The user&#8217;s hashed password. Use <code class="command">/usr/sbin/slappasswd</code> to generate the hash.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The user&#8217;s first name</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The user&#8217;s last name</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>The user&#8217;s full name</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>The user&#8217;s e-mail address. It is used as the login name to {dashboard} and {kube}.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Populate your OpenLDAP server with this LDIF file:</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``ldapadd -H ldap://ADMINISTRATION_NODE_FQDN:389 -ZZ \
+-D cn=admin,dc=infra,dc=caasp,dc=local -w LDAP_ADMIN_PASSWORD -f LDIF_FILE``</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_showing_user_attributes"><a class="anchor" href="#_showing_user_attributes"></a>4.2. Showing User Attributes</h3>
+<div class="paragraph">
+<p>To show the attributes of a user, use the <code class="command">ldapsearch</code> command.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``ldapsearch -H ldap://ADMINISTRATION_NODE_FQDN:389 -ZZ \
+    -D cn=admin,dc=infra,dc=caasp,dc=local -w LDAP_ADMIN_PASSWORD \
+    -b uid=USERID,ou=People,dc=infra,dc=caasp,dc=local``</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.security.users.change.group"><a class="anchor" href="#_sec.admin.security.users.change.group"></a>4.3. Changing User</h3>
+<div class="paragraph">
+<p>The following procedure details how to modify a user in the LDAP directory.
+The example LDIF files detail how to change a user password and add a user to the <code>Administrators</code> group.
+To modify other fields, use the the password example and replace <code>userPassword</code> with other field names.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create a LDIF file that contains the change to the LDAP directory.</p>
+<div id="_ex.admin.security.users.change_password" class="exampleblock">
+<div class="title">Example 2. Change User Password</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>dn: uid=`USERID`,ou=People,dc=infra,dc=caasp,dc=local <i class="conum" data-value="7"></i><b>(7)</b>
+changetype: modify
+replace: userPassword
+userPassword:`PASSWORD` <i class="conum" data-value="8"></i><b>(8)</b></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code class="replaceable">USERID</code> with the user&#8217;s ID.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code class="replaceable">PASSWORD</code> With the user&#8217;s new hashed password. Use <code class="command">/usr/sbin/slappasswd</code> to generate the hash.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div id="_ex.admin.security.users.change_group" class="exampleblock">
+<div class="title">Example 3. Add User to Administrators Group</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>dn: cn=Administrators,ou=Groups,dc=infra,dc=caasp,dc=local
+changetype: modify
+add: uniqueMember
+uniqueMember: uid=`USERID` ,ou=People,dc=infra,dc=caasp,dc=local <i class="conum" data-value="9"></i><b>(9)</b></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code class="replaceable">USERID</code>
+with the user&#8217;s ID.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Execute <code class="command">ldapmodify</code>.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``ldapmodify -H ldap://ADMIN_NODE:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local \
+-w LDAP_ADMIN_PASSWORD -f LDIF_FILE``</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.security.users.delete"><a class="anchor" href="#_sec.admin.security.users.delete"></a>4.4. Deleting User</h3>
+<div class="paragraph">
+<p>The following procedure details how to delete a user from the LDAP database.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create an LDIF file that contains that specifies the distinguished name of the entry and a deletion command.</p>
+<div class="listingblock">
+<div class="content">
+<pre>dn: uid=`USER_ID`,ou=People,dc=infra,dc=caasp,dc=local
+changetype: delete</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Execute <code class="command">ldapmodify</code>.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``ldapmodify -H ldap://ADMIN_NODE:389 -ZZ -D uid=USER_ID,ou=People,dc=infra,dc=caasp,dc=local \
+-w LDAP_ADMIN_PASSWORD -f LDIF_DELETE``</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.security.groups"><a class="anchor" href="#_sec.admin.security.groups"></a>4.5. Adding New Group</h3>
+<div class="paragraph">
+<p>To grant users access to manage a single namespace in {kube}
+, first create your users as mentioned in <a href="#_sec.admin.security.users.add">Adding New User</a>.
+Then execute the following procedure.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create a LDIF file for a new group:</p>
+<div id="_ex.admin.security.groups" class="exampleblock">
+<div class="title">Example 4. LDIF File to Add a New Group</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>dn: cn=`group name` &lt;10&gt;,ou=Groups,dc=infra,dc=caasp,dc=local
+objectclass: top
+objectclass: groupOfUniqueNames
+cn:`group name`&lt;&lt;_co.admin.security.groups.cn&gt;&gt;uniqueMember: uid=`member1`, &lt;11&gt;ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=`member2`,&lt;&lt;_co.admin.security.groups.member&gt;&gt;ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=`member3`,&lt;&lt;_co.admin.security.groups.member&gt;&gt;ou=People,dc=infra,dc=caasp,dc=local</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>&lt;10&gt;
+         The group&#8217;s name.</p>
+</div>
+<div class="paragraph">
+<p>&lt;11&gt;
+         Members of the group. Repeat the <code>uniqueMember</code></p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>attribute for every member of this group.</pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Populate your <span class="productname">OpenLDAP</span> server with the LDIF file:</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``ldapadd -H ldap://ADMINISTRATION_NODE_FQDN:389 -ZZ \
+-D cn=admin,dc=infra,dc=caasp,dc=local -w LDAP_ADMIN_PASSWORD -f LDIF_FILE``</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.security.role"><a class="anchor" href="#_sec.admin.security.role"></a>5. Role Management</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>{productname}
+uses <em>role-based access control</em> authorization for {kube}
+.
+Roles define, which <em>subjects</em> (users or groups) can use which <em>verbs</em> (operations) on <em>resources</em>.
+The following sections provide an overview of resources, verbs and how to create roles.
+Roles can then be assigned to users and groups.</p>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.security.role.verb"><a class="anchor" href="#_sec.admin.security.role.verb"></a>5.1. List of Verbs</h3>
+<div class="paragraph">
+<p>This section provides an overview of the most common <em>verbs</em> (operations) used for defining roles.
+Verbs correspond to sub-commands of <code class="command">kubectl</code>.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">create</dt>
+<dd>
+<p>Create a resource.</p>
+</dd>
+<dt class="hdlist1">delete</dt>
+<dd>
+<p>Delete resources.</p>
+</dd>
+<dt class="hdlist1">deletecollection</dt>
+<dd>
+<p>Delete a collection of CronJob.</p>
+</dd>
+<dt class="hdlist1">get</dt>
+<dd>
+<p>Display individual resource.</p>
+</dd>
+<dt class="hdlist1">list</dt>
+<dd>
+<p>Display collections.</p>
+</dd>
+<dt class="hdlist1">patch</dt>
+<dd>
+<p>Update an API object in place.</p>
+</dd>
+<dt class="hdlist1">proxy</dt>
+<dd>
+<p>Allows running {kubectl}
+in a mode where it acts as a reverse proxy.</p>
+</dd>
+<dt class="hdlist1">update</dt>
+<dd>
+<p>Update fields of a resource, for example annotations or labels.</p>
+</dd>
+<dt class="hdlist1">watch</dt>
+<dd>
+<p>Watch resource.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.security.role.resource"><a class="anchor" href="#_sec.admin.security.role.resource"></a>5.2. List of Resources</h3>
+<div class="paragraph">
+<p>This section provides an overview of the most common <em>resources</em> used for defining roles.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Autoscaler</dt>
+<dd>
+<p><a href="https://v1-11.docs.kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/" class="bare">https://v1-11.docs.kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/</a></p>
+</dd>
+<dt class="hdlist1">ConfigMaps</dt>
+<dd>
+<p><a href="https://v1-11.docs.kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/" class="bare">https://v1-11.docs.kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/</a></p>
+</dd>
+<dt class="hdlist1">Cronjob</dt>
+<dd>
+<p><a href="https://v1-11.docs.kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/" class="bare">https://v1-11.docs.kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/</a></p>
+</dd>
+<dt class="hdlist1">DaemonSet</dt>
+<dd>
+<p><a href="https://v1-11.docs.kubernetes.io/docs/concepts/workloads/controllers/daemonset/" class="bare">https://v1-11.docs.kubernetes.io/docs/concepts/workloads/controllers/daemonset/</a></p>
+</dd>
+<dt class="hdlist1">Deployment</dt>
+<dd>
+<p><a href="https://v1-11.docs.kubernetes.io/docs/concepts/workloads/controllers/deployment/" class="bare">https://v1-11.docs.kubernetes.io/docs/concepts/workloads/controllers/deployment/</a></p>
+</dd>
+<dt class="hdlist1">Ingress</dt>
+<dd>
+<p><a href="https://v1-11.docs.kubernetes.io/docs/concepts/services-networking/ingress/" class="bare">https://v1-11.docs.kubernetes.io/docs/concepts/services-networking/ingress/</a></p>
+</dd>
+<dt class="hdlist1">Job</dt>
+<dd>
+<p><a href="https://v1-11.docs.kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/" class="bare">https://v1-11.docs.kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/</a></p>
+</dd>
+<dt class="hdlist1">Namespace</dt>
+<dd>
+<p><a href="https://v1-11.docs.kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/" class="bare">https://v1-11.docs.kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/</a></p>
+</dd>
+<dt class="hdlist1">Node</dt>
+<dd>
+<p><a href="https://v1-11.docs.kubernetes.io/docs/concepts/architecture/nodes/" class="bare">https://v1-11.docs.kubernetes.io/docs/concepts/architecture/nodes/</a></p>
+</dd>
+<dt class="hdlist1">Pod</dt>
+<dd>
+<p><a href="https://v1-11.docs.kubernetes.io/docs/concepts/workloads/pods/pod-overview/" class="bare">https://v1-11.docs.kubernetes.io/docs/concepts/workloads/pods/pod-overview/</a></p>
+</dd>
+<dt class="hdlist1">PV</dt>
+<dd>
+<p><a href="https://v1-11.docs.kubernetes.io/docs/concepts/storage/persistent-volumes/" class="bare">https://v1-11.docs.kubernetes.io/docs/concepts/storage/persistent-volumes/</a></p>
+</dd>
+<dt class="hdlist1">Secrets</dt>
+<dd>
+<p><a href="https://v1-11.docs.kubernetes.io/docs/concepts/configuration/secret/" class="bare">https://v1-11.docs.kubernetes.io/docs/concepts/configuration/secret/</a></p>
+</dd>
+<dt class="hdlist1">Service</dt>
+<dd>
+<p><a href="https://v1-11.docs.kubernetes.io/docs/concepts/services-networking/service/" class="bare">https://v1-11.docs.kubernetes.io/docs/concepts/services-networking/service/</a></p>
+</dd>
+<dt class="hdlist1">ReplicaSets</dt>
+<dd>
+<p><a href="https://v1-11.docs.kubernetes.io/docs/concepts/workloads/controllers/replicaset/" class="bare">https://v1-11.docs.kubernetes.io/docs/concepts/workloads/controllers/replicaset/</a></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.security.role.create"><a class="anchor" href="#_sec.admin.security.role.create"></a>5.3. Create Role</h3>
+<div class="paragraph">
+<p>Roles are defined in YAML files.
+To apply role definitions to {kube}
+, use <code class="command">kubectl apply -f
+    [replaceable]</code>YAML_FILE````.
+The following examples provide an overview about different use cases of roles.</p>
+</div>
+<div class="exampleblock">
+<div class="title">Example 5. Simple Role for Core Resource</div>
+<div class="content">
+<div class="paragraph">
+<p>This example allows to <code>get</code>, <code>watch</code> and <code>list</code> all <code>pods</code> in the namespace <code>default</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: view-pods &lt;12&gt;namespace: default &lt;13&gt;rules:
+- apiGroups: [""] &lt;14&gt;resources: ["pods"] &lt;15&gt;verbs: ["get", "watch", "list"] <i class="conum" data-value="16"></i><b>(16)</b></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>&lt;12&gt;
+         Name of the role. This is required to associate the rule with
+         a group or user. For details, refer to <a href="#_sec.admin.security.role.create_binding">Create Role Bindings</a>
+.</p>
+</div>
+<div class="paragraph">
+<p>&lt;13&gt;
+         Namespace the new group should be allowed to access. Use
+         <code>default</code>
+ for {kube}
+' default namespace.</p>
+</div>
+<div class="paragraph">
+<p>&lt;14&gt;
+         {kube}
+ API groups. Use `
+""`
+ for the core group
+         <code>rbac.authorization.k8s.io</code>
+.</p>
+</div>
+<div class="paragraph">
+<p>&lt;15&gt;
+         {kube}
+ resources. For a list of available resources, refer to
+         <a href="#_sec.admin.security.role.resource">List of Resources</a>
+.</p>
+</div>
+<div class="paragraph">
+<p>&lt;16&gt;
+         {kube}
+ verbs. For a list of available verbs, refer to
+         <a href="#_sec.admin.security.role.verb">List of Verbs</a>
+.</p>
+</div>
+</div>
+</div>
+<div class="exampleblock">
+<div class="title">Example 6. Clusterwide Creation of Pods</div>
+<div class="content">
+<div class="paragraph">
+<p>This example allows to <code>create<code>`pods</code> clusterwide.
+Note the `ClusterRole</code> value for <code class="option">kind</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: admin-create-pods &lt;17&gt;rules:
+- apiGroups: [""] &lt;18&gt;resources: ["pods"] &lt;19&gt;verbs: ["create"] <i class="conum" data-value="20"></i><b>(20)</b></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>&lt;17&gt;
+         Name of the role. This is required to associate the rule with
+         a group or user. For details, refer to <a href="#_sec.admin.security.role.create_binding">Create Role Bindings</a>
+.</p>
+</div>
+<div class="paragraph">
+<p>&lt;18&gt;
+         {kube}
+ API groups. Use `
+""`
+ for the core group
+         <code>rbac.authorization.k8s.io</code>
+.</p>
+</div>
+<div class="paragraph">
+<p>&lt;19&gt;
+         {kube}
+ resources. For a list of available resources, refer to
+         <a href="#_sec.admin.security.role.resource">List of Resources</a>
+.</p>
+</div>
+<div class="paragraph">
+<p>&lt;20&gt;
+         {kube}
+ verbs. For a list of available verbs, refer to
+         <a href="#_sec.admin.security.role.verb">List of Verbs</a>
+.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.security.role.create_binding"><a class="anchor" href="#_sec.admin.security.role.create_binding"></a>5.4. Create Role Bindings</h3>
+<div class="paragraph">
+<p>To bind a group or user to a rule, create a YAML file that contains the role binding description.
+Then apply the binding with <code class="command">kubectl apply -f
+    [replaceable]</code>YAML_FILE````.
+The following examples provide an overview about different use cases of role bindings.</p>
+</div>
+<div id="_ex.admin.security.groups.role" class="exampleblock">
+<div class="title">Example 7. Binding a Group to a Role</div>
+<div class="content">
+<div class="paragraph">
+<p>This example shows how to bind a group to a defined role.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name:`ROLE_BINDING_NAME` &lt;21&gt;namespace:`NAMESPACE` &lt;22&gt;subjects:
+- kind: Group
+  name:`LDAP_GROUP_NAME` &lt;23&gt;apiGroup: rbac.authorization.k8s.io
+roleRef:
+- kind: Role
+  name:`ROLE_NAME` &lt;24&gt;apiGroup: rbac.authorization.k8s.io</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>&lt;21&gt;
+       Defines a name for this new role binding.</p>
+</div>
+<div class="paragraph">
+<p>&lt;22&gt;
+       Name of the namespace for which the binding applies.</p>
+</div>
+<div class="paragraph">
+<p>&lt;24&gt;
+       Name of the role used. For defining rules, refer to
+       <a href="#_sec.admin.security.role.create">Create Role</a>
+.</p>
+</div>
+<div class="paragraph">
+<p>&lt;23&gt;
+       Name of the LDAP group to which this binding applies. For
+       creating groups, refer to <a href="#_sec.admin.security.groups">Adding New Group</a>
+.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.security.certs"><a class="anchor" href="#_sec.admin.security.certs"></a>6. Certificates</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>During the installation of {productname}
+, a CA (Certificate Authority) certificate is generated; that is then used to authenticate and verify all communications.
+The process also creates and distributes client certificates for the components.</p>
+</div>
+<div class="paragraph">
+<p>Communication is secured with TLS v1.2 using the <code>AES 128 CBC</code> cipher.</p>
+</div>
+<div class="paragraph">
+<p>All client certificates are 4096 Bit RSA encrypted.</p>
+</div>
+<div class="paragraph">
+<p>Certificates are located in <code class="path">/etc/pki</code>
+ on each cluster node.</p>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.security.certs.renewal"><a class="anchor" href="#_sec.admin.security.certs.renewal"></a>6.1. Certificate Renewal</h3>
+<div class="paragraph">
+<p>The CA certificate is valid for <code>3650</code> days (10 years) by default.</p>
+</div>
+<div class="paragraph">
+<p>The client certificates are valid for <code>365</code> days (1 year) by default.</p>
+</div>
+<div class="paragraph">
+<p>All certificates have a renewal period of <code>90</code> days before expiration.
+If orchestration of the cluster is run during that period, the certificates which are about to expire are renewed automatically.</p>
+</div>
+<div class="paragraph">
+<p>To manually renew certificates, refer to <a href="#_sec.admin.troubleshooting.replace_certificates">[_sec.admin.troubleshooting.replace_certificates]</a>.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Renewing Expired Certificates</div>
+<div class="paragraph">
+<p>If for whatever reason any of the certificates have failed to renew, please log in to {dashboard}
+and navigate to <span class="menuseq"><b class="menu">Settings</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">]
+.
+Click the menu:Apply changes[</b></span>
+ button.
+This will force a refresh of the cluster settings and any expired certificates will be renewed.</p>
+</div>
+<div class="paragraph">
+<p>If this still fails, you can replace the certificates manually.
+Refer to: <a href="#_sec.admin.troubleshooting.replace_certificates">[_sec.admin.troubleshooting.replace_certificates]</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.security.certs.installing_rootca"><a class="anchor" href="#_sec.admin.security.certs.installing_rootca"></a>6.2. Obtaining and Installing Root CA Certificate</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Obtain the root CA certificate from any node in your cluster with <code class="command">scp</code>.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``scp NODE:/etc/pki/trust/anchors/SUSE_CaaSP_CA.crt .``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Copy the Root CA certificate file into the trust anchors directory <code class="path">/etc/pki/trust/anchors/</code> .</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.sudo}cp`SUSE_CaaSP_CA`.crt /etc/pki/trust/anchors/</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Update the cache for known CA certificates.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.sudo}``update-ca-certificates``</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Operating System Specific Instructions</div>
+<div class="paragraph">
+<p>The location of the trust store anchors directory or the command to refresh the CA certificates cache might vary depending on your operating system.</p>
+</div>
+<div class="paragraph">
+<p>Please consult the official documentation for your operating system to find the respective alternatives.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.security.pod_policies"><a class="anchor" href="#_sec.admin.security.pod_policies"></a>7. Pod Security Policies</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section provides an overview of policy settings for pod security.
+By default, pod security policies are already enabled on {productname}
+.</p>
+</div>
+<div class="paragraph">
+<p>{productname}
+comes with 2 pre-defined policies.
+These policies are detailed in the examples below, including the required role definitions.
+All authenticated users and service accounts are given the role <code>suse:caasp:psp:unprivileged</code>.
+Other role bindings have to be created manually.
+For details about roles and role bindings, refer to <a href="#_sec.admin.security.role">Role Management</a>.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><a href="#_ex.admin.security.pod_policies.unprivileged">Unprivileged Pod Security Policy</a></dt>
+<dd>
+<p>This is the default policy.
+It is a compromise between security and daily needs.
+This policy is bound to the role <code>suse:caasp:psp:unprivileged</code>.</p>
+</dd>
+<dt class="hdlist1"><a href="#_ex.admin.security.pod_policies.privileged">Privileged Pod Security Policy</a></dt>
+<dd>
+<p>This policy has few restrictions and should only be given to highly trusted users.
+This policy is bound to the role <code>suse:caasp:psp:privileged</code>.</p>
+</dd>
+<dt class="hdlist1"><a href="#_ex.admin.security.pod_policies.daemonset">Privileged DaemonSet</a></dt>
+<dd>
+<p>This example details how to define a privileged DaemonSet with a new default service account.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>To create new policies, you can adapt the provided example policies to your needs.
+Then copy them into a YAML file and apply the definition by executing <code class="command">kubectl apply -f
+   [replaceable]</code>YAML_FILE````.</p>
+</div>
+<div class="paragraph">
+<p>Detailed information is available at <a href="https://v1-11.docs.kubernetes.io/docs/concepts/policy/pod-security-policy/" class="bare">https://v1-11.docs.kubernetes.io/docs/concepts/policy/pod-security-policy/</a>.</p>
+</div>
+<div id="_ex.admin.security.pod_policies.unprivileged" class="exampleblock">
+<div class="title">Example 8. Unprivileged Pod Security Policy</div>
+<div class="content">
+<div class="paragraph">
+<p>The unprivileged Pod Security Policy is intended to be a reasonable compromise between the reality of {kube}
+workloads and the role <code>suse:caasp:psp:privileged</code>.
+By default, {productname}
+ grants this policy to all users and service accounts.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>---
+apiVersion: extensions/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: suse.caasp.psp.unprivileged &lt;25&gt;annotations:
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: docker/default
+    seccomp.security.alpha.kubernetes.io/defaultProfileName: docker/default
+    apparmor.security.beta.kubernetes.io/allowedProfileNames: runtime/default
+    apparmor.security.beta.kubernetes.io/defaultProfileName: runtime/default
+spec:
+  # Privileged
+  privileged: false
+  # Volumes and File Systems
+  volumes:
+    # Kubernetes Pseudo Volume Types
+    - configMap
+    - secret
+    - emptyDir
+    - downwardAPI
+    - projected
+    - persistentVolumeClaim
+    # Networked Storage
+    - nfs
+    - rbd
+    - cephFS
+    - glusterfs
+    - fc
+    - iscsi
+    # Cloud Volumes
+    - cinder
+    - gcePersistentDisk
+    - awsElasticBlockStore
+    - azureDisk
+    - azureFile
+    - vsphereVolume
+  allowedHostPaths:
+    # Note: We don't allow hostPath volumes above, but set this to a path we
+    # control anyway as a belt+braces protection. /dev/null may be a better
+    # option, but the implications of pointing this towards a device are
+    # unclear.
+    - pathPrefix: /opt/kubernetes-hostpath-volumes
+  readOnlyRootFilesystem: false
+  # Users and groups
+  runAsUser:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  fsGroup:
+    rule: RunAsAny
+  # Privilege Escalation
+  allowPrivilegeEscalation: false
+  defaultAllowPrivilegeEscalation: false
+  # Capabilities
+  allowedCapabilities: []
+  defaultAddCapabilities: []
+  requiredDropCapabilities: []
+  # Host namespaces
+  hostPID: false
+  hostIPC: false
+  hostNetwork: false
+  hostPorts:
+  - min: 0
+    max: 65535
+  # SELinux
+  seLinux:
+    # SELinux is unsed in CaaSP
+    rule: 'RunAsAny'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: suse:caasp:psp:unprivileged&lt;&lt;_co.admin.security.pod_policies.unprivileged.name&gt;&gt;rules:
+  - apiGroups: ['extensions']
+    resources: ['podsecuritypolicies']
+    verbs: ['use']
+resourceNames: ['suse.caasp.psp.unprivileged']&lt;&lt;_co.admin.security.pod_policies.unprivileged.name&gt;&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>&lt;25&gt;
+      Make sure to change the policy and role name when adapting the
+      example for your own policies.</p>
+</div>
+</div>
+</div>
+<div id="_ex.admin.security.pod_policies.privileged" class="exampleblock">
+<div class="title">Example 9. Privileged Pod Security Policy</div>
+<div class="content">
+<div class="paragraph">
+<p>The privileged Pod Security Policy is intended to be given only to trusted workloads.
+It provides for as few restrictions as possible and should only be assigned to highly trusted users.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>---
+apiVersion: extensions/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: suse.caasp.psp.privileged &lt;26&gt;annotations:
+    seccomp.security.alpha.kubernetes.io/defaultProfileName: docker/default
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
+    apparmor.security.beta.kubernetes.io/defaultProfileName: runtime/default
+spec:
+  # Privileged
+  privileged: true
+  # Volumes and File Systems
+  volumes:
+    # Kubernetes Pseudo Volume Types
+    - configMap
+    - secret
+    - emptyDir
+    - downwardAPI
+    - projected
+    - persistentVolumeClaim
+    # Kubernetes Host Volume Types
+    - hostPath
+    # Networked Storage
+    - nfs
+    - rbd
+    - cephFS
+    - glusterfs
+    - fc
+    - iscsi
+    # Cloud Volumes
+    - cinder
+    - gcePersistentDisk
+    - awsElasticBlockStore
+    - azureDisk
+    - azureFile
+    - vsphereVolume
+  #allowedHostPaths: []
+  readOnlyRootFilesystem: false
+  # Users and groups
+  runAsUser:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  fsGroup:
+    rule: RunAsAny
+  # Privilege Escalation
+  allowPrivilegeEscalation: true
+  defaultAllowPrivilegeEscalation: true
+  # Capabilities
+  allowedCapabilities:
+    - '*'
+  defaultAddCapabilities: []
+  requiredDropCapabilities: []
+  # Host namespaces
+  hostPID: true
+  hostIPC: true
+  hostNetwork: true
+  hostPorts:
+  - min: 0
+    max: 65535
+  seLinux:
+    # SELinux is unsed in CaaSP
+    rule: 'RunAsAny'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: suse:caasp:psp:privileged&lt;&lt;_co.admin.security.pod_policies.privileged.name&gt;&gt;rules:
+  - apiGroups: ['extensions']
+    resources: ['podsecuritypolicies']
+    verbs: ['use']
+resourceNames: ['suse.caasp.psp.privileged']&lt;&lt;_co.admin.security.pod_policies.privileged.name&gt;&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>&lt;26&gt;
+      Make sure to change the policy and role name when adapting the
+      example for your own policies.</p>
+</div>
+</div>
+</div>
+<div id="_ex.admin.security.pod_policies.daemonset" class="exampleblock">
+<div class="title">Example 10. Privileged DaemonSet</div>
+<div class="content">
+<div class="paragraph">
+<p>This example details how to create a privileged DaemonSet which uses the role <code>suse:caasp:psp:privileged</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name:`NAMESPACE`---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name:`SERVICE_ACCOUNT_NAME`namespace:`NAMESPACE`---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name:`ROLE_BINDING_NAME`namespace:`NAMESPACE`roleRef:
+  kind: ClusterRole
+  name: suse:caasp:psp:privileged
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- kind: ServiceAccount
+  name:`SERVICE_ACCOUNT_NAME`namespace:`NAMESPACE`---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name:`DAEMONSET_NAME`namespace:`NAMESPACE`spec:
+  selector:
+    matchLabels:
+      name:`DAEMONSET_NAME`template:
+    metadata:
+      labels:
+        name:`DAEMONSET_NAME`spec:
+      serviceAccountName:`SERVICE_ACCOUNT_NAME`hostPID: true
+      hostIPC: true
+      hostNetwork: true
+      nodeSelector:
+        beta.kubernetes.io/arch: amd64
+      containers:
+      - name:`CONTAINER_NAME`image:`IMAGE_NAME`volumeMounts:
+        - name: examplemount
+          mountPath: /something
+        securityContext:
+          privileged: true
+      volumes:
+      - name: examplemount
+        hostPath:
+          path: /var/log</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.security.audit"><a class="anchor" href="#_sec.admin.security.audit"></a>8. Security Audit Log</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To enable the {kube}
+security audit log please see: <a href="#_sec.admin.logging.kubernetes">[_sec.admin.logging.kubernetes]</a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.security.external.ldap"><a class="anchor" href="#_sec.admin.security.external.ldap"></a>9. Configuring External LDAP Server</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can configure the cluster to authenticate {dashboard}
+and {kube}
+users against a pre-existing Lightweight Directory Access Protocol (LDAP) server and use <a href="https://ldap.com/ldap-filters/">LDAP Filters</a> to select the scope of users that will be permitted access.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Automatic Attributes from LDAP</div>
+<div class="paragraph">
+<p>Please note that users that belong to the <code>administrators</code> group in LDAP will automatically be assigned the role of <code>cluster-admin</code>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure: Configuring External LDAP connector</div>
+<ol class="arabic">
+<li>
+<p>Log in to {dashboard}</p>
+</li>
+<li>
+<p>Access the LDAP configuration settings under <b class="menuref">Settings → EXTERNAL AUTHENTICATION → LDAP Connectors</b> .</p>
+</li>
+<li>
+<p>Click on <b class="menuref">Add LDAP connector</b> to add a new connector.</p>
+</li>
+<li>
+<p>Configure the connector.</p>
+</li>
+<li>
+<p>Test the connector.</p>
+</li>
+<li>
+<p>Save your connector settings.</p>
+</li>
+</ol>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.security.external.ldap.configuration"><a class="anchor" href="#_sec.admin.security.external.ldap.configuration"></a>9.1. LDAP Connector Settings</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">LDAP Anonymous Binding</div>
+<div class="paragraph">
+<p>Anonymous binding is available, if allowed by the LDAP server.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_settings_ldap.png" alt="velum settings ldap">
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Name</dt>
+<dd>
+<p>Name shown to user when selecting a connector</p>
+</dd>
+</dl>
+</div>
+<div class="sect3">
+<h4 id="_server"><a class="anchor" href="#_server"></a>9.1.1. Server</h4>
+<div class="paragraph">
+<p>Basic settings for the LDAP server host</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Host</dt>
+<dd>
+<p>Host name of LDAP server reachable from the cluster</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Provide the hostname as FQDN</div>
+The <b class="menuref">Host</b>
+ field must use a Fully Qualified Domain Name, as IP address is not allowed with TLS.
+</td>
+</tr>
+</table>
+</div>
+</dd>
+<dt class="hdlist1">Port</dt>
+<dd>
+<p>The port on which to connect to the host (e.g. <code>StartTLS: 389, TLS: 646</code>)</p>
+</dd>
+<dt class="hdlist1">StartTLS</dt>
+<dd>
+<p>When enabled use StartTLS otherwise TLS will be used</p>
+</dd>
+<dt class="hdlist1">Certificate</dt>
+<dd>
+<p>The <b class="menuref">Certificate</b>
+field must be a Base64-encoded PEM key.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_authentication"><a class="anchor" href="#_authentication"></a>9.1.2. Authentication</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Anonymous</dt>
+<dd>
+<p>Use anonymous authentication to do initial user search.</p>
+<div class="paragraph">
+<p>Selects if you wish to perform an anonymous bind with the LDAP server.
+If set to <span class="menuseq"><b class="menu">False</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">]
+you must provide a menu:DN[</b></span>
+and a <span class="menuseq"><b class="menu">Password</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">]
+.
+The latter two are hidden when the slider is set to menu:True[</b></span>
+.</p>
+</div>
+</dd>
+<dt class="hdlist1">DN</dt>
+<dd>
+<p>Bind DN of user that can do user searches</p>
+</dd>
+<dt class="hdlist1">Password</dt>
+<dd>
+<p>Password of the user</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_user_search"><a class="anchor" href="#_user_search"></a>9.1.3. User Search</h4>
+<div class="paragraph">
+<p>Definition of the user search parameters</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Username Prompt</dt>
+<dd>
+<p>Label of LDAP attribute users will enter to identify themselves (e.g. <code>username</code>)</p>
+</dd>
+<dt class="hdlist1">Base DN</dt>
+<dd>
+<p>BaseDN where users are located (e.g. <code>cn=users,dc=example,dc=com</code>)</p>
+</dd>
+<dt class="hdlist1">Filter</dt>
+<dd>
+<p>Filter to specify type of user objects (e.g. <code>"(objectClass=person)"</code>)</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_user_attribute_map"><a class="anchor" href="#_user_attribute_map"></a>9.1.4. User Attribute Map</h4>
+<div class="paragraph">
+<p>Definition of the user attribute map</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Username</dt>
+<dd>
+<p>Attribute users will enter to identify themselves</p>
+</dd>
+<dt class="hdlist1">ID</dt>
+<dd>
+<p>Attribute used to identify user within the system (e.g. <code>uid</code>)</p>
+</dd>
+<dt class="hdlist1">Email</dt>
+<dd>
+<p>Attribute containing email of users</p>
+</dd>
+<dt class="hdlist1">Name</dt>
+<dd>
+<p>Attribute used as username used within OIDC tokens</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_group_search"><a class="anchor" href="#_group_search"></a>9.1.5. Group Search</h4>
+<div class="paragraph">
+<p>Definition of group search parameters</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Base DN</dt>
+<dd>
+<p>BaseDN where groups are located (e.g. <code>cn=users,dc=example,dc=com</code>)</p>
+</dd>
+<dt class="hdlist1">Filter</dt>
+<dd>
+<p>Filter to specify type of user objects (e.g. <code>"(objectClass=group)"</code>)</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_group_attribute_map"><a class="anchor" href="#_group_attribute_map"></a>9.1.6. Group Attribute Map</h4>
+<div class="paragraph">
+<p>Definition of group attribute map</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">User</dt>
+<dd>
+<p>Attribute to map as user (e.g. <code>uid</code>)</p>
+</dd>
+<dt class="hdlist1">Group</dt>
+<dd>
+<p>Attribute identifying membership (e.g. <code>member</code>)</p>
+</dd>
+<dt class="hdlist1">Name</dt>
+<dd>
+<p>Attribute to map as name (e.g. <code>name</code>)</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.security.external.ldap.examples"><a class="anchor" href="#_sec.admin.security.external.ldap.examples"></a>9.2. Examples</h3>
+<div class="paragraph">
+<p>In both directories, <code>user-regular1</code> and <code>user-regular2</code> are members of the <code>k8s-users</code> group, <code>user-admin</code> is a member of the <code>k8s-admins</code> group.</p>
+</div>
+<div class="paragraph">
+<p>For Active Directory, <code>user-bind</code> is a simple user which is member of the default <code>Domain Users</code> group.
+Hence, we can use it to authenticate because has read-only access to Active Directory.</p>
+</div>
+<div class="paragraph">
+<p>The mail attribute is used to create the RBAC rules.</p>
+</div>
+<div class="sect3">
+<h4 id="_sec.admin.security.external.ldap.examples.ad"><a class="anchor" href="#_sec.admin.security.external.ldap.examples.ad"></a>9.2.1. Active Directory</h4>
+<div class="exampleblock">
+<div class="title">Example 11. Active Directory Content LDIF</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre># user-regular1, Users, example.com
+dn: CN=user-regular1,CN=Users,DC=example,DC=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: user
+cn: user-regular1
+sn: Regular1
+givenName: User
+distinguishedName: CN=user-regular1,CN=Users,DC=example,DC=com
+displayName: User Regular1
+memberOf: CN=Domain Users,CN=Users,DC=example,DC=com
+memberOf: CN=k8s-users,CN=Groups,DC=example,DC=com
+name: user-regular1
+sAMAccountName: user-regular1
+objectCategory: CN=Person,CN=Schema,CN=Configuration,DC=example,DC=com
+mail: user-regular1@example.com
+
+# user-regular2, Users, example.com
+dn: CN=user-regular2,CN=Users,DC=example,DC=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: user
+cn: user-regular2
+sn: Regular2
+givenName: User
+distinguishedName: CN=user-regular2,CN=Users,DC=example,DC=com
+displayName: User Regular2
+memberOf: CN=Domain Users,CN=Users,DC=example,DC=com
+memberOf: CN=k8s-users,CN=Groups,DC=example,DC=com
+name: user-regular2
+sAMAccountName: user-regular2
+objectCategory: CN=Person,CN=Schema,CN=Configuration,DC=example,DC=com
+mail: user-regular2@example.com
+
+# user-bind, Users, example.com
+dn: CN=user-bind,CN=Users,DC=example,DC=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: user
+cn: user-bind
+sn: Bind
+givenName: User
+distinguishedName: CN=user-bind,CN=Users,DC=example,DC=com
+displayName: User Bind
+memberOf: CN=Domain Users,CN=Users,DC=example,DC=com
+name: user-bind
+sAMAccountName: user-bind
+objectCategory: CN=Person,CN=Schema,CN=Configuration,DC=example,DC=com
+mail: user-bind@example.com
+
+# user-admin, Users, example.com
+dn: CN=user-admin,CN=Users,DC=example,DC=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: user
+cn: user-admin
+sn:: Admin
+givenName: User
+distinguishedName: CN=user-admin,CN=Users,DC=example,DC=com
+displayName: User Admin
+memberOf: CN=Domain Users,CN=Users,DC=example,DC=com
+memberOf: CN=k8s-admins,CN=Groups,DC=example,DC=com
+name: user-admin
+sAMAccountName: user-admin
+objectCategory: CN=Person,CN=Schema,CN=Configuration,DC=example,DC=com
+mail: user-admin@example.com
+
+# k8s-users, Groups, example.com
+dn: CN=k8s-users,CN=Groups,DC=example,DC=com
+objectClass: top
+objectClass: group
+cn: k8s-users
+member: CN=user-regular1,CN=Users,DC=example,DC=com
+member: CN=user-regular2,CN=Users,DC=example,DC=com
+distinguishedName: CN=k8s-users,CN=Groups,DC=example,DC=com
+name: k8s-users
+sAMAccountName: k8s-users
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=example,DC=com
+
+# k8s-admins, Groups, example.com
+dn: CN=k8s-admins,CN=Groups,DC=example,DC=com
+objectClass: top
+objectClass: group
+cn: k8s-admins
+member: CN=user-admin,CN=Users,DC=example,DC=com
+distinguishedName: CN=k8s-admins,CN=Groups,DC=example,DC=com
+name: k8s-admins
+sAMAccountName: k8s-admins
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=example,DC=com</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock">
+<div class="title">Example 12. Active Directory LDAP Connector (YAML)</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre># Server
+Host: domain-controler.example.com
+Port: 636
+StartTLS: Off
+
+Certificate: DC_Trust_Root.crt
+
+# Authentication
+Anonymous: False
+DN: user-bind@example.com
+Password: &lt;password&gt;
+
+# User search
+Identifying User Attribute: sAMAccountName
+Base DN: CN=Users,DC=example,DC=com
+Filter: (objectClass=person)
+
+# User Attribute Map
+Username: sAMAccountName
+ID: distinguishedName
+Email: mail
+Name: sAMAccountName
+
+# Group Search
+Base DN: CN=Groups,DC=example,DC=com
+Filter: (objectClass=group)
+
+# Group Attribute Map
+User: distinguishedName
+Group: member
+Name: sAMAccountName</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_sec.admin.security.external.ldap.examples.openldap"><a class="anchor" href="#_sec.admin.security.external.ldap.examples.openldap"></a>9.2.2. openLDAP</h4>
+<div class="exampleblock">
+<div class="title">Example 13. openLDAP Content LDIF</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre># user-regular1, accounts, example.com
+dn: CN=user-regular1,OU=accounts,DC=example,DC=com
+cn: User Regular1
+uidNumber: 1200
+gidNumber: 500
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+uid: user-regular1
+mail: user-regular1@example.com
+sn: Regular1
+givenName: User
+
+# user-regular2, accounts, example.com
+dn: CN=user-regular2,OU=accounts,DC=example,DC=com
+cn: User Regular2
+uidNumber: 1300
+gidNumber: 500
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+uid: user-regular2
+mail: user-regular2@example.com
+sn: Regular2
+givenName: User
+
+# user-admin, accounts, example.com
+dn: CN=user-admin,OU=accounts,DC=example,DC=com
+cn: User Admin
+uidNumber: 1000
+gidNumber: 100
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+uid: user-admin
+mail: user-admin@example.com
+sn: Admin
+givenName: User
+
+# k8s-users, accounts, example.com
+dn: CN=k8s-users,OU=accounts,DC=example,DC=com
+gidNumber: 500
+objectClass: posixGroup
+cn: k8s-users
+memberUid: user-regular1
+memberUid: user-regular2
+
+# k8s-admins, accounts, example.com
+dn: CN=k8s-admins,OU=accounts,DC=example,DC=com
+gidNumber: 100
+objectClass: posixGroup
+cn: k8s-admins
+memberUid: user-admin</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock">
+<div class="title">Example 14. External LDAP Connector without Authentication</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre># Server
+Host: ldap.example.com
+Port: 636
+StartTLS: Off
+
+Certificate: LDAP_Trust_Root.crt
+
+# Authentication
+Anonymous: True
+
+# User search
+Identifying User Attribute: uid
+Base DN: OU=accounts,DC=example,DC=com
+Filter: (objectClass=person)
+
+# User Attribute Map
+Username: uid
+ID: uid
+Email: mail
+Name: uid
+
+# Group Search
+Base DN: OU=accounts,DC=example,DC=com
+Filter: (objectClass=posixGroup)
+
+# Group Attribute Map
+User: uid
+Group: memberUid
+Name: cn</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+  </main>
+</div>
+<footer class="footer">
+  <p>Copyright (C) 2017-2018 <a href="https://opensource.suse.com/doc-susemanager/">SUSE Manager</a></p>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js -->
+<script>
+function focusSearchInput () { document.querySelector('#search-input').focus() }
+var search = docsearch({
+  appId: 'KIB3CEDKWD',
+  apiKey: '51646b7d454f125193a0ba62253e8e17',
+  indexName: 'manager',
+  inputSelector: '#search-input',
+  autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+  algoliaOptions: { hitsPerPage: 10 }
+}).autocomplete;
+search.on('autocomplete:closed', function () { search.autocomplete.setVal() });
+focusSearchInput();
+window.addEventListener('load', focusSearchInput)
+</script>
+<script src="../../../_/js/site.js"></script>
+<script src="../../../_/js/vendor/highlight.js"></script>
+<script>hljs.initHighlighting()</script>
+  </body>
+</html>

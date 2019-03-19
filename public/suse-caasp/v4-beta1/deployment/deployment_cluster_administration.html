@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cluster Administration :: SUSE CaaS Platform Documentation</title>
+    <meta name="generator" content="Antora 2.0.0">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="stylesheet" href="../../../_/css/suse.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css">
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css -->
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header" role="banner">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-logo">
+        <img class="logo" src="../../../_/img/suse_logo_reverse.png" />
+      </div>
+      <div class="navbar-item">
+        <a href="https://r0ckarong.github.io">SUSE CaaS Platform</a>
+        <span class="separator">//</span>
+        <a href="../../..">Documentation</a>
+      </div>
+      <div class="navbar-item">
+        <input id="search-input" type="text" placeholder="Search docs">
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">Projects</div>
+          <div class="navbar-dropdown">
+            <div class="navbar-item"><strong>Resources</strong></div>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/tree/antora">Repository</a>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/issues">Issue Tracker</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="main-wrapper">
+<div class="navigation-container" data-component="suse-caasp" data-version="v4-beta1">
+  <aside class="navigation">
+    <div class="panels">
+<div class="navigation-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">SUSE CaaS Platform</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../quickstart/quick_intro.html">Quickstart Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_system_requirements.html">System Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_install.html">Installation and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_configuration.html">Node Configuration</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../administration/admin_intro.html">Administration Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_security.html">Security</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_administration.html">Administration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_software.html">Software Management</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_monitoring.html">Monitoring</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_logging.html">Logging</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_misc.html">Miscellaenous Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_integration_ses.html">SES Integration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_troubleshooting.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="deployment_intro.html">Deployment Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_about.html">About Deployment Guide</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_scenarios.html">Deployment Scenarios</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_sysreqs.html">System Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_preparation.html">Preparing The Installation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_installing_nodes.html">Installing and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_configuration.html">Node Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="navigation-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">SUSE CaaS Platform</span>
+    <span class="version">v4-beta1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">SUSE CaaS Platform</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">v4-beta1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+  <main class="main">
+<div class="toolbar" role="navigation">
+  <button class="navigation-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="crumbs" aria-label="breadcrumbs">
+  <ul>
+    <li class="crumb"><a href="../index.html">SUSE CaaS Platform</a></li>
+    <li class="crumb"><a href="deployment_cluster_administration.html">Cluster Administration</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/mnapp/mydata/software/SUSE/doc-caasp/modules/deployment/pages/deployment_cluster_administration.adoc">Edit this Page</a></div>
+</div>
+<article class="doc">
+<h1>Cluster Administration</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_auth">1. Authentication and Authorization</a>
+<ul class="sectlevel2">
+<li><a href="#_auth.kubeconfig">1.1. Authentication</a></li>
+<li><a href="#_auth.users">1.2. Managing Users and Groups</a></li>
+</ul>
+</li>
+<li><a href="#_transactional.updates">2. Handling Transactional Updates</a>
+<ul class="sectlevel2">
+<li><a href="#_transactional.updates.installation">2.1. Manual Installation of Updates</a></li>
+<li><a href="#_transactional.updates.disabling">2.2. Disabling Transactional Updates</a></li>
+</ul>
+</li>
+<li><a href="#_ptf.handling">3. Handling Program Temporary Fixes</a></li>
+<li><a href="#_commands.node.managment">4. Commands for Single Node Management</a>
+<ul class="sectlevel2">
+<li><a href="#_commands.node.managment.issue_generator">4.1. The <code class="command">issue-generator</code> Command</a></li>
+<li><a href="#_commands.node.managment.transactional_update">4.2. The <code class="command">transactional-update</code> Command</a></li>
+<li><a href="#_commands.node.managment.create_autoyast_profile">4.3. The <code class="command">create_autoyast_profile</code> Command</a></li>
+</ul>
+</li>
+<li><a href="#_node.managment">5. Node Management</a>
+<ul class="sectlevel2">
+<li><a href="#_node.managment.adding">5.1. Adding Nodes</a></li>
+<li><a href="#_node.managment.removing">5.2. Removing Nodes</a></li>
+</ul>
+</li>
+<li><a href="#_cluster.monitoring">6. Cluster Monitoring</a>
+<ul class="sectlevel2">
+<li><a href="#_cluster.monitoring.heapster">6.1. Monitoring with Heapster</a></li>
+<li><a href="#_cluster.monitoring.grafana">6.2. Monitoring with Grafana</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="sect1">
+<h2 id="_auth"><a class="anchor" href="#_auth"></a>1. Authentication and Authorization</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Role-based access control (RBAC) adds the ability to perform authentication and authorization of activities performed against a {kube}
+cluster.
+Authentication is concerned with the &#8220;who&#8221;
+ and authorization is concerned with the &#8220;what&#8221;
+.</p>
+</div>
+<div class="sect2">
+<h3 id="_auth.kubeconfig"><a class="anchor" href="#_auth.kubeconfig"></a>1.1. Authentication</h3>
+<div class="paragraph">
+<p>Starting in {productname}
+2, {kubectl}
+needs to authenticate against the {kube}{master_node}
+.
+The necessary authentication information is included in the {kubeconfig}
+file available from {dashboard}
+.
+Click the <code>kubectl config</code> button and authenticate with your user name and password.
+Download the file from {dashboard}
+ and save it as <code class="path">$HOME/.kube/config</code>
+.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">The KUBECONFIG variable</div>
+<div class="paragraph">
+<p>{kubectl}
+uses an environment variable named <code class="var">KUBECONFIG</code> to locate your {kubeconfig}
+ file.
+If this variable is not specified, it defaults to <code class="path">$HOME/.kube/config</code>
+.
+To use a different location, run</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``export`` _KUBECONFIG=/path/to/kube/config/file_</pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Obtaining the root CA certificate</div>
+<div class="paragraph">
+<p>You can obtain the root CA certificate from any node in your cluster via SCP:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``scp`` _NODE:/etc/pki/trust/anchors/SUSE_CaaSP_CA.crt ._</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To trust this root CA certificate on your machine, place it in <code class="path">/etc/pki/trust/anchors/</code>
+ and call the <code class="command">update-ca-certificates</code> script.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_auth.users"><a class="anchor" href="#_auth.users"></a>1.2. Managing Users and Groups</h3>
+<div class="paragraph">
+<p>User information is stored in <span class="productname">OpenLDAP</span>
+ running in a container on your {productname}{admin_node}
+.
+You can use standard LDAP administration tools for managing these users remotely.
+To do so, install the <span class="package">openldap2</span>
+ package on a computer in your network and make sure that computer can connect to the {admin_node}
+ on port 389.
+For further information, refer to <a href="#_sec.caasp.installquick.netreqs">[_sec.caasp.installquick.netreqs]</a>.</p>
+</div>
+<div class="sect3">
+<h4 id="_auth.user.ldap_rootpw"><a class="anchor" href="#_auth.user.ldap_rootpw"></a>1.2.1. Obtaining the OpenLDAP Password</h4>
+<div class="paragraph">
+<p>Before performing any administrative tasks on the <span class="productname">OpenLDAP</span>
+ instance, you will need to retrieve your <span class="productname">OpenLDAP</span>
+ administrator account password.
+To do this, run:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``ssh`` _root@caasp-admin.example.com_ \``cat`` _/var/lib/misc/infra-secrets/openldap-password_</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Make sure to replace <code class="replaceable">caasp-admin.example.com</code> with the FQDN or IP of your {admin_node}
+.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_auth.users.import_cert"><a class="anchor" href="#_auth.users.import_cert"></a>1.2.2. Importing the LDAP Certificate Locally</h4>
+<div class="paragraph">
+<p>To be able to perform any LDAP queries, you first need to import the generated LDAP certificate to your local trusted certificate storage.
+On the {admin_node}
+, run:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``docker`` exec -it $(docker ps | grep openldap | awk '{print $1}') cat /etc/openldap/pki/ca.crt &gt; ~/ca.pem</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``scp`` ~/ca.pem`root@workstation`:/usr/share/pki/trust/anchors/ca-caasp.crt.pem</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Replace <code class="replaceable">root@workstation</code> with the appropriate username and hostname for the workstation where you wish to run the LDAP queries.</p>
+</div>
+<div class="paragraph">
+<p>Then, on that workstation, run:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``update-ca-certificates``</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_auth.users.add"><a class="anchor" href="#_auth.users.add"></a>1.2.3. Adding New Users</h4>
+<div class="paragraph">
+<p>By default, when you create the first user in {dashboard}
+during bootstrap of your cluster, that user is granted <code>Cluster Administrator</code> privileges within {kube}
+.
+You can add additional users with these rights by adding new entries into the LDAP directory.</p>
+</div>
+<div class="paragraph">
+<p>To add a new user, create a LDIF file like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>dn: uid=`userid` &lt;1&gt;,ou=People,dc=infra,dc=caasp,dc=local
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: top
+uid:`userid`&lt;&lt;_co.auth.users.add.uid&gt;&gt;userPassword:`password hash` &lt;2&gt;givenname:`first name` &lt;3&gt;sn:`surname` &lt;4&gt;cn:`full name` &lt;5&gt;mail:`email address` <i class="conum" data-value="6"></i><b>(6)</b></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Make sure to replace all the parameters indicated <code class="replaceable">like
+      this</code> in the template above as follows:
+&lt;1&gt;
+       User ID (UID) of the new user. Needs to be unique.</p>
+</div>
+<div class="paragraph">
+<p>&lt;2&gt;
+       The user&#8217;s hashed password. Use <code class="command">/usr/sbin/slappasswd</code></p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>to generate the hash.</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>&lt;3&gt;
+       The user&#8217;s first name</p>
+</div>
+<div class="paragraph">
+<p>&lt;4&gt;
+       The user&#8217;s last name</p>
+</div>
+<div class="paragraph">
+<p>&lt;5&gt;
+       The user&#8217;s full name</p>
+</div>
+<div class="paragraph">
+<p>&lt;6&gt;The user&#8217;s e-mail address. It is used as the login name to
+       {dashboard}
+ and {kube}
+.</p>
+</div>
+<div class="paragraph">
+<p>Populate your OpenLDAP server with this LDIF file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``ldapadd`` -H ldap://`ADMIN NODE IP`;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w`LDAP ADMIN PASSWORD`-f`LDIF FILE`</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To add this new user to the existing Administrators group, create a new LDIF file like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>dn: cn=Administrators,ou=Groups,dc=infra,dc=caasp,dc=local
+changetype: modify
+add: uniqueMember
+uniqueMember: uid=`userid` &lt;7&gt;,ou=People,dc=infra,dc=caasp,dc=local</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Make sure to replace all the parameters indicated <code class="replaceable">like
+      this</code> in the template above as follows:
+&lt;7&gt;The user ID (UID) of the user</p>
+</div>
+<div class="paragraph">
+<p>Populate your <span class="productname">OpenLDAP</span>
+ server with the LDIF file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``ldapadd`` -H ldap://`ADMIN NODE IP`:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w`LDAP ADMIN PASSWORD`-f`LDIF FILE`</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_auth.users.change_pw"><a class="anchor" href="#_auth.users.change_pw"></a>1.2.4. Changing a User&#8217;s Password</h4>
+<div class="paragraph">
+<p>To change a user&#8217;s password, create a LDIF file like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>dn: uid=`userid` &lt;8&gt;,ou=People,dc=infra,dc=caasp,dc=local
+changetype: modify
+modify: userPassword
+userPassword:`password hash` <i class="conum" data-value="9"></i><b>(9)</b></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Make sure to replace all the parameters indicated <code class="replaceable">like
+      this</code> in the template above as follows:
+&lt;8&gt;
+       User ID (UID) of the user.</p>
+</div>
+<div class="paragraph">
+<p>&lt;9&gt;
+       The user&#8217;s new hashed password. Use
+       <code class="command">/usr/sbin/slappasswd</code>
+ to generate the hash.</p>
+</div>
+<div class="paragraph">
+<p>Populate your OpenLDAP server with this LDIF file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``ldapadd`` -H ldap://`ADMIN NODE IP`;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w`LDAP ADMIN PASSWORD`-f`LDIF FILE`</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_auth.group"><a class="anchor" href="#_auth.group"></a>1.2.5. Adding New Groups</h4>
+<div class="paragraph">
+<p>Say you have users that you want to grant access to manage a single namespace in Kubernetes.
+To do this, first create your users as mentioned in <a href="#_auth.users.add">Adding New Users</a>.
+Then create a new group:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>dn: cn=`group name` &lt;10&gt;,ou=Groups,dc=infra,dc=caasp,dc=local
+objectclass: top
+objectclass: groupOfUniqueNames
+cn:`group name`&lt;&lt;_co.auth.group.cn&gt;&gt;uniqueMember: uid=`member1`, &lt;11&gt;ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=`member2`,&lt;&lt;_co.auth.group.member&gt;&gt;ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=`member3`,&lt;&lt;_co.auth.group.member&gt;&gt;ou=People,dc=infra,dc=caasp,dc=local</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Make sure to replace all the parameters indicated <code class="replaceable">like
+      this</code> in the template above as follows:
+&lt;10&gt;
+       The group&#8217;s name.</p>
+</div>
+<div class="paragraph">
+<p>&lt;11&gt;
+       Members of the group. Repeat the <code>uniqueMember</code></p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>attribute for every member of this group.</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Populate your <span class="productname">OpenLDAP</span>
+ server with the LDIF file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``ldapadd`` -H ldap://`ADMIN NODE IP`:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w`LDAP ADMIN PASSWORD`-f`LDIF FILE`</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Next, create a role binding to allow this new LDAP group access in {kube}
+.
+Create a Kubernetes deployment descriptor like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre># Define a Role and its permissions in{kube}kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name:`role name` &lt;12&gt;namespace:`applicable namespace` &lt;13&gt;# This set of rules amounts to "allow all"
+rules:
+- apiGroups: [""]
+  resources: [""]
+  resourceNames: [""]
+  verbs: [""]
+---
+# Map an LDAP group to this{kube}role
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name:`role binding name` &lt;14&gt;namespace:`applicable namespace`&lt;&lt;_co.auth.group.role_namespace&gt;&gt;subjects:
+- kind: Group
+  name:`LDAP group name` &lt;15&gt;apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name:`role name`&lt;&lt;_co.auth.group.role_name&gt;&gt;apiGroup: rbac.authorization.k8s.io</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>&lt;12&gt;
+       Name of the new role in {kube}</p>
+</div>
+<div class="paragraph">
+<p>&lt;13&gt;
+       Namespace the new group should be allowed to access. Use
+        `
+default`
+ for {kube}
+' default namespace.</p>
+</div>
+<div class="paragraph">
+<p>&lt;14&gt;
+       Name of the role binding in {kube}</p>
+</div>
+<div class="paragraph">
+<p>&lt;15&gt;
+       Name of the corresponding group in LDAP</p>
+</div>
+<div class="paragraph">
+<p>Add this role and binding to {kube}
+:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``kubectl`` _apply -f DEPLOYMENT DESCRIPTOR FILE_</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_further_information"><a class="anchor" href="#_further_information"></a>1.2.6. Further information</h4>
+<div class="paragraph">
+<p>For more details on authorization in {kube}
+, refer to <a href="https://kubernetes.io/docs/admin/authorization/rbac/" class="bare">https://kubernetes.io/docs/admin/authorization/rbac/</a></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_transactional.updates"><a class="anchor" href="#_transactional.updates"></a>2. Handling Transactional Updates</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For security and stability reasons, the operating system and application should always be up-to-date.
+While with a single machine you can keep the system up-to-date quite easily by running several commands, in a large-scaled cluster the update process can become a real burden.
+Thus transactional automatic updates have been introduced.
+Transactional updates can be characterized as follows:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>They are atomic.</p>
+</li>
+<li>
+<p>They do not influence the running system.</p>
+</li>
+<li>
+<p>They can be rolled back.</p>
+</li>
+<li>
+<p>The system needs to be rebooted to activate the changes.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Transactional updates are managed by the <code class="command">transactional-update</code> script, which is called once a day.
+The script checks if any update is available.
+If there is an update to be applied, a new snapshot of the root file system is created and the system is updated by using <code class="command">zypper dup</code>.
+All updates released to this point are applied.
+The snapshot is then marked as active and will be used after the next reboot of the system.
+Ensure that the cluster is rebooted as soon as possible after the update installation is complete, otherwise all changes will be lost.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">General Notes to the Updates Installation</div>
+<div class="paragraph">
+<p>Only packages that are part of the snapshot of the root file system can be updated.
+If packages contain files that are not part of the snapshot, the update could fail or break the system.</p>
+</div>
+<div class="paragraph">
+<p>RPMs that require a license to be accepted cannot be updated.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_transactional.updates.installation"><a class="anchor" href="#_transactional.updates.installation"></a>2.1. Manual Installation of Updates</h3>
+<div class="paragraph">
+<p>After the <code class="command">transactional-update</code> script has run on all nodes, {dashboard}
+ displays any nodes in your cluster running outdated software. {dashboard}
+ then enables you to update your cluster directly.
+Follow the next procedure to update your cluster.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure: Updating the Cluster with {dashboard}</div>
+<ol class="arabic">
+<li>
+<p>Login to {dashboard} .</p>
+</li>
+<li>
+<p>If required, click <b class="menuref">UPDATE ADMIN NODE</b> to start the update.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_updating.png" alt="velum updating">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Confirm the update by clicking <b class="menuref">Reboot to update</b> .</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_reboot_and_update.png" alt="velum reboot and update">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Now you have to wait until the {admin_node} reboots and {dashboard} is available again.</p>
+</li>
+<li>
+<p>Click <b class="menuref">update all nodes</b> to update {master_node} and {worker_node} s.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_update_nodes.png" alt="velum update nodes">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_transactional.updates.disabling"><a class="anchor" href="#_transactional.updates.disabling"></a>2.2. Disabling Transactional Updates</h3>
+<div class="paragraph">
+<p>Even though it is not recommended, you can disable transactional updates by issuing the command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>``systemctl`` _--now disable transactional-update.timer_</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ptf.handling"><a class="anchor" href="#_ptf.handling"></a>3. Handling Program Temporary Fixes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Program temporary fixes (PTFs) are available in the {productname}
+environment.
+You install them by using the <code class="command">transactional-update</code> script.
+Typically you invoke the installation of PTFs by running:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>``transactional-update`` _reboot ptf install rpm … rpm_</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The command installs PTF RPMs.
+The <code>reboot</code> option then schedules a reboot after the installation.
+PTFs are activate only after rebooting of your system.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Reboot Required</div>
+<div class="paragraph">
+<p>If you install or remove PTFs and you call the <code class="command">transactional-update</code> to update the system before reboot, the applied changes by PTFs are lost and need to be done again after reboot.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In case you need to remove the installed PTFs, use the following command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>``transactional-update`` _reboot ptf remove rpm … rpm_</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_commands.node.managment"><a class="anchor" href="#_commands.node.managment"></a>4. Commands for Single Node Management</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>{productname}
+comes with several built-in commands that enable you to manage your {cluster_node}
+s.</p>
+</div>
+<div class="sect2">
+<h3 id="_commands.node.managment.issue_generator"><a class="anchor" href="#_commands.node.managment.issue_generator"></a>4.1. The <code class="command">issue-generator</code> Command</h3>
+<div class="paragraph">
+<p>The <code class="command">issue-generator</code> creates a volatile temporary <code class="path">/run/issue</code>
+ file.
+The file <code class="path">/etc/issue</code>
+ should be a symbolic link to the temporary <code class="path">/run/issue</code>
+.</p>
+</div>
+<div class="paragraph">
+<p>You can use the command to prefix all directories and files with a specified prefix (path in this case):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>issue-generator --prefix`path`</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>By using the command you can also create or delete files in the network configuration, for example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>issue-generator network`remove``interface`</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The command removes file <code class="path">/run/issue.d/70-interface.conf</code>
+.
+The file contains the name of the <code class="replaceable">interface</code> and escape codes for <code class="command">agentty</code>.</p>
+</div>
+<div class="paragraph">
+<p>You can use the command to add or delete <code class="path">/run/issue.d/60-ssh_host_keys.conf</code>
+ that contains fingerprints of the public SSH keys of the host:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>issue-generator ssh`add|remove`</pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">The Command without Arguments</div>
+<div class="paragraph">
+<p>If you run the command without any argument, all input files will be applied.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_commands.node.managment.transactional_update"><a class="anchor" href="#_commands.node.managment.transactional_update"></a>4.2. The <code class="command">transactional-update</code> Command</h3>
+<div class="paragraph">
+<p>The <code class="command">transactional-update</code> enables you to install or remove updates of your system in an atomic way.
+The updates are applied all or none of them if any package cannot be installed.
+Before the update is applied, a snapshot of the system is created in order to restore the previous state in case of a failure.</p>
+</div>
+<div class="paragraph">
+<p>If the current root file system is identical to the active root file system (after applying updates and reboot), run cleanup of all old snapshots:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>transactional-update cleanup</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Other options of the command are the following:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>up</code></dt>
+<dd>
+<p>If there are new updates available, a new snapshot is created and <code class="command">zypper dup</code> is used to update the snapshot.
+The snapshot is activated afterwards and is used as the new root file system after reboot.</p>
+<div class="listingblock">
+<div class="content">
+<pre>transactional-update up</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>dup</code></dt>
+<dd>
+<p>If there are new updates available, a new snapshot is created and <code class="command">zypper dup –no-allow-vendor-change</code> is used to update the snapshot.
+The snapshot is activated afterwards and is used as the new root file system after reboot.</p>
+<div class="listingblock">
+<div class="content">
+<pre>transactional-update dup</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>patch</code></dt>
+<dd>
+<p>If there are new updates available, a new snapshot is created and <code class="command">zypper patch</code> is used to update the snapshot.
+The snapshot is activated afterwards and is used as the new root file system after reboot.</p>
+<div class="listingblock">
+<div class="content">
+<pre>transactional-update patch</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>ptf install</code></dt>
+<dd>
+<p>The command installs the specified RPMs:</p>
+<div class="listingblock">
+<div class="content">
+<pre>transactional-update ptf install`rpm ... rpm`</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>ptf remove</code></dt>
+<dd>
+<p>The command removes the specified RPMs from the system:</p>
+<div class="listingblock">
+<div class="content">
+<pre>transactional-update ptf remove`rpm ... rpm`</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>rollback</code></dt>
+<dd>
+<p>The command sets the default sub volume.
+On systems with read-write file system <code class="command">snapper rollback</code> is called.
+On a read-only file system and without any argument, the current system is set to a new default root file system.
+If you specify a number, that snapshot is used as the default root file system.
+On a read-only file system, no additional snapshots are created.</p>
+<div class="listingblock">
+<div class="content">
+<pre>transactional-update rollback`snapshot_number`</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>--help</code></dt>
+<dd>
+<p>The option outputs possible options and subcommands.</p>
+<div class="listingblock">
+<div class="content">
+<pre>transactional-update --help</pre>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_commands.node.managment.create_autoyast_profile"><a class="anchor" href="#_commands.node.managment.create_autoyast_profile"></a>4.3. The <code class="command">create_autoyast_profile</code> Command</h3>
+<div class="paragraph">
+<p>The <code class="command">create_autoyast_profile</code> command creates an autoyast profile for fully automatic installation of {productname}
+.
+You can use the following options when invoking the command:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>-o|--output</code></dt>
+<dd>
+<p>Specify to which file the command should save the created profile.</p>
+<div class="listingblock">
+<div class="content">
+<pre>create_autoyast_profile -o`filename`</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>--salt-master</code></dt>
+<dd>
+<p>Specify the host name of the {smaster}
+.</p>
+<div class="listingblock">
+<div class="content">
+<pre>create_autoyast_profile --salt-master`saltmaster`</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>--smt-url</code></dt>
+<dd>
+<p>Specify the URL of the SMT server.</p>
+<div class="listingblock">
+<div class="content">
+<pre>create_autoyast_profile --smt-url`saltmaster`</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>--regcode</code></dt>
+<dd>
+<p>Specify the registration code for {productname}
+.</p>
+<div class="listingblock">
+<div class="content">
+<pre>create_autoyast_profile --regcode`405XAbs593`</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>--reg-email</code></dt>
+<dd>
+<p>Specify an e-mail address for registration.</p>
+<div class="listingblock">
+<div class="content">
+<pre>create_autoyast_profile --reg-email`address@exampl.com`</pre>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_node.managment"><a class="anchor" href="#_node.managment"></a>5. Node Management</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After you complete the deployment and you bootstrap the cluster, you may need to perform additional changes to the cluster.
+By using {dashboard}
+you can add additional nodes to the cluster.
+You can also delete some nodes, but in that case make sure that you do not break the cluster.</p>
+</div>
+<div class="sect2">
+<h3 id="_node.managment.adding"><a class="anchor" href="#_node.managment.adding"></a>5.1. Adding Nodes</h3>
+<div class="paragraph">
+<p>You may need to add additional {worker_node}
+s to your cluster.
+The following steps guides you through that procedure:</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure: Adding Nodes to Existing Cluster</div>
+<ol class="arabic">
+<li>
+<p>Prepare the node as described in <a href="#_sec.caasp.installquick.node">[_sec.caasp.installquick.node]</a></p>
+</li>
+<li>
+<p>Open {dashboard} in your browser and login.</p>
+</li>
+<li>
+<p>You should see the newly added node as a node to be accepted in <b class="menuref">Pending Nodes</b> . Accept the node.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_pending_nodes.png" alt="velum pending nodes">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In the <span class="menuseq"><b class="menu">Summary</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">] you can see the menu:New[</b></span> that appears next to <span class="menuseq"><b class="menu">New nodes</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">] . Click the menu:New[</b></span> button.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_unassigned_nodes.png" alt="velum unassigned nodes">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Select the node to be added and click <b class="menuref">Add nodes</b> .</p>
+</li>
+<li>
+<p>The node has been added to your cluster.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_node.managment.removing"><a class="anchor" href="#_node.managment.removing"></a>5.2. Removing Nodes</h3>
+<div class="paragraph">
+<p>As each node in the cluster runs also an instance of <code>etcd</code>, {productname}
+ has to ensure that removing of several nodes does not break the <code>etcd</code> cluster.
+In case you have for example three nodes in the <code>etcd</code> and you delete two of them, {productname}
+ deletes one node, recovers the cluster and only if the recovery is successful, the next node can be removed.
+If a node runs just an <code>etcd-proxy</code>, there is nothing special that has to be done, as deleting any amount of <code>etcd-proxy</code> can not break the <code>etcd</code> cluster.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_cluster.monitoring"><a class="anchor" href="#_cluster.monitoring"></a>6. Cluster Monitoring</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>There are three basic ways how you can monitor your cluster:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>by directly accessing the <em>cAdvisor</em> on <code>http://[replaceable]</code>WORKER NODE ADDRESS<code>;:4194/containers/</code>. The <em>cAdvisor</em> runs on worker nodes by default.</p>
+</li>
+<li>
+<p>By using <em>Heapster</em>, for details refer to <a href="#_cluster.monitoring.heapster">Monitoring with Heapster</a>.</p>
+</li>
+<li>
+<p>By using <em>Grafana</em>, for details refer to <a href="#_cluster.monitoring.grafana">Monitoring with Grafana</a>.</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="_cluster.monitoring.heapster"><a class="anchor" href="#_cluster.monitoring.heapster"></a>6.1. Monitoring with Heapster</h3>
+<div class="paragraph">
+<p><em>Heapster</em> is a tool that collects and interprets various signals from your cluster. <em>Heapster</em> communicates directly with the <em>cAdvisor</em>.
+The signals from the cluster are then exported using REST endpoints.</p>
+</div>
+<div class="paragraph">
+<p>To deploy <em>Heapster</em>, run the following command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/heapster/heapster.yaml</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><em>Heapster</em> can store data in <em>InfluxDB</em>, which can be then used by other tools.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_cluster.monitoring.grafana"><a class="anchor" href="#_cluster.monitoring.grafana"></a>6.2. Monitoring with Grafana</h3>
+<div class="paragraph">
+<p><em>Grafana</em> is an analytics platform that processes data stored in <em>InfluxDB</em> and displays the data graphically.
+You can deploy <em>Grafana</em> by running the following commands:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-services/master/contrib/addons/heapster/heapster.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/influxdb.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-config/influxdb/grafana-deployment.yaml
+wget https://raw.githubusercontent.com/kubernetes/heapster/release-1.3/deploy/kube-config/influxdb/grafana-service.yaml</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then open the file <code class="path">grafana-service.yaml</code>
+:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>vi grafana-service.yaml</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the file uncomment the line with the <code>NodePort</code> type.</p>
+</div>
+<div class="paragraph">
+<p>To finish the <em>Grafana</em> installation, apply the configuration by running:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>kubectl apply -f grafana-service.yaml</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+  </main>
+</div>
+<footer class="footer">
+  <p>Copyright (C) 2017-2018 <a href="https://opensource.suse.com/doc-susemanager/">SUSE Manager</a></p>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js -->
+<script>
+function focusSearchInput () { document.querySelector('#search-input').focus() }
+var search = docsearch({
+  appId: 'KIB3CEDKWD',
+  apiKey: '51646b7d454f125193a0ba62253e8e17',
+  indexName: 'manager',
+  inputSelector: '#search-input',
+  autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+  algoliaOptions: { hitsPerPage: 10 }
+}).autocomplete;
+search.on('autocomplete:closed', function () { search.autocomplete.setVal() });
+focusSearchInput();
+window.addEventListener('load', focusSearchInput)
+</script>
+<script src="../../../_/js/site.js"></script>
+<script src="../../../_/js/vendor/highlight.js"></script>
+<script>hljs.initHighlighting()</script>
+  </body>
+</html>

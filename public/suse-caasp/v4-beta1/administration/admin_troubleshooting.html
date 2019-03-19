@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Troubleshooting :: SUSE CaaS Platform Documentation</title>
+    <meta name="generator" content="Antora 2.0.0">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="stylesheet" href="../../../_/css/suse.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css">
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css -->
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header" role="banner">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-logo">
+        <img class="logo" src="../../../_/img/suse_logo_reverse.png" />
+      </div>
+      <div class="navbar-item">
+        <a href="https://r0ckarong.github.io">SUSE CaaS Platform</a>
+        <span class="separator">//</span>
+        <a href="../../..">Documentation</a>
+      </div>
+      <div class="navbar-item">
+        <input id="search-input" type="text" placeholder="Search docs">
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">Projects</div>
+          <div class="navbar-dropdown">
+            <div class="navbar-item"><strong>Resources</strong></div>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/tree/antora">Repository</a>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/issues">Issue Tracker</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="main-wrapper">
+<div class="navigation-container" data-component="suse-caasp" data-version="v4-beta1">
+  <aside class="navigation">
+    <div class="panels">
+<div class="navigation-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">SUSE CaaS Platform</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../quickstart/quick_intro.html">Quickstart Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_system_requirements.html">System Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_install.html">Installation and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_configuration.html">Node Configuration</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="admin_intro.html">Administration Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_security.html">Security</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_administration.html">Administration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_software.html">Software Management</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_monitoring.html">Monitoring</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_logging.html">Logging</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_misc.html">Miscellaenous Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_integration_ses.html">SES Integration</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="admin_troubleshooting.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../deployment/deployment_intro.html">Deployment Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_about.html">About Deployment Guide</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_scenarios.html">Deployment Scenarios</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_sysreqs.html">System Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_preparation.html">Preparing The Installation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_installing_nodes.html">Installing and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_configuration.html">Node Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="navigation-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">SUSE CaaS Platform</span>
+    <span class="version">v4-beta1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">SUSE CaaS Platform</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">v4-beta1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+  <main class="main">
+<div class="toolbar" role="navigation">
+  <button class="navigation-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="crumbs" aria-label="breadcrumbs">
+  <ul>
+    <li class="crumb"><a href="../index.html">SUSE CaaS Platform</a></li>
+    <li class="crumb"><a href="admin_intro.html">Administration Guide</a></li>
+    <li class="crumb"><a href="admin_troubleshooting.html">Troubleshooting</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/mnapp/mydata/software/SUSE/doc-caasp/modules/administration/pages/admin_troubleshooting.adoc">Edit this Page</a></div>
+</div>
+<article class="doc">
+<h1>Troubleshooting</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_sec.admin.troubleshooting.overview">1. Overview</a></li>
+<li><a href="#_sec.admin.troubleshooting.node_acceptance">2. New Nodes Not Showing In Velum</a>
+<ul class="sectlevel2">
+<li><a href="#_nodes_not_showing_in_pending_nodes">2.1. Nodes Not Showing In "Pending Nodes"</a></li>
+<li><a href="#_accepted_nodes_not_showing_in_nodes_list">2.2. Accepted Nodes Not Showing In "Nodes" List</a></li>
+</ul>
+</li>
+<li><a href="#_sec.admin.troubleshooting.failed_bootstrap">3. Debugging Failed Bootstrap</a></li>
+<li><a href="#_sec.admin.troubleshooting.failed_update">4. Recovering From Failed Update</a></li>
+<li><a href="#_sec.admin.troubleshooting.etcd">5. Checking <code>etcd</code> Health</a></li>
+<li><a href="#_sec.admin.troubleshooting.velum_ptf">6. Locking Installed Program Temporary Fixes</a></li>
+<li><a href="#_sec.admin.troubleshooting.network_planning">7. Network Planning And Reconfiguration</a></li>
+<li><a href="#_sec.admin.troubleshooting.proxy">8. Using A Proxy Server With Authentication</a></li>
+<li><a href="#_sec.admin.troubleshooting.replace_certificates">9. Replacing TLS/SSL Certificates</a></li>
+<li><a href="#_sec.admin.troubleshooting.add_ca_cert">10. Fixing &#8220;x509: certificate signed by unknown authority&#8221;</a></li>
+<li><a href="#_sec.admin.troubleshooting.lost_node">11. Replacing a Lost Node</a></li>
+</ul>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="quoteblock abstract">
+<blockquote>
+<div class="paragraph">
+<p>This chapter summarizes frequent problems that can occur while using SUSE CaaS Platform
+and their solutions.</p>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.troubleshooting.overview"><a class="anchor" href="#_sec.admin.troubleshooting.overview"></a>1. Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This chapter is a collection of frequent problems that are reported for SUSE CaaS Platform
+.
+Additionally, SUSE
+support collects problems and their solutions online at <a href="https://www.suse.com/support/kb/?id=SUSE_CaaS_Platform" class="bare">https://www.suse.com/support/kb/?id=SUSE_CaaS_Platform</a>.</p>
+</div>
+<div class="paragraph">
+<p>In case of problems, a detailed system report can be created with the <code class="command">supportconfig</code> command line tool.
+It will collect information about the system such as: current kernel version, hardware, installed packages, partition setup, and much more.
+The result is a TAR archive of files.
+After opening a Service Request (SR), you can upload the TAR archive to Global Technical Support.
+It will help to locate the issue you reported and to assist you in solving the problem.
+For details, see <a href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_adm_support.html" class="bare">https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_adm_support.html</a>.</p>
+</div>
+<div class="paragraph">
+<p>While resolving a technical difficulty with SUSE Support, you may receive a so-called Program Temporary Fix (PTF). PTFs may be issued for various packages as RPMs.
+For details about handling PTFs, see <a href="#_sec.admin.software.patch">[_sec.admin.software.patch]</a>.</p>
+</div>
+<div class="paragraph">
+<p>For details about how to contact SUSE
+support, refer to <a href="https://www.suse.com/media/flyer/suse_customer_support_quick_reference_guide_flyer.pdf" class="bare">https://www.suse.com/media/flyer/suse_customer_support_quick_reference_guide_flyer.pdf</a> and <a href="https://www.suse.com/support/" class="bare">https://www.suse.com/support/</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.troubleshooting.node_acceptance"><a class="anchor" href="#_sec.admin.troubleshooting.node_acceptance"></a>2. New Nodes Not Showing In Velum</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>All SUSE CaaS Platform
+nodes must have a <code class="path">/etc/salt/minion.d/master.conf</code>
+ configuration file that contains the IP address or the FQDN of (one of) the Salt master(s) in the cluster.
+During the installation you must provide the IP/FQDN of the Salt master (typically the admin node).</p>
+</div>
+<div class="paragraph">
+<p>To become part of the cluster, the node must be (manually) accepted. Velum
+shows a list of Salt minions that are known to the Salt master and can be accepted.</p>
+</div>
+<div class="sect2">
+<h3 id="_nodes_not_showing_in_pending_nodes"><a class="anchor" href="#_nodes_not_showing_in_pending_nodes"></a>2.1. Nodes Not Showing In "Pending Nodes"</h3>
+<div class="paragraph">
+<p>You have added a new machine to the cluster but there is no new node key displayed in the <b class="menuref">Pending Nodes</b>
+ list.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Check that the configured value in the <code class="path">master.conf</code> of the machine is correct and it is communicating with the admin node.</p>
+</li>
+<li>
+<p>Check if the Administration Node has enough free memory. In some situations Kubernetes will intermittently shut down containers to conserve resources. If any of <code>salt-master</code>, <code>salt-api</code> or other critical services are affected, this could lead to this kind of issues.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_accepted_nodes_not_showing_in_nodes_list"><a class="anchor" href="#_accepted_nodes_not_showing_in_nodes_list"></a>2.2. Accepted Nodes Not Showing In "Nodes" List</h3>
+<div class="paragraph">
+<p>If the accepted node does not show up in the <b class="menuref">Nodes</b>
+list, you can log in to the Administration Node
+ via SSH and perform the following checks:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Check that the minion ID has been actually accepted:</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``docker exec -it $(docker ps --filter=name=salt-master -q) salt-key`` Accepted Keys:
+admin
+ca
+231bb41553ac4102bb8fda8b2fd9d60d
+Denied Keys:
+Unaccepted Keys:
+bbaf54654d5649f68a0af5f1914ecedf
+db79f30700974971b5e32d62ba0d5d76
+Rejected Keys:</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The minion ID of the node should appear on the "Accepted Keys" list.</p>
+</div>
+<div class="paragraph">
+<p>If the node does not appear on this "Accepted Keys" list, the acceptance request didn&#8217;t reach the backend and/or the Salt API.
+Check with <code class="command">docker ps</code> that containers on the Administration Node
+have approximately the same age.
+If there is a large age differences, it&#8217;s likely that the Administration Node
+is under memory pressure and is shutting down containers.
+This can lead to multiple problems respective of which container is not available.
+For example: MariaDB could have been down when Salt tried to insert events into the database etc..</p>
+</div>
+<div class="paragraph">
+<p>Adjust workloads accordingly to restore available memory and retry accepting the node from Velum
+.</p>
+</div>
+</li>
+<li>
+<p>Check that the event processor is running on the Administration Node :</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``docker ps -q -f name=event-processor``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If it&#8217;s not running or has a significantly different age from the other containers, make sure the admin node is not under memory pressure.</p>
+</div>
+</li>
+<li>
+<p>Check if the event processor is lagging behind processing events:</p>
+<div class="paragraph">
+<p>If there was a previous problem with the event processor, it&#8217;s possible that salt continued creating events while it wasn&#8217;t running for a long time, causing it to lag behind processing events.
+Check the number of events in the processing queue.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``docker exec -it $(docker ps -q -f name=dashboard) \
+entrypoint.sh bundle exec rails runner \
+'puts "Number of events to process: #{SaltEvent.not_processed.count}"'``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Check if Salt couldn&#8217;t introduce an important event on the database</p>
+<div class="paragraph">
+<p>Make sure there&#8217;s enough free space on the Administration Node
+.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.troubleshooting.failed_bootstrap"><a class="anchor" href="#_sec.admin.troubleshooting.failed_bootstrap"></a>3. Debugging Failed Bootstrap</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If the bootstrapping as described in <a href="#_sec.deploy.install.bootstrap">[_sec.deploy.install.bootstrap]</a> fails, there are several places to look for errors.
+The following procedure outlines where to start debugging.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Check the logs from Velum dashboard. Execute on the Administration Node :</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``docker logs $(docker ps -q -f name="velum-dashboard")``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Convert the log into a human readable format and open it with <code class="command">less</code>.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``/var/lib/supportutils-plugin-suse-caasp/debug-salt --json_output=salt.json \
+    --summary_output=summary.txt --text-status --no-color`` {prompt.root.admin}``less summary.txt``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Retry bootstrapping from Administration Node console.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``docker exec -it $(docker ps -q -f name="salt-master") \
+    salt-run -l debug state.orchestrate orch.kubernetes &gt; salt-orchestration.logs``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>If the orchestration failed in late state, you can check if <code class="command">etcd</code> and the Kubernetes cluster is up and running. Log in on a Master Node and check if <code class="command">etcd</code> cluster is up and running.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.master}``set -a`` {prompt.root.master}``source /etc/sysconfig/etcdctl`` {prompt.root.master}``export ETCDCTL_API=3`` {prompt.root.master}``etcdctl member list`` {prompt.root.master}``etcdctl endpoint health`` {prompt.root.master}``etcdctl endpoint status`` {prompt.root.master}``journalctl -u etcd``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check if Kubernetes
+cluster is up and running.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.master}``kubectl get nodes`` {prompt.root.master}``kubectl cluster-info`` {prompt.root.master}``journalctl -u kubelet`` {prompt.root.master}``journalctl -u kube-apiserver`` {prompt.root.master}``journalctl -u kube-scheduler`` {prompt.root.master}``journalctl -u kube-controller-manager``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Collect all relevant logs with <code class="command">supportconfig</code> on the Master Node and Administration Node .</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``supportconfig`` {prompt.root.admin}``tar -xvjf /var/log/nts_*.tbz`` {prompt.root.admin}``cd nts*`` {prompt.root.admin}``cat etcd.txt kubernetes.txt salt-minion.txt``</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.master}``supportconfig`` {prompt.root.master}``tar -xvjf /var/log/nts_*.tbz`` {prompt.root.master}``cd nts*`` {prompt.root.master}``cat etcd.txt kubernetes.txt salt-minion.txt``</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.troubleshooting.failed_update"><a class="anchor" href="#_sec.admin.troubleshooting.failed_update"></a>4. Recovering From Failed Update</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>See <a href="#_sec.admin.software.transactional_updates.recovering">[_sec.admin.software.transactional_updates.recovering]</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.troubleshooting.etcd"><a class="anchor" href="#_sec.admin.troubleshooting.etcd"></a>5. Checking <code>etcd</code> Health</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To work with <code class="command">etcdctl</code>, you have to pass parameters with paths to required certificates.</p>
+</div>
+<div class="paragraph">
+<p>Use SSH to log into one of the cluster nodes, for example your first master.
+The following command provides an example for using <code class="command">etcdctl</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``set -a`` {prompt.root}``source /etc/sysconfig/etcdctl`` {prompt.root}``export ETCDCTL_API=3`` {prompt.root}``etcdctl cluster-health``</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.troubleshooting.velum_ptf"><a class="anchor" href="#_sec.admin.troubleshooting.velum_ptf"></a>6. Locking Installed Program Temporary Fixes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It can happen that <code class="command">zypper</code> removes an installed <em>Program Temporary Fix</em> (<em>PTF</em>) when updates are started with Velum.
+To prevent this, execute the following procedure.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Locks Disable Updates for Package</div>
+<div class="paragraph">
+<p>If a package is locked, it will no longer receive any updates until the lock is released with <code class="command">zypper rl</code>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Install the PTF manually.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``transactional-update reboot pkg install PTF_FILE.rpm``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>As soon as the node has restarted, verify that the RPM is installed.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``rpm -qa | grep PTF``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Create a <code class="command">zypper</code> lock for this RPM.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``zypper al PTF_PACKAGE_NAME``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that the lock is created.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``zypper ll``</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.troubleshooting.network_planning"><a class="anchor" href="#_sec.admin.troubleshooting.network_planning"></a>7. Network Planning And Reconfiguration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It is not possible to reconfigure the used IP ranges of SUSE CaaS Platform
+once the deployment is complete.
+Therefore, carefully plan for required IP ranges and future scenarios.</p>
+</div>
+<div class="paragraph">
+<p>Additionally, keep the network requirements in mind, as stated in <a href="#_sec.deploy.requirements.network">[_sec.deploy.requirements.network]</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.troubleshooting.proxy"><a class="anchor" href="#_sec.admin.troubleshooting.proxy"></a>8. Using A Proxy Server With Authentication</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you need to register the Administration Node
+with SUSE Customer Center
+over a proxy server that requires authentication, it is not possible to specify the configuration in <code class="path">/etc/sysconfig/proxy</code>
+.</p>
+</div>
+<div class="paragraph">
+<p>For information about setting authentication credentials and connecting to SUSE Customer Center
+with <code class="command">SUSEConnect</code>, see <a href="#_sec.configuration.suseconnect.proxy">[_sec.configuration.suseconnect.proxy]</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.troubleshooting.replace_certificates"><a class="anchor" href="#_sec.admin.troubleshooting.replace_certificates"></a>9. Replacing TLS/SSL Certificates</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Sometimes certificates are not updated properly because they are outdated.
+To replace outdated certificates, execute the following procedure.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Use SSH  and log in on the Administration Node .</p>
+</li>
+<li>
+<p>Move the expired certs out of the way.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``mv /etc/pki/{velum,ldap,salt-api}.crt /root``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Generate new certificates.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``cd /etc/pki`` {prompt.root.admin}``/usr/share/caasp-container-manifests/gen-certs.sh``</pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">Generating Additional Certificates</div>
+To regenerate additional certificates, for example <code class="path">/etc/pki/kubectl-client-cert.crt</code>
+, add an additional line at the end of the <code class="command">gen-certs.sh</code> script:
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``transactional-update shell``
+transactional update # ``echo "gencert \"kubectl-client-cert\" \"kubectl-client-cert\" \
+    \"\$all_hostnames\" \"\$(ip_addresses)\"" &gt;&gt;/usr/share/caasp-container-manifests/gen-certs.sh``
+transactional update # ``/usr/share/caasp-container-manifests/gen-certs.sh``
+transactional update # ``exit``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Use SSH and log in on a Master Node .</p>
+</li>
+<li>
+<p>Backup and delete the dex-tls secret.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.master}``kubectl -n kube-system get secret dex-tls -o yaml &gt; /root/dex-tls`` {prompt.root.master}``kubectl -n kube-system delete secret dex-tls``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>On a master node, find and delete the Dex pods.</p>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">This Step Breaks Authentication</div>
+Executing this step prevents new authentications requests from succeeding.
+However, the static credentials located on the master nodes will continue to function.
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The Dex pods will not restart by themselves until the dex-tls secret is recreated.</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.master}``kubectl -n kube-system get pods | grep dex`` {prompt.root.master}``kubectl -n kube-system delete pods DEX_POD1 DEX_POD2 DEX_POD3``</pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Manually run the salt orchestration on the Administration Node . This may take some time.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``docker exec -it $(docker ps -q -f name="salt-master") \
+    bash -c "salt-run state.orchestrate orch.kubernetes" 2&amp;&gt;1 &gt; salt-run.log``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Check the tail of <code class="path">salt-run.log</code> to see if the orchestration succeeded.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``tail -n 50 salt-run.log``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>On a master node, validate the dex pods are running.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.master}``kubectl -n kube-system get pods | grep dex``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>If you are not able to log in into Velum, reboot the Administration Node . Then test and validate that the cluster is still functional.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.troubleshooting.add_ca_cert"><a class="anchor" href="#_sec.admin.troubleshooting.add_ca_cert"></a>10. Fixing &#8220;x509: certificate signed by unknown authority&#8221;</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When interacting with Kubernetes
+you can run into the situation where your existing configuration for the authentication has changed (cluster has been rebuild, certificates have been switched.)</p>
+</div>
+<div class="paragraph">
+<p>In such a case you might see an error message in the output of your CLI tool.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>x509: certificate signed by unknown authority</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This message indicates that your current system does not know the Certificate Authority (CA) that signed the SSL certificates used for encrypting the communication to the cluster.
+You then need to add or update the Root CA certificate in your local trust store.</p>
+</div>
+<div class="paragraph">
+<p>For details about installing the root CA certificate, see <a href="#_sec.admin.security.certs.installing_rootca">[_sec.admin.security.certs.installing_rootca]</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.troubleshooting.lost_node"><a class="anchor" href="#_sec.admin.troubleshooting.lost_node"></a>11. Replacing a Lost Node</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If your cluster loses a node, for example due to failed hardware, remove the node as explained in <a href="#_sec.admin.nodes.remove">[_sec.admin.nodes.remove]</a>.
+Then add a new node as described in <a href="#_sec.admin.nodes.add">[_sec.admin.nodes.add]</a>.</p>
+</div>
+</div>
+</div>
+</article>
+  </main>
+</div>
+<footer class="footer">
+  <p>Copyright (C) 2017-2018 <a href="https://opensource.suse.com/doc-susemanager/">SUSE Manager</a></p>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js -->
+<script>
+function focusSearchInput () { document.querySelector('#search-input').focus() }
+var search = docsearch({
+  appId: 'KIB3CEDKWD',
+  apiKey: '51646b7d454f125193a0ba62253e8e17',
+  indexName: 'manager',
+  inputSelector: '#search-input',
+  autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+  algoliaOptions: { hitsPerPage: 10 }
+}).autocomplete;
+search.on('autocomplete:closed', function () { search.autocomplete.setVal() });
+focusSearchInput();
+window.addEventListener('load', focusSearchInput)
+</script>
+<script src="../../../_/js/site.js"></script>
+<script src="../../../_/js/vendor/highlight.js"></script>
+<script>hljs.initHighlighting()</script>
+  </body>
+</html>

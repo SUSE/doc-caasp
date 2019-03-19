@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Node Configuration :: SUSE CaaS Platform Documentation</title>
+    <meta name="generator" content="Antora 2.0.0">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="stylesheet" href="../../../_/css/suse.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css">
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css -->
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header" role="banner">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-logo">
+        <img class="logo" src="../../../_/img/suse_logo_reverse.png" />
+      </div>
+      <div class="navbar-item">
+        <a href="https://r0ckarong.github.io">SUSE CaaS Platform</a>
+        <span class="separator">//</span>
+        <a href="../../..">Documentation</a>
+      </div>
+      <div class="navbar-item">
+        <input id="search-input" type="text" placeholder="Search docs">
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">Projects</div>
+          <div class="navbar-dropdown">
+            <div class="navbar-item"><strong>Resources</strong></div>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/tree/antora">Repository</a>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/issues">Issue Tracker</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="main-wrapper">
+<div class="navigation-container" data-component="suse-caasp" data-version="v4-beta1">
+  <aside class="navigation">
+    <div class="panels">
+<div class="navigation-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">SUSE CaaS Platform</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../quickstart/quick_intro.html">Quickstart Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_system_requirements.html">System Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_install.html">Installation and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_configuration.html">Node Configuration</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../administration/admin_intro.html">Administration Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_security.html">Security</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_administration.html">Administration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_software.html">Software Management</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_monitoring.html">Monitoring</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_logging.html">Logging</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_misc.html">Miscellaenous Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_integration_ses.html">SES Integration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_troubleshooting.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="deployment_intro.html">Deployment Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_about.html">About Deployment Guide</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_scenarios.html">Deployment Scenarios</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_sysreqs.html">System Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_preparation.html">Preparing The Installation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_installing_nodes.html">Installing and Configuring Nodes</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="deployment_configuration.html">Node Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="navigation-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">SUSE CaaS Platform</span>
+    <span class="version">v4-beta1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">SUSE CaaS Platform</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">v4-beta1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+  <main class="main">
+<div class="toolbar" role="navigation">
+  <button class="navigation-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="crumbs" aria-label="breadcrumbs">
+  <ul>
+    <li class="crumb"><a href="../index.html">SUSE CaaS Platform</a></li>
+    <li class="crumb"><a href="deployment_intro.html">Deployment Guide</a></li>
+    <li class="crumb"><a href="deployment_configuration.html">Node Configuration</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/mnapp/mydata/software/SUSE/doc-caasp/modules/deployment/pages/deployment_configuration.adoc">Edit this Page</a></div>
+</div>
+<article class="doc">
+<h1>Node Configuration</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_sec.deploy.configuration">1. Default Configuration Values</a></li>
+<li><a href="#_sec.deploy.cloud_init">2. Customizing Configuration with <code class="command">cloud-init</code></a>
+<ul class="sectlevel2">
+<li><a href="#_sec.deploy.cloud_init.localdisk_datasource">2.1. The <code>LocalDisk</code> Datasource</a></li>
+<li><a href="#_sec.deploy.cloud_init.nocloud_datasource">2.2. The <code>NoCloud</code> Datasource</a></li>
+<li><a href="#_sec.deploy.cloud_init.cloud.cfg">2.3. The <code class="path">cloud.cfg</code> Configuration File</a></li>
+<li><a href="#_sec.deploy.cloud_init.meta_data">2.4. The <code class="path">meta-data</code> Configuration File</a></li>
+<li><a href="#_sec.deploy.cloud_init.user_data">2.5. The <code class="path">user-data</code> Configuration File</a></li>
+<li><a href="#_sec.deploy.cloud_init.vendor_data">2.6. The <code class="path">vendor-data</code> Configuration File</a></li>
+</ul>
+</li>
+<li><a href="#_sec.deploy.autoyast">3. Customizing Configuration with {ay}</a></li>
+<li><a href="#_sec.configuration.suseconnect">4. Registering Node at {scc} , {smt} or {rmt}</a></li>
+</ul>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>{productname}
+is typically configured in two stages: first, during the installation process.
+After installation, you can configure your cluster using <code>cloud-init</code>.
+The first-stage configuration of {productname}
+ comes as preconfigured as possible.
+The second stage is typically used for large-scale clusters.
+If you only have a few machines, <code>cloud-init</code> is not necessary.</p>
+</div>
+<div class="paragraph">
+<p>Each configuration stage is described in the following sections.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.deploy.configuration"><a class="anchor" href="#_sec.deploy.configuration"></a>1. Default Configuration Values</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The defaults for the first stage configuration are the following:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Timezone</dt>
+<dd>
+<p>The timezone is set to <code>UTC</code> by default, but can be changed by <code class="command">cloud-init</code>.</p>
+</dd>
+<dt class="hdlist1">Keyboard Layout</dt>
+<dd>
+<p>The keyboard layout is set to <code>US</code> by default, but can be changed during the installation process.</p>
+</dd>
+<dt class="hdlist1">Locale</dt>
+<dd>
+<p>The locale is set to <code>en_US.utf8</code> by default, but can be changed by <code class="command">cloud-init</code>.</p>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Note that {productname}
+does not support the full range of locales that are available in {sle}
+.
+Because of this, we do recommend to not change the locale.
+</td>
+</tr>
+</table>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.deploy.cloud_init"><a class="anchor" href="#_sec.deploy.cloud_init"></a>2. Customizing Configuration with <code class="command">cloud-init</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code class="command">cloud-init</code> is a tool that helps customizing an operating system at boot time. <code class="command">cloud-init</code> can set environment variables, configure the hostname, SSH keys, mount points and network devices.</p>
+</div>
+<div class="paragraph">
+<p>The customization information is usually read from 3 files during boot: <code class="path">meta-data</code>
+, <code class="path">user-data</code>
+ and optionally <code class="path">vendor-data</code>
+.
+These files can be loaded from different datasources.
+In {productname}
+, the following datasources are preconfigured, and <code>cloud-init</code> searches them in the following order:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">LocalDisk</dt>
+<dd>
+<p>First, the configuration is searched in the local directory <code class="path">/cloud-init-config</code>
+.
+For details, see <a href="#_sec.deploy.cloud_init.localdisk_datasource">The <code>LocalDisk</code> Datasource</a>.</p>
+</dd>
+<dt class="hdlist1">NoCloud</dt>
+<dd>
+<p>Second, <code class="command">cloud-init</code> tries to read the configuration from a local block device, for example an USB stick, DVD or virtual disk.
+For details, see <a href="#_sec.deploy.cloud_init.nocloud_datasource">The <code>NoCloud</code> Datasource</a>.</p>
+</dd>
+<dt class="hdlist1">{ostack}</dt>
+<dd>
+<p>Third, if there is a running {ostack}
+service, this datasource can be used.
+The configuration then depends on a particular setup and is not covered by this manual.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>For details about the configuration files, see:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#_sec.deploy.cloud_init.meta_data">The <code class="path">meta-data</code> Configuration File</a></p>
+</li>
+<li>
+<p><a href="#_sec.deploy.cloud_init.user_data">The <code class="path">user-data</code> Configuration File</a></p>
+</li>
+<li>
+<p><a href="#_sec.deploy.cloud_init.vendor_data">The <code class="path">vendor-data</code> Configuration File</a> (Optional)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>More information about <code class="command">cloud-init</code> can be found at <a href="https://cloudinit.readthedocs.io/en/latest/index.html" class="bare">https://cloudinit.readthedocs.io/en/latest/index.html</a>.</p>
+</div>
+<div class="sect2">
+<h3 id="_sec.deploy.cloud_init.localdisk_datasource"><a class="anchor" href="#_sec.deploy.cloud_init.localdisk_datasource"></a>2.1. The <code>LocalDisk</code> Datasource</h3>
+<div class="paragraph">
+<p>To provide the <code class="command">cloud-init</code> configuration on the local file system, create a directory <code class="path">/cloud-init-config/</code>
+.
+Then create the files <code class="path">meta-data</code>
+, <code class="path">user-data</code>
+ and optionally <code class="path">vendor-data</code>
+.
+For details about the content of the files, see the following sections.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.deploy.cloud_init.nocloud_datasource"><a class="anchor" href="#_sec.deploy.cloud_init.nocloud_datasource"></a>2.2. The <code>NoCloud</code> Datasource</h3>
+<div class="paragraph">
+<p>The <code>NoCloud</code> datasource enables you to read the <code>cloud-init</code> configuration without running a network service. <code>cloud-init</code> searches for the configuration files <code class="path">meta-data</code>
+, <code class="path">user-data</code>
+, and (optional) <code class="path">vendor-data</code>
+ in the root directory of a local file system formatted as <code>vfat</code> or <code>iso9660</code> with a label <code>cidata</code>.
+Typically it is an unpartitioned USB stick or disk or a DVD iso.</p>
+</div>
+<div class="paragraph">
+<p>Alternatively you can specify a remote location of the <code class="path">cloud.cfg</code>
+, but you have to configure network first, for example by using local configuration files.
+The url is specified as a boot parameter and must be in the format: <code>cloud-config-url=http://[replaceable]</code>hostname.domain<code>/cloud.cfg</code>.
+The content of the passed url is copied to <code class="path">/etc/cloud/cloud.cfg.d/91_kernel_cmdline_url.cfg</code>
+ and it is not overwritten even though the url changes.
+For details about boot parameters, see <a href="https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_startup.html" class="bare">https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_startup.html</a>.</p>
+</div>
+<div class="sect3">
+<h4 id="_nocloud.datasource.images"><a class="anchor" href="#_nocloud.datasource.images"></a>2.2.1. Generating cloud-init images for <code>NoCloud</code> datasource</h4>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title"><code class="command">mkisofs</code> dependecy</div>
+<div class="paragraph">
+<p>You need the tool <code class="command">mkisofs</code> to produce the images.
+It should be preinstalled {opensuse}
+ Leap and Tumbleweed installations.
+For other operating systems, please refer to the specific instructions for the respective distribution.</p>
+</div>
+<div class="paragraph">
+<p>If <code class="command">mkisofs</code> is not available, you can use the nearly identical <code class="command">genisoimage</code>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You can use a local ISO image generated from cloud-init data to help configuring a cluster that is not hosted in the cloud.</p>
+</div>
+<div class="paragraph">
+<p>You will need to create two image files.
+One that is used to initialize the admin node and one that is used to initialize the master and worker nodes.
+You need to provide a <code class="path">meta-data</code>
+ and <code class="path">user-data</code>
+ file per node type.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure: Generate cloud-init ISO files</div>
+<ol class="arabic">
+<li>
+<p>Create two directories: <code class="path">cc-admin</code> and <code class="path">cc-worker</code> .</p>
+</li>
+<li>
+<p>Create your configuration files as described in:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#_sec.deploy.cloud_init.meta_data">The <code class="path">meta-data</code> Configuration File</a></p>
+</li>
+<li>
+<p><a href="#_sec.deploy.cloud_init.user_data">The <code class="path">user-data</code> Configuration File</a></p>
+</li>
+<li>
+<p><a href="#_sec.deploy.cloud_init.vendor_data">The <code class="path">vendor-data</code> Configuration File</a> (Optional)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The result should be three or more files:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code class="path">cc-admin/meta-data</code> (This file will be reused across all nodes)</p>
+</li>
+<li>
+<p><code class="path">cc-admin/user-data</code></p>
+</li>
+<li>
+<p><code class="path">cc-admin/vendor-data</code> (Optional)</p>
+</li>
+<li>
+<p><code class="path">cc-worker/user-data</code></p>
+</li>
+<li>
+<p><code class="path">cc-worker/vendor-data</code> (Optional)</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Copy <code class="path">cc-admin/meta-data</code> to <code class="path">cc-worker/</code> .</p>
+</li>
+<li>
+<p>Finally, you need to package the respective configurations into two ISO files. The result of the following commands will be two <code>iso9660</code> ISO files with the volume label <code>cidata</code> and additional <code>joliet</code> metadata.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``sudo mkisofs -output cc-admin.iso -volid cidata -joliet -rock cc-admin`` {prompt.user}``sudo mkisofs -output cc-worker.iso -volid cidata -joliet -rock cc-worker``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The files will be called <code class="path">cc-admin.iso</code>
+and <code class="path">cc-worker.iso</code>
+.
+You need to attach these files to your respective VM as a block device before boot.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.deploy.cloud_init.cloud.cfg"><a class="anchor" href="#_sec.deploy.cloud_init.cloud.cfg"></a>2.3. The <code class="path">cloud.cfg</code> Configuration File</h3>
+<div class="paragraph">
+<p>The <code class="path">/etc/cloud/cloud.cfg</code>
+ file is used to define a datasource and the locations of the other required configuration files.
+Use the <code>\#cloud-config</code> syntax when defining the content.</p>
+</div>
+<div class="paragraph">
+<p>An example with <code>NoCloud</code> datasource follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>#cloud-config
+    datasource:
+     NoCloud:
+     # default seedfrom is None
+     # if found, then it should contain a url with:
+     #    &lt;url&gt;user-data and &lt;url&gt;meta-data
+     # seedfrom: http://my.example.com/&lt;path&gt;/</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.deploy.cloud_init.meta_data"><a class="anchor" href="#_sec.deploy.cloud_init.meta_data"></a>2.4. The <code class="path">meta-data</code> Configuration File</h3>
+<div class="paragraph">
+<p>The file <code class="path">meta-data</code>
+ is a YAML format file which is intended to configure system items such as network, instance ID, etc.
+The file typically contains the <code>instance-id</code> and <code>network-interfaces</code> options.
+Each is described below.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Network Configuration Priority</div>
+<div class="paragraph">
+<p>If you are deploying {productname}
+nodes using {ay}
+, the network settings from <code>cloud-init</code> will be ignored and the settings made in the {ay}
+ process are applied.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>instance-id</code></dt>
+<dd>
+<p>Defines the instance.
+If you perform any changes to the configuration (with either <code class="path">user-data</code>
+or <code class="path">meta-data</code>
+), you must update this option with another value.
+Thus <code>cloud-init</code> can recognize if this is the first boot of that particular host instance.</p>
+<div class="listingblock">
+<div class="content">
+<pre>instance-id: iid-example001</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>network-interfaces</code></dt>
+<dd>
+<p>Here you can define the following options:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>auto</code> to start the network in that configuration automatically during the boot phase.</p>
+</li>
+<li>
+<p><code>iface</code> that defines the configured interfaces.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>A static network configuration then could look as follows:</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>network-interfaces: |
+  auto eth0
+  iface eth0 inet static
+  address 192.168.1.10
+  network 192.168.1.0
+  netmask 255.255.255.0
+  broadcast 192.168.1.255
+  gateway 192.168.1.1</pre>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.deploy.cloud_init.user_data"><a class="anchor" href="#_sec.deploy.cloud_init.user_data"></a>2.5. The <code class="path">user-data</code> Configuration File</h3>
+<div class="paragraph">
+<p>The configuration file <code class="path">user-data</code>
+ is a YAML file used to configure users, SSH keys, time zone, etc.
+Each part of the file is described in following sections.</p>
+</div>
+<div class="sect3">
+<h4 id="_sec.deploy.cloud_init.user_data.header"><a class="anchor" href="#_sec.deploy.cloud_init.user_data.header"></a>2.5.1. <code class="path">user-data</code> Header</h4>
+<div class="paragraph">
+<p>Each <code class="path">user-data</code>
+ file must start with <code>\#cloud-config</code> that indicates the <code>cloud-config</code> format.
+The snippet below enables debugging output and disables passwordless authentication for {rootuser}
+.
+Thus you must login with the {rootuser}
+ credentials.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>#cloud-config
+debug: True
+disable_root: False</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_sec.deploy.cloud_init.user_data.runcmd_statements"><a class="anchor" href="#_sec.deploy.cloud_init.user_data.runcmd_statements"></a>2.5.2. ` runcmd` Statements</h4>
+<div class="paragraph">
+<p>In the <code class="path">user-data</code>
+ you can use the <code>runcmd</code> statement to run various commands in your system.
+The <code class="path">user-data</code>
+ file can contain only a single <code>runcmd</code> statement, so if you must run several commands, group them into one statement:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>runcmd:
+    - /usr/bin/systemctl enable --now ntpd</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>By using the <code>runcmd</code> statement, you can perform the following in your system:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Configure keyboard layout</dt>
+<dd>
+<p>for example, configure the German keyboard layout with <em>nodeadkeys</em>:</p>
+<div class="listingblock">
+<div class="content">
+<pre>runcmd:
+  - /usr/bin/localectl set-keymap de-latin1-nodeadkeys</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Start services</dt>
+<dd>
+<p>for example, start the NTP server as described in <a href="#_sec.deploy.cloud_init.user_data.ntp_server">NTP Server Configuration</a>.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_sec.deploy.cloud_init.user_data.authorized_keys"><a class="anchor" href="#_sec.deploy.cloud_init.user_data.authorized_keys"></a>2.5.3. SSH Keys Management</h4>
+<div class="paragraph">
+<p>You can configure the behaviour of adding SSH keys to the <code class="path">authorized_keys</code>
+ and the SSH login pattern.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>ssh_deletekeys: False
+ssh_pwauth: True
+ssh_authorized_keys:
+  - ssh-rsa XXXKEY mail@example.com</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The option <code>ssh_deletekeys</code> disables/enables automatic deletion of old private and public SSH keys of the host.
+The default value is <code>true</code>{mdash}
+the keys are deleted and new keys are generated.
+We do not recommend using the default value, as there could be a problem with <code class="command">ssh</code> reporting that the keys are incorrect or have been changed after the <code>cloud-init</code> configuration has been changed.</p>
+</div>
+<div class="paragraph">
+<p>The option <code>ssh_pwauth: true</code> allows you to login by using SSH with a password, if the password is set.</p>
+</div>
+<div class="paragraph">
+<p>The option <code>ssh_authorized_keys</code> defines whether the SSH key will be added to the <code class="path">authorized_keys</code>
+ file of the user.
+If <strong>not</strong> specified otherwise, the default user is {rootuser}
+.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_sec.deploy.cloud_init.user_data.password"><a class="anchor" href="#_sec.deploy.cloud_init.user_data.password"></a>2.5.4. Setting Password</h4>
+<div class="paragraph">
+<p>The <code class="path">user-data</code>
+ file enables you to set default passwords by using the <code>chpasswd</code> option:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>chpasswd:
+  list: |
+    root:linux
+  expire: True</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the example above you set the password for {rootuser}
+to be "<em>linux</em>". The <code>expire</code> option defines whether the user will be prompted to change the default password at the first login.</p>
+</div>
+<div class="paragraph">
+<p>For additional security, password hashes may be used instead of plain text.
+The format is as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>username:$X$salt$hash</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The value "X" in $X$ can be any of <code>1</code>, <code>2a</code>, <code>2y</code>, <code>5</code>, or <code>6</code>.
+For more information, see the <code>HASHING METHODS</code> section in the output of the command <code class="command">man 3 crypt</code>.</p>
+</div>
+<div class="paragraph">
+<p>For example, you can generate a safe hash with the following command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>mkpasswd --method=SHA-512 --rounds=4096</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This command would create an SHA-512 password hash with 4096 salt rounds, using <code>stdin</code> as input.</p>
+</div>
+<div class="paragraph">
+<p>This could be specified in the file using <code>$6$</code>, as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>root:$6$j212wezy$7H/1LT4f9/N3wpgNunhsIqtMj62OKiS3nyNwuizouQc3u7MbYCarYeAHWYPYb2FT.lbioDm2RrkJPb9BZMN1O/</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_sec.deploy.cloud_init.user_data.adding_custom_repository"><a class="anchor" href="#_sec.deploy.cloud_init.user_data.adding_custom_repository"></a>2.5.5. Adding Custom Repository</h4>
+<div class="paragraph">
+<p>You can add a custom software repository to your system by using the <code>zypp_repos</code> option:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>zypper:
+  repos:
+    - id: opensuse-oss
+      name: os-oss
+      baseurl: http://my.example.com/repo/SUSE-CAASP-{productnumber}-CUSTOM/
+      enabled: 1
+      autorefresh: 1
+    - id: opensuse-oss-update
+      name: os-oss-up
+      baseurl: http://my.example.com/repo/SUSE-CAASP-{productnumber}-CUSTOM/update</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The options available are:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>id</code></dt>
+<dd>
+<p>The local unique ID of the repository, also known as its alias.
+(Mandatory.)</p>
+</dd>
+<dt class="hdlist1"><code>name</code></dt>
+<dd>
+<p>A more descriptive string describing the repository, used in the UI.
+(Mandatory.)</p>
+</dd>
+<dt class="hdlist1"><code>baseurl</code></dt>
+<dd>
+<p>URL to the directory where the repository&#8217;s <code>repodata</code> directory lives.
+(Mandatory.)</p>
+</dd>
+<dt class="hdlist1"><code>type</code></dt>
+<dd>
+<p>Zypper is able to work with three types of repository: <code>yast2</code> and <code>rpm-md</code> (yum) repositories, as well as <code>plaindir</code> - plain directories containing <code>.rpm</code> files.</p>
+</dd>
+<dt class="hdlist1"><code>path</code></dt>
+<dd>
+<p>This is relative to the <code>baseurl</code>; the default is <code>/</code>.</p>
+</dd>
+<dt class="hdlist1"><code>gpgcheck</code></dt>
+<dd>
+<p>Defines whether the source signatures should be checked using GPG.</p>
+</dd>
+<dt class="hdlist1"><code>gpgkey</code></dt>
+<dd>
+<p>Defines the URL for a GPG key.</p>
+</dd>
+<dt class="hdlist1"><code>enabled</code></dt>
+<dd>
+<p>Defaults to <code>1</code> (on). Set to <code>0</code> to disable the repository: it will be known and listed, but not used.</p>
+</dd>
+<dt class="hdlist1"><code>autorefresh</code></dt>
+<dd>
+<p>Defaults to <code>1</code> (on). When on, the local package cache will be updated to the remote version whenever package management actions are performed.</p>
+</dd>
+<dt class="hdlist1"><code>priority</code></dt>
+<dd>
+<p>Defines a source priority, from <code>1</code> (lowest) to <code>200</code> (highest). The default is <code>99</code>.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_sec.deploy.cloud_init.user_data.timezone"><a class="anchor" href="#_sec.deploy.cloud_init.user_data.timezone"></a>2.5.6. Setting Timezone</h4>
+<div class="paragraph">
+<p>You can set a default timezone.
+Bear in mind that the configured value must exist in <code class="path">/usr/share/zoneinfo</code>
+:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>timezone: Europe/Berlin</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_sec.deploy.cloud_init.user_data.hostname"><a class="anchor" href="#_sec.deploy.cloud_init.user_data.hostname"></a>2.5.7. Setting Host name</h4>
+<div class="paragraph">
+<p>You can set either a host name or, preferably, a fully-qualified domain name for the machine:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>hostname: myhost</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>fqdn: myhost.example.com</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The option <code>preserve_hostname</code> specifies whether any existing host name (for example, from the kernel command-line) should be retained or not.
+Enter <code>true</code> or <code>false</code> as required:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>preserve_hostname: true</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_sec.deploy.cloud_init.user_data.nameserver"><a class="anchor" href="#_sec.deploy.cloud_init.user_data.nameserver"></a>2.5.8. Configuring Name server</h4>
+<div class="paragraph">
+<p>You can configure the server to manage the <code class="path">resolv.conf</code>
+ file and thus set values of the file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>manage_resolv_conf: true
+resolv_conf:
+  nameservers: ['8.8.4.4', '8.8.8.8']
+  searchdomains:
+    - foo.example.com
+    - bar.example.com
+  domain: example.com
+  options:
+    rotate: true
+    timeout: 1</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_sec.deploy.cloud_init.user_data.ntp_server"><a class="anchor" href="#_sec.deploy.cloud_init.user_data.ntp_server"></a>2.5.9. NTP Server Configuration</h4>
+<div class="paragraph">
+<p>You must configure at least one NTP server.</p>
+</div>
+<div class="paragraph">
+<p>We recommend providing a dedicated NTP server from your local network.
+The following snippet configures three NTP servers during the first boot and the NTP service is enabled and started.
+You must choose an NTP client. <code class="command">chrony</code> or <code class="command">systemd_timesyncd</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>ntp:
+  enabled: true
+  ntp_client: systemd_timesyncd
+  servers:
+    - ntp1.example.com
+    - ntp2.example.com
+    - ntp3.example.com
+runcmd:
+  - /usr/bin/systemctl enable --now systemd-timesyncd</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_sec.deploy.cloud_init.user_data.salt_minion"><a class="anchor" href="#_sec.deploy.cloud_init.user_data.salt_minion"></a>2.5.10. {sminion} Configuration</h4>
+<div class="paragraph">
+<p>You can use the file to set the {sminion}
+and its communication with the {smaster}
+.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>salt_minion:
+  conf:
+    master: saltmaster.example.com
+
+  public_key: |
+    -----BEGIN PUBLIC KEY-----
+    XXX
+    -----END PUBLIC KEY-----
+
+  private_key: |
+    -----BEGIN RSA PRIVATE KEY-----
+    XXX
+   -----END RSA PRIVATE KEY-----</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_sec.deploy.cloud_init.user_data.caasp_roles"><a class="anchor" href="#_sec.deploy.cloud_init.user_data.caasp_roles"></a>2.5.11. Assigning Roles to the Cluster Nodes</h4>
+<div class="paragraph">
+<p>You need to specify which node of your cluster will be used as the {admin_node}
+and which nodes will be used as regular cluster nodes.</p>
+</div>
+<div class="paragraph">
+<p>To assign the {admin_node}
+role to the cluster node, add the following to the configuration file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>suse_caasp:
+  role: admin</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the cluster node is assigned the {admin_node}
+, all required containers are imported and started.</p>
+</div>
+<div class="paragraph">
+<p>To other cluster nodes you assign the role <code>cluster</code>.
+The machine will register itself as {sminion}
+ on the {admin_node}
+.
+Bear in mind, you must configure NTP clients for all cluster nodes.
+Refer to: <a href="#_sec.deploy.cloud_init.user_data.ntp_server">NTP Server Configuration</a>.</p>
+</div>
+<div class="paragraph">
+<p>An example of the <code>cluster</code> role assignment follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>suse_caasp:
+  role: cluster
+  admin_node: admin.example.com</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>where the <code>admin.example.com</code> is the host name of the {admin_node}
+.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.deploy.cloud_init.vendor_data"><a class="anchor" href="#_sec.deploy.cloud_init.vendor_data"></a>2.6. The <code class="path">vendor-data</code> Configuration File</h3>
+<div class="paragraph">
+<p>The <code class="path">vendor-data</code>
+ is an optional configuration file that typically stores data related to the cloud you use.
+The data are provided by the entity that launches the cloud instance.</p>
+</div>
+<div class="paragraph">
+<p>The format is the same as used for <code class="path">user-data</code>
+.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.deploy.autoyast"><a class="anchor" href="#_sec.deploy.autoyast"></a>3. Customizing Configuration with {ay}</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>{productname}
+will generate a default {ay}
+configuration control file during the initial setup that can be used to configure nodes.
+If you wish to modify specific parts of this configuration to deviate from the default configuration (timezone, language, keys, etc.), you can retrieve the control file, modify it, and serve the modified version to be used by the nodes for setup instead.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Start the setup in {dashboard} and follow the instructions until you reach the {ay} info screen.</p>
+</li>
+<li>
+<p>Download the default control file.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``curl https://caasp-admin.example.com/autoyast``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Modify the downloaded control file.</p>
+<div class="paragraph">
+<p>Information on the possible configuration values can be found in the <a href="https://www.suse.com/documentation/sles-15/singlehtml/book_autoyast/book_autoyast.html">AutoYaST Guide</a>.</p>
+</div>
+</li>
+<li>
+<p>Upload the modified <code class="path">autoyast</code> file to a static webserver that is reachable by the nodes you wish to configure. Specify the replacement URL in the <b class="menuref">Boot Options</b> of the installer instead of the default URL.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.configuration.suseconnect"><a class="anchor" href="#_sec.configuration.suseconnect"></a>4. Registering Node at {scc} , {smt} or {rmt}</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To register a node at the {scc}
+, {rmtool}
+({rmt}
+) or {smtool}
+({smt}
+), use <code class="command">SUSEConnect</code>.
+This can be necessary if you want to install updates on your node but did not register during the installation as described in <a href="#_sec.deploy.nodes.admin_install">[_sec.deploy.nodes.admin_install]</a>.</p>
+</div>
+<div class="paragraph">
+<p>You can also use <code class="command">SUSEConnect</code> to switch from {scc}
+ to a local {rmt}
+ or {smt}
+ server.</p>
+</div>
+<div class="paragraph">
+<p>To register a node at the {scc}
+and for listing available products, use</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``SUSEConnect -r REGISTRATION_CODE`` {prompt.root}``SUSEConnect --list-extensions``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Use the displayed commands to enable the required {productname}
+repositories.</p>
+</div>
+<div class="paragraph">
+<p>If you want to register your node at a {smt}
+server, refer to the <em>SMT Guide</em> at <a href="https://www.suse.com/documentation/sles-12/book_smt/data/book_smt.html" class="bare">https://www.suse.com/documentation/sles-12/book_smt/data/book_smt.html</a>.</p>
+</div>
+<div class="paragraph">
+<p>If you want to register your node at a {rmt}
+server, refer to the <em>RMT Guide</em> at <a href="https://www.suse.com/documentation/sles-15/book_rmt/data/book_rmt.html" class="bare">https://www.suse.com/documentation/sles-15/book_rmt/data/book_rmt.html</a>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Using a Proxy Server with Authentication</div>
+<div class="paragraph">
+<p>Create the file <code class="path">/root/.curlrc</code>
+ with the content:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>--proxy https://`PROXY_FQDN`:`PROXY_PORT`--proxy-user "`USER`:`PASSWORD`"</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Replace <code class="replaceable">PROXY_FQDN</code> with the fully qualified domain name of the proxy server and <code class="replaceable">PROXY_PORT</code> with its port.
+Replace <code class="replaceable">USER</code> and <code class="replaceable">PASSWORD</code> with the credentials of an allowed user for the proxy server.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</article>
+  </main>
+</div>
+<footer class="footer">
+  <p>Copyright (C) 2017-2018 <a href="https://opensource.suse.com/doc-susemanager/">SUSE Manager</a></p>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js -->
+<script>
+function focusSearchInput () { document.querySelector('#search-input').focus() }
+var search = docsearch({
+  appId: 'KIB3CEDKWD',
+  apiKey: '51646b7d454f125193a0ba62253e8e17',
+  indexName: 'manager',
+  inputSelector: '#search-input',
+  autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+  algoliaOptions: { hitsPerPage: 10 }
+}).autocomplete;
+search.on('autocomplete:closed', function () { search.autocomplete.setVal() });
+focusSearchInput();
+window.addEventListener('load', focusSearchInput)
+</script>
+<script src="../../../_/js/site.js"></script>
+<script src="../../../_/js/vendor/highlight.js"></script>
+<script>hljs.initHighlighting()</script>
+  </body>
+</html>

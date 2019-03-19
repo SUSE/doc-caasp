@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Requirements :: SUSE CaaS Platform Documentation</title>
+    <meta name="generator" content="Antora 2.0.0">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="stylesheet" href="../../../_/css/suse.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css">
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css -->
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header" role="banner">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-logo">
+        <img class="logo" src="../../../_/img/suse_logo_reverse.png" />
+      </div>
+      <div class="navbar-item">
+        <a href="https://r0ckarong.github.io">SUSE CaaS Platform</a>
+        <span class="separator">//</span>
+        <a href="../../..">Documentation</a>
+      </div>
+      <div class="navbar-item">
+        <input id="search-input" type="text" placeholder="Search docs">
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">Projects</div>
+          <div class="navbar-dropdown">
+            <div class="navbar-item"><strong>Resources</strong></div>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/tree/antora">Repository</a>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/issues">Issue Tracker</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="main-wrapper">
+<div class="navigation-container" data-component="suse-caasp" data-version="v4-beta1">
+  <aside class="navigation">
+    <div class="panels">
+<div class="navigation-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">SUSE CaaS Platform</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../quickstart/quick_intro.html">Quickstart Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_system_requirements.html">System Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_install.html">Installation and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_configuration.html">Node Configuration</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../administration/admin_intro.html">Administration Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_security.html">Security</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_administration.html">Administration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_software.html">Software Management</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_monitoring.html">Monitoring</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_logging.html">Logging</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_misc.html">Miscellaenous Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_integration_ses.html">SES Integration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_troubleshooting.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="deployment_intro.html">Deployment Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_about.html">About Deployment Guide</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_scenarios.html">Deployment Scenarios</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="deployment_sysreqs.html">System Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_preparation.html">Preparing The Installation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_installing_nodes.html">Installing and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_configuration.html">Node Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="navigation-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">SUSE CaaS Platform</span>
+    <span class="version">v4-beta1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">SUSE CaaS Platform</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">v4-beta1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+  <main class="main">
+<div class="toolbar" role="navigation">
+  <button class="navigation-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="crumbs" aria-label="breadcrumbs">
+  <ul>
+    <li class="crumb"><a href="../index.html">SUSE CaaS Platform</a></li>
+    <li class="crumb"><a href="deployment_intro.html">Deployment Guide</a></li>
+    <li class="crumb"><a href="deployment_sysreqs.html">System Requirements</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/mnapp/mydata/software/SUSE/doc-caasp/modules/deployment/pages/deployment_sysreqs.adoc">Edit this Page</a></div>
+</div>
+<article class="doc">
+<h1>System Requirements</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_sec.deploy.requirements.system.cluster">1. Cluster Size Requirements</a>
+<ul class="sectlevel2">
+<li><a href="#_sec.deploy.requirements.system.cluster.etcd_cluster_size">1.1. etcd Cluster Sizing</a></li>
+<li><a href="#_sec.deploy.requirements.system.cluster.salt_cluster_size">1.2. Salt Cluster Sizing</a></li>
+</ul>
+</li>
+<li><a href="#_sec.deploy.requirements.environment">2. Supported Environments</a></li>
+<li><a href="#_sec.deploy.requirements.storage">3. Container Data Storage</a></li>
+<li><a href="#_sec.deploy.requirements.hardware">4. Minimum Node Specification</a></li>
+<li><a href="#_sec.deploy.requirements.network">5. Network Requirements</a></li>
+<li><a href="#_sec.deploy.requirements.public_cloud">6. Public Cloud Requirements</a></li>
+<li><a href="#_sec.deploy.requirements.limits">7. Limitations</a></li>
+</ul>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This chapter specifies the requirements to install and operate {productname}
+.
+Before you begin the installation, please make sure your system meets all requirements listed below.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.deploy.requirements.system.cluster"><a class="anchor" href="#_sec.deploy.requirements.system.cluster"></a>1. Cluster Size Requirements</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>{productname}
+is a dedicated cluster operating system and only functions in a multi-node configuration.
+It requires a connected group of four or more physical or virtual machines.</p>
+</div>
+<div class="paragraph">
+<p>The minimum supported cluster size is four nodes: a single {admin_node}
+, one {master_node}
+, and two {worker_node}
+s.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Cluster Update Reserves</div>
+<div class="paragraph">
+<p>You should always size your cluster to accomodate your expected workloads and contingency resources for updates.
+During updates, worker nodes will become temporarily unavailable to process workloads and their assigned load must be shifted somewhere else in the cluster.</p>
+</div>
+<div class="paragraph">
+<p>As a general rule of thumb: Your cluster utilization should not exceed 70% and must not exceed 80%.</p>
+</div>
+<div class="paragraph">
+<p>You can make use of <a href="https://kubernetes.io/docs/concepts/policy/resource-quotas/">Resource Quotas</a> to limit the resources user workloads can take up in the cluster.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Test and Proof-of-Concept Clusters</div>
+<div class="paragraph">
+<p>It is possible to provision a three-node cluster with only a single {worker_node}
+, but this is not a supported configuration for deployment.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For improved performance, multiple {master_node}
+s are supported, but there must always be an odd number.
+For cluster reliability, when using multiple master nodes, some form of DNS load-balancing should be used.</p>
+</div>
+<div class="paragraph">
+<p>Any number of {worker_node}
+s may be added up to the maximum cluster size.
+For the current maximum supported number of nodes, please refer to the Release Notes on <a href="https://www.suse.com/releasenotes/" class="bare">https://www.suse.com/releasenotes/</a>.</p>
+</div>
+<div class="sect2">
+<h3 id="_sec.deploy.requirements.system.cluster.etcd_cluster_size"><a class="anchor" href="#_sec.deploy.requirements.system.cluster.etcd_cluster_size"></a>1.1. etcd Cluster Sizing</h3>
+<div class="paragraph">
+<p><code>etcd</code> is a distributed key-value store.
+Some nodes on the cluster run <code>etcd</code> members that sync with other peers in order to provide a fault-tolerant storage that {kube}
+ uses for persistence.</p>
+</div>
+<div class="paragraph">
+<p><code>etcd</code> is the central component where {kube}
+ reads and writes in order to have global knowledge about the cluster status and desired state.</p>
+</div>
+<div class="paragraph">
+<p>It&#8217;s very important to note that <code>etcd</code> automatically recovers from temporary failures like machine reboots.</p>
+</div>
+<div class="paragraph">
+<p><code>etcd</code> knows how many peers conform the <code>etcd</code> cluster; based on this information the <code>etcd</code> cluster can be in three different states: healthy, degraded or unavailable.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Healthy</dt>
+<dd>
+<p>All <code>etcd</code> members are working as expected.</p>
+</dd>
+<dt class="hdlist1">Degraded</dt>
+<dd>
+<p>Some <code>etcd</code> members are not working as expected, but there&#8217;s still a majority in the working ones.
+This still means the cluster is working, because it has quorum.</p>
+</dd>
+<dt class="hdlist1">Unavailable</dt>
+<dd>
+<p>There is no working majority of peers.
+The cluster is not available and cannot be used because the quorum is lost.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>In order to maintain functionality of the <code>etcd</code> cluster, the number of Master nodes must always maintain quorum.
+This means there always must be a majority of nodes available to "overrule" a possible minority caused by network partitioning or other failure.
+Therefore, you should always run an odd number of Master nodes in your cluster.</p>
+</div>
+<div class="paragraph">
+<p>This ensures that there is a sufficiently lopsided majority.
+The number of Master nodes that can be lost without causing loss of functionality depends on this ratio.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. etcd Cluster Sizing</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-top">Master Nodes</th>
+<th class="tableblock halign-center valign-top">Quorum Limit</th>
+<th class="tableblock halign-center valign-top">Fault Tolerance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">9</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Whether <code>etcd</code> is available or not depends on how many etcd members are available/not available at a given moment.
+It is important to differentiate between transient and permanent failures.
+Transient failures happen when a member is temporarily not available, for example when a machine running one etcd member is rebooting.
+Permanent failures happen when a member was irrevocably lost, for example a machine hard disk failure.
+The etcd cluster can tolerate up to (N - 1) / 2 permanent failures, where N is the number of etcd members; a subset of masters and possibly workers.
+The number of etcd nodes must always maintain <code>Majority</code> quorum.</p>
+</div>
+<div class="paragraph">
+<p><code>Majority</code> means that the number of available etcd cluster members must never be lower or equal to the number of unavailable nodes.
+If, for example, you have only <code>1</code> or <code>2</code> etcd members, the cluster has a fault tolerance of <code>0</code> because <code>0</code> nodes can be faulty for the cluster to maintain <code>Majority</code>.</p>
+</div>
+<div class="paragraph">
+<p>When the <code>etcd</code> cluster actually loses quorum, it will enter a "read-only" state and will refuse to work.
+This will cause scheduling of new pods and workloads to fail.
+You must always consider maintaining quorum on adding/removing Master nodes to/from the cluster.</p>
+</div>
+<div class="paragraph">
+<p>If you have <code>6</code> nodes, a maximum of <code>2</code> nodes can become faulty for the cluster to remain in degraded but working state.
+If <code>3</code> or more nodes fail, there is no longer a majority of nodes working, therefore the cluster becomes unavailable.</p>
+</div>
+<div class="paragraph">
+<p>For example: The fault tolerance of a cluster with <code>7</code> nodes is <code>3</code>, because you need at least <code>4</code> active nodes to maintain majority.</p>
+</div>
+<div class="paragraph">
+<p>When (N - 1) / 2 or fewer permanent failures happen in a given <code>etcd</code> cluster, the cluster still has a quorum.
+It is then possible to remove the faulty members and add new ones.
+The new members will synchronize with the existing ones.
+This does not require an explicit backup/restore procedure, as it is normal etcd operation.</p>
+</div>
+<div class="paragraph">
+<p>When more than (N - 1) / 2 permanent failures happen in a given <code>etcd</code> cluster, the quorum is lost irrevocably.
+That means that there is no way to recover from that situation, because it is no longer possible to remove faulty members or add new members.
+In this case, it is necessary to start a new etcd cluster and grow it.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.deploy.requirements.system.cluster.salt_cluster_size"><a class="anchor" href="#_sec.deploy.requirements.system.cluster.salt_cluster_size"></a>1.2. Salt Cluster Sizing</h3>
+<div class="paragraph">
+<p>{productname}
+relies on SaltStack (or Salt for short) to automate various tasks.
+The actions are performed by so called "minions". A master can handle a theoretical number of minions at the same time.
+Salt assigns a configured number of "worker threads" to the minions.
+The number of available worker threads limits the overall size of the cluster.</p>
+</div>
+<div class="paragraph">
+<p>Up until a total cluster size of <code>40</code> nodes, no adjustments to the default configuration of {productname}
+ need to be made.</p>
+</div>
+<div class="paragraph">
+<p>For clusters that consist of more than <code>40</code> nodes the number of Salt worker threads must be adjusted as follows:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. Salt Cluster Sizing</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Cluster Size (nodes)</th>
+<th class="tableblock halign-left valign-top">Salt worker threads</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&gt;40</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">20</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&gt;60</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">30</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&gt;75</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">40</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&gt;85</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">50</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&gt;95</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">60</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>As a rule of thumb, if the cluster grows above <code>100</code> nodes the number of worker threads should be at about two thirds of the overall number of cluster nodes.</p>
+</div>
+<div class="paragraph">
+<p>To adjust the number of Salt worker threads, refer to: <a href="#_sec.admin.salt.worker_threads">[_sec.admin.salt.worker_threads]</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.deploy.requirements.environment"><a class="anchor" href="#_sec.deploy.requirements.environment"></a>2. Supported Environments</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Regarding deployment scenarios, {suse}
+supports {productname}
+running in the following environments:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>{productname} only supports x86_64 hardware.</p>
+</li>
+<li>
+<p>Aside from this, the same hardware and virtualization platforms as {sle} 12 SP3 are supported. For a list of certified hardware, see <a href="https://www.suse.com/yessearch/" class="bare">https://www.suse.com/yessearch/</a>.</p>
+</li>
+<li>
+<p>Virtualized{mdash} running under the following hypervisors:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>KVM</p>
+<div class="ulist">
+<ul>
+<li>
+<p>on {sle} 11 SP4</p>
+</li>
+<li>
+<p>on {sle} 12 SP1</p>
+</li>
+<li>
+<p>on {sle} 12 SP2</p>
+</li>
+<li>
+<p>on {sle} 12 SP3</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Xen</p>
+<div class="ulist">
+<ul>
+<li>
+<p>same host platforms as for KVM</p>
+</li>
+<li>
+<p>full virtualization</p>
+</li>
+<li>
+<p>paravirtualization</p>
+</li>
+<li>
+<p>Citrix XenServer 6.5</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>{vmware}</p>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Disable {vmware}Memory Ballooning</div>
+When installing {productname}
+on {vmware}
+you must disable {vmware}
+'s memory ballooning feature. {vmware}
+has instructions on how to do this here: <a href="https://kb.vmware.com/s/article/1002586" class="bare">https://kb.vmware.com/s/article/1002586</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>When using pre-installed disk images, read <a href="#_sec.deploy.preparation.disk_images.vmware">[_sec.deploy.preparation.disk_images.vmware]</a>.
+After bootstrapping the cluster, install the {vmware}
+tools.
+For details, see <a href="#_sec.deploy.install.vmware_tools">[_sec.deploy.install.vmware_tools]</a>.
+<strong>* ESX 5.5
+</strong>* ESXi 6.0
+<strong>*</strong> ESXi 6.5+</p>
+</div>
+</li>
+<li>
+<p>Hyper-V</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Windows Server 2008 SP2+</p>
+</li>
+<li>
+<p>Windows Server 2008 R2 SP1+</p>
+</li>
+<li>
+<p>Windows Server 2012+</p>
+</li>
+<li>
+<p>Windows Server 2012 R2+</p>
+</li>
+<li>
+<p>Windows Server 2016</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Oracle VM 3.3</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Private and Public Cloud Environments</p>
+<div class="ulist">
+<ul>
+<li>
+<p>{soc} 7</p>
+</li>
+<li>
+<p>Amazon AWS*</p>
+</li>
+<li>
+<p>Microsoft Azure*</p>
+</li>
+<li>
+<p>Google Compute Engine*</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.deploy.requirements.storage"><a class="anchor" href="#_sec.deploy.requirements.storage"></a>3. Container Data Storage</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Storage can be provided using:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>{ses}</p>
+</li>
+<li>
+<p>NFS</p>
+</li>
+<li>
+<p><code class="command">hostpath</code></p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title"><code>hostpath</code> Storage</div>
+Storage using <code>hostpath</code> is still supported, but by default it is disabled by <code>PodSecurityPolicies</code>.
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.deploy.requirements.hardware"><a class="anchor" href="#_sec.deploy.requirements.hardware"></a>4. Minimum Node Specification</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Each node in the cluster must meet the following minimum specifications.
+All these specifications must be adjusted according to the expected load and type of deployments.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">(v)CPU</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p><code>4 Core</code> AMD64/Intel* EM64T processor</p>
+</li>
+<li>
+<p>32-bit processors are not supported</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">Memory</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p><code>8 GB</code></p>
+<div class="paragraph">
+<p>Although it may be possible to install {productname}
+with less memory than recommended, there is a high risk that the operating system will run out of memory and subsequently causes a cluster failure.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Swap partitions</div>
+{kube}
+does not support swap.
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>For technical reasons, an {admin_node}
+installed from an ISO image will have a small swap partition which will be disabled after installation.
+Nodes built using {ay}
+do not have a swap partition.</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Storage Size</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p><code>40 GB</code> for the root file system with Btrfs and enabled snapshots.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Cloud default root volume size</div>
+In some Public Cloud frameworks the default root volume size of the images is smaller than 40GB.
+You must resize the root volume before instance launch using the command line tools or the web interface for the framework of your choice.
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">Storage Performance</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>IOPS: <code>500</code> sequential IOPS</p>
+</li>
+<li>
+<p>Write Performance: <code>10MB/s</code></p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">etcd Storage requirements</div>
+Storage performance requirements are tied closely to the <a href="https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware.md#disks">etcd hardware recommendations</a>
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.deploy.requirements.network"><a class="anchor" href="#_sec.deploy.requirements.network"></a>5. Network Requirements</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>All the nodes on the cluster must be on a the same network and be able to communicate directly with one another.</p>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Reliable Networking</div>
+Please make sure all nodes can communicate without interruptions.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>All nodes in the cluster must be assigned static IP addresses. Using dynamically assigned IPs will break cluster functionality after update/reboot.</p>
+</li>
+<li>
+<p>The admin node and the {kube} API master must have valid Fully-Qualified Domain Names (FQDNs), which can be resolved both by all other nodes and from other networks which need to access the cluster.</p>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Hostname 64 Character Limit</div>
+{productname}
+generates SSL certificates for the cluster.
+The <code>Common Name (CN)</code> field is derived from the supplied hostnames.
+The <code>CN</code> field is limited to 64 characters.
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Your hostnames must not exceed this limit or they will fail to be added to the cluster.</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="paragraph">
+<p>+
+Admin node and {kube}
+API master node should be configured as CNAME records in the local DNS.
+This improves portability for disaster recovery.
+* A DNS server to resolve host names. If you are using host names to specify nodes, please make sure you have reliable DNS resolution at all times, especially in combination with DHCP.</p>
+</div>
+<div class="paragraph">
+<p>+
+.Unique Host Names
+IMPORTANT: Host names must be unique.
+It is recommended to let the DHCP server provide not only IP addresses but also host names of the cluster nodes.</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>On the same network, a separate computer with a Web browser is required in order to complete bootstrap of the cluster.</p>
+</li>
+<li>
+<p>We recommend that {productname} is setup to run in two subnets in one network segment, also referred to as VPC or VNET. The {admin_node} should run in a subnet that is not accessible to the outside world and should be connected to your network via VPN or other means. Consider a security group/firewall that only allows ingress traffic on ports 22 (SSH) and 443 (https) for the Administrative node from outside the VPC. All nodes must have access to the Internet through some route in order to connect to {scc} and receive updates, or be otherwise configured to receive updates, for example through {smt} .</p>
+<div class="paragraph">
+<p>Depending on the applications running in your cluster you may consider exposing the subnet for the cluster nodes to the outside world.
+Use a security group/firewall that only allows incoming traffic on ports served by your workload.
+For example, a containerized application providing the backend for REST based services with content served over https should only allow ingress traffic on port 443.</p>
+</div>
+</li>
+<li>
+<p>In a {productname} cluster, internal TCP/IP ports are managed using <code>iptables</code> controlled by <code>Salt</code> and so need not be manually configured. However, for reference and for environments where there are existing security policies, the following are the standard ports in use.</p>
+<table id="_tab.deploy.requirements.ports" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 3. Node types and open ports</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Node</th>
+<th class="tableblock halign-left valign-top">Port</th>
+<th class="tableblock halign-left valign-top">Accessibility1</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All nodes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">22</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Internal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SSH (required in public clouds)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle" rowspan="5"><p class="tableblock">Admin</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Internal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP (Only used for {ay}
+)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">389</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">External</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">LDAP (user management)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">443</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">External</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTPS</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2379</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Internal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>etcd</code> discovery</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4505 - 4506</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Internal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Salt</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle" rowspan="6"><p class="tableblock">Masters</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2379 - 2380</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Internal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>etcd</code> (peer-to-peer traffic)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6443 - 6444</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Both</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{kube}
+API server</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8471 - 8472</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Internal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VXLAN traffic (used by Flannel)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10250, 20255</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Internal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubelet</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10256</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Internal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">kube-proxy</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">32000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">External</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dex (OIDC Connect)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle" rowspan="6"><p class="tableblock">Workers</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2379 - 2380</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Internal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>etcd</code> (peer-to-peer traffic)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4149</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Internal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubelet</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8471 - 8472</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Internal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VXLAN traffic (used by Flannel)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10250, 10255</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Internal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubelet</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10256</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Internal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">kube-proxy</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">32000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">External</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dex (OIDC Connect)</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>1) Information about whether the port is used by <em>internal</em> cluster nodes or <em>external</em> networks or hosts.</p>
+</div>
+<div class="paragraph">
+<p>When some additional ingress mechanism is used, additional ports would also be open.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.deploy.requirements.public_cloud"><a class="anchor" href="#_sec.deploy.requirements.public_cloud"></a>6. Public Cloud Requirements</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Amazon AWS*</dt>
+<dd>
+<p>The adminstrative instance must be launched with an IAM role that allows full access to the EC2 API.</p>
+</dd>
+<dt class="hdlist1">Microsoft Azure*</dt>
+<dd>
+<p>All security credentials will be collected during setup.</p>
+<div class="paragraph">
+<p>Microsoft Azure does not provide a time protocol service.
+Please refer to <a href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_netz_xntp.html"> SUSE Linux Enterprise Server documentation</a> for more information about NTP configuration.
+No manual NTP configuration is required on the cluster nodes, they synchronize time with the {admin_node}
+.</p>
+</div>
+</dd>
+<dt class="hdlist1">Google Compute Engine*</dt>
+<dd>
+<p>The instance must be launched with an IAM role including <code>Compute Admin</code> and <code>Service Account
+Actor</code> scopes.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.deploy.requirements.limits"><a class="anchor" href="#_sec.deploy.requirements.limits"></a>7. Limitations</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p></p>
+<div class="paragraph">
+<p>{productname}{productnumber}
+does not support remote installations with <code>Virtual Network Computing (VNC)</code>.</p>
+</div>
+</li>
+<li>
+<p>{productname} is a dedicated cluster operating system and does not support dual-booting with other operating systems. Ensure that all drives in all cluster nodes are empty and contain no other operating systems before beginning installation.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</article>
+  </main>
+</div>
+<footer class="footer">
+  <p>Copyright (C) 2017-2018 <a href="https://opensource.suse.com/doc-susemanager/">SUSE Manager</a></p>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js -->
+<script>
+function focusSearchInput () { document.querySelector('#search-input').focus() }
+var search = docsearch({
+  appId: 'KIB3CEDKWD',
+  apiKey: '51646b7d454f125193a0ba62253e8e17',
+  indexName: 'manager',
+  inputSelector: '#search-input',
+  autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+  algoliaOptions: { hitsPerPage: 10 }
+}).autocomplete;
+search.on('autocomplete:closed', function () { search.autocomplete.setVal() });
+focusSearchInput();
+window.addEventListener('load', focusSearchInput)
+</script>
+<script src="../../../_/js/site.js"></script>
+<script src="../../../_/js/vendor/highlight.js"></script>
+<script>hljs.initHighlighting()</script>
+  </body>
+</html>

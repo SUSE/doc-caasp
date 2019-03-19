@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preparing The Installation :: SUSE CaaS Platform Documentation</title>
+    <meta name="generator" content="Antora 2.0.0">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="stylesheet" href="../../../_/css/suse.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css">
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css -->
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header" role="banner">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-logo">
+        <img class="logo" src="../../../_/img/suse_logo_reverse.png" />
+      </div>
+      <div class="navbar-item">
+        <a href="https://r0ckarong.github.io">SUSE CaaS Platform</a>
+        <span class="separator">//</span>
+        <a href="../../..">Documentation</a>
+      </div>
+      <div class="navbar-item">
+        <input id="search-input" type="text" placeholder="Search docs">
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">Projects</div>
+          <div class="navbar-dropdown">
+            <div class="navbar-item"><strong>Resources</strong></div>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/tree/antora">Repository</a>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/issues">Issue Tracker</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="main-wrapper">
+<div class="navigation-container" data-component="suse-caasp" data-version="v4-beta1">
+  <aside class="navigation">
+    <div class="panels">
+<div class="navigation-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">SUSE CaaS Platform</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../quickstart/quick_intro.html">Quickstart Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_system_requirements.html">System Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_install.html">Installation and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_configuration.html">Node Configuration</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../administration/admin_intro.html">Administration Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_security.html">Security</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_administration.html">Administration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_software.html">Software Management</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_monitoring.html">Monitoring</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_logging.html">Logging</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_misc.html">Miscellaenous Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_integration_ses.html">SES Integration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_troubleshooting.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="deployment_intro.html">Deployment Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_about.html">About Deployment Guide</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_scenarios.html">Deployment Scenarios</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_sysreqs.html">System Requirements</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="deployment_preparation.html">Preparing The Installation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_installing_nodes.html">Installing and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_configuration.html">Node Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="navigation-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">SUSE CaaS Platform</span>
+    <span class="version">v4-beta1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">SUSE CaaS Platform</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">v4-beta1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+  <main class="main">
+<div class="toolbar" role="navigation">
+  <button class="navigation-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="crumbs" aria-label="breadcrumbs">
+  <ul>
+    <li class="crumb"><a href="../index.html">SUSE CaaS Platform</a></li>
+    <li class="crumb"><a href="deployment_intro.html">Deployment Guide</a></li>
+    <li class="crumb"><a href="deployment_preparation.html">Preparing The Installation</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/mnapp/mydata/software/SUSE/doc-caasp/modules/deployment/pages/deployment_preparation.adoc">Edit this Page</a></div>
+</div>
+<article class="doc">
+<h1>Preparing The Installation</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_sec.deploy.preparation.dvd">1. Installing From USB, DVD Or ISO Images</a></li>
+<li><a href="#_sec.deploy.preparation.disk_images">2. Installing From Virtual Disk Images</a>
+<ul class="sectlevel2">
+<li><a href="#_sec.deploy.preparation.disk_images.overview">2.1. Overview</a></li>
+<li><a href="#_sec.deploy.preparation.disk_images.vmware">2.2. Converting Images For {vmware} ESX and ESXi</a></li>
+<li><a href="#_sec.deploy.preparation.disk_images.configuration">2.3. Configuration Files</a></li>
+<li><a href="#_sec.deploy.preparation.disk_images.iso_image">2.4. Preparing An ISO image</a></li>
+<li><a href="#_sec.deploy.preparation.qcow2.admin">2.5. Bringing Up An {Admin_Node}</a></li>
+<li><a href="#_sec.deploy.preparation.disk_images.worker">2.6. Bringing Up A {Worker_Node}</a></li>
+</ul>
+</li>
+<li><a href="#_sec.deploy.preparation.pxe">3. Installing From Network Source</a></li>
+<li><a href="#_sec.deploy.preparation.openstack">4. Installing In {soc}</a>
+<ul class="sectlevel2">
+<li><a href="#_sec.deploy.preparation.openstack.horizon">4.1. Using The Horizon Dashboard</a></li>
+<li><a href="#_sec.deploy.preparation.openstack.cli">4.2. Using The {ostack} CLI</a></li>
+</ul>
+</li>
+<li><a href="#_sec.deploy.preparation.public_cloud">5. Installing In Public Cloud</a>
+<ul class="sectlevel2">
+<li><a href="#_sec.deploy.preparation.public_cloud.overview">5.1. Overview</a></li>
+<li><a href="#_sec.deploy.preparation.public_cloud.provisioning">5.2. Provisioning Cluster Nodes</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This chapter prepares the installation of {productname}
+on physical machines, manually configured virtual machines or in private cloud environments.</p>
+</div>
+<div class="paragraph">
+<p>There are several ways to install {productname}
+:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><a href="#_sec.deploy.preparation.dvd">Installing From USB, DVD Or ISO Images</a></dt>
+<dd>
+<p>This method requires lots of manual interaction with the physical or virtual machines.
+This method is suitable for small to medium cluster sizes.</p>
+</dd>
+<dt class="hdlist1"><a href="#_sec.deploy.preparation.disk_images">Installing From Virtual Disk Images</a></dt>
+<dd>
+<p>You can use prepared disk images ready to deploy on virtual machines.
+This increases the deployment speed.</p>
+</dd>
+<dt class="hdlist1"><a href="#_sec.deploy.preparation.pxe">Installing From Network Source</a></dt>
+<dd>
+<p>With this method the boot into the installation is done with a network installation server.
+This reduces the need to interact with every single node.
+This method is suitable for medium cluster sizes.</p>
+</dd>
+<dt class="hdlist1"><a href="#_sec.deploy.preparation.openstack">Installing In {soc}</a></dt>
+<dd>
+<p>You can deploy {productname}
+on {soc}
+.
+This method is suitable for large cluster sizes.</p>
+</dd>
+<dt class="hdlist1"><a href="#_sec.deploy.preparation.public_cloud">Installing In Public Cloud</a></dt>
+<dd>
+<p>This section is about installing {productname}
+in a public cloud, for example <em>Microsoft Azure</em>*, <em>Amazon AWS</em>* and <em>Google Compute
+Engine</em>*.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>To customize the setup of the nodes, use <code class="command">cloud-init</code>.
+For details, see <a href="#_sec.deploy.cloud_init">[_sec.deploy.cloud_init]</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.deploy.preparation.dvd"><a class="anchor" href="#_sec.deploy.preparation.dvd"></a>1. Installing From USB, DVD Or ISO Images</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This procedure provides an overview of the steps for the cluster deployment with classical boot devices like DVD drives.
+This method is suitable for small to medium cluster sizes.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Choose an installation medium. You can install from DVD or USB sticks. On virtual machines, you can install from ISO images.</p>
+</li>
+<li>
+<p>Boot the machine designated for the {admin_node} from your selected medium. Then follow the installation and configuration instructions detailed in <a href="#_sec.deploy.nodes.admin_install">[_sec.deploy.nodes.admin_install]</a> and <a href="#_sec.deploy.nodes.admin_configuration">[_sec.deploy.nodes.admin_configuration]</a>.</p>
+</li>
+<li>
+<p>Boot the machines designated to be the Master and Worker Nodes from your selected medium. Then follow the installation and configuration instructions detailed in <a href="#_sec.deploy.nodes.worker_install">[_sec.deploy.nodes.worker_install]</a>. To automate the installation, you can use an {ay} file provided by the {admin_node} . We recommend to use {ay} to speed up the node deployment. For details, see <a href="#_sec.deploy.nodes.worker_install.manual.autoyast">[_sec.deploy.nodes.worker_install.manual.autoyast]</a>.</p>
+</li>
+<li>
+<p>Finish the installation by bootstrapping the cluster. For details, see <a href="#_sec.deploy.install.bootstrap">[_sec.deploy.install.bootstrap]</a>.</p>
+</li>
+<li>
+<p>For {vmware} ESX/ESXi: install the <span class="package">open-vm-tools</span> package. See <a href="#_sec.deploy.install.vmware_tools">[_sec.deploy.install.vmware_tools]</a>.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.deploy.preparation.disk_images"><a class="anchor" href="#_sec.deploy.preparation.disk_images"></a>2. Installing From Virtual Disk Images</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For building clusters from virtual machines on supported hypervisors, it is not necessary to individually install each node. {suse}
+offers pre-installed VM disk images in the following formats:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">{kvm} and {xen}</dt>
+<dd>
+<p>In QCOW2 format, for {kvm}
+and for {xen}
+using full virtualization.</p>
+</dd>
+<dt class="hdlist1">{xen}</dt>
+<dd>
+<p>In QCOW2 format, for {xen}
+using paravirtualization.</p>
+</dd>
+<dt class="hdlist1">{vmware}</dt>
+<dd>
+<p>In VMDK format, for {vmware}
+ESXi.</p>
+</dd>
+<dt class="hdlist1">VHD</dt>
+<dd>
+<p>For Microsoft Hyper-V.</p>
+</dd>
+</dl>
+</div>
+<div class="sect2">
+<h3 id="_sec.deploy.preparation.disk_images.overview"><a class="anchor" href="#_sec.deploy.preparation.disk_images.overview"></a>2.1. Overview</h3>
+<div class="paragraph">
+<p>When deploying a cluster node from pre-installed disk images, the setup program never runs.
+Therefore, the configuration must happen while the node is starting up.
+For this purpose, {productname}
+includes <code class="command">cloud-init</code>.
+The described process is very similar for all hypervisors.
+The examples in this manual use {kvm}
+ running on {sle}
+.
+The following procedure outlines the overall process.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>For {vmware} ESX/ESXi: Convert VMDK images. See <a href="#_sec.deploy.preparation.disk_images.vmware">Converting Images For {vmware} ESX and ESXi</a>.</p>
+</li>
+<li>
+<p>Write <code class="command">cloud-init</code> configuration files. See <a href="#_sec.deploy.preparation.disk_images.configuration">Configuration Files</a>.</p>
+</li>
+<li>
+<p>Prepare ISO images containing the <code class="command">cloud-init</code> configuration files. See <a href="#_sec.deploy.preparation.disk_images.iso_image">Preparing An ISO image</a>.</p>
+</li>
+<li>
+<p>Create a copy of the downloaded disk image for each virtual machine, naming them appropriately: for example, <code>caas-admin</code>, <code>caas-master</code>, <code>caas-worker1</code>, <code>caas-worker2</code> and so on.</p>
+</li>
+<li>
+<p>Boot and configure the {admin_node} . See <a href="#_sec.deploy.preparation.qcow2.admin">Bringing Up An {Admin_Node}</a>.</p>
+</li>
+<li>
+<p>Boot and configure the worker nodes. See <a href="#_sec.deploy.preparation.disk_images.worker">Bringing Up A {Worker_Node}</a>.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.deploy.preparation.disk_images.vmware"><a class="anchor" href="#_sec.deploy.preparation.disk_images.vmware"></a>2.2. Converting Images For {vmware} ESX and ESXi</h3>
+<div class="paragraph">
+<p>Downloaded disk images need to be converted for usage with {vmware}
+ESX and ESXi.
+On the ESX/ESXi host, run the following command on the downloaded disk images:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``vmkfstools -i DOWNLOADED_IMAGE.vmdk CONVERTED_IMAGE.vmdk``</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.deploy.preparation.disk_images.configuration"><a class="anchor" href="#_sec.deploy.preparation.disk_images.configuration"></a>2.3. Configuration Files</h3>
+<div class="paragraph">
+<p>There are two separate configuration files: <code class="path">user-data</code>
+ and <code class="path">meta-data</code>
+.
+Each node needs both.
+Thus, you need to prepare at a minimum one pair of files for the {admin_node}
+, and another pair of files for all the {worker_node}
+s.</p>
+</div>
+<div class="paragraph">
+<p>Place the files into subdirectories named <code class="path">cc-admin</code>
+ for the {admin_node}
+ and <code class="path">cc-worker</code>
+ for the {worker_node}
+s.</p>
+</div>
+<div class="paragraph">
+<p>So, for instance, if your working directory is <code class="path">~/cloud-config</code>
+, then for the admin node, you need these two files:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>~/cloud-config/cc-admin/user-data
+~/cloud-config/cc-admin/meta-data</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For a {worker_node}
+, you need:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>~/cloud-config/cc-worker/user-data
+~/cloud-config/cc-worker/meta-data</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The same <code class="path">meta-data</code>
+ file can be used for both node types.
+Here is an sample <code class="path">meta-data</code>
+ file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>#cloud-config
+instance-id:`iid-CAAS01`network-interfaces: |
+   auto`eth0`iface`eth0`inet dhcp</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code class="path">user-data</code>
+ file contains settings such as time servers, the {rootuser}
+ password, and the node type.</p>
+</div>
+<div class="paragraph">
+<p>Here is an example <code class="path">cc-admin/user-data</code>
+ file for an {admin_node}
+:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>#cloud-config
+debug: True
+disable_root: False
+ssh_deletekeys: False
+ssh_pwauth: True
+chpasswd:
+   list: |
+     root:`MY_PASSWORD`expire: False
+ntp:
+   servers:
+     -`ntp1.example.com`-`ntp2.example.com`runcmd:
+   - /usr/bin/systemctl enable --now ntpd
+suse_caasp:
+  role:`admin`</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Here is an example <code class="path">cc-worker/user-data</code>
+  for a {worker_node}
+.
+Rather than providing the {rootuser}
+ password in clear text, you can use a hash instead; this example is hashed with SHA-256.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>#cloud-config
+debug: True
+disable_root: False
+ssh_deletekeys: False
+ssh_pwauth: True
+chpasswd:
+   list: |
+   root:`$5$eriogqzq$Dg7PxHsKGzziuEGkZgkLvacjuEFeljJ.rLf.hZqKQLA`expire: False
+suse_caasp:
+    role:`cluster`admin_node:`caas-admin.example.com`</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For more informatin, also refer to <a href="#_sec.deploy.cloud_init">[_sec.deploy.cloud_init]</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.deploy.preparation.disk_images.iso_image"><a class="anchor" href="#_sec.deploy.preparation.disk_images.iso_image"></a>2.4. Preparing An ISO image</h3>
+<div class="paragraph">
+<p>First, edit the configuration files as described in <a href="#_sec.deploy.preparation.disk_images.configuration">Configuration Files</a>.
+Then create an ISO image with the volume label <code>cidata</code> containing only the subdirectory for that node type.</p>
+</div>
+<div class="paragraph">
+<p>On {sle}
+12 or {opensuse}
+Leap 42, use <code class="command">genisoimage</code> to do this.
+On {sle}
+ or {opensuse}
+ Leap 15, use <code class="command">mkisofs</code>.
+The parameters are the same for both commands.</p>
+</div>
+<div class="paragraph">
+<p>For example, to create the ISO image for an admin node on a computer running {opensuse}
+Leap 42:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``sudo genisoimage -output cc-admin.iso -volid cidata -joliet -rock cc-admin``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To create the ISO image for a worker node on a computer running {opensuse}
+15, substituting the name of the folder containing the configuration files for a {worker_node}
+and titling the volume <code>cc-worker</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``sudo mkisofs -output cc-worker.iso -volid cidata -joliet -rock cc-worker``</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.deploy.preparation.qcow2.admin"><a class="anchor" href="#_sec.deploy.preparation.qcow2.admin"></a>2.5. Bringing Up An {Admin_Node}</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create a new VM for the {admin_node} .</p>
+</li>
+<li>
+<p>Attach a copy of the downloaded disk image as its main hard disk.</p>
+</li>
+<li>
+<p>Attach the <code class="path">cc-admin.iso</code> image as a virtual DVD unit. For details about preparing the image, see <a href="#_sec.deploy.preparation.disk_images.iso_image">Preparing An ISO image</a></p>
+</li>
+<li>
+<p>Start the VM.</p>
+</li>
+<li>
+<p>Configure the new {admin_node} as in step <a href="#_sec.deploy.nodes.admin_configuration">[_sec.deploy.nodes.admin_configuration]</a>.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.deploy.preparation.disk_images.worker"><a class="anchor" href="#_sec.deploy.preparation.disk_images.worker"></a>2.6. Bringing Up A {Worker_Node}</h3>
+<div class="paragraph">
+<p>Then, repeat the following steps for each {worker_node}
+:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create a new VM for the {worker_node} .</p>
+</li>
+<li>
+<p>Attach a copy of the downloaded disk image as its main hard disk.</p>
+</li>
+<li>
+<p>Attach the <code class="path">cc-worker.iso</code> disk image as a virtual DVD unit. For details about preparing the image, see <a href="#_sec.deploy.preparation.disk_images.iso_image">Preparing An ISO image</a>. The ISO image can be reused for multiple {worker_node} s.</p>
+</li>
+<li>
+<p>Start the VM.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Once you have brought up as many {worker_node}
+s as you need, proceed to bootstap the cluster using the {dashboard}
+dashboard.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.deploy.preparation.pxe"><a class="anchor" href="#_sec.deploy.preparation.pxe"></a>3. Installing From Network Source</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This procedure provides an overview of the steps for the cluster deployment from an network installation server.
+A PXE environment sis used to provide the nodes with the data required for installation.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Install an installation server that provides a DHCP, PXE and TFTP service. Additionally, you can provide the installation data on an HTTP or FTP server. For details, refer to the {sle} 12 Deployment Guide: <a href="https://www.suse.com/documentation/sles-12/singlehtml/book_sle_deployment/book_sle_deployment.html#cha.deployment.prep_boot" class="bare">https://www.suse.com/documentation/sles-12/singlehtml/book_sle_deployment/book_sle_deployment.html#cha.deployment.prep_boot</a>.</p>
+<div class="paragraph">
+<p>You can directly use the <code class="path">initrd</code>
+and <code class="path">linux</code>
+files from your installation media, or install the package <span class="package">tftpboot-installation-CAASP-3.0</span>
+onto your TFTP server.
+The package provides the required <code class="path">initrd</code>
+and <code class="path">linux</code>
+files in the <code class="path">/srv/tftpboot/</code>
+directory.
+You will need to modify the paths used in the {sle}
+12 Deployment Guide to correctly point to the files provided by the package.</p>
+</div>
+</li>
+<li>
+<p>PXE boot the machine designated for the {admin_node} . Then follow the installation and configuration instructions detailed in <a href="#_sec.deploy.nodes.admin_install">[_sec.deploy.nodes.admin_install]</a> and <a href="#_sec.deploy.nodes.admin_configuration">[_sec.deploy.nodes.admin_configuration]</a>.</p>
+</li>
+<li>
+<p>Pxe boot the machines designated to be the Master and Worker Nodes. Then follow the installation and configuration instructions detailed in <a href="#_sec.deploy.nodes.worker_install">[_sec.deploy.nodes.worker_install]</a>. To automate the installation, you can use an {ay} file provided by the {admin_node} . For details, see <a href="#_sec.deploy.nodes.worker_install.manual.autoyast">[_sec.deploy.nodes.worker_install.manual.autoyast]</a>.</p>
+</li>
+<li>
+<p>Finish the installation by bootstrapping the cluster. For details, see <a href="#_sec.deploy.install.bootstrap">[_sec.deploy.install.bootstrap]</a>.</p>
+</li>
+<li>
+<p>For {vmware} ESX/ESXi: install the <span class="package">open-vm-tools</span> package. See <a href="#_sec.deploy.install.vmware_tools">[_sec.deploy.install.vmware_tools]</a>.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.deploy.preparation.openstack"><a class="anchor" href="#_sec.deploy.preparation.openstack"></a>4. Installing In {soc}</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can deploy a {productname}
+on {soc}
+using {ostack}
+.
+You will need a {productname}
+machine image and {ostack}
+Heat templates.
+Once you have created a stack, you will continue with the {productname}
+setup.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">{productname}Machine Image For {soc}</div>
+<div class="paragraph">
+<p>Download the latest {productname}
+for {ostack}
+image from <a href="https://download.suse.com" class="bare">https://download.suse.com</a> (for example, <code class="path">SUSE-CaaS-Platform-3.0-OpenStack-Cloud.x86_64-1.0.0-GM.qcow2</code>
+).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">{ostack}Heat Templates Repository</div>
+<div class="paragraph">
+<p>{productname}
+Heat templates are available from <a href="https://github.com/SUSE/caasp-openstack-heat-templates">GitHub</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_sec.deploy.preparation.openstack.horizon"><a class="anchor" href="#_sec.deploy.preparation.openstack.horizon"></a>4.1. Using The Horizon Dashboard</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Go to <span class="menuseq"><b class="menu">Project → Compute → Images</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">] and click on menu:Create Image[</b></span> .</p>
+<div class="paragraph">
+<p>Give your image a name (for example: <code>CaaSP-3</code>); you will need to use this later to find the image.</p>
+</div>
+</li>
+<li>
+<p>Go to <span class="menuseq"><b class="menu">Project → Orchestration</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">] and click on menu:Stacks[</b></span> .</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/horizon_stacks.png" alt="horizon stacks">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Click on <span class="menuseq"><b class="menu">Launch Stack</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="submenu">] and provide the stack templates. Either upload the files</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="submenu">provide the URL to the raw files directly (only applies to stack template)</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">or copy and paste the contents into the menu:Direct Input[</b></span> fields.</p>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="title">Replace The Default <code>root_password</code></div>
+Do not use the <code class="path">caasp-environment.yaml</code>
+ directly from the GitHub repository.
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>You must make sure to replace the value for <code>root_password</code> with a secure password.
+This will become the password for the {rootuser}
+ account on all nodes in the stack.</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/horizon_launch_stack.png" alt="horizon launch stack">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Click <b class="menuref">Next</b> .</p>
+</li>
+<li>
+<p>Now you need to define more information about the stack.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>Stack Name</code></dt>
+<dd>
+<p>Give your stack a name</p>
+</dd>
+<dt class="hdlist1"><code>Password</code></dt>
+<dd>
+<p>Your {soc}
+password</p>
+</dd>
+<dt class="hdlist1"><code>Image</code></dt>
+<dd>
+<p>Select the image your machines will be created from</p>
+</dd>
+<dt class="hdlist1"><code>root_password</code></dt>
+<dd>
+<p>Set the root password for your cluster machines</p>
+</dd>
+<dt class="hdlist1"><code>admin</code>/master/worker_flavor</dt>
+<dd>
+<p>Select the machine flavor for your nodes</p>
+</dd>
+<dt class="hdlist1"><code>worker_count</code></dt>
+<dd>
+<p>Number of worker nodes to be launched</p>
+</dd>
+<dt class="hdlist1"><code>external_net</code></dt>
+<dd>
+<p>Select an external network that your cluster will be reachable from</p>
+</dd>
+<dt class="hdlist1"><code>internal_net_cidr</code></dt>
+<dd>
+<p>The internal network range to be used inside the cluster</p>
+</dd>
+<dt class="hdlist1"><code>dns_nameserver</code></dt>
+<dd>
+<p>Internal name server for the cluster</p>
+</dd>
+</dl>
+</div>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/horizon_stack_options.png" alt="horizon stack options">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Click <b class="menuref">Launch</b> .</p>
+</li>
+<li>
+<p>After the cluster has been started and the cluster overview shows <b class="menuref">Create Complete</b> , you need to find the external IP address for the admin node of your cluster (here: <code>192.168.1.72</code>). Now visit that IP address in your browser. You should see the {dashboard} login page and can continue with <a href="#_sec.deploy.nodes.admin_configuration">[_sec.deploy.nodes.admin_configuration]</a>.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/horizon_stack_resources.png" alt="horizon stack resources">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.deploy.preparation.openstack.cli"><a class="anchor" href="#_sec.deploy.preparation.openstack.cli"></a>4.2. Using The {ostack} CLI</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>You need to have access to the {ostack}
+command-line tools.
+You can either access those via <code>ssh</code> on your {soc}
+ admin server or <a href="https://docs.openstack.org/newton/user-guide/common/cli-install-openstack-command-line-clients.html">
+     install a local openstack client</a>.</p>
+</div>
+<div class="paragraph">
+<p>To use the local client, you need to access <span class="menuseq"><b class="menu">Project → Compute → Access &amp; Security</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">]
+ in the Horizon Dashboard and click on the menu:Download OpenStack RC File v3[</b></span>
+.</p>
+</div>
+<div class="paragraph">
+<p>The downloaded file is a script that you then need to load using the <code class="command">source</code> command.
+The script will ask you for your {soc}
+ password.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``source container-openrc.sh``</pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Upload the container image to {ostack} Glance (Image service). This example uses the name <code>CaaSP-3</code> as the name of the image that is created in {soc} .</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``openstack image create --public --disk-format qcow2 \
+--container-format bare \
+--file SUSE-CaaS-Platform-3.0-OpenStack-Cloud.x86_64-1.0.0-GM.qcow2 \
+CaaSP-3``</pre>
+</div>
+</div>
+</li>
+<li>
+<p></p>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="title">Replace The Default <code>root_password</code></div>
+Do not use the <code class="path">caasp-environment.yaml</code>
+ directly from the GitHub repository.
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>You must make sure to replace the value for <code>root_password</code> with a secure password.
+This will become the password for the {rootuser}
+ account on all nodes in the stack.</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="paragraph">
+<p>+
+Download the <code class="path">caasp-stack.yaml</code>
+and <code class="path">caasp-environment.yaml</code>
+Heat templates to your workstation and then run the <code class="command">openstack stack create</code> command.</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``openstack stack create \
+-t caasp-stack.yaml \
+-e caasp-environment.yaml \
+--parameter image=CaaSP-3 caasp3-stack``</pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Find out which (external) IP address was assigned to the admin node of your {productname} cluster (here: <code>192.168.1.51</code>).</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``openstack server list --name "admin" | awk 'FNR &gt; 3 {print $4 $5 $9}'`` caasp3-stack-admin|192.168.1.51</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Visit the external IP address in your browser. You should see the {dashboard} login page and can continue with <a href="#_sec.deploy.nodes.admin_configuration">[_sec.deploy.nodes.admin_configuration]</a>.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.deploy.preparation.public_cloud"><a class="anchor" href="#_sec.deploy.preparation.public_cloud"></a>5. Installing In Public Cloud</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_sec.deploy.preparation.public_cloud.overview"><a class="anchor" href="#_sec.deploy.preparation.public_cloud.overview"></a>5.1. Overview</h3>
+<div class="paragraph">
+<p>The {productname}
+images published by {suse}
+in selected Public Cloud environments are provided as <code>Bring Your Own Subscription
+    (BYOS)</code> images. {productname}
+ instances need to be registered with the {scc}
+ in order to receive bugfix and security updates.
+Images labeled with the <code>cluster</code> designation in the name are not intended to be started directly; they are deployed by the Administrative node.
+Administrative node images contain the <code>admin</code> designation in the image name.</p>
+</div>
+<div class="paragraph">
+<p>The following procedure outlines the deployment process:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Read the special system requirements for public cloud installations in <a href="#_sec.deploy.requirements.public_cloud">[_sec.deploy.requirements.public_cloud]</a>.</p>
+</li>
+<li>
+<p>Provision the cluster nodes. For details, see <a href="#_sec.deploy.preparation.public_cloud.provisioning">Provisioning Cluster Nodes</a>.</p>
+</li>
+<li>
+<p>Deploy the admin node with <code class="command">caasp-admin-setup</code>. For details, see <a href="#_sec.deploy.nodes.admin_install_cli">[_sec.deploy.nodes.admin_install_cli]</a>.</p>
+</li>
+<li>
+<p>Finish bootstrapping your cluster. The provisioned worker nodes are ready to be consumed into the cluster. For details, see <a href="#_sec.deploy.install.bootstrap">[_sec.deploy.install.bootstrap]</a>.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.deploy.preparation.public_cloud.provisioning"><a class="anchor" href="#_sec.deploy.preparation.public_cloud.provisioning"></a>5.2. Provisioning Cluster Nodes</h3>
+<div class="sect3">
+<h4 id="_sec.deploy.preparation.public_cloud.provisioning.aws"><a class="anchor" href="#_sec.deploy.preparation.public_cloud.provisioning.aws"></a>5.2.1. Amazon Web Services EC2</h4>
+<div class="paragraph">
+<p>You may select from one of the predefined instance types, hand selected for general container workloads, or choose <span class="menuseq"><b class="menu">Other types&#8230;&#8203;</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">]
+ and enter any menu:instance type[</b></span>
+, as defined at <a href="https://aws.amazon.com/ec2/instance-types/">
+     https://aws.amazon.com/ec2/instance-types/</a></p>
+</div>
+<div class="paragraph">
+<p>Two configuration options are required in EC2:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Subnet ID</dt>
+<dd>
+<p>The <code>subnet</code> within which cluster nodes will be attached to the network, in the form <code>subnet-xxxxxxxx</code>.</p>
+</dd>
+<dt class="hdlist1">Security Group ID</dt>
+<dd>
+<p>The <code>security group</code> defining network access rules for the cluster nodes, in the form <code>sg-xxxxxxxx</code>.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>The defaults used for those two options are preset to the subnet ID of the administration host and the security group ID that was automatically created by <code class="command">caasp-admin-setup</code>.
+You may choose to place the cluster nodes in a different subnet and you can also use a custom security group, but please bear in mind that traffic must be allowed between the individual cluster nodes and also between the admininstration node and the cluster nodes.</p>
+</div>
+<div class="paragraph">
+<p>See the <a href="https://aws.amazon.com/documentation/vpc/">
+     Amazon Virtual Private Cloud Documentation</a>for more information.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_sec.deploy.preparation.public_cloud.provisioning.azure"><a class="anchor" href="#_sec.deploy.preparation.public_cloud.provisioning.azure"></a>5.2.2. Microsoft Azure</h4>
+<div class="paragraph">
+<p>You need to configure credentials for access to the Azure framework so instances can be created, as well as parameters for the cluster node instances themselves.
+The credentials refer to authentication via a service principal.
+See <a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal">
+     https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal</a> for more information on how you can create a service principal.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Subscription ID</dt>
+<dd>
+<p>The subscription ID of your Azure account.</p>
+</dd>
+<dt class="hdlist1">Tenant ID</dt>
+<dd>
+<p>The tenant ID of your service principal, also known as the Active Directory ID.</p>
+</dd>
+<dt class="hdlist1">Application ID</dt>
+<dd>
+<p>The application ID of your service principal.</p>
+</dd>
+<dt class="hdlist1">Client Secret</dt>
+<dd>
+<p>The key value or password of your service principal.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Below the <span class="menuseq"><b class="menu">Service Principal Authentication</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">]
+ box you will find the menu:Instance Type[</b></span>
+ configuration.
+You may select from one of the predefined instance types, hand selected for general container workloads, or choose <span class="menuseq"><b class="menu">Other types&#8230;&#8203;</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="submenu">]
+ and enter any <code>size</code></b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">as defined at <a href="https://docs.microsoft.com/en-us/azure/virtual-machines/linux/sizes/" class="bare">https://docs.microsoft.com/en-us/azure/virtual-machines/linux/sizes/</a>[
+     <a href="https://docs.microsoft.com/en-us/azure/virtual-machines/linux/sizes/" class="bare">https://docs.microsoft.com/en-us/azure/virtual-machines/linux/sizes/</a></b></span>Set the <b class="menuref">Cluster size</b>
+ using the slider.</p>
+</div>
+<div class="paragraph">
+<p>The parameters in <b class="menuref">Resource Scopes</b>
+ define attributes of the cluster instances, as required for Azure Resource Manager:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Resource Group</dt>
+<dd>
+<p>The Resource Group in which all cluster nodes will be created.</p>
+</dd>
+<dt class="hdlist1">Storage Account</dt>
+<dd>
+<p>The Storage Account that will be used for storing the cluster node OS disks.
+See <a href="https://docs.microsoft.com/en-us/azure/storage/common/storage-create-storage-account">
+https://docs.microsoft.com/en-us/azure/storage/common/storage-create-storage-account</a>for more information about Azure Storage Accounts.</p>
+</dd>
+<dt class="hdlist1">Network</dt>
+<dd>
+<p>The virtual network the cluster nodes will be connected to.</p>
+</dd>
+<dt class="hdlist1">Subnet</dt>
+<dd>
+<p>A subnet in the previously defined virtual network.
+See <a href="https://docs.microsoft.com/en-us/azure/virtual-network/">
+https://docs.microsoft.com/en-us/azure/virtual-network/</a> for more information about Azure Virtual Networks.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_sec.deploy.preparation.public_cloud.provisioning.google"><a class="anchor" href="#_sec.deploy.preparation.public_cloud.provisioning.google"></a>5.2.3. Google Compute Engine</h4>
+<div class="paragraph">
+<p>You may select from one of the predefined instance types, hand selected for general container workloads, or choose <span class="menuseq"><b class="menu">Other types&#8230;&#8203;</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="submenu">]
+ and enter any <code>machine type</code></b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">as defined at <a href="https://cloud.google.com/compute/docs/machine-types" class="bare">https://cloud.google.com/compute/docs/machine-types</a>[
+     <a href="https://cloud.google.com/compute/docs/machine-types" class="bare">https://cloud.google.com/compute/docs/machine-types</a></b></span></p>
+</div>
+<div class="paragraph">
+<p>Two configuration options are required in GCE:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Network</dt>
+<dd>
+<p>The name of the virtual network the cluster nodes will run within.</p>
+</dd>
+<dt class="hdlist1">Subnet</dt>
+<dd>
+<p>If you created a custom network, you must specify the name of the subnet within which the cluster nodes will run.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>See the <a href="https://cloud.google.com/vpc/docs/vpc"> GCE
+     Network Documentation</a> for more information.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+  </main>
+</div>
+<footer class="footer">
+  <p>Copyright (C) 2017-2018 <a href="https://opensource.suse.com/doc-susemanager/">SUSE Manager</a></p>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js -->
+<script>
+function focusSearchInput () { document.querySelector('#search-input').focus() }
+var search = docsearch({
+  appId: 'KIB3CEDKWD',
+  apiKey: '51646b7d454f125193a0ba62253e8e17',
+  indexName: 'manager',
+  inputSelector: '#search-input',
+  autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+  algoliaOptions: { hitsPerPage: 10 }
+}).autocomplete;
+search.on('autocomplete:closed', function () { search.autocomplete.setVal() });
+focusSearchInput();
+window.addEventListener('load', focusSearchInput)
+</script>
+<script src="../../../_/js/site.js"></script>
+<script src="../../../_/js/vendor/highlight.js"></script>
+<script>hljs.initHighlighting()</script>
+  </body>
+</html>

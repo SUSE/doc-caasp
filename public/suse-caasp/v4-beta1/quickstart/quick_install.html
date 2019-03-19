@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Installation :: SUSE CaaS Platform Documentation</title>
+    <meta name="generator" content="Antora 2.0.0">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="stylesheet" href="../../../_/css/suse.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css">
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css -->
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header" role="banner">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-logo">
+        <img class="logo" src="../../../_/img/suse_logo_reverse.png" />
+      </div>
+      <div class="navbar-item">
+        <a href="https://r0ckarong.github.io">SUSE CaaS Platform</a>
+        <span class="separator">//</span>
+        <a href="../../..">Documentation</a>
+      </div>
+      <div class="navbar-item">
+        <input id="search-input" type="text" placeholder="Search docs">
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">Projects</div>
+          <div class="navbar-dropdown">
+            <div class="navbar-item"><strong>Resources</strong></div>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/tree/antora">Repository</a>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/issues">Issue Tracker</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="main-wrapper">
+<div class="navigation-container" data-component="suse-caasp" data-version="v4-beta1">
+  <aside class="navigation">
+    <div class="panels">
+<div class="navigation-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">SUSE CaaS Platform</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="quick_intro.html">Quickstart Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="quick_system_requirements.html">System Requirements</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="quick_install.html">Installation and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="quick_configuration.html">Node Configuration</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../administration/admin_intro.html">Administration Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_security.html">Security</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_administration.html">Administration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_software.html">Software Management</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_monitoring.html">Monitoring</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_logging.html">Logging</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_misc.html">Miscellaenous Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_integration_ses.html">SES Integration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_troubleshooting.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../deployment/deployment_intro.html">Deployment Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_about.html">About Deployment Guide</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_scenarios.html">Deployment Scenarios</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_sysreqs.html">System Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_preparation.html">Preparing The Installation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_installing_nodes.html">Installing and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_configuration.html">Node Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="navigation-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">SUSE CaaS Platform</span>
+    <span class="version">v4-beta1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">SUSE CaaS Platform</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">v4-beta1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+  <main class="main">
+<div class="toolbar" role="navigation">
+  <button class="navigation-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="crumbs" aria-label="breadcrumbs">
+  <ul>
+    <li class="crumb"><a href="../index.html">SUSE CaaS Platform</a></li>
+    <li class="crumb"><a href="quick_intro.html">Quickstart Guide</a></li>
+    <li class="crumb"><a href="quick_install.html">Installation and Configuring Nodes</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/mnapp/mydata/software/SUSE/doc-caasp/modules/quickstart/pages/quick_install.adoc">Edit this Page</a></div>
+</div>
+<article class="doc">
+<h1>Installation</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_sec.quick.install.admin">1. Installing The Administration Node</a></li>
+<li><a href="#_sec.quick.install.conf">2. Configuring the Administration Node</a></li>
+<li><a href="#_sec.quick.install.node">3. Installing Cluster Nodes</a>
+<ul class="sectlevel2">
+<li><a href="#_sec.quick.install.node.manual">3.1. Manual Installation</a></li>
+<li><a href="#_sec.quick.install.node.ay">3.2. Installation With AutoYaST</a></li>
+</ul>
+</li>
+<li><a href="#_sec.quick.install.bootstrap">4. Bootstrapping The Cluster</a></li>
+</ul>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Scope of this document</div>
+<div class="paragraph">
+<p>This document is meant to give you a quick way to deploy a default installation of SUSE CaaS Platform
+.
+The instructions will assume the absolute minimum of configuration.</p>
+</div>
+<div class="paragraph">
+<p>If you require any specific configuration for you environment <em>at all</em>, this document is not for you and you must consult the full deployment guide.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>This chapter gives a quick overview on how to run through a default installation of SUSE CaaS Platform
+onto dedicated physical or virtual machines.</p>
+</div>
+<div class="paragraph">
+<p>In addition, SUSE CaaS Platform
+supports other deployment methods and scenarios, such as from pre-installed disk images and onto OpenStack
+or certain supported public-cloud providers.</p>
+</div>
+<div class="paragraph">
+<p>For these and other deployment scenarios, see the SUSE CaaS Platform
+Deployment Guide on <a href="http://www.suse.com/documentation/" class="bare">http://www.suse.com/documentation/</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.quick.install.admin"><a class="anchor" href="#_sec.quick.install.admin"></a>1. Installing The Administration Node</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following instructions assume that you are installing onto a dedicated physical or virtual machine, using either an ISO image or a physical removable medium, such as a DVD or bootable USB key.
+The hard disk should not contain any existing partitions.</p>
+</div>
+<div id="_pro.quick.intall.admin" class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Insert the bootable SUSE CaaS Platform installation medium, then reboot the computer to start the installation program. On machines with a traditional BIOS you will see the graphical boot screen shown below. On machines equipped with UEFI, a slightly different boot screen is used. Secure Boot on UEFI machines is supported.</p>
+<div class="paragraph">
+<p>Use <kbd>F2</kbd>
+to change the language for the installer.
+A corresponding keyboard layout is chosen automatically.
+For more information about changing boot options, see <a href="https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_startup.html" class="bare">https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_startup.html</a>.</p>
+</div>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/install_boot.png" alt="install boot">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Select <b class="menuref">Installation</b> on the boot screen, then press <kbd>Enter</kbd> . This boots the system and loads the SUSE CaaS Platform installer.</p>
+</li>
+<li>
+<p></p>
+<div class="paragraph">
+<p>Configure the following mandatory settings on the <b class="menuref">Installation Overview</b>
+screen.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">Help And Release Notes</div>
+From this point on, a brief help document and the Release Notes can be viewed from any screen during the installation process by selecting <span class="menuseq"><b class="menu">Help</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">]
+ or menu:Release Notes[</b></span>
+ respectively.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Keyboard Layout</dt>
+<dd>
+<p>The <b class="menuref">Keyboard Layout</b>
+is initialized with the language settings you have chosen on the boot screen.
+Change it here, if necessary.</p>
+</dd>
+<dt class="hdlist1">Password for root User </dt>
+<dd>
+<p>Type a password for the system administrator account (called the root
+user) and confirm it.</p>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="title">Do Not Forget The rootPassword</div>
+You should ensure that you will not lose the root
+password! After you entered it here, the password cannot be retrieved.
+See <a href="https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_user_root.html" class="bare">https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_user_root.html</a> for more information.
+</td>
+</tr>
+</table>
+</div>
+</dd>
+<dt class="hdlist1">Registration Code or SMT Server URL </dt>
+<dd>
+<p>Enter the <b class="menuref">Registration Code or SMT Server URL</b>
+.
+SMT Server URLs must use <code>https</code> or <code>http</code>; other protocols are not supported.</p>
+</dd>
+<dt class="hdlist1">System Role </dt>
+<dd>
+<p>As this is the first node in the cluser, you must select <code>"Administration Node (Dashboard)"</code> as the <b class="menuref">System Role</b>
+for your system.</p>
+</dd>
+<dt class="hdlist1">NTP Servers </dt>
+<dd>
+<p>Enter host names or IP addresses of one or more <b class="menuref">NTP Servers</b>
+for the node, separated by white spaces or colons.
+While a single time server is sufficient, clusters should use at least three for optimal precision and reliability.</p>
+<div class="paragraph">
+<p>For more information about <code>NTP</code>, refer to <a href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_netz_xntp.html" class="bare">https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_netz_xntp.html</a></p>
+</div>
+</dd>
+</dl>
+</div>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/install_overview_admin.png" alt="install overview admin">
+</div>
+</div>
+<div class="paragraph">
+<p>+
+Optionally, you can customize the following settings.
+If you do not make any changes, defaults are used.
+A brief summary of the settings is displayed below the respective settings option.</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Partitioning </dt>
+<dd>
+<p>Review the partition setup proposed by the system and change it if necessary.
+You have the following options:</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Select a hard disk </dt>
+<dd>
+<p>Select a disk to which install SUSE CaaS Platform
+to with the recommended partitioning scheme.</p>
+</dd>
+<dt class="hdlist1"><b class="menuref">Custom Partitioning (for Experts)</b></dt>
+<dd>
+<p>Opens the <b class="menuref">Expert Partitioner</b>
+described in <a href="https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_yast2_i_y2_part_expert.html" class="bare">https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_yast2_i_y2_part_expert.html</a> .</p>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="title">For Experts Only</div>
+As the name suggests, the <b class="menuref">Expert Partitioner</b>
+ is for experts only.
+Custom partitioning schemes that do not meet the requirements of SUSE CaaS Platform
+ are not supported.
+</td>
+</tr>
+</table>
+</div>
+</dd>
+</dl>
+</div>
+</dd>
+</dl>
+</div>
+<div class="ulist">
+<div class="title">Requirements for custom partitioning schemes</div>
+<ul>
+<li>
+<p>SUSE CaaS Platform exclusively supports the file system types Btrfs and OverlayFS. A read-only Btrfs file system is used for the root file system which enables transactional updates.</p>
+</li>
+<li>
+<p>For snapshots, partitions must have a capacity of at least 11 GB.</p>
+</li>
+<li>
+<p>Depending on the number and size of your containers, you will need sufficient space under the <code>/var</code> mount point.</p>
+<div class="paragraph">
+<p>+
+To accept the proposed setup without any changes, choose <b class="menuref">Next</b>
+to proceed.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Booting </dt>
+<dd>
+<p>This section shows the boot loader configuration.
+Changing the defaults is only recommended if really needed.
+Refer to <a href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_grub2.html" class="bare">https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_grub2.html</a> for details.</p>
+</dd>
+<dt class="hdlist1">Network Configuration </dt>
+<dd>
+<p>If the network could not be configured automatically while starting the installation system, you have to manually configure the <b class="menuref">Network Settings</b>
+.
+Please make sure at least one network interface is connected to the Internet in order to register your product.</p>
+<div class="paragraph">
+<p>By default, the installer requests a host name from a DHCP server.
+If you set a custom name in the <b class="menuref">Hostname/DNS</b>
+tab, make sure that it is unique.</p>
+</div>
+<div class="paragraph">
+<p>For more information on configuring network connections, refer to <a href="https://www.suse.com/documentation/sles-12/book_sle_admin/data/sec_basicnet_yast.html" class="bare">https://www.suse.com/documentation/sles-12/book_sle_admin/data/sec_basicnet_yast.html</a> .</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Reliable Networking</div>
+Please make sure all nodes are on the same network and can communicate without interruptions.
+If you are using host names to specify nodes, please make sure you have reliable DNS resolution at all times, especially in combination with DHCP.
+</td>
+</tr>
+</table>
+</div>
+</dd>
+<dt class="hdlist1">Kdump </dt>
+<dd>
+<p>Kdump saves the memory image (&#8220;core dump&#8221;
+) to the file system in case the kernel crashes.
+This enables you to find the cause of the crash by debugging the dump file.
+For more information, see <a href="https://www.suse.com/documentation/sles-12/book_sle_tuning/data/cha_tuning_kdump_basic.html" class="bare">https://www.suse.com/documentation/sles-12/book_sle_tuning/data/cha_tuning_kdump_basic.html</a>.</p>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="title">Kdump With Large Amounts Of RAM</div>
+If you have a system with large amounts of RAM or a small hard drive, core dumps may not be able to fit on the disk.
+If the installer warns you about this, there are two options:
+&#8230;&#8203; Enter the <b class="menuref">Expert Partitioner</b> and increase the size of the root partition so that it can accommodate the size of the core dump. In this case, you will need to decrease the size of the data partition accordingly. Remember to keep all other partitioning parameters (e.g. the root file system, the mount point of the data partition) when doing these changes.
+&#8230;&#8203; Disable kdump completely.
+</td>
+</tr>
+</table>
+</div>
+</dd>
+<dt class="hdlist1">System Information </dt>
+<dd>
+<p>View detailed hardware information by clicking <span class="menuseq"><b class="menu">System Information</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">]
+.
+In this screen you can also change menu:Kernel Settings[</b></span>
+.
+For more information, see <a href="https://www.suse.com/documentation/sles-12/book_sle_tuning/data/cha_tuning_io.html" class="bare">https://www.suse.com/documentation/sles-12/book_sle_tuning/data/cha_tuning_io.html</a>.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Proceed with <b class="menuref">Next</b>
+.</p>
+</div>
+<div class="paragraph">
+<p>+
+.Installing Product Patches At Installation Time
+TIP: If SUSE CaaS Platform
+has been successfully registered at the SUSE Customer Center
+, you are asked whether to install the latest available online updates during the installation.
+If choosing <b class="menuref">Yes</b>
+, the system will be installed with the most current packages without having to apply the updates after installation.
+Activating this option is recommended.</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>After you have finalized the system configuration on the <span class="menuseq"><b class="menu">Installation Overview</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="submenu">] screen</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">click menu:Install[</b></span> . Up to this point no changes have been made to your system. After you click <b class="menuref">Install</b> a second time, the installation process starts.</p>
+</li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/install_confirm.png" alt="install confirm">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>During the installation, the progress is shown in detail on the <b class="menuref">Details</b> tab.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/install_perform.png" alt="install perform">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>After the installation routine has finished, the computer is rebooted into the installed system.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.quick.install.conf"><a class="anchor" href="#_sec.quick.install.conf"></a>2. Configuring the Administration Node</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In order to finalize the configuration of the Administration Node
+, a few additional steps are required.</p>
+</div>
+<div id="_pro.quick.install.conf" class="olist arabic">
+<ol class="arabic">
+<li>
+<p>After the Administration Node has finished booting and you see the login prompt, point a web browser to <a href="https://caasp-admin.example.com" class="bare">https://caasp-admin.example.com</a> , where <code>caasp-admin.{exampledomain}</code> is the host name or IP address of the Administration Node . The IP address is shown above the login prompt.</p>
+</li>
+<li>
+<p>To create an Administrator account, click <span class="menuseq"><b class="menu">Create an account</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">] and provide an e-mail address and a password. Confirm the password and click menu:Create Admin[</b></span> . You will be logged into the dashboard automatically.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_register.png" alt="velum register">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Fill in the values for the minimum required options.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_setup1.png" alt="velum setup1">
+</div>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Dashboard Location</dt>
+<dd>
+<p>Host name or IP of the node running this web interface.</p>
+</dd>
+<dt class="hdlist1">Proxy Settings</dt>
+<dd>
+<p>If enabled, you can set proxy servers for <code>HTTP</code> and <code>HTTPS</code>.
+You may also configure exceptions and choose whether to apply the settings only to the container engine or to all processes running on the cluster nodes.</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Click <b class="menuref">Next</b> .</p>
+</li>
+<li>
+<p>You will be shown an information screen about AutoYaST .</p>
+</li>
+</ol>
+</div>
+</dd>
+</dl>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_setup2.png" alt="velum setup2">
+</div>
+</div>
+<div class="paragraph">
+<p>+
+This is now the time for you to install the master/worker nodes for the cluster.</p>
+</div>
+<div class="paragraph">
+<p>+
+.Leave The Admin Node Configuration Open
+IMPORTANT: If you quit out of the configuration process at this time by closing the browser window/tab, you will lose all input you made to the settings and have to restart the configuration from the beginning.</p>
+</div>
+<div class="paragraph">
+<p>We recommend you leave the browser window/tab open while you perform the installation of the other nodes in a new window.</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Click <b class="menuref">Next</b> to proceed and install some cluster nodes as described in <a href="#_sec.quick.install.node">Installing Cluster Nodes</a>.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.quick.install.node"><a class="anchor" href="#_sec.quick.install.node"></a>3. Installing Cluster Nodes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Cluster nodes can be installed manually, with AutoYaST
+, or are provisionend automatically on public cloud service.
+Manual installation is only feasible for a small number of workers.
+For larger numbers outside of public cloud service, AutoYaST
+is recommended.</p>
+</div>
+<div class="paragraph">
+<p>You can start the setup via PXE.
+For the full procedure, refer to the SUSE Linux Enterprise
+12 Deployment Guide: <a href="https://www.suse.com/documentation/sles-12/singlehtml/book_sle_deployment/book_sle_deployment.html#cha.deployment.prep_boot" class="bare">https://www.suse.com/documentation/sles-12/singlehtml/book_sle_deployment/book_sle_deployment.html#cha.deployment.prep_boot</a>.</p>
+</div>
+<div class="paragraph">
+<p>You can directly use the <code>initrd</code> and <code>linux</code> files from your install media, or install the package <span class="package">tftpboot-installation-CAASP-3.0</span>
+ on the TFTP server.
+The package provides the required <code>initrd</code> and <code>linux</code> files in the <code class="path">/srv/tftpboot/</code>
+ directory.
+You need to modify the paths used in the SUSE Linux Enterprise
+ 12 Deployment Guide to correctly point to the files provided by the package.</p>
+</div>
+<div class="paragraph">
+<p>Before you can set up a cluster node, you have to install and bootstrap an Administration Node
+to run the administration dashboard.
+Refer to <a href="#_sec.quick.install.admin">Installing The Administration Node</a> for information on how to install the Administration Node
+.</p>
+</div>
+<div class="sect2">
+<h3 id="_sec.quick.install.node.manual"><a class="anchor" href="#_sec.quick.install.node.manual"></a>3.1. Manual Installation</h3>
+<div id="_pro.quick.install.node.manual" class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Follow the steps as described in <a href="#_sec.quick.install.admin">Installing The Administration Node</a>.</p>
+</li>
+<li>
+<p>In step 3, select <code>Cluster Node</code> as <span class="menuseq"><b class="menu">System Role</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">] and enter the host name or IP address of the menu:Administration Node[</b></span> .</p>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Reliable Networking</div>
+Please make sure all nodes are on the same network and can communicate without interruptions.
+If you are using host names to specify nodes, please make sure you have reliable DNS resolution at all times, especially in combination with DHCP.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>After you have finalized the system configuration on the <span class="menuseq"><b class="menu">Installation Overview</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="submenu">] screen</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">click menu:Install[</b></span> . Up to this point no changes have been made to your system. After you click <b class="menuref">Install</b> a second time, the installation process starts.</p>
+<div class="paragraph">
+<p>After a reboot, the worker should show up in the dashboard and can be added to your cluster.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.quick.install.node.ay"><a class="anchor" href="#_sec.quick.install.node.ay"></a>3.2. Installation With AutoYaST</h3>
+<div class="paragraph">
+<p>Please make sure you have finished the initial configuration described in <a href="#_sec.quick.install.conf">Configuring the Administration Node</a> before installing cluster nodes with AutoYaST
+.</p>
+</div>
+<div id="_pro.quick.install.node.ay" class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Insert the SUSE CaaS Platform DVD into the drive, then reboot the computer to start the installation program.</p>
+</li>
+<li>
+<p></p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/install_boot_ay.png" alt="install boot ay">
+</div>
+</div>
+<div class="paragraph">
+<p>+
+Select <span class="menuseq"><b class="menu">Installation</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">]
+on the boot screen.
+Enter the necessary menu:Boot Options[</b></span>
+for AutoYaST
+and networking, namely:</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">autoyast</dt>
+<dd>
+<p>Path to the AutoYaST
+file.
+For more information, refer to <a href="https://www.suse.com/documentation/sles-12/book_autoyast/data/invoking_autoinst.html#commandline_ay" class="bare">https://www.suse.com/documentation/sles-12/book_autoyast/data/invoking_autoinst.html#commandline_ay</a></p>
+</dd>
+<dt class="hdlist1">ifcfg</dt>
+<dd>
+<p>Network configuration.
+If you are using dhcp, you can simply enter <code>ifcfg=eth0=dhcp</code>.
+Make sure to replace <code>eth0</code> with the actual name of the interface that you want to use DHCP for.
+For manual configuration, refer to <a href="https://www.suse.com/documentation/sles-12/book_autoyast/data/ay_adv_network.html" class="bare">https://www.suse.com/documentation/sles-12/book_autoyast/data/ay_adv_network.html</a>.</p>
+</dd>
+<dt class="hdlist1">hostname </dt>
+<dd>
+<p>The host name for the node, if not provided by DHCP.
+If you manually specify a host name, make sure it is unique.</p>
+<div class="paragraph">
+<p>Press <kbd>Enter</kbd>
+.
+This boots the system and loads the SUSE CaaS Platform
+installer.
+. The rest of the installation will run fully automated. After a reboot, the worker should show up in the dashboard and can be added to your cluster.</p>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.quick.install.bootstrap"><a class="anchor" href="#_sec.quick.install.bootstrap"></a>4. Bootstrapping The Cluster</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To complete the installation of your SUSE CaaS Platform
+cluster, it is necessary to bootstrap at least three additional nodes; those will be the Kubernetes
+master and workers.</p>
+</div>
+<div id="_pro.quick.install.bootstrap" class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Return to your admin node; with the AutoYaST instructions screen open from before.</p>
+</li>
+<li>
+<p>Click <b class="menuref">Next</b> .</p>
+</li>
+<li>
+<p>On the screen <span class="menuseq"><b class="menu">Select nodes and roles</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="submenu">]</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">you will see a list of <code>salt-minion</code> IDs under menu:Pending Nodes[</b></span> . These are internal IDs for the master/worker nodes you have just set up and which have automatically registered with the admin node in the background.</p>
+</li>
+<li>
+<p><span class="menuseq"><b class="menu">Accept</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">] individual nodes into the cluster or click menu:Accept All Nodes[</b></span> .</p>
+</li>
+<li>
+<p>Assign the roles of the added nodes.</p>
+<div class="paragraph">
+<p>By clicking on <b class="menuref">Select remaining nodes</b>
+, all nodes without a selected role will be assigned the <code>Worker</code> role.</p>
+</div>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_setup3.png" alt="velum setup3">
+</div>
+</div>
+<div class="paragraph">
+<p>+
+.Minimum Cluster Size
+IMPORTANT: You must designate at least <code>1</code> master node and <code>2</code> worker nodes..</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="paragraph">
+<p>+
+.Assign Unused Nodes Later
+TIP: Nodes that you do not wish to designate for a role now, can later be assigned one on the Velum
+status page.</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Once you have assigned all desired nodes a role, click <b class="menuref">Next</b> .</p>
+</li>
+<li>
+<p>The last step is to configure the external FQDNs for dashboard and Kubernetes API.</p>
+<div class="paragraph">
+<p>These values will determine where the nodes in the cluster will attempt to communicate.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Master Node Loadbalancer FQDN</div>
+If you are planning a larger cluster with multiple Master Node
+s, they must all be accessible from a single host name.
+If not, the functionality of Velum
+will degrade if the original Master Node
+is removed.
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Therefore, you should ensure that there is some form of load-balancing or reverse proxy configured at the location you enter here.</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_setup4.png" alt="velum setup4">
+</div>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">External Kubernetes API FQDN</dt>
+<dd>
+<p>Name used to reach the node running the Kubernetes
+API server.</p>
+<div class="paragraph">
+<p>In a simple deployment with a single master node, this will be the name of the node that was selected as the Master Node
+during bootstrapping of the cluster.</p>
+</div>
+</dd>
+<dt class="hdlist1">External Dashboard FQDN</dt>
+<dd>
+<p>Name used to reach the admin node running Velum
+.</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Click on <b class="menuref">Bootstrap cluster</b> to finalize the intial setup and start the bootstrapping process.</p>
+<div class="paragraph">
+<p>The status overview will be shown while the nodes are bootstrapped for their respective roles in the background.</p>
+</div>
+</li>
+</ol>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</article>
+  </main>
+</div>
+<footer class="footer">
+  <p>Copyright (C) 2017-2018 <a href="https://opensource.suse.com/doc-susemanager/">SUSE Manager</a></p>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js -->
+<script>
+function focusSearchInput () { document.querySelector('#search-input').focus() }
+var search = docsearch({
+  appId: 'KIB3CEDKWD',
+  apiKey: '51646b7d454f125193a0ba62253e8e17',
+  indexName: 'manager',
+  inputSelector: '#search-input',
+  autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+  algoliaOptions: { hitsPerPage: 10 }
+}).autocomplete;
+search.on('autocomplete:closed', function () { search.autocomplete.setVal() });
+focusSearchInput();
+window.addEventListener('load', focusSearchInput)
+</script>
+<script src="../../../_/js/site.js"></script>
+<script src="../../../_/js/vendor/highlight.js"></script>
+<script>hljs.initHighlighting()</script>
+  </body>
+</html>

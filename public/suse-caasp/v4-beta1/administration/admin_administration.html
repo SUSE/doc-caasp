@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cluster Management :: SUSE CaaS Platform Documentation</title>
+    <meta name="generator" content="Antora 2.0.0">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="stylesheet" href="../../../_/css/suse.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css">
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css -->
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header" role="banner">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-logo">
+        <img class="logo" src="../../../_/img/suse_logo_reverse.png" />
+      </div>
+      <div class="navbar-item">
+        <a href="https://r0ckarong.github.io">SUSE CaaS Platform</a>
+        <span class="separator">//</span>
+        <a href="../../..">Documentation</a>
+      </div>
+      <div class="navbar-item">
+        <input id="search-input" type="text" placeholder="Search docs">
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">Projects</div>
+          <div class="navbar-dropdown">
+            <div class="navbar-item"><strong>Resources</strong></div>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/tree/antora">Repository</a>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/issues">Issue Tracker</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="main-wrapper">
+<div class="navigation-container" data-component="suse-caasp" data-version="v4-beta1">
+  <aside class="navigation">
+    <div class="panels">
+<div class="navigation-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">SUSE CaaS Platform</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../quickstart/quick_intro.html">Quickstart Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_system_requirements.html">System Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_install.html">Installation and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_configuration.html">Node Configuration</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="admin_intro.html">Administration Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_security.html">Security</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="admin_administration.html">Administration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_software.html">Software Management</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_monitoring.html">Monitoring</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_logging.html">Logging</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_misc.html">Miscellaenous Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_integration_ses.html">SES Integration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_troubleshooting.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../deployment/deployment_intro.html">Deployment Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_about.html">About Deployment Guide</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_scenarios.html">Deployment Scenarios</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_sysreqs.html">System Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_preparation.html">Preparing The Installation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_installing_nodes.html">Installing and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_configuration.html">Node Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="navigation-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">SUSE CaaS Platform</span>
+    <span class="version">v4-beta1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">SUSE CaaS Platform</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">v4-beta1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+  <main class="main">
+<div class="toolbar" role="navigation">
+  <button class="navigation-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="crumbs" aria-label="breadcrumbs">
+  <ul>
+    <li class="crumb"><a href="../index.html">SUSE CaaS Platform</a></li>
+    <li class="crumb"><a href="admin_intro.html">Administration Guide</a></li>
+    <li class="crumb"><a href="admin_administration.html">Administration</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/mnapp/mydata/software/SUSE/doc-caasp/modules/administration/pages/admin_administration.adoc">Edit this Page</a></div>
+</div>
+<article class="doc">
+<h1>Cluster Management</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_sec.admin.kubernetes.install_kubectl">1. Interacting With {kube}</a></li>
+<li><a href="#_sec.admin.salt">2. Interacting with Salt</a>
+<ul class="sectlevel2">
+<li><a href="#_sec.admin.salt.worker_threads">2.1. Adjusting The Number Of Salt Worker Threads</a></li>
+</ul>
+</li>
+<li><a href="#_sec.admin.nodes">3. Node Management</a>
+<ul class="sectlevel2">
+<li><a href="#_sec.admin.nodes.add">3.1. Adding Nodes</a></li>
+<li><a href="#_sec.admin.nodes.remove">3.2. Removing Nodes</a></li>
+<li><a href="#_sec.admin.nodes.remove.unassigned">3.3. Removing Unassigned nodes</a></li>
+</ul>
+</li>
+<li><a href="#_sec.admin.nodes.graceful_shutdown">4. Graceful Shutdown and Startup</a>
+<ul class="sectlevel2">
+<li><a href="#_sec.admin.nodes.graceful_shutdown.overview">4.1. Overview</a></li>
+<li><a href="#_sec.admin.nodes.graceful_shutdown.nodes">4.2. Node Types</a></li>
+<li><a href="#_sec.admin.nodes.graceful_shutdown.complete">4.3. Complete Shutdown</a></li>
+<li><a href="#_sec.admin.nodes.graceful_shutdown.segmented">4.4. Segmented Reboots</a></li>
+<li><a href="#_sec.admin.nodes.graceful_shutdown.etcd">4.5. Behavior of <code>etcd</code></a></li>
+</ul>
+</li>
+<li><a href="#_sec.admin.scale_cluster">5. Scaling the Cluster</a></li>
+<li><a href="#_sec.admin.velum.registry">6. Configuring Remote Container Registry</a>
+<ul class="sectlevel2">
+<li><a href="#_sec.admin.velum.registry.add">6.1. Adding A Remote Registry</a></li>
+<li><a href="#_sec.admin.velum.registry.modify">6.2. Modifying A Registry</a></li>
+<li><a href="#_sec.admin.velum.registry.remove">6.3. Removing A Registry</a></li>
+</ul>
+</li>
+<li><a href="#_sec.admin.velum.mirror">7. Configuring A Registry Mirror</a>
+<ul class="sectlevel2">
+<li><a href="#_sec.admin.velum.mirror.add">7.1. Adding A Mirror</a></li>
+<li><a href="#_sec.admin.velum.mirror.modify">7.2. Modifying A Mirror</a></li>
+<li><a href="#_sec.admin.velum.mirror.remove">7.3. Removing A Mirror</a></li>
+</ul>
+</li>
+<li><a href="#_sec.admin.compute_resources">8. Reserving Compute Resources</a></li>
+</ul>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.kubernetes.install_kubectl"><a class="anchor" href="#_sec.admin.kubernetes.install_kubectl"></a>1. Interacting With {kube}</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>{kube}
+requires the use of <code>kubectl</code> for many tasks.
+You can perform most of these actions while logged in to an SSH session on the master node of your {productname}
+ cluster. <code>kubectl</code> is a pre-installed component of {productname}
+.</p>
+</div>
+<div class="paragraph">
+<p>The proxy functionality requires <code>kubectl</code> to be installed on your local machine to act as a proxy between the local workstation and the remote cluster.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">{sle}Desktop 12 SP3 / 15.0 - Installation from Packagehub</div>
+<div class="paragraph">
+<p>The use of PackageHub is <a href="https://packagehub.suse.com/support/">exempt from commercial support</a>.</p>
+</div>
+<div class="paragraph">
+<p>If you are using {sle}
+12 SP3 or 15.0, you must <a href="https://www.suse.com/documentation/sled-15/book_quickstarts/data/sec_modules_installing.html">enable the PackageHub Extension</a>.</p>
+</div>
+<div class="paragraph">
+<p>The instructions are identical for both versions.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">Installing <code class="command">kubectl</code> on Non-SUSE OS or Old Release</div>
+<div class="paragraph">
+<p>If you are using an operating system other than the current {sle}
+12 SP3/15.0 or {opensuse}
+Tumbleweed/Leap please consult the <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">
+    installation instructions</a> from the {kube}
+ project.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">The KUBECONFIG Variable</div>
+<div class="paragraph">
+<p>{kubectl}
+uses an environment variable named <code class="var">KUBECONFIG</code> to locate your {kubeconfig}
+ file.
+If this variable is not specified, it defaults to <code class="path">$HOME/.kube/config</code>
+.
+To use a different location, run</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``export KUBECONFIG=/PATH/TO/KUBE/CONFIG/FILE``</pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure: Install the <code>kubectl</code> package</div>
+<ol class="arabic">
+<li>
+<p>Install the <code class="path">kubectl</code> package:</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.sudo}``zypper in kubectl``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>To use kubectl to connect to a local machine you must perform <a href="#_sec.admin.security.auth.kubeconfig">[_sec.admin.security.auth.kubeconfig]</a> against the {kube} master node. Download the <code class="path">.kubeconfig</code> file from {dashboard} and place it in <code class="path">˜/.kube/config</code> .</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_status.png" alt="velum status">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Verify that <code>kubectl</code> was installed and is configured correctly:</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``kubectl get nodes`` NAME                  STATUS    ROLES     AGE       VERSION
+caasp3-master     Ready     master    1d        v1.9.8
+caasp3-worker-1   Ready     &lt;none&gt;    1d        v1.9.8
+caasp3-worker-2   Ready     &lt;none&gt;    1d        v1.9.8
+caasp3-worker-3   Ready     &lt;none&gt;    1d        v1.9.8
+caasp3-worker-4   Ready     &lt;none&gt;    1d        v1.9.8</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should see the list of nodes known to {productname}
+.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.salt"><a class="anchor" href="#_sec.admin.salt"></a>2. Interacting with Salt</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can run commands across all nodes in the cluster by running them via <code>salt</code>.</p>
+</div>
+<div class="paragraph">
+<p>Log in to the admin node and run:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``docker exec -it $(docker ps -q -f name="salt-master") \
+salt -P 'roles:(admin|kube-(master|minion)' \
+cmd.run "df -h"``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This command tells <code>docker</code> to find the <code>salt-master</code> container and execute the command on all nodes that match the roles <code>admin</code>, <code>kube-master</code>, and <code>kube-minion</code> (which is all nodes).</p>
+</div>
+<div class="paragraph">
+<p>Replace the example <code class="command">df -h</code> with a command of your choice.
+The output will be produced in your current terminal session.</p>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.salt.worker_threads"><a class="anchor" href="#_sec.admin.salt.worker_threads"></a>2.1. Adjusting The Number Of Salt Worker Threads</h3>
+<div class="paragraph">
+<p>It will sometimes be necessary to resize the {kube}
+cluster to adjust for workloads or other factors.
+Salt will run into problems, if the number of nodes to handle becomes too large without adjusting the number of available Salt worker threads.</p>
+</div>
+<div class="paragraph">
+<p>For the correct value, refer to <a href="#_sec.deploy.requirements.system.cluster.salt_cluster_size">[_sec.deploy.requirements.system.cluster.salt_cluster_size]</a>.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure: Adjust The Salt Worker Count</div>
+<ol class="arabic">
+<li>
+<p>Log in to your admin node via SSH.</p>
+</li>
+<li>
+<p>Run the following command to adjust the configured number of workers (here: <code>20</code>).</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``echo "worker_threads:20" &gt; /etc/salt/salt-master-custom.conf``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Find the ID of the {smaster} container.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``saltid=$(docker ps -q -f salt-master)``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>And restart the {smaster} .</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``docker kill $saltid``</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Now, Salt will restart and adjust the number of workers in the cluster.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.nodes"><a class="anchor" href="#_sec.admin.nodes"></a>3. Node Management</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After you complete the deployment and you bootstrap the cluster, you may need to perform additional changes to the cluster.
+By using {dashboard}
+you can add additional nodes to the cluster.
+You can also delete some nodes, but in that case make sure that you do not break the cluster.</p>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.nodes.add"><a class="anchor" href="#_sec.admin.nodes.add"></a>3.1. Adding Nodes</h3>
+<div class="paragraph">
+<p>You may need to add additional {worker_node}
+s to your cluster.
+The following steps guides you through that procedure:</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure: Adding Nodes to Existing Cluster</div>
+<ol class="arabic">
+<li>
+<p>Prepare the node as described in <a href="#_sec.deploy.nodes.worker_install">[_sec.deploy.nodes.worker_install]</a></p>
+</li>
+<li>
+<p>Open {dashboard} in your browser and login.</p>
+</li>
+<li>
+<p>You should see the newly added node as a node to be accepted in <span class="menuseq"><b class="menu">Pending Nodes</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">] . Click on menu:Accept Node[</b></span> .</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_pending_nodes.png" alt="velum pending nodes">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In the <span class="menuseq"><b class="menu">Summary</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">] you can see the menu:New[</b></span> that appears next to <span class="menuseq"><b class="menu">New nodes</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">] . Click the menu:New[</b></span> button.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_unassigned_nodes.png" alt="velum unassigned nodes">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Select the node to be added and click <b class="menuref">Add nodes</b> .</p>
+</li>
+<li>
+<p>The node has been added to your cluster.</p>
+</li>
+</ol>
+</div>
+<div class="sect3">
+<h4 id="_sec.admin.nodes.create_autoyast_profile"><a class="anchor" href="#_sec.admin.nodes.create_autoyast_profile"></a>3.1.1. The <code class="command">create_autoyast_profile</code> Command</h4>
+<div class="paragraph">
+<p>The <code class="command">create_autoyast_profile</code> command creates an autoyast profile for fully automatic installation of {productname}
+.
+You can use the following options when invoking the command:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>-o|--output</code></dt>
+<dd>
+<p>Specify to which file the command should save the created profile.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``create_autoyast_profile -o FILENAME``</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>--salt-master</code></dt>
+<dd>
+<p>Specify the host name of the {smaster}
+.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``create_autoyast_profile --salt-master SALTMASTER``</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>--smt-url</code></dt>
+<dd>
+<p>Specify the URL of the SMT server.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``create_autoyast_profile --smt-url SALTMASTER``</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>--regcode</code></dt>
+<dd>
+<p>Specify the registration code for {productname}
+.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``create_autoyast_profile --regcode REGISTRATION_CODE``</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>--reg-email</code></dt>
+<dd>
+<p>Specify an e-mail address for registration.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``create_autoyast_profile --reg-email E-MAIL_ADRESS``</pre>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.nodes.remove"><a class="anchor" href="#_sec.admin.nodes.remove"></a>3.2. Removing Nodes</h3>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If you attempt to remove more nodes than are required for the minimum cluster size (3 nodes: 1 master, 2 workers) {dashboard}
+will display a warning.
+Your cluster will be disfunctional until you add the minimum amount of nodes again.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>As each node in the cluster runs also an instance of <code>etcd</code>, {productname}
+ has to ensure that removing of several nodes does not break the <code>etcd</code> cluster.
+In case you have, for example, three nodes in the <code>etcd</code> and you delete two of them, {productname}
+ deletes one node, recovers the cluster and only if the recovery is successful, allows the next node to be removed.
+Refer to: <a href="#_sec.deploy.requirements.system.cluster.etcd_cluster_size">[_sec.deploy.requirements.system.cluster.etcd_cluster_size]</a>.</p>
+</div>
+<div class="paragraph">
+<p>If a node runs just an <code>etcd-proxy</code>, there is nothing special that has to be done, as deleting any amount of <code>etcd-proxy</code> cannot break the <code>etcd</code> cluster.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If you have only one master node configured, {dashboard}
+will not allow you to remove it.
+You must first add a second master node as a replacement.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Log-in to {dashboard} on your {productname} Admin node. Then, click <b class="menuref">Remove</b> next to the node you wish to remove. A dialog will ask you to confirm the removal.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_status.png" alt="velum status">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The cluster will then attempt to remove the node in a controlled manner. Progress is indicated by a spinning icon and the words <code>Pending removal</code> in the location where the <b class="menuref">Remove</b> -button was displayed before.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_pending_removal.png" alt="velum pending removal">
+</div>
+</div>
+<div class="paragraph">
+<p>+
+This should conclude the regular removal process.
+If the node is successfully removed, it will disappear from the list after a few moments.
+. In some cases nodes cannot be removed in a controlled manner and must be forced out of the cluster. A typical scenario is a machine instance was removed externally or has no connectivity. In such cases, the removal will fail. You then get the option to <b class="menuref">Force remove</b> . A dialog will ask you to confirm the removal.</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_failed_removal.png" alt="velum failed removal">
+</div>
+</div>
+<div class="paragraph">
+<p>+
+Additionally, a large warning dialog will ask you to confirm the forced removal.
+Click <b class="menuref">Proceed with forcible removal</b>
+if you are sure you wish to force the node out of the cluster.</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_force_removal.png" alt="velum force removal">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.nodes.remove.unassigned"><a class="anchor" href="#_sec.admin.nodes.remove.unassigned"></a>3.3. Removing Unassigned nodes</h3>
+<div class="paragraph">
+<p>You might run into the situation where you have (accidentally) added new nodes to a cluster but did not wish to bootstrap them.
+They are now registered against the cluster and show up in "Unassigned nodes". You might have already configured the machine to register with another cluster and want to clean out this entry from the "Unassigned Nodes" view.
+You must perform the following steps:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Find the "Unassigned nodes" line in the overview and click on menu:(new)[] next to the count number. You will be shown the "Unassigned Nodes" view where all the unassigned nodes are listed. Make sure that you first assign all roles to nodes that you wish to keep and proceed with bootstrapping. Once the list only show the nodes you are sure to remove copy the ID of the node you wish to drop.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_unassigned_nodes.png" alt="velum unassigned nodes">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Log into the Admin node of you cluster via SSH.</p>
+</li>
+<li>
+<p>Run the following command and replace <code class="replaceable">$ID_FROM_UNASSIGNED_QUEUE</code> with the node ID that you copied from the "Unassigned nodes" view in {dashboard} .</p>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Make absolutely sure that the node ID you have copied is the one of the node you wish to drop.
+This command is <code>irreversible</code> and will remove the specified node from the cluster without confirmation.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``docker exec -it $(docker ps -q -f name="velum-dashboard") \
+entrypoint.sh bundle exec rails runner 'puts Minion.find_by(minion_id: "$ID_FROM_UNASSIGNED_QUEUE").destroy'``</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.nodes.graceful_shutdown"><a class="anchor" href="#_sec.admin.nodes.graceful_shutdown"></a>4. Graceful Shutdown and Startup</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_sec.admin.nodes.graceful_shutdown.overview"><a class="anchor" href="#_sec.admin.nodes.graceful_shutdown.overview"></a>4.1. Overview</h3>
+<div class="paragraph">
+<p>{kube}
+, being a self-healing solution, tries to keep all pods and services available.
+In general, this is of its core features and desired functions.
+But it is important to take this into account if you are doing a complete shutdown of the infrastructure.</p>
+</div>
+<div class="paragraph">
+<p>There are two ways of shutting down the whole cluster: Shut down and start all nodes at once or restart them sequentially in segments.
+In both cases, {productname}
+expects that IP addresses do not change after the restart, even when using dynamic IP addresses.</p>
+</div>
+<div class="paragraph">
+<p>When restarting segments of nodes, it is possible to avoid downtime.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Deviating from Shutdown and Startup Procedures</div>
+<div class="paragraph">
+<p>The procedures described in this section are recommended to reduce logged errors.
+However, it is possible to not follow this order as long as all nodes are stopped in a graceful way.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.nodes.graceful_shutdown.nodes"><a class="anchor" href="#_sec.admin.nodes.graceful_shutdown.nodes"></a>4.2. Node Types</h3>
+<div class="paragraph">
+<p>For shutting down and starting nodes, three different types of nodes are relevant:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The {admin_node} contains state and needs to be shut down in a graceful way to ensure that all state has been synced to disk in a clean way.</p>
+</li>
+<li>
+<p>Nodes with <code>etcd</code> contain state and also need to be shut down in a graceful way. They will usually be a subset of the master nodes. But it can happen that some workers run <code>etcd</code> members.</p>
+</li>
+<li>
+<p>The rest (masters and workers not running <code>etcd</code> members): These nodes contain local state possibly created by applications running on top of the cluster. They need to be shut down in a graceful way too, when possible.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.nodes.graceful_shutdown.complete"><a class="anchor" href="#_sec.admin.nodes.graceful_shutdown.complete"></a>4.3. Complete Shutdown</h3>
+<div class="sect3">
+<h4 id="_sec.admin.nodes.graceful_shutdown.complete.shutdown"><a class="anchor" href="#_sec.admin.nodes.graceful_shutdown.complete.shutdown"></a>4.3.1. Shutting Down</h4>
+<div class="paragraph">
+<p>All commands are executed on the admin node.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Disable scheduling on the whole cluster. This will avoid {kube} rescheduling jobs while you are shutting down nodes.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``kubectl get nodes -o name | xargs -I{} kubectl cordon {}``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Gracefully shut down all worker nodes.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``docker exec -it $(docker ps -q -f name="salt-master") \
+salt --async -G 'roles:kube-minion' cmd.run 'systemctl poweroff'``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Gracefully shut down all master nodes.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``docker exec -it $(docker ps -q -f name="salt-master") \
+salt --async -G 'roles:kube-master' cmd.run 'systemctl poweroff'``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Shut down the {admin_node} :</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``systemctl poweroff``</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_sec.admin.nodes.graceful_shutdown.complete.startup"><a class="anchor" href="#_sec.admin.nodes.graceful_shutdown.complete.startup"></a>4.3.2. Starting Up</h4>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title"><code>kubectl</code> Needs Master Nodes To Function</div>
+<div class="paragraph">
+<p><code class="command">kubectl</code> requires use of the {kube}
+ API hosted on the master nodes.
+Therefore, until at least some of the master nodes have started successfully, you will see error messages of the type <code>HTTP 503</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Error from server (InternalError): an error on the server
+("&lt;html&gt;&lt;body&gt;&lt;h1&gt;503 Service Unavailable&lt;/h1&gt;\nNo server is available
+to handle this request.\n&lt;/body&gt;&lt;/html&gt;") has prevented the request
+from succeeding (get nodes)</pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Start the {admin_node} up. All commands are executed on the {admin_node} .</p>
+</li>
+<li>
+<p>Once that the admin node is up, start the master nodes. Keep checking the status of the master nodes. Continue as soon as all master nodes are <code>Ready</code>.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``kubectl get nodes`` NAME       STATUS                        ROLES     AGE       VERSION
+master-0   Ready,SchedulingDisabled      master    21h       v1.9.8
+master-1   Ready,SchedulingDisabled      master    21h       v1.9.8
+master-2   Ready,SchedulingDisabled      master    21h       v1.9.8
+worker-0   NotReady,SchedulingDisabled   &lt;none&gt;    21h       v1.9.8
+worker-1   NotReady,SchedulingDisabled   &lt;none&gt;    21h       v1.9.8
+worker-2   NotReady,SchedulingDisabled   &lt;none&gt;    21h       v1.9.8
+worker-3   NotReady,SchedulingDisabled   &lt;none&gt;    21h       v1.9.8
+worker-4   NotReady,SchedulingDisabled   &lt;none&gt;    21h       v1.9.8</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Continue by starting all the worker nodes. Keep checking the status of the nodes. Continue when all nodes are <code>Ready</code>.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``kubectl get nodes`` NAME       STATUS                     ROLES     AGE       VERSION
+master-0   Ready,SchedulingDisabled   master    21h       v1.9.8
+master-1   Ready,SchedulingDisabled   master    21h       v1.9.8
+master-2   Ready,SchedulingDisabled   master    21h       v1.9.8
+worker-0   Ready,SchedulingDisabled   &lt;none&gt;    21h       v1.9.8
+worker-1   Ready,SchedulingDisabled   &lt;none&gt;    21h       v1.9.8
+worker-2   Ready,SchedulingDisabled   &lt;none&gt;    21h       v1.9.8
+worker-3   Ready,SchedulingDisabled   &lt;none&gt;    21h       v1.9.8
+worker-4   Ready,SchedulingDisabled   &lt;none&gt;    21h       v1.9.8</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Uncordon all nodes so they can receive new workloads:</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``kubectl get nodes -o name | xargs -I{} kubectl uncordon {}``</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.nodes.graceful_shutdown.segmented"><a class="anchor" href="#_sec.admin.nodes.graceful_shutdown.segmented"></a>4.4. Segmented Reboots</h3>
+<div class="paragraph">
+<p>A sequential reboot of cluster segments is a way to completely avoid the downtime of services or at least reduce it as much as possible.
+However, downtime of services occurs if all pods of a service are forced on one node.</p>
+</div>
+<div class="sect3">
+<h4 id="_sec.admin.nodes.graceful_shutdown.segmented.worker"><a class="anchor" href="#_sec.admin.nodes.graceful_shutdown.segmented.worker"></a>4.4.1. Rebooting Worker Nodes</h4>
+<div class="paragraph">
+<p>The number of worker nodes to reboot at once depends on the number of total worker nodes and their labels.</p>
+</div>
+<div class="paragraph">
+<p>For example: If there are 5 worker nodes with 2 of them having the label <code>diskType: ssd</code>, then the two nodes with SSDs must not be shut down at the same time.</p>
+</div>
+<div class="paragraph">
+<p>The size of segments for simultaneous reboots depends on the topology of the cluster and the workload.
+We recommend to use small segment sizes.
+This makes it less likely that all nodes running replicas of the same pod are shut down at the same time.</p>
+</div>
+<div class="paragraph">
+<p>During this migration time, the worker nodes need to be able to reach the master nodes at all times.
+This includes master nodes that are already or not yet updated.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_rebooting_master_nodes"><a class="anchor" href="#_rebooting_master_nodes"></a>4.4.2. Rebooting Master Nodes</h4>
+<div class="paragraph">
+<p>Master nodes should not run user workloads.
+This means that the decision to batch the reboots of master nodes depends on whether you want to keep control of the cluster while the reboot is taking place.</p>
+</div>
+<div class="paragraph">
+<p>If all the master nodes disappear at the same time, the worker nodes continue serving the services they are running.
+No further operation will take place on the worker nodes, since they cannot contact an <code>apiserver</code> to discover new workloads or perform any other operations.</p>
+</div>
+<div class="paragraph">
+<p>It is safe to choose batches as desired.
+Rebooting one by one is the safest, two by two is generally safe too.
+For larger batches than two, certain cluster services, for example <code>dex</code>, could be completely shut down.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.nodes.graceful_shutdown.etcd"><a class="anchor" href="#_sec.admin.nodes.graceful_shutdown.etcd"></a>4.5. Behavior of <code>etcd</code></h3>
+<div class="paragraph">
+<p><code class="command">etcd</code> requires special considerations for maintaining cluster health and integrtiy.
+Refer to: <a href="#_sec.deploy.requirements.system.cluster.etcd_cluster_size">[_sec.deploy.requirements.system.cluster.etcd_cluster_size]</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.scale_cluster"><a class="anchor" href="#_sec.admin.scale_cluster"></a>5. Scaling the Cluster</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The default maximum number of nodes in a cluster is 40.
+The Salt Master configuration needs to be adjusted to handle installation and updating a of larger cluster:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Node Count and Salt Worker Threads</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Nodes</th>
+<th class="tableblock halign-left valign-top">Salt Worker Threads</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&gt;40</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">20</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&gt;60</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">30</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&gt;75</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">40</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&gt;85</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">50</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&gt;95</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">60</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>To change the variable in the {smaster}
+configuration, run the following on the {admin_node}
+:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``echo "worker_threads: 20" &gt; /etc/caasp/salt-master-custom.conf`` {prompt.root}``docker restart $(docker ps -q -f name="salt-master")``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>{smaster}
+will be automatically restarted by kubelet.</p>
+</div>
+<div class="paragraph">
+<p>Following bootstrapping failure, you can check if Salt worker_threads is too low.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``docker logs $(docker ps -q -f name="salt-master") \
+    | grep -i worker_threads``</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.velum.registry"><a class="anchor" href="#_sec.admin.velum.registry"></a>6. Configuring Remote Container Registry</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A remote registry allows you to access container images locally.
+This is commonly used in cases where a {productname}
+cluster is not allowed to have direct access to the internet.
+You can create a local registry with the images that you will need and add the information for that registry here.
+If the registry is using a self-signed certificate, it can be added here to create trust between Kubernetes and the registry.</p>
+</div>
+<div class="paragraph">
+<p>By default, Docker Hub and the {suse}
+container registry are available sources for container images.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_settings_registry_overview.png" alt="velum settings registry overview">
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.velum.registry.add"><a class="anchor" href="#_sec.admin.velum.registry.add"></a>6.1. Adding A Remote Registry</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Log in to {dashboard} and navigate to <b class="menuref">Settings → Remote Registries</b> .</p>
+</li>
+<li>
+<p>Click on <b class="menuref">Add Remote Registry</b> to add a new remote registry configuration.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_settings_remote_registry.png" alt="velum settings remote registry">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Fill in the options for the new registry.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_settings_new_registry.png" alt="velum settings new registry">
+</div>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Name</dt>
+<dd>
+<p>Define a name for the registry.</p>
+</dd>
+<dt class="hdlist1">URL</dt>
+<dd>
+<p>Enter the URL for the registry in the format <code>http(s)://&lt;hostname&gt;:&lt;port&gt;</code>.</p>
+</dd>
+<dt class="hdlist1">Certificate</dt>
+<dd>
+<p>Will only be shown if the <code>URL</code> field contains <code>https:</code>.</p>
+<div class="paragraph">
+<p>Provide the body of the (self-signed) SSL certificate for the registry.
+. You will be shown a summary of the details of the registry you have just created.</p>
+</div>
+<div class="paragraph">
+<p>+
+If you have to adjust the registry click <b class="menuref">Edit</b>
+to return to the editing dialog.</p>
+</div>
+<div class="paragraph">
+<p>+
+Click <b class="menuref">Delete</b>
+if you made a mistake and wish to remove the registry.
+You can always remove the registry from the overview later.</p>
+</div>
+<div class="paragraph">
+<p>+
+If you wish to define a mirror for this registry you can click on <b class="menuref">Add Mirror</b>
+to do so.
+For details, refer to <a href="#_sec.admin.velum.mirror">Configuring A Registry Mirror</a></p>
+</div>
+</dd>
+</dl>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_settings_registry_details.png" alt="velum settings registry details">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>If you have further registries to add, repeat the previous steps.</p>
+</li>
+<li>
+<p>Finally, click the <b class="menuref">Apply Changes</b> button on the top of the page. This will update the registry settings across the cluster.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.velum.registry.modify"><a class="anchor" href="#_sec.admin.velum.registry.modify"></a>6.2. Modifying A Registry</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Log in to {dashboard} and navigate to <b class="menuref">Settings → Remote Registries</b> .</p>
+</li>
+<li>
+<p>Click on the pencil icon in the row of the registry you wish to modify. Perform the changes you wish to make and click "Save".</p>
+</li>
+<li>
+<p>If you have further registries to modify, repeat the previous steps.</p>
+</li>
+<li>
+<p>Finally, click the <b class="menuref">Apply Changes</b> button on the top of the page. This will update the registry settings across the cluster.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.velum.registry.remove"><a class="anchor" href="#_sec.admin.velum.registry.remove"></a>6.3. Removing A Registry</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Log in to {dashboard} and navigate to <b class="menuref">Settings → Remote Registries</b> .</p>
+</li>
+<li>
+<p>Click on the red trashcan icon in the row of the registry you wish to delete and confirm the popup dialog by clicking <b class="menuref">OK</b> .</p>
+</li>
+<li>
+<p>If you have further registries to remove, repeat the previous steps.</p>
+</li>
+<li>
+<p>Finally, click the <b class="menuref">Apply Changes</b> button on the top of the page. This will update the registry settings across the cluster.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.velum.mirror"><a class="anchor" href="#_sec.admin.velum.mirror"></a>7. Configuring A Registry Mirror</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Similar to the <span class="menuseq"><b class="menu">Remote Registries</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="submenu">]
+ page</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">the menu:Mirrors[</b></span>
+ page allows you to add redundant image mirrors to existing registries.
+The internal container engine will use this information to reroute requests from the cluster nodes to the defined mirror address.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_settings_mirror_overview.png" alt="velum settings mirror overview">
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.velum.mirror.add"><a class="anchor" href="#_sec.admin.velum.mirror.add"></a>7.1. Adding A Mirror</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Log in to {dashboard} and navigate to <b class="menuref">Settings → Mirrors</b> .</p>
+</li>
+<li>
+<p>Click on <b class="menuref">Add Mirror</b> to add a new registry mirror configuration.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_settings_mirror.png" alt="velum settings mirror">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Fill in the options for the new mirror.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_settings_new_mirror.png" alt="velum settings new mirror">
+</div>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Mirror of</dt>
+<dd>
+<p>Select one of the configured registries from the menu.</p>
+</dd>
+<dt class="hdlist1">Name</dt>
+<dd>
+<p>Define a name for the mirror.</p>
+</dd>
+<dt class="hdlist1">URL</dt>
+<dd>
+<p>Enter the URL for the mirror in the format <code>http(s)://&lt;hostname&gt;:&lt;port&gt;</code>.</p>
+</dd>
+<dt class="hdlist1">Certificate</dt>
+<dd>
+<p>Will only be shown if the <code>URL</code> field contains <code>https:</code>.</p>
+<div class="paragraph">
+<p>Provide the body of the (self-signed) SSL certificate for the registry.
+. </p>
+</div>
+</dd>
+</dl>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_settings_mirror_details.png" alt="velum settings mirror details">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.velum.mirror.modify"><a class="anchor" href="#_sec.admin.velum.mirror.modify"></a>7.2. Modifying A Mirror</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Log in to {dashboard} and navigate to <b class="menuref">Settings → Mirrors</b> .</p>
+</li>
+<li>
+<p>Click on the pencil icon in the row of the mirror you wish to modify. Perform the changes you wish to make and click "Save".</p>
+</li>
+<li>
+<p>If you have further mirrors to modify, repeat the previous steps.</p>
+</li>
+<li>
+<p>Finally, click the <b class="menuref">Apply Changes</b> button on the top of the page. This will update the mirror settings across the cluster.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.velum.mirror.remove"><a class="anchor" href="#_sec.admin.velum.mirror.remove"></a>7.3. Removing A Mirror</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Log in to {dashboard} and navigate to <b class="menuref">Settings → Mirrors</b> .</p>
+</li>
+<li>
+<p>Click on the trashcan icon in the row of the mirror you wish to remove and confirm the popup dialog with <b class="menuref">OK</b> .</p>
+</li>
+<li>
+<p>If you have further mirrors to remove, repeat the previous steps.</p>
+</li>
+<li>
+<p>Finally, click the <b class="menuref">Apply Changes</b> button on the top of the page. This will update the mirror settings across the cluster.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.compute_resources"><a class="anchor" href="#_sec.admin.compute_resources"></a>8. Reserving Compute Resources</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By default, {kube}
+will allocate all available hardware resources of a node to pods.
+This can starve core services of needed resources, which are, for example, required for managing single nodes or the cluster.
+To prevent core services from running out of resources, you can reserve CPU, memory, and disk resources for them.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="title">Carefully Check Entered Values</div>
+<div class="paragraph">
+<p>Entering invalid values into the input fields may break nodes.
+Carefully check the entered values before selecting the <b class="menuref">Save</b>
+ button.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_settings_compute_resource.png" alt="velum settings compute resource">
+</div>
+</div>
+<div class="paragraph">
+<p>To reserve hardware resources, go to the {dashboard}
+dashboard and then proceed to <em>Settings</em> and <em>Compute
+   Resources Reservation</em>.</p>
+</div>
+<div class="paragraph">
+<p>You can reserve resources for {kube}
+services in the box <code>{kube}
+ core services</code> and for services running on a single node in <code>Host system services</code>.</p>
+</div>
+<div class="paragraph">
+<p>In the box <code>Eviction threshold</code>, you can set rules for killing pods when the usage of RAM or storage reaches a defined level.
+This prevents nodes from actually running out of resources, which would then trigger the default out-of-resource-handling.</p>
+</div>
+<div class="paragraph">
+<p>To activate entered settings, use the <b class="menuref">Save</b>
+ button at the bottom of the page.</p>
+</div>
+</div>
+</div>
+</article>
+  </main>
+</div>
+<footer class="footer">
+  <p>Copyright (C) 2017-2018 <a href="https://opensource.suse.com/doc-susemanager/">SUSE Manager</a></p>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js -->
+<script>
+function focusSearchInput () { document.querySelector('#search-input').focus() }
+var search = docsearch({
+  appId: 'KIB3CEDKWD',
+  apiKey: '51646b7d454f125193a0ba62253e8e17',
+  indexName: 'manager',
+  inputSelector: '#search-input',
+  autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+  algoliaOptions: { hitsPerPage: 10 }
+}).autocomplete;
+search.on('autocomplete:closed', function () { search.autocomplete.setVal() });
+focusSearchInput();
+window.addEventListener('load', focusSearchInput)
+</script>
+<script src="../../../_/js/site.js"></script>
+<script src="../../../_/js/vendor/highlight.js"></script>
+<script>hljs.initHighlighting()</script>
+  </body>
+</html>

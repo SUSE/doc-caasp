@@ -6,17 +6,23 @@ site:
 content:
   sources:
   # For building locally
-  #- url: .
+  - url: .
   # For building from the github repository directly.
-  - url: https://github.com/SUSE/doc-caasp.git
+  #- url: https://github.com/SUSE/doc-caasp.git
     branches:
     - 'antora'
-
+asciidoc:
+  attributes:
+    test: 'Insert some text'
+    experimental: ''
 ui:
   bundle:
+    #url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable
+    #url: https://gitlab.com/jcayouette2/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable
     url: ui-bundle.zip
     snapshot: false
   supplemental_files: ./supplemental-ui
+  #supplemental_files: ./supplemental-ui/external
 output:
   dir: ./public
 runtime:

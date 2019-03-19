@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logging :: SUSE CaaS Platform Documentation</title>
+    <meta name="generator" content="Antora 2.0.0">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="stylesheet" href="../../../_/css/suse.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css">
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css -->
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header" role="banner">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-logo">
+        <img class="logo" src="../../../_/img/suse_logo_reverse.png" />
+      </div>
+      <div class="navbar-item">
+        <a href="https://r0ckarong.github.io">SUSE CaaS Platform</a>
+        <span class="separator">//</span>
+        <a href="../../..">Documentation</a>
+      </div>
+      <div class="navbar-item">
+        <input id="search-input" type="text" placeholder="Search docs">
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">Projects</div>
+          <div class="navbar-dropdown">
+            <div class="navbar-item"><strong>Resources</strong></div>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/tree/antora">Repository</a>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/issues">Issue Tracker</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="main-wrapper">
+<div class="navigation-container" data-component="suse-caasp" data-version="v4-beta1">
+  <aside class="navigation">
+    <div class="panels">
+<div class="navigation-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">SUSE CaaS Platform</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../quickstart/quick_intro.html">Quickstart Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_system_requirements.html">System Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_install.html">Installation and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_configuration.html">Node Configuration</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="admin_intro.html">Administration Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_security.html">Security</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_administration.html">Administration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_software.html">Software Management</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_monitoring.html">Monitoring</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="admin_logging.html">Logging</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_misc.html">Miscellaenous Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_integration_ses.html">SES Integration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_troubleshooting.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../deployment/deployment_intro.html">Deployment Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_about.html">About Deployment Guide</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_scenarios.html">Deployment Scenarios</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_sysreqs.html">System Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_preparation.html">Preparing The Installation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_installing_nodes.html">Installing and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_configuration.html">Node Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="navigation-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">SUSE CaaS Platform</span>
+    <span class="version">v4-beta1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">SUSE CaaS Platform</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">v4-beta1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+  <main class="main">
+<div class="toolbar" role="navigation">
+  <button class="navigation-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="crumbs" aria-label="breadcrumbs">
+  <ul>
+    <li class="crumb"><a href="../index.html">SUSE CaaS Platform</a></li>
+    <li class="crumb"><a href="admin_intro.html">Administration Guide</a></li>
+    <li class="crumb"><a href="admin_logging.html">Logging</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/mnapp/mydata/software/SUSE/doc-caasp/modules/administration/pages/admin_logging.adoc">Edit this Page</a></div>
+</div>
+<article class="doc">
+<h1>Logging</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_sec.admin.logging.intro">1. About SUSE CaaS Platform Logging</a>
+<ul class="sectlevel2">
+<li><a href="#_sec.admin.logging.intro.log_levels">1.1. Log levels</a></li>
+</ul>
+</li>
+<li><a href="#_sec.admin.logging.admin">2. Admin Node Logs</a>
+<ul class="sectlevel2">
+<li><a href="#_sec.admin.logging.velum">2.1. Velum Logs</a></li>
+<li><a href="#_sec.admin.logging.ldap">2.2. OpenLDAP Logs</a></li>
+</ul>
+</li>
+<li><a href="#_sec.admin.logging.salt">3. Salt Logging</a>
+<ul class="sectlevel2">
+<li><a href="#_sec.admin.logging.salt.orchestration">3.1. Salt Orchestration Log</a></li>
+<li><a href="#_sec.admin.logging.salt.master">3.2. Salt Master Log</a></li>
+<li><a href="#_sec.admin.logging.salt.minion">3.3. Salt Minion Logs</a></li>
+<li><a href="#_sec.admin.logging.log_levels.salt">3.4. Salt Log Levels</a></li>
+</ul>
+</li>
+<li><a href="#_sec.admin.logging.transactional_updates">4. Transactional Update Log</a></li>
+<li><a href="#_sec.admin.logging.kubernetes">5. Kubernetes Audit Log</a>
+<ul class="sectlevel2">
+<li><a href="#_sec.admin.logging.log_levels.kubernetes">5.1. Kubernetes Log Levels</a></li>
+</ul>
+</li>
+<li><a href="#_sec.admin.logging.fluentd">6. External log collection</a></li>
+</ul>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Scope Of This Document</div>
+<div class="paragraph">
+<p>The scope of this document is limited to the SUSE CaaS Platform
+Infrastructure layer.
+Logging the activity of deployed applications is beyond the scope of this document.</p>
+</div>
+<div class="paragraph">
+<p>Please refer to: <a href="https://kubernetes.io/docs/concepts/cluster-administration/logging/">Kubernetes:
+   Logging Architecture</a> for more information.</p>
+</div>
+<div class="paragraph">
+<p>The SUSE CaaS Platform
+components run in indvidual Docker containers and typically you can get a set of log information using <a href="https://docs.docker.com/engine/reference/commandline/logs/#extended-description">docker-logs</a>.</p>
+</div>
+<div class="paragraph">
+<p>For detailed information on how to use log files for the individual components, please refer to the respective official documentation of the component.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.logging.intro"><a class="anchor" href="#_sec.admin.logging.intro"></a>1. About SUSE CaaS Platform Logging</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Logging across the cluster is done on multiple logical levels.
+You can think of them as three logical layers (simplified).</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>SUSE CaaS Platform Infrastructure (Salt, Velum, LDAP)</p>
+</li>
+<li>
+<p>Cluster (etcd, dex, tiller, kubernetes apiserver, kubernetes controller-manager, kubernetes scheduler)</p>
+</li>
+<li>
+<p>Pod (kubelet, haproxy, flanneld, systemd, journald, dmesg)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The individual log files allow introspection of activities across the cluster.
+Due to some technical limitations it is sometimes not possible to directly trace log events from one layer to the next.
+Most log files would be used for debugging purposes only.</p>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.logging.intro.log_levels"><a class="anchor" href="#_sec.admin.logging.intro.log_levels"></a>1.1. Log levels</h3>
+<div class="paragraph">
+<p>There are two main components and their respective sub-components that allow configuration of different loglevels: Salt and Kubernetes
+.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Salt</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>salt-master</code></p>
+</li>
+<li>
+<p><code>salt-minion</code> on each machine</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Kubernetes</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Master nodes</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>apiserver</code></p>
+</li>
+<li>
+<p><code>controller-manager</code></p>
+</li>
+<li>
+<p><code>scheduler</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>All nodes</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>kubelet</code></p>
+</li>
+<li>
+<p><code>kube proxy</code></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.logging.admin"><a class="anchor" href="#_sec.admin.logging.admin"></a>2. Admin Node Logs</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_sec.admin.logging.velum"><a class="anchor" href="#_sec.admin.logging.velum"></a>2.1. Velum Logs</h3>
+<div class="paragraph">
+<p>The Velum
+logs will contain more details on error messages displayed in the dashboard.</p>
+</div>
+<div class="paragraph">
+<p>Logs are generated in the Velum
+container (<code>k8s_velum-dashboard</code>) running on the admin node.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``docker logs $(docker ps -q -f name="k8s_velum-dashboard")``</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.logging.ldap"><a class="anchor" href="#_sec.admin.logging.ldap"></a>2.2. OpenLDAP Logs</h3>
+<div class="paragraph">
+<p>The OpenLDAP logs contain information about the authentication of users in the Velum
+dashboard.</p>
+</div>
+<div class="paragraph">
+<p>The OpenLDAP logs are generated in the <code class="path">k8s_openldap_velum</code>
+ container running on the admin node.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``docker logs $(docker ps -q -f name="k8s_openldap_velum")``</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.logging.salt"><a class="anchor" href="#_sec.admin.logging.salt"></a>3. Salt Logging</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>Salt</code> performs a variety of functions that control behavior and configuration of the Kubernetes
+ cluster.
+A failure of executing certain <code>Salt</code> workflows could lead to an unhealthy cluster, in such a case it can be inspected using <code>Salt</code> log information.</p>
+</div>
+<div class="paragraph">
+<p>Salt orchestration and master log are generated on the <code>Salt
+   Master</code> container (<code class="path">k8s_salt-master</code>
+) running on the admin node.</p>
+</div>
+<div class="paragraph">
+<p>Salt minion logs are generated in the respective salt minion containers on each node.
+The <code>salt-master</code> collects these logs on the admin node and writes them into the MariaDB container <code class="path">k8s_velum-mariadb</code>
+.</p>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.logging.salt.orchestration"><a class="anchor" href="#_sec.admin.logging.salt.orchestration"></a>3.1. Salt Orchestration Log</h3>
+<div class="paragraph">
+<p>The <code>Salt</code> orchestration logs contains log entries about orchestration events that have changed the cluster.</p>
+</div>
+<div class="paragraph">
+<p>Orchestration events are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Bootstrapping</p>
+</li>
+<li>
+<p>Adding new nodes</p>
+</li>
+<li>
+<p>Removing nodes</p>
+</li>
+<li>
+<p>Updating settings</p>
+</li>
+<li>
+<p>Upgrading a cluster</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``/var/lib/supportutils-plugin-suse-caasp/debug-salt \
+--json_output=events.txt \
+--summary_output=events-summarized.txt \
+--text-status \
+--no-color``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Reading the <code class="path">events-summarized.txt</code>
+ file should be enough for detecting most (if not all) of the issues caused by <code>Salt</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.logging.salt.master"><a class="anchor" href="#_sec.admin.logging.salt.master"></a>3.2. Salt Master Log</h3>
+<div class="paragraph">
+<p>Retrieve the <code>salt-master</code> logs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``docker exec -it $(docker ps -q -f name="salt-master") \
+cat /var/log/salt/master``</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.logging.salt.minion"><a class="anchor" href="#_sec.admin.logging.salt.minion"></a>3.3. Salt Minion Logs</h3>
+<div class="paragraph">
+<p>Retrieve the <code>salt-minion</code> logs for all nodes.
+This will show all output for all <code>salt-minions</code> at once.
+Execute the following command on the admin node.</p>
+</div>
+<div class="paragraph">
+<p>Of course, it&#8217;s possible to retrieve this information on any specific node by reading the <code class="path">/var/log/salt/minion</code>
+ file.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``docker exec -it $(docker ps -q -f name="salt-master") \
+salt '*' cmd.run "cat /var/log/salt/minion"``</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.logging.log_levels.salt"><a class="anchor" href="#_sec.admin.logging.log_levels.salt"></a>3.4. Salt Log Levels</h3>
+<div class="paragraph">
+<p>Salt provides different loglevels that apply both to the master and the minions.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">quiet</dt>
+<dd>
+<p>Nothing should be logged at this level</p>
+</dd>
+<dt class="hdlist1">critical</dt>
+<dd>
+<p>Critical errors</p>
+</dd>
+<dt class="hdlist1">error</dt>
+<dd>
+<p>Errors</p>
+</dd>
+<dt class="hdlist1">warning</dt>
+<dd>
+<p>Warnings</p>
+</dd>
+<dt class="hdlist1">info</dt>
+<dd>
+<p>Normal log information</p>
+</dd>
+<dt class="hdlist1">profile</dt>
+<dd>
+<p>Profiling information on salt performance</p>
+</dd>
+<dt class="hdlist1">debug</dt>
+<dd>
+<p>Information useful for debugging both salt implementations and salt code</p>
+</dd>
+<dt class="hdlist1">trace</dt>
+<dd>
+<p>More detailed code debugging information</p>
+</dd>
+<dt class="hdlist1">garbage</dt>
+<dd>
+<p>Even more debugging information</p>
+</dd>
+<dt class="hdlist1">all</dt>
+<dd>
+<p>Everything</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>For detailed explanations of the usage of these log levels please see: <a href="https://docs.saltstack.com/en/latest/ref/configuration/logging/">Salt
+    Log Levels (Upstream)</a></p>
+</div>
+<div class="sect3">
+<h4 id="_sec.admin.logging.log_levels.salt.set"><a class="anchor" href="#_sec.admin.logging.log_levels.salt.set"></a>3.4.1. Setting A Different Log Level</h4>
+<div class="paragraph">
+<p>The <code>salt-master</code> configuration can be modified on the admin node, at <code class="path">/etc/caasp/salt-master-custom.conf</code>
+.
+Inside this file you can add: <code>log_level: debug</code>.</p>
+</div>
+<div class="paragraph">
+<p>Note that after any change on this file you need to restart the <code>salt-master</code> container, like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>``docker rm -f $(docker ps -q -f name="salt-master")`` .</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>After deleting this container, the <code>kubelet</code> will bring up a new <code>salt-master</code> container automatically with the new configuration applied.
+Then.
+you can check the logs with the <code>debug</code> loglevel.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>``docker logs -f $(docker ps -q -f name="salt-master")``</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.logging.transactional_updates"><a class="anchor" href="#_sec.admin.logging.transactional_updates"></a>4. Transactional Update Log</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code class="command">transactional-update</code> method processes updates in the background and generates new machine image snapshots.
+This process can run into issues.
+Possible causes are connectivity issues or timeouts against the package repository.
+In such cases the update fails and the affected node will be marked with a red cross in Velum
+.</p>
+</div>
+<div class="paragraph">
+<p>In most cases this situation resolves itself the next time the update process runs automatically.
+If you have performed manual updates or must debug a failed update, you can read the log for <code class="command">transactional-update</code> with the command below.</p>
+</div>
+<div class="paragraph">
+<p>The <code class="command">transactional-update</code> logs are generated in the MicroOS
+ layer on each node respectively.</p>
+</div>
+<div class="paragraph">
+<p>For more information on transactional-update, see: <a href="#_sec.admin.software.transactional_updates">[_sec.admin.software.transactional_updates]</a></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``docker exec -it $(docker ps -q -f name="salt-master") \
+salt -P 'roles:(admin|kube-(master|minion)' \
+cmd.run "journalctl -u transactional-update"``</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.logging.kubernetes"><a class="anchor" href="#_sec.admin.logging.kubernetes"></a>5. Kubernetes Audit Log</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To track actions that have been performed on the cluster, you can enable the Kubernetes
+audit log in Velum
+.</p>
+</div>
+<div class="paragraph">
+<p>Navigate to: <b class="menuref">Settings → KUBERNETES → Auditing</b>
+.
+This allows the audit logs to be written on the Kubernetes
+ master nodes at <code class="path">/var/log/kube-apiserver/audit.log</code>
+ and you can then use an external data collector like <code>fluentd</code> to collect all the audit logs.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Kubernetes Audit Log Documentation</div>
+<div class="paragraph">
+<p>For more information on the audit log and its contents, see: <a href="https://v1-11.docs.kubernetes.io/docs/tasks/debug-application-cluster/audit/">Kubernetes
+    Documentation: Auditing</a></p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">KubernetesAudit Log Limitations</div>
+<div class="paragraph">
+<p>The Kubernetes
+audit log only collects and stores actions performed on the Kubernetes
+level of the cluster.
+This does not include any actions performed by SUSE CaaS Platform
+administrators in Velum
+or any of the resulting actions of services.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_settings_audit.png" alt="velum settings audit">
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Enable Auditing</dt>
+<dd>
+<p>Enable / Disable the audit logging feature (Default: <code>Disabled</code>)</p>
+</dd>
+<dt class="hdlist1">Max size</dt>
+<dd>
+<p>Maximum size in megabytes of the audit log file before it gets rotated (Default: <code>10</code>)</p>
+</dd>
+<dt class="hdlist1">Max age</dt>
+<dd>
+<p>Maximum number of days to retain old audit log files (Default: <code>15</code>)</p>
+</dd>
+<dt class="hdlist1">Max backup</dt>
+<dd>
+<p>Maximum number of audit log files to retain (Default: <code>20</code>)</p>
+</dd>
+<dt class="hdlist1">Policy</dt>
+<dd>
+<p>The YAML file defining the <a href="https://v1-11.docs.kubernetes.io/docs/tasks/debug-application-cluster/audit/#audit-policy">auditing
+policy rules</a></p>
+</dd>
+</dl>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.logging.log_levels.kubernetes"><a class="anchor" href="#_sec.admin.logging.log_levels.kubernetes"></a>5.1. Kubernetes Log Levels</h3>
+<div class="paragraph">
+<p>For Kubernetes
+our default <code>loglevel</code> is <code>2</code> (<a href="https://kubernetes.io/docs/reference/kubectl/cheatsheet/#kubectl-output-verbosity-and-debugging">Kubernetes
+    Upstream: Output Verbosity and Debugging</a>).</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">0</dt>
+<dd>
+<p>Generally useful for this to ALWAYS be visible to an operator.</p>
+</dd>
+<dt class="hdlist1">1</dt>
+<dd>
+<p>A reasonable default log level if you don&#8217;t want verbosity.</p>
+</dd>
+<dt class="hdlist1">2</dt>
+<dd>
+<p>Useful steady state information about the service and important log messages that may correlate to significant changes in the system.
+This is the recommended default log level for most systems.</p>
+</dd>
+<dt class="hdlist1">3</dt>
+<dd>
+<p>Extended information about changes.</p>
+</dd>
+<dt class="hdlist1">4</dt>
+<dd>
+<p>Debug level verbosity.</p>
+</dd>
+<dt class="hdlist1">6</dt>
+<dd>
+<p>Display requested resources.</p>
+</dd>
+<dt class="hdlist1">7</dt>
+<dd>
+<p>Display HTTP request headers.</p>
+</dd>
+<dt class="hdlist1">8</dt>
+<dd>
+<p>Display HTTP request contents.</p>
+</dd>
+</dl>
+</div>
+<div class="sect3">
+<h4 id="_sec.admin.logging.log_levels.kubernetes.set"><a class="anchor" href="#_sec.admin.logging.log_levels.kubernetes.set"></a>5.1.1. Setting A Different Log Level</h4>
+<div class="olist arabic">
+<div class="title">Procedure: Modify KubernetesLog Level Across The Cluster</div>
+<ol class="arabic">
+<li>
+<p>Change the log level value in the Salt pillar.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``docker exec -it $(docker ps -q -f name="dashboard") \
+entrypoint.sh bundle exec rake "velum:create_pillar['kube_log_level', '4']"``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Then run Salt orchestration to rebuild the configuration across the cluster.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``docker exec -it $(docker ps -q -f name="salt-master") \
+salt-run state.orchestrate orch.kubernetes``</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>If modified, this setting will be applied to all Kubernetes
+components; there is no way to set a different loglevel per component.
+Moreover, there is no way to specify different loglevels per machine.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.logging.fluentd"><a class="anchor" href="#_sec.admin.logging.fluentd"></a>6. External log collection</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>At Kubernetes
+level, there are different solutions that can be implemented.
+For example: <a href="https://docs.fluentd.org/v0.12/articles/kubernetes-fluentd">fluentd</a> can be used to collect all applications log in a central instance.</p>
+</div>
+<div class="paragraph">
+<p>Then, <a href="https://kubernetes.io/docs/tasks/debug-application-cluster/logging-elasticsearch-kibana/">Elasticsearch
+   and Kibana</a> can be used to provide an intuitive way to visualize and interact with the logs.</p>
+</div>
+</div>
+</div>
+</article>
+  </main>
+</div>
+<footer class="footer">
+  <p>Copyright (C) 2017-2018 <a href="https://opensource.suse.com/doc-susemanager/">SUSE Manager</a></p>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js -->
+<script>
+function focusSearchInput () { document.querySelector('#search-input').focus() }
+var search = docsearch({
+  appId: 'KIB3CEDKWD',
+  apiKey: '51646b7d454f125193a0ba62253e8e17',
+  indexName: 'manager',
+  inputSelector: '#search-input',
+  autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+  algoliaOptions: { hitsPerPage: 10 }
+}).autocomplete;
+search.on('autocomplete:closed', function () { search.autocomplete.setVal() });
+focusSearchInput();
+window.addEventListener('load', focusSearchInput)
+</script>
+<script src="../../../_/js/site.js"></script>
+<script src="../../../_/js/vendor/highlight.js"></script>
+<script>hljs.initHighlighting()</script>
+  </body>
+</html>

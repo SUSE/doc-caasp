@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About {productname} :: SUSE CaaS Platform Documentation</title>
+    <meta name="generator" content="Antora 2.0.0">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="stylesheet" href="../../../_/css/suse.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css">
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css -->
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header" role="banner">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-logo">
+        <img class="logo" src="../../../_/img/suse_logo_reverse.png" />
+      </div>
+      <div class="navbar-item">
+        <a href="https://r0ckarong.github.io">SUSE CaaS Platform</a>
+        <span class="separator">//</span>
+        <a href="../../..">Documentation</a>
+      </div>
+      <div class="navbar-item">
+        <input id="search-input" type="text" placeholder="Search docs">
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">Projects</div>
+          <div class="navbar-dropdown">
+            <div class="navbar-item"><strong>Resources</strong></div>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/tree/antora">Repository</a>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/issues">Issue Tracker</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="main-wrapper">
+<div class="navigation-container" data-component="suse-caasp" data-version="v4-beta1">
+  <aside class="navigation">
+    <div class="panels">
+<div class="navigation-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">SUSE CaaS Platform</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../quickstart/quick_intro.html">Quickstart Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_system_requirements.html">System Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_install.html">Installation and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_configuration.html">Node Configuration</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../administration/admin_intro.html">Administration Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_security.html">Security</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_administration.html">Administration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_software.html">Software Management</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_monitoring.html">Monitoring</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_logging.html">Logging</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_misc.html">Miscellaenous Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_integration_ses.html">SES Integration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../administration/admin_troubleshooting.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="deployment_intro.html">Deployment Guide</a>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="deployment_about.html">About Deployment Guide</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_scenarios.html">Deployment Scenarios</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_sysreqs.html">System Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_preparation.html">Preparing The Installation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_installing_nodes.html">Installing and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_configuration.html">Node Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment_appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="navigation-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">SUSE CaaS Platform</span>
+    <span class="version">v4-beta1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">SUSE CaaS Platform</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">v4-beta1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+  <main class="main">
+<div class="toolbar" role="navigation">
+  <button class="navigation-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="crumbs" aria-label="breadcrumbs">
+  <ul>
+    <li class="crumb"><a href="../index.html">SUSE CaaS Platform</a></li>
+    <li class="crumb"><a href="deployment_intro.html">Deployment Guide</a></li>
+    <li class="crumb"><a href="deployment_about.html">About Deployment Guide</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/mnapp/mydata/software/SUSE/doc-caasp/modules/deployment/pages/deployment_about.adoc">Edit this Page</a></div>
+</div>
+<article class="doc">
+<h1>About {productname}</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_sec.deploy.architecture">1. Architectural Overview</a></li>
+<li><a href="#_sec.deploy.components">2. Software Components</a></li>
+<li><a href="#_sec.deploy.architecture.administration_node">3. The Administration Node</a></li>
+<li><a href="#_sec.deploy.architecture.master_nodes">4. Master Nodes</a></li>
+<li><a href="#_sec.deploy.architecture.worker_node">5. Worker Nodes</a></li>
+</ul>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>{suse}{productname}
+is a Cloud-Native Computing Foundation (CNCF) certified {kube}
+distribution on top of {suse}{mos}
+. {suse}{mos}
+is a minimalist operating system based on {sle}
+, dedicated to hosting containers. {suse}{mos}
+inherits the benefits of {sle}
+in the form of a smaller, simpler, and more robust operating system, optimized for large, clustered deployments.
+It also features an atomic, transactional update mechanism, making the system more resilient against software-update-related problems.</p>
+</div>
+<div class="paragraph">
+<p>{productname}
+automates the orchestration and management of containerized applications and services with powerful {kube}
+capabilities, including:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Workload scheduling optimizes hardware utilization while taking the container requirements into account.</p>
+</li>
+<li>
+<p>Service proxies provide single IP addresses for services and distribute the load between containers.</p>
+</li>
+<li>
+<p>Application scaling up and down accommodates changing loads.</p>
+</li>
+<li>
+<p>Non-disruptive rollout/rollback of new applications and updates enables frequent changes without downtime.</p>
+</li>
+<li>
+<p>Health monitoring and management supports application self-healing and ensures application availability.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In addition, {productname}
+simplifies the platform operator&#8217;s experience, with everything you need to get up and running quickly, and to manage the environment effectively in production.
+It provides:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A complete container execution environment, including a purpose-built container host operating system ({suse}{mos} ), container runtime, and container image registries.</p>
+</li>
+<li>
+<p>Enhanced datacenter integration features that enable you to plug {kube} into new or existing infrastructure, systems, and processes.</p>
+</li>
+<li>
+<p>Application ecosystem support with {sle} container base images, and access to tools and services offered by {suse} Ready for CaaS Platform partners and the {kube} community.</p>
+</li>
+<li>
+<p>End-to-End security, implemented holistically across the full stack.</p>
+</li>
+<li>
+<p>Advanced platform management that simplifies platform installation, configuration, re-configuration, monitoring, maintenance, updates, and recovery.</p>
+</li>
+<li>
+<p>Enterprise hardening including comprehensive interoperability testing, support for thousands of platforms, and world-class platform maintenance and technical support.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You can deploy {productname}
+onto physical servers or use it on virtual machines.
+After deployment, it is immediately ready to run and provides a highly-scalable cluster.</p>
+</div>
+<div class="paragraph">
+<p>While {productname}
+inherits benefits of {sle}
+and uses tools and technologies well-known to system administrators such as <code>cloud-init</code> and Salt, the main innovation (compared to {sls}
+) comes with <strong>transactional updates</strong>.
+A transactional update is an update that can be installed when the system is running without any down-time.
+A transactional update can be rolled back, so if the update fails or is not compatible with your infrastructure, you can restore the previous system state.</p>
+</div>
+<div class="paragraph">
+<p>{productname}
+uses the {btrfs}
+file system with the following characteristics:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The root file system and its snapshots are read-only.</p>
+</li>
+<li>
+<p>Sub-volumes for data sharing are read-write.</p>
+</li>
+<li>
+<p>{productname} introduces overlays of the <code>/etc</code> directories used by <code>cloud-init</code> and {salt} .</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For more information, including a list of the various components which make up {productname}
+please refer to the Release Notes on <a href="https://www.suse.com/releasenotes/" class="bare">https://www.suse.com/releasenotes/</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.deploy.architecture"><a class="anchor" href="#_sec.deploy.architecture"></a>1. Architectural Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A typical {productname}
+cluster consists of several types of nodes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <em>{admin_node}</em> is a {smaster} which assigns roles to {sminion} s. This node runs the {dash} Web-based dashboard for managing the whole cluster. For details, refer to <a href="#_sec.deploy.architecture.administration_node">The Administration Node</a>.</p>
+</li>
+<li>
+<p>Each {cluster_node} is a {sminion} which can have one of the following roles:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>{kube} master: <em>{master_node} s</em> manage the worker nodes.</p>
+</li>
+<li>
+<p>{kube} worker: <em>{worker_node} s</em> run the application containers with the main workload of the cluster.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In large-scale clusters, there are other types of node that can help you to manage and run the cluster:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>a local <em>{smt} server</em> that manages subscriptions for workers and so decreases the traffic to the {scc} .</p>
+</li>
+<li>
+<p>a <em>log server</em> that stores the cluster nodes' logs.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The following figure illustrates the interactions of the nodes.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/caasp_generic_scheme.png" alt="SUSE CaaS Platform Nodes Architecture">
+</div>
+<div class="title">Figure 1. {productname}Nodes Architecture <a id="_fig.deploy.architecture.cluster"></a></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.deploy.components"><a class="anchor" href="#_sec.deploy.components"></a>2. Software Components</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To run the whole cluster, {productname}
+uses various technologies such as {salt}
+, Flannel networking, the <code>etcd</code> distributed key- store database, a controller, a scheduler, <code>kubelet</code>, a {kube}
+ API Server, and a choice of two container runtime engines, Docker or CRI-O.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p></p>
+<div class="paragraph">
+<div class="title">Docker</div>
+<p>This is the leading open-source format for application containers.
+It is fully supported by {suse}
+.</p>
+</div>
+<div class="paragraph">
+<p>For more information, see <a href="https://www.docker.com/" class="bare">https://www.docker.com/</a>.</p>
+</div>
+</li>
+<li>
+<p></p>
+<div class="paragraph">
+<div class="title">CRI-O</div>
+<p>Designed specifically for {kube}
+, CRI-O is an implementation of CRI, the Container Runtime Interface.
+A lightweight alternative to Docker or Moby, it supports Open Container Initiative (OCI) images.</p>
+</div>
+<div class="paragraph">
+<p>For more information, see <a href="http://cri-o.io/" class="bare">http://cri-o.io/</a>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Container Engine Support Status</div>
+CRI-O is included as an <em>unsupported technology
+       preview</em>, to allow customers to evaluate the new technology.
+It is <em>not</em> supported for use in production deployments.
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>{salt}
+is used to manage deployment and administration of the cluster. <code>{salt}
+-api</code> is used to distribute commands from {dashboard}
+ to the <code>salt-master</code> daemon.
+The <code>salt-master</code> daemon stores events in <em>MariaDB</em>, which is also used to store {dashboard}
+ data.
+The <code>salt-minion</code> daemon on the {admin_node}
+ generates the required certificates, and {sminion}
+s on the {worker_node}
+s communicate with the {admin_node}
+.</p>
+</div>
+<div class="paragraph">
+<p>As there can be several containers running on each host machine, each container is assigned an IP address that is used for communication with other containers on the same host.
+Containers might need to have a unique IP address exposed for network communications, thus Flannel networking is used.
+Flannel gives each host an IP subnet from which the container engine can allocate IP addresses to containers.
+The mapping of IP addresses is stored by <code>etcd</code>.
+The <code>flanneld</code> daemon manages routing of packets and mapping of IP addresses.</p>
+</div>
+<div class="paragraph">
+<p>Within the cluster there are several instances of <code>etcd</code>, each with a different purpose.
+The <code>etcd discovery</code> daemon running on the {admin_node}
+ is used to bootstrap instances of <code>etcd</code> on other nodes and is not part of the <code>etcd</code> cluster on the other nodes.
+The <code>etcd</code> instance on the {master_node}
+ stores events from the {kube}
+ API Server.
+The <code>etcd</code> instance on {worker_node}
+s runs as a proxy that forwards clients to the <code>etcd</code> on the {master_node}
+.</p>
+</div>
+<div class="paragraph">
+<p>{kube}
+is used to manage container orchestration.
+The following services and daemons are used by {kube}
+:
+ kubelet::
+An agent that runs on each node to monitor and control all the containers in a pod, ensuring that they are running and healthy.
+ kube-apiserver ::
+This daemon exposes a REST API used to manage pods.
+The API server performs authentication and authorization.
+ scheduler::
+The scheduler assigns pods onto nodes.
+It does not run them itself; that is <code>kubelet</code>'s job.
+ controllers::
+These monitor the shared state of the cluster through the <code>apiserver</code> and handle pod replication, deployment, etc.
+ kube-proxy::
+This runs on each node and is used to distribute loads and reach services.</p>
+</div>
+<div class="paragraph">
+<p>Now let&#8217;s focus on a more detailed view of the cluster that involves also services running on each node type.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/caasp_nodes_architecture.svg" alt="Services on nodes">
+</div>
+<div class="title">Figure 2. Services on nodes <a id="_fig.deploy.architecture.services"></a></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.deploy.architecture.administration_node"><a class="anchor" href="#_sec.deploy.architecture.administration_node"></a>3. The Administration Node</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The {admin_node}
+manages the cluster and runs several applications required for proper functioning of the cluster.
+Because it is integral to the  operation of {productname}
+, the {admin_node}
+must have a fully-qualified  domain name (FQDN) which can be resolved from outside the cluster.</p>
+</div>
+<div class="paragraph">
+<p>The {admin_node}
+runs {dashboard}
+, the administration dashboard; the MariaDB database; the <code>etcd discovery</code> server, <em>salt-api</em>, <code>salt-master</code> and <code>salt-minion</code>.
+The dashboard, database, and daemons all run in separate containers.</p>
+</div>
+<div class="paragraph">
+<p>{dashboard}
+is a Web application that enables you to deploy, manage, and monitor the cluster.
+The dashboard manages the cluster using <em>salt-api</em> to interact with the underlying {salt}
+ technology.</p>
+</div>
+<div class="paragraph">
+<p>The containers on the {admin_node}
+are managed by <code>kubelet</code> as a static pod.
+Bear in mind that this <code>kubelet</code> does not manage the cluster nodes.
+Each cluster node has its own running instance of <code>kubelet</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.deploy.architecture.master_nodes"><a class="anchor" href="#_sec.deploy.architecture.master_nodes"></a>4. Master Nodes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>{productname}{master_node}
+s monitor and control the {worker_node}
+s.
+They make global decisions about the cluster, such as starting and scheduling  pods of containers on the {worker_node}
+s.
+They run <em>kube-apiserver</em> but do not host application containers.</p>
+</div>
+<div class="paragraph">
+<p>Each cluster must have at least one {master_node}
+.
+For larger clusters, more {master_node}
+s can be added, but there must always be an odd number.</p>
+</div>
+<div class="paragraph">
+<p>Like the {admin_node}
+, the {master_node}
+must have a resolvable FQDN.
+For {dashboard}
+to function correctly, it must always be able to resolve the  IP address of a {master_node}
+, so if there are multiple {master_node}
+s, they must all share the same FQDN, meaning that load-balancing should be configured.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.deploy.architecture.worker_node"><a class="anchor" href="#_sec.deploy.architecture.worker_node"></a>5. Worker Nodes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The {worker_node}
+s are the machines in the cluster which host application containers.
+Each runs its own instance of <em>kubelet</em> which controls the pods on that machine.
+Earlier versions of {kube}
+ referred to {worker_node}
+s as "minions".</p>
+</div>
+<div class="paragraph">
+<p>Each {worker_node}
+runs a container runtime engine (either <code>Docker</code> or <code>cri-o</code>) and an instance of <code>kube-proxy</code>.</p>
+</div>
+<div class="paragraph">
+<p>The {worker_node}
+s do not require individual FQDNs, although it may help in troubleshooting network problems.</p>
+</div>
+</div>
+</div>
+</article>
+  </main>
+</div>
+<footer class="footer">
+  <p>Copyright (C) 2017-2018 <a href="https://opensource.suse.com/doc-susemanager/">SUSE Manager</a></p>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js -->
+<script>
+function focusSearchInput () { document.querySelector('#search-input').focus() }
+var search = docsearch({
+  appId: 'KIB3CEDKWD',
+  apiKey: '51646b7d454f125193a0ba62253e8e17',
+  indexName: 'manager',
+  inputSelector: '#search-input',
+  autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+  algoliaOptions: { hitsPerPage: 10 }
+}).autocomplete;
+search.on('autocomplete:closed', function () { search.autocomplete.setVal() });
+focusSearchInput();
+window.addEventListener('load', focusSearchInput)
+</script>
+<script src="../../../_/js/site.js"></script>
+<script src="../../../_/js/vendor/highlight.js"></script>
+<script>hljs.initHighlighting()</script>
+  </body>
+</html>

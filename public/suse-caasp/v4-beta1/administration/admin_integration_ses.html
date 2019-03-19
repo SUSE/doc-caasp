@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUSE Enterprise Storage Integration :: SUSE CaaS Platform Documentation</title>
+    <meta name="generator" content="Antora 2.0.0">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="stylesheet" href="../../../_/css/suse.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css">
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css -->
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header" role="banner">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-logo">
+        <img class="logo" src="../../../_/img/suse_logo_reverse.png" />
+      </div>
+      <div class="navbar-item">
+        <a href="https://r0ckarong.github.io">SUSE CaaS Platform</a>
+        <span class="separator">//</span>
+        <a href="../../..">Documentation</a>
+      </div>
+      <div class="navbar-item">
+        <input id="search-input" type="text" placeholder="Search docs">
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">Projects</div>
+          <div class="navbar-dropdown">
+            <div class="navbar-item"><strong>Resources</strong></div>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/tree/antora">Repository</a>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/issues">Issue Tracker</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="main-wrapper">
+<div class="navigation-container" data-component="suse-caasp" data-version="v4-beta1">
+  <aside class="navigation">
+    <div class="panels">
+<div class="navigation-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">SUSE CaaS Platform</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../quickstart/quick_intro.html">Quickstart Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_system_requirements.html">System Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_install.html">Installation and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_configuration.html">Node Configuration</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="admin_intro.html">Administration Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_security.html">Security</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_administration.html">Administration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_software.html">Software Management</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_monitoring.html">Monitoring</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_logging.html">Logging</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_misc.html">Miscellaenous Configuration</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="admin_integration_ses.html">SES Integration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_troubleshooting.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../deployment/deployment_intro.html">Deployment Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_about.html">About Deployment Guide</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_scenarios.html">Deployment Scenarios</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_sysreqs.html">System Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_preparation.html">Preparing The Installation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_installing_nodes.html">Installing and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_configuration.html">Node Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="navigation-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">SUSE CaaS Platform</span>
+    <span class="version">v4-beta1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">SUSE CaaS Platform</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">v4-beta1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+  <main class="main">
+<div class="toolbar" role="navigation">
+  <button class="navigation-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="crumbs" aria-label="breadcrumbs">
+  <ul>
+    <li class="crumb"><a href="../index.html">SUSE CaaS Platform</a></li>
+    <li class="crumb"><a href="admin_intro.html">Administration Guide</a></li>
+    <li class="crumb"><a href="admin_integration_ses.html">SES Integration</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/mnapp/mydata/software/SUSE/doc-caasp/modules/administration/pages/admin_integration_ses.adoc">Edit this Page</a></div>
+</div>
+<article class="doc">
+<h1>SUSE Enterprise Storage Integration</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_sec.admin.integration.prerequisites">1. Prerequisites</a></li>
+<li><a href="#_sec.admin.integration.mounting_named_object_storage">2. Using RBD in a Pod</a></li>
+<li><a href="#_sec.admin.integration.persistent_volumes">3. Using RBD in Persistent Volume</a></li>
+</ul>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>SUSE CaaS Platform
+can use another SUSE
+product as storage for containers{mdash}SUSE Enterprise Storage
+(henceforth called SES). This chapter gives details on several ways to integrate these two products.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.integration.prerequisites"><a class="anchor" href="#_sec.admin.integration.prerequisites"></a>1. Prerequisites</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Before you start the integration process, you need to ensure the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The SUSE CaaS Platform cluster can communicate with the SES nodes{mdash} master, monitoring nodes, OSD nodes and the metadata server, in case you need a shared file system. For more details regarding SES refer to the SES documentation, here: <a href="https://www.suse.com/documentation/suse-enterprise-storage/" class="bare">https://www.suse.com/documentation/suse-enterprise-storage/</a>.</p>
+</li>
+<li>
+<p>The SES cluster has a pool with RADOS Block Device (RBD) enabled.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.integration.mounting_named_object_storage"><a class="anchor" href="#_sec.admin.integration.mounting_named_object_storage"></a>2. Using RBD in a Pod</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The procedure below describes steps to take when you need to use a RADOS Block Device in a Pod.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure: Using RBD In A Pod</div>
+<ol class="arabic">
+<li>
+<p>Retrieve the Ceph admin secret. Get the key value from the file <code class="path">/etc/ceph/ceph.client.admin.keyring</code> .</p>
+</li>
+<li>
+<p>On the Master Node apply the configuration that includes the Ceph secret by using <code class="command">kubectl apply</code>. Replace <code class="replaceable">CEPH_SECRET</code> with your Ceph secret.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``kubectl apply -f - &lt;&lt; *EOF*
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ceph-secret
+type: "kubernetes.io/rbd"
+data:
+  key: "$(echo CEPH_SECRET | base64)"
+*EOF*``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Create an image in the SES cluster. On the Master Node , run the following command:</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``rbd create -s SIZE YOUR_VOLUME``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Replace <code class="replaceable">SIZE</code> with the size of the image, for example <code>1G</code>, and <code class="replaceable">YOUR_VOLUME</code> is the name of the image.</p>
+</div>
+</li>
+<li>
+<p>Create a pod that uses the image by executing the following command on the Master Node . In this example it is a minimal configuration for using a <code>RADOS</code> Block Device. Fill in the IP addresses and ports of your monitor nodes. The port number usually is <code>6789</code>.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``kubectl apply -f - &lt;&lt; *EOF*
+apiVersion: v1
+kind: Pod
+metadata:
+  name: POD_NAME
+spec:
+  containers:
+  - name: CONTAINER_NAME
+    image: IMAGE_NAME
+    volumeMounts:
+    - mountPath: /mnt/rbdvol
+      name: rbdvol
+  volumes:
+  - name: rbdvol
+    rbd:
+      monitors:
+      - 'MONITOR1_IP:MONITOR1_PORT'
+      - 'MONITOR2_IP:MONITOR2_PORT'
+      - 'MONITOR3_IP:MONITOR3_PORT'
+      pool: rbd
+      image: YOUR_VOLUME
+      user: admin
+      secretRef:
+        name: ceph-secret
+      fsType: ext4
+      readOnly: false
+*EOF*``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that the pod exists and its status:</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``kubectl get po``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Once the pod is running, check the mounted volume:</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``kubectl exec -it CONTAINER_NAME -- df -k`` ...
+/dev/rbd1               999320      1284    929224   0% /mnt/rbdvol
+...</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>In case you need to delete the pod, run the following command on the Master Node
+:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``kubectl delete pod POD_NAME``</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.integration.persistent_volumes"><a class="anchor" href="#_sec.admin.integration.persistent_volumes"></a>3. Using RBD in Persistent Volume</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following procedure describes how to attach a pod to a persistent SES volume.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure: Creating a Pod with RBD in Persistent Volume</div>
+<ol class="arabic">
+<li>
+<p>Retrieve the Ceph admin secret. Get the key value from the file <code class="path">/etc/ceph/ceph.client.admin.keyring</code> .</p>
+</li>
+<li>
+<p>On the Master Node , apply the configuration that includes the Ceph secret by using <code class="command">kubectl apply</code>. Replace <code class="replaceable">CEPH_SECRET</code> with your Ceph secret.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``kubectl apply -f - &lt;&lt; *EOF*
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ceph-secret
+type: "kubernetes.io/rbd"
+data:
+  key: "$(echo CEPH_SECRET | base64)"
+*EOF*``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Create a volume on the SES cluster:</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``rbd create -s SIZE YOUR_VOLUME``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Replace <code class="replaceable">SIZE</code> with the size of the image, for example <code>1G</code> (1 Gigabyte), and <code class="replaceable">YOUR_VOLUME</code> is the name of the image.</p>
+</div>
+</li>
+<li>
+<p>Create the persistent volume on the Master Node :</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``kubectl apply -f - &lt;&lt; *EOF*
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: PV_NAME
+spec:
+  capacity:
+    storage: SIZE
+  accessModes:
+    - ReadWriteOnce
+  rbd:
+    monitors:
+    - 'MONITOR1_IP:MONITOR1_PORT'
+    - 'MONITOR2_IP:MONITOR2_PORT'
+    - 'MONITOR3_IP:MONITOR3_PORT'
+    pool: rbd
+    image: YOUR_VOLUME
+    user: admin
+    secretRef:
+      name: ceph-secret
+    fsType: ext4
+    readOnly: false
+*EOF*``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Replace <code class="replaceable">SIZE</code> with the desired size of the volume.
+Use the <em>gibibit</em> notation, for example <code>1Gi</code>.</p>
+</div>
+</li>
+<li>
+<p>Create a persistent volume claim on the Master Node :</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``kubectl apply -f - &lt;&lt; *EOF*
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: PV_NAME
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: SIZE
+*EOF*``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Replace <code class="replaceable">SIZE</code> with the desired size of the volume.
+Use the <em>gibibit</em> notation, for example <code>1Gi</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Listing Volumes</div>
+This persistent volume claim does not explicitly list the volume.
+Persistent volume claims work by picking any volume that meets the criteria from a pool.
+In this case we specified any volume with a size of 1G or larger.
+When the claim is removed the recycling policy will be followed.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Create a pod that uses the persistent volume claim. On the Master Node run the following:</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``kubectl apply -f - &lt;&lt;*EOF*
+apiVersion: v1
+kind: Pod
+metadata:
+  name: POD_NAME
+spec:
+  containers:
+  - name: CONTAINER_NAME
+    image: IMAGE_NAME
+    volumeMounts:
+    - mountPath: /mnt/rbdvol
+      name: rbdvol
+  volumes:
+  - name: rbdvol
+    persistentVolumeClaim:
+      claimName: PV_NAME
+*EOF*``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that the pod exists and its status. On the Master Node run:</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``kubectl get po``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Once pod is running, check the volume by running on the Master Node :</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``kubectl exec -it CONTAINER_NAME -- df -k`` ...
+/dev/rbd3               999320      1284    929224   0% /mnt/rbdvol
+...</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>In case you need to delete the pod, run the following command on the Master Node
+:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``kubectl delete pod CONTAINER_NAME``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And when the command finishes, run</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``kubectl delete persistentvolume PV_NAME``</pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Deleting A Pod</div>
+<div class="paragraph">
+<p>When you delete the pod, the persistent volume claim is deleted as well.
+The RBD is not deleted.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</article>
+  </main>
+</div>
+<footer class="footer">
+  <p>Copyright (C) 2017-2018 <a href="https://opensource.suse.com/doc-susemanager/">SUSE Manager</a></p>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js -->
+<script>
+function focusSearchInput () { document.querySelector('#search-input').focus() }
+var search = docsearch({
+  appId: 'KIB3CEDKWD',
+  apiKey: '51646b7d454f125193a0ba62253e8e17',
+  indexName: 'manager',
+  inputSelector: '#search-input',
+  autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+  algoliaOptions: { hitsPerPage: 10 }
+}).autocomplete;
+search.on('autocomplete:closed', function () { search.autocomplete.setVal() });
+focusSearchInput();
+window.addEventListener('load', focusSearchInput)
+</script>
+<script src="../../../_/js/site.js"></script>
+<script src="../../../_/js/vendor/highlight.js"></script>
+<script>hljs.initHighlighting()</script>
+  </body>
+</html>

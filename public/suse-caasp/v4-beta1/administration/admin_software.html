@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Software Management :: SUSE CaaS Platform Documentation</title>
+    <meta name="generator" content="Antora 2.0.0">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="stylesheet" href="../../../_/css/suse.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css">
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css -->
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header" role="banner">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-logo">
+        <img class="logo" src="../../../_/img/suse_logo_reverse.png" />
+      </div>
+      <div class="navbar-item">
+        <a href="https://r0ckarong.github.io">SUSE CaaS Platform</a>
+        <span class="separator">//</span>
+        <a href="../../..">Documentation</a>
+      </div>
+      <div class="navbar-item">
+        <input id="search-input" type="text" placeholder="Search docs">
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">Projects</div>
+          <div class="navbar-dropdown">
+            <div class="navbar-item"><strong>Resources</strong></div>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/tree/antora">Repository</a>
+            <a class="navbar-item" href="https://github.com/SUSE/doc-caasp/issues">Issue Tracker</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="main-wrapper">
+<div class="navigation-container" data-component="suse-caasp" data-version="v4-beta1">
+  <aside class="navigation">
+    <div class="panels">
+<div class="navigation-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">SUSE CaaS Platform</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../quickstart/quick_intro.html">Quickstart Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_system_requirements.html">System Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_install.html">Installation and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../quickstart/quick_configuration.html">Node Configuration</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="admin_intro.html">Administration Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_security.html">Security</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_administration.html">Administration</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="admin_software.html">Software Management</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_monitoring.html">Monitoring</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_logging.html">Logging</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_misc.html">Miscellaenous Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_integration_ses.html">SES Integration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="admin_troubleshooting.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-toggle"></button>
+    <a class="nav-link" href="../deployment/deployment_intro.html">Deployment Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_about.html">About Deployment Guide</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_scenarios.html">Deployment Scenarios</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_sysreqs.html">System Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_preparation.html">Preparing The Installation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_installing_nodes.html">Installing and Configuring Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_configuration.html">Node Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment/deployment_appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="navigation-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">SUSE CaaS Platform</span>
+    <span class="version">v4-beta1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">SUSE CaaS Platform</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">v4-beta1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+  <main class="main">
+<div class="toolbar" role="navigation">
+  <button class="navigation-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="crumbs" aria-label="breadcrumbs">
+  <ul>
+    <li class="crumb"><a href="../index.html">SUSE CaaS Platform</a></li>
+    <li class="crumb"><a href="admin_intro.html">Administration Guide</a></li>
+    <li class="crumb"><a href="admin_software.html">Software Management</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/mnapp/mydata/software/SUSE/doc-caasp/modules/administration/pages/admin_software.adoc">Edit this Page</a></div>
+</div>
+<article class="doc">
+<h1>Software Management</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_sec.admin.software.transactional_updates">1. Transactional Updates</a>
+<ul class="sectlevel2">
+<li><a href="#_sec.admin.software.transactional_updates.command">1.1. The <code class="command">transactional-update</code> Command</a></li>
+<li><a href="#_sec.admin.software.transactional_updates.disabling">1.2. Disabling Transactional Updates</a></li>
+<li><a href="#_sec.admin.software.transactional_updates.installation">1.3. Applying Updates</a></li>
+<li><a href="#_sec.admin.software.transactional_updates.recovering">1.4. Recovering From Failed Updates</a></li>
+</ul>
+</li>
+<li><a href="#_sec.admin.software.patch">2. Program Temporary Fixes</a></li>
+<li><a href="#_sec.admin.software.upgrade_caasp2">3. Upgrading From SUSE CaaS Platform 2</a>
+<ul class="sectlevel2">
+<li><a href="#_sec.admin.software.upgrade_caasp2.prereq">3.1. Install SUSE CaaS Platform 2 Updates</a></li>
+<li><a href="#_sec.admin.software.upgrade_caasp2.timer">3.2. Disable Automatic Updates</a></li>
+<li><a href="#_sec.admin.software.upgrade_caasp2.upgrade">3.3. Upgrading to SUSE CaaS Platform 3</a></li>
+<li><a href="#_sec.admin.software.upgrade_caasp2.reboot">3.4. Reboot Cluster Nodes</a></li>
+<li><a href="#_sec.admin.software.upgrade_caasp2.troubleshooting">3.5. Troubleshooting</a></li>
+</ul>
+</li>
+<li><a href="#_sec.admin.software.install">4. Additional Software Installation</a>
+<ul class="sectlevel2">
+<li><a href="#_sec.admin.software.toolchain">4.1. Building Kernel Modules</a></li>
+<li><a href="#_sec.admin.software.helm">4.2. Deploying Helm and Tiller</a></li>
+<li><a href="#_sec.admin.software.helm.installing_heapster">4.3. Example: Installing heapster</a></li>
+</ul>
+</li>
+<li><a href="#_installing.kube.dashboard">5. Installing Kubernetes Dashboard</a></li>
+</ul>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.software.transactional_updates"><a class="anchor" href="#_sec.admin.software.transactional_updates"></a>1. Transactional Updates</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For security and stability reasons, the operating system and application should always be up-to-date.
+While with a single machine you can keep the system up-to-date quite easily by running several commands, in a large-scale cluster the update process can become a real burden.
+Thus transactional automatic updates have been introduced.
+Transactional updates can be characterized as follows:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>They are atomic.</p>
+</li>
+<li>
+<p>They do not influence the running system.</p>
+</li>
+<li>
+<p>They can be rolled back.</p>
+</li>
+<li>
+<p>The system needs to be rebooted to activate the changes.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Transactional updates are managed by the <code class="command">transactional-update</code> script, which is called once a day.
+The script checks if any updates are available.
+If there are any updates to be applied, a new snapshot of the root file system is created in the background and is updated from the release channels.
+All updates released to this point are applied.
+The running file system/machine state is left untouched.</p>
+</div>
+<div class="paragraph">
+<p>The new snapshot, once completely updated, is then marked as active and will be used as the new default after the next reboot of the system.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Snapshot Activation</div>
+<div class="paragraph">
+<p>For each "transaction" performed by <code class="command">transactional-updates</code> a new snapshot is generated and requires a reboot to incorporate the changes.
+If another transaction is run before the reboot, only the latest snapshot is used and changes might be lost.
+If you perform manual updates or installation on your nodes, please make sure to reboot after each transaction.
+Refer to: <a href="#_sec.admin.software.transactional_updates.installation.manual">Applying Updates Manually</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Velum
+will show a list of nodes that have new updates available for use.
+The cluster administrator then uses Velum
+to reboot the nodes to the new snapshots to ensure the health of services and configuration. Velum
+uses <code class="command">salt</code> to safely disable services on the nodes, apply new snapshots, rewrite configurations and then bring the services and nodes back up.</p>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.software.transactional_updates.command"><a class="anchor" href="#_sec.admin.software.transactional_updates.command"></a>1.1. The <code class="command">transactional-update</code> Command</h3>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Only use when requested by SUSE Support</div>
+<div class="paragraph">
+<p>This reference for <code class="command">transactional-update</code> should only be used when requested by SUSE Support.
+Updates are handled by an automated process and only require user interaction for rebooting of nodes.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <code class="command">transactional-update</code> enables you to install or remove updates of your system in an atomic way.
+The updates are applied all or none of them if any package cannot be installed.
+Before the update is applied, a snapshot of the system is created in order to restore the previous state in case of a failure.</p>
+</div>
+<div class="paragraph">
+<p>If the current root file system is identical to the active root file system (after applying updates and reboot), run cleanup of all old snapshots:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``transactional-update cleanup``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Other options of the command are the following:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>pkg in/install</code></dt>
+<dd>
+<p>Installs individual packages from the available channels using the <code class="command">zypper install</code> command.
+This command can also be used to install PTF RPM files.
+Please note that the changes to the base file system only become permanent after a reboot.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``transactional-update pkg install PACKAGE_NAME``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``transactional-update pkg install RPM1 RPM2``</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>pkg rm/remove</code></dt>
+<dd>
+<p>Removes individual packages from the active snapshot using the <code class="command">zypper remove</code> command.
+This command can also be used to remove PTF RPM files.
+Please note that the changes to the base file system only become permanent after a reboot.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``transactional-update pkg remove PACKAGE_NAME``</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>pkg up/update</code></dt>
+<dd>
+<p>Updates individual packages from the active snapshot using the <code class="command">zypper update</code> command.
+This command can also be used to update PTF RPM files.
+Please note that only packages that are part of the snapshot of the base file system can be updated and changes only become permanent after a reboot.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``transactional-update pkg remove PACKAGE_NAME``</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>up/update</code></dt>
+<dd>
+<p>If there are new updates available, a new snapshot is created and <code class="command">zypper up/update</code> is used to update the snapshot.
+The snapshot is activated afterwards and is used as the new root file system after reboot.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``transactional-update up``</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>dup</code></dt>
+<dd>
+<p>If there are new updates available, a new snapshot is created and <code class="command">zypper dup –no-allow-vendor-change</code> is used to update the snapshot.
+The snapshot is activated afterwards and is used as the new root file system after reboot.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``transactional-update dup``</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>patch</code></dt>
+<dd>
+<p>If there are new updates available, a new snapshot is created and <code class="command">zypper patch</code> is used to update the snapshot.
+The snapshot is activated afterwards and is used as the new root file system after reboot.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``transactional-update patch``</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>rollback</code></dt>
+<dd>
+<p>The command sets the default sub volume.
+On systems with read-write file system <code class="command">snapper rollback</code> is called.
+On a read-only file system and without any argument, the current system is set to a new default root file system.
+If you specify a number, that snapshot is used as the default root file system.
+On a read-only file system, no additional snapshots are created.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``transactional-update rollback SNAPSHOT_NUMBER``</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>grub.cfg</code></dt>
+<dd>
+<p>The command creates a new grub2 config.
+Sometimes it is necessary to adjust the boot configuration, e.g.
+by adding additional kernel parameters.
+This can be done by editing <code class="replaceable">/etc/default/grub</code>, calling <code class="command">transactional-update grub.cfg</code> and then rebooting the machine to activate the change.
+Please note that without rebooting the machine, the new grub config will be overwritten with the default by any transactional-update that takes place.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``transactional-update grub.cfg``</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>reboot</code></dt>
+<dd>
+<p>This parameter triggers a reboot after the action is completed.</p>
+<div class="paragraph">
+<p>How the reboot is done depends on how <code class="command">transactional-update</code> is configured.
+For cluster nodes this will set a Salt grain to show the updated node in Velum
+as requiring reboot.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``transactional-update dup reboot``</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>--help</code></dt>
+<dd>
+<p>The option outputs possible options and subcommands.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``transactional-update --help``</pre>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.software.transactional_updates.disabling"><a class="anchor" href="#_sec.admin.software.transactional_updates.disabling"></a>1.2. Disabling Transactional Updates</h3>
+<div class="paragraph">
+<p>Even though it is not recommended, you can disable transactional updates by issuing the command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``systemctl --now disable transactional-update.timer``</pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Disabling transaction update timer is required during upgrade</div>
+<div class="paragraph">
+<p>You must disable transactional updates during the upgrade procedure from one version of SUSE CaaS Platform
+to the next.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.software.transactional_updates.installation"><a class="anchor" href="#_sec.admin.software.transactional_updates.installation"></a>1.3. Applying Updates</h3>
+<div class="paragraph">
+<p>It is paramount that you never "hard reboot" nodes in the cluster after transactional updates.
+This will omit reconfiguring services and applications and will leave nodes in unhealthy, if not unsusable, states.</p>
+</div>
+<div class="paragraph">
+<p>Updates are typically applied to nodes automatically and will be flagged in Velum
+for reboot.
+If you have nodes with pending transactional updates follow the steps below.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">General Notes to the Updates Installation</div>
+<div class="paragraph">
+<p>Only packages that are part of the snapshot of the root file system can be updated.
+If packages contain files that are not part of the snapshot, the update could fail or break the system.</p>
+</div>
+<div class="paragraph">
+<p>RPMs that require a license to be accepted cannot be updated.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>After the <code class="command">transactional-update</code> script has run on all nodes, Velum
+ displays any nodes in your cluster running outdated software.
+The updates are only applied after a reboot.
+For this purpose, Velum
+ enables you to update your cluster directly.
+Follow the next procedure to update your cluster.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure: Updating the Cluster with Velum</div>
+<ol class="arabic">
+<li>
+<p>Login to Velum .</p>
+</li>
+<li>
+<p>If required, click <b class="menuref">UPDATE ADMIN NODE</b> to start the update.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_updating.png" alt="velum updating">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Confirm the update by clicking <b class="menuref">Reboot to update</b> .</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_reboot_and_update.png" alt="velum reboot and update">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Now you have to wait until the Administration Node reboots and Velum is available again.</p>
+</li>
+<li>
+<p>Click <b class="menuref">update all nodes</b> to update Master Node and Worker Node s.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/velum_update_nodes.png" alt="velum update nodes">
+</div>
+</div>
+<div class="sect3">
+<h4 id="_sec.admin.software.transactional_updates.installation.manual"><a class="anchor" href="#_sec.admin.software.transactional_updates.installation.manual"></a>1.3.1. Applying Updates Manually</h4>
+<div class="paragraph">
+<p>You can use <code class="command">transactional-update</code> to apply updates or install PTF files manually.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``transactional-update pkg install PACKAGE_NAME reboot``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If your node is accepted to the cluster, it will have been configured to use Salt orchestration to reboot.
+The updated node will show in Velum
+requiring a reboot.</p>
+</div>
+<div class="paragraph">
+<p>If your node is not (yet) accepted into the cluster it will reboot after the transactional-update has finished.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.software.transactional_updates.recovering"><a class="anchor" href="#_sec.admin.software.transactional_updates.recovering"></a>1.4. Recovering From Failed Updates</h3>
+<div class="paragraph">
+<p>Velum notifies you about failed updates.
+If the update failed, there are several things that can be the cause.
+The following list provides an overview of things to check.
+For general information about troubleshooting, read <a href="#_sec.admin.troubleshooting.overview">[_sec.admin.troubleshooting.overview]</a>.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="title">Do Not Interfere with Transactional Updates</div>
+<div class="paragraph">
+<p>Do not manually interfere with transactional updates.
+Do so only if you are requested to do so by SUSE
+support.</p>
+</div>
+<div class="paragraph">
+<p>For details, see <a href="#_sec.admin.software.transactional_updates.command">The <code class="command">transactional-update</code> Command</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Stopping Services and Reboot</dt>
+<dd>
+<p>Velum uses Salt
+to stop all services and reboot the node.
+Salt also takes care of adjusting configuration.
+Check the logs of the Salt
+master and minions for error messages.
+For details, see <a href="#_sec.admin.logging.salt.master">[_sec.admin.logging.salt.master]</a> and <a href="#_sec.admin.logging.salt.minion">[_sec.admin.logging.salt.minion]</a>.</p>
+</dd>
+<dt class="hdlist1">Installing Updates</dt>
+<dd>
+<p>Updates are installed once a day but only applied after a reboot is manually triggered.
+If the installation of updates fails, Velum shows the message <code>Update Failed</code> as the node&#8217;s status.
+In this case, log in on the node and check <code class="path">/var/log/transactional-update.log</code>
+for problems.</p>
+</dd>
+<dt class="hdlist1">Starting Services</dt>
+<dd>
+<p>Finally, all services of the node are being restarted.
+Look which services have failed by executing <code class="command">systemctl
+list-units --failed</code>.
+Then check the logs of failed services.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>The following procedure can help in some situations.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Reboot all nodes.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``docker exec -it $(docker ps -q -f name="salt-master") \
+salt -P "roles:(admin|kube-(master|minion))" system.reboot``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>On the Administration Node run</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``docker exec -it $(docker ps -q -f name="salt-master") \
+ salt -P "roles:(admin|kube-(master|minion))" cmd.run "transactional-update cleanup reboot dup"``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Reboot all nodes again.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``docker exec -it $(docker ps -q -f name="salt-master") \
+salt -P "roles:(admin|kube-(master|minion))" system.reboot``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Start the update with debug output.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root.admin}``docker exec -it $(docker ps -q -f name="salt-master") \
+salt-run -l debug state.orchestrate orch.update``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>If there is any ongoing problem, look at all the Salt grains of all nodes in <code class="path">/etc/salt/grains</code> . This file contains the status if the update is ongoing, and is therefore providing the "Update Retry" in Velum.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.software.patch"><a class="anchor" href="#_sec.admin.software.patch"></a>2. Program Temporary Fixes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Program temporary fixes (PTFs) are available in the SUSE CaaS Platform
+environment.
+You install them by using the <code class="command">transactional-update</code> script.
+Typically you invoke the installation of PTFs by running:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``transactional-update reboot ptf install RPM1 RPM2 …``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The command installs PTF RPMs.
+The <code>reboot</code> option then schedules a reboot after the installation.
+PTFs are activate only after rebooting of your system.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Reboot Required</div>
+<div class="paragraph">
+<p>If you install or remove PTFs and you call the <code class="command">transactional-update</code> to update the system before reboot, the applied changes by PTFs are lost and need to be done again after reboot.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In case you need to remove the installed PTFs, use the following command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``transactional-update reboot ptf remove RPM1 RPM2 …``</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.software.upgrade_caasp2"><a class="anchor" href="#_sec.admin.software.upgrade_caasp2"></a>3. Upgrading From SUSE CaaS Platform 2</h2>
+<div class="sectionbody">
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="title">Read This Section Carefully</div>
+<div class="paragraph">
+<p>Before executing the single steps of the upgrade procedure, carefully read all information in this overview section.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>As SUSE CaaS Platform
+is constantly developed and improved, new versions get released.
+You are strongly advised to upgrade to a supported release.
+These upgrades may involve manual intervention.</p>
+</div>
+<div id="_pro.admin.upgrade.procedure" class="olist arabic">
+<div class="title">Procedure: Overview of Upgrade Procedure</div>
+<ol class="arabic">
+<li>
+<p>Plan a maintenance window. Upgrades may take some time, during which services may be degraded in performance or completely unavailable.</p>
+</li>
+<li>
+<p>If you are using <em>Repository Mirroring Tool</em> or <em>Subscription Management Tool</em>, enable the SUSE CaaS Platform 3 repositories and mirror the packages.</p>
+</li>
+<li>
+<p>Install all updates for SUSE CaaS Platform 2. For details, see <a href="#_sec.admin.software.upgrade_caasp2.prereq">Install SUSE CaaS Platform 2 Updates</a></p>
+</li>
+<li>
+<p>Disable automatic updates during the upgrade procedure. For details, see <a href="#_sec.admin.software.upgrade_caasp2.timer">Disable Automatic Updates</a>.</p>
+</li>
+<li>
+<p>Upgrade the nodes. For details, refer to <a href="#_sec.admin.software.upgrade_caasp2.upgrade">Upgrading to SUSE CaaS Platform 3</a>.</p>
+</li>
+<li>
+<p>Reboot all nodes. For details, refer to <a href="#_sec.admin.software.upgrade_caasp2.reboot">Reboot Cluster Nodes</a>.</p>
+</li>
+</ol>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.software.upgrade_caasp2.prereq"><a class="anchor" href="#_sec.admin.software.upgrade_caasp2.prereq"></a>3.1. Install SUSE CaaS Platform 2 Updates</h3>
+<div class="paragraph">
+<p>Before you start the upgrade procedure to SUSE CaaS Platform
+v3, you must ensure that all your nodes are running on the latest v2 updates.
+You can check the <code class="path">SUSEConnect</code>
+ package version to see if you are up to date.
+To do so you will run a <code class="command">salt</code> command to display the package version installed on each node.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``docker exec -i  $(docker ps -q -f name="salt-master") \
+salt --batch 10 -P "roles:(admin|kube-(master|minion))" \
+cmd.run "rpm -q SUSEConnect"`` Executing run on ['12cda3c374144d74804298bdee4d686c',
+                  '9b6d8d28393045c0914c959d0a5c0e33',
+                  '73b92dd7816147058c3d0fbb67fb18f9',
+                  'admin']
+admin:
+    SUSEConnect-0.3.11-3.15.1.x86_64
+jid:
+    20180809103558881056
+retcode:
+    0
+73b92dd7816147058c3d0fbb67fb18f9:
+    SUSEConnect-0.3.11-3.15.1.x86_64
+jid:
+    20180809103558881056
+retcode:
+    0
+9b6d8d28393045c0914c959d0a5c0e33:
+    SUSEConnect-0.3.11-3.15.1.x86_64
+jid:
+    20180809103558881056
+retcode:
+    0
+12cda3c374144d74804298bdee4d686c:
+    SUSEConnect-0.3.11-3.15.1.x86_64
+jid:
+    20180809103558881056
+retcode:
+    0</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the package version is <code>0.3.11-3.15.1</code> (or higher) you have the latest updates from the v2 channel installed.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.software.upgrade_caasp2.timer"><a class="anchor" href="#_sec.admin.software.upgrade_caasp2.timer"></a>3.2. Disable Automatic Updates</h3>
+<div class="paragraph">
+<p>To begin with the upgrade procedure, you first must disable the automatic transactional update mechanism to avoid conflicts.
+To do so you must run a <code class="command">salt</code> command across the nodes to disable the <code>transactional-update.timer</code>.</p>
+</div>
+<div class="paragraph">
+<p>The automatic update timer will be re-enabled automatically after the migration procedure.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``docker exec -i $(docker ps -q -f name="salt-master") \
+salt --batch 10 -P "roles:(admin|kube-(master|minion))" \
+cmd.run "systemctl disable --now transactional-update.timer"`` Executing run on ['5f6688bbeac94d2ab5c4330dc7043fb2',
+                  'c3afd049edbe43afb4e2e5913a88291b',
+                  '5bf346291a18406290886c2e2f7c3e3f',
+                  'admin']
+
+5bf346291a18406290886c2e2f7c3e3f:
+    Removed symlink /etc/systemd/system/timers.target.wants/transactional-update.timer.
+jid:
+    20180807122220543037
+retcode:
+    0
+admin:
+    Removed symlink /etc/systemd/system/timers.target.wants/transactional-update.timer.
+jid:
+    20180807122220543037
+retcode:
+    0
+c3afd049edbe43afb4e2e5913a88291b:
+    Removed symlink /etc/systemd/system/timers.target.wants/transactional-update.timer.
+jid:
+    20180807122220543037
+retcode:
+    0
+5f6688bbeac94d2ab5c4330dc7043fb2:
+    Removed symlink /etc/systemd/system/timers.target.wants/transactional-update.timer.
+jid:
+    20180807122220543037
+retcode:
+    0</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.software.upgrade_caasp2.upgrade"><a class="anchor" href="#_sec.admin.software.upgrade_caasp2.upgrade"></a>3.3. Upgrading to SUSE CaaS Platform 3</h3>
+<div class="paragraph">
+<p>Run the update command across your nodes.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Batch size for upgrade</div>
+<div class="paragraph">
+<p>In this example we have limited the number of nodes this step will be performed on to <code>10 nodes</code> at a time.</p>
+</div>
+<div class="paragraph">
+<p>This is a precaution to avoid problems on slower network connections.
+If you are performing this step on a high bandwidth connection (for example from within the same datacenter as the cluster), you can raise the number of nodes by replacing the value for the (<code>--batch</code>) parameter.
+It is highly recommended not to change this setting.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``docker exec -i $(docker ps -q -f name="salt-master") \
+salt --batch 10 -P "roles:(admin|kube-(master|minion))" \
+cmd.run "transactional-update salt migration -n" \
+| tee transactional-update-migration.log`` Executing run on ['5f6688bbeac94d2ab5c4330dc7043fb2',
+                  'c3afd049edbe43afb4e2e5913a88291b',
+                  '5bf346291a18406290886c2e2f7c3e3f',
+                  'admin']
+
+5bf346291a18406290886c2e2f7c3e3f:
+
+
+    Executing 'zypper --root /tmp/tmp.vbaqUwrLIh --non-interactive refresh'
+
+    Retrieving repository 'SUSE-CAASP-ALL-Pool' metadata [...done]
+    Building repository 'SUSE-CAASP-ALL-Pool' cache [....done]
+    Retrieving repository 'SUSE-CAASP-ALL-Updates' metadata [....done]
+    Building repository 'SUSE-CAASP-ALL-Updates' cache [....done]
+    All repositories have been refreshed.
+    Upgrading product SUSE CaaS Platform 3.0 x86_64.
+
+[ SNIP ... ]
+
+    done
+jid:
+    20180807122253512832
+retcode:
+    0</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>During the procedure the nodes will be switched to the new release channel for v3, available updates are downloaded and installed, services and applications are reconfigured and brought up in a orderly fashion.</p>
+</div>
+<div class="paragraph">
+<p>This operation will produce a lot of output for each node.
+The entire output is mirrored to a log file <code class="path">transactional-update-migration.log</code>
+ to the current working directory.
+This log file can be very helpful should any of the update operations fail.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.software.upgrade_caasp2.reboot"><a class="anchor" href="#_sec.admin.software.upgrade_caasp2.reboot"></a>3.4. Reboot Cluster Nodes</h3>
+<div class="paragraph">
+<p>To complete the procedure, you must reboot the cluster nodes.
+To do this properly, use Velum
+to restart the nodes.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Log in to Velum .</p>
+</li>
+<li>
+<p>Update the Admin node as described in <a href="#_sec.admin.software.transactional_updates.installation">Applying Updates</a>.</p>
+</li>
+<li>
+<p>Update the remaining nodes as described in <a href="#_sec.admin.software.transactional_updates.installation">Applying Updates</a>.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.software.upgrade_caasp2.troubleshooting"><a class="anchor" href="#_sec.admin.software.upgrade_caasp2.troubleshooting"></a>3.5. Troubleshooting</h3>
+<div class="paragraph">
+<p>In case the upgrade fails, please perform the support data collection by running <code class="command">supportconfig</code> on the affected nodes.
+Provide the resulting files including the <code class="path">transactional-update-migration.log</code>
+ to SUSE Support.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sec.admin.software.install"><a class="anchor" href="#_sec.admin.software.install"></a>4. Additional Software Installation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Once your cluster is ready, you may want to deploy additional software that is not installed on SUSE CaaS Platform
+by default.
+This chapter provides instructions on how to install and configure Helm
+, the Kubernetes
+package manager.</p>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.software.toolchain"><a class="anchor" href="#_sec.admin.software.toolchain"></a>4.1. Building Kernel Modules</h3>
+<div class="paragraph">
+<p>Some vendors will only provide certain kernel drivers or modules as source.
+In order to use these modules you must build them on the machine they are required on.
+We provide a <code class="path">caasp-toolchain</code>
+ module that includes all necessary tools to <strong>build</strong> kernel modules.</p>
+</div>
+<div class="paragraph">
+<p>A full list of tools and packages available through the module can be found in the <a href="https://scc.suse.com/packages?name=SUSE%20CaaS%20Platform&amp;version=3.0&amp;arch=x86_64&amp;query=&amp;module=1752">SUSE Customer Center</a>.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Reboot Required For Toolchain</div>
+<div class="paragraph">
+<p>The toolchain module must be enabled through <code class="command">transactional-update</code>.
+Due to the nature of transactional updates, the machine must reboot at least twice.
+First to activate the module and a second time to start the machine from the new snapshot that incorporates the installed tools, packages, and libraries.</p>
+</div>
+<div class="paragraph">
+<p>Please plan for maintenance windows when setting up toolchain usage.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure: Enabling <code>caasp-toolchain</code> Module</div>
+<ol class="arabic">
+<li>
+<p>Log in to the machine where you wish to use the toolchain</p>
+</li>
+<li>
+<p>Register the <code>caasp-toolchain</code> module</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``transactional-update reboot register -p caasp-toolchain/3.0/x86_64``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The machine will reboot to incorporate the module into the read-only file system and start from the new snapshot.</p>
+</div>
+</li>
+<li>
+<p></p>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Avoid Reboots By Installing Multiple Packages</div>
+If you wish to install multiple packages, you should install them all in a single operation.
+Each time <code class="command">transactional-update</code> is run, it creates a new snapshot and discards all previous changes.
+The changes can only be persisted by starting from the new snapshot through reboot.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Use <code class="command">transactional-update</code> to install the desired packages from the toolchain module</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``transactional-update reboot pkg in binutils kernel-devel kernel-default-devel kernel-syms kernel-macros``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>After the operation is finished the machine will reboot and start from the new snapshots with the packages installed.</p>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Procedure: Disabling <code>caasp-toolchain</code> Module</div>
+<p>After you are done using the toolchain module, you can free up space by uninstalling the tools you no longer need and disable the toolchain module.
+. Uninstall the packages you no longer need</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``transactional-update reboot pkg rm binutils kernel-devel kernel-default-devel kernel-syms kernel-macros``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>+
+The machine will reboot and start from the new snapshot without these packages.
+. Disable the toolchain module</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``transactional-update reboot register -d -p caasp-toolchain/3.0/x86_64``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>+
+The machine will reboot and start from the new snapshot without the module registered.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.software.helm"><a class="anchor" href="#_sec.admin.software.helm"></a>4.2. Deploying Helm and Tiller</h3>
+<div class="paragraph">
+<p>Helm
+has two parts: Helm
+is the client and Tiller
+is the server component. Helm
+runs on your remote workstation that has access to your cluster, and Tiller
+is installed as a container on SUSE CaaS Platform
+when you run Velum
+for the first time.
+(See <a href="#_sec.deploy.nodes.admin_configuration">[_sec.deploy.nodes.admin_configuration]</a>.)</p>
+</div>
+<div class="paragraph">
+<p>You should match the Helm
+version with the version of Tiller
+that is running on your cluster.
+The Tiller
+binary cannot report its version, and you need the version that is packaged inside the Tiller
+container.
+Run the following command from your workstation to query the logs:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``kubectl logs -l name=tiller --namespace=kube-system | grep "Starting Tiller"`` [main] 2018/04/04 16:48:27 Starting{tiller}v2.6.1 (tls=false)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the log gets overwritten and loses this information, the following command queries the <code class="command">rpm</code> package manager inside the container.
+This works only on SUSE CaaS Platform
+/SUSE Cloud Foundry
+ installations:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``kubectl exec -it $(kubectl get pods -n kube-system | awk '/tiller/{print$1}') \
+-n kube-system -- rpm -q helm`` helm-2.6.1-1.6.x86_64</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the Linux distribution on your workstation doesn&#8217;t provide the correct Helm
+version, or you are using some other platform, see the <a href="https://docs.helm.sh/using_helm/#quickstart"> Helm Quickstart Guide</a> for installation instructions and basic usage examples.
+Download the matching Helm
+ binary into any directory that is in your PATH on your workstation, such as your <code class="path">~/bin</code>
+ directory.
+Then initialize just the client part:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.user}``helm init --client-only``</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The Tiller
+version that ships with SUSE CaaS Platform
+is supported by SUSE
+.
+While SUSE
+does not provide support for third-party Helm
+charts, you can easily use them if necessary.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sec.admin.software.helm.installing_heapster"><a class="anchor" href="#_sec.admin.software.helm.installing_heapster"></a>4.3. Example: Installing heapster</h3>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>By default, <code>tiller</code> will be installed and you only need to initialize data for it.
+Use the <code>--client-only</code> parameter.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<div class="title">Procedure: Installation of heapster</div>
+<p>By default, the chart repository for helm will not be known to the system.
+You must perform <code class="command">helm init</code> to initialize the necessary repository files and then refresh the information using <code class="command">helm repo
+      update</code>.
+After that, you can install <code>heapster</code> from the Kubernetes
+ helm charts repository.
+. (On CaaSP Admin Node) Initialize helm repo data.</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``helm init --client-only`` Creating /root/.helm/repository
+Creating /root/.helm/repository/cache
+Creating /root/.helm/repository/local
+Creating /root/.helm/plugins
+Creating /root/.helm/starters
+Creating /root/.helm/repository/repositories.yaml
+Adding stable repo with URL: https://kubernetes-charts.storage.googleapis.com
+Adding local repo with URL: http://127.0.0.1:8879/charts
+$HELM_HOME has been configured at /root/.helm.
+Not installing Tiller due to 'client-only' flag having been set
+Happy Helming!</pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Install <code>heapster</code> from stable/heapster Kubernetes charts repository</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``helm install --name heapster-default --namespace=kube-system stable/heapster \
+--version=0.2.7 --set rbac.create=true``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that <code>heapster</code> was deployed successfully.</p>
+<div class="listingblock">
+<div class="content">
+<pre>{prompt.root}``helm list | grep heapster`` heapster-default  1  Fri Jun 29 10:48:45 2018  DEPLOYED  heapster-0.2.7  kube-system</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_installing.kube.dashboard"><a class="anchor" href="#_installing.kube.dashboard"></a>5. Installing Kubernetes Dashboard</h2>
+<div class="sectionbody">
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Technology Preview</div>
+<div class="paragraph">
+<p>Even though you can install and use the community Kubernetes
+dashboard, SUSE CaaS Platform
+currently fully supports only Velum
+.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<div class="title">Requirements</div>
+<ul>
+<li>
+<p>Heapster version 1.3.0 or later needs to be installed on the cluster</p>
+</li>
+<li>
+<p>Helm version 2.7.2+ and kubectl version 1.8.0+ recommended</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure: Installation of KubernetesDashboard</div>
+<ol class="arabic">
+<li>
+<p>If <code>heapster</code> is not installed, refer to <a href="#_sec.admin.software.helm.installing_heapster">Example: Installing heapster</a>.</p>
+</li>
+<li>
+<p></p>
+<div class="listingblock">
+<div class="content">
+<pre>``helm install --namespace=kube-system \
+--name=kubernetes-dashboard stable/kubernetes-dashboard \
+--version=0.6.1``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Run <code class="command">kubectl proxy</code> to expose the cluster on your local workstation.</p>
+</li>
+<li>
+<p>Visit <code><a href="http://127.0.0.1:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/" class="bare">http://127.0.0.1:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/</a></code> in your browser. You will be greeted with by a welcome page containing a dialog to configure authentication.</p>
+</li>
+<li>
+<p>Select <b class="menuref">token</b> authentication. To retrieve your token refer to the value in your kubeconfig file by running the command:</p>
+<div class="listingblock">
+<div class="content">
+<pre>``grep "id-token" /path/to/kubeconfig  | awk '{print $2}'``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>On login cluster resources and basic metrics are populated.</p>
+</li>
+</ol>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure: Exposing the Dashboard</div>
+<ol class="arabic">
+<li>
+<p></p>
+<div class="listingblock">
+<div class="content">
+<pre>``helm upgrade kubernetes-dashboard stable/kubernetes-dashboard --set service.type=NodePort``</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Now you may visit the dashboard at <code>https://<code class="replaceable">WORKER_NODE_ADDRESS</code>:<code class="replaceable">NODE_PORT</code></code> in your browser from outside of your cluster.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</article>
+  </main>
+</div>
+<footer class="footer">
+  <p>Copyright (C) 2017-2018 <a href="https://opensource.suse.com/doc-susemanager/">SUSE Manager</a></p>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<!-- fetched from https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js -->
+<script>
+function focusSearchInput () { document.querySelector('#search-input').focus() }
+var search = docsearch({
+  appId: 'KIB3CEDKWD',
+  apiKey: '51646b7d454f125193a0ba62253e8e17',
+  indexName: 'manager',
+  inputSelector: '#search-input',
+  autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+  algoliaOptions: { hitsPerPage: 10 }
+}).autocomplete;
+search.on('autocomplete:closed', function () { search.autocomplete.setVal() });
+focusSearchInput();
+window.addEventListener('load', focusSearchInput)
+</script>
+<script src="../../../_/js/site.js"></script>
+<script src="../../../_/js/vendor/highlight.js"></script>
+<script>hljs.initHighlighting()</script>
+  </body>
+</html>
