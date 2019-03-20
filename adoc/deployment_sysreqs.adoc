@@ -1,0 +1,603 @@
+[[_cha.deploy.requirements]]
+= System Requirements
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:sourcedir: .
+:imagesdir: ./images
+= System Requirements
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:imagesdir: ./images
+
+
+This chapter specifies the requirements to install and operate {productname}
+.
+Before you begin the installation, please make sure your system meets all requirements listed below. 
+
+[[_sec.deploy.requirements.system.cluster]]
+== Cluster Size Requirements
+
+{productname}
+is a dedicated cluster operating system and only functions in a multi-node configuration.
+It requires a connected group of four or more physical or virtual machines. 
+
+The minimum supported cluster size is four nodes: a single {admin_node}
+, one {master_node}
+, and two {worker_node}
+s. 
+
+.Cluster Update Reserves
+[IMPORTANT]
+====
+You should always size your cluster to accomodate your expected workloads and contingency resources for updates.
+During updates, worker nodes will become temporarily unavailable to process workloads and their assigned load must be shifted somewhere else in the cluster. 
+
+As a general rule of thumb: Your cluster utilization should not exceed 70% and must not exceed 80%. 
+
+You can make use of https://kubernetes.io/docs/concepts/policy/resource-quotas/[Resource Quotas] to limit the resources user workloads can take up in the cluster. 
+====
+
+.Test and Proof-of-Concept Clusters
+[NOTE]
+====
+It is possible to provision a three-node cluster with only a single {worker_node}
+, but this is not a supported configuration for deployment. 
+====
+
+
+For improved performance, multiple {master_node}
+s are supported, but there must always be an odd number.
+For cluster reliability, when using multiple master nodes, some form of DNS load-balancing should be used. 
+
+Any number of {worker_node}
+s may be added up to the maximum cluster size.
+For the current maximum supported number of nodes, please refer to the Release Notes on https://www.suse.com/releasenotes/. 
+
+[[_sec.deploy.requirements.system.cluster.etcd_cluster_size]]
+=== etcd Cluster Sizing
+
+`etcd` is a distributed key-value store.
+Some nodes on the cluster run `etcd` members that sync with other peers in order to provide a fault-tolerant storage that {kube}
+ uses for persistence. 
+
+`etcd` is the central component where {kube}
+ reads and writes in order to have global knowledge about the cluster status and desired state. 
+
+It's very important to note that `etcd` automatically recovers from temporary failures like machine reboots. 
+
+`etcd` knows how many peers conform the `etcd` cluster; based on this information the `etcd` cluster can be in three different states: healthy, degraded or unavailable. 
+
+Healthy::
+All `etcd` members are working as expected. 
+
+Degraded::
+Some `etcd` members are not working as expected, but there's still a majority in the working ones.
+This still means the cluster is working, because it has quorum. 
+
+Unavailable::
+There is no working majority of peers.
+The cluster is not available and cannot be used because the quorum is lost. 
+
+
+In order to maintain functionality of the `etcd` cluster, the number of Master nodes must always maintain quorum.
+This means there always must be a majority of nodes available to "overrule" a possible minority caused by network partitioning or other failure.
+Therefore, you should always run an odd number of Master nodes in your cluster. 
+
+This ensures that there is a sufficiently lopsided majority.
+The number of Master nodes that can be lost without causing loss of functionality depends on this ratio. 
+
+.etcd Cluster Sizing
+[cols="1,1,1", options="header"]
+|===
+^| Master Nodes
+^| Quorum Limit
+^| Fault Tolerance
+
+|1
+|1
+|0
+
+|3
+|2
+|1
+
+|5
+|3
+|2
+
+|7
+|4
+|3
+
+|9
+|5
+|4
+|===
+
+
+Whether `etcd` is available or not depends on how many etcd members are available/not available at a given moment.
+It is important to differentiate between transient and permanent failures.
+Transient failures happen when a member is temporarily not available, for example when a machine running one etcd member is rebooting.
+Permanent failures happen when a member was irrevocably lost, for example a machine hard disk failure.
+The etcd cluster can tolerate up to (N - 1) / 2 permanent failures, where N is the number of etcd members; a subset of masters and possibly workers.
+The number of etcd nodes must always maintain `Majority` quorum. 
+
+`Majority` means that the number of available etcd cluster members must never be lower or equal to the number of unavailable nodes.
+If, for example, you have only `1` or `2` etcd members, the cluster has a fault tolerance of `0` because `0` nodes can be faulty for the cluster to maintain ``Majority``. 
+
+When the `etcd` cluster actually loses quorum, it will enter a "read-only" state and will refuse to work.
+This will cause scheduling of new pods and workloads to fail.
+You must always consider maintaining quorum on adding/removing Master nodes to/from the cluster. 
+
+If you have `6` nodes, a maximum of `2` nodes can become faulty for the cluster to remain in degraded but working state.
+If `3` or more nodes fail, there is no longer a majority of nodes working, therefore the cluster becomes unavailable. 
+
+For example: The fault tolerance of a cluster with `7` nodes is ``3``, because you need at least `4` active nodes to maintain majority. 
+
+When (N - 1) / 2 or fewer permanent failures happen in a given `etcd` cluster, the cluster still has a quorum.
+It is then possible to remove the faulty members and add new ones.
+The new members will synchronize with the existing ones.
+This does not require an explicit backup/restore procedure, as it is normal etcd operation. 
+
+When more than (N - 1) / 2 permanent failures happen in a given `etcd` cluster, the quorum is lost irrevocably.
+That means that there is no way to recover from that situation, because it is no longer possible to remove faulty members or add new members.
+In this case, it is necessary to start a new etcd cluster and grow it. 
+
+[[_sec.deploy.requirements.system.cluster.salt_cluster_size]]
+=== Salt Cluster Sizing
+
+{productname}
+relies on SaltStack (or Salt for short) to automate various tasks.
+The actions are performed by so called "minions". A master can handle a theoretical number of minions at the same time.
+Salt assigns a configured number of "worker threads" to the minions.
+The number of available worker threads limits the overall size of the cluster. 
+
+Up until a total cluster size of `40` nodes, no adjustments to the default configuration of {productname}
+ need to be made. 
+
+For clusters that consist of more than `40` nodes the number of Salt worker threads must be adjusted as follows: 
+
+.Salt Cluster Sizing
+[cols="1,1", options="header"]
+|===
+| Cluster Size (nodes)
+| Salt worker threads 
+
+|>40
+|20
+
+|>60
+|30
+
+|>75
+|40
+
+|>85
+|50
+
+|>95
+|60
+|===
+
+
+As a rule of thumb, if the cluster grows above `100` nodes the number of worker threads should be at about two thirds of the overall number of cluster nodes. 
+
+To adjust the number of Salt worker threads, refer to: <<_sec.admin.salt.worker_threads>>. 
+
+[[_sec.deploy.requirements.environment]]
+== Supported Environments
+
+
+Regarding deployment scenarios, {suse}
+supports {productname}
+running in the following environments: 
+
+* {productname} only supports x86_64 hardware. 
+* Aside from this, the same hardware and virtualization platforms as {sle} 12 SP3 are supported. For a list of certified hardware, see https://www.suse.com/yessearch/. 
+* Virtualized{mdash} running under the following hypervisors: 
+** KVM 
+*** on {sle} 11 SP4 
+*** on {sle} 12 SP1 
+*** on {sle} 12 SP2 
+*** on {sle} 12 SP3 
+** Xen 
+*** same host platforms as for KVM 
+*** full virtualization 
+*** paravirtualization 
+*** Citrix XenServer 6.5 
+** {vmware}
++
+.Disable {vmware}Memory Ballooning
+IMPORTANT: When installing {productname}
+on {vmware}
+you must disable {vmware}
+'s memory ballooning feature. {vmware}
+has instructions on how to do this here: https://kb.vmware.com/s/article/1002586
++
+
+
++
+When using pre-installed disk images, read <<_sec.deploy.preparation.disk_images.vmware>>.
+After bootstrapping the cluster, install the {vmware}
+tools.
+For details, see <<_sec.deploy.install.vmware_tools>>. 
+*** ESX 5.5 
+*** ESXi 6.0 
+*** ESXi 6.5+ 
+** Hyper-V 
+*** Windows Server 2008 SP2+ 
+*** Windows Server 2008 R2 SP1+ 
+*** Windows Server 2012+ 
+*** Windows Server 2012 R2+ 
+*** Windows Server 2016 
+** Oracle VM 3.3 
+* Private and Public Cloud Environments 
+** {soc} 7 
+** Amazon AWS* 
+** Microsoft Azure* 
+** Google Compute Engine* 
+
+
+[[_sec.deploy.requirements.storage]]
+== Container Data Storage
+
+
+Storage can be provided using: 
+
+* {ses}
+* NFS 
+* [command]``hostpath``
++
+.`hostpath` Storage
+NOTE: Storage using `hostpath` is still supported, but by default it is disabled by ``PodSecurityPolicies``. 
++
+
+
+
+[[_sec.deploy.requirements.hardware]]
+== Minimum Node Specification
+
+
+Each node in the cluster must meet the following minimum specifications.
+All these specifications must be adjusted according to the expected load and type of deployments. 
+
+(v)CPU::
+** `4 Core` AMD64/Intel* EM64T processor 
+** 32-bit processors are not supported 
+
+Memory::
+** `8 GB`
++ 
+Although it may be possible to install {productname}
+with less memory than recommended, there is a high risk that the operating system will run out of memory and subsequently causes a cluster failure. 
++
+.Swap partitions
+NOTE: {kube}
+does not support swap. 
+
+For technical reasons, an {admin_node}
+installed from an ISO image will have a small swap partition which will be disabled after installation.
+Nodes built using {ay}
+do not have a swap partition. 
++
+
+
+Storage Size::
+** `40 GB` for the root file system with Btrfs and enabled snapshots. 
++
+.Cloud default root volume size
+NOTE: In some Public Cloud frameworks the default root volume size of the images is smaller than 40GB.
+You must resize the root volume before instance launch using the command line tools or the web interface for the framework of your choice. 
++
+
+
+Storage Performance::
+** IOPS: `500` sequential IOPS 
+** Write Performance: `10MB/s`
++
+.etcd Storage requirements
+NOTE: Storage performance requirements are tied closely to the https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware.md#disks[etcd hardware recommendations]
++
+
+
+
+[[_sec.deploy.requirements.network]]
+== Network Requirements
+
+* All the nodes on the cluster must be on a the same network and be able to communicate directly with one another. 
++
+.Reliable Networking
+IMPORTANT: Please make sure all nodes can communicate without interruptions. 
++
+
+* All nodes in the cluster must be assigned static IP addresses. Using dynamically assigned IPs will break cluster functionality after update/reboot. 
+* The admin node and the {kube} API master must have valid Fully-Qualified Domain Names (FQDNs), which can be resolved both by all other nodes and from other networks which need to access the cluster. 
++
+.Hostname 64 Character Limit
+IMPORTANT: {productname}
+generates SSL certificates for the cluster.
+The `Common Name (CN)` field is derived from the supplied hostnames.
+The `CN` field is limited to 64 characters. 
+
+Your hostnames must not exceed this limit or they will fail to be added to the cluster. 
++
+
+
++
+Admin node and {kube}
+API master node should be configured as CNAME records in the local DNS.
+This improves portability for disaster recovery. 
+* A DNS server to resolve host names. If you are using host names to specify nodes, please make sure you have reliable DNS resolution at all times, especially in combination with DHCP. 
++
+.Unique Host Names
+IMPORTANT: Host names must be unique.
+It is recommended to let the DHCP server provide not only IP addresses but also host names of the cluster nodes. 
++
+
+* On the same network, a separate computer with a Web browser is required in order to complete bootstrap of the cluster. 
+* We recommend that {productname} is setup to run in two subnets in one network segment, also referred to as VPC or VNET. The {admin_node} should run in a subnet that is not accessible to the outside world and should be connected to your network via VPN or other means. Consider a security group/firewall that only allows ingress traffic on ports 22 (SSH) and 443 (https) for the Administrative node from outside the VPC. All nodes must have access to the Internet through some route in order to connect to {scc} and receive updates, or be otherwise configured to receive updates, for example through {smt} . 
++ 
+Depending on the applications running in your cluster you may consider exposing the subnet for the cluster nodes to the outside world.
+Use a security group/firewall that only allows incoming traffic on ports served by your workload.
+For example, a containerized application providing the backend for REST based services with content served over https should only allow ingress traffic on port 443. 
+* In a {productname} cluster, internal TCP/IP ports are managed using `iptables` controlled by `Salt` and so need not be manually configured. However, for reference and for environments where there are existing security policies, the following are the standard ports in use. 
++
+
+[[_tab.deploy.requirements.ports]]
+.Node types and open ports
+[cols="1,1,1,1", options="header"]
+|===
+| 
+         
+          Node
+         
+        
+| 
+         
+          Port
+         
+        
+| 
+         
+          Accessibility1
+         
+        
+| 
+         
+          Description
+         
+        
+
+|
+
+All nodes 
+|
+
+22 
+|
+
+Internal 
+|
+
+SSH (required in public clouds) 
+
+.5+.^|
+
+Admin 
+|
+
+80 
+|
+
+Internal 
+|
+
+HTTP (Only used for {ay}
+) 
+
+|
+
+389 
+|
+
+External 
+|
+
+LDAP (user management) 
+
+|
+
+443 
+|
+
+External 
+|
+
+HTTPS 
+
+|
+
+2379 
+|
+
+Internal 
+|
+
+`etcd` discovery 
+
+|
+
+4505 - 4506 
+|
+
+Internal 
+|
+
+Salt 
+
+.6+.^|
+
+Masters 
+|
+
+2379 - 2380 
+|
+
+Internal 
+|
+
+`etcd` (peer-to-peer traffic) 
+
+|
+
+6443 - 6444 
+|
+
+Both 
+|
+
+{kube}
+API server 
+
+|
+
+8471 - 8472 
+|
+
+Internal 
+|
+
+VXLAN traffic (used by Flannel) 
+
+|
+
+10250, 20255 
+|
+
+Internal 
+|
+
+Kubelet 
+
+|
+
+10256 
+|
+
+Internal 
+|
+
+kube-proxy 
+
+|
+
+32000 
+|
+
+External 
+|
+
+Dex (OIDC Connect) 
+
+.6+.^|
+
+Workers 
+|
+
+2379 - 2380 
+|
+
+Internal 
+|
+
+`etcd` (peer-to-peer traffic) 
+
+|
+
+4149 
+|
+
+Internal 
+|
+
+Kubelet 
+
+|
+
+8471 - 8472 
+|
+
+Internal 
+|
+
+VXLAN traffic (used by Flannel) 
+
+|
+
+10250, 10255 
+|
+
+Internal 
+|
+
+Kubelet 
+
+|
+
+10256 
+|
+
+Internal 
+|
+
+kube-proxy 
+
+|
+
+32000 
+|
+
+External 
+|
+
+Dex (OIDC Connect) 
+|===
+
+
+1) Information about whether the port is used by _internal_ cluster nodes or _external_ networks or hosts. 
+
+When some additional ingress mechanism is used, additional ports would also be open. 
+
+[[_sec.deploy.requirements.public_cloud]]
+== Public Cloud Requirements
+
+Amazon AWS*::
+The adminstrative instance must be launched with an IAM role that allows full access to the EC2 API. 
+
+Microsoft Azure*::
+All security credentials will be collected during setup. 
++
+Microsoft Azure does not provide a time protocol service.
+Please refer to https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_netz_xntp.html[ SUSE Linux Enterprise Server documentation] for more information about NTP configuration.
+No manual NTP configuration is required on the cluster nodes, they synchronize time with the {admin_node}
+. 
+
+Google Compute Engine*::
+The instance must be launched with an IAM role including `Compute Admin` and `Service Account
+Actor` scopes. 
+
+
+[[_sec.deploy.requirements.limits]]
+== Limitations
+
+* {empty}
++ 
+{productname}{productnumber}
+does not support remote installations with ``Virtual Network Computing (VNC)``. 
+* {productname} is a dedicated cluster operating system and does not support dual-booting with other operating systems. Ensure that all drives in all cluster nodes are empty and contain no other operating systems before beginning installation. 
