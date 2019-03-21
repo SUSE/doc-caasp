@@ -1,20 +1,30 @@
-## ----------------------------
-## Doc Config File for SUSE CaaSP
-## Administration Guide
-## ----------------------------
+## Doc config file for the DAPS example document
+## See /etc/daps/config for documentation of the settings below
 ##
-## Basics
-MAIN="MAIN.caasp.xml"
-ROOTID="book.caasp.admin"
 
-## Profiling
-#PROFOS="sles"
-#PROFARCH="x86_64;zseries;power;aarch64"
-#ROLE="admin;worker;plain"
+## MAIN file (mandatory)
 
-## stylesheet location
-STYLEROOT="/usr/share/xml/docbook/stylesheet/suse2013-ns"
-FALLBACK_STYLEROOT="/usr/share/xml/docbook/stylesheet/suse-ns"
+MAIN="book_admin.adoc"
 
-##Configuration
-XSLTPARAM="--param toc.section.depth=2"
+##----- optional parameters -----
+
+## Image directory
+
+ADOC_IMG_DIR="adoc/images"
+
+## Type
+
+ADOC_TYPE="book"
+
+## Turn on postprocessing
+
+ADOC_POST="yes"
+
+## Stylesheet directory
+
+STYLEROOT="/usr/share/xml/docbook/stylesheet/daps2013"
+
+## XSLT Parameters for customizing the stylesheets
+
+#XSLTPARAM="--stringparam homepage=https://github.com/openSUSE/daps"
+XSLTPARAM+="--param variablelist.as.blocks=1"

@@ -7,13 +7,6 @@
 :experimental:
 :sourcedir: .
 :imagesdir: ./images
-= Node Configuration
-:doctype: book
-:sectnums:
-:toc: left
-:icons: font
-:experimental:
-:imagesdir: ./images
 
 {productname}
 is typically configured in two stages: first, during the installation process.
@@ -21,30 +14,30 @@ After installation, you can configure your cluster using ``cloud-init``.
 The first-stage configuration of {productname}
  comes as preconfigured as possible.
 The second stage is typically used for large-scale clusters.
-If you only have a few machines, `cloud-init` is not necessary. 
+If you only have a few machines, `cloud-init` is not necessary.
 
-Each configuration stage is described in the following sections. 
+Each configuration stage is described in the following sections.
 
 [[_sec.deploy.configuration]]
 == Default Configuration Values
 
 
-The defaults for the first stage configuration are the following: 
+The defaults for the first stage configuration are the following:
 
 Timezone::
-The timezone is set to `UTC` by default, but can be changed by [command]``cloud-init``. 
+The timezone is set to `UTC` by default, but can be changed by [command]``cloud-init``.
 
 Keyboard Layout::
-The keyboard layout is set to `US` by default, but can be changed during the installation process. 
+The keyboard layout is set to `US` by default, but can be changed during the installation process.
 
 Locale::
-The locale is set to `en_US.utf8` by default, but can be changed by [command]``cloud-init``. 
+The locale is set to `en_US.utf8` by default, but can be changed by [command]``cloud-init``.
 +
 
 IMPORTANT: Note that {productname}
 does not support the full range of locales that are available in {sle}
 .
-Because of this, we do recommend to not change the locale. 
+Because of this, we do recommend to not change the locale.
 +
 
 
@@ -52,7 +45,7 @@ Because of this, we do recommend to not change the locale.
 [[_sec.deploy.cloud_init]]
 == Customizing Configuration with [command]``cloud-init``
 
-[command]``cloud-init`` is a tool that helps customizing an operating system at boot time. [command]``cloud-init`` can set environment variables, configure the hostname, SSH keys, mount points and network devices. 
+[command]``cloud-init`` is a tool that helps customizing an operating system at boot time. [command]``cloud-init`` can set environment variables, configure the hostname, SSH keys, mount points and network devices.
 
 The customization information is usually read from 3 files during boot: [path]``meta-data``
 , [path]``user-data``
@@ -60,31 +53,31 @@ The customization information is usually read from 3 files during boot: [path]``
 .
 These files can be loaded from different datasources.
 In {productname}
-, the following datasources are preconfigured, and `cloud-init` searches them in the following order: 
+, the following datasources are preconfigured, and `cloud-init` searches them in the following order:
 
 LocalDisk::
 First, the configuration is searched in the local directory [path]``/cloud-init-config``
 .
-For details, see <<_sec.deploy.cloud_init.localdisk_datasource>>. 
+For details, see <<_sec.deploy.cloud_init.localdisk_datasource>>.
 
 NoCloud::
 Second, [command]``cloud-init`` tries to read the configuration from a local block device, for example an USB stick, DVD or virtual disk.
-For details, see <<_sec.deploy.cloud_init.nocloud_datasource>>. 
+For details, see <<_sec.deploy.cloud_init.nocloud_datasource>>.
 
 {ostack}::
 Third, if there is a running {ostack}
 service, this datasource can be used.
-The configuration then depends on a particular setup and is not covered by this manual. 
+The configuration then depends on a particular setup and is not covered by this manual.
 
 
-For details about the configuration files, see: 
+For details about the configuration files, see:
 
 * <<_sec.deploy.cloud_init.meta_data>>
 * <<_sec.deploy.cloud_init.user_data>>
-* <<_sec.deploy.cloud_init.vendor_data>> (Optional) 
+* <<_sec.deploy.cloud_init.vendor_data>> (Optional)
 
 
-More information about [command]``cloud-init`` can be found at https://cloudinit.readthedocs.io/en/latest/index.html. 
+More information about [command]``cloud-init`` can be found at https://cloudinit.readthedocs.io/en/latest/index.html.
 
 [[_sec.deploy.cloud_init.localdisk_datasource]]
 === The `LocalDisk` Datasource
@@ -96,7 +89,7 @@ Then create the files [path]``meta-data``
 , [path]``user-data``
  and optionally [path]``vendor-data``
 .
-For details about the content of the files, see the following sections. 
+For details about the content of the files, see the following sections.
 
 [[_sec.deploy.cloud_init.nocloud_datasource]]
 === The `NoCloud` Datasource
@@ -106,14 +99,14 @@ The `NoCloud` datasource enables you to read the `cloud-init` configuration with
 , [path]``user-data``
 , and (optional) [path]``vendor-data``
  in the root directory of a local file system formatted as `vfat` or `iso9660` with a label ``cidata``.
-Typically it is an unpartitioned USB stick or disk or a DVD iso. 
+Typically it is an unpartitioned USB stick or disk or a DVD iso.
 
 Alternatively you can specify a remote location of the [path]``cloud.cfg``
 , but you have to configure network first, for example by using local configuration files.
 The url is specified as a boot parameter and must be in the format: ``cloud-config-url=http://[replaceable]``hostname.domain``/cloud.cfg``.
 The content of the passed url is copied to [path]``/etc/cloud/cloud.cfg.d/91_kernel_cmdline_url.cfg``
  and it is not overwritten even though the url changes.
-For details about boot parameters, see https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_startup.html. 
+For details about boot parameters, see https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_startup.html.
 
 [[_nocloud.datasource.images]]
 ==== Generating cloud-init images for `NoCloud` datasource
@@ -124,46 +117,46 @@ For details about boot parameters, see https://www.suse.com/documentation/sles-1
 You need the tool [command]``mkisofs`` to produce the images.
 It should be preinstalled {opensuse}
  Leap and Tumbleweed installations.
-For other operating systems, please refer to the specific instructions for the respective distribution. 
+For other operating systems, please refer to the specific instructions for the respective distribution.
 
-If [command]``mkisofs`` is not available, you can use the nearly identical [command]``genisoimage``. 
+If [command]``mkisofs`` is not available, you can use the nearly identical [command]``genisoimage``.
 ====
 
 
-You can use a local ISO image generated from cloud-init data to help configuring a cluster that is not hosted in the cloud. 
+You can use a local ISO image generated from cloud-init data to help configuring a cluster that is not hosted in the cloud.
 
 You will need to create two image files.
 One that is used to initialize the admin node and one that is used to initialize the master and worker nodes.
 You need to provide a [path]``meta-data``
  and [path]``user-data``
- file per node type. 
+ file per node type.
 
 .Procedure: Generate cloud-init ISO files
-. Create two directories: [path]``cc-admin`` and [path]``cc-worker`` . 
-. Create your configuration files as described in: 
+. Create two directories: [path]``cc-admin`` and [path]``cc-worker`` .
+. Create your configuration files as described in:
 ** <<_sec.deploy.cloud_init.meta_data>>
 ** <<_sec.deploy.cloud_init.user_data>>
-** <<_sec.deploy.cloud_init.vendor_data>> (Optional) 
+** <<_sec.deploy.cloud_init.vendor_data>> (Optional)
 
 +
-The result should be three or more files: 
-** [path]``cc-admin/meta-data`` (This file will be reused across all nodes) 
+The result should be three or more files:
+** [path]``cc-admin/meta-data`` (This file will be reused across all nodes)
 ** [path]``cc-admin/user-data``
-** [path]``cc-admin/vendor-data`` (Optional) 
+** [path]``cc-admin/vendor-data`` (Optional)
 ** [path]``cc-worker/user-data``
-** [path]``cc-worker/vendor-data`` (Optional) 
-. Copy [path]``cc-admin/meta-data`` to [path]``cc-worker/`` . 
-. Finally, you need to package the respective configurations into two ISO files. The result of the following commands will be two `iso9660` ISO files with the volume label `cidata` and additional `joliet` metadata. 
+** [path]``cc-worker/vendor-data`` (Optional)
+. Copy [path]``cc-admin/meta-data`` to [path]``cc-worker/`` .
+. Finally, you need to package the respective configurations into two ISO files. The result of the following commands will be two `iso9660` ISO files with the volume label `cidata` and additional `joliet` metadata.
 +
 
 ----
-{prompt.user}``sudo mkisofs -output cc-admin.iso -volid cidata -joliet -rock cc-admin`` {prompt.user}``sudo mkisofs -output cc-worker.iso -volid cidata -joliet -rock cc-worker`` 
+{prompt.user}``sudo mkisofs -output cc-admin.iso -volid cidata -joliet -rock cc-admin`` {prompt.user}``sudo mkisofs -output cc-worker.iso -volid cidata -joliet -rock cc-worker``
 ----
 +
 The files will be called [path]``cc-admin.iso``
 and [path]``cc-worker.iso``
 .
-You need to attach these files to your respective VM as a block device before boot. 
+You need to attach these files to your respective VM as a block device before boot.
 
 
 [[_sec.deploy.cloud_init.cloud.cfg]]
@@ -172,9 +165,9 @@ You need to attach these files to your respective VM as a block device before bo
 
 The [path]``/etc/cloud/cloud.cfg``
  file is used to define a datasource and the locations of the other required configuration files.
-Use the `\#cloud-config` syntax when defining the content. 
+Use the `\#cloud-config` syntax when defining the content.
 
-An example with `NoCloud` datasource follows: 
+An example with `NoCloud` datasource follows:
 
 ----
 #cloud-config
@@ -193,7 +186,7 @@ An example with `NoCloud` datasource follows:
 The file [path]``meta-data``
  is a YAML format file which is intended to configure system items such as network, instance ID, etc.
 The file typically contains the `instance-id` and `network-interfaces` options.
-Each is described below. 
+Each is described below.
 
 .Network Configuration Priority
 [IMPORTANT]
@@ -201,7 +194,7 @@ Each is described below.
 If you are deploying {productname}
 nodes using {ay}
 , the network settings from `cloud-init` will be ignored and the settings made in the {ay}
- process are applied. 
+ process are applied.
 ====
 
 `instance-id`::
@@ -209,19 +202,19 @@ Defines the instance.
 If you perform any changes to the configuration (with either [path]``user-data``
 or [path]``meta-data``
 ), you must update this option with another value.
-Thus `cloud-init` can recognize if this is the first boot of that particular host instance. 
+Thus `cloud-init` can recognize if this is the first boot of that particular host instance.
 +
 
 ----
 instance-id: iid-example001
 ----
 `network-interfaces`::
-Here you can define the following options: 
-** `auto` to start the network in that configuration automatically during the boot phase. 
-** `iface` that defines the configured interfaces. 
+Here you can define the following options:
+** `auto` to start the network in that configuration automatically during the boot phase.
+** `iface` that defines the configured interfaces.
 
 +
-A static network configuration then could look as follows: 
+A static network configuration then could look as follows:
 +
 
 ----
@@ -241,7 +234,7 @@ network-interfaces: |
 
 The configuration file [path]``user-data``
  is a YAML file used to configure users, SSH keys, time zone, etc.
-Each part of the file is described in following sections. 
+Each part of the file is described in following sections.
 
 [[_sec.deploy.cloud_init.user_data.header]]
 ==== [path]``user-data`` Header
@@ -252,7 +245,7 @@ Each [path]``user-data``
 The snippet below enables debugging output and disables passwordless authentication for {rootuser}
 .
 Thus you must login with the {rootuser}
- credentials. 
+ credentials.
 
 ----
 #cloud-config
@@ -267,7 +260,7 @@ disable_root: False
 In the [path]``user-data``
  you can use the `runcmd` statement to run various commands in your system.
 The [path]``user-data``
- file can contain only a single `runcmd` statement, so if you must run several commands, group them into one statement: 
+ file can contain only a single `runcmd` statement, so if you must run several commands, group them into one statement:
 
 ----
 runcmd:
@@ -275,10 +268,10 @@ runcmd:
 ----
 
 
-By using the `runcmd` statement, you can perform the following in your system: 
+By using the `runcmd` statement, you can perform the following in your system:
 
 Configure keyboard layout::
-for example, configure the German keyboard layout with __nodeadkeys__: 
+for example, configure the German keyboard layout with __nodeadkeys__:
 +
 
 ----
@@ -286,7 +279,7 @@ runcmd:
   - /usr/bin/localectl set-keymap de-latin1-nodeadkeys
 ----
 Start services::
-for example, start the NTP server as described in <<_sec.deploy.cloud_init.user_data.ntp_server>>. 
+for example, start the NTP server as described in <<_sec.deploy.cloud_init.user_data.ntp_server>>.
 
 
 [[_sec.deploy.cloud_init.user_data.authorized_keys]]
@@ -294,7 +287,7 @@ for example, start the NTP server as described in <<_sec.deploy.cloud_init.user_
 
 
 You can configure the behaviour of adding SSH keys to the [path]``authorized_keys``
- and the SSH login pattern. 
+ and the SSH login pattern.
 
 ----
 ssh_deletekeys: False
@@ -307,21 +300,21 @@ ssh_authorized_keys:
 The option `ssh_deletekeys` disables/enables automatic deletion of old private and public SSH keys of the host.
 The default value is `true`{mdash}
 the keys are deleted and new keys are generated.
-We do not recommend using the default value, as there could be a problem with [command]``ssh`` reporting that the keys are incorrect or have been changed after the `cloud-init` configuration has been changed. 
+We do not recommend using the default value, as there could be a problem with [command]``ssh`` reporting that the keys are incorrect or have been changed after the `cloud-init` configuration has been changed.
 
-The option `ssh_pwauth: true` allows you to login by using SSH with a password, if the password is set. 
+The option `ssh_pwauth: true` allows you to login by using SSH with a password, if the password is set.
 
 The option `ssh_authorized_keys` defines whether the SSH key will be added to the [path]``authorized_keys``
  file of the user.
 If *not* specified otherwise, the default user is {rootuser}
-. 
+.
 
 [[_sec.deploy.cloud_init.user_data.password]]
 ==== Setting Password
 
 
 The [path]``user-data``
- file enables you to set default passwords by using the `chpasswd` option: 
+ file enables you to set default passwords by using the `chpasswd` option:
 
 ----
 chpasswd:
@@ -332,10 +325,10 @@ chpasswd:
 
 
 In the example above you set the password for {rootuser}
-to be "__linux__". The `expire` option defines whether the user will be prompted to change the default password at the first login. 
+to be "__linux__". The `expire` option defines whether the user will be prompted to change the default password at the first login.
 
 For additional security, password hashes may be used instead of plain text.
-The format is as follows: 
+The format is as follows:
 
 ----
 username:$X$salt$hash
@@ -343,18 +336,18 @@ username:$X$salt$hash
 
 
 The value "X" in $X$ can be any of ``1``, ``2a``, ``2y``, ``5``, or ``6``.
-For more information, see the `HASHING METHODS` section in the output of the command [command]``man 3 crypt``. 
+For more information, see the `HASHING METHODS` section in the output of the command [command]``man 3 crypt``.
 
-For example, you can generate a safe hash with the following command: 
+For example, you can generate a safe hash with the following command:
 
 ----
 mkpasswd --method=SHA-512 --rounds=4096
 ----
 
 
-This command would create an SHA-512 password hash with 4096 salt rounds, using `stdin` as input. 
+This command would create an SHA-512 password hash with 4096 salt rounds, using `stdin` as input.
 
-This could be specified in the file using ``$6$``, as follows: 
+This could be specified in the file using ``$6$``, as follows:
 
 ----
 root:$6$j212wezy$7H/1LT4f9/N3wpgNunhsIqtMj62OKiS3nyNwuizouQc3u7MbYCarYeAHWYPYb2FT.lbioDm2RrkJPb9BZMN1O/
@@ -364,7 +357,7 @@ root:$6$j212wezy$7H/1LT4f9/N3wpgNunhsIqtMj62OKiS3nyNwuizouQc3u7MbYCarYeAHWYPYb2F
 ==== Adding Custom Repository
 
 
-You can add a custom software repository to your system by using the `zypp_repos` option: 
+You can add a custom software repository to your system by using the `zypp_repos` option:
 
 ----
 zypper:
@@ -384,36 +377,36 @@ The options available are:
 
 `id`::
 The local unique ID of the repository, also known as its alias.
-(Mandatory.) 
+(Mandatory.)
 
 `name`::
 A more descriptive string describing the repository, used in the UI.
-(Mandatory.) 
+(Mandatory.)
 
 `baseurl`::
 URL to the directory where the repository's `repodata` directory lives.
-(Mandatory.) 
+(Mandatory.)
 
 `type`::
-Zypper is able to work with three types of repository: `yast2` and `rpm-md` (yum) repositories, as well as `plaindir` - plain directories containing `$$.$$rpm` files. 
+Zypper is able to work with three types of repository: `yast2` and `rpm-md` (yum) repositories, as well as `plaindir` - plain directories containing `$$.$$rpm` files.
 
 `path`::
-This is relative to the ``baseurl``; the default is ``/``. 
+This is relative to the ``baseurl``; the default is ``/``.
 
 `gpgcheck`::
-Defines whether the source signatures should be checked using GPG. 
+Defines whether the source signatures should be checked using GPG.
 
 `gpgkey`::
-Defines the URL for a GPG key. 
+Defines the URL for a GPG key.
 
 `enabled`::
-Defaults to `1` (on). Set to `0` to disable the repository: it will be known and listed, but not used. 
+Defaults to `1` (on). Set to `0` to disable the repository: it will be known and listed, but not used.
 
 `autorefresh`::
-Defaults to `1` (on). When on, the local package cache will be updated to the remote version whenever package management actions are performed. 
+Defaults to `1` (on). When on, the local package cache will be updated to the remote version whenever package management actions are performed.
 
 `priority`::
-Defines a source priority, from `1` (lowest) to `200` (highest). The default is ``99``. 
+Defines a source priority, from `1` (lowest) to `200` (highest). The default is ``99``.
 
 
 [[_sec.deploy.cloud_init.user_data.timezone]]
@@ -422,7 +415,7 @@ Defines a source priority, from `1` (lowest) to `200` (highest). The default is 
 
 You can set a default timezone.
 Bear in mind that the configured value must exist in [path]``/usr/share/zoneinfo``
-: 
+:
 
 ----
 timezone: Europe/Berlin
@@ -432,14 +425,14 @@ timezone: Europe/Berlin
 ==== Setting Host name
 
 
-You can set either a host name or, preferably, a fully-qualified domain name for the machine: 
+You can set either a host name or, preferably, a fully-qualified domain name for the machine:
 
 ----
 hostname: myhost
 ----
 
 
-or 
+or
 
 ----
 fqdn: myhost.example.com
@@ -447,7 +440,7 @@ fqdn: myhost.example.com
 
 
 The option `preserve_hostname` specifies whether any existing host name (for example, from the kernel command-line) should be retained or not.
-Enter `true` or `false` as required: 
+Enter `true` or `false` as required:
 
 ----
 preserve_hostname: true
@@ -458,7 +451,7 @@ preserve_hostname: true
 
 
 You can configure the server to manage the [path]``resolv.conf``
- file and thus set values of the file: 
+ file and thus set values of the file:
 
 ----
 manage_resolv_conf: true
@@ -477,11 +470,11 @@ resolv_conf:
 ==== NTP Server Configuration
 
 
-You must configure at least one NTP server. 
+You must configure at least one NTP server.
 
 We recommend providing a dedicated NTP server from your local network.
 The following snippet configures three NTP servers during the first boot and the NTP service is enabled and started.
-You must choose an NTP client. [command]``chrony`` or [command]``systemd_timesyncd``. 
+You must choose an NTP client. [command]``chrony`` or [command]``systemd_timesyncd``.
 
 ----
 ntp:
@@ -501,7 +494,7 @@ runcmd:
 
 You can use the file to set the {sminion}
 and its communication with the {smaster}
-. 
+.
 
 ----
 salt_minion:
@@ -524,10 +517,10 @@ salt_minion:
 
 
 You need to specify which node of your cluster will be used as the {admin_node}
-and which nodes will be used as regular cluster nodes. 
+and which nodes will be used as regular cluster nodes.
 
 To assign the {admin_node}
-role to the cluster node, add the following to the configuration file: 
+role to the cluster node, add the following to the configuration file:
 
 ----
 suse_caasp:
@@ -536,16 +529,16 @@ suse_caasp:
 
 
 If the cluster node is assigned the {admin_node}
-, all required containers are imported and started. 
+, all required containers are imported and started.
 
 To other cluster nodes you assign the role ``cluster``.
 The machine will register itself as {sminion}
  on the {admin_node}
 .
 Bear in mind, you must configure NTP clients for all cluster nodes.
-Refer to: <<_sec.deploy.cloud_init.user_data.ntp_server>>. 
+Refer to: <<_sec.deploy.cloud_init.user_data.ntp_server>>.
 
-An example of the `cluster` role assignment follows: 
+An example of the `cluster` role assignment follows:
 
 ----
 suse_caasp:
@@ -555,7 +548,7 @@ suse_caasp:
 
 
 where the `admin.example.com` is the host name of the {admin_node}
-. 
+.
 
 [[_sec.deploy.cloud_init.vendor_data]]
 === The [path]``vendor-data`` Configuration File
@@ -563,10 +556,10 @@ where the `admin.example.com` is the host name of the {admin_node}
 
 The [path]``vendor-data``
  is an optional configuration file that typically stores data related to the cloud you use.
-The data are provided by the entity that launches the cloud instance. 
+The data are provided by the entity that launches the cloud instance.
 
 The format is the same as used for [path]``user-data``
-. 
+.
 
 [[_sec.deploy.autoyast]]
 == Customizing Configuration with {ay}
@@ -574,20 +567,20 @@ The format is the same as used for [path]``user-data``
 {productname}
 will generate a default {ay}
 configuration control file during the initial setup that can be used to configure nodes.
-If you wish to modify specific parts of this configuration to deviate from the default configuration (timezone, language, keys, etc.), you can retrieve the control file, modify it, and serve the modified version to be used by the nodes for setup instead. 
+If you wish to modify specific parts of this configuration to deviate from the default configuration (timezone, language, keys, etc.), you can retrieve the control file, modify it, and serve the modified version to be used by the nodes for setup instead.
 
 
-. Start the setup in {dashboard} and follow the instructions until you reach the {ay} info screen. 
-. Download the default control file. 
+. Start the setup in {dashboard} and follow the instructions until you reach the {ay} info screen.
+. Download the default control file.
 +
 
 ----
-{prompt.user}``curl https://caasp-admin.example.com/autoyast`` 
+{prompt.user}``curl https://caasp-admin.example.com/autoyast``
 ----
-. Modify the downloaded control file. 
-+ 
-Information on the possible configuration values can be found in the https://www.suse.com/documentation/sles-15/singlehtml/book_autoyast/book_autoyast.html[AutoYaST Guide]. 
-. Upload the modified [path]``autoyast`` file to a static webserver that is reachable by the nodes you wish to configure. Specify the replacement URL in the menu:Boot Options[] of the installer instead of the default URL. 
+. Modify the downloaded control file.
++
+Information on the possible configuration values can be found in the https://www.suse.com/documentation/sles-15/singlehtml/book_autoyast/book_autoyast.html[AutoYaST Guide].
+. Upload the modified [path]``autoyast`` file to a static webserver that is reachable by the nodes you wish to configure. Specify the replacement URL in the menu:Boot Options[] of the installer instead of the default URL.
 
 
 [[_sec.configuration.suseconnect]]
@@ -600,40 +593,40 @@ To register a node at the {scc}
 ) or {smtool}
 ({smt}
 ), use [command]``SUSEConnect``.
-This can be necessary if you want to install updates on your node but did not register during the installation as described in <<_sec.deploy.nodes.admin_install>>. 
+This can be necessary if you want to install updates on your node but did not register during the installation as described in <<_sec.deploy.nodes.admin_install>>.
 
 You can also use [command]``SUSEConnect`` to switch from {scc}
  to a local {rmt}
  or {smt}
- server. 
+ server.
 
 To register a node at the {scc}
-and for listing available products, use 
+and for listing available products, use
 
 ----
-{prompt.root}``SUSEConnect -r REGISTRATION_CODE`` {prompt.root}``SUSEConnect --list-extensions`` 
+{prompt.root}``SUSEConnect -r REGISTRATION_CODE`` {prompt.root}``SUSEConnect --list-extensions``
 ----
 
 
 Use the displayed commands to enable the required {productname}
-repositories. 
+repositories.
 
 If you want to register your node at a {smt}
-server, refer to the _SMT Guide_ at https://www.suse.com/documentation/sles-12/book_smt/data/book_smt.html. 
+server, refer to the _SMT Guide_ at https://www.suse.com/documentation/sles-12/book_smt/data/book_smt.html.
 
 If you want to register your node at a {rmt}
-server, refer to the _RMT Guide_ at https://www.suse.com/documentation/sles-15/book_rmt/data/book_rmt.html. 
+server, refer to the _RMT Guide_ at https://www.suse.com/documentation/sles-15/book_rmt/data/book_rmt.html.
 
 .Using a Proxy Server with Authentication
 [NOTE]
 ====
 Create the file [path]``/root/.curlrc``
- with the content: 
+ with the content:
 
 ----
 --proxy https://`PROXY_FQDN`:`PROXY_PORT`--proxy-user "`USER`:`PASSWORD`"
 ----
 
 Replace [replaceable]``PROXY_FQDN`` with the fully qualified domain name of the proxy server and [replaceable]``PROXY_PORT`` with its port.
-Replace [replaceable]``USER`` and [replaceable]``PASSWORD`` with the credentials of an allowed user for the proxy server. 
+Replace [replaceable]``USER`` and [replaceable]``PASSWORD`` with the credentials of an allowed user for the proxy server.
 ====
