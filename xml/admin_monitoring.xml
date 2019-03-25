@@ -1162,20 +1162,196 @@ To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
      Is the <literal>kubelet</literal> up and working in this node?
     </para>
     <para>
-     The <literal>kubelet</literal> has a port exposed <literal>10250</literal>
-     on all machines; it's possible to perform an HTTP request to the endpoint
-     to find out if the kubelet is healthy on that machine. The expected
-     (healthy) response is a <literal>200 HTTP</literal> and a response body
-     containing <literal>ok</literal>.
+     The <literal>kubelet</literal> has two ports exposed on all machines:
     </para>
     <para>
-     Endpoint:
-     <literal>https://<replaceable>NODE</replaceable>:10250/healthz</literal>
-     (HTTPS)
+     Port <literal>https/10250</literal> exposes kubelet services to the entire
+     cluster and is available from all nodes using authentication.
     </para>
-<screen>&prompt.user;<command>curl -i https://localhost:10250/healthz</command>
+    <para>
+     Port <literal>http/10248</literal> is only available on the local host.
+    </para>
+    <para>
+     You can perform an HTTP request to these endpoints to find out if the
+     kubelet is healthy on that machine. The expected (healthy) response is a
+     <literal>200 HTTP</literal> and a response body containing
+     <literal>ok</literal>.
+    </para>
+    <sect4>
+     <title>Local Check</title>
+     <para>
+      If for example there is an agent running on each node, this agent can
+      simply fetch the local healthz port:
+     </para>
+<screen>&prompt.user;<command>curl -i http://localhost:10248/healthz</command>
 ok
-    </screen>
+     </screen>
+    </sect4>
+    <sect4>
+     <title>Remote Check</title>
+     <para>
+      There are two ways to fetch endpoints remotely (metrics, healthz etc.).
+      Both methods use HTTPS and a token.
+     </para>
+     <para>
+      The first one is executed against the APIServer and
+      mostly used with Prometheus and Kubernetes discovery
+      (<link xlink:href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config">https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config</link>), it allows
+      automatic discovery of the nodes and avoids the task of defining
+      monitoring for each node.
+      </para>
+      <para>
+      The second method directly talks to kubelet can be used in more
+      traditional monitoring where one must configure each node to be checked.
+     </para>
+     <procedure>
+      <title>Configuration and Token retrieval</title>
+      <step>
+       <para>
+        Create a Service Account (monitoring) with a secondary Token
+        (monitoring-secret-token) associated. The token will be used in HTTP
+        requests to authenticate against the APIserver.
+       </para>
+       <para>
+        This Service Account can only fetch information about nodes and pods.
+        It is best practice to not use the default created token. Using a
+        secondary token is also easier for management.
+       </para>
+<screen>
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: monitoring
+  namespace: kube-system
+secrets:
+- name: monitoring-secret-token
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: monitoring-secret-token
+  namespace: kube-system
+  annotations:
+    kubernetes.io/service-account.name: monitoring
+type: kubernetes.io/service-account-token
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: monitoring-clusterrole
+  namespace: kube-system
+rules:
+- apiGroups: [""]
+  resources:
+  - nodes
+  - nodes/proxy
+  - pods
+  verbs: ["get", "list"]
+- nonResourceURLs: ["/metrics", "/healthz", "/healthz/*"]
+  verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: monitoring-clusterrole-binding
+  namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: monitoring-clusterrole
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- kind: ServiceAccount
+  name: monitoring
+  namespace: kube-system
+</screen>
+       <para>
+        Export the token to an environment variable:
+       </para>
+<screen>&prompt.user;<command>TOKEN=$(kubectl -n kube-system get secrets monitoring-secret-token -ojsonpath='{.data.token}' | base64 -d)</command>
+</screen>
+       <para>
+        This token can now be passed in headers in the form:
+        <literal>"Authorization: Bearer $TOKEN"</literal>
+       </para>
+      </step>
+     </procedure>
+     <para>
+     Now export important values as environment variables.
+    </para>
+     <procedure>
+      <title>Testing Token Remotely</title>
+       <step>
+        <para>
+         Choose a Kubernetes node. The value here must be a node name
+         in your &kube; cluster. Export the name to a variable
+         <literal>NODE</literal> so it can be reused.
+       </para>
+<screen>&prompt.user;<command>NODE="<replaceable>vm154162</replaceable>"</command></screen>
+       </step>
+       <step>
+       <para>
+        Retrieve the TOKEN with kubectl.
+       </para>
+<screen>&prompt.user;<command>TOKEN=$(kubectl -n kube-system get secrets monitoring-secret-token \
+-ojsonpath='{.data.token}' | base64 -d)</command></screen>
+        </step>
+       <step>
+        <para>
+         Get <literal>APISERVER</literal> from the configuration file. You can
+         skip this step if you only want to use the kubelet endpoint.
+        </para>
+<screen>&prompt.user;<command>APISERVER=$(kubectl config view | grep server | cut -f 2- -d ":" | tr -d " ")</command></screen>
+       </step>
+      </procedure>
+      <para>
+       Now the key information to retrieve data from the endpoints should be
+       available in the environment and you can poll the endpoints.
+      </para>
+      <procedure>
+       <title>Fetching Information from kubelet Endpoint</title>
+       <step>
+        <para>
+         Fetching metrics
+        </para>
+        <screen>&prompt.user;<command>curl -k https://$NODE:10250/metrics --header "Authorization: Bearer $TOKEN"</command></screen>
+       </step>
+       <step>
+        <para>
+         Fetching cAdvisor
+        </para>
+        <screen>&prompt.user;<command>curl -k https://$NODE:10250/metrics/cadvisor --header "Authorization: Bearer $TOKEN"</command></screen>
+       </step>
+       <step>
+        <para>
+         Fetching healthz
+        </para>
+        <screen>&prompt.user;<command>curl -k https://$NODE:10250/healthz --header "Authorization: Bearer $TOKEN"</command></screen>
+       </step>
+      </procedure>
+      <procedure>
+       <title>Fetching Information from APISERVER Endpoint</title>
+       <step>
+        <para>
+         Fetching metrics
+        </para>
+        <screen>&prompt.user;<command>curl -k $APISERVER/api/v1/nodes/$NODE/proxy/metrics --header "Authorization: Bearer $TOKEN"</command></screen>
+       </step>
+       <step>
+        <para>
+         Fetching cAdvisor
+        </para>
+        <screen>&prompt.user;<command>curl -k $APISERVER/api/v1/nodes/$NODE/proxy/metrics/cadvisor --header "Authorization: Bearer $TOKEN"</command></screen>
+       </step>
+       <step>
+        <para>
+         Fetching healthz
+        </para>
+        <screen>&prompt.user;<command>curl -k $APISERVER/api/v1/nodes/$NODE/proxy/healthz --header "Authorization: Bearer $TOKEN"</command></screen>
+       </step>
+      </procedure>
+    </sect4>
+
    </sect3>
    <sect3 xml:id="sec.admin.monitoring.health.node.cni">
     <title><literal>CNI</literal></title>
