@@ -200,7 +200,10 @@ velum_production | gzip > <replaceable>/var/tmp/db-backup-$(date +'%Y-%m-%d').sq
      <para>
       Run the following command to unpack the data backup:
      </para>
-<screen>&prompt.root;<command>tar xzf <replaceable>backup-admin-node-[date].tgz</replaceable> --exclude='mariadb*' --exclude='55-returner-credentials.conf' -C / 2> /var/tmp/log.txt</command></screen>
+<screen>&prompt.root;<command>tar xzf <replaceable>backup-admin-node-[date].tgz</replaceable> \
+--exclude='mariadb*' \
+--exclude='55-returner-credentials.conf' \
+-C / 2> /var/tmp/log.txt</command></screen>
      <para>
       Run the following command to load the database backup into the MariaDB
       container. Make sure to replace <literal>[date]</literal> with the actual
@@ -210,8 +213,9 @@ velum_production | gzip > <replaceable>/var/tmp/db-backup-$(date +'%Y-%m-%d').sq
 docker exec -i $(docker ps -qf name="velum-mariadb") \
 mysql --password=$(cat /var/lib/misc/infra-secrets/mariadb-root-password) velum_production</command></screen>
      <note>
+      <title>Cluster Member Hostnames Must Be Resolvable</title>
       <para>
-       Note: These instructions assume that all cluster member node hostnames
+       These instructions assume that all cluster member node hostnames
        are resolvable by one another via DNS.
       </para>
      </note>
