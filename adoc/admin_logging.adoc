@@ -234,16 +234,16 @@ you can check the logs with the `debug` loglevel.
 == Transactional Update Log
 
 
-The [command]``transactional-update`` method processes updates in the background and generates new machine image snapshots.
+The `transactional-update` method processes updates in the background and generates new machine image snapshots.
 This process can run into issues.
 Possible causes are connectivity issues or timeouts against the package repository.
 In such cases the update fails and the affected node will be marked with a red cross in {dashboard}
 . 
 
 In most cases this situation resolves itself the next time the update process runs automatically.
-If you have performed manual updates or must debug a failed update, you can read the log for [command]``transactional-update`` with the command below. 
+If you have performed manual updates or must debug a failed update, you can read the log for `transactional-update` with the command below. 
 
-The [command]``transactional-update`` logs are generated in the {mos}
+The `transactional-update` logs are generated in the {mos}
  layer on each node respectively. 
 
 For more information on transactional-update, see: <<_sec.admin.software.transactional_updates>>
@@ -271,7 +271,7 @@ This allows the audit logs to be written on the {kube}
 .Kubernetes Audit Log Documentation
 [NOTE]
 ====
-For more information on the audit log and its contents, see: https://v1-13.docs.kubernetes.io/docs/tasks/debug-application-cluster/audit/[Kubernetes
+For more information on the audit log and its contents, see: {kubedoc}tasks/debug-application-cluster/audit/[Kubernetes
     Documentation: Auditing]
 ====
 
@@ -303,7 +303,7 @@ Max backup::
 Maximum number of audit log files to retain (Default: ``20``) 
 
 Policy::
-The YAML file defining the https://v1-13.docs.kubernetes.io/docs/tasks/debug-application-cluster/audit/#audit-policy[auditing
+The YAML file defining the {kubedoc}tasks/debug-application-cluster/audit/#audit-policy[auditing
 policy rules]
 
 

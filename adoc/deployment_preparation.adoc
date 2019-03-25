@@ -47,7 +47,7 @@ in a public cloud, for example __Microsoft Azure__*, __Amazon AWS__* and __Googl
 Engine__*. 
 
 
-To customize the setup of the nodes, use [command]``cloud-init``.
+To customize the setup of the nodes, use `cloud-init`.
 For details, see <<_sec.deploy.cloud_init>>. 
 
 [[_sec.deploy.preparation.dvd]]
@@ -95,7 +95,7 @@ For Microsoft Hyper-V.
 When deploying a cluster node from pre-installed disk images, the setup program never runs.
 Therefore, the configuration must happen while the node is starting up.
 For this purpose, {productname}
-includes [command]``cloud-init``.
+includes `cloud-init`.
 The described process is very similar for all hypervisors.
 The examples in this manual use {kvm}
  running on {sle}
@@ -104,8 +104,8 @@ The following procedure outlines the overall process.
 
 
 . For {vmware} ESX/ESXi: Convert VMDK images. See <<_sec.deploy.preparation.disk_images.vmware>>. 
-. Write [command]``cloud-init`` configuration files. See <<_sec.deploy.preparation.disk_images.configuration>>. 
-. Prepare ISO images containing the [command]``cloud-init`` configuration files. See <<_sec.deploy.preparation.disk_images.iso_image>>. 
+. Write `cloud-init` configuration files. See <<_sec.deploy.preparation.disk_images.configuration>>. 
+. Prepare ISO images containing the `cloud-init` configuration files. See <<_sec.deploy.preparation.disk_images.iso_image>>. 
 . Create a copy of the downloaded disk image for each virtual machine, naming them appropriately: for example, ``caas-admin``, ``caas-master``, ``caas-worker1``, `caas-worker2` and so on. 
 . Boot and configure the {admin_node} . See <<_sec.deploy.preparation.qcow2.admin>>. 
 . Boot and configure the worker nodes. See <<_sec.deploy.preparation.disk_images.worker>>. 
@@ -228,10 +228,10 @@ Then create an ISO image with the volume label `cidata` containing only the subd
 
 On {sle}
 12 or {opensuse}
-Leap 42, use [command]``genisoimage`` to do this.
+Leap 42, use `genisoimage` to do this.
 On {sle}
  or {opensuse}
- Leap 15, use [command]``mkisofs``.
+ Leap 15, use `mkisofs`.
 The parameters are the same for both commands. 
 
 For example, to create the ISO image for an admin node on a computer running {opensuse}
@@ -422,7 +422,7 @@ To use the local client, you need to access menu:Project → Compute → Access 
  in the Horizon Dashboard and click on the menu:Download OpenStack RC File v3[]
 . 
 
-The downloaded file is a script that you then need to load using the [command]``source`` command.
+The downloaded file is a script that you then need to load using the `source` command.
 The script will ask you for your {soc}
  password. 
 
@@ -456,7 +456,7 @@ This will become the password for the {rootuser}
 +
 Download the [path]``caasp-stack.yaml``
 and [path]``caasp-environment.yaml``
-Heat templates to your workstation and then run the [command]``openstack stack create`` command. 
+Heat templates to your workstation and then run the `openstack stack create` command. 
 +
 
 ----
@@ -495,7 +495,7 @@ The following procedure outlines the deployment process:
 
 . Read the special system requirements for public cloud installations in <<_sec.deploy.requirements.public_cloud>>. 
 . Provision the cluster nodes. For details, see <<_sec.deploy.preparation.public_cloud.provisioning>>. 
-. Deploy the admin node with [command]``caasp-admin-setup``. For details, see <<_sec.deploy.nodes.admin_install_cli>>. 
+. Deploy the admin node with `caasp-admin-setup`. For details, see <<_sec.deploy.nodes.admin_install_cli>>. 
 . Finish bootstrapping your cluster. The provisioned worker nodes are ready to be consumed into the cluster. For details, see <<_sec.deploy.install.bootstrap>>. 
 
 
@@ -520,7 +520,7 @@ Security Group ID::
 The `security group` defining network access rules for the cluster nodes, in the form ``sg-xxxxxxxx``. 
 
 
-The defaults used for those two options are preset to the subnet ID of the administration host and the security group ID that was automatically created by [command]``caasp-admin-setup``.
+The defaults used for those two options are preset to the subnet ID of the administration host and the security group ID that was automatically created by `caasp-admin-setup`.
 You may choose to place the cluster nodes in a different subnet and you can also use a custom security group, but please bear in mind that traffic must be allowed between the individual cluster nodes and also between the admininstration node and the cluster nodes. 
 
 See the https://aws.amazon.com/documentation/vpc/[

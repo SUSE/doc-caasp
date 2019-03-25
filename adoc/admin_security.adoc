@@ -25,7 +25,7 @@ Authentication::
 The authentication confirms the identity of an user.
 The _OpenID Connect_ (__OIDC__) implementation `dex` is used as an authentication provider by {kube}
 . `dex` connects to an LDAP server to look up user information.
-To authenticate against the cluster, the [path]``kubeconfig``
+To authenticate against the cluster, the [path]`kubeconfig`
 file is used.
 For details, refer to <<_sec.admin.kubernetes.install_kubectl>>.
 
@@ -42,11 +42,11 @@ To define which operations, called _verbs_ in {kube}
 Admission::
 Admission controllers in {kube}
 can mutate and validate requests.
-For details, refer to https://v1-13.docs.kubernetes.io/docs/reference/access-authn-authz/admission-controllers/.
+For details, refer to {kubedoc}reference/access-authn-authz/admission-controllers/.
 
 
 For details about access control in {kube}
-, refer to https://v1-13.docs.kubernetes.io/docs/reference/access-authn-authz/controlling-access/.
+, refer to {kubedoc}reference/access-authn-authz/controlling-access/.
 
 [[_sec.admin.security.admin]]
 == Administrator Accounts
@@ -65,7 +65,7 @@ You can retrieve the current password from the admin node.
 +
 
 ----
-{prompt.user}``cat /var/lib/misc/infra-secrets/openldap-password`` c88a9c67056a74e0357befdff93f87bbe0904214
+{prompt.user}`cat /var/lib/misc/infra-secrets/openldap-password` c88a9c67056a74e0357befdff93f87bbe0904214
 ----
 {dashboard} admin user::
 `uid=test,ou=People,dc=infra,dc=caasp,dc=local`
@@ -82,17 +82,17 @@ and consequently for configuring {productname}
 
 .Procedure: Changing openLDAP Admin User Password
 . Log in to the admin node via SSH.
-. Change the openLDAP admin password in the file [path]``/var/lib/misc/infra-secrets/openldap-password`` .
+. Change the openLDAP admin password in the file [path]`/var/lib/misc/infra-secrets/openldap-password` .
 +
 
 ----
-{prompt.user}``echo new_password > /var/lib/misc/infra-secrets/openldap-password``
+{prompt.user}`echo new_password > /var/lib/misc/infra-secrets/openldap-password`
 ----
 . Restart openLDAP to activate the changes.
 +
 
 ----
-{prompt.user}``docker stop $(docker ps -q -f name=ldap)``
+{prompt.user}`docker stop $(docker ps -q -f name=ldap)`
 ----
 +
 After about `20` seconds, the OpenLDAP container will be automatically restarted with the new root password.
@@ -113,13 +113,13 @@ You will need the openLDAP admin password that is stored on the admin node itsel
 +
 
 ----
-{prompt.user}``docker exec -it $(docker ps -q -f name=ldap) /bin/bash``
+{prompt.user}`docker exec -it $(docker ps -q -f name=ldap) /bin/bash`
 ----
-. Use [command]``slappasswd`` to generate a hashed and salted password string.
+. Use `slappasswd` to generate a hashed and salted password string.
 +
 
 ----
-{prompt.user}``slappasswd -n -s password`` {SSHA}mU7vDqF+cyNQlnQ2bZyvY4oFfjX9uDm3
+{prompt.user}`slappasswd -n -s password` {SSHA}mU7vDqF+cyNQlnQ2bZyvY4oFfjX9uDm3
 ----
 +
 NOTE: By ommitting the `-s <password>` parameter, you will be prompted to enter a new secret instead of providing it through the input.
@@ -129,15 +129,15 @@ NOTE: By ommitting the `-s <password>` parameter, you will be prompted to enter 
 +
 
 ----
-{prompt.user}``UNAME=$(slapcat -n1 | grep uniqueMember | cut -d': ' -f2)``
+{prompt.user}`UNAME=$(slapcat -n1 | grep uniqueMember | cut -d': ' -f2)`
 ----
-. Set the new password. Replace `new_password` with the string you generated in the previous step. Replace $UNAME will replace it with the DN from the previous step (e.g. ``uid=user,ou=People,dc=infra,dc=caasp,dc=local``).
+. Set the new password. Replace `new_password` with the string you generated in the previous step. Replace $UNAME will replace it with the DN from the previous step (e.g. `uid=user,ou=People,dc=infra,dc=caasp,dc=local`).
 +
 
 ----
-{prompt.user}``ldappasswd -H ldaps:// -D "cn=admin,dc=infra,dc=caasp,dc=local" \
+{prompt.user}`ldappasswd -H ldaps:// -D "cn=admin,dc=infra,dc=caasp,dc=local" \
 -w $(cat /var/lib/misc/infra-secrets/openldap-password) \
-$UNAME -s new_password``
+$UNAME -s new_password`
 ----
 
 
@@ -145,7 +145,7 @@ $UNAME -s new_password``
 == Preparing LDAP Authentication
 
 
-To perform administrative tasks from a [replaceable]``WORKSTATION`` on the [productname]##LDAP##
+To perform administrative tasks from a `WORKSTATION` on the [productname]##LDAP##
  directory, retrieve the [productname]##OpenLDAP##
  administrator password and install the LDAP certificate.
 
@@ -154,22 +154,22 @@ To perform administrative tasks from a [replaceable]``WORKSTATION`` on the [prod
 +
 
 ----
-{prompt.root.admin}``cat /var/lib/misc/infra-secrets/openldap-password``
+{prompt.root.admin}`cat /var/lib/misc/infra-secrets/openldap-password`
 ----
 . Import the LDAP certificate to your local trusted certificate storage. On the {admin_node} , run:
 +
 
 ----
-{prompt.root.admin}``docker exec -it $(docker ps -q -f name=ldap) \
-cat /etc/openldap/pki/ca.crt > ~/ca.pem`` {prompt.root.admin}``scp ~/ca.pem root@WORKSTATION:/usr/share/pki/trust/anchors/ca-caasp.crt.pem``
+{prompt.root.admin}`docker exec -it $(docker ps -q -f name=ldap) \
+cat /etc/openldap/pki/ca.crt > ~/ca.pem` {prompt.root.admin}`scp ~/ca.pem root@WORKSTATION:/usr/share/pki/trust/anchors/ca-caasp.crt.pem`
 ----
 +
-Replace [replaceable]``WORKSTATION`` with the appropriate hostname for the workstation where you wish to run the LDAP queries.
+Replace `WORKSTATION` with the appropriate hostname for the workstation where you wish to run the LDAP queries.
 . Then, on that workstation, run:
 +
 
 ----
-{prompt.root}``update-ca-certificates``
+{prompt.root}`update-ca-certificates`
 ----
 
 
@@ -183,7 +183,7 @@ User information is stored in [productname]##OpenLDAP##
 You can use standard LDAP administration tools for managing these users remotely.
 To do so, install the [package]#openldap2#
  package on a computer in your network and make sure that computer can connect to the {admin_node}
- on port ``389``.
+ on port `389`.
 
 [[_sec.admin.security.users.add]]
 === Adding New User
@@ -213,7 +213,7 @@ uid:`USERID`<<_co.admin.security.users.add.uid>>userPassword:`PASSWORD_HASH` <2>
          User ID (UID) of the new user. Needs to be unique.
 
 <2>
-         The user's hashed password. Use [command]``/usr/sbin/slappasswd``
+         The user's hashed password. Use `/usr/sbin/slappasswd`
 
          to generate the hash.
 
@@ -237,20 +237,20 @@ uid:`USERID`<<_co.admin.security.users.add.uid>>userPassword:`PASSWORD_HASH` <2>
 +
 
 ----
-{prompt.user}``ldapadd -H ldap://ADMINISTRATION_NODE_FQDN:389 -ZZ \
--D cn=admin,dc=infra,dc=caasp,dc=local -w LDAP_ADMIN_PASSWORD -f LDIF_FILE``
+{prompt.user}`ldapadd -H ldap://ADMINISTRATION_NODE_FQDN:389 -ZZ \
+-D cn=admin,dc=infra,dc=caasp,dc=local -w LDAP_ADMIN_PASSWORD -f LDIF_FILE`
 ----
 
 
 === Showing User Attributes
 
 
-To show the attributes of a user, use the [command]``ldapsearch`` command.
+To show the attributes of a user, use the `ldapsearch` command.
 
 ----
-{prompt.user}``ldapsearch -H ldap://ADMINISTRATION_NODE_FQDN:389 -ZZ \
+{prompt.user}`ldapsearch -H ldap://ADMINISTRATION_NODE_FQDN:389 -ZZ \
     -D cn=admin,dc=infra,dc=caasp,dc=local -w LDAP_ADMIN_PASSWORD \
-    -b uid=USERID,ou=People,dc=infra,dc=caasp,dc=local``
+    -b uid=USERID,ou=People,dc=infra,dc=caasp,dc=local`
 ----
 
 [[_sec.admin.security.users.change.group]]
@@ -275,13 +275,13 @@ replace: userPassword
 userPassword:`PASSWORD` <8>
 ----
 <7>
-         [replaceable]``USERID``
+         `USERID`
  with the user's ID.
 
 <8>
-         [replaceable]``PASSWORD``
+         `PASSWORD`
  with the user's new hashed
-         password. Use [command]``/usr/sbin/slappasswd``
+         password. Use `/usr/sbin/slappasswd`
  to
          generate the hash.
 
@@ -298,16 +298,16 @@ add: uniqueMember
 uniqueMember: uid=`USERID` <9>,ou=People,dc=infra,dc=caasp,dc=local
 ----
 <9>
-         [replaceable]``USERID``
+         `USERID`
  with the user's ID.
 
 ====
-. Execute [command]``ldapmodify``.
+. Execute `ldapmodify`.
 +
 
 ----
-{prompt.user}``ldapmodify -H ldap://ADMIN_NODE:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local \
--w LDAP_ADMIN_PASSWORD -f LDIF_FILE``
+{prompt.user}`ldapmodify -H ldap://ADMIN_NODE:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local \
+-w LDAP_ADMIN_PASSWORD -f LDIF_FILE`
 ----
 
 
@@ -325,12 +325,12 @@ The following procedure details how to delete a user from the LDAP database.
 dn: uid=`USER_ID`,ou=People,dc=infra,dc=caasp,dc=local
 changetype: delete
 ----
-. Execute [command]``ldapmodify``.
+. Execute `ldapmodify`.
 +
 
 ----
-{prompt.user}``ldapmodify -H ldap://ADMIN_NODE:389 -ZZ -D uid=USER_ID,ou=People,dc=infra,dc=caasp,dc=local \
--w LDAP_ADMIN_PASSWORD -f LDIF_DELETE``
+{prompt.user}`ldapmodify -H ldap://ADMIN_NODE:389 -ZZ -D uid=USER_ID,ou=People,dc=infra,dc=caasp,dc=local \
+-w LDAP_ADMIN_PASSWORD -f LDIF_DELETE`
 ----
 
 
@@ -370,8 +370,8 @@ uniqueMember: uid=`member3`,<<_co.admin.security.groups.member>>ou=People,dc=inf
 +
 
 ----
-{prompt.user}``ldapadd -H ldap://ADMINISTRATION_NODE_FQDN:389 -ZZ \
--D cn=admin,dc=infra,dc=caasp,dc=local -w LDAP_ADMIN_PASSWORD -f LDIF_FILE``
+{prompt.user}`ldapadd -H ldap://ADMINISTRATION_NODE_FQDN:389 -ZZ \
+-D cn=admin,dc=infra,dc=caasp,dc=local -w LDAP_ADMIN_PASSWORD -f LDIF_FILE`
 ----
 
 
@@ -390,7 +390,7 @@ Roles can then be assigned to users and groups.
 
 
 This section provides an overview of the most common _verbs_ (operations) used for defining roles.
-Verbs correspond to sub-commands of [command]``kubectl``.
+Verbs correspond to sub-commands of `kubectl`.
 
 create::
 Create a resource.
@@ -428,46 +428,46 @@ Watch resource.
 This section provides an overview of the most common _resources_ used for defining roles.
 
 Autoscaler::
-https://v1-13.docs.kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+{kubedoc}tasks/run-application/horizontal-pod-autoscale/
 
 ConfigMaps::
-https://v1-13.docs.kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
+{kubedoc}tasks/configure-pod-container/configure-pod-configmap/
 
 Cronjob::
-https://v1-13.docs.kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/
+{kubedoc}concepts/workloads/controllers/cron-jobs/
 
 DaemonSet::
-https://v1-13.docs.kubernetes.io/docs/concepts/workloads/controllers/daemonset/
+{kubedoc}concepts/workloads/controllers/daemonset/
 
 Deployment::
-https://v1-13.docs.kubernetes.io/docs/concepts/workloads/controllers/deployment/
+{kubedoc}concepts/workloads/controllers/deployment/
 
 Ingress::
-https://v1-13.docs.kubernetes.io/docs/concepts/services-networking/ingress/
+{kubedoc}concepts/services-networking/ingress/
 
 Job::
-https://v1-13.docs.kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/
+{kubedoc}concepts/workloads/controllers/jobs-run-to-completion/
 
 Namespace::
-https://v1-13.docs.kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
+{kubedoc}concepts/overview/working-with-objects/namespaces/
 
 Node::
-https://v1-13.docs.kubernetes.io/docs/concepts/architecture/nodes/
+{kubedoc}concepts/architecture/nodes/
 
 Pod::
-https://v1-13.docs.kubernetes.io/docs/concepts/workloads/pods/pod-overview/
+{kubedoc}concepts/workloads/pods/pod-overview/
 
 PV::
-https://v1-13.docs.kubernetes.io/docs/concepts/storage/persistent-volumes/
+{kubedoc}concepts/storage/persistent-volumes/
 
 Secrets::
-https://v1-13.docs.kubernetes.io/docs/concepts/configuration/secret/
+{kubedoc}concepts/configuration/secret/
 
 Service::
-https://v1-13.docs.kubernetes.io/docs/concepts/services-networking/service/
+{kubedoc}concepts/services-networking/service/
 
 ReplicaSets::
-https://v1-13.docs.kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+{kubedoc}concepts/workloads/controllers/replicaset/
 
 
 [[_sec.admin.security.role.create]]
@@ -475,14 +475,12 @@ https://v1-13.docs.kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 
 
 Roles are defined in YAML files.
-To apply role definitions to {kube}
-, use [command]``kubectl apply -f
-    [replaceable]``YAML_FILE````.
+To apply role definitions to {kube}, use `kubectl apply -f YAML_FILE`.
 The following examples provide an overview about different use cases of roles.
 
 .Simple Role for Core Resource
 ====
-This example allows to ``get``, `watch` and `list` all `pods` in the namespace ``default``.
+This example allows to `get`, `watch` and `list` all `pods` in the namespace `default`.
 
 ----
 kind: Role
@@ -507,7 +505,7 @@ metadata:
  API groups. Use `
 ""`
  for the core group
-         ``rbac.authorization.k8s.io``
+         `rbac.authorization.k8s.io`
 .
 
 <15>
@@ -527,7 +525,7 @@ metadata:
 .Clusterwide Creation of Pods
 ====
 This example allows to `create pods` clusterwide.
-Note the `ClusterRole` value for [option]``kind``.
+Note the `ClusterRole` value for [option]`kind`.
 
 ----
 kind: ClusterRole
@@ -546,7 +544,7 @@ metadata:
  API groups. Use `
 ""`
  for the core group
-         ``rbac.authorization.k8s.io``
+         `rbac.authorization.k8s.io`
 .
 
 <19>
@@ -568,8 +566,7 @@ metadata:
 
 
 To bind a group or user to a rule, create a YAML file that contains the role binding description.
-Then apply the binding with [command]``kubectl apply -f
-    [replaceable]``YAML_FILE````.
+Then apply the binding with `kubectl apply -f YAML_FILE`.
 The following examples provide an overview about different use cases of role bindings.
 
 [[_ex.admin.security.groups.role]]
@@ -618,7 +615,7 @@ Communication is secured with TLS v1.2 using the `AES 128 CBC` cipher.
 
 All client certificates are 4096 Bit RSA encrypted.
 
-Certificates are located in [path]``/etc/pki``
+Certificates are located in [path]`/etc/pki`
  on each cluster node.
 
 [[_sec.admin.security.certs.renewal]]
@@ -652,13 +649,13 @@ Refer to: <<_sec.admin.troubleshooting.replace_certificates>>.
 === Obtaining and Installing Root CA Certificate
 
 
-. Obtain the root CA certificate from any node in your cluster with [command]``scp``.
+. Obtain the root CA certificate from any node in your cluster with `scp`.
 +
 
 ----
-{prompt.user}``scp NODE:/etc/pki/trust/anchors/SUSE_CaaSP_CA.crt .``
+{prompt.user}`scp NODE:/etc/pki/trust/anchors/SUSE_CaaSP_CA.crt .`
 ----
-. Copy the Root CA certificate file into the trust anchors directory [path]``/etc/pki/trust/anchors/`` .
+. Copy the Root CA certificate file into the trust anchors directory [path]`/etc/pki/trust/anchors/` .
 +
 
 ----
@@ -668,7 +665,7 @@ Refer to: <<_sec.admin.troubleshooting.replace_certificates>>.
 +
 
 ----
-{prompt.sudo}``update-ca-certificates``
+{prompt.sudo}`update-ca-certificates`
 ----
 
 
@@ -691,34 +688,33 @@ By default, pod security policies are already enabled on {productname}
 {productname}
 comes with 2 pre-defined policies.
 These policies are detailed in the examples below, including the required role definitions.
-All authenticated users and service accounts are given the role ``suse:caasp:psp:unprivileged``.
+All authenticated users and service accounts are given the role `suse:caasp:psp:unprivileged`.
 Other role bindings have to be created manually.
 For details about roles and role bindings, refer to <<_sec.admin.security.role>>.
 
 <<_ex.admin.security.pod_policies.unprivileged>>::
 This is the default policy.
 It is a compromise between security and daily needs.
-This policy is bound to the role ``suse:caasp:psp:unprivileged``.
+This policy is bound to the role `suse:caasp:psp:unprivileged`.
 
 <<_ex.admin.security.pod_policies.privileged>>::
 This policy has few restrictions and should only be given to highly trusted users.
-This policy is bound to the role ``suse:caasp:psp:privileged``.
+This policy is bound to the role `suse:caasp:psp:privileged`.
 
 <<_ex.admin.security.pod_policies.daemonset>>::
 This example details how to define a privileged DaemonSet with a new default service account.
 
 
 To create new policies, you can adapt the provided example policies to your needs.
-Then copy them into a YAML file and apply the definition by executing [command]``kubectl apply -f
-   [replaceable]``YAML_FILE````.
+Then copy them into a YAML file and apply the definition by executing `kubectl apply -f YAML_FILE`.
 
-Detailed information is available at https://v1-13.docs.kubernetes.io/docs/concepts/policy/pod-security-policy/.
+Detailed information is available at {kubedoc}concepts/policy/pod-security-policy/.
 
 [[_ex.admin.security.pod_policies.unprivileged]]
 .Unprivileged Pod Security Policy
 ====
 The unprivileged Pod Security Policy is intended to be a reasonable compromise between the reality of {kube}
-workloads and the role ``suse:caasp:psp:privileged``.
+workloads and the role `suse:caasp:psp:privileged`.
 By default, {productname}
  grants this policy to all users and service accounts.
 
@@ -895,7 +891,7 @@ resourceNames: ['suse.caasp.psp.privileged']<<_co.admin.security.pod_policies.pr
 [[_ex.admin.security.pod_policies.daemonset]]
 .Privileged DaemonSet
 ====
-This example details how to create a privileged DaemonSet which uses the role ``suse:caasp:psp:privileged``.
+This example details how to create a privileged DaemonSet which uses the role `suse:caasp:psp:privileged`.
 
 ----
 ---
@@ -963,7 +959,7 @@ users against a pre-existing Lightweight Directory Access Protocol (LDAP) server
 .Automatic Attributes from LDAP
 [IMPORTANT]
 ====
-Please note that users that belong to the `administrators` group in LDAP will automatically be assigned the role of ``cluster-admin``.
+Please note that users that belong to the `administrators` group in LDAP will automatically be assigned the role of `cluster-admin`.
 ====
 
 .Procedure: Configuring External LDAP connector
@@ -1008,7 +1004,7 @@ NOTE: The menu:Host[]
 
 
 Port::
-The port on which to connect to the host (e.g. ``StartTLS: 389, TLS: 646``)
+The port on which to connect to the host (e.g. `StartTLS: 389, TLS: 646`)
 
 StartTLS::
 When enabled use StartTLS otherwise TLS will be used
@@ -1044,13 +1040,13 @@ Password of the user
 Definition of the user search parameters
 
 Username Prompt::
-Label of LDAP attribute users will enter to identify themselves (e.g. ``username``)
+Label of LDAP attribute users will enter to identify themselves (e.g. `username`)
 
 Base DN::
-BaseDN where users are located (e.g. ``cn=users,dc=example,dc=com``)
+BaseDN where users are located (e.g. `cn=users,dc=example,dc=com`)
 
 Filter::
-Filter to specify type of user objects (e.g. ``"(objectClass=person)"``)
+Filter to specify type of user objects (e.g. `"(objectClass=person)"`)
 
 
 ==== User Attribute Map
@@ -1062,7 +1058,7 @@ Username::
 Attribute users will enter to identify themselves
 
 ID::
-Attribute used to identify user within the system (e.g. ``uid``)
+Attribute used to identify user within the system (e.g. `uid`)
 
 Email::
 Attribute containing email of users
@@ -1077,10 +1073,10 @@ Attribute used as username used within OIDC tokens
 Definition of group search parameters
 
 Base DN::
-BaseDN where groups are located (e.g. ``cn=users,dc=example,dc=com``)
+BaseDN where groups are located (e.g. `cn=users,dc=example,dc=com`)
 
 Filter::
-Filter to specify type of user objects (e.g. ``"(objectClass=group)"``)
+Filter to specify type of user objects (e.g. `"(objectClass=group)"`)
 
 
 ==== Group Attribute Map
@@ -1089,13 +1085,13 @@ Filter to specify type of user objects (e.g. ``"(objectClass=group)"``)
 Definition of group attribute map
 
 User::
-Attribute to map as user (e.g. ``uid``)
+Attribute to map as user (e.g. `uid`)
 
 Group::
-Attribute identifying membership (e.g. ``member``)
+Attribute identifying membership (e.g. `member`)
 
 Name::
-Attribute to map as name (e.g. ``name``)
+Attribute to map as name (e.g. `name`)
 
 
 [[_sec.admin.security.external.ldap.examples]]

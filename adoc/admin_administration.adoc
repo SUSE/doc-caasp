@@ -31,7 +31,7 @@ If you are using {sle}
 The instructions are identical for both versions.
 ====
 
-.Installing [command]``kubectl`` on Non-SUSE OS or Old Release
+.Installing `kubectl` on Non-SUSE OS or Old Release
 [TIP]
 ====
 If you are using an operating system other than the current {sle}
@@ -101,7 +101,7 @@ cmd.run "df -h"``
 
 This command tells `docker` to find the `salt-master` container and execute the command on all nodes that match the roles ``admin``, ``kube-master``, and `kube-minion` (which is all nodes).
 
-Replace the example [command]``df -h`` with a command of your choice.
+Replace the example `df -h` with a command of your choice.
 The output will be produced in your current terminal session.
 
 [[_sec.admin.salt.worker_threads]]
@@ -173,10 +173,10 @@ image::velum_unassigned_nodes.png[scaledwidth=100%]
 
 
 [[_sec.admin.nodes.create_autoyast_profile]]
-==== The [command]``create_autoyast_profile`` Command
+==== The `create_autoyast_profile` Command
 
 
-The [command]``create_autoyast_profile`` command creates an autoyast profile for fully automatic installation of {productname}
+The `create_autoyast_profile` command creates an autoyast profile for fully automatic installation of {productname}
 .
 You can use the following options when invoking the command:
 
@@ -292,7 +292,7 @@ You must perform the following steps:
 
 image::velum_unassigned_nodes.png[scaledwidth=100%]
 . Log into the Admin node of you cluster via SSH.
-. Run the following command and replace [replaceable]``$ID_FROM_UNASSIGNED_QUEUE`` with the node ID that you copied from the "Unassigned nodes" view in {dashboard} .
+. Run the following command and replace `$ID_FROM_UNASSIGNED_QUEUE` with the node ID that you copied from the "Unassigned nodes" view in {dashboard} .
 +
 WARNING: Make absolutely sure that the node ID you have copied is the one of the node you wish to drop.
 This command is `irreversible` and will remove the specified node from the cluster without confirmation.
@@ -386,7 +386,7 @@ salt --async -G 'roles:kube-master' cmd.run 'systemctl poweroff'``
 .`kubectl` Needs Master Nodes To Function
 [NOTE]
 ====
-[command]``kubectl`` requires use of the {kube}
+`kubectl` requires use of the {kube}
  API hosted on the master nodes.
 Therefore, until at least some of the master nodes have started successfully, you will see error messages of the type ``HTTP 503``.
 
@@ -474,7 +474,7 @@ For larger batches than two, certain cluster services, for example ``dex``, coul
 [[_sec.admin.nodes.graceful_shutdown.etcd]]
 === Behavior of `etcd`
 
-[command]``etcd`` requires special considerations for maintaining cluster health and integrtiy.
+`etcd` requires special considerations for maintaining cluster health and integrtiy.
 Refer to: <<_sec.deploy.requirements.system.cluster.etcd_cluster_size>>.
 
 [[_sec.admin.scale_cluster]]

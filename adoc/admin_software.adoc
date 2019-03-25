@@ -30,7 +30,7 @@ Transactional updates can be characterized as follows:
 * The system needs to be rebooted to activate the changes.
 
 
-Transactional updates are managed by the [command]``transactional-update`` script, which is called once a day.
+Transactional updates are managed by the `transactional-update` script, which is called once a day.
 The script checks if any updates are available.
 If there are any updates to be applied, a new snapshot of the root file system is created in the background and is updated from the release channels.
 All updates released to this point are applied.
@@ -41,7 +41,7 @@ The new snapshot, once completely updated, is then marked as active and will be 
 .Snapshot Activation
 [NOTE]
 ====
-For each "transaction" performed by [command]``transactional-updates`` a new snapshot is generated and requires a reboot to incorporate the changes.
+For each "transaction" performed by `transactional-updates` a new snapshot is generated and requires a reboot to incorporate the changes.
 If another transaction is run before the reboot, only the latest snapshot is used and changes might be lost.
 If you perform manual updates or installation on your nodes, please make sure to reboot after each transaction.
 Refer to: <<_sec.admin.software.transactional_updates.installation.manual>>.
@@ -51,20 +51,20 @@ Refer to: <<_sec.admin.software.transactional_updates.installation.manual>>.
 will show a list of nodes that have new updates available for use.
 The cluster administrator then uses {dashboard}
 to reboot the nodes to the new snapshots to ensure the health of services and configuration. {dashboard}
-uses [command]``salt`` to safely disable services on the nodes, apply new snapshots, rewrite configurations and then bring the services and nodes back up.
+uses `salt` to safely disable services on the nodes, apply new snapshots, rewrite configurations and then bring the services and nodes back up.
 
 [[_sec.admin.software.transactional_updates.command]]
-=== The [command]``transactional-update`` Command
+=== The `transactional-update` Command
 
 .Only use when requested by SUSE Support
 [IMPORTANT]
 ====
-This reference for [command]``transactional-update`` should only be used when requested by SUSE Support.
+This reference for `transactional-update` should only be used when requested by SUSE Support.
 Updates are handled by an automated process and only require user interaction for rebooting of nodes.
 ====
 
 
-The [command]``transactional-update`` enables you to install or remove updates of your system in an atomic way.
+The `transactional-update` enables you to install or remove updates of your system in an atomic way.
 The updates are applied all or none of them if any package cannot be installed.
 Before the update is applied, a snapshot of the system is created in order to restore the previous state in case of a failure.
 
@@ -78,7 +78,7 @@ If the current root file system is identical to the active root file system (aft
 Other options of the command are the following:
 
 `pkg in/install`::
-Installs individual packages from the available channels using the [command]``zypper install`` command.
+Installs individual packages from the available channels using the `zypper install` command.
 This command can also be used to install PTF RPM files.
 Please note that the changes to the base file system only become permanent after a reboot.
 +
@@ -94,7 +94,7 @@ or
 {prompt.root}``transactional-update pkg install RPM1 RPM2``
 ----
 `pkg rm/remove`::
-Removes individual packages from the active snapshot using the [command]``zypper remove`` command.
+Removes individual packages from the active snapshot using the `zypper remove` command.
 This command can also be used to remove PTF RPM files.
 Please note that the changes to the base file system only become permanent after a reboot.
 +
@@ -103,7 +103,7 @@ Please note that the changes to the base file system only become permanent after
 {prompt.root}``transactional-update pkg remove PACKAGE_NAME``
 ----
 `pkg up/update`::
-Updates individual packages from the active snapshot using the [command]``zypper update`` command.
+Updates individual packages from the active snapshot using the `zypper update` command.
 Please note that only packages that are part of the snapshot of the base file system can be updated and changes only become permanent after a reboot.
 +
 
@@ -111,7 +111,7 @@ Please note that only packages that are part of the snapshot of the base file sy
 {prompt.root}``transactional-update pkg remove PACKAGE_NAME``
 ----
 `up/update`::
-If there are new updates available, a new snapshot is created and [command]``zypper up/update`` is used to update the snapshot.
+If there are new updates available, a new snapshot is created and `zypper up/update` is used to update the snapshot.
 The snapshot is activated afterwards and is used as the new root file system after reboot.
 +
 
@@ -119,7 +119,7 @@ The snapshot is activated afterwards and is used as the new root file system aft
 {prompt.root}``transactional-update up``
 ----
 `dup`::
-If there are new updates available, a new snapshot is created and [command]``zypper dup –no-allow-vendor-change`` is used to update the snapshot.
+If there are new updates available, a new snapshot is created and `zypper dup –no-allow-vendor-change` is used to update the snapshot.
 The snapshot is activated afterwards and is used as the new root file system after reboot.
 +
 
@@ -127,7 +127,7 @@ The snapshot is activated afterwards and is used as the new root file system aft
 {prompt.root}``transactional-update dup``
 ----
 `patch`::
-If there are new updates available, a new snapshot is created and [command]``zypper patch`` is used to update the snapshot.
+If there are new updates available, a new snapshot is created and `zypper patch` is used to update the snapshot.
 The snapshot is activated afterwards and is used as the new root file system after reboot.
 +
 
@@ -136,7 +136,7 @@ The snapshot is activated afterwards and is used as the new root file system aft
 ----
 `rollback`::
 The command sets the default sub volume.
-On systems with read-write file system [command]``snapper rollback`` is called.
+On systems with read-write file system `snapper rollback` is called.
 On a read-only file system and without any argument, the current system is set to a new default root file system.
 If you specify a number, that snapshot is used as the default root file system.
 On a read-only file system, no additional snapshots are created.
@@ -149,7 +149,7 @@ On a read-only file system, no additional snapshots are created.
 The command creates a new grub2 config.
 Sometimes it is necessary to adjust the boot configuration, e.g.
 by adding additional kernel parameters.
-This can be done by editing [replaceable]``/etc/default/grub``, calling [command]``transactional-update grub.cfg`` and then rebooting the machine to activate the change.
+This can be done by editing `/etc/default/grub`, calling `transactional-update grub.cfg` and then rebooting the machine to activate the change.
 Please note that without rebooting the machine, the new grub config will be overwritten with the default by any transactional-update that takes place.
 +
 
@@ -159,7 +159,7 @@ Please note that without rebooting the machine, the new grub config will be over
 `reboot`::
 This parameter triggers a reboot after the action is completed.
 +
-How the reboot is done depends on how [command]``transactional-update`` is configured.
+How the reboot is done depends on how `transactional-update` is configured.
 For cluster nodes this will set a Salt grain to show the updated node in {dashboard}
 as requiring reboot.
 +
@@ -213,7 +213,7 @@ RPMs that require a license to be accepted cannot be updated.
 ====
 
 
-After the [command]``transactional-update`` script has run on all nodes, {dashboard}
+After the `transactional-update` script has run on all nodes, {dashboard}
  displays any nodes in your cluster running outdated software.
 The updates are only applied after a reboot.
 For this purpose, {dashboard}
@@ -244,7 +244,7 @@ image::velum_update_nodes.png[scaledwidth=100%]
 ==== Applying Updates Manually
 
 
-You can use [command]``transactional-update`` to apply updates or install PTF files manually.
+You can use `transactional-update` to apply updates or install PTF files manually.
 
 ----
 {prompt.root}``transactional-update pkg install PACKAGE_NAME reboot``
@@ -337,7 +337,7 @@ salt-run -l debug state.orchestrate orch.update``
 
 Program temporary fixes (PTFs) are available in the {productname}
 environment.
-You install them by using the [command]``transactional-update`` script.
+You install them by using the `transactional-update` script.
 Typically you invoke the installation of PTFs by running:
 
 ----
@@ -352,7 +352,7 @@ PTFs are activate only after rebooting of your system.
 .Reboot Required
 [NOTE]
 ====
-If you install or remove PTFs and you call the [command]``transactional-update`` to update the system before reboot, the applied changes by PTFs are lost and need to be done again after reboot.
+If you install or remove PTFs and you call the `transactional-update` to update the system before reboot, the applied changes by PTFs are lost and need to be done again after reboot.
 ====
 
 
@@ -394,7 +394,7 @@ Before you start the upgrade procedure to {productname}
 v3, you must ensure that all your nodes are running on the latest v2 updates.
 You can check the [path]``SUSEConnect``
  package version to see if you are up to date.
-To do so you will run a [command]``salt`` command to display the package version installed on each node.
+To do so you will run a `salt` command to display the package version installed on each node.
 
 ----
 {prompt.user}``docker exec -i  $(docker ps -q -f name="salt-master") \
@@ -437,7 +437,7 @@ If the package version is `0.3.11-3.15.1` (or higher) you have the latest update
 
 
 To begin with the upgrade procedure, you first must disable the automatic transactional update mechanism to avoid conflicts.
-To do so you must run a [command]``salt`` command across the nodes to disable the ``transactional-update.timer``.
+To do so you must run a `salt` command across the nodes to disable the ``transactional-update.timer``.
 
 The automatic update timer will be re-enabled automatically after the migration procedure.
 
@@ -547,7 +547,7 @@ to restart the nodes.
 === Troubleshooting
 
 
-In case the upgrade fails, please perform the support data collection by running [command]``supportconfig`` on the affected nodes.
+In case the upgrade fails, please perform the support data collection by running `supportconfig` on the affected nodes.
 Provide the resulting files including the [path]``transactional-update-migration.log``
  to SUSE Support.
 
@@ -575,7 +575,7 @@ A full list of tools and packages available through the module can be found in t
 .Reboot Required For Toolchain
 [IMPORTANT]
 ====
-The toolchain module must be enabled through [command]``transactional-update``.
+The toolchain module must be enabled through `transactional-update`.
 Due to the nature of transactional updates, the machine must reboot at least twice.
 First to activate the module and a second time to start the machine from the new snapshot that incorporates the installed tools, packages, and libraries.
 
@@ -596,13 +596,13 @@ The machine will reboot to incorporate the module into the read-only file system
 +
 .Avoid Reboots By Installing Multiple Packages
 IMPORTANT: If you wish to install multiple packages, you should install them all in a single operation.
-Each time [command]``transactional-update`` is run, it creates a new snapshot and discards all previous changes.
+Each time `transactional-update` is run, it creates a new snapshot and discards all previous changes.
 The changes can only be persisted by starting from the new snapshot through reboot.
 +
 
 
 +
-Use [command]``transactional-update`` to install the desired packages from the toolchain module
+Use `transactional-update` to install the desired packages from the toolchain module
 +
 
 ----
@@ -659,7 +659,7 @@ Run the following command from your workstation to query the logs:
 ----
 
 
-If the log gets overwritten and loses this information, the following command queries the [command]``rpm`` package manager inside the container.
+If the log gets overwritten and loses this information, the following command queries the `rpm` package manager inside the container.
 This works only on {productname}
 /{scf}
  installations:
@@ -702,7 +702,7 @@ Use the `--client-only` parameter.
 .Procedure: Installation of heapster
 
 By default, the chart repository for helm will not be known to the system.
-You must perform [command]``helm init`` to initialize the necessary repository files and then refresh the information using [command]``helm repo
+You must perform `helm init` to initialize the necessary repository files and then refresh the information using [command]``helm repo
       update``.
 After that, you can install `heapster` from the {kube}
  helm charts repository.
@@ -764,7 +764,7 @@ currently fully supports only {dashboard}
 --name=kubernetes-dashboard stable/kubernetes-dashboard \
 --version=0.6.1``
 ----
-. Run [command]``kubectl proxy`` to expose the cluster on your local workstation.
+. Run `kubectl proxy` to expose the cluster on your local workstation.
 . Visit `http://127.0.0.1:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/` in your browser. You will be greeted with by a welcome page containing a dialog to configure authentication.
 . Select menu:token[] authentication. To retrieve your token refer to the value in your kubeconfig file by running the command:
 +

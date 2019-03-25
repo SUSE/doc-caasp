@@ -81,8 +81,8 @@ SMT Server URLs should use `https` or ``http``; other protocols are not supporte
 Fill this field to enable installing current updates during the installation process.
 Alternatively, the machine can be registered at the {scc}
 or a {smt}
-server at any later point in time with [command]``SUSEConnect``.
-For details about registering with [command]``SUSEConnect`` and using an authenticated proxy server for registration, see <<_sec.configuration.suseconnect>>. 
+server at any later point in time with `SUSEConnect`.
+For details about registering with `SUSEConnect` and using an authenticated proxy server for registration, see <<_sec.configuration.suseconnect>>. 
 
 System Role:::
 From the menu:System Role[]
@@ -219,9 +219,9 @@ This procedure is intended to be used with public cloud installations only.
 ====
 
 
-Use SSH to log into the admin node and run the [command]``caasp-admin-setup`` executable as the ``root``user. 
+Use SSH to log into the admin node and run the `caasp-admin-setup` executable as the ``root``user. 
 
-By default the [command]``caasp-admin-setup`` executable operates in `wizard` mode, walking you through the necessary steps.
+By default the `caasp-admin-setup` executable operates in `wizard` mode, walking you through the necessary steps.
 During this process your {scc}
  credentials will be requested.
 Registration with {scc}
@@ -230,21 +230,21 @@ If this step is skipped during setup the admin node and the cluster nodes will n
 While registration to {scc}
  can be performed after the initial setup with ``SUSEConnect``, performing the registration during setup has the advantage that cluster nodes will automatically be registered with {scc}
  as well.
-If you prefer not to run the ``wizard``, use [command]``caasp-admin-setup --help`` to obtain a list of the available command line arguments. 
+If you prefer not to run the ``wizard``, use `caasp-admin-setup --help` to obtain a list of the available command line arguments. 
 
 Once the `caasp-admin-setup` process is complete all {productname}
  containers will be launched on the admin node instance.
 Use your web browser to access the Velum dashboard via ``https``.
-If you did not provide your own certificate, a certificate was generated for you and the fingerprint was written to the terminal in which [command]``caasp-admin-setup`` was executed.
+If you did not provide your own certificate, a certificate was generated for you and the fingerprint was written to the terminal in which `caasp-admin-setup` was executed.
 You can compare this fingerprint in your browser to establish the chain of trust. 
 
-=== [command]``caasp-admin-setup`` Details
+=== `caasp-admin-setup` Details
 
 
-The general purpose of [command]``caasp-admin-setup`` is to collect all information needed to successfully start the {productname}
+The general purpose of `caasp-admin-setup` is to collect all information needed to successfully start the {productname}
  containers. 
 
-When [command]``caasp-admin-setup`` is executed it determines which cluster node image to use according to the cloud framework.
+When `caasp-admin-setup` is executed it determines which cluster node image to use according to the cloud framework.
 For this operation to succeed outgoing traffic on port `443` to the Internet must be permitted.
 The code will access the `Public Cloud
     Information Tracker` service operated by SUSE.
@@ -266,7 +266,7 @@ In order to use your own SSL certificate and key you must upload the files to th
 This location is then provided to the setup code.
 For example, if your certificate is called [path]``my-velum.crt``
  and you uploaded it to [path]``/tmp``
- then the [command]``caasp-admin-setup`` code expects [path]``/tmp/my-velum.crt``
+ then the `caasp-admin-setup` code expects [path]``/tmp/my-velum.crt``
  as the location for the SSL certificate.
 The same concept applies to the SSL key.
 The certificate and key will be placed in the appropriate locations on the admin node. 
@@ -502,7 +502,7 @@ Floating network UUID::::
 Load balancer monitor max retries::::
 Number of permissible ping failures before changing the load balancer member's status to ``INACTIVE``.
 Must be a number between 1 and 10.
-(Default: [replaceable]``3``) 
+(Default: `3`) 
 
 Cinder Block Storage API version::::
 Specifies the API version to be used when talking to Cinder.
@@ -621,11 +621,11 @@ Refer to: <<_sec.deploy.autoyast>>.
 When nodes are installed using {ay}
 , there is no opportunity to specify the password for {rootuser}
 .
-However, each node will have [command]``ssh`` keys for {rootuser}
+However, each node will have `ssh` keys for {rootuser}
  on the {admin_node}
  pre-installed.
 Thus it is possible to access the {worker_node}
-s by opening an [command]``ssh`` session from the {admin_node}
+s by opening an `ssh` session from the {admin_node}
 . 
 ====
 
@@ -670,7 +670,7 @@ If you are using DHCP, you can simply enter ``ifcfg=eth0=dhcp``.
 Make sure to replace `eth0` with the actual name of the interface that you want to use DHCP for.
 For manual configuration, refer to https://www.suse.com/documentation/sles-12/book_autoyast/data/ay_adv_network.html. 
 +
-If you wish to define a static IP you can also use [command]``ifcfg``.
+If you wish to define a static IP you can also use `ifcfg`.
 For example: 
 +
 

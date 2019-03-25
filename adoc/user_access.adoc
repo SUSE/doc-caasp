@@ -23,7 +23,7 @@ The core software component of this cluster is {kube}
 takes care of balancing the workloads, starting and stopping applications in containers, configuring network access, and many other things. 
 
 Users interact with {kube}
-via an REST API. [command]``kubectl`` is an easy to use command line tool for this API.
+via an REST API. `kubectl` is an easy to use command line tool for this API.
 To run workloads on {productname}
 , you need to authenticate against the cluster and your user needs to be granted the required privileges. 
 
@@ -39,7 +39,7 @@ cluster, execute the following steps:
 
 
 . Get your credentials consisting of an e-mail address and a password from your cluster administrator. You also need the _fully qualified domain name_ (__FQDN__) of the admin node. 
-. Download the [path]``kubeconfig`` by visiting ``https://[replaceable]``ADMIN_NODE``/kubeconfig``. Log in with your credentials and store the [path]``kubeconfig`` as [path]``~/.kube/config`` . 
+. Download the [path]``kubeconfig`` by visiting ``https://`ADMIN_NODE`/kubeconfig``. Log in with your credentials and store the [path]``kubeconfig`` as [path]``~/.kube/config`` . 
 . Obtain the cluster root certificate and update your certificate store. On {sle} or {opensuse} , execute: 
 +
 
@@ -49,15 +49,15 @@ cluster, execute the following steps:
 
 
 [[_sec.user.access.kubectl]]
-== Using [command]``kubectl``
+== Using `kubectl`
 
-[command]``kubectl`` is a command line user interface to the {kube}
+`kubectl` is a command line user interface to the {kube}
  cluster.
 By default, the authorization credentials are read from the file [path]``~/.kube/config``
 . 
 
 To perform a specific command, at least one of your assigned roles needs to have the required privilege.
-The default syntax for [command]``kubectl`` commands is: 
+The default syntax for `kubectl` commands is: 
 
 ----
 {prompt.user}``kubectl COMMAND TYPE NAME FLAGS`` 
@@ -70,14 +70,14 @@ TYPE::
 The resource type on which the operation is performed, for example ``pod``, ``service``, or ``namespace``. 
 
 NAME::
-The name of specific resources ([replaceable]``TYPE``). If omitted, the command is performed on all resources of a type. 
+The name of specific resources (`TYPE`). If omitted, the command is performed on all resources of a type. 
 
 FLAGS::
 This allows setting further details for the command, for example the {kube}
 API server URL. 
 
 
-Instead of running [command]``kubectl`` multiple times to perform all required changes, all changes can be collected in JSON or YAML files and applied at once.
+Instead of running `kubectl` multiple times to perform all required changes, all changes can be collected in JSON or YAML files and applied at once.
 This is done with the following syntax: 
 
 ----
@@ -85,10 +85,10 @@ This is done with the following syntax:
 ----
 
 
-Replace [replaceable]``ACTION`` with ``create``, ``replace``, ``delete``, or ``get``.
-Replace [replaceable]``FILE_NAME`` with the path to the YAML or JSON file or containing directory. 
+Replace `ACTION` with ``create``, ``replace``, ``delete``, or ``get``.
+Replace `FILE_NAME` with the path to the YAML or JSON file or containing directory. 
 
-For more details about [command]``kubectl``, refer to [command]``kubectl --help`` and https://v1-13.docs.kubernetes.io/docs/reference/kubectl/overview/. 
+For more details about `kubectl`, refer to `kubectl --help` and {kubedoc}reference/kubectl/overview/. 
 
-[command]``kubectl`` supports different modes: an imperative and a declarative mode.
-For details, refer to https://v1-13.docs.kubernetes.io/docs/concepts/overview/object-management-kubectl/declarative-config/. 
+`kubectl` supports different modes: an imperative and a declarative mode.
+For details, refer to {kubedoc}concepts/overview/object-management-kubectl/declarative-config/. 

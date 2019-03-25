@@ -38,7 +38,7 @@ The procedure below describes steps to take when you need to use a RADOS Block D
 
 .Procedure: Using RBD In A Pod
 . Retrieve the Ceph admin secret. Get the key value from the file [path]``/etc/ceph/ceph.client.admin.keyring`` . 
-. On the {master_node} apply the configuration that includes the Ceph secret by using [command]``kubectl apply``. Replace [replaceable]``CEPH_SECRET`` with your Ceph secret. 
+. On the {master_node} apply the configuration that includes the Ceph secret by using `kubectl apply`. Replace `CEPH_SECRET` with your Ceph secret. 
 +
 
 ----
@@ -59,7 +59,7 @@ data:
 {prompt.root}``rbd create -s SIZE YOUR_VOLUME`` 
 ----
 +
-Replace [replaceable]``SIZE`` with the size of the image, for example ``1G``, and [replaceable]``YOUR_VOLUME`` is the name of the image. 
+Replace `SIZE` with the size of the image, for example ``1G``, and `YOUR_VOLUME` is the name of the image. 
 . Create a pod that uses the image by executing the following command on the {master_node} . In this example it is a minimal configuration for using a `RADOS` Block Device. Fill in the IP addresses and ports of your monitor nodes. The port number usually is ``6789``. 
 +
 
@@ -123,7 +123,7 @@ The following procedure describes how to attach a pod to a persistent SES volume
 
 .Procedure: Creating a Pod with RBD in Persistent Volume
 . Retrieve the Ceph admin secret. Get the key value from the file [path]``/etc/ceph/ceph.client.admin.keyring`` . 
-. On the {master_node} , apply the configuration that includes the Ceph secret by using [command]``kubectl apply``. Replace [replaceable]``CEPH_SECRET`` with your Ceph secret. 
+. On the {master_node} , apply the configuration that includes the Ceph secret by using `kubectl apply`. Replace `CEPH_SECRET` with your Ceph secret. 
 +
 
 ----
@@ -144,7 +144,7 @@ data:
 {prompt.root}``rbd create -s SIZE YOUR_VOLUME`` 
 ----
 +
-Replace [replaceable]``SIZE`` with the size of the image, for example `1G` (1 Gigabyte), and [replaceable]``YOUR_VOLUME`` is the name of the image. 
+Replace `SIZE` with the size of the image, for example `1G` (1 Gigabyte), and `YOUR_VOLUME` is the name of the image. 
 . Create the persistent volume on the {master_node} : 
 +
 
@@ -174,7 +174,7 @@ spec:
 *EOF*`` 
 ----
 +
-Replace [replaceable]``SIZE`` with the desired size of the volume.
+Replace `SIZE` with the desired size of the volume.
 Use the _gibibit_ notation, for example ``1Gi``. 
 . Create a persistent volume claim on the {master_node} : 
 +
@@ -194,7 +194,7 @@ spec:
 *EOF*`` 
 ----
 +
-Replace [replaceable]``SIZE`` with the desired size of the volume.
+Replace `SIZE` with the desired size of the volume.
 Use the _gibibit_ notation, for example ``1Gi``. 
 +
 .Listing Volumes

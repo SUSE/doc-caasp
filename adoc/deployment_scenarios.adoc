@@ -703,7 +703,7 @@ Update the Helm chart repository by following the shared update procedure <<_sec
 ==== Client Configuration
 
 
-Add the webserver as a repo to [command]``helm``. 
+Add the webserver as a repo to `helm`. 
 
 This step needs to be performed on a machine where Helm is installed and configured to talk to the Tiller server in the {productname}
 cluster.
@@ -763,19 +763,19 @@ Replace `http://charts.mymirror.local` with the hostname of the webserver provid
 ----
 +
 .Ignoring Chart Errors
-NOTE: The [command]``helm-mirror`` tool will attempt to render and inspect all downloaded charts.
+NOTE: The `helm-mirror` tool will attempt to render and inspect all downloaded charts.
 Some charts will have values that are filled from environment data on their source repository and produce errors.
 You can still proceed with this step by using the `--ignore-errors` flag. 
 +
 
-. Download all the referenced images using [command]``skopeo``. 
+. Download all the referenced images using `skopeo`. 
 +
 
 ----
 {prompt.user}``skopeo sync --source-yaml sync.yaml dir:/tmp/skopeodata`` 
 ----
 + 
-[command]``skopeo`` will automatically create a directory named after the hostname of the registry from which you are downloading the images.
+`skopeo` will automatically create a directory named after the hostname of the registry from which you are downloading the images.
 The final path will be something like [path]``/tmp/skopeodata/registry.suse.com/``
 . 
 . Populate the local registry with the downloaded data. 
@@ -869,7 +869,7 @@ register the node against the {rmtool}
 server.
 This will ensure the node zypper repositories are pointed against {rmtool}
 .
-Moreover, all the available updates are going to be installed and there is no need to install updates using [command]``transactional-update`` right after the installation. 
+Moreover, all the available updates are going to be installed and there is no need to install updates using `transactional-update` right after the installation. 
 
 ==== Using AutoYast
 

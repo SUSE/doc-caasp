@@ -27,9 +27,9 @@ A pod has its own IP address and storage resources.
 To scale an application, multiple pods with the same containers can be started.
 The pods are automatically distributed among the cluster nodes. 
 
-A very good introduction to starting an application in a pod is available at https://v1-13.docs.kubernetes.io/docs/tutorials/kubernetes-basics/deploy-interactive/. 
+A very good introduction to starting an application in a pod is available at {kubedoc}tutorials/kubernetes-basics/deploy-interactive/. 
 
-For more information about pods, refer to https://v1-13.docs.kubernetes.io/docs/concepts/workloads/pods/pod-overview/. 
+For more information about pods, refer to {kubedoc}concepts/workloads/pods/pod-overview/. 
 
 [[_sec.user.pods.create]]
 == Creating Pods
@@ -58,15 +58,15 @@ spec:
 
 
 Then apply the YAML file with [command]``kubectl create -f
-   [replaceable]``YAML_FILE````. 
+   `YAML_FILE```. 
 
 [[_sec.user.pods.remove]]
 == Killing Pods
 
 
 To kill a running pod, use [command]``kubectl delete pod
-   [replaceable]``POD_NAME````.
-The [replaceable]``POD_NAME`` refers to the `name` value of the `metadata` section.
+   `POD_NAME```.
+The `POD_NAME` refers to the `name` value of the `metadata` section.
 By default, the pod is granted a grace period of 30 seconds to shut down.
 After that, it will be killed. 
 
@@ -74,4 +74,4 @@ After that, it will be killed.
 == List Running Pods
 
 
-To list running pods, run [command]``kubectl get pods``. 
+To list running pods, run `kubectl get pods`. 

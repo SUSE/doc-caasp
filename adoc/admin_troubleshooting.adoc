@@ -20,7 +20,7 @@ This chapter is a collection of frequent problems that are reported for {product
 Additionally, {suse}
 support collects problems and their solutions online at https://www.suse.com/support/kb/?id=SUSE_CaaS_Platform.
 
-In case of problems, a detailed system report can be created with the [command]``supportconfig`` command line tool.
+In case of problems, a detailed system report can be created with the `supportconfig` command line tool.
 It will collect information about the system such as: current kernel version, hardware, installed packages, partition setup, and much more.
 The result is a TAR archive of files.
 After opening a Service Request (SR), you can upload the TAR archive to Global Technical Support.
@@ -80,7 +80,7 @@ Rejected Keys:
 The minion ID of the node should appear on the "Accepted Keys" list.
 +
 If the node does not appear on this "Accepted Keys" list, the acceptance request didn't reach the backend and/or the Salt API.
-Check with [command]``docker ps`` that containers on the {admin_node}
+Check with `docker ps` that containers on the {admin_node}
 have approximately the same age.
 If there is a large age differences, it's likely that the {admin_node}
 is under memory pressure and is shutting down containers.
@@ -128,7 +128,7 @@ The following procedure outlines where to start debugging.
 ----
 {prompt.root.admin}``docker logs $(docker ps -q -f name="velum-dashboard")``
 ----
-. Convert the log into a human readable format and open it with [command]``less``.
+. Convert the log into a human readable format and open it with `less`.
 +
 
 ----
@@ -142,7 +142,7 @@ The following procedure outlines where to start debugging.
 {prompt.root.admin}``docker exec -it $(docker ps -q -f name="salt-master") \
     salt-run -l debug state.orchestrate orch.kubernetes > salt-orchestration.logs``
 ----
-. If the orchestration failed in late state, you can check if [command]``etcd`` and the {kube} cluster is up and running. Log in on a {master_node} and check if [command]``etcd`` cluster is up and running.
+. If the orchestration failed in late state, you can check if `etcd` and the {kube} cluster is up and running. Log in on a {master_node} and check if `etcd` cluster is up and running.
 +
 
 ----
@@ -156,7 +156,7 @@ cluster is up and running.
 ----
 {prompt.root.master}``kubectl get nodes`` {prompt.root.master}``kubectl cluster-info`` {prompt.root.master}``journalctl -u kubelet`` {prompt.root.master}``journalctl -u kube-apiserver`` {prompt.root.master}``journalctl -u kube-scheduler`` {prompt.root.master}``journalctl -u kube-controller-manager``
 ----
-. Collect all relevant logs with [command]``supportconfig`` on the {master_node} and {admin_node} .
+. Collect all relevant logs with `supportconfig` on the {master_node} and {admin_node} .
 +
 
 ----
@@ -179,10 +179,10 @@ See <<_sec.admin.software.transactional_updates.recovering>>.
 == Checking `etcd` Health
 
 
-To work with [command]``etcdctl``, you have to pass parameters with paths to required certificates.
+To work with `etcdctl`, you have to pass parameters with paths to required certificates.
 
 Use SSH to log into one of the cluster nodes, for example your first master.
-The following command provides an example for using [command]``etcdctl``.
+The following command provides an example for using `etcdctl`.
 
 ----
 {prompt.root}``set -a`` {prompt.root}``source /etc/sysconfig/etcdctl`` {prompt.root}``export ETCDCTL_API=3`` {prompt.root}``etcdctl cluster-health``
@@ -192,13 +192,13 @@ The following command provides an example for using [command]``etcdctl``.
 == Locking Installed Program Temporary Fixes
 
 
-It can happen that [command]``zypper`` removes an installed _Program Temporary Fix_ (__PTF__) when updates are started with Velum.
+It can happen that `zypper` removes an installed _Program Temporary Fix_ (__PTF__) when updates are started with Velum.
 To prevent this, execute the following procedure.
 
 .Locks Disable Updates for Package
 [IMPORTANT]
 ====
-If a package is locked, it will no longer receive any updates until the lock is released with [command]``zypper rl``.
+If a package is locked, it will no longer receive any updates until the lock is released with `zypper rl`.
 ====
 
 
@@ -214,7 +214,7 @@ If a package is locked, it will no longer receive any updates until the lock is 
 ----
 {prompt.root}``rpm -qa | grep PTF``
 ----
-. Create a [command]``zypper`` lock for this RPM.
+. Create a `zypper` lock for this RPM.
 +
 
 ----
@@ -248,7 +248,7 @@ over a proxy server that requires authentication, it is not possible to specify 
 .
 
 For information about setting authentication credentials and connecting to {scc}
-with [command]``SUSEConnect``, see <<_sec.configuration.suseconnect.proxy>>.
+with `SUSEConnect`, see <<_sec.configuration.suseconnect.proxy>>.
 
 [[_sec.admin.troubleshooting.replace_certificates]]
 == Replacing TLS/SSL Certificates
@@ -274,7 +274,7 @@ To replace outdated certificates, execute the following procedure.
 +
 .Generating Additional Certificates
 TIP: To regenerate additional certificates, for example [path]``/etc/pki/kubectl-client-cert.crt``
-, add an additional line at the end of the [command]``gen-certs.sh`` script:
+, add an additional line at the end of the `gen-certs.sh` script:
 
 ----
 {prompt.root.admin}``transactional-update shell``

@@ -25,13 +25,13 @@ Each configuration stage is described in the following sections.
 The defaults for the first stage configuration are the following:
 
 Timezone::
-The timezone is set to `UTC` by default, but can be changed by [command]``cloud-init``.
+The timezone is set to `UTC` by default, but can be changed by `cloud-init`.
 
 Keyboard Layout::
 The keyboard layout is set to `US` by default, but can be changed during the installation process.
 
 Locale::
-The locale is set to `en_US.utf8` by default, but can be changed by [command]``cloud-init``.
+The locale is set to `en_US.utf8` by default, but can be changed by `cloud-init`.
 +
 
 IMPORTANT: Note that {productname}
@@ -43,9 +43,9 @@ Because of this, we do recommend to not change the locale.
 
 
 [[_sec.deploy.cloud_init]]
-== Customizing Configuration with [command]``cloud-init``
+== Customizing Configuration with `cloud-init`
 
-[command]``cloud-init`` is a tool that helps customizing an operating system at boot time. [command]``cloud-init`` can set environment variables, configure the hostname, SSH keys, mount points and network devices.
+`cloud-init` is a tool that helps customizing an operating system at boot time. `cloud-init` can set environment variables, configure the hostname, SSH keys, mount points and network devices.
 
 The customization information is usually read from 3 files during boot: [path]``meta-data``
 , [path]``user-data``
@@ -61,7 +61,7 @@ First, the configuration is searched in the local directory [path]``/cloud-init-
 For details, see <<_sec.deploy.cloud_init.localdisk_datasource>>.
 
 NoCloud::
-Second, [command]``cloud-init`` tries to read the configuration from a local block device, for example an USB stick, DVD or virtual disk.
+Second, `cloud-init` tries to read the configuration from a local block device, for example an USB stick, DVD or virtual disk.
 For details, see <<_sec.deploy.cloud_init.nocloud_datasource>>.
 
 {ostack}::
@@ -77,13 +77,13 @@ For details about the configuration files, see:
 * <<_sec.deploy.cloud_init.vendor_data>> (Optional)
 
 
-More information about [command]``cloud-init`` can be found at https://cloudinit.readthedocs.io/en/latest/index.html.
+More information about `cloud-init` can be found at https://cloudinit.readthedocs.io/en/latest/index.html.
 
 [[_sec.deploy.cloud_init.localdisk_datasource]]
 === The `LocalDisk` Datasource
 
 
-To provide the [command]``cloud-init`` configuration on the local file system, create a directory [path]``/cloud-init-config/``
+To provide the `cloud-init` configuration on the local file system, create a directory [path]``/cloud-init-config/``
 .
 Then create the files [path]``meta-data``
 , [path]``user-data``
@@ -103,7 +103,7 @@ Typically it is an unpartitioned USB stick or disk or a DVD iso.
 
 Alternatively you can specify a remote location of the [path]``cloud.cfg``
 , but you have to configure network first, for example by using local configuration files.
-The url is specified as a boot parameter and must be in the format: ``cloud-config-url=http://[replaceable]``hostname.domain``/cloud.cfg``.
+The url is specified as a boot parameter and must be in the format: ``cloud-config-url=http://`hostname.domain`/cloud.cfg``.
 The content of the passed url is copied to [path]``/etc/cloud/cloud.cfg.d/91_kernel_cmdline_url.cfg``
  and it is not overwritten even though the url changes.
 For details about boot parameters, see https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_i_yast2_startup.html.
@@ -111,15 +111,15 @@ For details about boot parameters, see https://www.suse.com/documentation/sles-1
 [[_nocloud.datasource.images]]
 ==== Generating cloud-init images for `NoCloud` datasource
 
-.[command]``mkisofs`` dependecy
+.`mkisofs` dependecy
 [NOTE]
 ====
-You need the tool [command]``mkisofs`` to produce the images.
+You need the tool `mkisofs` to produce the images.
 It should be preinstalled {opensuse}
  Leap and Tumbleweed installations.
 For other operating systems, please refer to the specific instructions for the respective distribution.
 
-If [command]``mkisofs`` is not available, you can use the nearly identical [command]``genisoimage``.
+If `mkisofs` is not available, you can use the nearly identical `genisoimage`.
 ====
 
 
@@ -300,7 +300,7 @@ ssh_authorized_keys:
 The option `ssh_deletekeys` disables/enables automatic deletion of old private and public SSH keys of the host.
 The default value is `true`{mdash}
 the keys are deleted and new keys are generated.
-We do not recommend using the default value, as there could be a problem with [command]``ssh`` reporting that the keys are incorrect or have been changed after the `cloud-init` configuration has been changed.
+We do not recommend using the default value, as there could be a problem with `ssh` reporting that the keys are incorrect or have been changed after the `cloud-init` configuration has been changed.
 
 The option `ssh_pwauth: true` allows you to login by using SSH with a password, if the password is set.
 
@@ -336,7 +336,7 @@ username:$X$salt$hash
 
 
 The value "X" in $X$ can be any of ``1``, ``2a``, ``2y``, ``5``, or ``6``.
-For more information, see the `HASHING METHODS` section in the output of the command [command]``man 3 crypt``.
+For more information, see the `HASHING METHODS` section in the output of the command `man 3 crypt`.
 
 For example, you can generate a safe hash with the following command:
 
@@ -474,7 +474,7 @@ You must configure at least one NTP server.
 
 We recommend providing a dedicated NTP server from your local network.
 The following snippet configures three NTP servers during the first boot and the NTP service is enabled and started.
-You must choose an NTP client. [command]``chrony`` or [command]``systemd_timesyncd``.
+You must choose an NTP client. `chrony` or `systemd_timesyncd`.
 
 ----
 ntp:
@@ -592,10 +592,10 @@ To register a node at the {scc}
 ({rmt}
 ) or {smtool}
 ({smt}
-), use [command]``SUSEConnect``.
+), use `SUSEConnect`.
 This can be necessary if you want to install updates on your node but did not register during the installation as described in <<_sec.deploy.nodes.admin_install>>.
 
-You can also use [command]``SUSEConnect`` to switch from {scc}
+You can also use `SUSEConnect` to switch from {scc}
  to a local {rmt}
  or {smt}
  server.
@@ -627,6 +627,6 @@ Create the file [path]``/root/.curlrc``
 --proxy https://`PROXY_FQDN`:`PROXY_PORT`--proxy-user "`USER`:`PASSWORD`"
 ----
 
-Replace [replaceable]``PROXY_FQDN`` with the fully qualified domain name of the proxy server and [replaceable]``PROXY_PORT`` with its port.
-Replace [replaceable]``USER`` and [replaceable]``PASSWORD`` with the credentials of an allowed user for the proxy server.
+Replace `PROXY_FQDN` with the fully qualified domain name of the proxy server and `PROXY_PORT` with its port.
+Replace `USER` and `PASSWORD` with the credentials of an allowed user for the proxy server.
 ====

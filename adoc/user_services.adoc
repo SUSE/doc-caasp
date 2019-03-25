@@ -24,7 +24,7 @@
 services abstract a set of pods and a policy to access them.
 Services can be exposed outside the cluster. 
 
-For details, refer to https://v1-13.docs.kubernetes.io/docs/concepts/services-networking/service/. 
+For details, refer to {kubedoc}concepts/services-networking/service/. 
 
 [[_sec.user.services.create]]
 == Creating Services
@@ -53,7 +53,7 @@ spec:
 
 
 Apply the YAML file with [command]``kubectl create -f
-   [replaceable]``YAML_FILE````. 
+   `YAML_FILE```. 
 
 The IP address can be retrieved with the command [command]``kubectl
    describe services my-service``.
@@ -67,4 +67,4 @@ If the the example above is created in the namespace ``my-ns``, the DNS record w
 
 
 To delete a service, use [command]``kubectl delete service
-   [replaceable]``SERVICE_NAME````. 
+   `SERVICE_NAME```. 
