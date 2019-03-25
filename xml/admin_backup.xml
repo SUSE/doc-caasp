@@ -225,7 +225,7 @@ mysql --password=$(cat /var/lib/misc/infra-secrets/mariadb-root-password) velum_
     <step>
      <para>
       Once the new &admin_node; has restarted, ssh back onto it and run the following command.
-<screen>&prompt.root;<command> docker exec -it $(docker ps -qf name="salt-master") salt-key -A</command></screen>
+<screen>&prompt.root;<command> docker exec -it $(docker ps -qf name="salt-master") salt-key -A -y</command></screen>
      </para>
     </step>
     <step>
