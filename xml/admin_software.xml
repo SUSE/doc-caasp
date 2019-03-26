@@ -235,6 +235,16 @@
         is configured. For cluster nodes this will set a Salt grain to show the
         updated node in &dashboard; as requiring reboot.
        </para>
+       <para>
+        You must then reboot the node through &dashboard;. There is no other
+        supported method to drain and reboot nodes with
+        <command>transactional-update</command>.
+       </para>
+       <para>
+        Nodes that are not part of the cluster will be forcefully rebooted.
+        Since they are not a member of the cluster they will never receive
+        workloads and don't require draining.
+       </para>
 <screen>&prompt.root;<command>transactional-update <replaceable>dup</replaceable> reboot</command></screen>
      </listitem>
     </varlistentry>
