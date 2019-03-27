@@ -234,6 +234,16 @@
         is configured. For cluster nodes this will set a Salt grain to show the
         updated node in &dashboard; as requiring reboot.
        </para>
+       <para>
+        You must then reboot the node through &dashboard;. There is no other
+        supported method to drain and reboot nodes with
+        <command>transactional-update</command>.
+       </para>
+       <para>
+        Nodes that are not part of the cluster will be forcefully rebooted.
+        Since they are not a member of the cluster they will never receive
+        workloads and don't require draining.
+       </para>
 <screen>&prompt.root;<command>transactional-update <replaceable>dup</replaceable> reboot</command></screen>
      </listitem>
     </varlistentry>
@@ -915,7 +925,7 @@ helm-2.6.1-1.6.x86_64
    <para>
     If the Linux distribution on your workstation doesn't provide the correct
     &helm; version, or you are using some other platform, see the
-    <link xlink:href="https://docs.helm.sh/using_helm/#quickstart"> &helm; Quickstart Guide</link>
+    <link xlink:href="https://docs.helm.sh/using_helm/#quickstart">&helm; Quickstart Guide</link>
     for installation instructions and basic usage examples. Download the matching
     &helm; binary into any directory that is in your PATH on your workstation,
     such as your <filename>~/bin</filename> directory. Then initialize just the
