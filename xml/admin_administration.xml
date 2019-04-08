@@ -124,7 +124,7 @@ caasp3-worker-4   Ready     &lt;none&gt;    1d        v1.9.8</screen>
    Log in to the admin node and run:
   </para>
 <screen>&prompt.user;<command>docker exec -it $(docker ps -q -f name="salt-master") \
-salt -P 'roles:(admin|kube-master|kube-minion)' \
+salt -P 'roles:(admin|kube-(master|minion)' \
 cmd.run "<replaceable>df -h</replaceable>"</command>
 </screen>
   <para>
@@ -342,6 +342,9 @@ cmd.run "<replaceable>df -h</replaceable>"</command>
      you have, for example, three nodes in the <literal>etcd</literal> and you
      delete two of them, &productname; deletes one node, recovers the cluster
      and only if the recovery is successful, allows the next node to be removed.
+     Refer to: <xref linkend="sec.deploy.requirements.system.cluster.etcd_cluster_size"/>.
+    </para>
+    <para>
      If a node runs just an <literal>etcd-proxy</literal>, there is nothing special
      that has to be done, as deleting any amount of
      <literal>etcd-proxy</literal> cannot break the <literal>etcd</literal>
@@ -696,107 +699,8 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
   <sect2 xml:id="sec.admin.nodes.graceful_shutdown.etcd">
    <title>Behavior of <literal>etcd</literal></title>
    <para>
-    <literal>etcd</literal> is a distributed key-value store. Some
-    nodes on the cluster run <literal>etcd</literal> members that
-    sync with other peers in order to provide a fault-tolerant storage
-    that &kube; uses for persistence.
-   </para>
-   <para>
-    <literal>etcd</literal> is the central component where &kube; reads and
-    writes in order to have global knowledge about the cluster status
-    and desired state.
-   </para>
-   <para>
-    It's very important to note that <literal>etcd</literal>
-    automatically recovers from temporary failures like machine
-    reboots.
-   </para>
-   <para>
-    <literal>etcd</literal> knows how many peers conform the
-    <literal>etcd</literal> cluster; based on this information the
-    <literal>etcd</literal> cluster can be in three different states:
-    healthy, degraded or unavailable.
-   </para>
-   <variablelist>
-    <varlistentry>
-     <term>Healthy</term>
-     <listitem>
-      <para>
-       All <literal>etcd</literal> members are working as expected.
-      </para>
-     </listitem>
-    </varlistentry>
-    <varlistentry>
-     <term>Degraded</term>
-     <listitem>
-      <para>
-       Some <literal>etcd</literal> members are not working as
-       expected, but there's still a majority in the working ones. This
-       still means the cluster is working, because it has quorum.
-      </para>
-     </listitem>
-    </varlistentry>
-    <varlistentry>
-     <term>Unavailable</term>
-     <listitem>
-      <para>
-       There is no working majority of peers. The cluster is not
-       available and cannot be used because the quorum is lost.
-      </para>
-     </listitem>
-    </varlistentry>
-   </variablelist>
-   <para>
-   Whether <literal>etcd</literal> is available or not depends on how many
-   <literal>etcd</literal> members are available/not available at a given
-   moment. It is important to differentiate between transient and
-   permanent failures. Transient failures happen when a member is
-   temporarily not available, for example when a machine running one
-   <literal>etcd</literal> member is rebooting. Permanent failures
-   happen when a member was irrevocably lost, for example a machine
-   hard disk failure. The <literal>etcd</literal> cluster can tolerate
-   up to (N - 1) / 2 permanent failures, where N is the number of
-   <literal>etcd</literal> members; a subset of masters and possibly
-   workers. The number of etcd nodes must always maintain
-   <literal>Majority</literal> quorum.
-  </para>
-  <para>
-   <literal>Majority</literal> means that the number of available etcd cluster
-   members must never be lower or equal to the number of unavailable nodes.
-   If, for example, you have only <literal>1</literal> or <literal>2</literal>
-   etcd members, the cluster has a fault tolerance of <literal>0</literal>
-   because <literal>0</literal> nodes can be faulty for the cluster to maintain
-   <literal>Majority</literal>.
-  </para>
-  <para>
-   If you have <literal>6</literal> nodes, a maximum of <literal>2</literal>
-   nodes can become faulty for the cluster to remain in degraded but working
-   state. If <literal>3</literal> or more nodes fail, there is no longer a
-   majority of nodes working, therefore the cluster becomes unavailable.
-  </para>
-  <para>
-   For example: The fault tolerance of a cluster with <literal>7</literal>
-   nodes is <literal>3</literal>, because you need at least <literal>4</literal>
-   active nodes to maintain majority.
-  </para>
-   <para>
-
-   </para>
-   <para>
-    When (N - 1) / 2 or fewer permanent failures happen in a given
-    <literal>etcd</literal> cluster, the cluster still has a quorum. It
-    is then possible to remove the faulty members and add new ones. The
-    new members will synchronize with the existing ones. This does not
-    require an explicit backup/restore procedure, as it is normal
-    <literal>etcd</literal> operation.
-   </para>
-   <para>
-    When more than (N - 1) / 2 permanent failures happen in a given
-    <literal>etcd</literal> cluster, the quorum is lost irrevocably.
-    That means that there is no way to recover from that situation,
-    because it is no longer possible to remove faulty members or add
-    new members. In this case, it is necessary to start a new
-    <literal>etcd</literal> cluster from a backup, and grow it.
+    <command>etcd</command> requires special considerations for maintaining
+    cluster health and integrtiy. Refer to: <xref linkend="sec.deploy.requirements.system.cluster.etcd_cluster_size"/>.
    </para>
   </sect2>
  </sect1>
