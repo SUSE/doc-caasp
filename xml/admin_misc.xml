@@ -51,7 +51,7 @@
    </para>
 <screen>
 &prompt.user;<command>docker exec -it $(docker ps -q -f name="salt-master") \
-salt -P 'roles:(admin|kube-(master|minion)' \
+salt -P 'roles:(admin|kube-master|kube-minion)' \
 cmd.run "ln -sf <replaceable>/usr/share/zoneinfo/Europe/Berlin</replaceable> /etc/localtime"</command>
    </screen>
   </sect2>

@@ -583,7 +583,7 @@
      for &sls; contains approximately <literal>36 GB</literal> of data.
     </para>
     <para>
-     The storage must be formatted to a file system type supporting files larger
+     The storage must be formatted to a filesystem type supporting files larger
      than <literal>4 GB</literal>.
     </para>
     <para>
@@ -924,7 +924,7 @@ auth:
 storage:
   cache:
     blobdescriptor: inmemory
-  file system:
+  filesystem:
     rootdirectory: /var/lib/registry
 http:
   addr: 0.0.0.0:5000
@@ -980,7 +980,7 @@ threshold: 3
      <step>
       <para>
        Connect the trusted storage to the internal mirror and load the registry
-       container image to the local file system.
+       container image to the local filesystem.
       </para>
 <screen>&prompt.root;<command>docker load -i /mnt/storage/registry.tar</command>
        </screen>
@@ -1004,7 +1004,7 @@ log:
 storage:
   cache:
     blobdescriptor: inmemory
-  file system:
+  filesystem:
     rootdirectory: /var/lib/registry
   maintenance:
     readonly:
@@ -1095,30 +1095,17 @@ threshold: 3
     <title>Client Configuration</title>
     <para>
      Add the webserver as a repo to <command>helm</command>.
-    </para>
-    <important>
-     <title>Skip Initial Refresh From Default Repository</title>
-     <para>
-      You must initialize helm on your workstation. During this process helm
-      will attempt to reach the default upstream repository which is not
-      possible in an air gapped environment. The initialization will fail.
      </para>
      <para>
-      You must use the <literal>--skip-refresh</literal> parameter to avoid
-      this problem.
+      This step needs to be performed on a machine where Helm is installed and
+      configured to talk to the Tiller server in the &productname; cluster.
+      Refer to, <xref linkend="sec.admin.software.helm"/>.
      </para>
-<screen>&prompt.user;<command>helm init --client-only --skip-refresh</command></screen>
-    </important>
-    <para>
-     This step needs to be performed on a machine where Helm is installed and
-     configured to talk to the Tiller server in the &productname; cluster.
-     Refer to, <xref linkend="sec.admin.software.helm"/>.
-    </para>
-    <para>
-     <literal>suse-mirror</literal> will be the user-defined name for this
-     repository listed by Helm. The name of the repository must adhere to
-     <link xlink:href="https://docs.helm.sh/chart_best_practices/#chart-names">Helm Chart naming conventions</link>.
-    </para>
+     <para>
+      <literal>suse-mirror</literal> will be the user-defined name for this
+      repository listed by Helm. The name of the repository must adhere to
+      <link xlink:href="https://docs.helm.sh/chart_best_practices/#chart-names">Helm Chart naming conventions</link>.
+     </para>
 <screen>&prompt.user;<command>helm repo add suse-mirror <replaceable>https://&lt;charts.mymirror.local&gt;</replaceable></command>
    </screen>
    </sect3>
@@ -1149,7 +1136,7 @@ threshold: 3
     </step>
     <step>
      <para>
-     Download all charts from the repository to the file system
+     Download all charts from the repository to the filesystem
      (e.g. <filename>/tmp/charts</filename>).
      </para>
      <para>

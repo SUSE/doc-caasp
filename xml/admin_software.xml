@@ -57,7 +57,7 @@
    available. If there are any updates to be applied, a new snapshot of the root
    file system is created in the background and is updated from the release
    channels. All updates released to this point are applied. The running
-   file system/machine state is left untouched.
+   filesystem/machine state is left untouched.
   </para>
   <para>
    The new snapshot, once completely updated, is then marked as active and will
@@ -118,38 +118,28 @@
      <term><literal>pkg in/install</literal></term>
      <listitem>
       <para>
-       Installs individual packages from the available channels using the
+       Installs a specific package from the available channels using the
        <command>zypper install</command> command. This command can also be used to
-       install PTF RPM files. Please note that the changes to the base file system
+       install a PTF RPM file. Please note that the changes to the base filesystem
        only become permanent after a reboot.
       </para>
-<screen>&prompt.root;<command>transactional-update pkg install <replaceable>PACKAGE_NAME</replaceable></command></screen>
+<screen>&prompt.root;<command>transactional-update pkg install <replaceable>&lt;packagename&gt;</replaceable></command></screen>
       <para>or</para>
-<screen>&prompt.root;<command>transactional-update pkg install <replaceable>RPM1 RPM2</replaceable></command></screen>
+<screen>&prompt.root;<command>transactional-update pkg install <replaceable>&lt;RPM1 RPM2&gt;</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
      <term><literal>pkg rm/remove</literal></term>
      <listitem>
       <para>
-       Removes individual packages from the active snapshot using the
+       Removes a specific package from the available channels using the
        <command>zypper remove</command> command. This command can also be used to
-       remove PTF RPM files. Please note that the changes to the base file system
+       remove a PTF RPM file. Please note that the changes to the base filesystem
        only become permanent after a reboot.
       </para>
-<screen>&prompt.root;<command>transactional-update pkg remove <replaceable>PACKAGE_NAME</replaceable></command></screen>
-     </listitem>
-    </varlistentry>
-    <varlistentry>
-     <term><literal>pkg up/update</literal></term>
-     <listitem>
-      <para>
-       Updates individual packages from the active snapshot using the
-       <command>zypper update</command> command. Please note that only packages
-       that are part of the snapshot of the base file system can be updated and
-       changes only become permanent after a reboot.
-      </para>
-      <screen>&prompt.root;<command>transactional-update pkg remove <replaceable>PACKAGE_NAME</replaceable></command></screen>
+<screen>&prompt.root;<command>transactional-update pkg remove <replaceable>&lt;packagename&gt;</replaceable></command></screen>
+      <para>or</para>
+<screen>&prompt.root;<command>transactional-update pkg install <replaceable>&lt;RPM1 RPM2&gt;</replaceable></command></screen>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -233,16 +223,6 @@
         How the reboot is done depends on how <command>transactional-update</command>
         is configured. For cluster nodes this will set a Salt grain to show the
         updated node in &dashboard; as requiring reboot.
-       </para>
-       <para>
-        You must then reboot the node through &dashboard;. There is no other
-        supported method to drain and reboot nodes with
-        <command>transactional-update</command>.
-       </para>
-       <para>
-        Nodes that are not part of the cluster will be forcefully rebooted.
-        Since they are not a member of the cluster they will never receive
-        workloads and don't require draining.
        </para>
 <screen>&prompt.root;<command>transactional-update <replaceable>dup</replaceable> reboot</command></screen>
      </listitem>
@@ -377,7 +357,7 @@
      You can use <command>transactional-update</command> to apply updates
      or install PTF files manually.
     </para>
-<screen>&prompt.root;<command>transactional-update pkg install <replaceable>PACKAGE_NAME</replaceable> reboot</command></screen>
+<screen>&prompt.root;<command>transactional-update <replaceable>pkg install &lt;packagename&gt;</replaceable> reboot</command></screen>
     <para>
      If your node is accepted to the cluster, it will have been configured to
      use Salt orchestration to reboot. The updated node will show in
@@ -457,28 +437,28 @@
       Reboot all nodes.
      </para>
 <screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name="salt-master") \
-salt -P "roles:(admin|kube-(master|minion))" system.reboot</command></screen>
+salt '*' system.reboot</command></screen>
     </step>
     <step>
      <para>
       On the &admin_node; run
      </para>
 <screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name="salt-master") \
- salt -P "roles:(admin|kube-(master|minion))" cmd.run "transactional-update cleanup reboot dup"</command></screen>
+ salt "*" cmd.run "transactional-update cleanup reboot dup"</command></screen>
     </step>
     <step>
      <para>
       Reboot all nodes again.
      </para>
 <screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name="salt-master") \
-salt -P "roles:(admin|kube-(master|minion))" system.reboot</command></screen>
+salt '*' system.reboot</command></screen>
     </step>
     <step>
      <para>
       Start the update with debug output.
      </para>
 <screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name="salt-master") \
-salt-run -l debug state.orchestrate orch.update</command></screen>
+    salt-run -l debug state.orchestrate orch.update</command></screen>
     </step>
     <step>
      <para>
@@ -834,7 +814,7 @@ retcode:
     </screen>
     <para>
      The machine will reboot to incorporate the module into the read-only
-     file system and start from the new snapshot.
+     filesystem and start from the new snapshot.
     </para>
     </step>
     <step>
@@ -925,7 +905,7 @@ helm-2.6.1-1.6.x86_64
    <para>
     If the Linux distribution on your workstation doesn't provide the correct
     &helm; version, or you are using some other platform, see the
-    <link xlink:href="https://docs.helm.sh/using_helm/#quickstart">&helm; Quickstart Guide</link>
+    <link xlink:href="https://docs.helm.sh/using_helm/#quickstart"> &helm; Quickstart Guide</link>
     for installation instructions and basic usage examples. Download the matching
     &helm; binary into any directory that is in your PATH on your workstation,
     such as your <filename>~/bin</filename> directory. Then initialize just the
@@ -1040,7 +1020,7 @@ heapster-default  1  Fri Jun 29 10:48:45 2018  DEPLOYED  heapster-0.2.7  kube-sy
    </step>
    <step>
     <para>
-      Visit <literal>http://127.0.0.1:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/</literal>
+      Visit <literal>http://127.0.0.1:8081/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/</literal>
       in your browser. You will be greeted with by a welcome page containing a
       dialog to configure authentication.
     </para>
