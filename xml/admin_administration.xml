@@ -708,9 +708,13 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
  <sect1 xml:id="sec.admin.scale_cluster">
   <title>Scaling the Cluster</title>
   <para>
-   The default maximum number of nodes in a cluster is 40. The Salt
-   Master configuration needs to be adjusted to handle installation and
-   updating a of larger cluster:
+   The default maximum number of nodes in a cluster is 40 for the minimum node
+   configuration with 8GB of RAM.
+   Please refer to: <xref linkend="sec.deploy.requirements.hardware">.
+  </para>
+   <para>
+   With more resources available, the Salt Master configuration needs to be
+   adjusted to handle installation and updating a of larger cluster:
   </para>
   <table>
    <title>Node Count and Salt Worker Threads</title>
