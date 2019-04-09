@@ -237,61 +237,65 @@
     a theoretical number of minions at the same time. Salt assigns a configured
     number of "worker threads" to the minions. The number of available
     worker threads limits the overall size of the cluster.
+   </para>
+   <para>
+    You must adjust the sizing of your &admin_node; RAM to allow for more
+    minions/nodes in the cluster. 32GB can run up to 150 nodes.
+    Please refer to: <xref linkend="sec.deploy.requirements.hardware"/>.
+   </para>
+   <para>
+    Up until a total cluster size of <literal>40</literal> nodes, no
+    adjustments to the default configuration of &productname; need to be made.
+   </para>
+   <para>
+    For clusters that consist of more than <literal>40</literal> nodes the
+    number of Salt worker threads must be adjusted as follows:
+   </para>
+   <table>
+    <title>Salt Cluster Sizing</title>
+     <tgroup cols="2" align="center">
+      <colspec colname="c1"/>
+      <colspec colname="c2"/>
+      <thead>
+       <row>
+        <entry>Cluster Size (nodes)</entry>
+        <entry>Salt worker threads </entry>
+       </row>
+      </thead>
+      <tbody>
+       <row>
+        <entry>&gt;40</entry>
+        <entry>20</entry>
+       </row>
+       <row>
+        <entry>&gt;60</entry>
+        <entry>30</entry>
+       </row>
+       <row>
+        <entry>&gt;75</entry>
+        <entry>40</entry>
+       </row>
+       <row>
+        <entry>&gt;85</entry>
+        <entry>50</entry>
+       </row>
+       <row>
+        <entry>&gt;95</entry>
+        <entry>60</entry>
+       </row>
+      </tbody>
+     </tgroup>
+    </table>
+    <para>
+     As a rule of thumb, if the cluster grows above <literal>100</literal>
+     nodes the number of worker threads should be at about two thirds of the
+     overall number of cluster nodes.
     </para>
     <para>
-     Up until a total cluster size of <literal>40</literal> nodes, no
-     adjustments to the default configuration of &productname; need to be made.
-    </para>
-    <para>
-     For clusters that consist of more than <literal>40</literal> nodes the
-     number of Salt worker threads must be adjusted as follows:
-    </para>
-
-    <table>
-     <title>Salt Cluster Sizing</title>
-      <tgroup cols="2" align="center">
-       <colspec colname="c1"/>
-       <colspec colname="c2"/>
-       <thead>
-        <row>
-         <entry>Cluster Size (nodes)</entry>
-         <entry>Salt worker threads </entry>
-        </row>
-       </thead>
-       <tbody>
-        <row>
-         <entry>&gt;40</entry>
-         <entry>20</entry>
-        </row>
-        <row>
-         <entry>&gt;60</entry>
-         <entry>30</entry>
-        </row>
-        <row>
-         <entry>&gt;75</entry>
-         <entry>40</entry>
-        </row>
-        <row>
-         <entry>&gt;85</entry>
-         <entry>50</entry>
-        </row>
-        <row>
-         <entry>&gt;95</entry>
-         <entry>60</entry>
-        </row>
-       </tbody>
-      </tgroup>
-     </table>
-     <para>
-      As a rule of thumb, if the cluster grows above <literal>100</literal>
-      nodes the number of worker threads should be at about two thirds of the
-      overall number of cluster nodes.
+     To adjust the number of Salt worker threads, refer to:
+     <xref linkend="sec.admin.salt.worker_threads"/>.
      </para>
-     <para>
-      To adjust the number of Salt worker threads, refer to:
-      <xref linkend="sec.admin.salt.worker_threads"/>.
-      </para>
-   </sect2>
+  </sect2>
  </sect1>
 
  <sect1 xml:id="sec.deploy.requirements.environment">
@@ -546,6 +550,16 @@
         than recommended, there is a high risk that the operating system will
         run out of memory and subsequently causes a cluster failure.
        </para>
+       <important>
+        <title>Cluster Sizing Considerations</title>
+        <para>
+         For the &admin_node; the size of RAM must be planned to accomodate the
+         expected cluster size. The minimum configuration with 8GB of RAM will
+         allow up to 40 worker nodes. 32GB will allow up to 150 workers. 150 is
+         the maximum number of nodes supported with any configuration.
+        </para>
+       </important>
+
        <note>
         <title>Swap partitions</title>
         <para>
