@@ -1,4 +1,5 @@
 include::entities.adoc[]
+
 = {productname} {productversion}
 :doctype: book
 :sectnums:
@@ -66,9 +67,13 @@ Production environments must be deployed with multiple master nodes for resilien
 
 For Master and Worker nodes you must ensure storage performance of at least 500 sequential IOPS with disk bandwidth depending on your cluster size.
 
-    "Typically 50 sequential IOPS (e.g., a 7200 RPM disk) is required. For heavily loaded clusters, 500 sequential IOPS (e.g., a typical local SSD or a high performance virtualized block device) is recommended."
+    "Typically 50 sequential IOPS (e.g., a 7200 RPM disk) is required.
+    For heavily loaded clusters, 500 sequential IOPS (e.g., a typical local SSD
+    or a high performance virtualized block device) is recommended."
 
-    "Typically 10MB/s will recover 100MB data within 15 seconds. For large clusters, 100MB/s or higher is suggested for recovering 1GB data within 15 seconds."
+    "Typically 10MB/s will recover 100MB data within 15 seconds.
+    For large clusters, 100MB/s or higher is suggested for recovering 1GB data
+    within 15 seconds."
 
 link:https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware.md#disks[]
 
@@ -90,7 +95,8 @@ Configure firewall and other network security to allow communication on the defa
 
 All master nodes of the cluster must have a minimum 1GB/s network connection to fullfill the requirements for etcd.
 
-    "1GbE is sufficient for common etcd deployments. For large etcd clusters, a 10GbE network will reduce mean time to recovery."
+    "1GbE is sufficient for common etcd deployments. For large etcd clusters,
+    a 10GbE network will reduce mean time to recovery."
 
 link:https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware.md#network[]
 
