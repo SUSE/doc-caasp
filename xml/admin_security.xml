@@ -1001,6 +1001,14 @@ roleRef:
        user must apply this update by clicking the "Apply changes" button at
        top-right.
       </para>
+      <para>
+       After the change has been applied to all nodes, the master nodes must be
+       rebooted one at a time in order for all daemons to recognize the new CA
+       certificates.  Failure to complete this step will result in failure
+       during the next step. In order to avoid cluster downtime, be sure to
+       wait for each master to return to the "online" state in &dashboard;
+       before rebooting the next.
+      </para>
     </sect3>
     <sect3>
      <title>Upload SSL Certificate(s) and Private Key(s)</title>
