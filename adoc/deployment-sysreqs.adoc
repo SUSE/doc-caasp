@@ -1,0 +1,76 @@
+== Requirements
+
+=== Platform
+
+Currently the only tested platform is SUSE OpenStack Cloud.
+Nodes
+
+You will need at least two machines:
+
+* 1 Master Node
+* 1 Worker Node
+
+CaaS Platform vNext supports deployments with a single or multiple master nodes.
+Production environments must be deployed with multiple master nodes for resilience.
+
+=== Hardware
+
+==== Master
+
+* Storage: 50 GB+
+* (v)CPU: 2
+* RAM: 2 GB
+* Network: Minimum 1GB/s, faster preferred
+
+==== Worker
+
+* Storage: Depending on workloads, minimum 20-30GB to hold base OS and required packages
+** Mount additional storage volumes as needed
+* (v)CPU: 2
+* RAM: 2 GB
+* Network: Minimum 1GB/s, faster preferred
+
+==== Storage Performance
+
+For Master and Worker nodes you must ensure storage performance of at least 500 sequential IOPS with disk bandwidth depending on your cluster size.
+
+    "Typically 50 sequential IOPS (e.g., a 7200 RPM disk) is required.
+    For heavily loaded clusters, 500 sequential IOPS (e.g., a typical local SSD
+    or a high performance virtualized block device) is recommended."
+
+    "Typically 10MB/s will recover 100MB data within 15 seconds.
+    For large clusters, 100MB/s or higher is suggested for recovering 1GB data
+    within 15 seconds."
+
+link:https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware.md#disks[]
+
+=== Networking
+
+==== IP Addresses
+
+All nodes must be assigned static IP addresses that must not be changed manually afterwards.
+Communication
+
+Please make sure that all your Kubernetes components can communicate with each other.
+This might require the configuration of routing when using multiple network adapters per node.
+
+Refer to: https://kubernetes.io/docs/setup/independent/install-kubeadm/#check-network-adapters.
+
+Configure firewall and other network security to allow communication on the default ports required by Kubernetes: https://kubernetes.io/docs/setup/independent/install-kubeadm/#check-required-ports
+
+==== Performance
+
+All master nodes of the cluster must have a minimum 1GB/s network connection to fullfill the requirements for etcd.
+
+    "1GbE is sufficient for common etcd deployments. For large etcd clusters,
+    a 10GbE network will reduce mean time to recovery."
+
+link:https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware.md#network[]
+
+==== Security
+
+Do not grant access to the kubeconfig file or any workstation configured with this configuration to unauthorized personnel.
+In the current state, full administrative access is granted to the cluster.
+
+Authentication is done via the kubeconfig file generated during deployment. This file will grant full access to the cluster and all workloads.
+Apply best practices for access control to workstations configured to administer the SUSE CaaS Platform cluster.

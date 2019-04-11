@@ -1,0 +1,137 @@
+include::entities.adoc[]
+
+== Deployment on VMWare
+
+(draft/notes provided by QA - contact person thehejik@suse.com)
+Environment description
+
+   In this doc I'm using vSphere cluster webui, cluster nodes are using 'VMware ESXi 6.0.0 Update 3' (vmware -l output)
+   there is no load-balancer present yet for vmware so I will show only single master deployment.
+
+VM preparation for creating a template
+
+   enable temporarily ssh access to one of the ESXi node in vSphere webui - as described at https://kb.vmware.com/s/article/2004746
+   download the current (GM later) ISO image and put it into desired vmware datastore:
+
+   ssh root@vmware.esxi.node # for eg. jazz19.qa.prv.suse.net
+   cd /vmfs/volumes/3PAR/thehejik/
+   wget http://download.suse.de/install/SLE-15-SP1-Installer-TEST/SLE-15-SP1-Installer-DVD-x86_64-Build211.2-Media1.iso
+
+   Now you can create a new base VM for CaaSP within designated Resource pool (CaaSP_RP for jazz cluster) thru vSphere webui:
+       create a "New Virtual Machine":
+           CPU: 2
+           Memory: 4096MB
+           New Hard disk: 40GB, LSI Logic Parallel SCSI controller (default)
+           New Network: VMXNET3 (using bridged network "VM Network" which provides a public IP address reachable within a company)
+           New CD/DVD: SATA, Datastore ISO File which points to downloaded ISO image on desired datastore (in my case /vmfs/volumes/3PAR/thehejik/SLE-15-SP1-Installer-DVD-x86_64-Build211.2-Media1.iso), thick checkbox "Connect At Power On" to be able boot from ISO/DVD
+
+SLES installation and preparation of the vmware template
+
+   Power on the newly created VM and install the system over graphical Remote Console (or use autoyast - TBD):
+
+       enter registration code in YaST for SLES
+       select following modules on "Extension and Module Selection" screen: Basesystem Module; Containers Module, Server Application Module, (and CaaSP Module when available)
+       select "System Role" -> "Minimal"
+       redesign the default partition layout - keep sda1 as BIOS partition and sda2 for the rootfs on btrfs (no separate home, no swap - to be verified)
+       create "sles" user and use his password also for root
+       disable firewall, kdump and keep ssh enabled on yast overview page
+       there is no need to change default set of packages
+
+   finish the installation and do a basic setup for caasp:
+
+   zypper ar http://download.suse.de/ibs/SUSE:/CA/SLE_15_SP1/ suse_ca # HACK for in-house signed images
+   zypper in ca-certificates-suse # HACK for in-house signed images
+   zypper in sudo
+   zypper in open-vm-tools # in my case it was installed and enabled automatically during sles installation
+   systemctl status vmtoolsd; systemctl status vgauthd.service
+   zypper ar http://download.suse.de/ibs/SUSE:/SLE-15-SP1:/Update:/Products:/CASP40/standard/ caasp_vnext # HACK will be replaced by SUSEConnect command once the CaaSP module will be available
+
+   copy your public ssh key for user used for caaspctl bootstrap (normally 'sles') which will be used for caasp deployment:
+
+   ssh-copy-id -i ~/.ssh/id_rsa.pub sles@vm154080.qa.prv.suse.net
+
+   configure sudo for sles user to be able auth without password, as root run:
+
+   echo "sles ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+   do a cleanup of the SLE image for converting into a vmware template (basically taken from JeOS config.sh script for creating jeos image):
+
+   rm /etc/machine-id /var/lib/zypp/AnonymousUniqueId /var/lib/systemd/random-seed /var/lib/dbus/machine-id /var/lib/wicked/*
+
+   cleanup btrfs snapshots and create one with initial state:
+
+   snapper list
+
+   snapper delete <list_of_nums_of_unneeded_snapshots>
+
+   snapper create -d "Initial snapshot for caasp template" -t single
+
+   power down the VM as root:
+
+   shutdown -h now
+
+Now you can convert the VM into template in VMware (or repeat this action block for each vm). in vSphere WebUI right-click on the VM and select "Template"->"Convert to Template" - name it reasonably and the template will be created.
+Deploying VMs from the Template
+
+   now right-click on the template and select "New VM from This Template..." and name it like "caasp4-master-0", select storage datastore and designated Resource pool.
+   repeat N-times also for worker nodes "caasp4-worker-N"
+   Power on the newly created VMs
+
+Install caasp packages and do a bootstrap of the cluster
+
+   Install caasp vNext related packages to each node or preinstall them in template but then pkgs will be outdated pretty soon.
+   You can use some kind of ssh connection aggregator to control multiple VMs over ssh at once (using terminator), but you can also do the same by performing commands on each VM one by one.
+   note a hostname/ip of each vm node
+   once the VMs booted up run as root to regenerate /etc/machine-id:
+
+   systemd-machine-id-setup
+
+   install following needed packages on each node:
+
+   sudo zypper ref
+   sudo zypper in kubernetes-kubeadm kubernetes-kubelet kubernetes-client cri-o cni-plugins
+
+Client side preparation
+
+   deploy a SLES15-SP1 desktop
+
+   import private ssh key to the machine (public part of this key is used in the template) and load the private key into ssh-agent by:
+
+   ssh-add ~/.ssh/id_rsa
+
+   on the client side add also caasp repo and install caaspctl package:
+
+   zypper ar http://download.suse.de/ibs/SUSE:/SLE-15-SP1:/Update:/Products:/CASP40/standard/ caasp_vnext # HACK will be replaced by SUSEConnect command once the CaaSP module will be available
+   zypper in caaspctl kubernetes-client
+
+Bootstrap the CaaSP vNext cluster from the client machine
+
+   Initialize the cluster:
+
+   cd ~
+   caaspctl cluster init --control-plane <fqdn_hostname_of_master-0> <name-of-yours-caasp-cluster>
+   caaspctl cluster init --control-plane vm153215.qa.prv.suse.net caasp-cluster
+   cd caasp-cluster
+
+   adding a master node (bootstrap):
+
+   caaspctl node bootstrap --user sles --sudo --target vm153215.qa.prv.suse.net vmware-master-0 2>&1 | tee master-0-bootstrap.log
+
+   adding a worker node (join):
+
+   caaspctl node join --role worker --user sles --sudo --target vm155088.qa.prv.suse.net vmware-worker-0 2>&1 | tee worker-0-join.log
+
+Now you can add multiple worker nodes by calling the join command again, but basic cluster has been just bootstraped.
+Operating the CaaSP cluster by kubectl command
+
+   on the client machine use generated admin.conf config as default one for kubectl:
+
+   cp ~/caasp-cluster/admin.conf ~/.kube/config
+   # or
+   export KUBECONFIG=/home/user/caasp-cluster/admin.conf
+
+   now you can check status of the cluster:
+
+   kubectl get nodes -o wide
+   kubectl cluster-info
+   kubectl get pods --all-namespaces # and watch if all needed pods in kube-system namespace are running

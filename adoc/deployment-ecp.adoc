@@ -1,0 +1,148 @@
+include::entities.adoc[]
+
+== Deployment on SUSE OpenStack Cloud
+
+You will use terrafrom to deploy the cluster nodes to SUSE OpenStack Cloud and then use the caaspctl tool to bootstrap the cluster.
+Node deployment
+
+=== Preparation
+
+You need terraform installed on your workstation and configure access to the SUSE OpenStack Cloud API.
+
+. Install terraform on your local machine.
++
+Select the appropriate repository from here: https://build.opensuse.org/repositories/systemsmanagement:terraform
+Add the repository to your workstation (here Tumbleweed):
++
+----
+sudo zypper ar https://download.opensuse.org/repositories/systemsmanagement:/terraform/openSUSE_Tumbleweed/ terraform
+----
+. Install terraform
++
+----
+zypper in terraform
+----
+. Download the SUSE OpenStack Cloud RC file.
+.. Log in to SUSE OpenStack Cloud.
+.. Click on your username in the upper right hand corner to reveal the dropdown menu.
+.. Click on menu:Download OpenStack RC File v3[].
+.. Save the file to your workstation.
+.. Load the file into your shell environment.
++
+----
+source container-openrc.sh
+----
+.. Enter the password for the RC file. This should be same credentials that you use to log in to {soc}.
+
+=== Deploying the cluster nodes
+
+. Clone the repository https://github.com/SUSE/caaspctl/tree/master/ci/infra/openstack
++
+----
+git clone git@github.com:SUSE/caaspctl.git
+----
+. Switch to the directory "caaspctl/ci/infra/openstack".
+. Create a file terraform.tfvars
++
+----
+# Name of the internal network to be created
+internal_net = "testing"
+
+# identifier to make all your resources unique and avoid clashes with other users of this terraform project
+stack_name = "testing"
+
+# instance user name
+username = "sles"
+
+# define which image to use
+image_name = "SLES15-SP1-JeOS-RC1-with-fixed-kernel-default"
+
+# define the repositories to use
+repositories = [
+  {
+    caasp = "http://download.suse.de/ibs/SUSE:/SLE-15-SP1:/Update:/Products:/CASP40/standard"
+  },
+  {
+    sle15sp1_pool = "http://download.suse.de/ibs/SUSE:/SLE-15-SP1:/GA/standard/"
+  },
+  {
+    sle15sp1_update = "http://download.suse.de/ibs/SUSE:/SLE-15-SP1:/Update/standard/"
+  },
+  {
+    sle15_pool = "http://download.suse.de/ibs/SUSE:/SLE-15:/GA/standard/"
+  },
+  {
+    sle15_update = "http://download.suse.de/ibs/SUSE:/SLE-15:/Update/standard/"
+  },
+  {
+    suse_ca = "http://download.suse.de/ibs/SUSE:/CA/SLE_15_SP1/"
+  }
+]
+
+packages = [
+  "ca-certificates-suse",
+  "kubernetes-kubeadm",
+  "kubernetes-kubelet",
+  "kubernetes-client"
+]
+
+# ssh keys to inject into all the nodes
+authorized_keys = [
+  ""
+]
+
+# Number of master and worker nodes to be created
+masters = 1
+workers = 1
+----
+
+. Replace `internal_net` and `stack_name` with your desired name for the cluster. This string will be used to generate the human readable IDs in {soc}.
+If you use a generic term it is very likely to fail deployment because the term is already in use by someone else. It's a good idea to use your username or other unique identifier.
+. Insert your public SSH key into the "authorized keys" variable. This key will be distributed to all machines and is your login credentials for all cluster nodes.
+. You can adjust the size of the deployed cluster by changing the "masters" and "workers" variables.
+. You can set timezone in before deploying the nodes by modifying the files:
++
+* caaspctl/ci/infra/openstack/cloud-init/master.tpl
+* caaspctl/ci/infra/openstack/cloud-init/worker.tpl
+. Now you can deploy the nodes by running:
+----
+terraform init
+terraform apply
+----
+
+Check the output for the actions to be taken. Type "yes" and confirm with Enter when ready.
+Terraform will now provision all the machines and network infrastructure for the cluster.
+
+.Note down IP/FQDN for nodes
+[IMPORTANT]
+====
+The IP addresses of the generated machines will be displayed in the terraform
+output during the cluster node deployment. You need these IP addresses to
+deploy {productname} to the cluster.
+
+If you need to find an IP addresses later on you can perform the following steps:
+
+. Log in to {soc} and click on menu:Network[Load Balancers]. Find the one with the string you entered in the terraform configuration above e.g. "testing-lb".
+. Note down the "Floating IP". If you have configured a FQDN for this IP, use the hostname instead.
++
+image::deploy-loadbalancer-ip.png[]
+. Now click on menu:Compute[Instances].
+. Switch the filter dropdown to `Instance Name` and enter the string you specified for `stack_name` in the `terraform.tfvars` file.
+. Find the Floating IPs on each of the nodes of your cluster.
+====
+
+[NOTE]
+====
+Please note that we provide some internal repositories with the terraform configuration that are not usually available to customers.
+In future versions the customer must enable two modules:
+
+* sle-module-server-applications/15.1/x86_64
+and
+* sle-module-containers/15.1/x86_64
+
+You must log in to every node via SSH and perform:
+----
+SUSEConnect -p sle-module-server-applications/15.1/x86_64
+SUSEConnect -p sle-module-containers/15.1/x86_64
+----
+====
