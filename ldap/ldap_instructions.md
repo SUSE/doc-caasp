@@ -1,8 +1,3 @@
-Here is a draft of the LDAP container instructions:
-[some spelling corrected, revision to follow]
-
-
-
 # LDAP Container
 These instructions are meant to set up an an OpenLDAP server for the purpose of user authentication for Dex.  The configuration described below ensures that TLS is enforced for all communication.  Note that use of TLS requires communication via hostname and not IP - so the LDAP server must be accessible by its hostname (either through a registered domain, local DNS or by modifying /etc/hosts).  The user can supply their own certificates (including TLS certificate, private key and CA certificate) by bind mounting the containing directory on the host machine to the container.  The user can also access and back up the LDAP database and configuration by bind mounting directories to the host.  These options as well as all of the docker flags are detailed below.  Additional documentation for the container can be found here:  https://github.com/osixia/docker-openldap
 
@@ -44,8 +39,11 @@ osixia/openldap:1.2.4
 ```
 
 2. Test that OpenLDAP server is accessible (for simplicity, the commands below assume LDAP_DOMAIN='ldaptest.com' and LDAP_ADMIN_PASSWORD='password'):
-  - `ldapsearch -x -H ldaps://ldaptest.com -b dc=ldaptest,dc=com -D "cn=admin,dc=ldaptest,dc=com" -w password`
-  - The result should look like:
+  
+  * `ldapsearch -x -H ldaps://ldaptest.com -b dc=ldaptest,dc=com -D "cn=admin,dc=ldaptest,dc=com" -w password`
+  
+  * The result should look like:
+  
   ```
   # extended LDIF
 #
@@ -78,10 +76,11 @@ result: 0 Success
 # numResponses: 3
 # numEntries: 2
 ```
-  - You can also run the same command through the OpenLDAP container as a sanity check:  `docker exec ldapcontainer ldapsearch -x -H ldaps://ldaptest.com -b dc=ldaptest,dc=com -D "cn=admin,dc=ldaptest,dc=com" -w admin`
+
+  * You can also run the same command through the OpenLDAP container as a sanity check:  `docker exec ldapcontainer ldapsearch -x -H ldaps://ldaptest.com -b dc=ldaptest,dc=com -D "cn=admin,dc=ldaptest,dc=com" -w admin`
 
 3. Add a user to the OpenLDAP Server by creating and LDIF file describing the user and adding to the server (for simplicity, the commands below assume LDAP_DOMAIN='ldaptest.com' and LDAP_ADMIN_PASSWORD='password').
-  - Here is an example LDIF file named 'newuser.ldif'
+    - Here is an example LDIF file named 'newuser.ldif'
   ```
 dn: cn=user,dc=ldaptest,dc=com
 changetype: add
@@ -94,8 +93,8 @@ mail: user@suse.com
 uid: user
 userPassword: {SSHA}XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
-  - Use of hashed password is highly recommended.  This can be generated with `slappasswd -h {SSHA} -s plaintextpassword`
-  - Add the user with `ldapadd -x -D "cn=admin,dc=ldaptest,dc=com" -w admin -H ldaps://ldaptest.com -f newuser.ldif`
+    - Use of hashed password is highly recommended.  This can be generated with `slappasswd -h {SSHA} -s plaintextpassword`
+    - Add the user with `ldapadd -x -D "cn=admin,dc=ldaptest,dc=com" -w admin -H ldaps://ldaptest.com -f newuser.ldif`
 
 	
 ### Docker command flag description:
