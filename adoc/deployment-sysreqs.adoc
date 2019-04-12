@@ -46,6 +46,72 @@ link:https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware
 
 === Networking
 
+==== Ports
+
+[cols="2*.^,.^,.>"",options="header,autowidth"]
+|===
+|Node |Port |Accessibility |Description
+
+.2+|All nodes
+|22
+|Internal
+|SSH (required in public clouds)
+
+|10010
+|Internal
+|CRI-O stream port
+
+.6+|Masters
+|2379 - 2380
+|Internal
+|etcd (peer-to-peer traffic)
+
+|6443 - 6444
+|Internal / External
+|Kubernetes API server
+
+|8471 - 8472
+|Internal
+|VXLAN traffic (used by Cilium)
+
+|10250, 20255
+|Internal
+|Kubelet
+
+|10256
+|Internal
+|kube-proxy
+
+|32000
+|External
+|Dex (OIDC Connect)
+
+.6+|Workers
+|2379 - 2380
+|Internal
+|etcd (peer-to-peer traffic)
+
+|4149
+|Internal
+|Kubelet
+
+|8471 - 8472
+|Internal
+|VXLAN traffic (used by Cilium)
+
+|10250, 10255
+|Internal
+|Kubelet
+
+|10256
+|Internal
+|kube-proxy
+
+|32000
+|External
+|Dex (OIDC Connect)
+|===
+
 ==== IP Addresses
 
 All nodes must be assigned static IP addresses that must not be changed manually afterwards.
