@@ -50,25 +50,25 @@ Now you can create a new base VM for {productname} within the designated resourc
 . Create a "New Virtual Machine"
 . Define a name for the virtual machine (VM)
 +
-image::vmware_step1.png[]
+image::vmware_step1.png[width=80%,pdfwidth=80%]
 . Select the folder where the VM will be stored
 . Select a `Compute Resource` that will run the VM
 +
-image::vmware_step2.png[]
+image::vmware_step2.png[width=80%,pdfwidth=80%]
 . Select the storage used by the VM
 +
-image::vmware_step3.png[]
+image::vmware_step3.png[width=80%,pdfwidth=80%]
 . Select `ESXi 6.0 and later` from compatibility
 +
-image::vmware_step4.png[]
+image::vmware_step4.png[width=80%,pdfwidth=80%]
 . Select menu:Guest OS Family[Linux] and menu:Guest OS Version[SUSE Linux Enterprise 12 (64 Bit)].
 +
 *Note*: You will manually select the correct installation media in the next step.
 +
-image::vmware_step5.png[]
+image::vmware_step5.png[width=80%,pdfwidth=80%]
 . Now customize the hardware settings
 +
-image::vmware_step6.png[]
+image::vmware_step6.png[width=80%,pdfwidth=80%]
 .. Select menu:CPU[2]
 .. Select menu:Memory[4096 MB]
 .. Select menu:New Hard disk[40GB]
@@ -103,55 +103,55 @@ Power on the newly created VM and install the system over graphical remote conso
 . Click on "Expert Partitioner" to redesign the default partition layout
 . Select "Start with current proposal"
 +
-image::vmware_step4.png[]
+image::vmware_step8.png[width=80%,pdfwidth=80%]
 .. Keep `sda1` as BIOS partition
 .. Remove the root `/` partition.
 +
 Select the device in "System View" on the left (Default: `/dev/sda2`) and click "Delete". Confirm with "Yes".
 +
-image::vmware_step9.png[]
+image::vmware_step9.png[width=80%,pdfwidth=80%]
 .. Remove the `/home` partition.
 .. Remove the `swap` partition.
 . Select the `/dev/sda/` device in "System View" and then click menu:Partitions[Add Partition]
 +
-image::vmware_step10.png[]
+image::vmware_step10.png[width=80%,pdfwidth=80%]
 . Accept the default maximum size (remaining size of the hard disk defined earlier without the boot partition)
 +
-image::vmware_step11.png[]
+image::vmware_step11.png[width=80%,pdfwidth=80%]
 .. Confirm with "Next"
 .. Select menu:Role[Operating System]
 +
-image::vmware_step12.png[]
+image::vmware_step12.png[width=80%,pdfwidth=80%]
 .. Confirm with "Next"
 .. Accept the default settings
 +
-image::vmware_step13.png[]
+image::vmware_step13.png[width=80%,pdfwidth=80%]
 *** Filesystem: BtrFS
 *** Enable Snapshots
 *** Mount Device
 *** Mount Point `/`
 . You should be left with 2 partitions. Now click "Accept".
 +
-image::vmware_step7.png[]
+image::vmware_step7.png[width=80%,pdfwidth=80%]
 . Confirm the partitioning changes.
 +
-image::vmware_step14.png[]
+image::vmware_step14.png[width=80%,pdfwidth=80%]
 . Click "Next".
 . Configure your timezone and click "Next".
 . Create a user with the Username `sles` and specify a password
 .. Tick the box menu:Local User[Use this password for system administrator]
 +
-image::vmware_step15.png[]
+image::vmware_step15.png[width=80%,pdfwidth=80%]
 . Click "Next".
 . On the "Installation Settings" screen, scroll to the `kdump` section of the software description and click on the title.
 . In the "Kdump Start-Up" screen select menu:Enable/Disable Kdump[Disable Kdump]
 .. Confirm with "OK".
 +
-image::vmware_step16.png[]
+image::vmware_step16.png[width=80%,pdfwidth=80%]
 . Click "Install". Confirm the installation by clicking "Install" in the popup dialog.
 . Finish the installation and confirm system reboot with "OK".
 +
-image::vmware_step16.png[]
+image::vmware_step16.png[width=80%,pdfwidth=80%]
 
 ==== Preparation of the VM as a template
 
