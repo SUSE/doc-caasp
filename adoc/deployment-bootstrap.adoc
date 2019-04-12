@@ -22,7 +22,7 @@ sudo zypper in caaspctl
 Make sure you have added the SSH identity (corresponding to the SSH key distributed above) to the ssh-agent on your workstation. This is a requirement for caaspctl (https://github.com/SUSE/caaspctl#prerequisites)
 
 . Now you can initialize the cluster on the deployed machines.
-As `--control-plane` enter the IP/FQDN of your loadbalancer.
+As `--control-plane` enter the IP/FQDN of your load balancer. If you do not use a load balancer use your first master node.
 +
 ----
 caaspctl cluster init --control-plane <LB IP/FQDN> my-cluster
