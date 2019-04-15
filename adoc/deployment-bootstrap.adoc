@@ -19,9 +19,33 @@ sudo zypper in caaspctl
 
 === Cluster Deployment
 
-Make sure you have added the SSH identity (corresponding to the SSH key distributed above) to the ssh-agent on your workstation. This is a requirement for caaspctl (https://github.com/SUSE/caaspctl#prerequisites)
+Make sure you have added the SSH identity (corresponding to the SSH key distributed above) to the ssh-agent on your workstation. This is a requirement for caaspctl (https://github.com/SUSE/caaspctl#prerequisites).
 
-. Now you can initialize the cluster on the deployed machines.
+[TIP]
+====
+The `ssh-agent` process is usually started automatically by most UNIX
+environments. If that's not the case, invoke the `ssh-agent` command
+and follow the guidance given by the tool's output.
+
+You can load as many keys as you want into your agent using the
+`ssh-add <path to key>` command. Keys can also be password protected.
+
+You can list all the identities loaded into the agent by using the
+`ssh-add -L` command.
+
+caaspctl will try all the identities loaded into the ssh-agent until one of
+them grants access to the node.
+
+It is also possible to forward the authentication agent connection from a
+host to another one. This can be useful if you intend to run caaspctl on
+a "jump host" and don't want to copy your private key to this node.
+
+This can be achieved using the `ssh -A` command. Please refer to the man page
+of ssh to learn about the security implications of using this feature.
+====
+
+
+Now you can initialize the cluster on the deployed machines.
 As `--control-plane` enter the IP/FQDN of your load balancer. If you do not use a load balancer use your first master node.
 +
 ----
