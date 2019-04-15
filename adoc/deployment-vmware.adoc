@@ -147,7 +147,7 @@ image::vmware_step16.png[width=80%,pdfwidth=80%]
 . Click "Install". Confirm the installation by clicking "Install" in the popup dialog.
 . Finish the installation and confirm system reboot with "OK".
 +
-image::vmware_step16.png[width=80%,pdfwidth=80%]
+image::vmware_step17.png[width=80%,pdfwidth=80%]
 
 ==== Preparation of the VM as a template
 
@@ -185,7 +185,7 @@ zypper ar {repourl} caasp_vnext
 . Copy your public SSH key for the user used for caaspctl bootstrap (normally 'sles') which will be used for {productname} deployment:
 +
 ----
-ssh-copy-id -i ~/.ssh/id_rsa.pub sles@vm154080.qa.prv.suse.net
+ssh-copy-id -i ~/.ssh/id_rsa.pub sles@vm-template.host
 ----
 . Configure sudo for the `sles` user to be able authenticate without password. As root run:
 +
@@ -196,7 +196,6 @@ echo "sles ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 +
 ----
 rm /etc/machine-id /var/lib/zypp/AnonymousUniqueId /var/lib/systemd/random-seed /var/lib/dbus/machine-id /var/lib/wicked/*
-dbus-uuidgen --ensure;
 ----
 . Cleanup btrfs snapshots and create one with initial state:
 +
@@ -240,6 +239,7 @@ You will need these names during bootstrapping of the cluster.
 . Once the VMs booted up, log in via SSH and run the following command to regenerate the Machine ID `/etc/machine-id`:
 +
 ----
+sudo dbus-uuidgen --ensure
 sudo systemd-machine-id-setup
 ----
 
