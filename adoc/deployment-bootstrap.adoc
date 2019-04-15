@@ -9,7 +9,7 @@ First you need to install caaspctl on your local workstation:
 . Add the SLE15 SP1 repository containing caaspctl.
 +
 ----
-sudo zypper ar http://download.suse.de/ibs/SUSE:/SLE-15-SP1:/Update:/Products:/CASP40/standard/ caasp
+sudo zypper ar http://download.suse.de/ibs/SUSE:/SLE-15-SP1:/Update:/Products:/CASP40/standard/ caasp_vnext
 ----
 . Install caaspctl:
 +
@@ -59,7 +59,7 @@ Replace the `<IP/FQDN>` with the IP for the machine.
 Replace `<NODE NAME>` with a unique identifier for example "worker-one".
 +
 ----
-caaspctl node join --role master --user sles --sudo --target <IP/FQDN> <NODE NAME>
+caaspctl node join --role worker --user sles --sudo --target <IP/FQDN> <NODE NAME>
 ----
 . Verify the nodes that you added
 +
