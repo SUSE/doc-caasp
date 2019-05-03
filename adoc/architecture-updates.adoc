@@ -1,0 +1,146 @@
+=== Upgrades of OS components (automated)
+
+By default {productname} clusters automatically apply all the patches that are marked as non
+interactive. These patches are safe to be applied since they should not cause any side effect.
+
+However, some patches need the nodes to be rebooted in order to be activated. This is the
+case for example of kernel updates or some packages updates (like glibc).
+
+The nodes of the cluster have some metadata that is kept up-to-date by {productname}.
+This metadata can be used by the system administrator to answer these questions:
+
+* Does the node need to be rebooted to make some updates active?
+* Does the node have pending non interactive updates?
+* When was the check done last time?
+
+System administrators can get a quick overview of each cluster node by using one of the
+following methods.
+
+UI mode:
+
+* Open a standard kubernetes UI (eg: ​kubernetes dashboard​).
+* Click on the node.
+* Look at the annotations associated to the node.
+
+Text mode:
+
+* Go to a machine with a working kubectl (meaning I can connect to the cluster).
+* Ensure I’ve the caasp kubectl plugin installed. This is a simple statically linked binary
+that SUSE distributes as RPM.
+* Execute the `kubectl caasp nodes status` command.
+
+The output of the command will look like that:
+
+[source,bash]
+----
+NAME                OS-IMAGE     KERNEL-VERSION                CONTAINER-RUNTIME   HAS-UPDATES   HAS-DISRUPTIVE-UPDATES
+ag-master-caasp-0   SLE 15 SP1   4.12.14-1p150.12.28-default   docker://18.6.1     yes           yes
+ag-master-caasp-1   SLE 15 SP1   4.12.14-1p150.12.28-default   docker://18.6.1     yes           yes
+ag-master-caasp-2   SLE 15 SP1   4.12.14-1p150.12.28-default   docker://18.6.1     yes           yes
+ag-worker-caasp-0   SLE 15 SP1   4.12.14-1p150.12.28-default   docker://18.6.1     yes           yes
+----
+
+==== Node reboots
+
+Some updates require the node to be rebooted to make them active. As a system administrator
+I don’t have to worry about a thing.
+
+The {productname} cluster is configured by default to take advantage of ​kured​. This service look for
+nodes that have to be rebooted and, before doing the actual reboot, takes care of draining the
+node.
+
+Kured reboots one node per time. This ensures my worker nodes won’t be saturated and my
+etcd cluster will always be in a healthy state.
+
+System administrators can integrate kured stats into my prometheus instance and create alerts,
+charts and other personal customizations.
+
+System administrators can also fine tune the kured deployment to prevent its agent from
+rebooting machines where special workloads are running. For example: I can prevent kured
+from rebooting nodes running computational workloads until their pods are done. To achieve
+that I just have to instruct all my users to add special labels to the pods they don’t want to see
+interrupted due to the node being rebooted.
+
+==== Interactive upgrades
+
+Some updates might cause damages to the running workloads. For example, docker updates
+can cause all the containers running on a machine to be suddenly killed.
+Note well:​ these interactive updates are currently being referenced by this document as
+“disruptive upgrades”.
+
+System administrators don’t have to worry about disruptive upgrades. {productname} will
+automatically apply them making sure no disruption is caused to the cluster.
+That happens because nodes with disruptive upgrades are updated one at a time, a bit like
+when nodes are automatically rebooted. Moreover {productname} will take care of cordoning and
+uncordoning the node before these updates are applied.
+
+Disruptive upgrades could take some time to be automatically applied due to their sensitive
+nature (nodes are updated one by one). As a system operator I can always see the status of my
+nodes by looking at the annotations of the kubernetes nodes (see previous section).
+
+By looking at node annotations a system administrator can answer the following questions:
+
+* Does the node have pending disruptive upgrades?
+* Are the disruptive upgrades being applied?
+
+=== Upgrades of OS components (not automated)
+
+As a systems administrator I want my cluster to be updated only when I consider it’s necessary,
+with human intervention as a must for every package update, so that I’m in complete control of
+when my cluster is updated.
+By default {productname} clusters have some updates applied automatically. Nodes can also be
+rebooted in an automatic fashion under some circumstances.
+To prevent that from happening I have to disable a systemd timer on each node of the cluster.
+Once this is done I can also get rid of the Kured deployment by using a simple kubectl
+command.
+The removal of the kured deployment is optional, it’s just meant to release some resources.
+System administrators can use software like SUSE Manager to check the patching level of
+the underlying operative system of my nodes.
+I can safely use SUSE Manager or other tools to apply all the non-interactive updates.
+I have to follow SUSE {productname} guidelines when rebooting nodes:
+
+* Ensure nodes are cordoned before they are rebooted, uncordon the nodes once they
+are back
+* Reboot master/etcd nodes one by one. Wait for the rebooted node to come back, make
+sure etcd is in an healthy state before moving to the next etcd node (this can be done
+using etcdctl)
+* Do not reboot too many worker nodes at the same time to avoid the remaining ones to
+be swamped by workloads
+
+System administrators have to follow the very same steps whenever a node has an
+interactive (aka disruptive) upgrade pending.
+Intermediate levels of automation
+As an operator I’m fine with having non-interactive updates applied, but I don’t want my nodes
+to be automatically rebooted.
+To prevent automatic reboots I can instruct kured to not reboot nodes. This can be done using a
+simple kubectl command.
+I can re-enable automatic reboots of the nodes using kured during my maintenance windows by
+using the same kubectl command.
+
+=== Upgrades of the Kubernetes platform
+As a systems administrator I want to check whether there’s a new Kubernetes version available
+distributed by SUSE, and in case there is, I want to upgrade to it in a controlled way.
+
+* In order to find out if there’s a new Kubernetes version available, I will run the following
+command in a machine that has access to the init configuration:
+** `caaspctl cluster upgrade check`
+* If there’s a new version available, it will be reported in the terminal.
+* I can now decide to upgrade the cluster as follows, all command executed from a
+machine that contains the folder where `kubeadm cluster init` was executed, and with an
+administrative kubeconfig file:
+** Run `caaspctl cluster upgrade plan`, what will create a `kubeadm-upgrade.conf`
+file that contains the new version of the stack aside from other information
+present on the `kubeadm-init.conf` file generated by `caaspctl cluster init`
+command.
+** This command will confirm the target version to what the cluster will be applied if
+the process is continued.
+Once that I’m fine with the target version, I have to update all control plane nodes. For
+every control plane instance, I have to run:
+** `caaspctl node upgrade control-plane --target <fqdn/IP>`
+**  This command will read the `kubeadm-upgrade.conf` file automatically and
+perform the upgrade of the control plane components on the target node.
+* Then, I will have to update the kubelet on all nodes, control plane instances and worker
+nodes, by running the following command:
+** `caaspctl node upgrade kubelet --target <fqdn/IP>`
+** This command will read the `kubeadm-upgrade.conf` file automatically and
+perform the upgrade of the kubelet on the target node.

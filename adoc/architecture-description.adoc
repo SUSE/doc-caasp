@@ -3,76 +3,254 @@ include::entities.adoc[]
 = {productname} {productversion} Architecture Description
 :doctype: book
 :sectnums:
+:sectnumlevels: 4
 :toc: left
-:toclevels: 3
+:toclevels: 4
 :icons: font
-:revdate: 2019-04-29
+:revdate: 2019-05-03
 :imagesdir: images/
 :experimental:
 
-== Outline
+== Product Description
 
-image::architecture-caasp-components.jpg[SUSE CaaSP Components, width=80%,pdfwidth=80%]
+{productname} is a {cncf} certified Kubernetes distribution on top of {sle}.
 
-== Brainstorm
+{productname} automates the orchestration and management of containerized applications and services with powerful Kubernetes capabilities, including:
+
+* Workload scheduling optimizes hardware utilization while taking the container requirements into account.
+* Service proxies provide single IP addresses for services and distribute the load between containers.
+* Application scaling up and down accommodates changing loads.
+* Non-disruptive rollout/rollback of new applications and updates enables frequent changes without downtime.
+* Health monitoring and management supports application self-healing and ensures application availability.
+
+In addition, {productname} simplifies the platform operator’s experience, with everything you need to get up and running quickly, and to manage the environment effectively in production. It provides:
+
+* A complete container execution environment, container run time (CRI-O), and container image registries (registry.suse.com).
+* Application ecosystem support with {sle} container base images, and access to tools and services offered by SUSE Ready for CaaS Platform partners and the Kubernetes community.
+* Enhanced datacenter integration features that enable you to plug Kubernetes into new or existing infrastructure, systems, and processes.
+* End-to-End security, implemented holistically across the full stack including Networking Policies via Cilium, PodSecurityPolicies and {kube} RBAC.
+* Advanced platform management that simplifies platform installation, configuration, re-configuration, monitoring, maintenance, updates, and recovery.
+* Enterprise hardening including comprehensive interoperability testing, support for thousands of platforms, and world-class platform maintenance and technical support.
+
+You can deploy {productname} onto physical servers or use it on virtual machines. After deployment, it is immediately ready to run and provides a highly-scalable cluster.
+
+{productname} inherits benefits of SUSE Linux Enterprise and uses tools and technologies well-known to system administrators such as cloud-init, AutoYaST and Terraform.
+
+{productname} uses the Btrfs file system with the following characteristics:
+
+* The root file system and its snapshots are read-only.
+* Sub-volumes for data sharing are read-write.
+* {productname} introduces overlays of the /etc directories used by cloud-init and Salt.
+
+For more information, including a list of the various components which make up {productname} please refer to the Release Notes on https://www.suse.com/releasenotes/.
+
+image::architecture-caasp-components.jpg[SUSE CaaSP Components, width=100%,pdfwidth=80%]
+
+
+
+
+== Supported Platforms
+
+* SUSE OpenStack Cloud 8
+* VMWare ESXi 6.0.0 Update 3
+* Bare Metal
+** KVM
+** x86_64
+
+Any other SLE 15 SP1 supported platform.
+
+=== Public Cloud
+
+* Google Kubernetes Engine (GKE)
+* Microsoft Azure (Azure)
+* Amazon Web Services (AWS)
+
+== Deployment Scenarios
+
+=== Testing / POC
+
+* testing / POC scenario
+* single master
+* 1 master
+* 2 workers
+
+=== Default Deployment
+
+* default scenario
+** high availability
+** multi master
+*** 1 Load Balancer
+*** 3 Master
+*** 4 Workers
+** Requires:
+*** persistent IP addresses
+*** NTP server provided on the host network.
+*** DNS entry that resolves all the master nodes.
+*** load balancer to expose the API servers on the master nodes.
+*** LDAP server or OIDC provider (Active Directory, GitLab, GitHub etc.)
+*** Alternatively: Containerized LDAP server in the cluster
+
+* (Optional) "Infrastructure node"
+** Local RMT server to synchronize RPMs
+** Local mirror of the SUSE container registry (registry.suse.com)
+** Local mirror of the SUSE helm chart repository
+
+=== Air Gapped Deployment
+
+* air gapped
+** registry mirror
+** package repository mirror
+
+== The {productname} stack
+
+Almost all components run in containers themselves.
+
+Namespaces used by default components
+
+=== Base Operating System
+
+* base OS
+** SLE 15 SP1
+** kernel ?
+** file system
+** snapshots?
+** special modules
+*** vxlan
+* update cycle and method
+** update channels
+* upgrade method and cycle
+* migration
+
+==== Software Management
+** extension to base OS image
+** software distribution channels
+** packages
+** container ecosystem
+*** helm
+*** SUSE container registry
+
+include::architecture-updates.adoc[leveloffset=+2]
+
+=== Software Versions
 
 used software components and libraries
 
-Cilium: {cilium_version}
-Kubernetes: {k8s_version}
+[options="header"]
+|===
+^|Component ^|URL ^|Version
 
+|image:logos/kubernetes.png[Kubernetes,width=200,height=70]
+|link:https://kubernetes.io/[]
+^|*{kube_version}*
 
-Networking
-Overlay networking
-interface
+|image:logos/crio.svg[CRI-O,width=200,height=70]
+|link:https://cri-o.io/[]
+^|*{crio_version}*
 
-Storage
-defaults
+|image:logos/cilium.png[Cilium,width=200,height=70]
+|link:https://cilium.io[]
+^|*{cilium_version}*
 
-operating system
-kernel
-special modules
-update cycle and method
-upgrade method and cycle
-software management
+|image:logos/etcd.svg[etcd,width=200,height=70]
+|link:https://github.com/etcd-io/etcd[]
+^|*{etcd_version}*
 
+|image:logos/dex.png[dex,width=200,height=70]
+|link:https://github.com/dexidp/dex[]
+^|*?*
 
-runtime
-cri-o
-special considerations
+|image:logos/kured.png[Kured,width=80,height=70] Kured
+|link:https://github.com/weaveworks/kured[]
+^|*{kured_version}*
 
-scenario
-multi master
-orchestration
+|Gangway
+|link:https://github.com/heptiolabs/gangway[]
+^|*?*
+|===
 
-api
-interaction
+=== Container Runtime environment
 
-services
-connections
-encryption
+* runtime
+* CRI-O
+* orchestration
+** etcd only on master nodes never on workers
+* special considerations
 
-certificates
-cipher suites
-type
-renewal
-default expiration
+=== Networking
 
-how to add/remove/replace nodes -> caaspctl
+* ingress and egress controllers
+* ingress concepts
+* egress concepts
+* Overlay networking
+* container networking interface
+* services
+* connections
+* encryption
+* networking policies (see security)
 
-how to backup and restore
+=== Storage
 
-user concepts
-security concepts
+* Storage
+* integrations
+* defaults
 
-monitoring approach and considerations taken
+=== Configuration Management and Orchestration
 
-logging approach and considerations taken
-logging formats and access points (API?)
+* caaspctl
+* etcd
+* cloud-init
+* AutoYaST
 
-integration points with external services and applications
+=== Interfaces
 
+==== API
 
-ingress and egress controllers
-ingress concepts
-egress concepts
+* caaspctl api
+* interaction
+
+==== Integrations
+
+* integration points with external services and applications
+
+== Security
+
+* security concepts
+
+=== RBAC / PodSecurityPolicies
+
+* user/role/group concepts
+
+=== Networking Policies
+
+=== Certificates
+
+* type
+* strength
+* root CA
+* cipher suites
+* renewal
+* default expiration
+
+== Maintenance, Logging and Monitoring
+
+=== Cluster Management
+* how to add/remove/replace nodes -> caaspctl
+
+=== Monitoring
+
+* monitoring approach and considerations taken
+** prometheus
+** grafana
+** containerized
+** user defined dashboards
+
+=== Logging
+
+* logging approach and considerations taken
+* logging formats and access points (API?)
+
+=== Disaster Recovery
+
+* disaster recovery concepts
+* backup and restore concepts
+* data retention and portability
