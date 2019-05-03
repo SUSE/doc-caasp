@@ -13,6 +13,11 @@ include::entities.adoc[]
 
 == Product Description
 
+[WARNING]
+====
+This text needs to be reviewed
+====
+
 {productname} is a {cncf} certified Kubernetes distribution on top of {sle}.
 
 {productname} automates the orchestration and management of containerized applications and services with powerful Kubernetes capabilities, including:
@@ -28,7 +33,7 @@ In addition, {productname} simplifies the platform operator’s experience, with
 * A complete container execution environment, container run time (CRI-O), and container image registries (registry.suse.com).
 * Application ecosystem support with {sle} container base images, and access to tools and services offered by SUSE Ready for CaaS Platform partners and the Kubernetes community.
 * Enhanced datacenter integration features that enable you to plug Kubernetes into new or existing infrastructure, systems, and processes.
-* End-to-End security, implemented holistically across the full stack including Networking Policies via Cilium, PodSecurityPolicies and {kube} RBAC.
+* End-to-End security, implemented holistically across the full stack including networking policies via Cilium, `PodSecurityPolicies` and {kube} RBAC.
 * Advanced platform management that simplifies platform installation, configuration, re-configuration, monitoring, maintenance, updates, and recovery.
 * Enterprise hardening including comprehensive interoperability testing, support for thousands of platforms, and world-class platform maintenance and technical support.
 
@@ -44,9 +49,59 @@ You can deploy {productname} onto physical servers or use it on virtual machines
 
 For more information, including a list of the various components which make up {productname} please refer to the Release Notes on https://www.suse.com/releasenotes/.
 
+[WARNING]
+====
+This diagram needs to be reviewed and recreated with more clean looking graphics
+====
+
 image::architecture-caasp-components.jpg[SUSE CaaSP Components, width=100%,pdfwidth=80%]
 
+=== Product Release Cycle
 
+Product releases are aligned with {sle} releases and {kube}. Major version jumps
+are determined by the {sle} release cycle. Minor version jumps by the quarterly {kube} releases.
+Individual maintenance updates with receive patchlevel numbering.
+
+Versioning scheme: `x.y.z`
+
+* x - Base OS version
+* y - Kubernetes version
+* z - Patchlevel (incl. new features !)
+
+[%autowidth.stretch]
+|===
+|Version |Base OS |{kube} version |Patchlevel
+
+|4.0.0
+|{sle} 15 SP1
+^|1.15
+^|0
+
+|4.0.1
+|{sle} 15 SP1
+^|1.15
+^|1
+
+|...
+|
+|
+|
+
+|4.1.0
+|{sle} 15 SP1
+^|1.16
+^|0
+
+|...
+|
+|
+|
+
+|5.0.0
+|{sle} 15 SP2
+^|tbd
+^|0
+|===
 
 
 == Supported Platforms
