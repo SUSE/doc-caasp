@@ -1,0 +1,52 @@
+== PodSecurityPolicies
+
+ PSP must always be applied before the admission controller starts.
+
+
+----
+* The caaspctl cluster init command should create the deployment
+  files of v3 pod security policies and later apply them during
+  cluster  bootstrap. Also include the 'clusterrolebinding' as part
+  of the PSP manifests.
+* Run kube-system pods only in privileged mode:
+  Setups a ClusterRole which uses the privileged policy. Then a
+  a RoleBinding references this ClusterRole and pairs with all
+  the (authenticated users and all ServiceAccounts) in kube-system
+  namespace. So it grants usage of privileged PSP for pods.
+  being run into kube-system namespace.
+* Any other pods running at other namespaces are using the
+  unprivileged PSP by default.
+* Replace apiVersion extensions/v1beta1 to policy/v1beta1.
+* Remove Apparmor annotation.
+* Enable PSPs via admission controller.
+----
+
+=== Default Policies
+
+// https://github.com/SUSE/avant-garde/issues/220
+Enabled Plugins:
+
+----
+NodeRestriction, PodSecurityPolicy
+----
+
+
+
+[WARNING]
+====
+The default policies shipped with {productname} are not suitable for most production environments.
+Please create your own security policies with the appropriate amount of permissions/restrictions.
+====
+
+We are currently deploying by default (there's no optional way) two PSP policies:
+
+privileged (full access everywhere)
+unprivileged (pretty much no access apart from the very basic stuff)
+
+
+All the containers running kube-system namespace are using the privileged policy
+All the new containers (from the customer) are using the unprivileged policy.
+
+=== Creating a PodSecurityPolicy
+
+https://kubernetes.io/docs/concepts/policy/pod-security-policy/
