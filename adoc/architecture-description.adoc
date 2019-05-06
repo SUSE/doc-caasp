@@ -7,7 +7,7 @@ include::entities.adoc[]
 :toc: left
 :toclevels: 4
 :icons: font
-:revdate: 2019-05-03
+:revdate: 2019-05-06
 :imagesdir: images/
 :experimental:
 
@@ -230,6 +230,11 @@ used software components and libraries
 * orchestration
 ** etcd only on master nodes never on workers
 * special considerations
+** From https://github.com/SUSE/avant-garde/issues/15#issuecomment-485785102:
++
+----
+One thing we could extract from my experience, is that we might need to document this and inform our support engineers that kubelet is responsible for bringing those specific containers up. So in case of debugging in a customer's environment they don't accidentally create even more mess by trying to run api-server as a workload on the workers
+----
 
 === Networking
 
