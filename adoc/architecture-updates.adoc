@@ -4,7 +4,7 @@ By default {productname} clusters automatically apply all the patches that are m
 interactive. These patches are safe to be applied since they should not cause any side effect.
 
 However, some patches need the nodes to be rebooted in order to be activated. This is the
-case for example of kernel updates or some packages updates (like glibc).
+case for example of kernel updates or some package updates (like glibc).
 
 The nodes of the cluster have some metadata that is kept up-to-date by {productname}.
 This metadata can be used by the system administrator to answer these questions:
@@ -27,7 +27,7 @@ Text mode:
 * Go to a machine with a working kubectl (meaning I can connect to the cluster).
 * Ensure I’ve the caasp kubectl plugin installed. This is a simple statically linked binary
 that SUSE distributes as RPM.
-* Execute the `kubectl caasp nodes status` command.
+* Execute the `kubectl caasp cluster status` command.
 
 The output of the command will look like that:
 
@@ -63,16 +63,14 @@ interrupted due to the node being rebooted.
 
 ==== Interactive upgrades
 
-Some updates might cause damages to the running workloads. For example, docker updates
-can cause all the containers running on a machine to be suddenly killed.
-Note well:​ these interactive updates are currently being referenced by this document as
-“disruptive upgrades”.
+Some updates might cause damages to the running workloads. These interactive updates are
+currently being referenced by this document as “disruptive upgrades”.
 
 System administrators don’t have to worry about disruptive upgrades. {productname} will
 automatically apply them making sure no disruption is caused to the cluster.
 That happens because nodes with disruptive upgrades are updated one at a time, a bit like
-when nodes are automatically rebooted. Moreover {productname} will take care of cordoning and
-uncordoning the node before these updates are applied.
+when nodes are automatically rebooted. Moreover {productname} will take care of draining the
+node before these updates are applied, and cordoning it afterwards.
 
 Disruptive upgrades could take some time to be automatically applied due to their sensitive
 nature (nodes are updated one by one). As a system operator I can always see the status of my
@@ -90,10 +88,8 @@ with human intervention as a must for every package update, so that I’m in com
 when my cluster is updated.
 By default {productname} clusters have some updates applied automatically. Nodes can also be
 rebooted in an automatic fashion under some circumstances.
-To prevent that from happening I have to disable a systemd timer on each node of the cluster.
-Once this is done I can also get rid of the Kured deployment by using a simple kubectl
-command.
-The removal of the kured deployment is optional, it’s just meant to release some resources.
+To prevent that from happening I can annotate nodes that are not desired to be automatically
+rebooted. Any user with rights to annotate nodes will be able to configure this behavior.
 System administrators can use software like SUSE Manager to check the patching level of
 the underlying operative system of my nodes.
 I can safely use SUSE Manager or other tools to apply all the non-interactive updates.

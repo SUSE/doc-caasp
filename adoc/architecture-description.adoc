@@ -39,13 +39,7 @@ In addition, {productname} simplifies the platform operator’s experience, with
 
 You can deploy {productname} onto physical servers or use it on virtual machines. After deployment, it is immediately ready to run and provides a highly-scalable cluster.
 
-{productname} inherits benefits of SUSE Linux Enterprise and uses tools and technologies well-known to system administrators such as cloud-init, AutoYaST and Terraform.
-
-{productname} uses the Btrfs file system with the following characteristics:
-
-* The root file system and its snapshots are read-only.
-* Sub-volumes for data sharing are read-write.
-* {productname} introduces overlays of the /etc directories used by cloud-init and Salt.
+{productname} inherits benefits of SUSE Linux Enterprise and uses tools and technologies well-known to system administrators such as cloud-init or AutoYaST.
 
 For more information, including a list of the various components which make up {productname} please refer to the Release Notes on https://www.suse.com/releasenotes/.
 
@@ -109,14 +103,14 @@ Versioning scheme: `x.y.z`
 * SUSE OpenStack Cloud 8
 * VMWare ESXi 6.0.0 Update 3
 * Bare Metal
-** KVM
-** x86_64
 
-Any other SLE 15 SP1 supported platform.
+== Supported Architectures
+
+* x86_64
 
 === Public Cloud
 
-* Google Kubernetes Engine (GKE)
+* Google Compute Engine (GCE)
 * Microsoft Azure (Azure)
 * Amazon Web Services (AWS)
 
@@ -134,9 +128,9 @@ Any other SLE 15 SP1 supported platform.
 * default scenario
 ** high availability
 ** multi master
-*** 1 Load Balancer
-*** 3 Master
-*** 4 Workers
+*** 2 Load Balancers
+*** 3 Masters
+*** 3 Workers
 ** Requires:
 *** persistent IP addresses
 *** NTP server provided on the host network.
