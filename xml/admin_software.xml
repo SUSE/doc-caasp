@@ -458,7 +458,9 @@
     </varlistentry>
    </variablelist>
    <para>
-    The following procedure can help in some situations.
+    The following procedure can help in some situations. Allow for
+    sufficient time between the individual steps as some might
+    take several minutes while not producing much output. 
    </para>
    <procedure>
     <step>
@@ -473,7 +475,7 @@ salt '*' system.reboot</command></screen>
       On the &admin_node; run
      </para>
 <screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name="salt-master") \
- salt "*" cmd.run "transactional-update cleanup reboot dup"</command></screen>
+salt "*" cmd.run "transactional-update cleanup reboot dup"</command></screen>
     </step>
     <step>
      <para>
@@ -487,7 +489,7 @@ salt '*' system.reboot</command></screen>
       Start the update with debug output.
      </para>
 <screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q -f name="salt-master") \
-    salt-run -l debug state.orchestrate orch.update</command></screen>
+salt-run -l debug state.orchestrate orch.update</command></screen>
     </step>
     <step>
      <para>
