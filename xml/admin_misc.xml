@@ -99,4 +99,36 @@ cmd.run "ln -sf <replaceable>/usr/share/zoneinfo/Europe/Berlin</replaceable> /et
 &prompt.root;<command>systemctl disable issue-add-ssh-keys.service</command>
    </screen>
  </sect1>
+ 
+ <sect1 xml:id="sec.admin.misc.flexvolume">
+  <title>FlexVolume configuration</title> 
+  <para>
+   FlexVolume drivers are external (out-of-tree) drivers usually provided by
+   a specific vendor. They are executable files, which are placed in a 
+   predefined directory in the cluster on both worker and master nodes. 
+   Pods interact with FlexVolume drivers through the <command>flexvolume</command>
+   in-tree plugin.
+  </para>
+  <para>
+   The vendor driver first has to be installed on each worker and master node
+   in a Kubernetes cluster. On &productname; &productnumber; the path to install 
+   the drivers is <filename>/usr/libexec/kubernetes/kubelet-plugins/volume/exec/</filename>.
+  </para>
+  <para>
+   If the drivers are deployed with DaemonSet, this will require changing 
+   the flexvolume directory path, which is usually stored as an environment 
+   variable, e.g. for rook:
+  </para>
+  <screen>
+   &prompt;<command>FLEXVOLUME_DIR_PATH=/usr/libexec/kubernetes/kubelet-plugins/volume/exec/</command>
+  </screen>
+  <para>
+   For more information on DaemonSets, refer to <xref linkend="cha.user.daemonset"/> 
+  </para>
+  <para>
+   For a general guide to the FlexVolume configuration, see 
+   <link xlink:href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-storage/flexvolume.md" />
+  </para>
+ </sect1>
+ 
 </chapter>
