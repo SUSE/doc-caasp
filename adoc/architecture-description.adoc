@@ -33,7 +33,7 @@ In addition, {productname} simplifies the platform operator’s experience, with
 * A complete container execution environment, container run time (CRI-O), and container image registries (registry.suse.com).
 * Application ecosystem support with {sle} container base images, and access to tools and services offered by SUSE Ready for CaaS Platform partners and the Kubernetes community.
 * Enhanced datacenter integration features that enable you to plug Kubernetes into new or existing infrastructure, systems, and processes.
-* End-to-End security, implemented holistically across the full stack including networking policies via Cilium, `PodSecurityPolicies` and {kube} RBAC.
+* End-to-End security, implemented holistically across the full stack including network policies via Cilium, `PodSecurityPolicies` and {kube} RBAC.
 * Advanced platform management that simplifies platform installation, configuration, re-configuration, monitoring, maintenance, updates, and recovery.
 * Enterprise hardening including comprehensive interoperability testing, support for thousands of platforms, and world-class platform maintenance and technical support.
 
@@ -116,61 +116,141 @@ Versioning scheme: `x.y.z`
 
 == Deployment Scenarios
 
+In Kubernetes there are two different machine types:
+
+* Control plane
+* Workers
+
+Control plane machines are responsible for running the main Kubernetes
+components, this includes:
+
+* etcd
+** etcd is a distributed key value store. It's where all data from the
+   cluster is persisted.
+* API server
+** The API server is responsible for serving all the API endpoints
+   that are used by the different Kubernetes components and clients.
+* Main controllers
+** The main controllers are responsible for most of the core
+   functionality from Kubernetes. When you create a Deployment, a
+   controller will be responsible for creating the ReplicaSet, and in
+   the same way, Pods will be created out of the ReplicaSet by a
+   controller as well.
+* Scheduler
+** The scheduler is the component that assigns pods to the different
+   nodes based on a number of restrictions and is aware of individual
+   and collective resource requirements.
+
+Both the control plane and worker nodes run an agent called kubelet
+and a container runtime (cri-o). The kubelet is responsible for
+talking to the container runtime, managing the Pod lifecycle that were
+assigned to this machine. The container runtime, is the component that
+will create the containers themselves.
+
 === Testing / POC
 
-* testing / POC scenario
-* single master
-* 1 master
+* Single master
 * 2 workers
 
 === Default Deployment
 
-* default scenario
-** high availability
-** multi master
-*** 2 Load Balancers
-*** 3 Masters
-*** 3 Workers
-** Requires:
-*** persistent IP addresses
-*** NTP server provided on the host network.
-*** DNS entry that resolves all the master nodes.
-*** load balancer to expose the API servers on the master nodes.
-*** LDAP server or OIDC provider (Active Directory, GitLab, GitHub etc.)
-*** Alternatively: Containerized LDAP server in the cluster
+The default deployment aims for an HA Kubernetes service. In order to
+achieve HA it's required to run several control planes.
+
+Not any number greater than 1 is optimal for HA, and this can impact
+the fault tolerance. The reason for this is the etcd distributed key
+value store:
+
+| Cluster size | Failure Tolerance |
+|--------------+-------------------|
+|            1 |                 0 |
+|            2 |                 0 |
+|            3 |                 1 |
+|            4 |                 1 |
+|            5 |                 2 |
+|            6 |                 2 |
+|            7 |                 3 |
+|            8 |                 3 |
+|            9 |                 4 |
+
+Given that etcd runs only on the control plane nodes, despite having 2
+control plane nodes is HA is not fault tolerant. If one of those two
+control planes goes down, the cluster storage will be unavailable, and
+the cluster won't be able to accept new changes (already running
+workloads won't suffer any changes, but the cluster won't be able to
+react to new changes from that point on).
+
+So we see that in order for HA to also be fault tolerant it's worth
+having an odd number of control planes. 3 master nodes is the minimum
+in order to tolerate a complete loss of one control plane node.
+
+Control planes is only part of the whole picture. Most components will
+talk to the API Server, and we need to expose the API Server in all
+masters to the clients and the rest of the cluster components.
+
+For this, a load balancer is required. The load balancer will point to
+all the control plane nodes, and the clients and the rest of the
+Kubernetes components will talk to the load balancer, that will
+perform health checks against all the control planes, maintaining an
+active pool of backends.
+
+If only one load balancer is deployed, since it's a single component
+running in a single machine, it's a single point of failure. That's
+why more than one load balancer is required for a complete HA
+solution. In this case as long as there are more than one load
+balancer the solution is HA and fault tolerant.
+
+* 2 Load Balancers
+* 3 Masters
+* 3 Workers
+
+* Requires:
+** Persistent IP addresses on all nodes.
+** NTP server provided on the host network.
+** DNS entry that resolves to the load balancer VIP.
+** LDAP server or OIDC provider (Active Directory, GitLab, GitHub etc.)
 
 * (Optional) "Infrastructure node"
-** Local RMT server to synchronize RPMs
+** LDAP server if LDAP integration is desired and your organization
+   does not have an LDAP server.
+** Local RMT server to synchronize RPMs.
 ** Local mirror of the SUSE container registry (registry.suse.com)
-** Local mirror of the SUSE helm chart repository
+** Local mirror of the SUSE helm chart repository.
 
 === Air Gapped Deployment
 
-* air gapped
-** registry mirror
-** package repository mirror
+In air gapped environments, the "Infrastructure node" is mandatory, as
+it's needed to have a local RMT server mirroring the CaaSP
+repositories, a mirror of the SUSE container registry and a mirror of
+the SUSE helm chart repository.
 
 == The {productname} stack
 
-Almost all components run in containers themselves.
+All long-lived components run in containers, with the exception of:
 
-Namespaces used by default components
+* kubelet
+* cri-o
+
+All Kubernetes components critical to the infrastructure are created
+inside the kube-system namespace. As a user, you can create as many
+namespaces as necessary for your operations and enforce different
+permissions using RBAC rules.
+
+kubeadm is what drives the deployment of new machines, and this
+component runs on-demand, uncontainerized during the bootstrap or join
+procedures.
 
 === Base Operating System
 
-* base OS
-** SLE 15 SP1
-** kernel ?
-** file system
-** snapshots?
-** special modules
-*** vxlan
-* update cycle and method
-** update channels
-* upgrade method and cycle
-* migration
+* SLE 15 SP1
+** Kernel: TBD exact version
+** Filesystem: XFS
 
 ==== Software Management
+
+CaaSP is distributed as a dedicated repository. All required packages
+to deploy a node to the cluster are installable via a pattern.
+
 ** extension to base OS image
 ** software distribution channels
 ** packages
@@ -206,7 +286,7 @@ used software components and libraries
 
 |image:logos/dex.png[dex,width=200,height=70]
 |link:https://github.com/dexidp/dex[]
-^|*?*
+^|*{dex_version}*
 
 |image:logos/kured.png[Kured,width=80,height=70] Kured
 |link:https://github.com/weaveworks/kured[]
@@ -214,7 +294,7 @@ used software components and libraries
 
 |Gangway
 |link:https://github.com/heptiolabs/gangway[]
-^|*?*
+^|*{gangway_version}*
 |===
 
 === Container Runtime environment
@@ -232,15 +312,26 @@ One thing we could extract from my experience, is that we might need to document
 
 === Networking
 
-* ingress and egress controllers
-* ingress concepts
-* egress concepts
-* Overlay networking
-* container networking interface
-* services
-* connections
-* encryption
-* networking policies (see security)
+In the networking level, several concepts need to be defined:
+
+* CNI: Container Network Interface. The default plugin providing CNI
+  in {productname} is Cilium. CNI forms an overlay network,
+  allowing for pods running in different machines in the cluster to
+  communicate with each other transparently.
+
+* Network policies: Network policies allow for security in terms of
+  routing within the cluster. They define how a groups of pods are
+  allowed to communicate with each other and with other network
+  endpoints.
+** Network policies allow for fine grained restrictions on what
+  networks are reachable, both in ingress and egress traffic.
+
+* Kube proxy: The kube proxy is a service that runs containerized in
+  all machines of the cluster and allows for pod to service
+  communication. When you expose a service, and some other pod
+  consumes this service, the kube proxy is the responsible for setting
+  the rules on every machine so the service is reachable from within
+  the pod using that service.
 
 === Storage
 
@@ -255,13 +346,6 @@ One thing we could extract from my experience, is that we might need to document
 * cloud-init
 * AutoYaST
 
-=== Interfaces
-
-==== API
-
-* caaspctl api
-* interaction
-
 ==== Integrations
 
 * integration points with external services and applications
@@ -274,21 +358,242 @@ One thing we could extract from my experience, is that we might need to document
 
 * user/role/group concepts
 
-=== Networking Policies
+=== Network Policies
 
-=== Certificates
 
-* type
-* strength
-* root CA
-* cipher suites
-* renewal
-* default expiration
+
+=== Control plane nodes certificates
+
+Certificates are stored under /etc/kubernetes/pki on the control plane nodes.
+
+==== CA certificates
+
+| Path        | Valid for | Common Name | Description          |
+|-------------+-----------+-------------+----------------------|
+| ca.crt      | 1 year    | kubernetes  | Kubernetes global CA |
+| etcd/ca.crt | 1 year    | etcd-ca     | etcd global CA       |
+
+==== CA certificate keys
+
+| Path        | Key type | Key length (bits) |
+|-------------+----------+-------------------|
+| ca.key      | RSA      |              2048 |
+| etcd/ca.key | RSA      |              2048 |
+
+==== Certificates
+
+| Path                         | Valid for | CN                            | Parent CA  | O (Subject)    | Kind           | Extra SANs                                                                                                                                |
+|------------------------------+-----------+-------------------------------+------------+----------------+----------------+-------------------------------------------------------------------------------------------------------------------------------------------|
+| apiserver-kubelet-client.crt | 1 year    | kube-apiserver-kubelet-client | kubernetes | system:masters | client         | -                                                                                                                                         |
+| etcd/healthcheck-client.crt  | 1 year    | kube-etcd-healthcheck-client  | etcd-ca    | system:masters | client         | -                                                                                                                                         |
+| etcd/server.crt              | 1 year    | master                        | etcd-ca    | -              | server         | Hostname, IP address, localhost, 127.0.0.1, 0:0:0:0:0:0:0:1                                                                               |
+| etcd/peer.crt                | 1 year    | master                        | etcd-ca    | -              | server, client | Hostname, IP address, localhost, 127.0.0.1, 0:0:0:0:0:0:0:1                                                                               |
+| apiserver.crt                | 1 year    | kube-apiserver                | kubernetes | -              | server         | Hostname, IP address, Control Plane Address, kubernetes, kubernetes.default, kubernetes.default.svc, kubernetes.default.svc.cluster.local |
+| apiserver-etcd-client.crt    | 1 year    | kube-apiserver-etcd-client    | etcd-ca    | system:masters | client         | -                                                                                                                                         |
+
+==== Certificate keys
+
+| Path                         | Key type | Key length (bits) |
+|------------------------------+----------+-------------------|
+| apiserver.key                | RSA      |              2048 |
+| apiserver-kubelet-client.key | RSA      |              2048 |
+| apiserver-etcd-client.key    | RSA      |              2048 |
+| etcd/server.key              | RSA      |              2048 |
+| etcd/healthcheck-client.key  | RSA      |              2048 |
+| etcd/peer.key                | RSA      |              2048 |
+
+=== Worker nodes certificates
+
+The CA certificate for the cluster is stored under /etc/kubernetes/pki
+on the worker nodes.
+
+When a new worker machine joins the cluster, the kubelet performs a
+TLS bootstrap. It requests a certificate to the cluster using a
+bootstrap token, this request is automatically approved by the
+cluster, and a certificate is created. The new worker downloads this
+certificate and writes it to disk, so the kubelet uses this
+client certificate from now on to contact the apiserver.
+
+==== CA certificates
+
+The CA certificate is downloaded from the cluster (present in the
+cluster-info secret inside the kube-public namespace). Since this
+information is public, there's no restriction to download the CA
+certificate.
+
+This certificate is saved under /etc/kubernetes/pki/ca.crt.
+
+| Path                             | Valid for | Common Name         | Description |
+|----------------------------------+-----------+---------------------+-------------|
+| /var/lib/kubelet/pki/kubelet.crt | 1 year    | worker-ca@random-id | Kubelet CA  |
+
+==== CA certificate keys
+
+| Path        | Key type | Key length (bits) |
+|-------------+----------+-------------------|
+| kubelet.key | RSA      |              2048 |
+
+==== Certificates
+
+Certificates are stored under /var/lib/kubelet/pki on the worker
+nodes.
+
+| Path                       | Valid for | CN                 | Parent CA           | O (Subject)  | Kind   | Extra SANs | Notes                                   |
+|----------------------------+-----------+--------------------+---------------------+--------------+--------+------------+-----------------------------------------|
+| kubelet-client-current.pem | 1 year    | system:node:worker | kubernetes          | system:nodes | client | -          | Symlink to kubelet-client-timestamp.pem |
+| kubelet.crt                | 1 year    | worker@random-id   | worker-ca@random-id | -            | server | Hostname   | -                                       |
+
+==== Certificate keys
+
+| Path        | Key type | Key length (bits) |
+|-------------+----------+-------------------|
+| kubelet.key | RSA      |              2048 |
 
 == Maintenance, Logging and Monitoring
 
+* TBD
+
 === Cluster Management
-* how to add/remove/replace nodes -> caaspctl
+
+Cluster lifecycle is managed using `caaspctl`. It enables you to
+manage nodes in your cluster:
+
+* Bootstrap a new cluster
+* Join new machines to the cluster
+** Master nodes
+** Worker nodes
+* Remove nodes from the cluster
+** Master nodes
+** Worker nodes
+
+==== Creating a cluster definition
+
+Creating a cluster definition is the first step to initialize your
+cluster. You can execute this task as follows:
+
+```
+~/clusters$ caaspctl cluster init --control-plane 10.86.3.149 my-cluster
+[init] configuration files written to /home/my-user/clusters/my-cluster
+```
+
+This operation happens strictly offline and will generate a folder
+structure like the following:
+
+```
+~/clusters$ tree my-cluster
+my-cluster/
+├── addons
+│   ├── cni
+│   │   └── cilium.yaml
+│   └── psp
+│       ├── podsecuritypolicy-privileged.yaml
+│       └── podsecuritypolicy-unprivileged.yaml
+├── kubeadm-init.conf
+└── kubeadm-join.conf.d
+    ├── master.conf.template
+    └── worker.conf.template
+
+4 directories, 6 files
+```
+
+At this point, you can inspect all generated files, and if desired you
+can experiment by changing the default settings.
+
+==== Bootstrapping the first node of the cluster
+
+From within your cluster definition folder, you can bootstrap your
+first master machine:
+
+```
+~/clusters/my-cluster$ caaspctl node bootstrap --user sles --sudo --target <IP address/FQDN> <nodename>
+```
+
+This operation will read the `kubeadm-init.conf` file inside your
+cluster definition, will forcefully set certain settings to the ones
+required by CaaSP and will bootstrap the node remotely.
+
+Prior to bootstrap it's possible for you to tweak the configuration
+that will be used to create the cluster. You can:
+
+* Replace the CNI by a different one, or completely skip the CNI
+  creation. The CNI that will be deployed by default is Cilium. For
+  this, you only need to remove the `addons/cni/cilium.yaml` and place
+  another file instead. You can also leave the directory empty if you
+  prefer to skip the CNI creation.
+
+* Tweak the default Pod Security Policies or create extra ones. If you
+  place extra Pod Security Policies in the `addons/psp` folder, those
+  will be created as well when the bootstrap is completed. You can
+  also modify the default ones and/or remove them.
+
+* Inspect the `kubeadm-init.conf` and set extra configuration settings
+  supported by `kubeadm`. The latest supported version is {kubeadm_api_version}.
+
+After this operation has completed several modifications will have
+happened on your cluster definition folder:
+
+* The `kubeadm-init.conf` file will contain the final complete
+  contents used to bootstrap the node, so you can inspect what
+  exact configuration was used to bootstrap the node.
+
+* A `admin.conf` file will be created on your cluster definition file,
+  this is a `kubeconfig` file that has complete access to the cluster
+  and uses client certificates for authenticating against the cluster.
+
+==== Adding master nodes to the cluster
+
+Adding new master nodes to the cluster can be achieved by executing
+the following `caaspctl` command:
+
+```
+~/clusters/my-cluster$ caaspctl node join --role master --user sles --sudo --target <IP address/FQDN> <nodename>
+```
+
+This operation will try to read the `kubeadm-join.conf.d/<IP address/FQDN>.conf`
+file if it exists. This allows you to set specific settings for this
+new node prior to joining it (a similar procedure to how
+`kubeadm-init.conf` file behaves when bootstrapping). If this file
+does not exist, `caaspctl` will read the `kubeadm-join.conf.d/master.conf.template`
+instead and will create this file automatically when `caaspctl node
+join` is called.
+
+This operation will increase the `etcd` member count by one, so it's
+recommended to always keep an odd number of master nodes because as
+described in previous sections an even number of nodes does not
+improve fault tolerance.
+
+==== Adding worker nodes to the cluster
+
+Adding new worker nodes to the cluster can be achieved by executing
+the following `caaspctl` command:
+
+```
+~/clusters/my-cluster$ caaspctl node join --role worker --user sles --sudo --target <IP address/FQDN> <nodename>
+```
+
+This operation will try to read the `kubeadm-join.conf.d/<IP address/FQDN>.conf`
+file if it exists. This allows you to set specific settings for this
+new node prior to joining it (a similar procedure to how
+`kubeadm-init.conf` file behaves when bootstrapping). If this file
+does not exist, `caaspctl` will read the `kubeadm-join.conf.d/worker.conf.template`
+instead and will create this file automatically when `caaspctl node
+join` is called.
+
+==== Removing nodes from the cluster
+
+Removing nodes from the cluster requires you to execute `caaspctl`
+from a folder containing an `admin.conf` file, because this operation
+is performed exclusively using Kubernetes, and no access to the node
+being removed or other nodes for that matter is required.
+
+For removing a node, the following command has to be executed:
+
+```
+~/clusters/my-cluster$ caaspctl node remove <nodename>
+```
+
+If the node to be removed is a master, specific actions will be
+automatically executed, like removing the etcd member from the cluster.
 
 === Monitoring
 
