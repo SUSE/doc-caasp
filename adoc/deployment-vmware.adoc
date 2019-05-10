@@ -1,7 +1,6 @@
 include::entities.adoc[]
-:isofile: SLE-15-SP1-Installer-DVD-x86_64-Build212.1-Media1.iso
-:isolink: http://download.suse.de/install/SLE-15-SP1-Installer-TEST/
-:repourl: http://download.suse.de/ibs/SUSE:/SLE-15-SP1:/Update:/Products:/CASP40/standard/
+:isofile: SLE-15-SP1-Installer-DVD-x86_64-Build225.1-Media1.iso
+:isolink: http://download.suse.de/install/SLE-15-SP1-Installer-GMC1/
 
 == Deployment on VMWare
 
@@ -165,10 +164,21 @@ zypper in ca-certificates-suse # HACK for in-house signed images
 ----
 ====
 
-. Install `sudo`
+. Register SLES15-SP1 system
 +
 ----
-zypper in sudo
+SUSEConnect -r <SLES_REGCODE>
+----
+. Register Container Module (free of charge)
++
+----
+SUSEConnect -p sle-module-containers/15.1/x86_64
+----
+. Register the {productname} Module
++
+[subs=attributes]
+----
+SUSEConnect -p caasp/4.0/x86_64 -r <CAASP_REGCODE>
 ----
 // . Install `open-vm-tools`
 // +
@@ -176,18 +186,17 @@ zypper in sudo
 // zypper in open-vm-tools # in my case it was installed and enabled automatically during sles installation
 // systemctl status vmtoolsd; systemctl status vgauthd.service
 // ----
-. Add the {productname} repository
-+
-[subs=attributes]
-----
-zypper ar {repourl} caasp_vnext
-----
 . Copy your public SSH key for the user used for caaspctl bootstrap (normally 'sles') which will be used for {productname} deployment:
 +
 ----
 ssh-copy-id -i ~/.ssh/id_rsa.pub sles@vm-template.host
 ----
-. Configure sudo for the `sles` user to be able authenticate without password. As root run:
+. Install `sudo`
++
+----
+zypper in sudo
+----
+. Configure `sudo` for the `sles` user to be able authenticate without password. As root run:
 +
 ----
 echo "sles ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
@@ -258,10 +267,7 @@ to perform commands or control SSH sessions across multiple machines simultaneou
 Install the following packages on each node:
 
 * kubernetes-kubeadm
-* kubernetes-kubelet
 * kubernetes-client
-* cri-o
-* cni-plugins
 
 ----
 sudo zypper in kubernetes-kubeadm kubernetes-kubelet kubernetes-client cri-o cni-plugins
