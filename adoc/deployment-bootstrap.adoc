@@ -6,10 +6,11 @@
 
 First you need to install caaspctl on your local workstation:
 
-. Add the SLE15 SP1 repository containing caaspctl.
+. Add the SLE15 SP1 extension containing caaspctl. This also requires the "containers" module.
 +
 ----
-sudo zypper ar http://download.suse.de/ibs/SUSE:/SLE-15-SP1:/Update:/Products:/CASP40/standard/ caasp_vnext
+SUSEConnect -p sle-module-containers/15.1/x86_64
+SUSEConnect -p caasp/4.0/x86_64 -r <Registration Code>
 ----
 . Install caaspctl:
 +
@@ -45,7 +46,7 @@ of ssh to learn about the security implications of using this feature.
 ====
 
 
-Now you can initialize the cluster on the deployed machines.
+. Now you can initialize the cluster on the deployed machines.
 As `--control-plane` enter the IP/FQDN of your load balancer. If you do not use a load balancer use your first master node.
 +
 ----

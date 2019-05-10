@@ -4,9 +4,9 @@ include::entities.adoc[]
 :doctype: book
 :sectnums:
 :toc: left
-:toclevels: 3
+:toclevels: 2
 :icons: font
-:revdate: 2019-03-29
+:revdate: 2019-05-09
 :imagesdir: images/
 :experimental:
 
@@ -36,8 +36,20 @@ include::deployment-sysreqs.adoc[System Requirements]
 
 == Deployment Instructions
 
+[IMPORTANT]
+====
+If you are installing over one of the previous milestones you must remove the
+RPM repository. {productname} is now distributed as an extension for
+{sle} and no longer requires the separate repository.
+
+If you do not remove the repository before installation, there might be conflicts
+with the package dependencies that can render you installation nonfunctional.
+====
+
 include::deployment-ecp.adoc[SUSE OpenStack Cloud Instructions, leveloffset=+1]
 
 include::deployment-vmware.adoc[VMWare Deployment Instructions, leveloffset=+1]
+
+include::deployment-sles.adoc[Existing SLES Installation, leveloffset=+1]
 
 include::deployment-bootstrap.adoc[Bootstrapping,leveloffset=0]

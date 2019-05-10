@@ -1,16 +1,46 @@
 == Requirements
 
+=== Registration Code
+
+[NOTE]
+The registration code for {productname} {productnumber} also contains the activation
+permissions for the underlying {sle} operating system. You can use your {productname}
+registration code to activate the {sle} 15 SP1 subscription.
+
+[IMPORTANT]
+====
+Because of a bug (gh#avant-garde#284) it is possible that the SLE 15 activation
+will not work with the registration codes for SUSE-CaaSP. In this case please
+download a registration code for SLE15 SP1 and use this to activate instead.
+
+Nonetheless, you must use the registration code downloaded for SUSE-CaaSP when
+enabling the extension.
+====
+
+You need a subscription registration code to use {productname}. You can retrieve your
+registration code from {scc}.
+
+* Login to https://scc.suse.com
+* Navigate to menu:Internal tools[Products]
+* Search for "caasp"
+* Select menu:SUSE CaaS Platform[4.0 >  x86_64 alpha]
+* Copy the menu:Registration Code[]
+
 === Platform
 
-Currently the only tested platform is SUSE OpenStack Cloud.
-Nodes
+Currently we support:
+
+* SUSE OpenStack Cloud 8.
+* VMWare ESXi 6.0.0 Update 3
+
+== Nodes
 
 You will need at least two machines:
 
 * 1 Master Node
 * 1 Worker Node
 
-CaaS Platform vNext supports deployments with a single or multiple master nodes.
+{productname} {productversion} supports deployments with a single or multiple master nodes.
 Production environments must be deployed with multiple master nodes for resilience.
 
 === Hardware
@@ -99,7 +129,7 @@ link:https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware
 |Internal
 |VXLAN traffic (used by Cilium)
 
-|10250, 10255
+|10250
 |Internal
 |Kubelet
 
@@ -126,7 +156,7 @@ Configure firewall and other network security to allow communication on the defa
 
 ==== Performance
 
-All master nodes of the cluster must have a minimum 1GB/s network connection to fullfill the requirements for etcd.
+All master nodes of the cluster must have a minimum 1GB/s network connection to fulfill the requirements for etcd.
 
     "1GbE is sufficient for common etcd deployments. For large etcd clusters,
     a 10GbE network will reduce mean time to recovery."
@@ -139,4 +169,4 @@ Do not grant access to the kubeconfig file or any workstation configured with th
 In the current state, full administrative access is granted to the cluster.
 
 Authentication is done via the kubeconfig file generated during deployment. This file will grant full access to the cluster and all workloads.
-Apply best practices for access control to workstations configured to administer the SUSE CaaS Platform cluster.
+Apply best practices for access control to workstations configured to administer the {productname} cluster.

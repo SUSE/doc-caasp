@@ -20,7 +20,8 @@ solution that directs access to the master nodes.
 
 === VM preparation for creating a template
 
-. Temporarily enable SSH access to one of the ESXi nodes in the vSphere WebUI as described at link:https://kb.vmware.com/s/article/2004746[]
+. Temporarily enable SSH access to one of the ESXi nodes in the vSphere WebUI
+as described at link:https://kb.vmware.com/s/article/2004746[]
 . Log in to the node.
 Replace `vmware.esxi.node` with the hostname of your SSH enabled node.
 +
@@ -40,7 +41,8 @@ cd /vmfs/volumes/my-directory/
 wget {isolink}{isofile}
 ----
 
-Now you can create a new base VM for {productname} within the designated resource pool through the vSphere WebUI:
+Now you can create a new base VM for {productname} within the designated resource
+pool through the vSphere WebUI:
 
 . Create a "New Virtual Machine"
 . Define a name for the virtual machine (VM)
@@ -90,10 +92,12 @@ Power on the newly created VM and install the system over graphical remote conso
 . Remove the checkmark in the "Hide Development Versions" box
 .
 . Make sure the following modules are selected on the "Extension and Module Selection" screen:
++
+image::vmware_extension.png[width=80%,pdfwidth=80%]
+** SUSE CaaS Platform 4.0 x86_64 (ALPHA)
 ** Basesystem Module
-** Containers Module
-** Server Applications Module
-//** {productname} Module
+** Containers Module (this will automatically be ticked when you select {productname})
+. Enter the registration code to unlock the {productname} extension
 . Select menu:System Role[Minimal] on the "System Role" screen
 . Click on "Expert Partitioner" to redesign the default partition layout
 . Select "Start with current proposal"
@@ -236,6 +240,7 @@ Repeat these steps until you have created the desired number of machines compris
 [IMPORTANT]
 ====
 Make sure to give each VM a clear name that shows it's purpose in the cluster e.g.
+
 * `caasp-worker-0`
 * `caasp-worker-1`
 * `caasp-master-0`

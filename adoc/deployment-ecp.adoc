@@ -2,12 +2,12 @@ include::entities.adoc[]
 
 == Deployment on SUSE OpenStack Cloud
 
-You will use terrafrom to deploy the cluster nodes to SUSE OpenStack Cloud and then use the caaspctl tool to bootstrap the cluster.
-Node deployment
+You will use terrafrom to deploy the cluster nodes to {soc} and then use the
+`caaspctl` tool to bootstrap the cluster.
 
 === Preparation
 
-You need terraform installed on your workstation and configure access to the SUSE OpenStack Cloud API.
+You need terraform installed on your workstation and configure access to the {soc} API.
 
 . Install terraform on your local machine.
 +
@@ -129,20 +129,4 @@ image::deploy-loadbalancer-ip.png[]
 . Now click on menu:Compute[Instances].
 . Switch the filter dropdown to `Instance Name` and enter the string you specified for `stack_name` in the `terraform.tfvars` file.
 . Find the Floating IPs on each of the nodes of your cluster.
-====
-
-[NOTE]
-====
-Please note that we provide some internal repositories with the terraform configuration that are not usually available to customers.
-In future versions the customer must enable two modules:
-
-* sle-module-server-applications/15.1/x86_64
-and
-* sle-module-containers/15.1/x86_64
-
-You must log in to every node via SSH and perform:
-----
-SUSEConnect -p sle-module-server-applications/15.1/x86_64
-SUSEConnect -p sle-module-containers/15.1/x86_64
-----
 ====
