@@ -168,21 +168,20 @@ zypper in ca-certificates-suse # HACK for in-house signed images
 ----
 ====
 
-. Register SLES15-SP1 system
+. Register SLES15-SP1 system. Substitute `SLES_REGCODE` for the {sle} registration code.
 +
 ----
-SUSEConnect -r <SLES_REGCODE>
+SUSEConnect -r SLES_REGCODE
 ----
 . Register Container Module (free of charge)
 +
 ----
 SUSEConnect -p sle-module-containers/15.1/x86_64
 ----
-. Register the {productname} Module
+. Register the {productname} Module. Substitute `CAASP_REGCODE` for the {productname} registration code.
 +
-[subs=attributes]
 ----
-SUSEConnect -p caasp/4.0/x86_64 -r <CAASP_REGCODE>
+SUSEConnect -p caasp/4.0/x86_64 -r CAASP_REGCODE
 ----
 // . Install `open-vm-tools`
 // +
