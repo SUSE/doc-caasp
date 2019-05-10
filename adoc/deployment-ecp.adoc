@@ -36,13 +36,13 @@ source container-openrc.sh
 
 === Deploying the cluster nodes
 
-. Clone the repository https://github.com/SUSE/caaspctl/tree/master/ci/infra/openstack
+. Clone the repository https://github.com/SUSE/caaspctl
 +
 ----
 git clone git@github.com:SUSE/caaspctl.git
 ----
-. Switch to the directory "caaspctl/ci/infra/openstack".
-. Create a file terraform.tfvars
+. Switch to the directory `caaspctl/ci/infra/openstack`.
+. Create a file `terraform.tfvars` or just copy the existing `terraform.tfvars.sles.example` to it
 +
 ----
 # Name of the internal network to be created
@@ -120,7 +120,7 @@ The IP addresses of the generated machines will be displayed in the terraform
 output during the cluster node deployment. You need these IP addresses to
 deploy {productname} to the cluster.
 
-If you need to find an IP addresses later on you can perform the following steps:
+If you need to find an IP addresses later on you can run `terraform output` within the `caaspctl/ci/infra/openstack` directory or perform the following steps:
 
 . Log in to {soc} and click on menu:Network[Load Balancers]. Find the one with the string you entered in the terraform configuration above e.g. "testing-lb".
 . Note down the "Floating IP". If you have configured a FQDN for this IP, use the hostname instead.
