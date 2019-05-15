@@ -1853,16 +1853,8 @@ Name: cn
    You can configure the cluster to authenticate &dashboard; and &kube; users
    against an external OIDC provider.
   </para>
-  <important>
-   <title>Automatic Attributes from LDAP</title>
-   <para>
-    Please note that users that belong to the <literal>administrators</literal>
-    group in LDAP will automatically be assigned the role of
-    <literal>cluster-admin</literal>.
-    </para>
-   </important>
   <procedure>
-   <title>Configuring External LDAP connector</title>
+   <title>Configuring External OIDC connector</title>
    <step>
     <para>
      Log in to &dashboard;
@@ -1870,13 +1862,13 @@ Name: cn
    </step>
    <step>
     <para>
-     Access the LDAP configuration settings under <guimenu>Settings
-     &rarr; EXTERNAL AUTHENTICATION &rarr; LDAP Connectors</guimenu>.
+     Access the OIDC configuration settings under <guimenu>Settings
+     &rarr; EXTERNAL AUTHENTICATION &rarr; OIDC Connectors</guimenu>.
     </para>
    </step>
    <step>
     <para>
-     Click on <guimenu>Add LDAP connector</guimenu> to add a new connector.
+     Click on <guimenu>Add OIDC connector</guimenu> to add a new connector.
     </para>
    </step>
    <step>
@@ -1897,13 +1889,7 @@ Name: cn
   </procedure>
 
   <sect2 xml:id="sec.admin.security.external.ldap.configuration">
-   <title>LDAP Connector Settings</title>
-   <note>
-    <title>LDAP Anonymous Binding</title>
-    <para>
-     Anonymous binding is available, if allowed by the LDAP server.
-    </para>
-   </note>
+   <title>OIDC Connector Settings</title>
    <informalfigure>
     <mediaobject>
      <imageobject role="fo">
@@ -1927,20 +1913,21 @@ Name: cn
    <sect3>
     <title>Server</title>
     <para>
-     Basic settings for the LDAP server host
+     Basic settings for the OIDC provider
     </para>
     <variablelist>
      <varlistentry>
       <term>Host</term>
       <listitem>
        <para>
-        Host name of LDAP server reachable from the cluster
+        Host name of OIDC provider reachable from the cluster
        </para>
        <note>
         <title>Provide the hostname as FQDN</title>
         <para>
          The <guimenu>Host</guimenu> field must use a Fully Qualified Domain
-         Name, as IP address is not allowed with TLS.
+         Name, as IP address is not allowed with TLS.  Additionally, the host must
+         be reachable from both the cluster and the authenticating user's workstation. 
         </para>
        </note>
       </listitem>
