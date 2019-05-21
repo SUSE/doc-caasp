@@ -1,4 +1,4 @@
-== PodSecurityPolicies
+= Pod Security Policies
 
 [NOTE]
 ====
@@ -25,9 +25,9 @@ environments. Please create your own security policies with the appropriate
 amount of permissions/restrictions.
 ====
 
-=== Default Policies
+== Default Policies
 
-{productname} {productnumber} currently ships with two default policies:
+{productname} {productmajor} currently ships with two default policies:
 
 * Privileged (full access everywhere)
 * Unprivileged (only very basic access)
@@ -47,7 +47,7 @@ You must configure RBAC rules and {psp} to provide proper functionality
 and security.
 ====
 
-=== Policy Definition
+== Policy Definition
 
 The policy definitions are embedded in the link:https://github.com/SUSE/caaspctl/blob/master/pkg/caaspctl/actions/cluster/init/manifests.go[cluster bootstrap manifest (GitHub)].
 
@@ -62,7 +62,7 @@ The filenames of the files created are:
 and
 * `podsecuritypolicy-privileged.yaml`.
 
-==== Policy File Examples
+=== Policy File Examples
 
 This is the unprivileged policy as a configuration file. You can use this
 as a basis to develop your own {psp}.
@@ -163,7 +163,7 @@ subjects:
   name: system:authenticated
 ----
 
-=== Creating a PodSecurityPolicy
+== Creating a PodSecurityPolicy
 
 In order to properly secure and run your {kube} workloads you must configure
 RBAC rules for your desired users and create {psp} that enable your respective
