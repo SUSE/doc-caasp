@@ -245,6 +245,81 @@ Name it reasonably so you can later identify the template. The template will be 
 
 === Deploying VMs from the Template
 
+==== Terraform
+
+To deploy the required virtual machines from the newly created template, it is
+possible to use `terraform`.
+
+To obtain the required packages you can use the `CaaSP` product repositories to
+install the packages: `terraform` and `caaspctl`.
+
+Once these packages are installed you will find terraform template files from
+`vmware` in `/usr/share/caasp/terraform/vmware`. Copy this folder to a location
+of your choice, as the files need adjustment.
+
+----
+mkdir -p ~/caasp/deployment/
+cp -r /usr/share/caasp/terraform/vmware/ ~/caasp/deployment/
+cd ~/caasp/deployment/vmware/
+----
+
+Once the files are copied rename the `terraform.tfvars.example` file to
+`terraform.tfvars`:
+
+----
+mv terraform.tfvars.example terraform.tfvars
+----
+
+Edit the `terraform.tfvars` file and adjust (at least) the following variables:
+
+. `vsphere_datastore`: The datastore to use.
+
+. `vsphere_datacenter`: The datacenter to use.
+
+. `vsphere_network`: The network to use.
+
+. `vsphere_resource_pool`: The resource pool to use.
+
+. `template_name`: The name of the template created according to instructions
+
+. `stack_name`: Prefix for all machines of the cluster spawned by terraform.
+
+. `authorized_keys`: List of ssh-public-keys that will be able to login to the
+deployed machines.
+
+. `ntp_servers`: A list of `ntp` servers you would like to use with `chrony`.
+
+. `repositories`: A list of additional repositories to be added on each
+machines - leave empty if no additional packages need to be installed.
+
+Also adjust the file `registration.auto.tfvars` and add the `CaaS Platform`
+registration code, so each machine is correctly registered after initialization.
+
+Once the files are adjusted `terraform` needs to know about the `vSphere` server
+and the login details for it - these can be exported as environment variables or
+entered every time `terraform` is invoked.
+
+Additionally the `ssh-key` that is specified in the `tfvars` file must be added
+to the keyring, so the machine running `caaspctl` can `ssh` into the machines:
+
+----
+export VSPHERE_SERVER="<server_address"
+export VSPHERE_USER="<username>"
+export VSPHERE_PASSWORD="<password>"
+
+ssh-add -i <path_to_ssh_key_from_tfvars>
+----
+
+Run terraform to create the required machines for use with `caaspctl`:
+
+----
+terraform init
+terraform apply
+----
+
+
+==== Setup by hand
+
 . Right-click on the template and select "New VM from This Template..." and name it something like `caasp4-master-0`.
 .. Select storage datastore and the designated Resource pool.
 
