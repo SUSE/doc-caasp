@@ -46,7 +46,7 @@ workers_vol_enabled = 0
 workers_vol_size = 5
 
 # Name of DNS domain
-dnsdomain = "testing.qa.caasp.suse.net"
+dnsdomain = "testing.example.com"
 
 # Set DNS Entry (0 is false, 1 is true)
 dnsentry = 0
@@ -59,8 +59,8 @@ password = "linux"
 
 # Optional: Define the repositories to use
 # repositories = [
-#     { repository1 = "http://example.my.repo.com/repository1/" },
-#     { repository2 = "http://example.my.repo.com/repository2/" }
+#     { repository1 = "http://repo.example.com/repository1/" },
+#     { repository2 = "http://repo.example.com/repository2/" }
 # ]
 repositories = []
 
@@ -96,7 +96,7 @@ vsphere_datastore = "3PAR"
 # datacenter to use on the vSphere server
 # EXAMPLE:
 # vsphere_datacenter = "DATACENTER"
-vsphere_datacenter = "PROVO"
+vsphere_datacenter = "MYDATACENTER"
 
 # network to use on the vSphere server
 # EXAMPLE:
@@ -105,16 +105,17 @@ vsphere_network = "VM Network"
 
 # resource pool the machines will be running in
 # EXAMPLE:
-# vsphere_resource_pool = "CaaSP_RP"
-vsphere_resource_pool = "CaaSP_RP"
+# vsphere_resource_pool = "My_RP"
+vsphere_resource_pool = "My_RP"
 
 # template name the machines will be copied from
 # EXAMPLE:
 # template_name = "SLES15-SP1-cloud-init"
-template_name = "fb-sles15-sp1-caasp"
+template_name = "sles15-sp1-caasp"
 
 # prefix that all of the booted machines will use
-# IMPORTANT, please enter unique identifier bellow as value of stack_name variable to not interfere with other deployments
+# IMPORTANT, please enter unique identifier below as value of
+# stack_name variable to not interfere with other deployments
 stack_name = "caasp-v4"
 
 # Number of master nodes
@@ -136,8 +137,8 @@ password = "sles"
 # define the repositories to use
 # EXAMPLE:
 # repositories = [
-#   { repository1 = "http://example.my.repo.com/repository1/" },
-#   { repository2 = "http://example.my.repo.com/repository2/" }
+#   { repository1 = "http://repo.example.com/repository1/" },
+#   { repository2 = "http://repo.example.com/repository2/" }
 # ]
 repositories = []
 
@@ -157,7 +158,7 @@ packages = [
 #   "ssh-rsa <key-content>"
 # ]
 authorized_keys = [
-  "ssh-rsa <example_key> example@example.org"
+  "ssh-rsa <example_key> example@example.com"
 ]
 
 # IMPORTANT: Replace these ntp servers with ones from your infrastructure

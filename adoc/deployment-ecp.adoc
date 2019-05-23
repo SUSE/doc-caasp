@@ -1,26 +1,12 @@
 == Deployment on SUSE OpenStack Cloud
 
+.Preparation Required
+[NOTE]
+You must have completed <<deployment.preparations>> to proceed.
+
 You will use {tf} to deploy the required master and worker cluster nodes (plus a load balancer) to {soc} and then use the
 `caaspctl` tool to bootstrap the {kube} cluster on top of those.
 
-=== Preparation
-
-Both `caaspctl` and `terraform` (along with its configuration examples) are provided by the `SUSE-CaaSP-Management` pattern.
-
-. Login and register
-+
-Activate your {suse} SLES15-SP1 and {productname} {productmajor} subscription, activating the containers module as well:
-+
-----
-sudo SUSEConnect -r <code>
-sudo SUSEConnect -p sle-module-containers/15.1/x86_64
-sudo SUSEConnect -p caasp/4.0/x86_64 -r <code>
-----
-. Install SUSE-CaaSP-Management pattern
-+
-----
-sudo zypper in -t pattern SUSE-CaaSP-Management
-----
 . Download the SUSE OpenStack Cloud RC file.
 .. Log in to SUSE OpenStack Cloud.
 .. Click on your username in the upper right hand corner to reveal the dropdown menu.
@@ -32,13 +18,13 @@ sudo zypper in -t pattern SUSE-CaaSP-Management
 source container-openrc.sh
 ----
 .. Enter the password for the RC file. This should be same credentials that you use to log in to {soc}.
-. Get the SLES15-SP1 image
-.. Download the latest SUSE SLES15-SP1 for Openstack from https://download.suse.com
-.. Upload the image to your {soc}
+. Get the SLES15-SP1 image.
+.. Download the latest SUSE SLES15-SP1 for {soc} from {download_url}.
+.. Upload the image to your {soc}.
 
 === Deploying the cluster nodes
 
-. Copy the configuration files into a directory:
+. Copy the terraform configuration files into a directory of your choice:
 +
 ----
 mkdir ~/my-deployment
@@ -56,12 +42,15 @@ If you use a generic term it is very likely to fail deployment because the term 
 . You can set timezone in before deploying the nodes by modifying the files:
 +
 * `~/my-deployment/cloud-init/master.tpl`
-* `/my-deployment/cloud-init/worker.tpl`
+* `~/my-deployment/cloud-init/worker.tpl`
 . Enter the registration code for your nodes in `~/my-deployment/registration.auto.tfvars`:
 +
+Substitute `REGISTRATION_CODE` for the code from <<registration_code>>.
++
+[source,json]
 ----
 # SUSE CaaSP Product Registration Code
-caasp_registry_code = ""
+caasp_registry_code = "REGISTRATION_CODE"
 ----
 +
 This is required so all the deployed nodes can automatically register to {scc} and retrieve packages.
