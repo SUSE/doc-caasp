@@ -1,24 +1,25 @@
 == Deployment on SUSE OpenStack Cloud
 
-You will use terrafrom to deploy the cluster nodes to {soc} and then use the
-`caaspctl` tool to bootstrap the cluster.
+You will use `terrafrom` to deploy the required master and worker cluster nodes (plus a load balancer) to {soc} and then use the
+`caaspctl` tool to bootstrap the kubernetes cluster on top of those.
 
 === Preparation
 
-You need terraform installed on your workstation and configure access to the {soc} API.
+Both `caaspctl` and `terraform` (along with its configuration examples) are provided by `SUSE-CaaSP-Management` pattern.
 
-. Install terraform on your local machine.
+. Login and register
 +
-Select the appropriate repository from here: https://build.opensuse.org/repositories/systemsmanagement:terraform
-Add the repository to your workstation (here Tumbleweed):
-+
-----
-sudo zypper ar https://download.opensuse.org/repositories/systemsmanagement:/terraform/openSUSE_Tumbleweed/ terraform
-----
-. Install terraform
+Activate your SUSE SLES15-SP1 and SUSE CaaSP v4.0 subscription, activating the containers module as well:
 +
 ----
-zypper in terraform
+sudo SUSEConnect -r <code>
+sudo SUSEConnect -p sle-module-containers/15.1/x86_64
+sudo SUSEConnect -p caasp/4.0/x86_64 -r <code>
+----
+. Install SUSE-CaaSP-Management pattern
++
+----
+sudo zypper in -t pattern SUSE-CaaSP-Management
 ----
 . Download the SUSE OpenStack Cloud RC file.
 .. Log in to SUSE OpenStack Cloud.
@@ -31,32 +32,40 @@ zypper in terraform
 source container-openrc.sh
 ----
 .. Enter the password for the RC file. This should be same credentials that you use to log in to {soc}.
+. Get the SLES15-SP1 image
+.. Download the latest SUSE SLES15-SP1 for Openstack from https://download.suse.com
+.. Upload the image to your {soc}
 
 === Deploying the cluster nodes
 
-. Install `caaspctl` from the repository:
-+
-[subs=attributes]
+. Copy the configuration files into a directory:
 ----
-sudo zypper ar {caasp_repo_url} caaspctl
-sudo zypper in caaspctl
+mkdir ~/my-deployment
+cp -r /usr/share/caasp/terraform/openstack/* ~/my-deployment
+cd my-deployment
 ----
-. Switch to the directory `/usr/share/caasp/terraform/openstack/`.
-. Create a file `terraform.tfvars` or just copy the existing `terraform.tfvars.sles.example` to it
+. Create a file `terraform.tfvars` or just copy the existing `terraform.tfvars.example` to it and modify the configuration: 
 +
 include::deployment-terraform-example.adoc[tags=tf.default]
 . Replace `internal_net` and `stack_name` with your desired name for the cluster. This string will be used to generate the human readable IDs in {soc}.
 If you use a generic term it is very likely to fail deployment because the term is already in use by someone else. It's a good idea to use your username or other unique identifier.
 . You can adjust the size of the deployed cluster by changing the "masters" and "workers" variables.
 . Insert your public SSH key into the "authorized keys" variable. This key will be distributed to all machines and is your login credentials for all cluster nodes.
-. Make sure to set the correct NTP time servers for your infrastructure
+. Make sure to set the correct NTP time servers for your infrastructure.
 . You can set timezone in before deploying the nodes by modifying the files:
 +
-* `/usr/share/caasp/terraform/openstack/cloud-init/master.tpl`
-* `/usr/share/caasp/terraform/openstack/cloud-init/worker.tpl`
+* `~/my-deployment/cloud-init/master.tpl`
+* `/my-deployment/cloud-init/worker.tpl`
+. Enter the registration code for your nodes into `~/my-deployment/registration.auto.tfvars`:
++
+----
+# SUSE CaaSP Product Registration Code
+caasp_registry_code = ""
+----
 . Now you can deploy the nodes by running:
 ----
 terraform init
+terraform plan
 terraform apply
 ----
 
@@ -70,7 +79,7 @@ The IP addresses of the generated machines will be displayed in the terraform
 output during the cluster node deployment. You need these IP addresses to
 deploy {productname} to the cluster.
 
-If you need to find an IP addresses later on you can run `terraform output` within the `caaspctl/ci/infra/openstack` directory or perform the following steps:
+If you need to find an IP addresses later on you can run `terraform output` within the directory you performed the deployment from `~/my-deployment` directory or perform the following steps:
 
 . Log in to {soc} and click on menu:Network[Load Balancers]. Find the one with the string you entered in the terraform configuration above e.g. "testing-lb".
 . Note down the "Floating IP". If you have configured a FQDN for this IP, use the hostname instead.
