@@ -1,13 +1,10 @@
-:isofile: SLE-15-SP1-Installer-DVD-x86_64-Build225.1-Media1.iso
-:isolink: http://download.suse.de/install/SLE-15-SP1-Installer-GMC1/
-
 == Deployment on VMWare
 
 === Environment description
 
 [NOTE]
 ====
-These instructions are based on `VMware ESXi 6.0.0 Update 3`.
+These instructions are based on `VMware ESXi {vmware_version}`.
 ====
 
 [IMPORTANT]
@@ -54,10 +51,10 @@ image::vmware_step2.png[width=80%,pdfwidth=80%]
 . Select the storage used by the VM
 +
 image::vmware_step3.png[width=80%,pdfwidth=80%]
-. Select `ESXi 6.0 and later` from compatibility
+. Select `ESXi 6.7 and later` from compatibility
 +
 image::vmware_step4.png[width=80%,pdfwidth=80%]
-. Select menu:Guest OS Family[Linux] and menu:Guest OS Version[SUSE Linux Enterprise 12 (64 Bit)].
+. Select menu:Guest OS Family[Linux] and menu:Guest OS Version[SUSE Linux Enterprise 15 (64 Bit)].
 +
 *Note*: You will manually select the correct installation media in the next step.
 +
@@ -76,11 +73,17 @@ image::vmware_step6.png[width=80%,pdfwidth=80%]
 .. Tick the box menu:New CD/DVD[Connect At Power On] to be able boot from ISO/DVD
 .. The click on "Browse" next to the `CD/DVD Media` field to select the downloaded ISO image on desired datastore (here: `/vmfs/volumes/my-directory/{isofile}`),
 
++
+image::vmware_step6b.png[width=80%,pdfwidth=80%]
+.. Go to tab VM Options
+.. Select menu:Boot Options[]
+.. Select menu:Firmware[Bios]
+
 ==== {sls} installation
 
 [NOTE]
 ====
-Use AutoYaST and ensure to use a staged frozen patchlevel via SMT/SUSE Manager to ensure 100% reproducible setup.
+Use AutoYaST and ensure to use a staged frozen patchlevel via SMT/SUSE Manager to ensure a 100% reproducible setup.
 For the moment (until an AutoYAsT template is available) follow the procedure below.
 ====
 
@@ -96,6 +99,7 @@ image::vmware_extension.png[width=80%,pdfwidth=80%]
 ** SUSE CaaS Platform 4.0 x86_64 (ALPHA)
 ** Basesystem Module
 ** Containers Module (this will automatically be ticked when you select {productname})
+** Public Cloud Module
 . Enter the registration code to unlock the {productname} extension
 . Select menu:System Role[Minimal] on the "System Role" screen
 . Click on "Expert Partitioner" to redesign the default partition layout
@@ -141,7 +145,11 @@ image::vmware_step14.png[width=80%,pdfwidth=80%]
 +
 image::vmware_step15.png[width=80%,pdfwidth=80%]
 . Click "Next".
-. On the "Installation Settings" screen, scroll to the `kdump` section of the software description and click on the title.
+. On the "Installation Settings" screen:
+.. In the "Network Configuration" section:
+... Disable the Firewall (click on `(disable)`)
+... Enable the SSH service (clock on `(enable)`)
+.. Scroll to the `kdump` section of the software description and click on the title.
 . In the "Kdump Start-Up" screen select menu:Enable/Disable Kdump[Disable Kdump]
 .. Confirm with "OK".
 +
@@ -154,18 +162,10 @@ image::vmware_step17.png[width=80%,pdfwidth=80%]
 ==== Preparation of the VM as a template
 
 In order to run {productname} on the created VMs, you must configure and install some additional details
-like root certificates, sudo, vmware tools and adding the {productname} package repository.
+like sudo, vmware tools and adding the {kube} dependencies.
 
-[IMPORTANT]
-====
-Since this is an internal preview release the images and packages are signed with SUSE internal certificates.
-You must make the certificates available to the VM by adding the CA repository and installing the certificates meta package.
-
-----
-zypper ar http://download.suse.de/ibs/SUSE:/CA/SLE_15_SP1/ suse_ca # HACK for in-house signed images
-zypper in ca-certificates-suse # HACK for in-house signed images
-----
-====
+[TIP]
+Steps 1-3 may be skipped, if they were already performed in YaST during the {sle} installation.
 
 . Register SLES15-SP1 system. Substitute `SLES_REGCODE` for the {sle} registration code.
 +
@@ -193,16 +193,29 @@ SUSEConnect -p caasp/4.0/x86_64 -r CAASP_REGCODE
 ----
 ssh-copy-id -i ~/.ssh/id_rsa.pub sles@vm-template.host
 ----
-. Install `sudo`
+. Install required packages:
 +
 ----
-zypper in sudo
+zypper in cloud-init sudo kubernetes-kubelet kubernetes-kubeadm kubernetes-client cni-plugins btrfsprogs e2fsprogs cloud-init-vmware-guestinfo
 ----
-. Configure `sudo` for the `sles` user to be able authenticate without password. As root run:
+. Configure `sudo` for the `{username}` user to be able authenticate without password. Replace `{username}` with the user you created during installation. As root run:
 +
 ----
-echo "sles ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+echo "{username} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 ----
+
+. Enable the installed `cloud-init` services:
++
+----
+systemctl enable cloud-init cloud-init-local cloud-config cloud-final
+----
+
+. Deregister from `scc`:
++
+----
+SUSEConnect -d
+----
+
 . Do a cleanup of the SLE image for converting into a VMWare template:
 +
 ----
@@ -225,13 +238,81 @@ shutdown -h now
 
 Now you can convert the VM into a template in VMware (or repeat this action block for each vm).
 
-. In the vSphere WebUI right-click on the VM and select menu:Template[Convert to Template]
+. In the vSphere WebUI right-click on the VM and select menu:Template[Convert to Template].
 Name it reasonably so you can later identify the template. The template will be created.
 
 === Deploying VMs from the Template
 
+==== Terraform
+
+To deploy the required virtual machines from the newly created template, it is
+possible to use `terraform`.
+
+To obtain the required packages you can use the {productname} product repositories to
+install the packages: `terraform` and `caaspctl`.
+
+Once these packages are installed, you will find terraform template files from
+VMWare in `/usr/share/caasp/terraform/vmware`. Copy this folder to a location
+of your choice, as the files need adjustment.
+
+----
+mkdir -p ~/caasp/deployment/
+cp -r /usr/share/caasp/terraform/vmware/ ~/caasp/deployment/
+cd ~/caasp/deployment/vmware/
+----
+
+Once the files are copied, rename the `terraform.tfvars.example` file to
+`terraform.tfvars`:
+
+----
+mv terraform.tfvars.example terraform.tfvars
+----
+
+Edit the `terraform.tfvars` file and add/adjust (at least) the following variables:
+
+. `vsphere_datastore`: The datastore to use.
+. `vsphere_datacenter`: The datacenter to use.
+. `vsphere_network`: The network to use.
+. `vsphere_resource_pool`: The resource pool to use.
+. `template_name`: The name of the template created according to instructions
+. `stack_name`: Prefix for all machines of the cluster spawned by terraform.
+. `authorized_keys`: List of ssh-public-keys that will be able to login to the
+deployed machines.
+. `ntp_servers`: A list of `ntp` servers you would like to use with `chrony`.
+. `repositories`: A list of additional repositories to be added on each
+machines - leave empty if no additional packages need to be installed.
+
+Also adjust the file `registration.auto.tfvars` and add the {productname}
+registration code, so each machine is correctly registered after initialization.
+
+Once the files are adjusted, `terraform` needs to know about the `vSphere` server
+and the login details for it; these can be exported as environment variables or
+entered every time `terraform` is invoked.
+
+Additionally, the `ssh-key` that is specified in the `tfvars` file must be added
+to the keyring, so the machine running `caaspctl` can `ssh` into the machines:
+
+----
+export VSPHERE_SERVER="<server_address"
+export VSPHERE_USER="<username>"
+export VSPHERE_PASSWORD="<password>"
+
+ssh-add -i <path_to_ssh_key_from_tfvars>
+----
+
+Run terraform to create the required machines for use with `caaspctl`:
+
+----
+terraform init
+terraform apply
+----
+
+include::deployment-terraform-example.adoc[tag=tf.vmware]
+
+==== Setup by hand
+
 . Right-click on the template and select "New VM from This Template..." and name it something like `caasp4-master-0`.
-.. Select storage datastore and the designated Resource pool.
+.. Select storage `datastore` and the designated resource pool.
 
 Repeat these steps until you have created the desired number of machines comprising your cluster.
 
@@ -257,7 +338,7 @@ sudo systemd-machine-id-setup
 
 === Installing {productname} packages
 
-Install {productname} related packages to each node. You can alternatively preinstall them during the creation of the template but
+Install {productname} related packages to each node. You can alternatively pre-install them during the creation of the template but
 then you are limited to installing old versions of the packages with the template and updating manually afterwards.
 
 [TIP]
