@@ -1,0 +1,128 @@
+== Terraform Config Examples
+
+# tag::tf.default[]
+[[tf.default]]
+=== Terraform Default Configuration
+[source,json]
+----
+# SUSE CaaSP Product Registration Code
+caasp_registry_code = "..."
+
+# Name of the internal network to be created
+internal_net = "caasp"
+
+# identifier to make all your resources unique and avoid clashes with other users of this terraform project
+stack_name = "caasp"
+
+# instance user name
+username = "sles"
+
+# define which image to use
+image_name = "SLE-15-SP1-JeOS-GMC"
+
+# Number of master nodes
+masters = 1
+
+# Number of worker nodes
+workers = 2
+
+repositories = []
+
+packages = [
+  "kubernetes-kubeadm",
+  "kubernetes-client",
+  "kernel-default",
+  "-kernel-default-base",
+]
+
+# ssh keys to inject into all the nodes
+authorized_keys = [
+  "ssh-rsa ..."
+]
+
+# IMPORTANT: Replace these ntp servers with ones from your infrastructure
+ntp_servers = ["0.novell.pool.ntp.org", "1.novell.pool.ntp.org", "2.novell.pool.ntp.org", "3.novell.pool.ntp.org"]
+----
+# end::tf.default[]
+
+# tag::tf.vmware[]
+[[tf.vmware]]
+=== Terraform VMWare Configuration
+[source,json]
+----
+# datastore to use on the vSphere server
+# EXAMPLE:
+# vsphere_datastore = "STORAGE-0"
+vsphere_datastore = "3PAR"
+
+# datacenter to use on the vSphere server
+# EXAMPLE:
+# vsphere_datacenter = "DATACENTER"
+vsphere_datacenter = "PROVO"
+
+# network to use on the vSphere server
+# EXAMPLE:
+# vsphere_network = "VM Network"
+vsphere_network = "VM Network"
+
+# resource pool the machines will be running in
+# EXAMPLE:
+# vsphere_resource_pool = "CaaSP_RP"
+vsphere_resource_pool = "CaaSP_RP"
+
+# template name the machines will be copied from
+# EXAMPLE:
+# template_name = "SLES15-SP1-cloud-init"
+template_name = "fb-sles15-sp1-caasp"
+
+# prefix that all of the booted machines will use
+# IMPORTANT, please enter unique identifier bellow as value of stack_name variable to not interfere with other deployments
+stack_name = "caasp-v4"
+
+# Number of master nodes
+masters = 1
+
+# Number of worker nodes
+workers = 2
+
+# Username for the cluster nodes
+# EXAMPLE:
+# username = "sles"
+username = "sles"
+
+# Password for the cluster nodes
+# EXAMPLE:
+# password = "linux"
+password = "sles"
+
+# define the repositories to use
+# EXAMPLE:
+# repositories = [
+#   { repository1 = "http://example.my.repo.com/repository1/" },
+#   { repository2 = "http://example.my.repo.com/repository2/" }
+# ]
+repositories = []
+
+# Minimum required packages. Do not remove them.
+# Feel free to add more packages
+packages = [
+    "kubernetes-kubeadm",
+    "kubernetes-kubelet",
+    "kubernetes-client",
+    "cri-o",
+    "cni-plugins"
+]
+
+# ssh keys to inject into all the nodes
+# EXAMPLE:
+# authorized_keys = [
+#   "ssh-rsa <key-content>"
+# ]
+authorized_keys = [
+  "ssh-rsa <example_key> example@example.org"
+]
+
+# IMPORTANT: Replace these ntp servers with ones from your infrastructure
+ntp_servers = ["0.novell.pool.ntp.org", "1.novell.pool.ntp.org", "2.novell.pool.ntp.org", "3.novell.pool.ntp.org"]
+----
+# end::tf.vmware[]
