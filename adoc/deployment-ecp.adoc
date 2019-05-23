@@ -44,62 +44,7 @@ sudo zypper in caaspctl
 . Switch to the directory `/usr/share/caasp/terraform/openstack/`.
 . Create a file `terraform.tfvars` or just copy the existing `terraform.tfvars.sles.example` to it
 +
-----
-# Name of the internal network to be created
-internal_net = "testing"
-
-# identifier to make all your resources unique and avoid clashes with other users of this terraform project
-stack_name = "testing"
-
-# instance user name
-username = "sles"
-
-# define which image to use
-image_name = "SLES15-SP1-JeOS-RC1-with-fixed-kernel-default"
-
-# Number of master nodes
-masters = 1
-
-# Number of worker nodes
-workers = 2
-
-# define the repositories to use
-repositories = [
-  {
-    caasp_40_devel_sle15sp1 = "http://download.suse.de/ibs/Devel:/CaaSP:/4.0/SLE_15_SP1/"
-  },
-  {
-    sle15sp1_pool = "http://download.suse.de/ibs/SUSE:/SLE-15-SP1:/GA/standard/"
-  },
-  {
-    sle15sp1_update = "http://download.suse.de/ibs/SUSE:/SLE-15-SP1:/Update/standard/"
-  },
-  {
-    sle15_pool = "http://download.suse.de/ibs/SUSE:/SLE-15:/GA/standard/"
-  },
-  {
-    sle15_update = "http://download.suse.de/ibs/SUSE:/SLE-15:/Update/standard/"
-  },
-  {
-    suse_ca = "http://download.suse.de/ibs/SUSE:/CA/SLE_15_SP1/"
-  }
-]
-
-packages = [
-  "ca-certificates-suse",
-  "kubernetes-kubeadm",
-  "kubernetes-kubelet",
-  "kubernetes-client"
-]
-
-# ssh keys to inject into all the nodes
-authorized_keys = [
-  ""
-]
-
-# IMPORTANT: Replace these ntp servers with ones from your infrastructure
-ntp_servers = ["0.novell.pool.ntp.org", "1.novell.pool.ntp.org", "2.novell.pool.ntp.org", "3.novell.pool.ntp.org"]
-----
+include::deployment-terraform-example.adoc[tags=tf.default]
 . Replace `internal_net` and `stack_name` with your desired name for the cluster. This string will be used to generate the human readable IDs in {soc}.
 If you use a generic term it is very likely to fail deployment because the term is already in use by someone else. It's a good idea to use your username or other unique identifier.
 . You can adjust the size of the deployed cluster by changing the "masters" and "workers" variables.
