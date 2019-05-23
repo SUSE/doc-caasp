@@ -1,15 +1,15 @@
 == Deployment on SUSE OpenStack Cloud
 
-You will use `terrafrom` to deploy the required master and worker cluster nodes (plus a load balancer) to {soc} and then use the
-`caaspctl` tool to bootstrap the kubernetes cluster on top of those.
+You will use {tf} to deploy the required master and worker cluster nodes (plus a load balancer) to {soc} and then use the
+`caaspctl` tool to bootstrap the {kube} cluster on top of those.
 
 === Preparation
 
-Both `caaspctl` and `terraform` (along with its configuration examples) are provided by `SUSE-CaaSP-Management` pattern.
+Both `caaspctl` and `terraform` (along with its configuration examples) are provided by the `SUSE-CaaSP-Management` pattern.
 
 . Login and register
 +
-Activate your SUSE SLES15-SP1 and SUSE CaaSP v4.0 subscription, activating the containers module as well:
+Activate your {suse} SLES15-SP1 and {productname} {productmajor} subscription, activating the containers module as well:
 +
 ----
 sudo SUSEConnect -r <code>
@@ -39,12 +39,13 @@ source container-openrc.sh
 === Deploying the cluster nodes
 
 . Copy the configuration files into a directory:
++
 ----
 mkdir ~/my-deployment
 cp -r /usr/share/caasp/terraform/openstack/* ~/my-deployment
 cd my-deployment
 ----
-. Create a file `terraform.tfvars` or just copy the existing `terraform.tfvars.example` to it and modify the configuration: 
+. Create a file `terraform.tfvars` or just copy the existing `terraform.tfvars.example` to it and modify the configuration:
 +
 include::deployment-terraform-example.adoc[tags=tf.default]
 . Replace `internal_net` and `stack_name` with your desired name for the cluster. This string will be used to generate the human readable IDs in {soc}.
@@ -56,22 +57,25 @@ If you use a generic term it is very likely to fail deployment because the term 
 +
 * `~/my-deployment/cloud-init/master.tpl`
 * `/my-deployment/cloud-init/worker.tpl`
-. Enter the registration code for your nodes into `~/my-deployment/registration.auto.tfvars`:
+. Enter the registration code for your nodes in `~/my-deployment/registration.auto.tfvars`:
 +
 ----
 # SUSE CaaSP Product Registration Code
 caasp_registry_code = ""
 ----
++
+This is required so all the deployed nodes can automatically register to {scc} and retrieve packages.
 . Now you can deploy the nodes by running:
++
 ----
 terraform init
 terraform plan
 terraform apply
 ----
-
++
 Check the output for the actions to be taken. Type "yes" and confirm with Enter when ready.
 Terraform will now provision all the machines and network infrastructure for the cluster.
-
++
 .Note down IP/FQDN for nodes
 [IMPORTANT]
 ====
