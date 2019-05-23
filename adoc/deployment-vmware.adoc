@@ -268,7 +268,7 @@ Once the files are copied, rename the `terraform.tfvars.example` file to
 mv terraform.tfvars.example terraform.tfvars
 ----
 
-Edit the `terraform.tfvars` file and adjust (at least) the following variables:
+Edit the `terraform.tfvars` file and add/adjust (at least) the following variables:
 
 . `vsphere_datastore`: The datastore to use.
 . `vsphere_datacenter`: The datacenter to use.
@@ -307,47 +307,7 @@ terraform init
 terraform apply
 ----
 
-===== Example
-[source,json]
-----
-# SUSE CaaSP Product Registration Code
-caasp_registry_code = "..."
-
-# Name of the internal network to be created
-internal_net = "caasp"
-
-# identifier to make all your resources unique and avoid clashes with other users of this terraform project
-stack_name = "caasp"
-
-# instance user name
-username = "sles"
-
-# define which image to use
-image_name = "SLE-15-SP1-JeOS-GMC"
-
-# Number of master nodes
-masters = 1
-
-# Number of worker nodes
-workers = 2
-
-repositories = []
-
-packages = [
-  "kubernetes-kubeadm",
-  "kubernetes-client",
-  "kernel-default",
-  "-kernel-default-base",
-]
-
-# ssh keys to inject into all the nodes
-authorized_keys = [
-  "ssh-rsa ..."
-]
-
-# IMPORTANT: Replace these ntp servers with ones from your infrastructure
-ntp_servers = ["0.novell.pool.ntp.org", "1.novell.pool.ntp.org", "2.novell.pool.ntp.org", "3.novell.pool.ntp.org"]
-----
+include::deployment-terraform-example.adoc[tag=tf.vmware]
 
 ==== Setup by hand
 
