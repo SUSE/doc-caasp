@@ -1,0 +1,53 @@
+[[deployment.preparations]]
+== Deployment Preparations
+
+In order to deploy {productname} you need a workstation running {sle} 15 SP1 or similar {opensuse} equivalent.
+This workstation is called the "Management node".
+
+You need to have configured an SSH key pair that will be used to log into the
+created cluster nodes. This identity must be loaded into your users ssh-agent.
+
+The correct configuration of this SSH key pair is mandatory to be able to use
+the installation tools; more specifically: `caaspctl`.
+
+=== Registration Code
+
+[NOTE]
+====
+The registration code for {productname} {productnumber} also contains the activation
+permissions for the underlying {sle} operating system. You can use your {productname}
+registration code to activate the {sle} 15 SP1 subscription during installation.
+====
+
+You need a subscription registration code to use {productname}. You can retrieve your
+registration code from {scc}.
+
+* Login to https://scc.suse.com
+* Navigate to menu:Internal tools[Products]
+* Search for "caasp"
+* Select menu:SUSE CaaS Platform[4.0 > x86_64 alpha]
+* Copy the menu:Registration Code[]
+
+=== Installation tools
+
+For any deployment type you will need `caaspctl` and `{tf}`. These packages are
+available from the {productname} package sources. They are provided as an installation
+"pattern" that will install dependencies and other required packages in one simple step.
+
+Access to the packages requires the `{productname}` and `Containers` extension modules.
+Enable the modules during the operating system installation or activate them using {suse} Connect.
+
+[source,bash]
+----
+sudo SUSEConnect -r REGISTRATION_CODE # <1>
+sudo SUSEConnect -p sle-module-containers/15.1/x86_64 # <2>
+sudo SUSEConnect -p caasp/4.0/x86_64 -r REGISTRATION_CODE # <3>
+----
+<1> Activate {sle}
+<2> Add the free `Containers` module
+<3> Add the {productname} extension with your registration code
+
+Install the required tools:
+----
+sudo zypper in -t pattern CaaSP-Management
+----
