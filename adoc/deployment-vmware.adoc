@@ -1,5 +1,9 @@
 == Deployment on VMWare
 
+.Preparation Required
+[NOTE]
+You must have completed <<deployment.preparations>> to proceed.
+
 === Environment description
 
 [NOTE]
@@ -29,29 +33,23 @@ ssh root@vmware.esxi.node
 ----
 cd /vmfs/volumes/my-directory/
 ----
-. Download the installation media from
-{isolink}{isofile}
-+
-[subs=attributes]
-----
-wget {isolink}{isofile}
-----
+. Download the installation media from {download_url}
 
 Now you can create a new base VM for {productname} within the designated resource
 pool through the vSphere WebUI:
 
-. Create a "New Virtual Machine"
-. Define a name for the virtual machine (VM)
+. Create a "New Virtual Machine".
+. Define a name for the virtual machine (VM).
 +
 image::vmware_step1.png[width=80%,pdfwidth=80%]
-. Select the folder where the VM will be stored
-. Select a `Compute Resource` that will run the VM
+. Select the folder where the VM will be stored.
+. Select a `Compute Resource` that will run the VM.
 +
 image::vmware_step2.png[width=80%,pdfwidth=80%]
-. Select the storage used by the VM
+. Select the storage used by the VM.
 +
 image::vmware_step3.png[width=80%,pdfwidth=80%]
-. Select `ESXi 6.7 and later` from compatibility
+. Select `ESXi 6.7 and later` from compatibility.
 +
 image::vmware_step4.png[width=80%,pdfwidth=80%]
 . Select menu:Guest OS Family[Linux] and menu:Guest OS Version[SUSE Linux Enterprise 15 (64 Bit)].
@@ -59,51 +57,51 @@ image::vmware_step4.png[width=80%,pdfwidth=80%]
 *Note*: You will manually select the correct installation media in the next step.
 +
 image::vmware_step5.png[width=80%,pdfwidth=80%]
-. Now customize the hardware settings
+. Now customize the hardware settings.
 +
 image::vmware_step6.png[width=80%,pdfwidth=80%]
-.. Select menu:CPU[2]
-.. Select menu:Memory[4096 MB]
-.. Select menu:New Hard disk[40GB]
-.. Select menu:New SCSI Controller[LSI Logic Parallel SCSI controller (default)] and change it to "VMware Paravirtualized"
-.. Select menu:New Network[VM Network], menu:New Network[Adapter Type > VMXNET3]
+.. Select menu:CPU[2].
+.. Select menu:Memory[4096 MB].
+.. Select menu:New Hard disk[40GB].
+.. Select menu:New SCSI Controller[LSI Logic Parallel SCSI controller (default)] and change it to "VMware Paravirtualized".
+.. Select menu:New Network[VM Network], menu:New Network[Adapter Type > VMXNET3].
 +
 ("VM Network" sets up a bridged network which provides a public IP address reachable within a company)
-.. Select menu:New CD/DVD[Datastore ISO File]
-.. Tick the box menu:New CD/DVD[Connect At Power On] to be able boot from ISO/DVD
-.. The click on "Browse" next to the `CD/DVD Media` field to select the downloaded ISO image on desired datastore (here: `/vmfs/volumes/my-directory/{isofile}`),
-
+.. Select menu:New CD/DVD[Datastore ISO File].
+.. Tick the box menu:New CD/DVD[Connect At Power On] to be able boot from ISO/DVD.
+.. The click on "Browse" next to the `CD/DVD Media` field to select the downloaded ISO image on desired datastore.
+.. Go to tab VM Options.
 +
 image::vmware_step6b.png[width=80%,pdfwidth=80%]
-.. Go to tab VM Options
-.. Select menu:Boot Options[]
-.. Select menu:Firmware[Bios]
+.. Select menu:Boot Options[].
+.. Select menu:Firmware[Bios].
+.. Confirm the process with menu:Next[].
 
 ==== {sls} installation
 
 [NOTE]
 ====
-Use AutoYaST and ensure to use a staged frozen patchlevel via SMT/SUSE Manager to ensure a 100% reproducible setup.
-For the moment (until an AutoYAsT template is available) follow the procedure below.
+Use {ay} and ensure to use a staged frozen patchlevel via SMT/SUSE Manager to ensure a 100% reproducible setup.
+For the moment (until an {ay} template is available) follow the procedure below.
 ====
 
 Power on the newly created VM and install the system over graphical remote console:
 
 . Enter registration code for SLES in YaST.
 . Confirm the update repositories prompt with "Yes".
-. Remove the checkmark in the "Hide Development Versions" box
+. Remove the checkmark in the "Hide Development Versions" box.
 .
 . Make sure the following modules are selected on the "Extension and Module Selection" screen:
 +
 image::vmware_extension.png[width=80%,pdfwidth=80%]
-** SUSE CaaS Platform 4.0 x86_64 (ALPHA)
+** SUSE CaaS Platform 4.0 x86_64 (BETA)
 ** Basesystem Module
 ** Containers Module (this will automatically be ticked when you select {productname})
 ** Public Cloud Module
-. Enter the registration code to unlock the {productname} extension
-. Select menu:System Role[Minimal] on the "System Role" screen
-. Click on "Expert Partitioner" to redesign the default partition layout
-. Select "Start with current proposal"
+. Enter the registration code to unlock the {productname} extension.
+. Select menu:System Role[Minimal] on the "System Role" screen.
+. Click on "Expert Partitioner" to redesign the default partition layout.
+. Select "Start with current proposal".
 +
 image::vmware_step8.png[width=80%,pdfwidth=80%]
 .. Keep `sda1` as BIOS partition
@@ -114,18 +112,18 @@ Select the device in "System View" on the left (Default: `/dev/sda2`) and click 
 image::vmware_step9.png[width=80%,pdfwidth=80%]
 .. Remove the `/home` partition.
 .. Remove the `swap` partition.
-. Select the `/dev/sda/` device in "System View" and then click menu:Partitions[Add Partition]
+. Select the `/dev/sda/` device in "System View" and then click menu:Partitions[Add Partition].
 +
 image::vmware_step10.png[width=80%,pdfwidth=80%]
-. Accept the default maximum size (remaining size of the hard disk defined earlier without the boot partition)
+. Accept the default maximum size (remaining size of the hard disk defined earlier without the boot partition).
 +
 image::vmware_step11.png[width=80%,pdfwidth=80%]
-.. Confirm with "Next"
+.. Confirm with "Next".
 .. Select menu:Role[Operating System]
 +
 image::vmware_step12.png[width=80%,pdfwidth=80%]
-.. Confirm with "Next"
-.. Accept the default settings
+.. Confirm with "Next".
+.. Accept the default settings.
 +
 image::vmware_step13.png[width=80%,pdfwidth=80%]
 *** Filesystem: BtrFS
@@ -140,17 +138,17 @@ image::vmware_step7.png[width=80%,pdfwidth=80%]
 image::vmware_step14.png[width=80%,pdfwidth=80%]
 . Click "Next".
 . Configure your timezone and click "Next".
-. Create a user with the Username `sles` and specify a password
-.. Tick the box menu:Local User[Use this password for system administrator]
+. Create a user with the Username `sles` and specify a password.
+.. Tick the box menu:Local User[Use this password for system administrator].
 +
 image::vmware_step15.png[width=80%,pdfwidth=80%]
 . Click "Next".
 . On the "Installation Settings" screen:
 .. In the "Network Configuration" section:
-... Disable the Firewall (click on `(disable)`)
-... Enable the SSH service (clock on `(enable)`)
+... Disable the Firewall (click on `(disable)`).
+... Enable the SSH service (clock on `(enable)`).
 .. Scroll to the `kdump` section of the software description and click on the title.
-. In the "Kdump Start-Up" screen select menu:Enable/Disable Kdump[Disable Kdump]
+. In the "Kdump Start-Up" screen select menu:Enable/Disable Kdump[Disable Kdump].
 .. Confirm with "OK".
 +
 image::vmware_step16.png[width=80%,pdfwidth=80%]
@@ -161,26 +159,27 @@ image::vmware_step17.png[width=80%,pdfwidth=80%]
 
 ==== Preparation of the VM as a template
 
-In order to run {productname} on the created VMs, you must configure and install some additional details
-like sudo, vmware tools and adding the {kube} dependencies.
+In order to run {productname} on the created VMs, you must configure and install some additional packages
+like `sudo`, `VMWare tools` and adding the {kube} dependencies.
 
+.Activate extensions during {sle} installation with YaST
 [TIP]
 Steps 1-3 may be skipped, if they were already performed in YaST during the {sle} installation.
 
-. Register SLES15-SP1 system. Substitute `SLES_REGCODE` for the {sle} registration code.
+. Register the SLES15-SP1 system. Substitute `REGISTRATION_CODE` for the code from <<registration_code>>.
 +
 ----
-SUSEConnect -r SLES_REGCODE
+SUSEConnect -r REGISTRATION_CODE
 ----
-. Register Container Module (free of charge)
+. Register the `Containers` module (free of charge)
 +
 ----
 SUSEConnect -p sle-module-containers/15.1/x86_64
 ----
-. Register the {productname} Module. Substitute `CAASP_REGCODE` for the {productname} registration code.
+. Register the {productname} module. Substitute `REGISTRATION_CODE` for the code from <<registration_code>>.
 +
 ----
-SUSEConnect -p caasp/4.0/x86_64 -r CAASP_REGCODE
+SUSEConnect -p caasp/4.0/x86_64 -r REGISTRATION_CODE
 ----
 // . Install `open-vm-tools`
 // +
@@ -188,23 +187,23 @@ SUSEConnect -p caasp/4.0/x86_64 -r CAASP_REGCODE
 // zypper in open-vm-tools # in my case it was installed and enabled automatically during sles installation
 // systemctl status vmtoolsd; systemctl status vgauthd.service
 // ----
-. Copy your public SSH key for the user used for caaspctl bootstrap (normally 'sles') which will be used for {productname} deployment:
+. Copy your public SSH key for the user used for `caaspctl` bootstrap (normally `sles`) which will be used for {productname} deployment:
 +
 ----
 ssh-copy-id -i ~/.ssh/id_rsa.pub sles@vm-template.host
 ----
-. Install required packages:
+. Install required packages. As root, run:
 +
 ----
-zypper in cloud-init sudo kubernetes-kubelet kubernetes-kubeadm kubernetes-client cni-plugins btrfsprogs e2fsprogs cloud-init-vmware-guestinfo
+zypper in -t pattern SUSE-CaaSP-Node
 ----
-. Configure `sudo` for the `{username}` user to be able authenticate without password. Replace `{username}` with the user you created during installation. As root run:
+. Configure `sudo` for the user to be able authenticate without password. Replace `USERNAME` with the user you created during installation. As root, run:
 +
 ----
-echo "{username} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+echo "USERNAME ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 ----
 
-. Enable the installed `cloud-init` services:
+. Enable the installed `cloud-init` services. As root, run:
 +
 ----
 systemctl enable cloud-init cloud-init-local cloud-config cloud-final
@@ -216,10 +215,12 @@ systemctl enable cloud-init cloud-init-local cloud-config cloud-final
 SUSEConnect -d
 ----
 
-. Do a cleanup of the SLE image for converting into a VMWare template:
+. Do a cleanup of the SLE image for converting into a VMWare template. As root, run:
 +
 ----
-rm /etc/machine-id /var/lib/zypp/AnonymousUniqueId /var/lib/systemd/random-seed /var/lib/dbus/machine-id /var/lib/wicked/*
+rm /etc/machine-id /var/lib/zypp/AnonymousUniqueId \
+/var/lib/systemd/random-seed /var/lib/dbus/machine-id \
+/var/lib/wicked/*
 ----
 . Cleanup btrfs snapshots and create one with initial state:
 +
@@ -228,7 +229,7 @@ snapper list
 snapper delete <list_of_nums_of_unneeded_snapshots>
 snapper create -d "Initial snapshot for caasp template" -t single
 ----
-. Power down the VM as root:
+. Power down the VM. As root, run:
 +
 ----
 shutdown -h now
@@ -236,24 +237,17 @@ shutdown -h now
 
 ==== Creating the VMWare Template
 
-Now you can convert the VM into a template in VMware (or repeat this action block for each vm).
+Now you can convert the VM into a template in VMware (or repeat this action block for each VM).
 
-. In the vSphere WebUI right-click on the VM and select menu:Template[Convert to Template].
+. In the vSphere WebUI, right-click on the VM and select menu:Template[Convert to Template].
 Name it reasonably so you can later identify the template. The template will be created.
 
 === Deploying VMs from the Template
 
 ==== Terraform
 
-To deploy the required virtual machines from the newly created template, it is
-possible to use `terraform`.
-
-To obtain the required packages you can use the {productname} product repositories to
-install the packages: `terraform` and `caaspctl`.
-
-Once these packages are installed, you will find terraform template files from
-VMWare in `/usr/share/caasp/terraform/vmware`. Copy this folder to a location
-of your choice, as the files need adjustment.
+Find the {tf} template files from VMWare in `/usr/share/caasp/terraform/vmware`.
+Copy this folder to a location of your choice as the files need adjustment.
 
 ----
 mkdir -p ~/caasp/deployment/
@@ -304,6 +298,7 @@ Run terraform to create the required machines for use with `caaspctl`:
 
 ----
 terraform init
+terraform plan
 terraform apply
 ----
 
@@ -311,7 +306,7 @@ include::deployment-terraform-example.adoc[tag=tf.vmware]
 
 ==== Setup by hand
 
-. Right-click on the template and select "New VM from This Template..." and name it something like `caasp4-master-0`.
+. Right-click on the template and select menu:New VM from This Template...[] and name it something like `caasp4-master-0`.
 .. Select storage `datastore` and the designated resource pool.
 
 Repeat these steps until you have created the desired number of machines comprising your cluster.
@@ -341,6 +336,7 @@ sudo systemd-machine-id-setup
 Install {productname} related packages to each node. You can alternatively pre-install them during the creation of the template but
 then you are limited to installing old versions of the packages with the template and updating manually afterwards.
 
+.Use terminal multiplexing
 [TIP]
 ====
 These steps have to be performed on each VM that you just created; thus it can be time consuming.

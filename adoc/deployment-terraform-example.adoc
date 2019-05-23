@@ -5,20 +5,27 @@
 # tag::tf.default[]
 [source,json]
 ----
-# SUSE CaaSP Product Registration Code
-caasp_registry_code = "..."
+# Name of the image to use
+image_name = "SLE-15-SP1-JeOS-GMC"
 
 # Name of the internal network to be created
-internal_net = "caasp"
+internal_net = "testing"
 
-# identifier to make all your resources unique and avoid clashes with other users of this terraform project
-stack_name = "caasp"
+# Name of the external network to be used, the one used to allocate floating IPs
+external_net = "floating"
 
-# instance user name
-username = "sles"
+# Identifier to make all your resources unique and avoid clashes with other users of this terraform project
+stack_name = "testing"
 
-# define which image to use
-image_name = "SLE-15-SP1-JeOS-GMC"
+# CIDR of the subnet for the internal network
+subnet_cidr = "172.28.0.0/24"
+
+# DNS servers for the nodes
+"dns_nameservers" = [
+    "172.28.0.2",
+    "8.8.8.8",
+    "8.8.8.4"
+]
 
 # Number of master nodes
 masters = 1
@@ -26,18 +33,49 @@ masters = 1
 # Number of worker nodes
 workers = 2
 
+# Size of the master nodes
+master_size = "m1.medium"
+
+# Size of the worker nodes
+worker_size = "m1.medium"
+
+# Attach persistent volumes to workers
+workers_vol_enabled = 0
+
+# Size of the worker volumes in GB
+workers_vol_size = 5
+
+# Name of DNS domain
+dnsdomain = "testing.example.com"
+
+# Set DNS Entry (0 is false, 1 is true)
+dnsentry = 0
+
+# Username for the cluster nodes
+username = "sles"
+
+# Password for the cluster nodes
+password = "linux"
+
+# Optional: Define the repositories to use
+# repositories = [
+#     { repository1 = "http://repo.example.com/repository1/" },
+#     { repository2 = "http://repo.example.com/repository2/" }
+# ]
 repositories = []
 
+# Define required packages to be installed/removed. Do not change those.
 packages = [
-  "kubernetes-kubeadm",
-  "kubernetes-client",
   "kernel-default",
   "-kernel-default-base",
+  "kubernetes-kubeadm",
+  "kubernetes-kubelet",
+  "kubernetes-client"
 ]
 
 # ssh keys to inject into all the nodes
 authorized_keys = [
-  "ssh-rsa ..."
+  ""
 ]
 
 # IMPORTANT: Replace these ntp servers with ones from your infrastructure
@@ -58,7 +96,7 @@ vsphere_datastore = "3PAR"
 # datacenter to use on the vSphere server
 # EXAMPLE:
 # vsphere_datacenter = "DATACENTER"
-vsphere_datacenter = "PROVO"
+vsphere_datacenter = "MYDATACENTER"
 
 # network to use on the vSphere server
 # EXAMPLE:
@@ -67,16 +105,17 @@ vsphere_network = "VM Network"
 
 # resource pool the machines will be running in
 # EXAMPLE:
-# vsphere_resource_pool = "CaaSP_RP"
-vsphere_resource_pool = "CaaSP_RP"
+# vsphere_resource_pool = "My_RP"
+vsphere_resource_pool = "My_RP"
 
 # template name the machines will be copied from
 # EXAMPLE:
 # template_name = "SLES15-SP1-cloud-init"
-template_name = "fb-sles15-sp1-caasp"
+template_name = "sles15-sp1-caasp"
 
 # prefix that all of the booted machines will use
-# IMPORTANT, please enter unique identifier bellow as value of stack_name variable to not interfere with other deployments
+# IMPORTANT, please enter unique identifier below as value of
+# stack_name variable to not interfere with other deployments
 stack_name = "caasp-v4"
 
 # Number of master nodes
@@ -98,8 +137,8 @@ password = "sles"
 # define the repositories to use
 # EXAMPLE:
 # repositories = [
-#   { repository1 = "http://example.my.repo.com/repository1/" },
-#   { repository2 = "http://example.my.repo.com/repository2/" }
+#   { repository1 = "http://repo.example.com/repository1/" },
+#   { repository2 = "http://repo.example.com/repository2/" }
 # ]
 repositories = []
 
@@ -119,7 +158,7 @@ packages = [
 #   "ssh-rsa <key-content>"
 # ]
 authorized_keys = [
-  "ssh-rsa <example_key> example@example.org"
+  "ssh-rsa <example_key> example@example.com"
 ]
 
 # IMPORTANT: Replace these ntp servers with ones from your infrastructure

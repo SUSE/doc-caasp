@@ -1,55 +1,8 @@
 == Bootstrapping the cluster
 
-=== Preparation
-
-==== Install caaspctl
-
-First you need to install caaspctl on your local workstation:
-
-. Add the SLE15 SP1 extension containing caaspctl. This also requires the "containers" module.
-+
-----
-SUSEConnect -p sle-module-containers/15.1/x86_64
-SUSEConnect -p caasp/4.0/x86_64 -r <Registration Code>
-----
-. Install caaspctl:
-+
-----
-sudo zypper in caaspctl
-----
-
 === Cluster Deployment
 
-Make sure you have added the SSH identity (corresponding to the SSH key distributed above) to the ssh-agent on your workstation. This is a requirement for caaspctl (https://github.com/SUSE/caaspctl#prerequisites).
-
-[TIP]
-====
-The `ssh-agent` process is usually started automatically by most UNIX
-environments. If that's not the case, invoke the `ssh-agent` command
-and follow the guidance given by the tool's output.
-
-You can start the `ssh-agent` in the background by using the
-`eval "$(ssh-agent -s)"` command.
-
-You can load as many keys as you want into your agent using the
-`ssh-add <path to key>` command. Keys can also be password protected.
-
-You can list all the identities loaded into the agent by using the
-`ssh-add -L` command.
-
-caaspctl will try all the identities loaded into the ssh-agent until one of
-them grants access to the node.
-
-It is also possible to forward the authentication agent connection from a
-host to another one. This can be useful if you intend to run caaspctl on
-a "jump host" and don't want to copy your private key to this node.
-
-This can be achieved using the `ssh -A` command. Please refer to the man page
-of ssh to learn about the security implications of using this feature.
-====
-
-
-. Now you can initialize the cluster on the deployed machines.
+. Initialize the cluster on the deployed machines.
 As `--control-plane` enter the IP/FQDN of your load balancer. If you do not use a load balancer use your first master node.
 +
 ----
@@ -61,6 +14,7 @@ caaspctl cluster init --control-plane <LB IP/FQDN> my-cluster
 For `--target` enter the IP address of your first master node.
 Replace `<NODE NAME>` with a unique identifier for example "master-one".
 +
+.Secure configuration files access
 [WARNING]
 ====
 The directory created during this step contains configuration files that allow full administrator access to your cluster. Apply best practices for access control to this folder.
@@ -68,7 +22,7 @@ The directory created during this step contains configuration files that allow f
 +
 ----
 cd my-cluster
-caaspctl node bootstrap  --user sles --sudo --target <IP/FQDN> <NODE NAME>
+caaspctl node bootstrap --user sles --sudo --target <IP/FQDN> <NODE NAME>
 ----
 This will bootstrap the specified node as the first master in the cluster.
 The process will generate authentication certificates and the `admin.conf` file that is used for authentication against the cluster.
@@ -105,7 +59,11 @@ worker-one   SUSE Linux Enterprise Server 15 SP1   4.12.14-110-default   cri-o:/
 
 === Using kubectl
 
-You can install and use kubectl by installing the kubernetes-client package from {caasp_repo_url}.
+You can install and use kubectl by installing the kubernetes-client package from the {productname} extension.
+
+----
+sudo zypper in kubernetes-client
+----
 
 [TIP]
 ====
