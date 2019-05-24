@@ -46,6 +46,7 @@ permissions for the underlying {sle} operating system. You can use your {product
 registration code to activate the {sle} 15 SP1 subscription during installation.
 ====
 
+ifeval::['{release_type}' == 'internal']
 You need a subscription registration code to use {productname}. You can retrieve your
 registration code from {scc}.
 
@@ -54,6 +55,12 @@ registration code from {scc}.
 * Search for "caasp"
 * Select menu:SUSE CaaS Platform[4.0 > x86_64 alpha]
 * Copy the menu:Registration Code[]
+endif::[]
+
+ifeval::['{release_type}' == 'public']
+Customers who wish to beta test {productname} {productmajor} should send an e-mail
+to beta-programs@lists.suse.com to request a {scc} subscription and a registration code.
+endif::[]
 
 === Installation tools
 
