@@ -1,0 +1,124 @@
+== Nginx TCP Load Balancer with passive checks
+
+We can use the `ngx_stream_module` module (available since version 1.9.0) in order to use
+TCP load balancing. In this mode, `nginx` will just forward the TCP packets to the master nodes.
+
+The default mechanism is **round-robin** so each request will be distributed
+to a different server.
+
+[CAUTION]
+====
+The Open Source version of Nginx referred to in this guide only allows one to
+use passive health checks. `nginx` will mark a node as unresponsive only after
+a failed request. The original request is lost and not forwarded to an available
+alternative server.
+
+This load balancer configuration is therefore only suitable for testing and proof-of-concept (POC) environments.
+====
+
+=== Configuration of the Load Balancer
+
+. Register SLES
++
+[source,bash]
+----
+SUSEConnect -r $MY_REG_CODE
+----
+. Install Nginx
++
+[source,bash]
+----
+zypper in nginx
+----
+. Write configuration in `/etc/nginx/nginx.conf`
++
+----
+user  nginx;
+worker_processes  auto;
+
+load_module /usr/lib64/nginx/modules/ngx_stream_module.so;
+
+error_log  /var/log/nginx/error.log;
+error_log  /var/log/nginx/error.log  notice;
+error_log  /var/log/nginx/error.log  info;
+
+events {
+    worker_connections  1024;
+    use epoll;
+}
+
+stream {
+    log_format proxy '$remote_addr [$time_local] '
+                     '$protocol $status $bytes_sent $bytes_received '
+                     '$session_time "$upstream_addr"';
+
+    error_log  /var/log/nginx/k8s-masters-lb-error.log;
+    access_log /var/log/nginx/k8s-masters-lb-access.log proxy;
+
+    upstream k8s-masters {
+        #hash $remote_addr consistent; // <1>
+        server master00:6443 weight=1 max_fails=1; // <2>
+        server master01:6443 weight=1 max_fails=1;
+        server master02:6443 weight=1 max_fails=1;
+    }
+
+    server {
+        listen 6443;
+        proxy_connect_timeout 1s;
+        proxy_timeout 3s;
+        proxy_pass k8s-masters;
+    }
+}
+----
+<1> **Note:** To enable session persistence, uncomment the `hash` option
+so the same client will always be redirected to the same server except if this
+server is unavailable.
+<2> Replace the individual `masterXX` with the IP/FQDN of your actual master nodes (one entry each) in the `upstream k8s-masters` section.
+. Configure `firewalld` to open up port `6443`. As root, run:
++
+[source,bash]
+----
+firewall-cmd --zone=public --permanent --add-port=6443/tcp
+----
+. Start and enable Nginx. As root, run:
++
+[source,bash]
+----
+systemctl enable --now nginx
+----
+
+=== Verify if the Load Balancer works
+
+[IMPORTANT]
+The {productname} cluster must be up and running for this to produce any useful
+results. This step can only be performed after <<bootstrap>> is completed
+successfully.
+
+To verify that the load balancer works you can run a simple command to repeatedly
+retrieve cluster information from the master nodes. Each request should be forwarded
+to a different master node.
+
+. Check logs
++
+From your workstation run:
++
+[source,bash]
+----
+$ while true; do caaspctl cluster status; sleep 1; done;
+----
+
+There should be no interruption in the  *caaspctl cluster status* running command.
+
+On the load balancer virtual machine, check the logs to validate
+that each request is correctly distributed in a round robin way.
+
+[source,bash]
+----
+# tail -f /var/log/nginx/k8s-masters-lb-access.log
+10.0.0.47 [17/May/2019:13:49:06 +0000] TCP 200 2553 1613 1.136 "10.0.0.145:6443"
+10.0.0.47 [17/May/2019:13:49:08 +0000] TCP 200 2553 1613 0.981 "10.0.0.148:6443"
+10.0.0.47 [17/May/2019:13:49:10 +0000] TCP 200 2553 1613 0.891 "10.0.0.7:6443"
+10.0.0.47 [17/May/2019:13:49:12 +0000] TCP 200 2553 1613 0.895 "10.0.0.145:6443"
+10.0.0.47 [17/May/2019:13:49:15 +0000] TCP 200 2553 1613 1.157 "10.0.0.148:6443"
+10.0.0.47 [17/May/2019:13:49:17 +0000] TCP 200 2553 1613 0.897 "10.0.0.7:6443"
+----
