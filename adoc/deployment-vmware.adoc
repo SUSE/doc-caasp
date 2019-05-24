@@ -246,38 +246,34 @@ Name it reasonably so you can later identify the template. The template will be 
 
 ==== Terraform
 
-Find the {tf} template files from VMWare in `/usr/share/caasp/terraform/vmware`.
+. Find the {tf} template files for {soc} in `/usr/share/caasp/terraform/openstack`.
 Copy this folder to a location of your choice as the files need adjustment.
-
++
 ----
 mkdir -p ~/caasp/deployment/
-cp -r /usr/share/caasp/terraform/vmware/ ~/caasp/deployment/
-cd ~/caasp/deployment/vmware/
+cp -r /usr/share/caasp/terraform/openstack/ ~/caasp/deployment/
+cd ~/caasp/deployment/openstack/
 ----
-
-Once the files are copied, rename the `terraform.tfvars.example` file to
+. Once the files are copied, rename the `terraform.tfvars.example` file to
 `terraform.tfvars`:
-
++
 ----
 mv terraform.tfvars.example terraform.tfvars
 ----
-
-Edit the `terraform.tfvars` file and add/adjust (at least) the following variables:
-
-. `vsphere_datastore`: The datastore to use.
-. `vsphere_datacenter`: The datacenter to use.
-. `vsphere_network`: The network to use.
-. `vsphere_resource_pool`: The resource pool to use.
-. `template_name`: The name of the template created according to instructions
-. `stack_name`: Prefix for all machines of the cluster spawned by terraform.
-. `authorized_keys`: List of ssh-public-keys that will be able to login to the
-deployed machines.
-. `ntp_servers`: A list of `ntp` servers you would like to use with `chrony`.
-. `repositories`: A list of additional repositories to be added on each
-machines - leave empty if no additional packages need to be installed.
-
-Also adjust the file `registration.auto.tfvars` and add the {productname}
-registration code, so each machine is correctly registered after initialization.
+. Edit the `terraform.tfvars` file and add modify the following variables:
++
+include::deployment-terraform-example.adoc[tag=tf_vmware]
+. Enter the registration code for your nodes in `~/my-deployment/registration.auto.tfvars`:
++
+Substitute `REGISTRATION_CODE` for the code from <<registration_code>>.
++
+[source,json]
+----
+# SUSE CaaSP Product Registration Code
+caasp_registry_code = "REGISTRATION_CODE"
+----
++
+This is required so all the deployed nodes can automatically register to {scc} and retrieve packages.
 
 Once the files are adjusted, `terraform` needs to know about the `vSphere` server
 and the login details for it; these can be exported as environment variables or
@@ -301,8 +297,6 @@ terraform init
 terraform plan
 terraform apply
 ----
-
-include::deployment-terraform-example.adoc[tag=tf.vmware]
 
 ==== Setup by hand
 

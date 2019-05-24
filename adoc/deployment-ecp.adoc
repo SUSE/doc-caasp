@@ -24,25 +24,31 @@ source container-openrc.sh
 
 === Deploying the cluster nodes
 
-. Copy the terraform configuration files into a directory of your choice:
+. Find the {tf} template files for {soc} in `/usr/share/caasp/terraform/openstack`.
+Copy this folder to a location of your choice as the files need adjustment.
 +
 ----
-mkdir ~/my-deployment
-cp -r /usr/share/caasp/terraform/openstack/* ~/my-deployment
-cd my-deployment
+mkdir -p ~/caasp/deployment/
+cp -r /usr/share/caasp/terraform/openstack/ ~/caasp/deployment/
+cd ~/caasp/deployment/openstack/
 ----
-. Create a file `terraform.tfvars` or just copy the existing `terraform.tfvars.example` to it and modify the configuration:
+. Once the files are copied, rename the `terraform.tfvars.example` file to
+`terraform.tfvars`:
 +
-include::deployment-terraform-example.adoc[tags=tf.default]
-. Replace `internal_net` and `stack_name` with your desired name for the cluster. This string will be used to generate the human readable IDs in {soc}.
-If you use a generic term it is very likely to fail deployment because the term is already in use by someone else. It's a good idea to use your username or other unique identifier.
-. You can adjust the size of the deployed cluster by changing the "masters" and "workers" variables.
-. Insert your public SSH key into the "authorized keys" variable. This key will be distributed to all machines and is your login credentials for all cluster nodes.
-. Make sure to set the correct NTP time servers for your infrastructure.
-. You can set timezone in before deploying the nodes by modifying the files:
+----
+mv terraform.tfvars.example terraform.tfvars
+----
+. Edit the `terraform.tfvars` file and add modify the following variables:
 +
+include::deployment-terraform-example.adoc[tags=tf_openstack]
++
+[TIP]
+====
+You can set timezone in before deploying the nodes by modifying the files:
+
 * `~/my-deployment/cloud-init/master.tpl`
 * `~/my-deployment/cloud-init/worker.tpl`
+====
 . Enter the registration code for your nodes in `~/my-deployment/registration.auto.tfvars`:
 +
 Substitute `REGISTRATION_CODE` for the code from <<registration_code>>.
