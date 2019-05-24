@@ -1,4 +1,5 @@
 = SUSE CaaS Platform Documentation
+:revdate: 2019-05-24
 
 image:https://travis-ci.org/SUSE/doc-caasp.svg?branch=adoc["Build Status", link="https://travis-ci.org/SUSE/doc-caasp"]
 
@@ -22,7 +23,21 @@ For help on style and structure, refer to the https://doc.opensuse.org/products/
 
 Changes to already released versions of the documentation must be merged to a `maintenance/CaaSX` branch from the maintainer.
 
-== Editing DocBook
+== Files and Directory Structure
+
+* `DC-caasp-*`: Configuration files for the exported guides.
+* `adoc/`: Contains all the pages that make up the content.
+* `adoc/book_*`: Meta files collating pages into a guide document.
+* `adoc/attributes.adoc` - Contains all version numbers of the product and it's components.
+Also contains the `release_type` flag that determines if the branch contains an `public` or (SUSE) `internal` release.
+* `adoc/entities.adoc` - Contains text substitutions for often used component names and strings.
+* `adoc/common_*`: Include files with common information like legal disclaimers and licenses.
+* `adoc/admin-*`: Pages belonging to the Admin guide.
+* `adoc/deployment-*`: Pages belonging to the Deployment guide.
+* `adoc/architecture-*`: Pages belonging to the Architecture guide.
+* `adoc/quick-*`: Pages belonging to the Quickstart guide.
+
+== Editing AsciiDoc
 
 To contribute to the documentation you will use AsciiDoc syntax.
 
