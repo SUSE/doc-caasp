@@ -3,10 +3,10 @@
 We can use the `ngx_stream_module` module (available since version 1.9.0) in order to use
 TCP load balancing. In this mode, `nginx` will just forward the TCP packets to the master nodes.
 
-The default mechanism is **round-robin** so each request will be distributed
+The default mechanism is *round-robin* so each request will be distributed
 to a different server.
 
-[CAUTION]
+[WARNING]
 ====
 The Open Source version of Nginx referred to in this guide only allows one to
 use passive health checks. `nginx` will mark a node as unresponsive only after
@@ -15,10 +15,10 @@ alternative server.
 
 This load balancer configuration is therefore only suitable for testing and proof-of-concept (POC) environments.
 
-For production environments we recommend the use of link:https://www.suse.com/documentation/sle-ha-15/index.html[{sle} {hasi} 15]
+For production environments, we recommend the use of link:https://www.suse.com/documentation/sle-ha-15/index.html[{sle} {hasi} 15]
 ====
 
-=== Configuration of the Load Balancer
+=== Configuring The Load Balancer
 
 . Register SLES
 +
@@ -89,7 +89,7 @@ firewall-cmd --zone=public --permanent --add-port=6443/tcp
 systemctl enable --now nginx
 ----
 
-=== Verify if the Load Balancer works
+=== Verifying the Load Balancer
 
 [IMPORTANT]
 The {productname} cluster must be up and running for this to produce any useful
