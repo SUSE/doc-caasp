@@ -18,6 +18,13 @@ This will be added in future versions. You must provide your own load balancing
 solution that directs access to the master nodes.
 ====
 
+[IMPORTANT]
+====
+VMWare vSPhere doesn't offer a load-balancer solution. Please expose port `6443`
+for the {kube} api-servers on the master nodes on a local load balancer using
+round-robin 1:1 port forwarding.
+====
+
 === VM preparation for creating a template
 
 . Temporarily enable SSH access to one of the ESXi nodes in the vSphere WebUI
