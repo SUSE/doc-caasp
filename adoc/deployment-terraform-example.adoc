@@ -51,7 +51,7 @@ dnsdomain = "testing.example.com"
 # Set DNS Entry (0 is false, 1 is true)
 dnsentry = 0
 
-# Username for the cluster nodes
+# Username for the cluster nodes. Must exist on base OS.
 username = "sles" // <5>
 
 # Password for the cluster nodes
@@ -87,7 +87,8 @@ ntp_servers = ["0.novell.pool.ntp.org", "1.novell.pool.ntp.org", "2.novell.pool.
 If you use a generic term it is very likely to fail deployment because the term is already in use by someone else. It's a good idea to use your username or other unique identifier.
 <3> `masters`: Number of master nodes to be deployed.
 <4> `workers`: Number of worker nodes to be deployed.
-<5> `username`: Login username for the nodes. Leave this the default `sles`.
+<5> `username`: Login username for the nodes.
+*Note*: Leave this the default `sles`. The username must exist on the used base operating system. It will not be created.
 <6> `password`: Login password for the defined username.
 <7> `repositories`: A list of additional repositories to be added on each
 machines - leave empty if no additional packages need to be installed.
@@ -141,7 +142,7 @@ masters = 1 // <7>
 # Number of worker nodes
 workers = 2 // <8>
 
-# Username for the cluster nodes
+# Username for the cluster nodes. Must exist on base OS.
 # EXAMPLE:
 # username = "sles"
 username = "sles" // <9>
@@ -191,7 +192,8 @@ ntp_servers = ["0.novell.pool.ntp.org", "1.novell.pool.ntp.org", "2.novell.pool.
 If you use a generic term it is very likely to fail deployment because the term is already in use by someone else. It's a good idea to use your username or other unique identifier.
 <7> `masters`: Number of master nodes to be deployed.
 <8> `workers`: Number of worker nodes to be deployed.
-<9> `username`: Login username for the nodes. Leave this the default `sles`.
+<9> `username`: Login username for the nodes.
+*Note*: Leave this the default `sles`. The username must exist on the used base operating system. It will not be created.
 <10> `password`: Login password for the defined username.
 <11> `repositories`: A list of additional repositories to be added on each
 machines - leave empty if no additional packages need to be installed.
