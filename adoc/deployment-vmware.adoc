@@ -194,7 +194,7 @@ SUSEConnect -p caasp/4.0/x86_64 -r REGISTRATION_CODE
 // zypper in open-vm-tools # in my case it was installed and enabled automatically during sles installation
 // systemctl status vmtoolsd; systemctl status vgauthd.service
 // ----
-. Copy your public SSH key for the user used for `caaspctl` bootstrap (normally `sles`) which will be used for {productname} deployment:
+. Copy your public SSH key for the user used for `skuba` bootstrap (normally `sles`) which will be used for {productname} deployment:
 +
 ----
 ssh-copy-id -i ~/.ssh/id_rsa.pub sles@vm-template.host
@@ -287,7 +287,7 @@ and the login details for it; these can be exported as environment variables or
 entered every time `terraform` is invoked.
 
 Additionally, the `ssh-key` that is specified in the `tfvars` file must be added
-to the keyring, so the machine running `caaspctl` can `ssh` into the machines:
+to the keyring, so the machine running `skuba` can `ssh` into the machines:
 
 ----
 export VSPHERE_SERVER="<server_address"
@@ -297,7 +297,7 @@ export VSPHERE_PASSWORD="<password>"
 ssh-add -i <path_to_ssh_key_from_tfvars>
 ----
 
-Run terraform to create the required machines for use with `caaspctl`:
+Run terraform to create the required machines for use with `skuba`:
 
 ----
 terraform init

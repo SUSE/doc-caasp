@@ -8,7 +8,7 @@ You need to have configured an SSH key pair that will be used to log into the
 created cluster nodes. This identity must be loaded into your users ssh-agent.
 
 The correct configuration of this SSH key pair is mandatory to be able to use
-the installation tools; more specifically: `caaspctl`.
+the installation tools; more specifically: `skuba`.
 
 [TIP]
 ====
@@ -25,11 +25,11 @@ You can load as many keys as you want into your agent using the
 You can list all the identities loaded into the agent by using the
 `ssh-add -L` command.
 
-caaspctl will try all the identities loaded into the ssh-agent until one of
+skuba will try all the identities loaded into the ssh-agent until one of
 them grants access to the node.
 
 It is also possible to forward the authentication agent connection from a
-host to another one. This can be useful if you intend to run caaspctl on
+host to another one. This can be useful if you intend to run skuba on
 a "jump host" and don't want to copy your private key to this node.
 
 This can be achieved using the `ssh -A` command. Please refer to the man page
@@ -64,7 +64,7 @@ endif::[]
 
 === Installation tools
 
-For any deployment type you will need `caaspctl` and `{tf}`. These packages are
+For any deployment type you will need `skuba` and `{tf}`. These packages are
 available from the {productname} package sources. They are provided as an installation
 "pattern" that will install dependencies and other required packages in one simple step.
 
@@ -86,7 +86,7 @@ Install the required tools:
 sudo zypper in -t pattern SUSE-CaaSP-Management
 ----
 
-This will install the `caaspctl` command line tool and `{tf}`; as well
+This will install the `skuba` command line tool and `{tf}`; as well
 as various default configurations and examples.
 
 === Load Balancer
