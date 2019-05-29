@@ -1,0 +1,87 @@
+= Cluster Management
+
+Cluster management refers to several processes in the lifecycle of a cluster an it's individual nodes: bootstrapping, joining, removing and resetting nodes.
+For maximum automation and ease {productname} uses the caaspctl tool, which simplifies Kubernetes cluster creation and reconfiguration.
+
+== Prerequisites
+
+To create and manage clusters you first need to:
+
+* install caaspctl on your local workstation
+* have virtual machines running
+//TODO: other prerequisites, see deployment guide
+
+== Bootstrapping the cluster
+
+Bootstrapping the cluster is the initial process of starting up a minimal viable cluster
+and joining the first master node. The first master node needs to be bootstrapped, later nodes can simply be joined.
+
+[TIP]
+====
+If you used terraform to set up your virtual machines,
+you can print the relevant IP address,
+which you will need in this section by running:
+`terraform output`
+====
+
+=== Initializing the cluster
+
+Before bootstrapping any nodes to the cluster,
+you need to create an empty cluster or in other words initialize a directory for your cluster.
+This is done using the `caaspctl cluster init` command and the `control-plane` flag:
+
+[source,bash]
+caaspctl cluster init --control-plane <LB IP/FQDN> <CLUSTER-NAME>
+
+* The `--control-plane` flag stands for the IP/FQDN of your load balancer.
+If you do not use a load balancer use the IP/FQDN of your first master node.
+Leaving this empty will result in ???
+* Substitute `<CLUSTER-NAME>` for a suitable name for your cluster and hence the resulting directory.
+
+== Adding nodes
+
+To add the first master node use the `caaspctl node bootstrap` command:
+
+[source,bash]
+caaspctl node bootstrap --user <USER_NAME> --sudo –target 10.86.4.208 my-master
+
+*
+
+=== Master nodes
+
+
+=== Worker nodes
+
+
+
+caaspctl cluster
+caaspctl cluster init
+       caaspctl cluster init <cluster-name> [flags]
+???    --control-plane string   The control plane location (IP/FQDN) that will load balance the master nodes
+
+
+caaspctl cluster status
+??? flags?
+
+
+caaspctl node
+Available Commands:
+  bootstrap   Bootstraps the first master node of the cluster
+  join        Joins a new node to the cluster
+  remove      Removes a node from the cluster
+  reset       Resets the node to it's state prior to running join or bootstrap
+
+
+== Removing nodes
+
+? Reconfigure from worker to master
+? Reconfigure from master to worker
+
+== Resetting nodes
+
+What does it do exactly?
+Reset is a command that enables you to reset a node to a state prior to join or bootstrap being run.
+
+
+
+== fix failed nodes
