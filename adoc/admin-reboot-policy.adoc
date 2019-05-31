@@ -1,0 +1,13 @@
+=== Completely disable reboots
+
+If you would like to take care about reboots manually, either temporary or in general, you can disable those by creating a lock:
+----
+kubectl -n kube-system annotate ds kured weave.works/kured-node-lock='{"nodeID":"manual"}'
+----
+
+=== Manual unlock
+
+In exceptional circumstances, such as a node experiencing a permanent failure whilst rebooting, manual intervention may be required to remove the cluster lock:
+----
+kubectl -n kube-system annotate ds kured weave.works/kured-node-lock-
+----
