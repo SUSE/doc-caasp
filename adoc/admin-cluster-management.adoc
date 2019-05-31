@@ -1,15 +1,17 @@
-= Cluster Management
+//= Cluster Management
 
-Cluster management refers to several processes in the lifecycle of a cluster an it's individual nodes: bootstrapping, joining, removing and resetting nodes.
-For maximum automation and ease {productname} uses the caaspctl tool, which simplifies Kubernetes cluster creation and reconfiguration.
+Cluster management refers to several processes in the lifecycle of a cluster an its individual nodes: bootstrapping, joining, removing and resetting nodes.
+For maximum automation and ease {productname} uses the skuba tool, which simplifies Kubernetes cluster creation and reconfiguration.
+
 
 == Prerequisites
 
 To create and manage clusters you first need to:
 
-* install caaspctl on your local workstation
-* have virtual machines running
+- install skuba on your local workstation
+- have virtual machines running and have their IP/FQDN ready.
 //TODO: other prerequisites, see deployment guide
+
 
 == Bootstrapping the cluster
 
@@ -19,69 +21,105 @@ and joining the first master node. The first master node needs to be bootstrappe
 [TIP]
 ====
 If you used terraform to set up your virtual machines,
-you can print the relevant IP address,
+you can print the relevant IP addresses,
 which you will need in this section by running:
 `terraform output`
 ====
+
 
 === Initializing the cluster
 
 Before bootstrapping any nodes to the cluster,
 you need to create an empty cluster or in other words initialize a directory for your cluster.
-This is done using the `caaspctl cluster init` command and the `control-plane` flag:
+This is done using the `skuba cluster init` command and the `control-plane` flag:
 
 [source,bash]
-caaspctl cluster init --control-plane <LB IP/FQDN> <CLUSTER-NAME>
+skuba cluster init --control-plane <LB IP/FQDN> <cluster-name>
 
-* The `--control-plane` flag stands for the IP/FQDN of your load balancer.
+- The `--control-plane` flag specifies the IP/FQDN of your load balancer.
 If you do not use a load balancer use the IP/FQDN of your first master node.
-Leaving this empty will result in ???
-* Substitute `<CLUSTER-NAME>` for a suitable name for your cluster and hence the resulting directory.
+- Substitute `<cluster-name>` for a suitable name for your cluster and hence the resulting directory.
+
+
+=== Bootstrapping the cluster
+
+To add the first master node use the `skuba node bootstrap` command:
+
+[source,bash]
+skuba node bootstrap --user <user-name> --sudo --target <IP/FQDN> <master-node>
+
+The mandatory flags for this command are `--user`, `--sudo` and `--target`.
+Provide the following information:
+- `--sudo` is for running the command with superuser privileges,
+this is required for all node operations.
+- `<user-name>` is the instance user name defined in the `terraform.tfvars` file.
+- `<IP/FQDN>` is the IP address or FQDN of the relevant virtual machine.
+- Substitute `<master-node>` for a unique master node name.
+
 
 == Adding nodes
 
-To add the first master node use the `caaspctl node bootstrap` command:
+Once you have added the first master node to the cluster,
+use the `skuba node join` command to add more nodes.
 
 [source,bash]
-caaspctl node bootstrap --user <USER_NAME> --sudo –target 10.86.4.208 my-master
+skuba node join --role <master/worker> --user <user-name> --sudo --target <IP/FQDN> <node-name>
 
-*
+The mandatory flags for the join command are `--role`, ``--user`, `--sudo` and `--target`.
 
-=== Master nodes
+- `--role` serves to specify if the node is a *master* or *worker*
+- `--sudo` is for running the command with superuser privileges.
+- `<user-name>` is the instance user name defined in the `terraform.tfvars` file.
+- `<IP/FQDN>` is the IP address or FQDN of the relevant virtual machine.
+- Substitute `<node-name>` for a unique node name.
 
+For example to add a *new master node* you would run something like this:
 
-=== Worker nodes
+[source,bash]
+skuba node join --role master --user sles --sudo --target 10.86.2.165 master2
 
+To add a *new worker node*, the process is essentially the same:
 
+[source,bash]
+skuba node join --role worker --user sles --sudo --target 10.86.2.164 worker1
 
-caaspctl cluster
-caaspctl cluster init
-       caaspctl cluster init <cluster-name> [flags]
-???    --control-plane string   The control plane location (IP/FQDN) that will load balance the master nodes
-
-
-caaspctl cluster status
-??? flags?
-
-
-caaspctl node
-Available Commands:
-  bootstrap   Bootstraps the first master node of the cluster
-  join        Joins a new node to the cluster
-  remove      Removes a node from the cluster
-  reset       Resets the node to it's state prior to running join or bootstrap
+[TIP]
+====
+Use `skuba cluster status` to check that nodes have been successfully joined.
+====
 
 
 == Removing nodes
 
-? Reconfigure from worker to master
-? Reconfigure from master to worker
+The `skuba node remove` command serves to *permanently* remove nodes.
+Running this command will work even if the target virtual machine is down,
+so it is the safest way to remove the node.
+
+[source,bash]
+skuba node remove <node-name>
+
+If you wish to remove the node and want to add it again, the recommended approach is to
+first drain the node using `kubectl`. This will also cordon the node,
+so that it doesn't receive any new workloads.
+When you want to bring the node back, you only have to uncordon it.
+Refer to the official Kubernetes documentation for more information:
+https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/#use-kubectl-drain-to-remove-a-node-from-service
+
 
 == Resetting nodes
 
-What does it do exactly?
-Reset is a command that enables you to reset a node to a state prior to join or bootstrap being run.
+The `skuba node reset` command enables you to reset a node to a state prior to join or bootstrap being run.
+Use this command to retry a failed bootstrap or join on a node or if the node fails.
+
+[source,bash]
+skuba node reset --target <IP/FQDN> --sudo --user <user-name>
 
 
+== Reconfiguring nodes
 
-== fix failed nodes
+To reconfigure a node, for example to change the node role from worker to master,
+you will need to use a combination of commands.
+
+1. Run `skuba node remove <node-name>`.
+2. Reinstall the node from scratch.
+3. Run `skuba node join --role <desired-role> -user <user-name> --sudo --target <IP/FQDN> <node-name>`
