@@ -1,0 +1,58 @@
+== Configuring container registries for {crio}
+
+Every registry related configuration needs to be done in the TOML file
+`/etc/containers/registries.conf`. This system-wide configuration exists in two
+versions, whereas the latest version supports extended features like the
+registry mirror semantics.
+
+The configuration is a sequence of `+[[registry]]+` entries. For example, a
+single registry entry within that configuration could be added like this:
+
+.`/etc/containers/registries.conf`
+[source,toml]
+----
+[[registry]]
+blocked = false
+insecure = false
+location = "example.net/bar"
+prefix = "example.com/foo"
+mirror = [
+    { location = "example-mirror-0.local", insecure = false },
+    { location = "example-mirror-1.local", insecure = true }
+]
+unqualified-search = false
+----
+
+If now a container image gets pulled by {crio}, then one single entry within
+that list will be selected. That entry must have a `prefix` field set to be a
+prefix of the input image name. This takes into account every namespace,
+repository, tag and digest of the image. The entry with the longest matching
+`prefix` field is used. The `prefix` field can be missing, too. If this is the
+case, then the image pull defaults to the value of the `location` field.
+
+By default, {crio} requires TLS when retrieving images from a registry. The
+`insecure = true` option allows using unencrypted HTTP as well as TLS
+connections with untrusted certificates.
+
+The `location` field specifies the physical location of the registry. This is
+typically the same as `prefix` (in which case `prefix` can be omitted), but it
+can be different to redirect operations with the image to a different physical
+server. The image will continue to use the original prefix-based name, not the
+result of the redirection. For example, if `prefix = "example.com/foo"`,
+`location = "example.net/bar"` and the `example.com/foo/myimage:latest` image
+is requested, then the image will actually be pulled from
+`example.net/bar/myimage:latest`.
+
+In addition to the single `location`, a registry can have (partial) mirrors
+configured in a `mirror` array.  The mirrors will be evaluated in order during
+an image pull, whereas the first one that contains the image will be used. 
+
+The mirror’s `location` field has the same rewriting semantics as the
+registry’s `location`. Furthermore, it is possible to specify the `insecure`
+flag per registry mirror, too.
+
+If the `unqualified-search = true` option is set, the registry can be used when
+pulling an hostname-unqualified image. All registries with `unqualified-search`
+set to true are tried in the order they appear in the configuration file.
+
+If `blocked = true` then it is not allowed to pull images from that registry.
