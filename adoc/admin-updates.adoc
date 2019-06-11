@@ -1,18 +1,18 @@
-=== Disable automatic updates
+== Disable automatic updates
 
 Nodes added to a cluster have the service `skuba-update.timer` activated by default. This is the service responsible of running automatic updates. In case you require to completely disable automatic updates for a node it can be done by simply disabling the skuba-update service on the node:
 ----
 systemctl disable --now skuba-update.timer
 ----
 
-=== Completely disable reboots
+== Completely disable reboots
 
 If you would like to take care about reboots manually, either temporary or in general, you can disable those by creating a lock:
 ----
 kubectl -n kube-system annotate ds kured weave.works/kured-node-lock='{"nodeID":"manual"}'
 ----
 
-=== Manual unlock
+== Manual unlock
 
 In exceptional circumstances, such as a node experiencing a permanent failure whilst rebooting, manual intervention may be required to remove the cluster lock:
 ----
