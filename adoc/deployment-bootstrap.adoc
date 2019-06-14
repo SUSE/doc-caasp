@@ -53,7 +53,8 @@ of ssh to learn about the security implications of using this feature.
 
 
 . Now you can initialize the cluster on the deployed machines.
-As `--control-plane` enter the IP/FQDN of your load balancer. If you do not use a load balancer use your first master node.
+As `--control-plane` enter the IP/FQDN of your load balancer.
+If you do not use a load balancer use your first master node.
 +
 ----
 skuba cluster init --control-plane <LB IP/FQDN> my-cluster
@@ -145,7 +146,8 @@ Replace `<NODE NAME>` with a unique identifier for example "master-one".
 .Secure configuration files access
 [WARNING]
 ====
-The directory created during this step contains configuration files that allow full administrator access to your cluster.
+The directory created during this step contains configuration files
+that allow full administrator access to your cluster.
 Apply best practices for access control to this folder.
 ====
 +
@@ -154,7 +156,8 @@ cd my-cluster
 skuba node bootstrap --user sles --sudo --target <IP/FQDN> <NODE NAME>
 ----
 This will bootstrap the specified node as the first master in the cluster.
-The process will generate authentication certificates and the `admin.conf` file that is used for authentication against the cluster.
+The process will generate authentication certificates and the `admin.conf`
+file that is used for authentication against the cluster.
 The files will be stored in the `my-cluster` directory specified in step one.
 . Add additional master nodes to the cluster.
 +
