@@ -147,22 +147,17 @@ workers = 2 // <8>
 # username = "sles"
 username = "sles" // <9>
 
-# Password for the cluster nodes
-# EXAMPLE:
-# password = "linux"
-password = "sles" // <10>
-
 # define the repositories to use
 # EXAMPLE:
 # repositories = [
 #   { repository1 = "http://repo.example.com/repository1/" },
 #   { repository2 = "http://repo.example.com/repository2/" }
 # ]
-repositories = [] // <11>
+repositories = [] // <10>
 
 # Minimum required packages. Do not remove them.
 # Feel free to add more packages
-packages = [ // <12>
+packages = [ // <11>
     "kubernetes-kubeadm",
     "kubernetes-kubelet",
     "kubernetes-client",
@@ -175,12 +170,12 @@ packages = [ // <12>
 # authorized_keys = [
 #   "ssh-rsa <key-content>"
 # ]
-authorized_keys = [ // <13>
+authorized_keys = [ // <12>
   "ssh-rsa <example_key> example@example.com"
 ]
 
 # IMPORTANT: Replace these ntp servers with ones from your infrastructure
-ntp_servers = ["0.novell.pool.ntp.org", "1.novell.pool.ntp.org", "2.novell.pool.ntp.org", "3.novell.pool.ntp.org"] // <14>
+ntp_servers = ["0.novell.pool.ntp.org", "1.novell.pool.ntp.org", "2.novell.pool.ntp.org", "3.novell.pool.ntp.org"] // <13>
 ----
 <1> `vsphere_datastore`: The datastore to use.
 <2> `vsphere_datacenter`: The datacenter to use.
@@ -194,14 +189,13 @@ If you use a generic term it is very likely to fail deployment because the term 
 <8> `workers`: Number of worker nodes to be deployed.
 <9> `username`: Login username for the nodes.
 *Note*: Leave this the default `sles`. The username must exist on the used base operating system. It will not be created.
-<10> `password`: Login password for the defined username.
-<11> `repositories`: A list of additional repositories to be added on each
+<10> `repositories`: A list of additional repositories to be added on each
 machines - leave empty if no additional packages need to be installed.
-<12> `packages`: Additional packages to be installed on the node.
+<11> `packages`: Additional packages to be installed on the node.
 *Note*: Do not remove any of the pre-filled values in the `packages` section. This can render
 your cluster unusable. You can add more packages but do not remove any of the
 default packages listed.
-<13> `authorized_keys`: List of ssh-public-keys that will be able to login to the
+<12> `authorized_keys`: List of ssh-public-keys that will be able to login to the
 deployed machines.
-<14> `ntp_servers`: A list of `ntp` servers you would like to use with `chrony`.
+<13> `ntp_servers`: A list of `ntp` servers you would like to use with `chrony`.
 # end::tf_vmware[]
