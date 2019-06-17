@@ -1,6 +1,4 @@
 include::entities.adoc[]
-:isofile: SLE-15-SP1-Installer-DVD-x86_64-Build225.1-Media1.iso
-:isolink: https://download.suse.com/Download?buildid=JOZpKbnuAuw~
 
 == Deployment on Bare Metal
 
@@ -15,23 +13,26 @@ solution that directs access to the master nodes.
 
 [NOTE]
 ====
-The autoyast file found in skuba is a template. It has the base requirements. 
-This autoyast file should act as a guide and should be updated with your companies standards.
+The {ay} file found in `skuba` is a template. It has the base requirements.
+This {ay} file should act as a guide and should be updated with your companies standards.
 ====
 
 [NOTE]
 ====
-Hardware specific setup (legacy bios vs EFI, drive partitioning, networking etc) will need to be updated to 
-match your hardware. More information on autoyast can be found link:https://doc.opensuse.org/projects/autoyast/[here]
+To account for hardware/platform specific setup criteria (legacy BIOS vs. (U)EFI, drive partitioning, networking etc.),
+you must adjust the {ay} file to your needs according to the requirements.
+
+Refer to the official {ay} documentation for more information: link:https://www.suse.com/documentation/sles-15/singlehtml/book_autoyast/book_autoyast.html[{ay} Guide].
 ====
 
-=== Autoyast preparation
+=== {ay} preparation
 
-. Obtain example autoyast file from /usr/share/caasp/autoyast/bare-metal/autoyast.xml
+. Obtain example {ay} file from `/usr/share/caasp/autoyast/bare-metal/autoyast.xml`
 +
-----
-. Update the autoyast file with your registration keys and company best practices.
-. Update the file with your desired username and ssh keys. below we disable root and add a `sles` user with no password.
+. Update the {ay} file with your registration keys and company best practices and hardware configurations.
++
+Refer to the official {ay} documentation for more information: link:https://www.suse.com/documentation/sles-15/singlehtml/book_autoyast/book_autoyast.html[{ay} Guide].
+. Update the file with your desired username and ssh keys. Below we disable `root` and add a `sles` user with no password.
 +
 ----
   <users config:type="list">
@@ -53,18 +54,21 @@ match your hardware. More information on autoyast can be found link:https://doc.
 +
 [NOTE]
 ====
-If your users don't have a password like the above, ensure your user's sudoer's file is updated so that you can use sudo without a password. The example autoyast file has an example. The password for root can be enabled by using the `passwd` command.
+If your users don't have a password like the above, ensure your user's `sudoers` file is updated so that you can use sudo without a password.
+The default {ay} file provides an example for this scenario.
+
+The password for root can be enabled by using the `passwd` command.
 ====
-. Host the autoyast file on a webserver reachable inside the network you will be setting up skuba in
-. Add autoyast=https://[webserver/path/to/autoyast.xml] to your sles15 SP1 install
+. Host the {ay} file on a webserver reachable inside the network your are installing the cluster in.
+. Provide `autoyast=https://[webserver/path/to/autoyast.xml]` during the {sle} 15 SP1 installation.
 
 ==== {sls} installation
 
 [NOTE]
 ====
-Use AutoYaST and ensure to use a staged frozen patchlevel via RMT/SUSE Manager to ensure 100% reproducible setup. 
+Use AutoYaST and ensure to use a staged frozen patchlevel via RMT/SUSE Manager to ensure 100% reproducible setup.
 link:https://www.suse.com/documentation/sles-15/singlehtml/book_rmt/book_rmt.html#cha.rmt_client[RMT Guide]
 ====
 
-Once the machines have been installed using the autoyast file, you are now ready to boostrap your cluster
-link:deployment-bootstrap.adoc[bootstrap guide]
+Once the machines have been installed using the {ay} file, you are now ready to boostrap your cluster
+link:deployment-bootstrap.adoc[bootstrap guide].
