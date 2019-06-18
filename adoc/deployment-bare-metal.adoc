@@ -1,0 +1,100 @@
+include::entities.adoc[]
+
+== Deployment on Bare Metal
+
+=== Environment description
+
+[IMPORTANT]
+====
+These instructions currently do not describe how to set up a load balancer.
+This will be added in future versions. You must provide your own load balancing
+solution that directs access to the master nodes.
+====
+
+[NOTE]
+====
+The {ay} file found in `skuba` is a template. It has the base requirements.
+This {ay} file should act as a guide and should be updated with your companies standards.
+====
+
+[NOTE]
+====
+To account for hardware/platform specific setup criteria (legacy BIOS vs. (U)EFI, drive partitioning, networking etc.),
+you must adjust the {ay} file to your needs according to the requirements.
+
+Refer to the official {ay} documentation for more information: link:https://www.suse.com/documentation/sles-15/singlehtml/book_autoyast/book_autoyast.html[{ay} Guide].
+====
+
+=== {ay} preparation
+
+. Obtain example {ay} file from `/usr/share/caasp/autoyast/bare-metal/autoyast.xml`
+. Copy the file to a suitable location to modify it. Name the file `autoyast.xml`.
+. Modify the following places in the {ay} (and any additional places that are required by your specific configuration/environment).
+.. `<ntp-client>`
++
+Change the pre-filled value to your organization's NTP server. Provide multiple servers if possible by add new `<ntp_server>` subentries.
+.. `<username>sles</username>`
++
+Insert your authorized key in the placeholder field.
+.. `<users>`
++
+You can add additional users by creating new blocks in the configuration containing their data.
++
+[NOTE]
+====
+If the users are configured to not have a password like in the example, ensure the system's `sudoers` file is updated.
+Without updating the sudoers file the user will only be able to perform basic operations that will prohibit many administrative tasks.
+
+The default {ay} file provides examples for a disabled `root` user and a `sles` user with authorized key SSH access.
+
+The password for root can be enabled by using the `passwd` command.
+====
+.. `<suse_register>`
++
+Insert the email address and {productname} registration code in the placeholder fields. This activates {sle} 15 SP1.
+.. `<addon>`
++
+Insert the {productname} registration code in the placeholder field. This enables the {productname} extension module.
+Update the {ay} file with your registration keys and company best practices and hardware configurations.
++
+[NOTE]
+====
+Your {productname} registration key can be used to both activate {sle} 15 SP1 and enable the extension.
+====
+
++
+Refer to the official {ay} documentation for more information: link:https://www.suse.com/documentation/sles-15/singlehtml/book_autoyast/book_autoyast.html[{ay} Guide].
++
+. Host the {ay} files on a web server reachable inside the network your are installing the cluster in.
+
+=== Provisioning The Cluster Nodes
+
+Once the {ay} file is available in the network that the machines will be configured in, you can start deploying machines.
+
+The default production scenario consists of 8 nodes:
+
+* 2 Load Balancers
+* 3 Masters
+* 3 Workers
+
+Depending on the type of load balancer you wish to use, you need to deploy at least 6 machines to serve as cluster nodes and provide 2 load balancers from the environment.
+
+The load balancer must point at the machines that are dedicated to be used as `master` nodes in the future cluster.
+
+[TIP]
+If you do not wish to use infrastructure load balancers, please deploy additional machines and refer to <<loadbalancer>>.
+
+Install {sle} 15 SP1 from your preferred medium and follow the steps for link:https://www.suse.com/documentation/sles-15/singlehtml/book_autoyast/book_autoyast.html#invoking_autoinst[Invoking the Auto-Installation Process]
+
+Provide `autoyast=https://[webserver/path/to/autoyast.xml]` during the {sle} 15 SP1 installation.
+
+==== {sls} installation
+
+[NOTE]
+====
+Use AutoYaST and ensure to use a staged frozen patchlevel via RMT/SUSE Manager to ensure 100% reproducible setup.
+link:https://www.suse.com/documentation/sles-15/singlehtml/book_rmt/book_rmt.html#cha.rmt_client[RMT Guide]
+====
+
+Once the machines have been installed using the {ay} file, you are now ready to bootstrap your cluster
+link:deployment-bootstrap.adoc[bootstrap guide].
