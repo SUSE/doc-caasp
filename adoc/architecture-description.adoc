@@ -302,6 +302,8 @@ Control planes are only part of the whole picture. Most components will
 talk to the API Server, and the API Server must be exposed on all master nodes
 to communicate to the clients and the rest of the cluster components.
 
+==== Load Balancer
+
 The most reasonable way to achieve fault tolerant exposure of the API servers is
 a load balancer. The load balancer will point to all the control plane nodes.
 The clients and {kube} components will talk to the load balancer: which will
