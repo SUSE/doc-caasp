@@ -54,11 +54,11 @@ dnsentry = 0
 username = "sles" // <5>
 
 # Optional: Define the repositories to use
-# repositories = [
-#     { repository1 = "http://repo.example.com/repository1/" },
-#     { repository2 = "http://repo.example.com/repository2/" }
-# ]
-repositories = [] // <6>
+# repositories = {
+#   repository1 = "http://example.my.repo.com/repository1/"
+#   repository2 = "http://example.my.repo.com/repository2/"
+# }
+repositories = {} // <6>
 
 # Define required packages to be installed/removed. Do not change those.
 packages = [  // <7>
@@ -99,29 +99,19 @@ deployed machines.
 # tag::tf_vmware[]
 [source,json]
 ----
-# datastore to use on the vSphere server
-# EXAMPLE:
-# vsphere_datastore = "STORAGE-0"
-vsphere_datastore = "3PAR" // <1>
+# datastore to use in vSphere
+vsphere_datastore = "STORAGE-0" // <1>
 
-# datacenter to use on the vSphere server
-# EXAMPLE:
-# vsphere_datacenter = "DATACENTER"
-vsphere_datacenter = "MYDATACENTER" // <2>
+# datacenter to use in vSphere
+vsphere_datacenter = "DATACENTER" // <2>
 
-# network to use on the vSphere server
-# EXAMPLE:
-# vsphere_network = "VM Network"
+# network to use in vSphere
 vsphere_network = "VM Network" // <3>
 
 # resource pool the machines will be running in
-# EXAMPLE:
-# vsphere_resource_pool = "My_RP"
 vsphere_resource_pool = "My_RP" // <4>
 
 # template name the machines will be copied from
-# EXAMPLE:
-# template_name = "SLES15-SP1-cloud-init"
 template_name = "sles15-sp1-caasp" // <5>
 
 # prefix that all of the booted machines will use
@@ -136,17 +126,14 @@ masters = 1 // <7>
 workers = 2 // <8>
 
 # Username for the cluster nodes. Must exist on base OS.
-# EXAMPLE:
-# username = "sles"
 username = "sles" // <9>
 
-# define the repositories to use
-# EXAMPLE:
-# repositories = [
-#   { repository1 = "http://repo.example.com/repository1/" },
-#   { repository2 = "http://repo.example.com/repository2/" }
-# ]
-repositories = [] // <10>
+# Optional: Define the repositories to use
+# repositories = {
+#   repository1 = "http://example.my.repo.com/repository1/"
+#   repository2 = "http://example.my.repo.com/repository2/"
+# }
+repositories = {} // <10>
 
 # Minimum required packages. Do not remove them.
 # Feel free to add more packages
@@ -155,10 +142,6 @@ packages = [ // <11>
 ]
 
 # ssh keys to inject into all the nodes
-# EXAMPLE:
-# authorized_keys = [
-#   "ssh-rsa <key-content>"
-# ]
 authorized_keys = [ // <12>
   "ssh-rsa <example_key> example@example.com"
 ]
