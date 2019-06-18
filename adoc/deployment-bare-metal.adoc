@@ -28,7 +28,7 @@ Refer to the official {ay} documentation for more information: link:https://www.
 === {ay} preparation
 
 . Obtain example {ay} file from `/usr/share/caasp/autoyast/bare-metal/autoyast.xml`
-. Copy the file to a suitable location to modify it. Name the file `autoyast-worker.xml`.
+. Copy the file to a suitable location to modify it. Name the file `autoyast.xml`.
 . Modify the following places in the {ay} (and any additional places that are required by your specific configuration/environment).
 .. `<ntp-client>`
 +
@@ -65,11 +65,11 @@ Your {productname} registration key can be used to both activate {sle} 15 SP1 an
 +
 Refer to the official {ay} documentation for more information: link:https://www.suse.com/documentation/sles-15/singlehtml/book_autoyast/book_autoyast.html[{ay} Guide].
 +
-. Host the {ay} files on a webserver reachable inside the network your are installing the cluster in.
+. Host the {ay} files on a web server reachable inside the network your are installing the cluster in.
 
 === Provisioning The Cluster Nodes
 
-Once the {ay} file is available in the network of the cluster you can start deploying machines.
+Once the {ay} file is available in the network that the machines will be configured in, you can start deploying machines.
 
 The default production scenario consists of 8 nodes:
 
@@ -79,24 +79,14 @@ The default production scenario consists of 8 nodes:
 
 Depending on the type of load balancer you wish to use, you need to deploy at least 6 machines to serve as cluster nodes and provide 2 load balancers from the environment.
 
+The load balancer must point at the machines that are dedicated to be used as `master` nodes in the future cluster.
+
 [TIP]
 If you do not wish to use infrastructure load balancers, please deploy additional machines and refer to <<loadbalancer>>.
 
-==== Setting Up The Master Nodes
-
-FIXME: What are the changes needed for the {ay} file to make this work as a master?
-
 Install {sle} 15 SP1 from your preferred medium and follow the steps for link:https://www.suse.com/documentation/sles-15/singlehtml/book_autoyast/book_autoyast.html#invoking_autoinst[Invoking the Auto-Installation Process]
 
-Provide `autoyast=https://[webserver/path/to/autoyast-master.xml]` during the {sle} 15 SP1 installation.
-
-
-==== Setting Up The Worker Nodes
-
-Install {sle} 15 SP1 from your preferred medium and follow the steps for link:https://www.suse.com/documentation/sles-15/singlehtml/book_autoyast/book_autoyast.html#invoking_autoinst[Invoking the Auto-Installation Process]
-
-Provide `autoyast=https://[webserver/path/to/autoyast-worker.xml]` during the {sle} 15 SP1 installation.
-
+Provide `autoyast=https://[webserver/path/to/autoyast.xml]` during the {sle} 15 SP1 installation.
 
 ==== {sls} installation
 
@@ -106,5 +96,5 @@ Use AutoYaST and ensure to use a staged frozen patchlevel via RMT/SUSE Manager t
 link:https://www.suse.com/documentation/sles-15/singlehtml/book_rmt/book_rmt.html#cha.rmt_client[RMT Guide]
 ====
 
-Once the machines have been installed using the {ay} file, you are now ready to boostrap your cluster
+Once the machines have been installed using the {ay} file, you are now ready to bootstrap your cluster
 link:deployment-bootstrap.adoc[bootstrap guide].
