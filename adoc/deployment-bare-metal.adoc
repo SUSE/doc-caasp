@@ -28,39 +28,75 @@ Refer to the official {ay} documentation for more information: link:https://www.
 === {ay} preparation
 
 . Obtain example {ay} file from `/usr/share/caasp/autoyast/bare-metal/autoyast.xml`
+. Copy the file to a suitable location to modify it. Name the file `autoyast-worker.xml`.
+. Modify the following places in the {ay} (and any additional places that are required by your specific configuration/environment).
+.. `<ntp-client>`
 +
-. Update the {ay} file with your registration keys and company best practices and hardware configurations.
+Change the pre-filled value to your organization's NTP server. Provide multiple servers if possible by add new `<ntp_server>` subentries.
+.. `<username>sles</username>`
 +
-Refer to the official {ay} documentation for more information: link:https://www.suse.com/documentation/sles-15/singlehtml/book_autoyast/book_autoyast.html[{ay} Guide].
-. Update the file with your desired username and ssh keys. Below we disable `root` and add a `sles` user with no password.
+Insert your authorized key in the placeholder field.
+.. `<users>`
 +
-----
-  <users config:type="list">
-    <user>
-      <username>root</username>
-      <user_password>!</user_password>
-      <encrypted config:type="boolean">true</encrypted>
-    </user>
-    <user>
-      <username>sles</username>
-      <user_password>!</user_password>
-      <encrypted config:type="boolean">true</encrypted>
-      <authorized_keys config:type="list">
-        <authorized_key>[ssh public key]</authorized_key>
-      </authorized_keys>
-    </user>
-  </users>
-----
+You can add additional users by creating new blocks in the configuration containing their data.
 +
 [NOTE]
 ====
-If your users don't have a password like the above, ensure your user's `sudoers` file is updated so that you can use sudo without a password.
-The default {ay} file provides an example for this scenario.
+If the users are configured to not have a password like in the example, ensure the system's `sudoers` file is updated.
+Without updating the sudoers file the user will only be able to perform basic operations that will prohibit many administrative tasks.
+
+The default {ay} file provides examples for a disabled `root` user and a `sles` user with authorized key SSH access.
 
 The password for root can be enabled by using the `passwd` command.
 ====
-. Host the {ay} file on a webserver reachable inside the network your are installing the cluster in.
-. Provide `autoyast=https://[webserver/path/to/autoyast.xml]` during the {sle} 15 SP1 installation.
+.. `<suse_register>`
++
+Insert the email address and {productname} registration code in the placeholder fields. This activates {sle} 15 SP1.
+.. `<addon>`
++
+Insert the {productname} registration code in the placeholder field. This enables the {productname} extension module.
+Update the {ay} file with your registration keys and company best practices and hardware configurations.
++
+[NOTE]
+====
+Your {productname} registration key can be used to both activate {sle} 15 SP1 and enable the extension.
+====
+
++
+Refer to the official {ay} documentation for more information: link:https://www.suse.com/documentation/sles-15/singlehtml/book_autoyast/book_autoyast.html[{ay} Guide].
++
+. Host the {ay} files on a webserver reachable inside the network your are installing the cluster in.
+
+=== Provisioning The Cluster Nodes
+
+Once the {ay} file is available in the network of the cluster you can start deploying machines.
+
+The default production scenario consists of 8 nodes:
+
+* 2 Load Balancers
+* 3 Masters
+* 3 Workers
+
+Depending on the type of load balancer you wish to use, you need to deploy at least 6 machines to serve as cluster nodes and provide 2 load balancers from the environment.
+
+[TIP]
+If you do not wish to use infrastructure load balancers, please deploy additional machines and refer to <<loadbalancer>>.
+
+==== Setting Up The Master Nodes
+
+FIXME: What are the changes needed for the {ay} file to make this work as a master?
+
+Install {sle} 15 SP1 from your preferred medium and follow the steps for link:https://www.suse.com/documentation/sles-15/singlehtml/book_autoyast/book_autoyast.html#invoking_autoinst[Invoking the Auto-Installation Process]
+
+Provide `autoyast=https://[webserver/path/to/autoyast-master.xml]` during the {sle} 15 SP1 installation.
+
+
+==== Setting Up The Worker Nodes
+
+Install {sle} 15 SP1 from your preferred medium and follow the steps for link:https://www.suse.com/documentation/sles-15/singlehtml/book_autoyast/book_autoyast.html#invoking_autoinst[Invoking the Auto-Installation Process]
+
+Provide `autoyast=https://[webserver/path/to/autoyast-worker.xml]` during the {sle} 15 SP1 installation.
+
 
 ==== {sls} installation
 
