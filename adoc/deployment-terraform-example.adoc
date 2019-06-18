@@ -8,14 +8,20 @@
 # Name of the image to use
 image_name = "SLE-15-SP1-JeOS-GMC"
 
+# Identifier to make all your resources unique and avoid clashes with other users of this terraform project
+stack_name = "testing" // <1>
+
 # Name of the internal network to be created
-internal_net = "testing" // <1>
+internal_net = "testing-net" // <2>
+
+# Name of the internal subnet to be created
+internal_subnet = "testing-subnet"
+
+# Name of the internal router to be created
+internal_router = "testing-router"
 
 # Name of the external network to be used, the one used to allocate floating IPs
 external_net = "floating"
-
-# Identifier to make all your resources unique and avoid clashes with other users of this terraform project
-stack_name = "testing" // <2>
 
 # CIDR of the subnet for the internal network
 subnet_cidr = "172.28.0.0/24"
@@ -79,8 +85,8 @@ authorized_keys = [ // <9>
 # IMPORTANT: Replace these ntp servers with ones from your infrastructure
 ntp_servers = ["0.novell.pool.ntp.org", "1.novell.pool.ntp.org", "2.novell.pool.ntp.org", "3.novell.pool.ntp.org"] // <10>
 ----
-<1> `internal_net` the internal network name that will be created/used for the cluster in {soc}.
-<2> `stack_name`: Prefix for all machines of the cluster spawned by terraform.
+<1> `stack_name`: Prefix for all machines of the cluster spawned by terraform.
+<2> `internal_net` the internal network name that will be created/used for the cluster in {soc}.
 *Note*: This string will be used to generate the human readable IDs in {soc}.
 If you use a generic term it is very likely to fail deployment because the term is already in use by someone else. It's a good idea to use your username or other unique identifier.
 <3> `masters`: Number of master nodes to be deployed.
