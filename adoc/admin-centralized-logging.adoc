@@ -68,20 +68,8 @@ the location where you normally run `skuba` commands:
 
 [source,bash]
 ----
-sudo zypper addrepo http://download.suse.de/ibs/SUSE/Updates/SUSE-CAASP/3.0/x86_64/update/SUSE:Updates:SUSE-CAASP:3.0:x86_64.repo
-sudo zypper refresh
-sudo zypper install -y helm
-
-helm init --client-only
-----
-
-////
-Note: what follows here are the instutions to be included after the Helm package has been integrated into v4:
-To install Helm, use the common zypper command:
-----
 sudo zypper install helm
 ----
-////
 
 - As of {productname} {productversion},
 Tiller is not part of the {productname} package repository,
