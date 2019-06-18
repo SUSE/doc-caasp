@@ -1,0 +1,116 @@
+[[deployment.preparations]]
+== Deployment Preparations
+
+In order to deploy {productname} you need a workstation running {sle} 15 SP1 or similar {opensuse} equivalent.
+This workstation is called the "Management node".
+
+You need to have configured an SSH key pair that will be used to log into the
+created cluster nodes. This identity must be loaded into your users ssh-agent.
+
+The correct configuration of this SSH key pair is mandatory to be able to use
+the installation tools; more specifically: `terraform` and `skuba`.
+
+[TIP]
+====
+The `ssh-agent` process is usually started automatically by most UNIX
+environments. If that's not the case, invoke the `ssh-agent` command
+and follow the guidance given by the tool's output.
+
+You can start the `ssh-agent` in the background by using the
+`eval "$(ssh-agent -s)"` command.
+
+You can load as many keys as you want into your agent using the
+`ssh-add <path to key>` command. Keys can also be password protected.
+
+You can list all the identities loaded into the agent by using the
+`ssh-add -L` command.
+
+skuba will try all the identities loaded into the ssh-agent until one of
+them grants access to the node.
+
+It is also possible to forward the authentication agent connection from a
+host to another one. This can be useful if you intend to run skuba on
+a "jump host" and don't want to copy your private key to this node.
+
+This can be achieved using the `ssh -A` command. Please refer to the man page
+of ssh to learn about the security implications of using this feature.
+====
+
+[[registration_code]]
+=== Registration Code
+
+[NOTE]
+====
+The registration code for {productname} {productmajor} also contains the activation
+permissions for the underlying {sle} operating system. You can use your {productname}
+registration code to activate the {sle} 15 SP1 subscription during installation.
+====
+
+ifeval::['{release_type}' == 'internal']
+You need a subscription registration code to use {productname}. You can retrieve your
+registration code from {scc}.
+
+* Login to https://scc.suse.com
+* Navigate to menu:Internal tools[Products]
+* Search for "caasp"
+* Select menu:SUSE CaaS Platform[4.0 > x86_64 alpha]
+* Copy the menu:Registration Code[]
+endif::[]
+
+ifeval::['{release_type}' == 'public']
+If you wish to beta test {productname} {productmajor}, please send an e-mail
+to beta-programs@lists.suse.com to request a {scc} subscription and a registration code.
+endif::[]
+
+=== Installation tools
+
+For any deployment type you will need `skuba` and `{tf}`. These packages are
+available from the {productname} package sources. They are provided as an installation
+"pattern" that will install dependencies and other required packages in one simple step.
+
+Access to the packages requires the `{productname}` and `Containers` extension modules.
+Enable the modules during the operating system installation or activate them using {suse} Connect.
+
+[source,bash]
+----
+sudo SUSEConnect -r REGISTRATION_CODE # <1>
+sudo SUSEConnect -p sle-module-containers/15.1/x86_64 # <2>
+sudo SUSEConnect -p caasp/4.0/x86_64 -r REGISTRATION_CODE # <3>
+----
+<1> Activate {sle} (Skip if you already have an activated operating system)
+<2> Add the free `Containers` module
+<3> Add the {productname} extension with your registration code
+
+Install the required tools:
+----
+sudo zypper in -t pattern SUSE-CaaSP-Management
+----
+
+This will install the `skuba` command line tool and `{tf}`; as well
+as various default configurations and examples.
+
+=== Load Balancer
+
+[IMPORTANT]
+====
+Setting up a load balancer is mandatory in any production environment.
+====
+
+{productname} requires a load balancer to distribute workload between the deployed
+master nodes of the cluster. There are many ways to configure a load balancer.
+
+For {soc} the {tf} configurations shipped with this version will automatically deploy
+a suitable loadbalancer for the cluster.
+
+For VMWare you must configure a load balancer manually and allow it access to
+all master nodes created during <<bootstrap>>.
+
+The load balancer should be configure before the actual deployment. It is needed
+during the cluster bootstrap. To simplify configuration you can reserve the IPs
+needed for the cluster nodes and pre-configure these in the load balancer.
+
+The load balancer needs access to port `6443` on all master nodes in the cluster.
+
+The following is an example of a possible load balancer configuration based on {sle} 15 SP1 and `nginx`.
+
+include::deployment-loadbalancer.adoc[Load Balancer,leveloffset=+2]

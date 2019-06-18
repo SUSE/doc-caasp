@@ -1,6 +1,9 @@
+include::attributes.adoc[]
+include::entities.adoc[]
+
 = Documentation Conventions
 :imagesdir: ./images
-
+:experimental:
 
 The following notices and typographical conventions are used in this documentation:
 
@@ -12,22 +15,17 @@ The following notices and typographical conventions are used in this documentati
 * [package]#package name# : name of a package
 * kbd:[Alt], kbd:[Alt+F1] : a key to press or a key combination; keys are shown in uppercase as on a keyboard
 * menu:File[Save As] : menu items, buttons
-* This paragraph is only relevant for the {amd64} /{intel64} architecture. The arrows mark the beginning and the end of the text block.
-+
-This paragraph is only relevant for the architectures `{zseries}` and ``{power}``.
-The arrows mark the beginning and the end of the text block.
 * _Dancing Penguins_ (Chapter __Penguins__, ↑Another Manual): This is a reference to a chapter in another manual.
 * Commands that must be run with {rootuser} privileges. Often you can also prefix these commands with the `sudo` command to run them as non-privileged user.
 +
-
-[source,bash]
+[source,bash,subs="attributes"]
 ----
 {prompt_root} command
 {prompt_user} sudo command
 ----
 * Commands that can be run by non-privileged users.
 +
-[source,bash]
+[source,bash,subs="attributes"]
 ----
 {prompt_user} command
 ----
