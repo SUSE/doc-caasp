@@ -122,32 +122,38 @@ stack_name = "caasp-v4" // <6>
 # Number of master nodes
 masters = 1 // <7>
 
+# Optional: Size of the root disk in GB on master node
+master_disk_size = 50 // <8>
+
 # Number of worker nodes
-workers = 2 // <8>
+workers = 2 // <9>
+
+# Optional: Size of the root disk in GB on worker node
+worker_disk_size = 40 // <10>
 
 # Username for the cluster nodes. Must exist on base OS.
-username = "sles" // <9>
+username = "sles" // <11>
 
 # Optional: Define the repositories to use
 # repositories = {
 #   repository1 = "http://example.my.repo.com/repository1/"
 #   repository2 = "http://example.my.repo.com/repository2/"
 # }
-repositories = {} // <10>
+repositories = {} // <12>
 
 # Minimum required packages. Do not remove them.
 # Feel free to add more packages
-packages = [ // <11>
+packages = [ // <13>
   "patterns-caasp-Node"
 ]
 
 # ssh keys to inject into all the nodes
-authorized_keys = [ // <12>
+authorized_keys = [ // <14>
   "ssh-rsa <example_key> example@example.com"
 ]
 
 # IMPORTANT: Replace these ntp servers with ones from your infrastructure
-ntp_servers = ["0.novell.pool.ntp.org", "1.novell.pool.ntp.org", "2.novell.pool.ntp.org", "3.novell.pool.ntp.org"] // <13>
+ntp_servers = ["0.novell.pool.ntp.org", "1.novell.pool.ntp.org", "2.novell.pool.ntp.org", "3.novell.pool.ntp.org"] // <15>
 ----
 <1> `vsphere_datastore`: The datastore to use.
 <2> `vsphere_datacenter`: The datacenter to use.
@@ -158,16 +164,20 @@ ntp_servers = ["0.novell.pool.ntp.org", "1.novell.pool.ntp.org", "2.novell.pool.
 *Note*: This string will be used to generate the human readable IDs in {soc}.
 If you use a generic term it is very likely to fail deployment because the term is already in use by someone else. It's a good idea to use your username or other unique identifier.
 <7> `masters`: Number of master nodes to be deployed.
-<8> `workers`: Number of worker nodes to be deployed.
-<9> `username`: Login username for the nodes.
+<8> `master_disk_size`: Size of the root disk in GB.
+*Note*: The value must be at least the same size of the source template. It is only possible to grow the size of an instance.
+<9> `workers`: Number of worker nodes to be deployed.
+<10> `worker_disk_size`: Size of the root disk in GB.
+*Note*: The value must be at least the same size of the source template. It is only possible to grow the size of an instance.
+<11> `username`: Login username for the nodes.
 *Note*: Leave this the default `sles`. The username must exist on the used base operating system. It will not be created.
-<10> `repositories`: A list of additional repositories to be added on each
+<12> `repositories`: A list of additional repositories to be added on each
 machines - leave empty if no additional packages need to be installed.
-<11> `packages`: Additional packages to be installed on the node.
+<13> `packages`: Additional packages to be installed on the node.
 *Note*: Do not remove any of the pre-filled values in the `packages` section. This can render
 your cluster unusable. You can add more packages but do not remove any of the
 default packages listed.
-<12> `authorized_keys`: List of ssh-public-keys that will be able to login to the
+<14> `authorized_keys`: List of ssh-public-keys that will be able to login to the
 deployed machines.
-<13> `ntp_servers`: A list of `ntp` servers you would like to use with `chrony`.
+<15> `ntp_servers`: A list of `ntp` servers you would like to use with `chrony`.
 # end::tf_vmware[]
