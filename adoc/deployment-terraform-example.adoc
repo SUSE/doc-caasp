@@ -26,13 +26,6 @@ external_net = "floating"
 # CIDR of the subnet for the internal network
 subnet_cidr = "172.28.0.0/24"
 
-# DNS servers for the nodes
-"dns_nameservers" = [
-    "172.28.0.2",
-    "8.8.8.8",
-    "8.8.8.4"
-]
-
 # Number of master nodes
 masters = 1 // <3>
 
@@ -60,25 +53,22 @@ dnsentry = 0
 # Username for the cluster nodes. Must exist on base OS.
 username = "sles" // <5>
 
-# Password for the cluster nodes
-password = "linux" // <6>
-
 # Optional: Define the repositories to use
 # repositories = [
 #     { repository1 = "http://repo.example.com/repository1/" },
 #     { repository2 = "http://repo.example.com/repository2/" }
 # ]
-repositories = [] // <7>
+repositories = [] // <6>
 
 # Define required packages to be installed/removed. Do not change those.
-packages = [  // <8>
+packages = [  // <7>
   "kernel-default",
   "-kernel-default-base",
   "patterns-caasp-Node"
 ]
 
 # ssh keys to inject into all the nodes
-authorized_keys = [ // <9>
+authorized_keys = [ // <8>
   ""
 ]
 
@@ -93,16 +83,15 @@ If you use a generic term it is very likely to fail deployment because the term 
 <4> `workers`: Number of worker nodes to be deployed.
 <5> `username`: Login username for the nodes.
 *Note*: Leave this the default `sles`. The username must exist on the used base operating system. It will not be created.
-<6> `password`: Login password for the defined username.
-<7> `repositories`: A list of additional repositories to be added on each
+<6> `repositories`: A list of additional repositories to be added on each
 machines - leave empty if no additional packages need to be installed.
-<8> `packages`: Additional packages to be installed on the node.
+<7> `packages`: Additional packages to be installed on the node.
 *Note*: Do not remove any of the pre-filled values in the `packages` section. This can render
 your cluster unusable. You can add more packages but do not remove any of the
 default packages listed.
-<9> `authorized_keys`: List of ssh-public-keys that will be able to login to the
+<8> `authorized_keys`: List of ssh-public-keys that will be able to login to the
 deployed machines.
-<10> `ntp_servers`: A list of `ntp` servers you would like to use with `chrony`.
+<9> `ntp_servers`: A list of `ntp` servers you would like to use with `chrony`.
 # end::tf_openstack[]
 
 [[tf.vmware]]
