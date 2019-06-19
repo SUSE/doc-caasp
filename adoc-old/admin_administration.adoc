@@ -155,8 +155,15 @@ You may need to add additional {worker_node}
 s to your cluster.
 The following steps guides you through that procedure:
 
+[IMPORTANT]
+====
+All nodes (including the cluster and nodes to be added) must be upgraded before adding. Failure to upgrade all nodes to the same software versions will result in orchestration failures.
+
+. Upgrade the cluster nodes. For details, refer to <<_sec.admin.software.upgrade_caasp2.upgrade>>.
+. Prepare the new node(s) as described in <<_sec.deploy.nodes.worker_install>>
+====
+
 .Procedure: Adding Nodes to Existing Cluster
-. Prepare the node as described in <<_sec.deploy.nodes.worker_install>>
 . Open {dashboard} in your browser and login.
 . You should see the newly added node as a node to be accepted in menu:Pending Nodes[] . Click on menu:Accept Node[] .
 +
