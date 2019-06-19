@@ -4,7 +4,7 @@ Every registry related configuration needs to be done in the TOML file
 `/etc/containers/registries.conf`. After any change of this file, CRI-O
 needs to be restarted.
 
-The configuration is a sequence of `+[[registry]]+` entries. For example, a
+The configuration is a sequence of `\[[registry]]` entries. For example, a
 single registry entry within that configuration could be added like this:
 
 `/etc/containers/registries.conf`
@@ -22,7 +22,7 @@ mirror = [
 unqualified-search = false
 ----
 
-Given an image name, a single `+[[registry]]+` TOML table is chosen based on its
+Given an image name, a single `\[[registry]]` TOML table is chosen based on its
 `prefix` field.
 
 A prefix is mainly a user-specified image name and can have one of the
@@ -34,7 +34,7 @@ following formats:
 - `host[:port]/namespace[/namespace…]/repo[:tag|@digest]`
 
 The user-specified image name must start with the specified `prefix` (and
-continue with the appropriate separator) for a particular `+[[registry]]+` TOML
+continue with the appropriate separator) for a particular `\[[registry]]` TOML
 table to be considered. Only the TOML entry with the longest match is used.
 
 As a special case, the `prefix` field can be missing. If so, it defaults to the
@@ -63,7 +63,7 @@ internet without having to change `Dockerfile`s, or to add redundancy.
 
 Accepts the same format as the `prefix` field, and specifies the physical
 location of the `prefix`-rooted namespace. By default, this equal to `prefix`
-(in which case `prefix` can be omitted and the `+[[registry]]+` TOML table can
+(in which case `prefix` can be omitted and the `\[[registry]]` TOML table can
 only specify `location`).
 
 ===== Example
@@ -88,7 +88,7 @@ contains the image, the primary location specified by the `registry.location`
 field, or using the unmodified user-specified reference, is tried last).
 
 Each TOML table in the `mirror` array can contain the following fields, with
-the same semantics as if specified in the `+[[registry]]+` TOML table directly:
+the same semantics as if specified in the `\[[registry]]` TOML table directly:
 
 - `location`
 - `insecure`
