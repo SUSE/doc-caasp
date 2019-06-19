@@ -61,10 +61,9 @@ In order to successfully use Centralized Logging, you first need to install `Hel
 Helm is used to install the log agents and provide custom logging settings.
 
 - As of {productname} {productversion},
-Helm is not part of the {productname} package repository, so to use Centralized Logging,
-install the {productname} 3 package to install the Helm client. Run the following command from
+Helm is part of the {productname} package repository, so to use Centralized Logging,
+you only need to run the following command from
 the location where you normally run `skuba` commands:
-
 
 [source,bash]
 ----
@@ -73,7 +72,7 @@ sudo zypper install helm
 
 - As of {productname} {productversion},
 Tiller is not part of the {productname} package repository,
-so to install the {productname} 3 Tiller container image run:
+so to install the Tiller container image run:
 
 [source,bash]
 ----
