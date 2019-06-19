@@ -164,6 +164,11 @@ The storage is divided so that 20 percent of it is for journal logs and 80 perce
 
 == Optional settings
 
+[NOTE]
+====
+Options with empty default values are set as not specified. 
+====
+
 |===
 |Parameter |Function |Default value
 
@@ -175,20 +180,20 @@ The storage is divided so that 20 percent of it is for journal logs and 80 perce
 |logs.kubernetesSystem.enabled|enables Kubernetes system logs (kubelet, crio)|true
 |logs.kubernetesUserNamespaces.enabled|enables Kubernetes user namespaces logs|false
 |logs.kubernetesUserNamespaces.exclude|excludes Kubernetes logs for specific namespaces|- ""
-|logs.osSystem.enabled|enables OS logs (auditd, kernel, wicked*, zypper)|true
-|persistStateInterval|Rsyslog persist state interval|100
+|logs.osSystem.enabled|enables OS logs (auditd, kernel, wicked, zypper)|true
+|persistStateInterval|sets time interval for data state persistency|100
 |queue.enabled|enables Rsyslog queue|false
-|queue.maxDiskSpace|Rsyslog queue maximum disk space in bytes|2147483648
-|queue.size|Rsyslog queue size|50000
+|queue.maxDiskSpace|sets maximum Rsyslog queue disk space in bytes|2147483648
+|queue.size|sets Rsyslog queue size|50000
 |resources.limits.cpu|sets CPU limits|
 |resources.limits.memory|sets memory limits|512Mi
-|resources.requests.cpu|CPU request|100m
-|resources.requests.memory|Memory request|512Mi
-|resumeInverval|Rsyslog resume interval|30
-|resumeRetryCount|Rsyslog resume retry count. -1 is unlimited|-1
-|server.tls.clientCert|TLS client certificate|
-|server.tls.clientKey|TLS client key|
+|resources.requests.cpu|sets CPU for request|100m
+|resources.requests.memory|sets memory for request|512Mi
+|resumeInverval|specifies time after failure before retry|30
+|resumeRetryCount|sets number of retries after first failure before the log is discarded. -1 is unlimited|-1
+|server.tls.clientCert|sets TLS client certificate|
+|server.tls.clientKey|sets TLS client key|
 |server.tls.enabled|enables TLS|false
-|server.tls.permittedPeer|TLS server permittedPeer|
-|server.tls.rootCa|TLS root CA|
+|server.tls.permittedPeer|sets a list of TLS/fingerprints or TLS/names.with permission to access the server|
+|server.tls.rootCa|specifies TLS root cetrificate authority|
 |===
