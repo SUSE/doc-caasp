@@ -1,9 +1,42 @@
-= Cilium
+== Network security
 
-The main characteristic of &cilium; is using &ebpf;
- (<link xlink:href="https://opensource.com/article/17/9/intro-ebpf">extended Berkeley Packet Filter</link>)
- as a mechanism for filtering incoming and outgoing packets in containers.
- &ebpf; is a bytecode interpreter inside Linux kernel which allows to write
- programs to analyze, filter network packets and to monitor system function
- calls. &cilium; translates &net_pols; into &ebpf; programs which are loaded
-into the kernel.
+=== Cilium
+
+Cilium is open source software for transparently securing the network
+connectivity between application services deployed using Linux container management platforms.
+The main characteristic of Cilium is that it uses the extended Berkeley Packet Filter
+as a mechanism for filtering incoming and outgoing packets in containers.
+The Berkeley Packet Filter (BPF) is a bytecode interpreter inside the Linux kernel
+which allows to write programs to analyze and filter network packets and to monitor system function
+calls. Cilium translates network/security policies into BPF programs, which are loaded
+into the kernel. This means that security policies can be applied and updated without any changes
+to the application code or container configuration.
+
+In {productname} {productversion} Cilium is deployed automatically with the Platform installation.
+Please refer to the official Cilium documentation for instructions on how to secure various
+parts of your infrastructure.
+The following chapters are specifically recommended for {productname} users.
+
+General introduction to Cilium::
+https://cilium.readthedocs.io/en/v1.5/intro/
+
+Securing traffic for HTTP servers and APIs::
+https://cilium.readthedocs.io/en/v1.5/gettingstarted/http/
+
+Restricting the network traffic to specific DNS queries or domains::
+https://cilium.readthedocs.io/en/v1.5/gettingstarted/dns/
+
+Securing traffic for the Kafka protocol::
+https://cilium.readthedocs.io/en/v1.5/gettingstarted/kafka/
+
+Securing applications using gRPC::
+https://cilium.readthedocs.io/en/v1.5/gettingstarted/grpc/
+
+Securing Cassandra databases::
+https://cilium.readthedocs.io/en/v1.5/gettingstarted/cassandra/
+
+Securing Memcached::
+https://cilium.readthedocs.io/en/v1.5/gettingstarted/memcached/
+
+Making security policies on clusters on AWS::
+https://cilium.readthedocs.io/en/v1.5/gettingstarted/aws/
