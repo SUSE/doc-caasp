@@ -1,0 +1,9 @@
+= Cilium
+
+The main characteristic of &cilium; is using &ebpf;
+ (<link xlink:href="https://opensource.com/article/17/9/intro-ebpf">extended Berkeley Packet Filter</link>)
+ as a mechanism for filtering incoming and outgoing packets in containers.
+ &ebpf; is a bytecode interpreter inside Linux kernel which allows to write
+ programs to analyze, filter network packets and to monitor system function
+ calls. &cilium; translates &net_pols; into &ebpf; programs which are loaded
+into the kernel.
