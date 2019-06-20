@@ -201,14 +201,20 @@ cmd.run "<replaceable>df -h</replaceable>"</command>
     You may need to add additional &worker_node;s to your cluster. The
     following steps guides you through that procedure:
    </para>
+   <important>
+   <para>
+    All nodes (including the cluster and nodes to be added) must be upgraded before adding. 
+    Failure to upgrade all nodes to the same software versions will result in orchestration failures.
+    </para>
+   <para>
+    First upgrade the cluster nodes. For details, refer to <xref linkend="sec.admin.software.upgrade_caasp2.upgrade"/>
+   </para>
+   <para>
+    Then prepare the new node(s) as described in <xref linkend="sec.deploy.nodes.worker_install"/>
+   </para>
+   </important>
    <procedure>
     <title>Adding Nodes to Existing Cluster</title>
-    <step>
-     <para>
-      Prepare the node as described in
-      <xref linkend="sec.deploy.nodes.worker_install"/>
-     </para>
-    </step>
     <step>
      <para>
       Open &dashboard; in your browser and login.
