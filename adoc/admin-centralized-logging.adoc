@@ -79,7 +79,7 @@ so to install the Tiller container image run:
 kubectl create serviceaccount --namespace kube-system tiller
 kubectl create clusterrolebinding tiller --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
 
-helm init --tiller-image registry.suse.com/sles12/tiller:2.8.2 --service-account tiller
+helm init --tiller-image registry.suse.com/caasp/v4/helm-tiller:2.8.2 --service-account tiller
 ----
 
 If the installation runs successfully there will be no output message.
@@ -118,7 +118,7 @@ If not specified otherwise, Helm will install log agents with TCP as the default
 ====
 
 
-After this step, all of the log agents will initialize then start to forward logs from each host to the configured remote Rsyslog server.
+After this step, all of the log agents will initialize then start to forward logs from each node to the configured remote Rsyslog server.
 
 - To check the installation progress, use the `helm status` command:
 ----
@@ -153,7 +153,7 @@ Additional parameters to define queue size and its disk usage are:
 `*queue.size*`, default value = 50000
 
 This option sets the number of messages allowed for the in-memory queue.
-This setting effects the kKbernetes cluster logs (`kubernetes-control-plane` and `kubernetes-user-name-space`).
+This setting effects the Kubernetes cluster logs (`kubernetes-control-plane` and `kubernetes-user-name-space`).
 
 
 `*queue.maxDiskSpace*`, default value = 2147483648
@@ -166,14 +166,14 @@ The storage is divided so that 20 percent of it is for journal logs and 80 perce
 
 [NOTE]
 ====
-Options with empty default values are set as not specified. 
+Options with empty default values are set as not specified.
 ====
 
 |===
 |Parameter |Function |Default value
 
 | image.repository |specifies image repository to pull from|registry.suse.com/caasp/v4/rsyslog
-|image.tag|specifies image tag to pull|	v8.39.0
+|image.tag|specifies image tag to pull|8.39.0
 |kubernetesPodAnnotationsEnabled|enables kubernetes meta annotations in pod logs|false
 |kubernetesPodLabelsEnabled|enables kubernetes meta labels in pod logs| false
 |logs.kubernetesControlPlane.enabled|enables Kubernetes control plane logs|true
@@ -181,19 +181,19 @@ Options with empty default values are set as not specified.
 |logs.kubernetesUserNamespaces.enabled|enables Kubernetes user namespaces logs|false
 |logs.kubernetesUserNamespaces.exclude|excludes Kubernetes logs for specific namespaces|- ""
 |logs.osSystem.enabled|enables OS logs (auditd, kernel, wicked, zypper)|true
-|persistStateInterval|sets time interval for data state persistency|100
+|persistStateInterval|sets time interval (seconds) for data state persistency|100
 |queue.enabled|enables Rsyslog queue|false
 |queue.maxDiskSpace|sets maximum Rsyslog queue disk space in bytes|2147483648
-|queue.size|sets Rsyslog queue size|50000
+|queue.size|sets Rsyslog queue size in bytes|50000
 |resources.limits.cpu|sets CPU limits|
 |resources.limits.memory|sets memory limits|512Mi
 |resources.requests.cpu|sets CPU for request|100m
 |resources.requests.memory|sets memory for request|512Mi
-|resumeInverval|specifies time after failure before retry|30
+|resumeInverval|specifies time (seconds) after failure before retry is attempted|30
 |resumeRetryCount|sets number of retries after first failure before the log is discarded. -1 is unlimited|-1
 |server.tls.clientCert|sets TLS client certificate|
 |server.tls.clientKey|sets TLS client key|
 |server.tls.enabled|enables TLS|false
-|server.tls.permittedPeer|sets a list of TLS/fingerprints or TLS/names.with permission to access the server|
+|server.tls.permittedPeer|sets a list of TLS/fingerprints or TLS/names with permission to access the server|
 |server.tls.rootCa|specifies TLS root cetrificate authority|
 |===
