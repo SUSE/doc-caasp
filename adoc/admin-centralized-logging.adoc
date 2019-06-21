@@ -82,8 +82,6 @@ kubectl create clusterrolebinding tiller --clusterrole=cluster-admin --serviceac
 helm init --tiller-image registry.suse.com/caasp/v4/helm-tiller:2.8.2 --service-account tiller
 ----
 
-If the installation runs successfully there will be no output message.
-
 ////
 Note: When Helm is included in v4, Tiller server will be automatically installed after CaaS Platform setup.
 So we probably  just need to mention that we use it and that it's installed automatically.
@@ -109,7 +107,7 @@ See <<Optional settings>> for the facultative parameters and their default value
 [source,bash]
 ----
 helm repo add suse-charts https://kubernetes-charts.suse.com
-helm install stable/log-agent-rsyslog --name ${RELEASE_NAME} --set server.host=${SERVER_HOST} --set server.port=${SERVER_PORT}
+helm install suse-charts/log-agent-rsyslog --name ${RELEASE_NAME} --set server.host=${SERVER_HOST} --set server.port=${SERVER_PORT}
 ----
 
 [NOTE]
@@ -189,7 +187,7 @@ Options with empty default values are set as not specified.
 |resources.limits.memory|sets memory limits|512Mi
 |resources.requests.cpu|sets CPU for request|100m
 |resources.requests.memory|sets memory for request|512Mi
-|resumeInverval|specifies time (seconds) after failure before retry is attempted|30
+|resumeInterval|specifies time (seconds) after failure before retry is attempted|30
 |resumeRetryCount|sets number of retries after first failure before the log is discarded. -1 is unlimited|-1
 |server.tls.clientCert|sets TLS client certificate|
 |server.tls.clientKey|sets TLS client key|
