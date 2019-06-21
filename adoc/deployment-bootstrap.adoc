@@ -3,13 +3,92 @@
 
 === Cluster Deployment
 
+==== Cluster initialization
 . Initialize the cluster on the deployed machines.
 As `--control-plane` enter the IP/FQDN of your load balancer. If you do not use a load balancer use your first master node.
 +
 ----
-caaspctl cluster init --control-plane <LB IP/FQDN> my-cluster
+skuba cluster init --control-plane <LB IP/FQDN> my-cluster
 ----
 `cluster init` generates the folder named `my-cluster` and initializes the directory that will hold the configuration for the cluster.
+
+==== Cluster configuration
+
+At this point you can perform some configurations before bootstrapping the cluster.
+
+===== Prevent nodes running special workloads from being rebooted
+
+. Open the `kured` deployment in `my-cluster/addons/kured/kured.yaml`
+. Adapt the `DaemonSet` by adding one of the following flags to the `command` section of the `kured` container:
++
+----
+---
+apiVersion: apps/v1
+kind: DaemonSet
+...
+spec:
+  ...
+    ...
+      ...
+      containers:
+        ...
+          command:
+            - /usr/bin/kured
+            - --blocking-pod-selector=name=<NAME OF POD>
+----
+
+You can add any key/value labels to this selector:
+----
+--blocking-pod-selector=<LABEL KEY 1>=<LABLE VALUE 1>,<LABEL KEY 2>=<LABEL VALUE 2>
+----
+
+Alternatively you can adapt the `kured` DaemonSet also later during runtime (after bootstrap) by editing `my-cluster/addons/kured/kured.yaml` and executing:
+----
+kubectl apply -f my-cluster/addons/kured/kured.yaml
+----
+
+This will restart all `kured` pods with the additional configuration flags.
+
+==== Prevent nodes with any prometheus alerts from being rebooted
+
+[NOTE]
+====
+By default, **any** prometheus alert blocks a node from reboot. However you can filter specific alerts to be ignored via the `--alert-filter-regexp` flag.
+====
+
+. Open the `kured` deployment in `my-cluster/addons/kured/kured.yaml`
+. Adapt the `DaemonSet` by adding one of the following flags to the `command` section of the `kured` container:
++
+----
+---
+apiVersion: apps/v1
+kind: DaemonSet
+...
+spec:
+  ...
+    ...
+      ...
+      containers:
+        ...
+          command:
+            - /usr/bin/kured
+            - --prometheus-url=<PROMETHEUS SERVER URL>
+            - --alert-filter-regexp=^(RebootRequired|AnotherBenignAlert|...$
+----
+
+[IMPORTANT]
+====
+The <PROMETHEUS SERVER URL> needs to contain the protocol (`http://` or `https://`)
+====
+
+Alternatively you can adapt the `kured` DaemonSet also later during runtime (after bootstrap) by editing `my-cluster/addons/kured/kured.yaml` and executing:
+----
+kubectl apply -f my-cluster/addons/kured/kured.yaml
+----
+
+This will restart all `kured` pods with the additional configuration flags.
+
+==== Cluster bootstrap
 . Switch to the new directory.
 . Now bootstrap a master node.
 For `--target` enter the IP address of your first master node.
@@ -23,7 +102,7 @@ The directory created during this step contains configuration files that allow f
 +
 ----
 cd my-cluster
-caaspctl node bootstrap --user sles --sudo --target <IP/FQDN> <NODE NAME>
+skuba node bootstrap --user sles --sudo --target <IP/FQDN> <NODE NAME>
 ----
 This will bootstrap the specified node as the first master in the cluster.
 The process will generate authentication certificates and the `admin.conf` file that is used for authentication against the cluster.
@@ -34,7 +113,7 @@ Replace the `<IP/FQDN>` with the IP for the machine.
 Replace `<NODE NAME>` with a unique identifier for example "master-two".
 +
 ----
-caaspctl node join --role master --user sles --sudo --target <IP/FQDN> <NODE NAME>
+skuba node join --role master --user sles --sudo --target <IP/FQDN> <NODE NAME>
 ----
 . Add a worker to the cluster.
 +
@@ -42,12 +121,12 @@ Replace the `<IP/FQDN>` with the IP for the machine.
 Replace `<NODE NAME>` with a unique identifier for example "worker-one".
 +
 ----
-caaspctl node join --role worker --user sles --sudo --target <IP/FQDN> <NODE NAME>
+skuba node join --role worker --user sles --sudo --target <IP/FQDN> <NODE NAME>
 ----
 . Verify the nodes that you added
 +
 ----
-caaspctl cluster status
+skuba cluster status
 ----
 +
 The output should look like this:
@@ -80,7 +159,7 @@ ln -s ~/clusters/my-cluster/admin.conf ~/.kube/config
 
 Then you can perform all cluster operations as usual. For example checking cluster status with either:
 
-* `caaspctl cluster status`
+* `skuba cluster status`
 +
 or
 * `kubectl get nodes -o wide`

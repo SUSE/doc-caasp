@@ -156,20 +156,20 @@ link:https://cilium.io[]
 link:https://github.com/etcd-io/etcd[]
 |*{etcd_version}*
 
-|image:logo_dex.png[dex,width=200,pdfwidth=20%,height=70]
-
-link:https://github.com/dexidp/dex[]
-|*{dex_version}*
+// |image:logo_dex.png[dex,width=200,pdfwidth=20%,height=70]
+//
+// link:https://github.com/dexidp/dex[]
+// |*{dex_version}*
 
 |image:logo_kured.png[Kured,width=100,pdfwidth=20%,height=70] Kured
 
 link:https://github.com/weaveworks/kured[]
 |*{kured_version}*
 
-|Gangway
-
-link:https://github.com/heptiolabs/gangway[]
-|*{gangway_version}*
+// |Gangway
+//
+// link:https://github.com/heptiolabs/gangway[]
+// |*{gangway_version}*
 |===
 
 === Container Runtime environment
@@ -220,7 +220,7 @@ the pod using that service.
 
 === Configuration Management and Orchestration
 
-* caaspctl
+* skuba
 * etcd
 * cloud-init
 * AutoYaST
@@ -301,6 +301,8 @@ of one control plane node.
 Control planes are only part of the whole picture. Most components will
 talk to the API Server, and the API Server must be exposed on all master nodes
 to communicate to the clients and the rest of the cluster components.
+
+==== Load Balancer
 
 The most reasonable way to achieve fault tolerant exposure of the API servers is
 a load balancer. The load balancer will point to all the control plane nodes.
@@ -472,7 +474,7 @@ Certificates are stored under `/var/lib/kubelet/pki` on the worker nodes.
 
 === Cluster Management
 
-Cluster lifecycle is managed using `caaspctl`. It enables you to
+Cluster lifecycle is managed using `skuba`. It enables you to
 manage nodes in your cluster:
 
 * Bootstrap a new cluster
@@ -489,7 +491,7 @@ Creating a cluster definition is the first step to initialize your
 cluster. You can execute this task as follows:
 
 ----
-~/clusters$ caaspctl cluster init --control-plane 10.86.3.149 my-cluster
+~/clusters$ skuba cluster init --control-plane 10.86.3.149 my-cluster
 [init] configuration files written to /home/my-user/clusters/my-cluster
 ----
 
@@ -522,7 +524,7 @@ From within your cluster definition folder, you can bootstrap your
 first master machine:
 
 ----
-~/clusters/my-cluster$ caaspctl node bootstrap --user sles --sudo --target <IP address/FQDN> <nodename>
+~/clusters/my-cluster$ skuba node bootstrap --user sles --sudo --target <IP address/FQDN> <nodename>
 ----
 
 This operation will read the `kubeadm-init.conf` file inside your
@@ -560,18 +562,18 @@ happened on your cluster definition folder:
 ==== Adding master nodes to the cluster
 
 Adding new master nodes to the cluster can be achieved by executing
-the following `caaspctl` command:
+the following `skuba` command:
 
 ----
-~/clusters/my-cluster$ caaspctl node join --role master --user sles --sudo --target <IP address/FQDN> <nodename>
+~/clusters/my-cluster$ skuba node join --role master --user sles --sudo --target <IP address/FQDN> <nodename>
 ----
 
 This operation will try to read the `kubeadm-join.conf.d/<IP address/FQDN>.conf`
 file if it exists. This allows you to set specific settings for this
 new node prior to joining it (a similar procedure to how
 `kubeadm-init.conf` file behaves when bootstrapping). If this file
-does not exist, `caaspctl` will read the `kubeadm-join.conf.d/master.conf.template`
-instead and will create this file automatically when `caaspctl node
+does not exist, `skuba` will read the `kubeadm-join.conf.d/master.conf.template`
+instead and will create this file automatically when `skuba node
 join` is called.
 
 This operation will increase the `etcd` member count by one, so it's
@@ -582,23 +584,23 @@ improve fault tolerance.
 ==== Adding worker nodes to the cluster
 
 Adding new worker nodes to the cluster can be achieved by executing
-the following `caaspctl` command:
+the following `skuba` command:
 
 ----
-~/clusters/my-cluster$ caaspctl node join --role worker --user sles --sudo --target <IP address/FQDN> <nodename>
+~/clusters/my-cluster$ skuba node join --role worker --user sles --sudo --target <IP address/FQDN> <nodename>
 ----
 
 This operation will try to read the `kubeadm-join.conf.d/<IP address/FQDN>.conf`
 file if it exists. This allows you to set specific settings for this
 new node prior to joining it (a similar procedure to how
 `kubeadm-init.conf` file behaves when bootstrapping). If this file
-does not exist, `caaspctl` will read the `kubeadm-join.conf.d/worker.conf.template`
-instead and will create this file automatically when `caaspctl node
+does not exist, `skuba` will read the `kubeadm-join.conf.d/worker.conf.template`
+instead and will create this file automatically when `skuba node
 join` is called.
 
 ==== Removing nodes from the cluster
 
-Removing nodes from the cluster requires you to execute `caaspctl`
+Removing nodes from the cluster requires you to execute `skuba`
 from a folder containing an `admin.conf` file, because this operation
 is performed exclusively using Kubernetes, and no access to the node
 being removed or other nodes for that matter is required.
@@ -606,7 +608,7 @@ being removed or other nodes for that matter is required.
 For removing a node, the following command has to be executed:
 
 ----
-~/clusters/my-cluster$ caaspctl node remove <nodename>
+~/clusters/my-cluster$ skuba node remove <nodename>
 ----
 
 If the node to be removed is a master, specific actions will be

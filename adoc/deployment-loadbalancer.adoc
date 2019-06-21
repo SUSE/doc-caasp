@@ -1,3 +1,4 @@
+[[loadbalancer]]
 == Nginx TCP Load Balancer with passive checks
 
 We can use the `ngx_stream_module` module (available since version 1.9.0) in order to use
@@ -105,10 +106,10 @@ From your workstation run:
 +
 [source,bash]
 ----
-$ while true; do caaspctl cluster status; sleep 1; done;
+$ while true; do skuba cluster status; sleep 1; done;
 ----
 
-There should be no interruption in the  *caaspctl cluster status* running command.
+There should be no interruption in the  *skuba cluster status* running command.
 
 On the load balancer virtual machine, check the logs to validate
 that each request is correctly distributed in a round robin way.
