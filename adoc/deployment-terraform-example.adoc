@@ -50,30 +50,27 @@ dnsdomain = "testing.example.com"
 # Set DNS Entry (0 is false, 1 is true)
 dnsentry = 0
 
-# Username for the cluster nodes. Must exist on base OS.
-username = "sles" // <5>
-
 # Optional: Define the repositories to use
 # repositories = {
 #   repository1 = "http://repo.example.com/repository1/"
 #   repository2 = "http://repo.example.com/repository2/"
 # }
-repositories = {} // <6>
+repositories = {} // <5>
 
 # Define required packages to be installed/removed. Do not change those.
-packages = [  // <7>
+packages = [  // <6>
   "kernel-default",
   "-kernel-default-base",
   "patterns-caasp-Node"
 ]
 
 # ssh keys to inject into all the nodes
-authorized_keys = [ // <8>
+authorized_keys = [ // <7>
   ""
 ]
 
 # IMPORTANT: Replace these ntp servers with ones from your infrastructure
-ntp_servers = ["0.novell.pool.ntp.org", "1.novell.pool.ntp.org", "2.novell.pool.ntp.org", "3.novell.pool.ntp.org"] // <9>
+ntp_servers = ["0.novell.pool.ntp.org", "1.novell.pool.ntp.org", "2.novell.pool.ntp.org", "3.novell.pool.ntp.org"] // <8>
 
 ----
 <1> `stack_name`: Prefix for all machines of the cluster spawned by terraform.
@@ -82,17 +79,16 @@ ntp_servers = ["0.novell.pool.ntp.org", "1.novell.pool.ntp.org", "2.novell.pool.
 If you use a generic term it is very likely to fail deployment because the term is already in use by someone else. It's a good idea to use your username or other unique identifier.
 <3> `masters`: Number of master nodes to be deployed.
 <4> `workers`: Number of worker nodes to be deployed.
-<5> `username`: Login username for the nodes.
 *Note*: Leave this the default `sles`. The username must exist on the used base operating system. It will not be created.
-<6> `repositories`: A list of additional repositories to be added on each
+<5> `repositories`: A list of additional repositories to be added on each
 machines - leave empty if no additional packages need to be installed.
-<7> `packages`: Additional packages to be installed on the node.
+<6> `packages`: Additional packages to be installed on the node.
 *Note*: Do not remove any of the pre-filled values in the `packages` section. This can render
 your cluster unusable. You can add more packages but do not remove any of the
 default packages listed.
-<8> `authorized_keys`: List of ssh-public-keys that will be able to login to the
+<7> `authorized_keys`: List of ssh-public-keys that will be able to login to the
 deployed machines.
-<9> `ntp_servers`: A list of `ntp` servers you would like to use with `chrony`.
+<8> `ntp_servers`: A list of `ntp` servers you would like to use with `chrony`.
 # end::tf_openstack[]
 
 [[tf.vmware]]
