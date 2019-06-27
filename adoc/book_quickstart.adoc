@@ -1,8 +1,6 @@
 include::attributes.adoc[]
 include::entities.adoc[]
 
-= {productname} {productversion} QuickStart Guide: This guide describes quick deployment for {productname} {productversion}.
-Markus Napp; Nora Kořánová
 :sectnums:
 :doctype: book
 :toc: left
@@ -14,34 +12,36 @@ Markus Napp; Nora Kořánová
 :experimental:
 :docinfo: shared,private-head
 
+:guide: deplquick
 
-[WARNING]
-====
-This is an internal release and MUST NOT be distributed outside SUSE
-====
+[[caas.installquick]]
+= {productname} {productversion} QuickStart Guide
 
-[IMPORTANT]
-====
-This is a very early pre-release of the software. You will encounter bugs
-and incomplete features. Please do not use for any productive deployments.
-====
+ifeval::["{set}" == "true"]
+[partintro]
+--
+This guide describes quick deployment for {productname} {productversion}.
+--
+endif::[]
 
-[NOTE]
-====
-This guide assumes a configured SUSE SLE 15 SP1 workstation environment.
-====
+[preface]
+== About This Guide
 
-include::common_copyright_quick.adoc[leveloffset=+1]
+include::common_disclaimer.adoc[Disclaimer]
 
+include::common_copyright_quick.adoc[Legal Notice]
 
-// System requirements
+== Requirements
+
 include::deployment-sysreqs.adoc[System Requirements]
 
-include::deployment-preparation.adoc[Preparation]
+include::deployment-preparation.adoc[Preperation,leveloffset=-1]
 
-include::deployment-ecp.adoc[ECP Instructions]
+include::deployment-ecp.adoc[ECP Instructions,leveloffset=-1]
 
+=== Bootstrapping the Cluster
 include::deployment-bootstrap.adoc[Bootstrapping,leveloffset=+1]
 
 //GNU Licenses
+[appendix]
 include::common_legal.adoc[Legal]

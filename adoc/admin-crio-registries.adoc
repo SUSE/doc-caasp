@@ -1,4 +1,4 @@
-== Configuring container registries for {crio}
+=== Configuring container registries for {crio}
 
 Every registry related configuration needs to be done in the TOML file
 `/etc/containers/registries.conf`. After any change of this file, CRI-O
@@ -40,7 +40,7 @@ table to be considered. Only the TOML entry with the longest match is used.
 As a special case, the `prefix` field can be missing. If so, it defaults to the
 value of the `location` field.
 
-=== Per-namespace settings
+==== Per-namespace settings
 
 - `insecure` (`true` or `false`): By default, container runtimes require TLS
   when retrieving images from a registry. If `insecure` is set to `true`,
@@ -50,7 +50,7 @@ value of the `location` field.
 - `blocked` (`true` or `false`): If `true`, pulling images with matching names
   is forbidden.
 
-=== Remapping and mirroring registries
+==== Remapping and mirroring registries
 
 The user-specified image reference is, primarily, a "logical" image name,
 always used for naming the image. By default, the image reference also directly
@@ -77,7 +77,7 @@ location = "internal-registry-for-example.net/bar"
 Requests for the image `example.com/foo/myimage:latest` will actually work with
 the `internal-registry-for-example.net/bar/myimage:latest` image.
 
-==== `mirror`
+===== `mirror`
 
 An array of TOML tables specifying (possibly-partial) mirrors for the
 `prefix`-rooted namespace.
@@ -93,7 +93,7 @@ the same semantics as if specified in the `\[[registry]]` TOML table directly:
 - `location`
 - `insecure`
 
-==== `mirror-by-digest-only`
+===== `mirror-by-digest-only`
 
 Can be `true` or `false`. If `true`, mirrors will only be used during pulling
 if the image reference includes a digest. Referencing an image by digest

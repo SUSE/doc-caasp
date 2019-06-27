@@ -11,18 +11,27 @@ include::entities.adoc[]
 :imagesdir: images/
 :experimental:
 :docinfo: shared,private-head
+//:author: Markus Napp
+//:author: Nora Kořánová
 
-= {productname} {productversion} Administration Guide: This guide describes general and specialized administrative tasks for {productname} {productversion}.
-Markus Napp; Nora Kořánová
+:guide: admin
 
+[[caas.admin]]
+= {productname} {productversion} Administration Guide
 
-[colophon]
-include::common_copyright_quick.adoc[leveloffset=+1]
+ifeval::["{set}" == "true"]
+[partintro]
+--
+This guide describes general and specialized administrative tasks for {productname} {productversion}.
+--
+endif::[]
 
-:leveloffset: -1
 [preface]
-= About This Guide
+== About This Guide
+
 include::common_disclaimer.adoc[Disclaimer]
+
+include::common_copyright_quick.adoc[Legal Notice]
 
 include::common_intro_target_audience.adoc[Required Background]
 
@@ -32,34 +41,33 @@ include::common_intro_feedback.adoc[Feedback]
 
 include::common_intro_typography.adoc[]
 
-:leveloffset: +1
-
 == Security
 
-include::admin-security-psp.adoc[Pod Security Policies,leveloffset=+2]
-
-// include::admin-security-rbac.adoc[Role Based Access Control (RBAC),leveloffset=+2]
+include::admin-security-psp.adoc[Pod Security Policies]
+// include::admin-skecurity-rbac.adoc[Role Based Access Control (RBAC)]
 
 == Cluster Updates
 
-include::admin-updates.adoc[Cluster Updates,leveloffset=+1]
+include::admin-updates.adoc[Cluster Updates]
 
 == Logging
 
-include::admin-centralized-logging.adoc[leveloffset=+2]
-
+include::admin-centralized-logging.adoc[]
 
 == Miscellaneous
 
-include::admin-crio-proxy.adoc[CRI-O Proxy,leveloffset=+1]
+include::admin-crio-proxy.adoc[CRI-O Proxy]
 
-include::admin-crio-registries.adoc[CRI-O Registry Configuration,leveloffset=+1]
+include::admin-crio-registries.adoc[CRI-O Registry Configuration]
 
-//include::admin-security-rbac.adoc[Role Based Access Control (RBAC),leveloffset=+1]
-include::admin-flexvolume.adoc[Flexvolume Configuration, leveloffset=+2]
+//include::admin-security-rbac.adoc[Role Based Access Control (RBAC)]
+
+include::admin-flexvolume.adoc[Flexvolume Configuration]
 
 // Changelog
+[appendix]
 include::common_changelog.adoc[Documentation Changelog]
 
 //GNU Licenses
+[appendix]
 include::common_legal.adoc[Legal]

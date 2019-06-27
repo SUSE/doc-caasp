@@ -1,8 +1,17 @@
-== Deployment on SUSE OpenStack Cloud
+=== Deployment on SUSE OpenStack Cloud
 
+ifeval::["{guide}" == "deployment"]
 .Preparation Required
 [NOTE]
 You must have completed <<deployment.preparations>> to proceed.
+endif::[]
+
+ifeval::["{guide}" == "deplquick"]
+.Preparation Required
+[NOTE]
+You must have completed <<q.deployment.preparations>> to proceed.
+endif::[]
+
 
 You will use {tf} to deploy the required master and worker cluster nodes (plus a load balancer) to {soc} and then use the
 `skuba` tool to bootstrap the {kube} cluster on top of those.
@@ -22,7 +31,7 @@ source container-openrc.sh
 .. Download the latest SUSE SLES15-SP1 for {soc} from {download_url}.
 .. Upload the image to your {soc}.
 
-=== Deploying the cluster nodes
+==== Deploying the cluster nodes
 
 . Find the {tf} template files for {soc} in `/usr/share/caasp/terraform/openstack`.
 Copy this folder to a location of your choice as the files need adjustment.
@@ -51,7 +60,12 @@ You can set timezone in before deploying the nodes by modifying the files:
 ====
 . Enter the registration code for your nodes in `~/my-deployment/registration.auto.tfvars`:
 +
+ifeval::["{guide}" == "deployment"]
 Substitute `REGISTRATION_CODE` for the code from <<registration_code>>.
+endif::[]
+ifeval::["{guide}" == "deplquick"]
+Substitute `REGISTRATION_CODE` for the code from <<q.registration_code>>.
+endif::[]
 +
 [source,json]
 ----
@@ -70,16 +84,13 @@ terraform apply
 +
 Check the output for the actions to be taken. Type "yes" and confirm with Enter when ready.
 Terraform will now provision all the machines and network infrastructure for the cluster.
-+
-.Note down IP/FQDN for nodes
-[IMPORTANT]
-====
-The IP addresses of the generated machines will be displayed in the terraform
+. The IP addresses of the generated machines will be displayed in the terraform
 output during the cluster node deployment. You need these IP addresses to
 deploy {productname} to the cluster.
-
++
 If you need to find an IP addresses later on you can run `terraform output` within the directory you performed the deployment from `~/my-deployment` directory or perform the following steps:
-
++
+--
 . Log in to {soc} and click on menu:Network[Load Balancers]. Find the one with the string you entered in the terraform configuration above e.g. "testing-lb".
 . Note down the "Floating IP". If you have configured a FQDN for this IP, use the hostname instead.
 +
@@ -87,4 +98,5 @@ image::deploy-loadbalancer-ip.png[]
 . Now click on menu:Compute[Instances].
 . Switch the filter dropdown to `Instance Name` and enter the string you specified for `stack_name` in the `terraform.tfvars` file.
 . Find the Floating IPs on each of the nodes of your cluster.
-====
+--
+

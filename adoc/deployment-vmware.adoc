@@ -1,10 +1,10 @@
-== Deployment on VMWare
+=== Deployment on VMWare
 
 .Preparation Required
 [NOTE]
 You must have completed <<deployment.preparations>> to proceed.
 
-=== Environment description
+==== Environment description
 
 [NOTE]
 ====
@@ -25,7 +25,7 @@ for the {kube} api-servers on the master nodes on a local load balancer using
 round-robin 1:1 port forwarding.
 ====
 
-=== VM preparation for creating a template
+==== VM preparation for creating a template
 
 . Temporarily enable SSH access to one of the ESXi nodes in the vSphere WebUI
 as described at link:https://kb.vmware.com/s/article/2004746[]
@@ -84,7 +84,7 @@ image::vmware_step6b.png[width=80%,pdfwidth=80%]
 .. Select menu:Firmware[Bios].
 .. Confirm the process with menu:Next[].
 
-==== {sls} installation
+===== {sls} installation
 
 [NOTE]
 ====
@@ -164,7 +164,7 @@ image::vmware_step16.png[width=80%,pdfwidth=80%]
 +
 image::vmware_step17.png[width=80%,pdfwidth=80%]
 
-==== Preparation of the VM as a template
+===== Preparation of the VM as a template
 
 In order to run {productname} on the created VMs, you must configure and install some additional packages
 like `sudo`, `VMWare tools` and adding the {kube} dependencies.
@@ -242,16 +242,16 @@ snapper create -d "Initial snapshot for caasp template" -t single
 shutdown -h now
 ----
 
-==== Creating the VMWare Template
+===== Creating the VMWare Template
 
 Now you can convert the VM into a template in VMware (or repeat this action block for each VM).
 
 . In the vSphere WebUI, right-click on the VM and select menu:Template[Convert to Template].
 Name it reasonably so you can later identify the template. The template will be created.
 
-=== Deploying VMs from the Template
+==== Deploying VMs from the Template
 
-==== Terraform
+===== Terraform
 
 . Find the {tf} template files for {soc} in `/usr/share/caasp/terraform/openstack`.
 Copy this folder to a location of your choice as the files need adjustment.
@@ -305,7 +305,7 @@ terraform plan
 terraform apply
 ----
 
-==== Setup by hand
+===== Setup by hand
 
 . Right-click on the template and select menu:New VM from This Template...[] and name it something like `caasp4-master-0`.
 .. Select storage `datastore` and the designated resource pool.
@@ -332,7 +332,7 @@ sudo dbus-uuidgen --ensure
 sudo systemd-machine-id-setup
 ----
 
-=== Installing {productname} packages
+==== Installing {productname} packages
 
 Install {productname} related packages to each node. You can alternatively pre-install them during the creation of the template but
 then you are limited to installing old versions of the packages with the template and updating manually afterwards.

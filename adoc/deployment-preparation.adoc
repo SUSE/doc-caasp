@@ -1,5 +1,10 @@
+ifeval::["{guide}" == "deployment"]
 [[deployment.preparations]]
-== Deployment Preparations
+endif::[]
+ifeval::["{guide}" == "deplquick"]
+[[q.deployment.preparations]]
+endif::[]
+=== Deployment Preparations
 
 In order to deploy {productname} you need a workstation running {sle} 15 SP1 or similar {opensuse} equivalent.
 This workstation is called the "Management node".
@@ -36,8 +41,13 @@ This can be achieved using the `ssh -A` command. Please refer to the man page
 of ssh to learn about the security implications of using this feature.
 ====
 
+ifeval::["{guide}" == "deployment"]
 [[registration_code]]
-=== Registration Code
+endif::[]
+ifeval::["{guide}" == "deplquick"]
+[[q.registration_code]]
+endif::[]
+==== Registration Code
 
 [NOTE]
 ====
@@ -62,7 +72,7 @@ If you wish to beta test {productname} {productmajor}, please send an e-mail
 to beta-programs@lists.suse.com to request a {scc} subscription and a registration code.
 endif::[]
 
-=== Installation tools
+==== Installation tools
 
 For any deployment type you will need `skuba` and `{tf}`. These packages are
 available from the {productname} package sources. They are provided as an installation
@@ -89,7 +99,7 @@ sudo zypper in -t pattern SUSE-CaaSP-Management
 This will install the `skuba` command line tool and `{tf}`; as well
 as various default configurations and examples.
 
-=== Load Balancer
+==== Load Balancer
 
 [IMPORTANT]
 ====
@@ -102,8 +112,14 @@ master nodes of the cluster. There are many ways to configure a load balancer.
 For {soc} the {tf} configurations shipped with this version will automatically deploy
 a suitable loadbalancer for the cluster.
 
+ifeval::["{guide}" == "deployment"]
 For VMWare you must configure a load balancer manually and allow it access to
 all master nodes created during <<bootstrap>>.
+endif::[]
+ifeval::["{guide}" == "deplquick"]
+For VMWare you must configure a load balancer manually and allow it access to
+all master nodes created during <<q.bootstrap>>.
+endif::[]
 
 The load balancer should be configure before the actual deployment. It is needed
 during the cluster bootstrap. To simplify configuration you can reserve the IPs
@@ -113,4 +129,4 @@ The load balancer needs access to port `6443` on all master nodes in the cluster
 
 The following is an example of a possible load balancer configuration based on {sle} 15 SP1 and `nginx`.
 
-include::deployment-loadbalancer.adoc[Load Balancer,leveloffset=+2]
+include::deployment-loadbalancer.adoc[Load Balancer]

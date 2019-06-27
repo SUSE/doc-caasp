@@ -1,4 +1,4 @@
-= Centralized Logging
+=== Centralized Logging
 
 Centralized Logging is a means of collecting logs from CaaS Platform for centralized management.
 It forwards system and Kubernetes cluster logs to a specified external logging service,
@@ -6,7 +6,7 @@ for example, Rsyslog server.
 
 Collecting logs in a central location can serve for audit or debug purposes or to analyze and visually present data.
 
-== Types of logs
+==== Types of logs
 
 You can log the following groups of services. See the <<Deployment>>
 for more information on how to select and customize the logs.
@@ -35,7 +35,7 @@ OS Components::
 Centralized logging is also restricted to the following protocols: UDP, TCP, TCP + TLS, TCP + mTLS.
 
 
-== Log formats
+==== Log formats
 
 The two supported syslog message formats are *RFC 5424* and *RFC 3164*.
 
@@ -55,7 +55,7 @@ Example RFC 5424
 ----
 
 
-== Installing Helm and Tiller
+==== Installing Helm and Tiller
 
 In order to successfully use Centralized Logging, you first need to install `Helm` and `Tiller`.
 Helm is used to install the log agents and provide custom logging settings.
@@ -87,7 +87,7 @@ Note: When Helm is included in v4, Tiller server will be automatically installed
 So we probably  just need to mention that we use it and that it's installed automatically.
 ////
 
-== Deployment
+==== Deployment
 
 After you have successfully installed it,
 use Helm CLI to install log agents on each node,
@@ -129,7 +129,7 @@ helm delete --purge ${RELEASE_NAME}
 ----
 
 
-== Queuing
+==== Queuing
 
 Centralized Logging supports a configurable buffered queue.
 This can be used to improve log processing throughput and eliminate possible data loss,
@@ -160,7 +160,7 @@ This option sets the maximum size allowed for disk storage (in bytes).
 The storage is divided so that 20 percent of it is for journal logs and 80 percent for the remaining logs.
 
 
-== Optional settings
+==== Optional settings
 
 [NOTE]
 ====

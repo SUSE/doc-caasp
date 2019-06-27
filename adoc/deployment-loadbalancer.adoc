@@ -1,5 +1,7 @@
+ifeval::["{guide}" == "deployment"]
 [[loadbalancer]]
-== Nginx TCP Load Balancer with passive checks
+endif::[]
+===== Nginx TCP Load Balancer with passive checks
 
 We can use the `ngx_stream_module` module (available since version 1.9.0) in order to use
 TCP load balancing. In this mode, `nginx` will just forward the TCP packets to the master nodes.
@@ -18,7 +20,7 @@ This load balancer configuration is therefore only suitable for testing and proo
 For production environments, we recommend the use of link:https://www.suse.com/documentation/sle-ha-15/index.html[{sle} {hasi} 15]
 ====
 
-=== Configuring The Load Balancer
+====== Configuring The Load Balancer
 
 . Register SLES
 +
@@ -89,12 +91,17 @@ firewall-cmd --zone=public --permanent --add-port=6443/tcp
 systemctl enable --now nginx
 ----
 
-=== Verifying the Load Balancer
+====== Verifying the Load Balancer
 
 [IMPORTANT]
 The {productname} cluster must be up and running for this to produce any useful
-results. This step can only be performed after <<bootstrap>> is completed
-successfully.
+results.
+ifeval::["{guide}" == "deployment"]
+This step can only be performed after <<bootstrap>> is completed successfully.
+endif::[]
+ifeval::["{guide}" == "deplquick"]
+This step can only be performed after <<q.bootstrap>> is completed successfully.
+endif::[]
 
 To verify that the load balancer works you can run a simple command to repeatedly
 retrieve cluster information from the master nodes. Each request should be forwarded

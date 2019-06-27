@@ -12,16 +12,27 @@ include::entities.adoc[]
 :experimental:
 :docinfo: shared,private-head
 
-= {productname} {productversion} Deployment Guide: This guide describes the deployment for {productname} {productversion}.
-Markus Napp; Nora Kořánová
+:guide: deployment
 
-[colophon]
-include::common_copyright_quick.adoc[leveloffset=+1]
+//:author: Markus Napp
+//:author: Nora Kořánová
 
-:leveloffset: -1
+[[caas.deployment]]
+= {productname} {productversion} Deployment Guide
+
+ifeval::["{set}" == "true"]
+[partintro]
+--
+This guide describes the deployment for {productname} {productversion}.
+--
+endif::[]
+
 [preface]
-= About This Guide
+== About This Guide
+
 include::common_disclaimer.adoc[Disclaimer]
+
+include::common_copyright_quick.adoc[Legal Notice]
 
 include::common_intro_target_audience.adoc[Required Background]
 
@@ -31,11 +42,10 @@ include::common_intro_feedback.adoc[Feedback]
 
 include::common_intro_typography.adoc[]
 
-:leveloffset: +1
 
-//System requirements
+== Requirements
+
 include::deployment-sysreqs.adoc[System Requirements]
-
 
 == Deployment Instructions
 
@@ -49,24 +59,28 @@ If you do not remove the repository before installation, there might be conflict
 with the package dependencies that can render you installation nonfunctional.
 ====
 
-include::deployment-preparation.adoc[Deployment Preparations, leveloffset=+1]
+include::deployment-preparation.adoc[Deployment Preparations]
 
-include::deployment-ecp.adoc[SUSE OpenStack Cloud Instructions, leveloffset=+1]
+include::deployment-ecp.adoc[SUSE OpenStack Cloud Instructions]
 
-include::deployment-vmware.adoc[VMWare Deployment Instructions, leveloffset=+1]
+include::deployment-vmware.adoc[VMWare Deployment Instructions]
 
-include::deployment-bare-metal.adoc[Bare Metal Install, leveloffset=+1]
+include::deployment-bare-metal.adoc[Bare Metal Install]
 
-include::deployment-sles.adoc[Existing SLES Installation, leveloffset=+1]
+include::deployment-sles.adoc[Existing SLES Installation]
 
-[[bootstrap]]
-include::deployment-bootstrap.adoc[Bootstrapping,leveloffset=0]
+== Bootstrapping the Cluster
+
+include::deployment-bootstrap.adoc[Bootstrapping]
+
+== Network security
 
 include::deployment-cilium.adoc[Cilium]
 
 // Changelog
+[appendix]
 include::common_changelog.adoc[Documentation Changelog]
 
 //GNU Licenses
+[appendix]
 include::common_legal.adoc[Legal]
-//include::appendix.adoc[]
