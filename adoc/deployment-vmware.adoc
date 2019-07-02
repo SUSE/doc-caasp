@@ -305,6 +305,10 @@ terraform plan
 terraform apply
 ----
 
+.Skip self-signed certificate verification
+[TIP]
+In case you are using a self-signed certificate you need to skip its verification, as Terraform vsphere provider is not supporting it, thus `terraform plan` will fail. To do this, type the following in your terminal session: `export VSPHERE_ALLOW_UNVERIFIED_SSL=true`
+
 ==== Setup by hand
 
 . Right-click on the template and select menu:New VM from This Template...[] and name it something like `caasp4-master-0`.
