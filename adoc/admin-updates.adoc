@@ -1,4 +1,48 @@
-== Disable automatic updates
+== Control Plane
+
+In order to get an overview, which cluster-wide updates of the control plane are available, you can run:
+
+----
+skuba cluster upgrade plan
+----
+
+If the cluster is already running the latest available versions, the output should look like this:
+
+----
+skuba version: 0.6.1 (development) 0a6f78f 20190703 go1.12.4
+Current Kubernetes cluster version: 1.14.1
+Latest Kubernetes version: 1.14.1
+Congratulations! You are already at the latest version available
+----
+
+If the cluster has a new patch-level and minor Kubernetes version available, the output should look like this:
+
+----
+skuba version: 0.6.1 (development) 0a6f78f 20190703 go1.12.4
+Current Kubernetes cluster version: 1.14.1
+Latest Kubernetes version: 1.15.1
+Upgrade path to update from 1.14.1 to 1.15.1:
+ - 1.14.1 -> 1.14.2
+ - 1.14.2 -> 1.15.1
+----
+
+[TIP]
+====
+The control plane consists of these components:
+
+* apiserver
+* controller-manager
+* scheduler
+* etcd
+* kubelet
+* cri-o
+====
+
+== Base OS
+
+Base Operating System updates are configurable.
+
+=== Disable automatic updates
 
 Nodes added to a cluster have the service `skuba-update.timer`, which is responsible for running automatic updates, activated by default. This service is calling `skuba-update` utility and it can be configured with the `/etc/sysconfig/skuba-update` file. To disable the automatic updates on a node simply `ssh` to it and then configure the skuba-update service by editing `/etc/sysconfig/skuba-update` file with the following runtime options:
 ----
@@ -15,7 +59,7 @@ It is not required to reload or restart `skuba-update.timer`.
 
 The `--annotate-only` flag makes `skuba-update` utility to only check if updates are available and annotate the node accordingly. When this flag is activated no updates are installed at all.
 
-== Completely disable reboots
+=== Completely disable reboots
 
 If you would like to take care of reboots manually, either as a temporary measure or permanently, you can disable them by creating a lock:
 
@@ -27,7 +71,7 @@ This command modifies an annotation (`annotate`) on the daemonset (`ds`) named `
 You must replace `"nodeID"` with the ID of the cluster node that you wish to lock out of automatic reboots.
 Retrieve the ID by running `kubectl get nodes` and copying the value from the first column.
 
-== Manual unlock
+=== Manual unlock
 
 In exceptional circumstances, such as a node experiencing a permanent failure whilst rebooting, manual intervention may be required to remove the cluster lock:
 
