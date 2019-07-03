@@ -1,12 +1,43 @@
 //= Cluster Management
 
-Cluster management refers to several processes in the lifecycle of a cluster an
+Cluster management refers to several processes in the lifecycle of a cluster and
 its individual nodes: bootstrapping, joining, removing and resetting nodes.
 For maximum automation and ease {productname} uses the `skuba` tool,
 which simplifies Kubernetes cluster creation and reconfiguration.
 
+== Bootstrap and initial configuration
 
-include::deployment-bootstrap.adoc[Bootstrapping]
+Bootstrapping the cluster is the initial process of starting up a minimal
+viable cluster and joining the first master node.
+Before bootstrapping any nodes to the cluster,
+you need to create an initial cluster definition folder (initialize the cluster).
+This is done using the `skuba cluster init` and its control-plane flag.
+For a step by step guide on how to initialize the cluster, configure updates using `kured`
+and subsequently bootstrap nodes to it, see the _Deployment Guide_.
+Only the first master node needs to be bootstrapped,
+later nodes can simply be joined as described in <<Adding nodes>>.
+
+== Adding nodes
+
+Once you have added the first master node to the cluster using `skuba node bootstrap`,
+use the `skuba node join` command to add more nodes.
+
+[source,bash]
+skuba node join --role <master/worker> --user <user-name> --sudo --target <IP/FQDN> <node-name>
+
+The mandatory flags for the join command are `--role`, ``--user`, `--sudo` and `--target`.
+
+- `--role` serves to specify if the node is a *master* or *worker*
+- `--sudo` is for running the command with superuser privileges,
+this is necessary for all node operations.
+- `<user-name>` is the name of the user that exists on your SLES machine.
+- `<IP/FQDN>` is the IP address or FQDN of the relevant machine.
+- `<node-name>` is how you decide to name the node you are adding.
+
+To add a new *worker* node, you would run something like :
+
+[source,bash]
+skuba node join --role worker --user sles --sudo --target 10.86.2.164 worker1
 
 
 == Removing nodes
