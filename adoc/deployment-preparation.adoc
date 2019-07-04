@@ -97,7 +97,13 @@ Setting up a load balancer is mandatory in any production environment.
 ====
 
 {productname} requires a load balancer to distribute workload between the deployed
-master nodes of the cluster. There are many ways to configure a load balancer.
+master nodes of the cluster. A failure tolerant {productname} cluster will
+always use more than one load balancer since that becomes a "single point of failure".
+
+There are many ways to configure a load balancer. This documentation can not
+describe all possible combinations of load balancer configurations and thus
+does not aim to do so. Please apply your organizations' load balancing best
+practices.
 
 For {soc} the {tf} configurations shipped with this version will automatically deploy
 a suitable loadbalancer for the cluster.
@@ -105,11 +111,15 @@ a suitable loadbalancer for the cluster.
 For VMWare you must configure a load balancer manually and allow it access to
 all master nodes created during <<bootstrap>>.
 
-The load balancer should be configure before the actual deployment. It is needed
+The load balancer should be configured before the actual deployment. It is needed
 during the cluster bootstrap. To simplify configuration you can reserve the IPs
 needed for the cluster nodes and pre-configure these in the load balancer.
 
-The load balancer needs access to port `6443` on all master nodes in the cluster.
+The load balancer needs access to port `6443` on the `apiserver` (all master nodes)
+in the cluster.
+
+We recommend performing regular HTTPS health checks each master node `/healthz`
+endpoint to verify that the node is responsive.
 
 The following is an example of a possible load balancer configuration based on {sle} 15 SP1 and `nginx`.
 
