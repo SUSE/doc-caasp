@@ -1,12 +1,19 @@
-== Control Plane
+== Handling updates
 
-In order to get an overview, which cluster-wide updates of the control plane are available, you can run:
+=== Kubernetes components
+
+The update of Kubernetes components is handled via `skuba`.
+
+==== An overview
+
+In order to get an overview of the updates available, you can run:
 
 ----
 skuba cluster upgrade plan
 ----
 
-If the cluster is already running the latest available versions, the output should look like this:
+If the cluster is already running the latest available versions, the output
+should look like this:
 
 ----
 skuba version: 0.6.1 (development) 0a6f78f 20190703 go1.12.4
@@ -15,7 +22,8 @@ Latest Kubernetes version: 1.14.1
 Congratulations! You are already at the latest version available
 ----
 
-If the cluster has a new patch-level and minor Kubernetes version available, the output should look like this:
+If the cluster has a new patch-level and minor Kubernetes version available, the
+output should look like this:
 
 ----
 skuba version: 0.6.1 (development) 0a6f78f 20190703 go1.12.4
@@ -26,8 +34,63 @@ Upgrade path to update from 1.14.1 to 1.15.1:
  - 1.14.2 -> 1.15.1
 ----
 
+Similarly, you can also fetch this information on a per-node basis with the following command:
+
+----
+skuba node upgrade plan <node>
+----
+
+For example, if the cluster has a node named `worker0` which is running the latest available versions, the output should look like this:
+
+----
+skuba version: 0.6.1 (development) b6a653225c98 20190704 go1.12.4
+Current Kubernetes cluster version: 1.14.1
+Latest Kubernetes version: 1.14.1
+
+Node worker0 is up to date
+----
+
+On the other hand, if this same node has a new patch-level or minor Kubernetes version available, the output should look like this:
+
+----
+skuba version: 0.6.1 (development) b6a653225c98 20190704 go1.12.4
+Current Kubernetes cluster version: 1.14.1
+Latest Kubernetes version: 1.15.0
+
+Component versions in worker0
+  - kubelet: 1.13.7 -> 1.14.1
+  - cri-o: 1.13.7 -> 1.14.1
+----
+
+You will get a similar output if there is a version available on a master node
+(named `master0` in this example):
+
+----
+skuba version: 0.6.1 (development) b6a653225c98 20190704 go1.12.4
+Current Kubernetes cluster version: 1.15.0
+Latest Kubernetes version: 1.14.1
+
+Component versions in master0
+  - apiserver: 1.14.1 -> 1.15.0
+  - controller-manager: 1.14.1 -> 1.15.0
+  - scheduler: 1.14.1 -> 1.15.0
+  - etcd: 3.3.11 -> 3.3.11
+  - kubelet: 1.14.1 -> 1.15.0
+  - cri-o: 1.14.1 -> 1.15.0
+----
+
+Finally, it may happen that the control plane is out of date. In this case, you would get something like this:
+
+----
+skuba version: 0.6.1 (development) b6a653225c98 20190704 devel +5f509148b13f Wed Jun 5 00:53:25 2019 +0000
+Current Kubernetes cluster version: 1.15.1
+Latest Kubernetes version: 1.15.1
+
+Unable to plan node upgrade: at least one control plane does not tolerate the current cluster version
+----
+
 [TIP]
-====
+=====
 The control plane consists of these components:
 
 * apiserver
@@ -36,15 +99,17 @@ The control plane consists of these components:
 * etcd
 * kubelet
 * cri-o
-====
+=====
 
-== Base OS
+=== Base OS
 
-Base Operating System updates are configurable.
+Base Operating System updates are handled by `skuba-update`, which works together
+with `kured`, and they are configurable.
 
-=== Disable automatic updates
+==== Disable automatic updates
 
 Nodes added to a cluster have the service `skuba-update.timer`, which is responsible for running automatic updates, activated by default. This service is calling `skuba-update` utility and it can be configured with the `/etc/sysconfig/skuba-update` file. To disable the automatic updates on a node simply `ssh` to it and then configure the skuba-update service by editing `/etc/sysconfig/skuba-update` file with the following runtime options:
+
 ----
 ## Path           : System/Management
 ## Description    : Extra switches for skuba-update
@@ -59,7 +124,7 @@ It is not required to reload or restart `skuba-update.timer`.
 
 The `--annotate-only` flag makes `skuba-update` utility to only check if updates are available and annotate the node accordingly. When this flag is activated no updates are installed at all.
 
-=== Completely disable reboots
+==== Completely disable reboots
 
 If you would like to take care of reboots manually, either as a temporary measure or permanently, you can disable them by creating a lock:
 
@@ -71,7 +136,7 @@ This command modifies an annotation (`annotate`) on the daemonset (`ds`) named `
 You must replace `"nodeID"` with the ID of the cluster node that you wish to lock out of automatic reboots.
 Retrieve the ID by running `kubectl get nodes` and copying the value from the first column.
 
-=== Manual unlock
+==== Manual unlock
 
 In exceptional circumstances, such as a node experiencing a permanent failure whilst rebooting, manual intervention may be required to remove the cluster lock:
 
