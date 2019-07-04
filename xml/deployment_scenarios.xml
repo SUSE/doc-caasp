@@ -897,7 +897,7 @@ server {
        Replace <literal>USERNAME</literal> and <literal>PASSWORD</literal> with
        proper credentials of your choosing.
       </para>
-<screen>&prompt.root;<command>mkdir -p /etc/docker/registry/{auth,certs}</command>
+<screen>&prompt.root;<command>mkdir -p /etc/docker/registry/auth</command>
 &prompt.root;<command>docker run --entrypoint htpasswd registry.suse.com/sles12/registry:2.6.2 -Bbn <replaceable>USERNAME PASSWORD</replaceable> \
 > /etc/docker/registry/auth/htpasswd</command>
  </screen>
@@ -907,11 +907,6 @@ server {
        Create the <filename>/etc/docker/registry/config.yml</filename>
        configuration file.
       </para>
-      <!-- <para>
-       Replace <filename>/etc/docker/registry/certs/domain.crt</filename> and
-       <filename>/etc/docker/registry/certs/domain.key</filename> with the appropriate certificate
-       files for your organization.
-      </para> -->
 <screen>
 version: 0.1
 log:
