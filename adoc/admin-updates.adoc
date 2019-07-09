@@ -101,6 +101,68 @@ The control plane consists of these components:
 * cri-o
 =====
 
+==== Applying an update
+
+[NOTE]
+=====
+The following steps are temporary and will be integrated into the official product soon.
+=====
+
+Updates have to be applied on a per-node base, starting from the control plane, down to the worker nodes.
+
+. To prepare the update, `ssh` to each of the nodes and perform the following steps:
+.. Disable the `skuba-update.timer`:
++
+----
+sudo systemctl disable --now skuba-update.timer
+----
+.. Create a temporary lock on the kubernetes component system packages:
++
+----
+sudo zypper addlock kubernetes-client kubernetes-common kubernetes-kubelet cri-o
+----
+.. Update kubeadm to the newer version:
++
+----
+sudo zypper update kubernetes-kubeadm
+----
+.. Choose the `break kubernetes-kubeadm-[VERSION] by ignoring some of its dependencies` solution.
+.. Remove the locks again:
++
+----
+sudo zypper removelock kubernetes-client kubernetes-common kubernetes-kubelet cri-o
+----
+. Now that all nodes are prepared, we can use `skuba` to:
+.. Upgrade the master nodes:
++
+----
+skuba node upgrade apply --target <master-node-ip> --user <user> --sudo
+----
+.. When all master nodes are upgraded, upgrade the worker nodes:
++
+----
+skuba node upgrade apply --target <worker-node-ip> --user <user> --sudo
+----
+
+Now all of your cluster nodes are upgraded. You can verify this by running:
+----
+kubectl get nodes -o wide
+----
+
+To enable the automatic OS updates again, `ssh` to each of the nodes and enable the `skuba-update.timer` again:
+----
+sudo systemctl enbable --now skuba-update.timer
+----
+
+[TIP]
+=====
+The upgrade via `skuba node upgrade apply` will
+
+* Upgrade the containerized control plane.
+* Upgrade the rest of the kubernetes system stack (kubelet, cri-o).
+* Restart services.
+=====
+
 === Base OS
 
 Base Operating System updates are handled by `skuba-update`, which works together
