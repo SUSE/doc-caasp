@@ -24,7 +24,7 @@ source container-openrc.sh
 
 .The default user is 'sles'
 [NOTE]
-The SUSE SLES15-SP1 images for {soc} come with pre-defined user `sles` that you use to log in into the cluster nodes. This user has been configured for password-less 'sudo' and is the one recommended to be used by {tf} and `skuba`.
+The SUSE SLES15-SP1 images for {soc} come with pre-defined user `sles`, which you use to log into the cluster nodes. This user has been configured for password-less 'sudo' and is the one recommended to be used by {tf} and `skuba`.
 
 === Deploying the cluster nodes
 
@@ -48,12 +48,12 @@ include::deployment-terraform-example.adoc[tags=tf_openstack]
 +
 [TIP]
 ====
-You can set timezone in before deploying the nodes by modifying the file:
+You can set the timezone before deploying the nodes by modifying the following file:
 
 * `~/my-deployment/cloud-init/common.tpl`
 ====
-. Optional: If you absolutely need to be able to ssh into your cluster nodes using password instead of key-based authentication, this is the best time to do it massively for all of your nodes. Alternatively you can do it also later, but manually. To do that you need to modify the cloud-init configuration and comment-out the related SSH configuration:
-* `~/my-deployment/cloud-init/common.tpl`
+. (Optional) If you absolutely need to be able to SSH into your cluster nodes using password instead of key-based authentication, this is the best time to set it globally for all of your nodes. If you do this later, you will have to do it manually. To set this, modify the cloud-init configuration and comment-out the related SSH configuration:
+`~/my-deployment/cloud-init/common.tpl`
 +
 ----
 # Workaround for bsc#1138557 . Disable root and password SSH login
@@ -103,42 +103,53 @@ image::deploy-loadbalancer-ip.png[]
 . Find the Floating IPs on each of the nodes of your cluster.
 ====
 
-=== Log into the cluster notes
+=== Logging into the cluster nodes
 
-. Connecting into the cluster nodes can be accomplished only via SSH key-based authentication thanks to the ssh-public key injection done earlier via {tf}. You can log in as `sles` user.
+. Connecting into the cluster nodes can be accomplished only via SSH key-based authentication thanks to the ssh-public key injection done earlier via {tf}. You can use the predefined `sles` user to log in.
++
+If the ssh-agent is running in the background run:
 +
 ----
-# With ssh-agent running in the background
 ssh sles@<node-ip-address>
-
-# Without ssh-agent running
+----
++
+Without the ssh-agent running run:
++
+----
 ssh sles@<node-ip-address> -i <path-to-your-ssh-private-key>
 ----
-. Once you are connected you can execute commands using password-less `sudo`. In addition to that, you can also set a password if you prefer to.
++
+. Once connected, you can execute commands using password-less `sudo`. In addition to that, you can also set a password if you prefer to.
++
+To set the *root password* run:
 +
 ----
-# Set root password
 sudo passwd
-
-# Set sles user's password
+----
++
+To set the *sles user's password* run:
++
+----
 sudo passwd sles
 ----
-+
+
+
 .Password authentication has been disabled
 [IMPORTANT]
 ====
-Even after setting a password for either `root` or `sles` user, you will be unable to log in via SSH using their passwords respectively. Most likely you will receive a `Permission denied (publickey)` error. This mechanism has been disabled on purpose because of security best practices. However, if this environment does not fit your workflows you can change it on your own risk by modifying the SSH configuration on your own.
+Under the default settings you always need your SSH key to access the machines. Even after setting a password for either `root` or `sles` user, you will be unable to log in via SSH using their passwords respectively. You will most likely receive a `Permission denied (publickey)` error. This mechanism has been deliberately disabled because of security best practices. However, if this environment does not fit your workflows, you can change it at your own risk by modifying the SSH configuration:
+under `/etc/ssh/sshd_config`
 
-* `sudo vi /etc/ssh/sshd_config`
-
-
+To allow password SSH authentication set:
 ----
-# Allow password ssh authentication
 + PasswordAuthentication yes
-
-# Allow login as root via ssh
+----
+To allow login as root via SSH set:
+----
 + PermitRootLogin yes
 ----
-
-For the changes to take effect you need to restart the ssh service by running `sudo systemctl restart sshd.service`.
+For the changes to take effect you need to restart the SSH service by running
+----
+sudo systemctl restart sshd.service
+----
 ====
