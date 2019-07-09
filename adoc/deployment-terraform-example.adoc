@@ -90,8 +90,7 @@ machines - leave empty if no additional packages need to be installed.
 *Note*: Do not remove any of the pre-filled values in the `packages` section. This can render
 your cluster unusable. You can add more packages but do not remove any of the
 default packages listed.
-<7> `authorized_keys`: List of ssh-public-keys that will be able to login to the
-deployed machines.
+<7> `authorized_keys`: List of ssh-public-keys that will be injected into the cluster nodes, allowing you to be able to log in into them via SSH as `sles` user.
 <8> `ntp_servers`: A list of `ntp` servers you would like to use with `chrony`.
 # end::tf_openstack[]
 
