@@ -12,6 +12,11 @@ skuba cluster init --control-plane <LB IP/FQDN> my-cluster
 ----
 `cluster init` generates the folder named `my-cluster` and initializes the directory that will hold the configuration (`kubeconfig`) for the cluster.
 
+[IMPORTANT]
+====
+The IP/FQDN must be reachable by every node of the cluster and therefore 127.0.0.1/localhost can't be used.
+====
+
 ==== Cluster configuration
 
 At this point you can perform some configurations before bootstrapping the cluster.
@@ -136,6 +141,11 @@ NAME         OS-IMAGE                              KERNEL-VERSION        CONTAIN
 master-one   SUSE Linux Enterprise Server 15 SP1   4.12.14-110-default   cri-o://1.13.3      <none>        <none>
 worker-one   SUSE Linux Enterprise Server 15 SP1   4.12.14-110-default   cri-o://1.13.3      <none>        <none>
 ----
+
+[IMPORTANT]
+====
+The IP/FQDN must be reachable by every node of the cluster and therefore 127.0.0.1/localhost can't be used.
+====
 
 === Using kubectl
 
