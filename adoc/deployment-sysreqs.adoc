@@ -21,9 +21,25 @@ Production environments must be deployed with multiple master nodes for resilien
 
 ==== Master
 
+Up to 5 worker nodes *(minimal)*:
+
 * Storage: 50 GB+
 * (v)CPU: 2
-* RAM: 2 GB
+* RAM: 4 GB
+* Network: Minimum 1GB/s, faster preferred
+
+Up to 10 worker nodes:
+
+* Storage: 50 GB+
+* (v)CPU: 2
+* RAM: 8 GB
+* Network: Minimum 1GB/s, faster preferred
+
+Up to 100 worker nodes:
+
+* Storage: 50 GB+
+* (v)CPU: 4
+* RAM: 16 GB
 * Network: Minimum 1GB/s, faster preferred
 
 [IMPORTANT]
@@ -34,11 +50,26 @@ a cluster with less is not possible.
 
 ==== Worker
 
+A newly deployed worker node without workloads requires the following resources:
+
+* CPU cores: 0.250
+* RAM: 1.2 GB
+
+Based on these values, the *minimal* configuration of a worker node is:
+
 * Storage: Depending on workloads, minimum 20-30GB to hold base OS and required packages
 ** Mount additional storage volumes as needed
-* (v)CPU: 2
+* (v)CPU: 1
 * RAM: 2 GB
 * Network: Minimum 1GB/s, faster preferred
+
+The sizing of the (v)CPU can be calculated by adding up the base requirements, the estimated essential cluster addons (logging agent, monitoring agent, configuration management, etc) and the estimated CPU workloads:
+
+* 0.250 (base requirements) + 0.250 (estimated cluster addons requirements) + estimated CPU workloads requirements
+
+The sizing of the RAM can be calculated with the same principles:
+
+* 1.2 GB (base requirements) + 500 MB (estimated cluster addons requirements) + estimated RAM workloads requirements
 
 ==== Storage Performance
 
