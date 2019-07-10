@@ -80,7 +80,7 @@ Component versions in master0
   - cri-o: 1.14.1 -> 1.15.0
 ----
 
-It may happen that the control plane is out of date. In this case, you would get something like this:
+It may happen that the {kube} version on the control plane is out of date. In this case, you would get something like this:
 
 ----
 skuba version: 0.6.1 (development) b6a653225c98 20190704 devel +5f509148b13f Wed Jun 5 00:53:25 2019 +0000
@@ -179,7 +179,7 @@ The upgrade via `skuba node upgrade apply` will
 === Base OS
 
 Base Operating System updates are handled by `skuba-update`, which works together
-with `kured`, and they are configurable.
+with the `kured` reboot daemon.
 
 ==== Disable automatic updates
 
