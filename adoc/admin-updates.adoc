@@ -2,7 +2,7 @@
 
 === Kubernetes components
 
-The update of Kubernetes components is handled via `skuba`.
+The update of {kube} components is handled via `skuba`.
 
 ==== An overview
 
@@ -12,8 +12,9 @@ In order to get an overview of the updates available, you can run:
 skuba cluster upgrade plan
 ----
 
-If the cluster is already running the latest available versions, the output
-should look like this:
+This will show you a list of updates (if available) for different components
+installed on the cluster. If the cluster is already running the latest available
+versions, the output should look like this:
 
 ----
 skuba version: 0.6.1 (development) 0a6f78f 20190703 go1.12.4
@@ -22,7 +23,7 @@ Latest Kubernetes version: 1.14.1
 Congratulations! You are already at the latest version available
 ----
 
-If the cluster has a new patch-level and minor Kubernetes version available, the
+If the cluster has a new patch-level and minor {kube} version available, the
 output should look like this:
 
 ----
@@ -50,7 +51,7 @@ Latest Kubernetes version: 1.14.1
 Node worker0 is up to date
 ----
 
-On the other hand, if this same node has a new patch-level or minor Kubernetes version available, the output should look like this:
+On the other hand, if this same node has a new patch-level or minor {kube} version available, the output should look like this:
 
 ----
 skuba version: 0.6.1 (development) b6a653225c98 20190704 go1.12.4
@@ -79,7 +80,9 @@ Component versions in master0
   - cri-o: 1.14.1 -> 1.15.0
 ----
 
-Finally, it may happen that the control plane is out of date. In this case, you would get something like this:
+It may happen that the {kube} version on the control plane is too outdated
+for the update to progress. 
+In this case, you would get output similar to the following:
 
 ----
 skuba version: 0.6.1 (development) b6a653225c98 20190704 devel +5f509148b13f Wed Jun 5 00:53:25 2019 +0000
@@ -88,6 +91,7 @@ Latest Kubernetes version: 1.15.1
 
 Unable to plan node upgrade: at least one control plane does not tolerate the current cluster version
 ----
+
 
 [TIP]
 =====
@@ -101,14 +105,80 @@ The control plane consists of these components:
 * cri-o
 =====
 
+=== Applying Updates
+
+[NOTE]
+====
+The following steps are temporary, the procedure is prone to change with the next update.
+====
+
+[IMPORTANT]
+====
+Updates have to be applied separately to each node, starting with the control plane all the way down to the worker nodes.
+====
+
+==== Preparation
+
+Before proceeding with update itself, some preparation is needed. SSH to each of the nodes and perform the following steps.
+
+. Disable the `skuba-update.timer`:
++
+----
+sudo systemctl disable --now skuba-update.timer
+----
+. Update kubeadm to the newer version:
++
+----
+sudo zypper in kubernetes-kubeadm=1.15.0
+----
+Select the solution: `break kubernetes-kubeadm-[VERSION] by ignoring some of its dependencies`.
+
+==== Applying The Update
+
+Now that you have done the required preparations, we can use `skuba` to:
+
+. Upgrade the master nodes:
++
+----
+skuba node upgrade apply --target <master-node-ip> --user <user> --sudo
+----
+. When all master nodes are upgraded, upgrade the worker nodes as well:
++
+----
+skuba node upgrade apply --target <worker-node-ip> --user <user> --sudo
+----
+
+* Verify that your cluster nodes are upgraded by running:
++
+----
+kubectl get nodes -o wide
+----
+
+* To enable the automatic OS updates again, SSH to each of the nodes and enable the `skuba-update.timer`:
++
+----
+sudo systemctl enable --now skuba-update.timer
+----
+
+[TIP]
+====
+The upgrade via `skuba node upgrade apply` will
+
+* Upgrade the containerized control plane
+* Upgrade the rest of the {kube} system stack (`kubelet`, `cri-o`)
+* Restart services
+====
+
 === Base OS
 
 Base Operating System updates are handled by `skuba-update`, which works together
-with `kured`, and they are configurable.
+with the `kured` reboot daemon.
 
 ==== Disable automatic updates
 
-Nodes added to a cluster have the service `skuba-update.timer`, which is responsible for running automatic updates, activated by default. This service is calling `skuba-update` utility and it can be configured with the `/etc/sysconfig/skuba-update` file. To disable the automatic updates on a node simply `ssh` to it and then configure the skuba-update service by editing `/etc/sysconfig/skuba-update` file with the following runtime options:
+Nodes added to a cluster have the service `skuba-update.timer`, which is responsible for running automatic updates, activated by default.
+This service is calling `skuba-update` utility and it can be configured with the `/etc/sysconfig/skuba-update` file.
+To disable the automatic updates on a node simply `ssh` to it and then configure the skuba-update service by editing `/etc/sysconfig/skuba-update` file with the following runtime options:
 
 ----
 ## Path           : System/Management
@@ -120,9 +190,11 @@ Nodes added to a cluster have the service `skuba-update.timer`, which is respons
 SKUBA_UPDATE_OPTIONS="--annotate-only"
 ----
 
+[TIP]
 It is not required to reload or restart `skuba-update.timer`.
 
-The `--annotate-only` flag makes `skuba-update` utility to only check if updates are available and annotate the node accordingly. When this flag is activated no updates are installed at all.
+The `--annotate-only` flag makes `skuba-update` utility to only check if updates are available and annotate the node accordingly.
+When this flag is activated no updates are installed at all.
 
 ==== Completely disable reboots
 
