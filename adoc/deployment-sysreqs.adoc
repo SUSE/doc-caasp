@@ -19,36 +19,36 @@ Production environments must be deployed with multiple master nodes for resilien
 
 === Hardware
 
-==== Master
+==== Master nodes
 
-Up to 5 worker nodes *(minimal)*:
+Up to 5 worker nodes *(minimum)*:
 
 * Storage: 50 GB+
 * (v)CPU: 2
 * RAM: 4 GB
-* Network: Minimum 1GB/s, faster preferred
+* Network: Minimum 1GB/s, (faster is preferred)
 
 Up to 10 worker nodes:
 
 * Storage: 50 GB+
 * (v)CPU: 2
 * RAM: 8 GB
-* Network: Minimum 1GB/s, faster preferred
+* Network: Minimum 1GB/s, (faster is preferred)
 
 Up to 100 worker nodes:
 
 * Storage: 50 GB+
 * (v)CPU: 4
 * RAM: 16 GB
-* Network: Minimum 1GB/s, faster preferred
+* Network: Minimum 1GB/s (faster is preferred)
 
 [IMPORTANT]
 ====
 Using a minimum of 2 (v)CPU is a hard requirement, deploying
-a cluster with less is not possible.
+a cluster with less processing units is not possible.
 ====
 
-==== Worker
+==== Worker nodes
 
 A newly deployed worker node without workloads requires the following resources:
 
@@ -57,19 +57,18 @@ A newly deployed worker node without workloads requires the following resources:
 
 Based on these values, the *minimal* configuration of a worker node is:
 
-* Storage: Depending on workloads, minimum 20-30GB to hold base OS and required packages
-** Mount additional storage volumes as needed
+* Storage: Depending on workloads, minimum 20-30GB to hold the base OS and required packages. Mount additional storage volumes as needed.
 * (v)CPU: 1
 * RAM: 2 GB
-* Network: Minimum 1GB/s, faster preferred
+* Network: Minimum 1GB/s (faster is preferred)
 
-The sizing of the (v)CPU can be calculated by adding up the base requirements, the estimated essential cluster addons (logging agent, monitoring agent, configuration management, etc) and the estimated CPU workloads:
+Calculate the size of the required (v)CPU by adding up the base requirements, the estimated additional essential cluster components (logging agent, monitoring agent, configuration management, etc.) and the estimated CPU workloads:
 
-* 0.250 (base requirements) + 0.250 (estimated cluster addons requirements) + estimated CPU workloads requirements
+* 0.250 (base requirements) + 0.250 (estimated additional cluster components) + estimated workload CPU requirements
 
-The sizing of the RAM can be calculated with the same principles:
+Calculate the size of the RAM using the same formula:
 
-* 1.2 GB (base requirements) + 500 MB (estimated cluster addons requirements) + estimated RAM workloads requirements
+* 1.2 GB (base requirements) + 500 MB (estimated additional cluster components) + estimated workload RAM requirements
 
 ==== Storage Performance
 
