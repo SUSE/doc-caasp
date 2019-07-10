@@ -123,22 +123,12 @@ Before proceeding with update itself, some preparation is needed. SSH to each of
 ----
 sudo systemctl disable --now skuba-update.timer
 ----
-. Create a temporary lock on the {kube} component system packages:
-+
-----
-sudo zypper addlock kubernetes-client kubernetes-common kubernetes-kubelet cri-o
-----
 . Update kubeadm to the newer version:
 +
 ----
-sudo zypper update kubernetes-kubeadm
+sudo zypper in kubernetes-kubeadm=1.15.0
 ----
 .. Select the solution `break kubernetes-kubeadm-[VERSION] by ignoring some of its dependencies`.
-. Remove the locks again:
-+
-----
-sudo zypper removelock kubernetes-client kubernetes-common kubernetes-kubelet cri-o
-----
 
 ==== Applying The Update
 
