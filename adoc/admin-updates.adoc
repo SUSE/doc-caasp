@@ -80,7 +80,9 @@ Component versions in master0
   - cri-o: 1.14.1 -> 1.15.0
 ----
 
-It may happen that the {kube} version on the control plane is out of date. In this case, you would get something like this:
+It may happen that the {kube} version on the control plane is too outdated
+for the update to progress. 
+In this case, you would get output similar to the following:
 
 ----
 skuba version: 0.6.1 (development) b6a653225c98 20190704 devel +5f509148b13f Wed Jun 5 00:53:25 2019 +0000
@@ -89,6 +91,7 @@ Latest Kubernetes version: 1.15.1
 
 Unable to plan node upgrade: at least one control plane does not tolerate the current cluster version
 ----
+
 
 [TIP]
 =====
@@ -128,7 +131,7 @@ sudo systemctl disable --now skuba-update.timer
 ----
 sudo zypper in kubernetes-kubeadm=1.15.0
 ----
-.. Select the solution `break kubernetes-kubeadm-[VERSION] by ignoring some of its dependencies`.
+Select the solution: `break kubernetes-kubeadm-[VERSION] by ignoring some of its dependencies`.
 
 ==== Applying The Update
 
