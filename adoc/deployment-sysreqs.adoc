@@ -48,6 +48,13 @@ Up to 100 worker nodes:
 * RAM: 16 GB
 * Network: Minimum 1GB/s (faster is preferred)
 
+Up to 250 worker nodes:
+
+* Storage: 50 GB+
+* (v)CPU: 8
+* RAM: 16 GB
+* Network: Minimum 1GB/s (faster is preferred)
+
 [IMPORTANT]
 ====
 Using a minimum of 2 (v)CPU is a hard requirement, deploying
@@ -56,7 +63,7 @@ a cluster with less processing units is not possible.
 
 ==== Worker nodes
 
-A newly deployed worker node without workloads requires the following resources:
+A worker node requires the following resources:
 
 * CPU cores: 0.250
 * RAM: 1.2 GB
@@ -75,6 +82,11 @@ Calculate the size of the required (v)CPU by adding up the base requirements, th
 Calculate the size of the RAM using the same formula:
 
 * 1.2 GB (base requirements) + 500 MB (estimated additional cluster components) + estimated workload RAM requirements
+
+[NOTE]
+====
+These values are provided as a guide to work in most cases. They may vary based on the type of the running workloads.
+====
 
 ==== Storage Performance
 
