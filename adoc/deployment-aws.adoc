@@ -40,7 +40,6 @@ include::deployment-terraform-example.adoc[tags=tf_aws]
 You can set timezone in before deploying the nodes by modifying the files:
 
 * `~/caasp/deployment/aws/cloud-init/cloud-init.yaml.tpl`
-
 ====
 . Enter the registration code for your nodes in `~/caasp/deployment/aws/registration.auto.tfvars`:
 +
@@ -53,7 +52,6 @@ caasp_registry_code = "REGISTRATION_CODE"
 ----
 +
 This is required so all the deployed nodes can automatically register to {scc} and retrieve packages.
-====
 . Now you can deploy the nodes by running:
 +
 ----
@@ -71,7 +69,7 @@ Terraform will now provision all the machines and network infrastructure for the
 `skuba` cannot currently access nodes through a bastion host, so all
 the nodes in the cluster must be directly reachable from the machine where
 `skuba` is being run. We must also consider that `skuba` must use
-the external IPs as `--target`s when initializing or joining the cluster,
+the external IPs as `--target` when initializing or joining the cluster,
 while we must specify the internal DNS names for registering the nodes
 in the cluster.
 ====
@@ -84,16 +82,15 @@ output during the cluster node deployment. You need these IP addresses to
 deploy {productname} to the cluster.
 
 If you need to find an IP addresses later on you can run `terraform output` within
-the directory you performed the deployment from `~/my-deployment` directory or
+the directory you performed the deployment from `~/my-cluster` directory or
 perform the following steps:
 
-. Log in to the AWS Console and click on the Load Balancers. Find the one with the
-string you entered in the terraform configuration above e.g. "testing-lb".
+. Log in to the AWS Console and click on menu:Load Balancers[]. Find the one with the
+string you entered in the {tf} configuration above e.g. `testing-lb`.
 . Note down the "DNS name".
 +
-. Now click on Instances.
-. Using the `Filter` textbox, enter the string you specified for `stack_name`
+. Now click on menu:Instances[].
+. Using the menu:Filter[] text box, enter the string you specified for `stack_name`
 in the `terraform.tfvars` file.
 . Find the `IPv4 Public IP` on each of the nodes of your cluster.
 ====
-
