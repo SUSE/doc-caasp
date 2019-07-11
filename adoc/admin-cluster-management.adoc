@@ -1,4 +1,4 @@
-//= Cluster Management
+= Cluster Management
 
 Cluster management refers to several processes in the life cycle of a cluster and
 its individual nodes: bootstrapping, joining, removing and resetting nodes.
@@ -9,13 +9,16 @@ which simplifies Kubernetes cluster creation and reconfiguration.
 
 Bootstrapping the cluster is the initial process of starting up a minimal
 viable cluster and joining the first master node.
+
 Before bootstrapping any nodes to the cluster,
 you need to create an initial cluster definition folder (initialize the cluster).
-This is done using the `skuba cluster init` and its control-plane flag.
+
+This is done using `skuba cluster init` and its `control-plane` flag.
+
 For a step by step guide on how to initialize the cluster, configure updates using `kured`
-and subsequently bootstrap nodes to it, see the _Deployment Guide_.
-Only the first master node needs to be bootstrapped,
-later nodes can simply be joined as described in <<Adding nodes>>.
+and subsequently bootstrap nodes to it, refer to the _{productname} Deployment Guide_.
+
+Only the first master node needs to be bootstrapped, later nodes can simply be joined as described in <<Adding nodes>>.
 
 == Adding nodes
 
@@ -30,8 +33,8 @@ The mandatory flags for the join command are `--role`, ``--user`, `--sudo` and `
 - `--role` serves to specify if the node is a *master* or *worker*
 - `--sudo` is for running the command with superuser privileges,
 this is necessary for all node operations.
-- `<user-name>` is the name of the user that exists on your SLES machine.
-- `<IP/FQDN>` is the IP address or FQDN of the relevant machine.
+- `<user-name>` is the name of the user that exists on your SLES machine (default: `sles`).
+- `--target <IP/FQDN>` is the IP address or FQDN of the relevant machine.
 - `<node-name>` is how you decide to name the node you are adding.
 
 To add a new *worker* node, you would run something like:
@@ -39,8 +42,25 @@ To add a new *worker* node, you would run something like:
 [source,bash]
 skuba node join --role worker --user sles --sudo --target 10.86.2.164 worker1
 
-
 == Removing nodes
+
+=== Temporary Removal
+
+If you wish to remove a node temporarily, the recommended approach is to first drain the node using `kubectl`.
+This will also cordon off the node, so that it doesn't receive any new workloads.
+
+When you want to bring the node back, you only have to uncordon it.
+
+Refer to the official Kubernetes documentation for more information:
+https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/#use-kubectl-drain-to-remove-a-node-from-service
+
+=== Permanent Removal
+
+[IMPORTANT]
+====
+Nodes removed with this method can not be added back to the cluster. You must
+reinstall the entire node and then join it again to the cluster.
+====
 
 The `skuba node remove` command serves to *permanently* remove nodes.
 Running this command will work even if the target virtual machine is down,
@@ -49,28 +69,18 @@ so it is the safest way to remove the node.
 [source,bash]
 skuba node remove <node-name>
 
-If you wish to remove the node and want to add it again, the recommended approach is to
-first drain the node using `kubectl`. This will also cordon the node,
-so that it doesn't receive any new workloads.
-When you want to bring the node back, you only have to uncordon it.
-Refer to the official Kubernetes documentation for more information:
-https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/#use-kubectl-drain-to-remove-a-node-from-service
-
-
 == Resetting nodes
 
-The `skuba node reset` command enables you to reset a node to a state prior to join or bootstrap being run.
-Use this command to retry a failed bootstrap or join on a node or if the node has to be evacuated from the cluster.
+The `skuba node reset` command enables you to reset a node to a state prior to `join` or `bootstrap` being run.
+Use this command to retry a failed `bootstrap` or `join` on a node or if the node has to be evacuated from the cluster.
 
 [source,bash]
 skuba node reset --target <IP/FQDN> --sudo --user <user-name>
 
-
 == Reconfiguring nodes
 
-To reconfigure a node, for example to change the node role from worker to master,
-you will need to use a combination of commands.
+To reconfigure a node, for example to change the node role from worker to master, you will need to use a combination of commands.
 
-1. Run `skuba node remove <node-name>`.
-2. Reinstall the node from scratch.
-3. Run `skuba node join --role <desired-role> -user <user-name> --sudo --target <IP/FQDN> <node-name>`
+. Run `skuba node remove <node-name>`.
+. Reinstall the node from scratch.
+. Run `skuba node join --role <desired-role> -user <user-name> --sudo --target <IP/FQDN> <node-name>`

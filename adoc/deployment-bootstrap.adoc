@@ -3,21 +3,21 @@
 
 Bootstrapping the cluster is the initial process of starting up the cluster
 and defining which of the nodes are masters and which workers. For maximum automation of this process
-{productname} uses the skuba package.
+{productname} uses the `skuba` package.
 
 === Preparation
 
-==== Install skuba
+==== Install `skuba`
 
-First you need to install skuba on your local workstation:
+First you need to install `skuba` on your local workstation:
 
-. Add the SLE15 SP1 extension containing skuba. This also requires the "containers" module.
+. Add the SLE15 SP1 extension containing `skuba`. This also requires the "containers" module.
 +
 ----
 SUSEConnect -p sle-module-containers/15.1/x86_64
 SUSEConnect -p caasp/4.0/x86_64 -r <Registration Code>
 ----
-. Install skuba:
+. Install `skuba`:
 +
 ----
 sudo zypper in skuba
@@ -26,7 +26,7 @@ sudo zypper in skuba
 === Cluster Deployment
 
 Make sure you have added the SSH identity (corresponding to the SSH key distributed above) to the ssh-agent on your workstation.
-This is a requirement for skuba (https://github.com/SUSE/skuba#prerequisites).
+This is a requirement for `skuba` (https://github.com/SUSE/skuba#prerequisites).
 
 [TIP]
 ====
@@ -40,11 +40,11 @@ You can load as many keys as you want into your agent using the
 You can list all the identities loaded into the agent by using the
 `ssh-add -L` command.
 
-skuba will try all the identities loaded into the ssh-agent until one of
+`skuba` will try all the identities loaded into the ssh-agent until one of
 them grants access to the node.
 
 It is also possible to forward the authentication agent connection from a
-host to another one. This can be useful if you intend to run skuba on
+host to another one. This can be useful if you intend to run `skuba` on
 a "jump host" and don't want to copy your private key to this node.
 
 This can be achieved using the `ssh -A` command. Please refer to the man page
