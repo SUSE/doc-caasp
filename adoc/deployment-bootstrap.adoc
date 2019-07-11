@@ -12,11 +12,56 @@ skuba cluster init --control-plane <LB IP/FQDN> my-cluster
 ----
 `cluster init` generates the folder named `my-cluster` and initializes the directory that will hold the configuration (`kubeconfig`) for the cluster.
 
+[IMPORTANT]
+====
+The IP/FQDN must be reachable by every node of the cluster and therefore 127.0.0.1/localhost can't be used.
+====
+
 ==== Cluster configuration
 
 At this point you can perform some configurations before bootstrapping the cluster.
 
-===== Prevent nodes running special workloads from being rebooted
+===== Integrate External LDAP
+
+. Open the `Dex` `ConfigMap` in `my-cluster/addons/dex/dex.yaml`
+. Adapt the `ConfigMap` by adding LDAP configuration to the connector section of the `config.yaml` file. For detailed configurations for the LDAP connector, refer to https://github.com/dexidp/dex/blob/master/Documentation/connectors/ldap.md.
+====
+# Example LDAP connector
+
+    connectors:
+    - type: ldap
+      id: ldap
+      name: openLDAP
+      config:
+        host: dirsrv-389ds.kube-system.svc.cluster.local:389 // <1> <2>
+        insecureNoSSL: true
+        insecureSkipVerify: true
+        bindDN: cn=admin,dc=example,dc=org // <3>
+        bindPW: 'admin' // <4>
+        usernamePrompt: Email Address // <5>
+        userSearch:
+          baseDN: cn=People,dc=example,dc=org // <6>
+          filter: "(objectClass=person)" // <7>
+          username: mail // <8>
+          idAttr: DN // <9>
+          emailAttr: mail // <10>
+          nameAttr: uid // <11>
+====
+<1> Host name of LDAP server reachable from the cluster.
+<2> The port on which to connect to the host (e.g. StartTLS: `389`, TLS: `636`).
+<3> Bind DN of user that can do user searches.
+<4> Password of the user.
+<5> Label of LDAP attribute users will enter to identify themselves (e.g. `username`).
+<6> BaseDN where users are located (e.g. `cn=users,dc=example,dc=com`).
+<7> Filter to specify type of user objects (e.g. "(objectClass=person)").
+<8> Attribute users will enter to identify themselves (here: `mail`).
+<9> Attribute used to identify user within the system (e.g. uid).
+<10> Attribute containing email of users.
+<11> Attribute used as username used within OIDC tokens.
+
+Besides the LDAP connector you can also setup other connectors. For additional connectors, refer to the available connector configurations in the Dex repository: https://github.com/dexidp/dex/tree/master/Documentation/connectors.
+
+===== Prevent Nodes Running Special Workloads From Being Rebooted
 
 . Open the `kured` deployment in `my-cluster/addons/kured/kured.yaml`
 . Adapt the `DaemonSet` by adding one of the following flags to the `command` section of the `kured` container:
@@ -49,7 +94,7 @@ kubectl apply -f my-cluster/addons/kured/kured.yaml
 
 This will restart all `kured` pods with the additional configuration flags.
 
-==== Prevent nodes with any prometheus alerts from being rebooted
+==== Prevent Nodes With Any Prometheus Alerts From Being Rebooted
 
 [NOTE]
 ====
@@ -136,6 +181,11 @@ NAME         OS-IMAGE                              KERNEL-VERSION        CONTAIN
 master-one   SUSE Linux Enterprise Server 15 SP1   4.12.14-110-default   cri-o://1.13.3      <none>        <none>
 worker-one   SUSE Linux Enterprise Server 15 SP1   4.12.14-110-default   cri-o://1.13.3      <none>        <none>
 ----
+
+[IMPORTANT]
+====
+The IP/FQDN must be reachable by every node of the cluster and therefore 127.0.0.1/localhost can't be used.
+====
 
 === Using kubectl
 

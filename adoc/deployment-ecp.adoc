@@ -22,6 +22,10 @@ source container-openrc.sh
 .. Download the pre-built image of SUSE SLES15-SP1 for {soc} from {jeos_product_page_url}.
 .. Upload the image to your {soc}.
 
+.The default user is 'sles'
+[NOTE]
+The SUSE SLES15-SP1 images for {soc} come with pre-defined user `sles`, which you use to log into the cluster nodes. This user has been configured for password-less 'sudo' and is the one recommended to be used by {tf} and `skuba`.
+
 === Deploying the cluster nodes
 
 . Find the {tf} template files for {soc} in `/usr/share/caasp/terraform/openstack`.
@@ -44,11 +48,21 @@ include::deployment-terraform-example.adoc[tags=tf_openstack]
 +
 [TIP]
 ====
-You can set timezone in before deploying the nodes by modifying the files:
+You can set the timezone before deploying the nodes by modifying the following file:
 
-* `~/my-deployment/cloud-init/master.tpl`
-* `~/my-deployment/cloud-init/worker.tpl`
+* `~/my-deployment/cloud-init/common.tpl`
 ====
+. (Optional) If you absolutely need to be able to SSH into your cluster nodes using password instead of key-based authentication, this is the best time to set it globally for all of your nodes. If you do this later, you will have to do it manually. To set this, modify the cloud-init configuration and comment-out the related SSH configuration:
+`~/my-deployment/cloud-init/common.tpl`
++
+----
+# Workaround for bsc#1138557 . Disable root and password SSH login
+# - sed -i -e '/^PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
+# - sed -i -e '/^#ChallengeResponseAuthentication/s/^.*$/ChallengeResponseAuthentication no/' /etc/ssh/sshd_config
+# - sed -i -e '/^#PasswordAuthentication/s/^.*$/PasswordAuthentication no/' /etc/ssh/sshd_config
+# - systemctl restart sshd
+----
++
 . Enter the registration code for your nodes in `~/my-deployment/registration.auto.tfvars`:
 +
 Substitute `REGISTRATION_CODE` for the code from <<registration_code>>.
@@ -87,4 +101,55 @@ image::deploy-loadbalancer-ip.png[]
 . Now click on menu:Compute[Instances].
 . Switch the filter dropdown to `Instance Name` and enter the string you specified for `stack_name` in the `terraform.tfvars` file.
 . Find the Floating IPs on each of the nodes of your cluster.
+====
+
+=== Logging into the cluster nodes
+
+. Connecting into the cluster nodes can be accomplished only via SSH key-based authentication thanks to the ssh-public key injection done earlier via {tf}. You can use the predefined `sles` user to log in.
++
+If the ssh-agent is running in the background run:
++
+----
+ssh sles@<node-ip-address>
+----
++
+Without the ssh-agent running run:
++
+----
+ssh sles@<node-ip-address> -i <path-to-your-ssh-private-key>
+----
++
+. Once connected, you can execute commands using password-less `sudo`. In addition to that, you can also set a password if you prefer to.
++
+To set the *root password* run:
++
+----
+sudo passwd
+----
++
+To set the *sles user's password* run:
++
+----
+sudo passwd sles
+----
+
+
+.Password authentication has been disabled
+[IMPORTANT]
+====
+Under the default settings you always need your SSH key to access the machines. Even after setting a password for either `root` or `sles` user, you will be unable to log in via SSH using their passwords respectively. You will most likely receive a `Permission denied (publickey)` error. This mechanism has been deliberately disabled because of security best practices. However, if this environment does not fit your workflows, you can change it at your own risk by modifying the SSH configuration:
+under `/etc/ssh/sshd_config`
+
+To allow password SSH authentication set:
+----
++ PasswordAuthentication yes
+----
+To allow login as root via SSH set:
+----
++ PermitRootLogin yes
+----
+For the changes to take effect you need to restart the SSH service by running
+----
+sudo systemctl restart sshd.service
+----
 ====
