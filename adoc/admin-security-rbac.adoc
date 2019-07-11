@@ -1,22 +1,135 @@
 = Role Based Access Control (RBAC)
 
-== Access Control Concepts
+== Introduction
+
+RBAC uses the `rbac.authorization.k8s.io` API group to drive authorization decisions, allowing administrators to dynamically configure policies through the {kube} API.
+
+The authentication components are deployed with {productname} installation. Administrators can update LDAP identity providers before or after platform deployment.
+After your {productname} deployment, administrators can then use {kube} RBAC to design user or group authorization.
+Users can access with a web browser to do the authentication and self-configure `kubectl` to access authorized resources.
+
+== Authentication Flow
+
+Authentication is composed of two open source libraries:
+
+* link:https://github.com/dexidp/dex[Dex] is an identity provider service (idP) that uses link:https://openid.net/connect/[OIDC] (Open ID Connect) to drive authentication for client application. It acts as portal to defer authentication to provider through connected identity providers(connectors).
+* link:https://github.com/heptiolabs/gangway[Gangway], a client application that enables authentication flow for your {productname}. User can login, authorize access and self-configure `kubectl`.
+
+For RBAC, administrators can use `kubectl` to create corresponding `RoleBinding` or `ClusterRoleBinding` for a user or group to limit resource access.
+
+image::oidc_flow.png[]
+// Source: suse-rbac-oidc-flow.xml (open with http://draw.io/app)
+
+. User requests access through Gangway.
+. Gangway redirects to Dex.
+. Dex redirects to connected identity provider (connector). User login and approve access request are generated.
+. Dex continues with OIDC authentication flow on behalf of the user and creates/updates data to {kube}  CRDs.
+. Dex redirects the user to Gangway. This redirect includes (ID/refresh) tokens.
+. Gangway returns `kubectl` self-configure instructions to the user.
++
+image::rbac-configure-kubectl.png[]
 
 
+. User self-configures `kubectl`.
+. The `kubectl` connects to {kube} API-server.
+. {kube} CRDs validate {kube} API-server request and return response.
+. The `kubectl` connects to authorized {kube} resources through {kube} API-server.
 
-=== Definition of User
+== RBAC Operations
 
-In auth context
+=== Administration
 
-=== Service Accounts
+==== {kube} Role Binding
 
-=== Global Roles
+Administrators can create {kube} `RoleBinding` or `ClusterRoleBinding` for users.
+This grants permission to users on the {kube} cluster like in the example below.
 
-Global roles applied first
-Cluster* prefix
+Create a `RoleBinding` for `<USER-1>`, `<USER-2>`, and `<GROUP-1>` using the `ClusterRole` `admin`.
 
-=== Local Roles
+----
+$ kubectl create rolebinding admin --clusterrole=admin --user=<USER-1> --user=<USER-2> --group=<GROUP-1>
+----
 
-Role
-RoleBindung
-Local roles and bindings only apply for a given namespace
+==== Update The Authentication Connector
+
+Administrators can update the authentication connector settings after {productname} deployment as follows:
+
+. Open the `dex` configmap in `<cluster name>/addons/dex/dex.yaml`
+. Adapt ConfigMap by adding LDAP configuration to the connector section of config.yaml data. The detailed configurations for LDAP connector, refer to https://github.com/dexidp/dex/blob/master/Documentation/connectors/ldap.md.
++
+====
+# Example LDAP connector
+
+  connectors:
+  - type: ldap
+    id: ldap
+    name: openLDAP
+    config:
+      host: dirsrv-389ds.kube-system.svc.cluster.local:389
+      insecureNoSSL: true
+      insecureSkipVerify: true
+      bindDN: cn=admin,dc=example,dc=org
+      bindPW: 'admin'
+      usernamePrompt: Email Address
+      userSearch:
+        baseDN: cn=People,dc=example,dc=org
+        filter: "(objectClass=person)"
+        username: mail
+        idAttr: DN
+        emailAttr: mail
+        nameAttr: uid
+====
++
+Besides the LDAP connector you can also setup other connectors.
+For additional connectors, refer to the available connector configurations in the Dex repository: https://github.com/dexidp/dex/tree/master/Documentation/connectors.
+. Update Dex deployment.
++
+----
+kubectl replace --force -f <cluster-name>/addons/dex/dex.yaml
+----
+
+=== User Access
+
+==== Setup `kubectl`
+
+. Go to the login page at `+https://<CONTROL-PLANE IP/FQDN>:32001/+` in your browser.
+. Click "login".
+. Choose the login method.
+. Enter the login credentials.
+. Approve the access request.
+. Self-configure `kubectl` with provided setup instruction.
+
+==== Access {kube} Resources
+
+The user can now access resources in the authorized `<NAMESPACE>`.
+
+If the user has the proper permissions to access the resources, the output should look like this:
+
+----
+# kubectl -n <NAMESPACE> get pod
+
+NAMESPACE     NAME                                 READY   STATUS    RESTARTS   AGE
+kube-system   dex-844dc9b8bb-w2zkm                 1/1     Running   0          19d
+kube-system   gangway-944dc9b8cb-w2zkm             1/1     Running   0          19d
+kube-system   cilium-76glw                         1/1     Running   0          27d
+kube-system   cilium-fvgcv                         1/1     Running   0          27d
+kube-system   cilium-j5lpx                         1/1     Running   0          27d
+kube-system   cilium-operator-5d9cc4fbb7-g5plc     1/1     Running   0          34d
+kube-system   cilium-vjf6p                         1/1     Running   8          27d
+kube-system   coredns-559fbd6bb4-2r982             1/1     Running   9          46d
+kube-system   coredns-559fbd6bb4-89k2j             1/1     Running   9          46d
+kube-system   etcd-my-master                       1/1     Running   5          46d
+kube-system   kube-apiserver-my-cluster            1/1     Running   0          19d
+kube-system   kube-controller-manager-my-master    1/1     Running   14         46d
+kube-system   kube-proxy-62hls                     1/1     Running   4          46d
+kube-system   kube-proxy-fhswj                     1/1     Running   0          46d
+kube-system   kube-proxy-r4h42                     1/1     Running   1          39d
+kube-system   kube-proxy-xsdf4                     1/1     Running   0          39d
+kube-system   kube-scheduler-my-master             1/1     Running   13         46d
+----
+
+If the user does not have the right permissions to access a resource, they will receive a `Forbidden` message.
+
+----
+Error from server (Forbidden): pods is forbidden
+----
