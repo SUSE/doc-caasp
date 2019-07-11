@@ -50,10 +50,10 @@ include::deployment-terraform-example.adoc[tags=tf_openstack]
 ====
 You can set the timezone before deploying the nodes by modifying the following file:
 
-* `~/my-deployment/cloud-init/common.tpl`
+* `~/my-cluster/cloud-init/common.tpl`
 ====
 . (Optional) If you absolutely need to be able to SSH into your cluster nodes using password instead of key-based authentication, this is the best time to set it globally for all of your nodes. If you do this later, you will have to do it manually. To set this, modify the cloud-init configuration and comment-out the related SSH configuration:
-`~/my-deployment/cloud-init/common.tpl`
+`~/my-cluster/cloud-init/common.tpl`
 +
 ----
 # Workaround for bsc#1138557 . Disable root and password SSH login
@@ -63,7 +63,7 @@ You can set the timezone before deploying the nodes by modifying the following f
 # - systemctl restart sshd
 ----
 +
-. Enter the registration code for your nodes in `~/my-deployment/registration.auto.tfvars`:
+. Enter the registration code for your nodes in `~/my-cluster/registration.auto.tfvars`:
 +
 Substitute `REGISTRATION_CODE` for the code from <<registration_code>>.
 +
@@ -92,7 +92,7 @@ The IP addresses of the generated machines will be displayed in the terraform
 output during the cluster node deployment. You need these IP addresses to
 deploy {productname} to the cluster.
 
-If you need to find an IP addresses later on you can run `terraform output` within the directory you performed the deployment from `~/my-deployment` directory or perform the following steps:
+If you need to find an IP addresses later on you can run `terraform output` within the directory you performed the deployment from `~/my-cluster` directory or perform the following steps:
 
 . Log in to {soc} and click on menu:Network[Load Balancers]. Find the one with the string you entered in the terraform configuration above e.g. "testing-lb".
 . Note down the "Floating IP". If you have configured a FQDN for this IP, use the hostname instead.
