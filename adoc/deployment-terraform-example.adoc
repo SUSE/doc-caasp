@@ -181,3 +181,75 @@ default packages listed.
 deployed machines.
 <15> `ntp_servers`: A list of `ntp` servers you would like to use with `chrony`.
 # end::tf_vmware[]
+
+
+[[tf.aws]]
+=== Terraform AWS Configuration
+# tag::tf_aws[]
+[source,json]
+----
+# prefix that all of the booted machines will use
+# IMPORTANT, please enter unique identifier below as value of
+# stack_name variable to not interfere with other deployments
+stack_name = "caasp-v4" // <1>
+
+# AWS region
+aws_region = "eu-central-1"  // <2>
+
+# AWS availability zone
+aws_az = "eu-central-1a" // <3>
+
+# access key for AWS services
+aws_access_key = "AKIXU..."  // <4>
+
+# secret key used for AWS services
+aws_secret_key = "ORd..." // <5>
+
+# Number of master nodes
+masters = 1 // <6>
+
+# Number of worker nodes
+workers = 2 // <7>
+
+# Username for the cluster nodes. Must exist on base OS.
+# EXAMPLE:
+# username = "opensuse"
+username = "opensuse" // <8>
+
+# ssh keys to inject into all the nodes
+# EXAMPLE:
+# authorized_keys = [
+#   "ssh-rsa <key-content>"
+# ]
+authorized_keys = [ // <9>
+  "ssh-rsa <example_key> example@example.com"
+]
+
+# to register CaaSP product please use ONLY ONE of the following method
+#
+# SUSE CaaSP Product Registration Code:
+#caasp_registry_code = ""  // <10>
+#
+# SUSE Repository Mirroring Server Name (FQDN):
+#rmt_server_name = "rmt.example.com"  // <11>
+
+----
+
+<1> `stack_name`: Prefix for all machines of the cluster spawned by terraform.
+*Note*: This string will be used to generate the human readable IDs in {soc}.
+<2> `aws_region`: The region in AWS.
+<3> `aws_az`: The availability zone in AWS.
+<4> `aws_access_key`: AWS access key.
+<5> `aws_secrert_key`: AWS secret key.
+<6> `masters`: Number of master nodes to be deployed.
+<7> `workers`: Number of worker nodes to be deployed.
+<8> `username`: Login username for the nodes.
+*Note*: the username must exist on the used base operating system. It will not be created.
+<9> `authorized_keys`: List of ssh-public-keys that will be able to login to the
+deployed machines.
+<10> `caasp_registry_code`: SUSE CaaSP Product Registration Code for registering
+the product against SUSE Customer Service.
+<11> `caasp_registry_code`: register against a local SUSE Repository
+Mirroring Server.
+
+# end::tf_aws[]
