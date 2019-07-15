@@ -17,9 +17,10 @@ installed on the cluster. If the cluster is already running the latest available
 versions, the output should look like this:
 
 ----
-skuba version: 0.6.1 (development) 0a6f78f 20190703 go1.12.4
-Current Kubernetes cluster version: 1.14.1
-Latest Kubernetes version: 1.14.1
+skuba version: 0.7.1 (release)  20190712 go1.12.6
+Current Kubernetes cluster version: 1.15.0
+Latest Kubernetes version: 1.15.0
+
 Congratulations! You are already at the latest version available
 ----
 
@@ -27,12 +28,12 @@ If the cluster has a new patch-level and minor {kube} version available, the
 output should look like this:
 
 ----
-skuba version: 0.6.1 (development) 0a6f78f 20190703 go1.12.4
+skuba version: 0.7.1 (release)  20190712 go1.12.6
 Current Kubernetes cluster version: 1.14.1
-Latest Kubernetes version: 1.15.1
-Upgrade path to update from 1.14.1 to 1.15.1:
+Latest Kubernetes version: 1.15.0
+Upgrade path to update from 1.14.1 to 1.15.0:
  - 1.14.1 -> 1.14.2
- - 1.14.2 -> 1.15.1
+ - 1.14.2 -> 1.15.0
 ----
 
 Similarly, you can also fetch this information on a per-node basis with the following command:
@@ -44,9 +45,9 @@ skuba node upgrade plan <node>
 For example, if the cluster has a node named `worker0` which is running the latest available versions, the output should look like this:
 
 ----
-skuba version: 0.6.1 (development) b6a653225c98 20190704 go1.12.4
-Current Kubernetes cluster version: 1.14.1
-Latest Kubernetes version: 1.14.1
+skuba version: 0.7.1 (release)  20190712 go1.12.6
+Current Kubernetes cluster version: 1.15.0
+Latest Kubernetes version: 1.15.0
 
 Node worker0 is up to date
 ----
@@ -54,7 +55,7 @@ Node worker0 is up to date
 On the other hand, if this same node has a new patch-level or minor {kube} version available, the output should look like this:
 
 ----
-skuba version: 0.6.1 (development) b6a653225c98 20190704 go1.12.4
+skuba version: 0.7.1 (release)  20190712 go1.12.6
 Current Kubernetes cluster version: 1.14.1
 Latest Kubernetes version: 1.15.0
 
@@ -67,7 +68,7 @@ You will get a similar output if there is a version available on a master node
 (named `master0` in this example):
 
 ----
-skuba version: 0.6.1 (development) b6a653225c98 20190704 go1.12.4
+skuba version: 0.7.1 (release)  20190712 go1.12.6
 Current Kubernetes cluster version: 1.15.0
 Latest Kubernetes version: 1.14.1
 
@@ -85,9 +86,9 @@ for the update to progress.
 In this case, you would get output similar to the following:
 
 ----
-skuba version: 0.6.1 (development) b6a653225c98 20190704 devel +5f509148b13f Wed Jun 5 00:53:25 2019 +0000
-Current Kubernetes cluster version: 1.15.1
-Latest Kubernetes version: 1.15.1
+skuba version: 0.7.1 (release)  20190712 go1.12.6
+Current Kubernetes cluster version: 1.15.0
+Latest Kubernetes version: 1.15.0
 
 Unable to plan node upgrade: at least one control plane does not tolerate the current cluster version
 ----
@@ -129,15 +130,17 @@ sudo systemctl disable --now skuba-update.timer
 . Update kubeadm to the newer version:
 +
 ----
-sudo zypper in kubernetes-kubeadm=1.15.0
+sudo zypper install --force kubernetes-kubeadm=1.15.0 kubernetes-client=1.14.1 kubernetes-common=1.14.1 kubernetes-kubelet=1.14.1
 ----
-Select the solution: `break kubernetes-kubeadm-[VERSION] by ignoring some of its dependencies`.
+Select the solution 3: `break kubernetes-kubeadm-[VERSION] by ignoring some of its dependencies`.
 
 ==== Applying The Update
 
 Now that you have done the required preparations, we can use `skuba` to:
 
 . Upgrade the master nodes:
++
+During the upgrade to a newer version, the apiserver will be unavailable so it is recommended to remove the server from the load balancer pool before the upgrade to avoid any connection issues.
 +
 ----
 skuba node upgrade apply --target <master-node-ip> --user <user> --sudo
