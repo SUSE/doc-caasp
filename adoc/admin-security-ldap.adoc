@@ -17,9 +17,9 @@ The mail attribute is used to create the RBAC rules.
 ===== Example: 389-ds Content LDIF
 
 ====
-# user-regular1, accounts, example.com
+# user-regular1, Users, example.org
 
-  dn: CN=user-regular1,OU=accounts,DC=example,DC=com
+  dn: CN=user-regular1,OU=Users,DC=example,DC=org
   cn: User Regular1
   uidNumber: 1200
   gidNumber: 500
@@ -27,15 +27,15 @@ The mail attribute is used to create the RBAC rules.
   objectClass: organizationalPerson
   objectClass: person
   uid: user-regular1
-  mail: user-regular1@example.com
+  mail: user-regular1@example.org
   sn: Regular1
   givenName: User
 ====
 
 ====
-# user-regular2, accounts, example.com
+# user-regular2, Users, example.org
 
-  dn: CN=user-regular2,OU=accounts,DC=example,DC=com
+  dn: CN=user-regular2,OU=Users,DC=example,DC=org
   cn: User Regular2
   uidNumber: 1300
   gidNumber: 500
@@ -43,15 +43,15 @@ The mail attribute is used to create the RBAC rules.
   objectClass: organizationalPerson
   objectClass: person
   uid: user-regular2
-  mail: user-regular2@example.com
+  mail: user-regular2@example.org
   sn: Regular2
   givenName: User
 ====
 
 ====
-# user-admin, accounts, example.com
+# user-admin, Users, example.org
 
-  dn: CN=user-admin,OU=accounts,DC=example,DC=com
+  dn: CN=user-admin,OU=Users,DC=example,DC=org
   cn: User Admin
   uidNumber: 1000
   gidNumber: 100
@@ -59,15 +59,15 @@ The mail attribute is used to create the RBAC rules.
   objectClass: organizationalPerson
   objectClass: person
   uid: user-admin
-  mail: user-admin@example.com
+  mail: user-admin@example.org
   sn: Admin
   givenName: User
 ====
 
 ====
-# k8s-users, accounts, example.com
+# k8s-users, Groups, example.org
 
-  dn: CN=k8s-users,OU=accounts,DC=example,DC=com
+  dn: CN=k8s-users,OU=Groups,DC=example,DC=org
   gidNumber: 500
   objectClass: posixGroup
   cn: k8s-users
@@ -76,16 +76,16 @@ The mail attribute is used to create the RBAC rules.
 ====
 
 ====
-# k8s-admins, accounts, example.com
+# k8s-admins, Groups, example.org
 
-  dn: CN=k8s-admins,OU=accounts,DC=example,DC=com
+  dn: CN=k8s-admins,OU=Groups,DC=example,DC=org
   gidNumber: 100
   objectClass: posixGroup
   cn: k8s-admins
   memberUid: user-admin
 ====
 
-==== Example: Dex LDAP Connector configuration (`addons/dex/dex.yaml`)
+==== Example: Dex LDAP TLS Connector configuration (`addons/dex/dex.yaml`)
 
 ----
 connectors:
@@ -99,7 +99,7 @@ connectors:
     # If the port is not supplied, it will be guessed based on "insecureNoSSL",
     # and "startTLS" flags. 389 for insecure or StartTLS connections, 636
     # otherwise.
-    host: ldap.example.com:636
+    host: ldap.example.org:636
 
     # Following field is required if the LDAP host is not using TLS (port 389).
     # Because this option inherently leaks passwords to anyone on the same network
@@ -119,7 +119,7 @@ connectors:
     # startTLS: true
 
     # Path to a trusted root certificate file. Default: use the host's root CA.
-    rootCA: /etc/dex/ldap.ca
+    rootCA: /etc/dex/pki/ca.crt
 
     # A raw certificate file can also be provided inline.
     # rootCAData: ( base64 encoded PEM file )
@@ -129,44 +129,44 @@ connectors:
     # server provides access for anonymous auth.
     # Please note that if the bind password contains a `$`, it has to be saved in an
     # environment variable which should be given as the value to `bindPW`.
-    # bindDN: uid=seviceaccount,cn=users,dc=example,dc=com
-    # bindPW: password
+    bindDN: CN=user-admin,OU=Users,DC=example,DC=org
+    bindPW: <Password of Bind DN>
 
     # The attribute to display in the provided password prompt. If unset, will
     # display "Username"
-    usernamePrompt: SSO Username
+    usernamePrompt: Email Address
 
     # User search maps a username and password entered by a user to a LDAP entry.
     userSearch:
       # BaseDN to start the search from. It will translate to the query
-      # "(&(objectClass=person)(uid=<username>))".
-      baseDN: OU=accounts,DC=example,DC=com
+      # "(&(objectClass=person)(mail=<username>))".
+      baseDN: OU=Users,DC=example,DC=org
       # Optional filter to apply when searching the directory.
       filter: "(objectClass=person)"
 
       # username attribute used for comparing user entries. This will be translated
       # and combined with the other filter as "(<attr>=<username>)".
-      username: uid
+      username: mail
       # The following three fields are direct mappings of attributes on the user entry.
       # String representation of the user.
-      idAttr: uid
+      idAttr: dn
       # Required. Attribute to map to Email.
       emailAttr: mail
       # Maps to display name of users. No default value.
-      nameAttr: uid
+      nameAttr: cn
 
       # Group search queries for groups given a user entry.
       groupSearch:
       # BaseDN to start the search from. It will translate to the query
       # "(&(objectClass=group)(member=<user uid>))".
-      baseDN: OU=accounts,DC=example,DC=com
+      baseDN: OU=Groups,DC=example,DC=org
       # Optional filter to apply when searching the directory.
       filter: "(objectClass=posixGroup)"
 
       # Following two fields are used to match a user to a group. It adds an additional
       # requirement to the filter that an attribute in the group must match the user's
       # attribute value.
-      userAttr: uid
+      userAttr: dn
       groupAttr: memberUid
 
       # Represents group name.
@@ -178,9 +178,9 @@ connectors:
 ==== Example: Active Directory Content LDIF
 
 ====
-# user-regular1, Users, example.com
+# user-regular1, Users, example.org
 
-  dn: CN=user-regular1,CN=Users,DC=example,DC=com
+  dn: CN=user-regular1,OU=Users,DC=example,DC=org
   objectClass: top
   objectClass: person
   objectClass: organizationalPerson
@@ -188,20 +188,20 @@ connectors:
   cn: user-regular1
   sn: Regular1
   givenName: User
-  distinguishedName: CN=user-regular1,CN=Users,DC=example,DC=com
+  distinguishedName: CN=user-regular1,OU=Users,DC=example,DC=org
   displayName: User Regular1
-  memberOf: CN=Domain Users,CN=Users,DC=example,DC=com
-  memberOf: CN=k8s-users,CN=Groups,DC=example,DC=com
+  memberOf: CN=Domain Users,OU=Users,DC=example,DC=org
+  memberOf: CN=k8s-users,OU=Groups,DC=example,DC=org
   name: user-regular1
   sAMAccountName: user-regular1
-  objectCategory: CN=Person,CN=Schema,CN=Configuration,DC=example,DC=com
-  mail: user-regular1@example.com
+  objectCategory: CN=Person,CN=Schema,CN=Configuration,DC=example,DC=org
+  mail: user-regular1@example.org
 ====
 
 ====
-# user-regular2, Users, example.com
+# user-regular2, Users, example.org
 
-  dn: CN=user-regular2,CN=Users,DC=example,DC=com
+  dn: CN=user-regular2,OU=Users,DC=example,DC=org
   objectClass: top
   objectClass: person
   objectClass: organizationalPerson
@@ -209,20 +209,20 @@ connectors:
   cn: user-regular2
   sn: Regular2
   givenName: User
-  distinguishedName: CN=user-regular2,CN=Users,DC=example,DC=com
+  distinguishedName: CN=user-regular2,OU=Users,DC=example,DC=org
   displayName: User Regular2
-  memberOf: CN=Domain Users,CN=Users,DC=example,DC=com
-  memberOf: CN=k8s-users,CN=Groups,DC=example,DC=com
+  memberOf: CN=Domain Users,OU=Users,DC=example,DC=org
+  memberOf: CN=k8s-users,OU=Groups,DC=example,DC=org
   name: user-regular2
   sAMAccountName: user-regular2
-  objectCategory: CN=Person,CN=Schema,CN=Configuration,DC=example,DC=com
-  mail: user-regular2@example.com
+  objectCategory: CN=Person,CN=Schema,CN=Configuration,DC=example,DC=org
+  mail: user-regular2@example.org
 ====
 
 ====
-# user-bind, Users, example.com
+# user-bind, Users, example.org
 
-  dn: CN=user-bind,CN=Users,DC=example,DC=com
+  dn: CN=user-bind,OU=Users,DC=example,DC=org
   objectClass: top
   objectClass: person
   objectClass: organizationalPerson
@@ -230,19 +230,19 @@ connectors:
   cn: user-bind
   sn: Bind
   givenName: User
-  distinguishedName: CN=user-bind,CN=Users,DC=example,DC=com
+  distinguishedName: CN=user-bind,OU=Users,DC=example,DC=org
   displayName: User Bind
-  memberOf: CN=Domain Users,CN=Users,DC=example,DC=com
+  memberOf: CN=Domain Users,OU=Users,DC=example,DC=org
   name: user-bind
   sAMAccountName: user-bind
-  objectCategory: CN=Person,CN=Schema,CN=Configuration,DC=example,DC=com
-  mail: user-bind@example.com
+  objectCategory: CN=Person,CN=Schema,CN=Configuration,DC=example,DC=org
+  mail: user-bind@example.org
 ====
 
 ====
-# user-admin, Users, example.com
+# user-admin, Users, example.org
 
-  dn: CN=user-admin,CN=Users,DC=example,DC=com
+  dn: CN=user-admin,OU=Users,DC=example,DC=org
   objectClass: top
   objectClass: person
   objectClass: organizationalPerson
@@ -250,46 +250,46 @@ connectors:
   cn: user-admin
   sn:: Admin
   givenName: User
-  distinguishedName: CN=user-admin,CN=Users,DC=example,DC=com
+  distinguishedName: CN=user-admin,OU=Users,DC=example,DC=org
   displayName: User Admin
-  memberOf: CN=Domain Users,CN=Users,DC=example,DC=com
-  memberOf: CN=k8s-admins,CN=Groups,DC=example,DC=com
+  memberOf: CN=Domain Users,OU=Users,DC=example,DC=org
+  memberOf: CN=k8s-admins,OU=Groups,DC=example,DC=org
   name: user-admin
   sAMAccountName: user-admin
-  objectCategory: CN=Person,CN=Schema,CN=Configuration,DC=example,DC=com
-  mail: user-admin@example.com
+  objectCategory: CN=Person,CN=Schema,CN=Configuration,DC=example,DC=org
+  mail: user-admin@example.org
 ====
 
 ====
-# k8s-users, Groups, example.com
+# k8s-users, Groups, example.org
 
-  dn: CN=k8s-users,CN=Groups,DC=example,DC=com
+  dn: CN=k8s-users,OU=Groups,DC=example,DC=org
   objectClass: top
   objectClass: group
   cn: k8s-users
-  member: CN=user-regular1,CN=Users,DC=example,DC=com
-  member: CN=user-regular2,CN=Users,DC=example,DC=com
-  distinguishedName: CN=k8s-users,CN=Groups,DC=example,DC=com
+  member: CN=user-regular1,OU=Users,DC=example,DC=org
+  member: CN=user-regular2,OU=Users,DC=example,DC=org
+  distinguishedName: CN=k8s-users,OU=Groups,DC=example,DC=org
   name: k8s-users
   sAMAccountName: k8s-users
-  objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=example,DC=com
+  objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=example,DC=org
 ====
 
 ====
-# k8s-admins, Groups, example.com
+# k8s-admins, Groups, example.org
 
-  dn: CN=k8s-admins,CN=Groups,DC=example,DC=com
+  dn: CN=k8s-admins,OU=Groups,DC=example,DC=org
   objectClass: top
   objectClass: group
   cn: k8s-admins
-  member: CN=user-admin,CN=Users,DC=example,DC=com
-  distinguishedName: CN=k8s-admins,CN=Groups,DC=example,DC=com
+  member: CN=user-admin,OU=Users,DC=example,DC=org
+  distinguishedName: CN=k8s-admins,OU=Groups,DC=example,DC=org
   name: k8s-admins
   sAMAccountName: k8s-admins
-  objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=example,DC=com
+  objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=example,DC=org
 ====
 
-==== Example: Dex LDAP Connector configuration (addons/dex/dex.yaml)
+==== Example: Dex Active Directory TLS Connector configuration (addons/dex/dex.yaml)
 
 ----
 connectors:
@@ -303,7 +303,7 @@ connectors:
     # If the port is not supplied, it will be guessed based on "insecureNoSSL",
     # and "startTLS" flags. 389 for insecure or StartTLS connections, 636
     # otherwise.
-    host: domain-controler.example.com:636
+    host: ad.example.org:636
 
     # Following field is required if the LDAP host is not using TLS (port 389).
     # Because this option inherently leaks passwords to anyone on the same network
@@ -333,24 +333,24 @@ connectors:
     # server provides access for anonymous auth.
     # Please note that if the bind password contains a `$`, it has to be saved in an
     # environment variable which should be given as the value to `bindPW`.
-    bindDN: uid=seviceaccount,CN=Users,DC=example,DC=com
-    bindPW: password
+    bindDN: CN=user-admin,OU=Users,DC=example,DC=org
+    bindPW: <Password of Bind DN>
 
     # The attribute to display in the provided password prompt. If unset, will
     # display "Username"
-    usernamePrompt: SSO Username
+    usernamePrompt: Email Address
 
     # User search maps a username and password entered by a user to a LDAP entry.
     userSearch:
       # BaseDN to start the search from. It will translate to the query
-      # "(&(objectClass=person)(uid=<username>))".
-      baseDN: CN=Users,DC=example,DC=com
+      # "(&(objectClass=person)(mail=<username>))".
+      baseDN: OU=Users,DC=example,DC=org
       # Optional filter to apply when searching the directory.
       filter: "(objectClass=person)"
 
       # username attribute used for comparing user entries. This will be translated
       # and combined with the other filter as "(<attr>=<username>)".
-      username: sAMAccountName
+      username: mail
       # The following three fields are direct mappings of attributes on the user entry.
       # String representation of the user.
       idAttr: distinguishedName
@@ -363,7 +363,7 @@ connectors:
     groupSearch:
       # BaseDN to start the search from. It will translate to the query
       # "(&(objectClass=group)(member=<user uid>))".
-      baseDN: CN=Groups,DC=example,DC=com
+      baseDN: OU=Groups,DC=example,DC=org
       # Optional filter to apply when searching the directory.
       filter: "(objectClass=group)"
 
@@ -377,6 +377,11 @@ connectors:
       nameAttr: sAMAccountName
 ----
 
+base64 encoded PEM file can be generated by
+----
+$ cat <root-ca-pem-file> | base64 | awk '{print}' ORS='' && echo
+----
+
 == Managing Users and Groups
 
 You can use standard LDAP administration tools for managing these users remotely.
@@ -388,7 +393,7 @@ To do so, install the `openldap2-client` package on a computer in your network a
 . To add a new group, create a LDIF file (`create_groups.ldif`) like this:
 +
 ----
-dn: cn=GROUP,ou=Groups,dc=infra,dc=caasp,dc=local
+dn: CN=GROUP,OU=Groups,DC=example,DC=org
 changetype: add
 objectClass: top
 objectClass: posixGroup
@@ -405,7 +410,7 @@ cn: GROUP
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
 LDAP_NODE_PROTOCOL=:389                         # ldap(:389), secure (:636)
-BIND_DN="cn=admin,dc=infra,dc=caasp,dc=local"   # Admin User
+BIND_DN="CN=admin,DC=example,DC=org"            # Admin User
 LDIF_FILE=./create_groups.ldif                  # LDIF Configuration File
 ROOT_PASSWORD=                                  # Admin Password
 
@@ -417,7 +422,7 @@ ldapmodify -v -H ${LDAP_PROTOCOL}://${LDAP_NODE_FQDN}${LDAP_NODE_PROTOCOL} -D "$
 . To add a new user, create a LDIF file (`new_user.ldif`) like this:
 +
 ----
-dn: uid=USERID,ou=People,dc=infra,dc=caasp,dc=local
+dn: uid=USERID,OU=Users,DC=example,DC=org
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: top
@@ -441,7 +446,7 @@ mail: E-MAIL_ADDRESS
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
 LDAP_NODE_PROTOCOL=:389                         # ldap(:389), secure (:636)
-BIND_DN="cn=admin,dc=infra,dc=caasp,dc=local"   # Admin User
+BIND_DN="CN=admin,DC=example,DC=org"            # Admin User
 LDIF_FILE=./new_user.ldif                       # LDIF Configuration File
 ROOT_PASSWORD=                                  # Admin Password
 
@@ -458,8 +463,8 @@ LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
 LDAP_NODE_PROTOCOL=:389                         # ldap(:389), secure (:636)
 USERID=user1
-BASE_DN="uid=${USERID},dc=infra,dc=caasp,dc=local"
-BIND_DN="cn=admin,dc=infra,dc=caasp,dc=local"   # Admin User
+BASE_DN="uid=${USERID},DC=example,DC=org"
+BIND_DN="CN=admin,DC=example,DC=org"            # Admin User
 ROOT_PASSWORD=                                  # Admin Password
 
 ldapsearch -v -x -H ${LDAP_PROTOCOL}://${LDAP_NODE_FQDN}${LDAP_NODE_PROTOCOL} -b "${BASE_DN}" -D "${BIND_DN}" -w ${ROOT_PASSWORD}
@@ -479,7 +484,7 @@ Change the User Password
 ====
 +
 ----
-dn: uid=USERID,ou=People,dc=infra,dc=caasp,dc=local
+dn: uid=USERID,OU=Users,DC=example,DC=org
 changetype: modify
 replace: userPassword
 userPassword: PASSWORD
@@ -490,10 +495,10 @@ userPassword: PASSWORD
 . Add User to `Administrators` group.
 +
 ----
-dn: cn=Administrators,ou=Groups,dc=infra,dc=caasp,dc=local
+dn: CN=Administrators,OU=Groups,DC=example,DC=org
 changetype: modify
 add: uniqueMember
-uniqueMember: uid=USERID,ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=USERID,OU=Users,DC=example,DC=org
 ----
 * USERID: with the user's ID.
 . Execute `ldapmodify` to change user attributes:
@@ -502,7 +507,7 @@ uniqueMember: uid=USERID,ou=People,dc=infra,dc=caasp,dc=local
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
 LDAP_NODE_PROTOCOL=:389                         # ldap(:389), secure (:636)
-BIND_DN="cn=admin,dc=infra,dc=caasp,dc=local"   # Admin User
+BIND_DN="CN=admin,DC=example,DC=org"            # Admin User
 LDIF_FILE=./modify_user.ldif                    # LDIF Configuration File
 ROOT_PASSWORD=                                  # Admin Password
 
@@ -516,7 +521,7 @@ The following procedure details how to delete a user from the LDAP server.
 . Create a LDIF file (`delete_user.ldif`) that specifies the distinguished name of the entry:
 +
 ----
-dn: uid=USER_ID,ou=People,dc=infra,dc=caasp,dc=local
+dn: uid=USER_ID,OU=Users,DC=example,DC=org
 changetype: delete
 ----
 +
@@ -526,7 +531,7 @@ changetype: delete
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
 LDAP_NODE_PROTOCOL=:389                         # ldap(:389), secure (:636)
-BIND_DN="cn=admin,dc=infra,dc=caasp,dc=local"   # Admin User
+BIND_DN="CN=admin,DC=example,DC=org"            # Admin User
 LDIF_FILE=./delete_user.ldif                    # LDIF Configuration File
 ROOT_PASSWORD=                                  # Admin Password
 
