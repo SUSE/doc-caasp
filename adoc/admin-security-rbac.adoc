@@ -67,18 +67,18 @@ Administrators can update the authentication connector settings after {productna
     config:
       host: ldap.example.org:636
       rootCAData: <base64 encoded PEM file>
-      bindDN: CN=user-admin,OU=Users,DC=example,DC=org
+      bindDN: cn=user-admin,ou=Users,dc=example,dc=org
       bindPW: <Password of Bind DN>
       usernamePrompt: Email Address
       userSearch:
-        baseDN: OU=Users,DC=example,DC=org
+        baseDN: ou=Users,dc=example,dc=org
         filter: "(objectClass=person)"
         username: mail
         idAttr: DN
         emailAttr: mail
         nameAttr: cn
       groupSearch:
-        baseDN: OU=Groups,DC=example,DC=org
+        baseDN: ou=Groups,dc=example,dc=org
         filter: "(objectClass=groupOfNames)"
         userAttr: DN
         groupAttr: member

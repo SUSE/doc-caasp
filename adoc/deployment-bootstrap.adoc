@@ -84,11 +84,11 @@ At this point you can perform some configurations before bootstrapping the clust
       config:
         host: ldap.example.org:636 // <1> <2>
         rootCAData: <base64 encoded PEM file> // <3>
-        bindDN: CN=user-admin,OU=Users,DC=example,DC=org // <4>
+        bindDN: cn=user-admin,ou=Users,dc=example,dc=org // <4>
         bindPW: <Password of Bind DN> // <5>
         usernamePrompt: Email Address // <6>
         userSearch:
-          baseDN: OU=Users,DC=example,DC=org // <7>
+          baseDN: ou=Users,dc=example,dc=org // <7>
           filter: "(objectClass=person)" // <8>
           username: mail // <9>
           idAttr: DN // <10>
@@ -101,7 +101,7 @@ At this point you can perform some configurations before bootstrapping the clust
 <4> Bind DN of user that can do user searches.
 <5> Password of the user.
 <6> Label of LDAP attribute users will enter to identify themselves (e.g. `username`).
-<7> BaseDN where users are located (e.g. `OU=Users,DC=example,DC=org`).
+<7> BaseDN where users are located (e.g. `ou=Users,dc=example,dc=org`).
 <8> Filter to specify type of user objects (e.g. "(objectClass=person)").
 <9> Attribute users will enter to identify themselves (e.g. mail).
 <10> Attribute used to identify user within the system (e.g. DN).
