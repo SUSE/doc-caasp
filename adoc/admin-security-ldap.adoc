@@ -4,6 +4,27 @@
 
 {productname} supports user authentication via external LDAP server like 389 Directory Server and Active Directory by updating the builtin Dex LDAP connector configuration.
 
+=== Deploy an External 389 Directory Server Using Container
+
+----
+INSTANCE_NAME=localhost                       # Directory Server Name
+ROOT_DN="cn=admin,dc=example,dc=com"          # Admin Account
+ROOT_PASSWORD=Passwd1234                      # Admin Password
+SUFFIX="dc=example,dc=com"                    # Suffix
+DATA_DIR=${PWD}/389_ds_data                   # Directory Server Data
+IMAGE=registry.suse.com/caasp/v4/389-ds:beta  # Container Image 
+
+docker run --rm -it \
+	-p 389:389 \
+	-p 636:636 \
+	-e INSTANCE_NAME=${INSTANCE_NAME} \
+	-e ROOT_DN=${ROOT_DN} \
+	-e ROOT_PASSWORD=${ROOT_PASSWORD} \
+	-e SUFFIX=${SUFFIX} \
+	-v ${DATA_DIR}:/data \
+	--name 389-ds ${IMAGE}
+----
+
 === Examples
 
 In both directories, `user-regular1` and `user-regular2` are members of the `k8s-users` group, `user-admin` is a member of the `k8s-admins` group.
@@ -19,7 +40,7 @@ The mail attribute is used to create the RBAC rules.
 ====
 # user-regular1, accounts, example.com
 
-  dn: CN=user-regular1,OU=accounts,DC=example,DC=com
+  dn: cn=user-regular1,ou=accounts,dc=example,dc=com
   cn: User Regular1
   uidNumber: 1200
   gidNumber: 500
@@ -35,7 +56,7 @@ The mail attribute is used to create the RBAC rules.
 ====
 # user-regular2, accounts, example.com
 
-  dn: CN=user-regular2,OU=accounts,DC=example,DC=com
+  dn: cn=user-regular2,ou=accounts,dc=example,dc=com
   cn: User Regular2
   uidNumber: 1300
   gidNumber: 500
@@ -51,7 +72,7 @@ The mail attribute is used to create the RBAC rules.
 ====
 # user-admin, accounts, example.com
 
-  dn: CN=user-admin,OU=accounts,DC=example,DC=com
+  dn: cn=user-admin,ou=accounts,dc=example,dc=com
   cn: User Admin
   uidNumber: 1000
   gidNumber: 100
@@ -67,7 +88,7 @@ The mail attribute is used to create the RBAC rules.
 ====
 # k8s-users, accounts, example.com
 
-  dn: CN=k8s-users,OU=accounts,DC=example,DC=com
+  dn: cn=k8s-users,ou=accounts,dc=example,dc=com
   gidNumber: 500
   objectClass: posixGroup
   cn: k8s-users
@@ -78,7 +99,7 @@ The mail attribute is used to create the RBAC rules.
 ====
 # k8s-admins, accounts, example.com
 
-  dn: CN=k8s-admins,OU=accounts,DC=example,DC=com
+  dn: cn=k8s-admins,ou=accounts,dc=example,dc=com
   gidNumber: 100
   objectClass: posixGroup
   cn: k8s-admins
@@ -140,7 +161,7 @@ connectors:
     userSearch:
       # BaseDN to start the search from. It will translate to the query
       # "(&(objectClass=person)(uid=<username>))".
-      baseDN: OU=accounts,DC=example,DC=com
+      baseDN: ou=accounts,dc=example,dc=com
       # Optional filter to apply when searching the directory.
       filter: "(objectClass=person)"
 
@@ -159,7 +180,7 @@ connectors:
       groupSearch:
       # BaseDN to start the search from. It will translate to the query
       # "(&(objectClass=group)(member=<user uid>))".
-      baseDN: OU=accounts,DC=example,DC=com
+      baseDN: ou=accounts,dc=example,dc=com
       # Optional filter to apply when searching the directory.
       filter: "(objectClass=posixGroup)"
 
@@ -180,7 +201,7 @@ connectors:
 ====
 # user-regular1, Users, example.com
 
-  dn: CN=user-regular1,CN=Users,DC=example,DC=com
+  dn: cn=user-regular1,cn=Users,dc=example,dc=com
   objectClass: top
   objectClass: person
   objectClass: organizationalPerson
@@ -188,20 +209,20 @@ connectors:
   cn: user-regular1
   sn: Regular1
   givenName: User
-  distinguishedName: CN=user-regular1,CN=Users,DC=example,DC=com
+  distinguishedName: cn=user-regular1,cn=Users,dc=example,dc=com
   displayName: User Regular1
-  memberOf: CN=Domain Users,CN=Users,DC=example,DC=com
-  memberOf: CN=k8s-users,CN=Groups,DC=example,DC=com
+  memberOf: cn=Domain Users,cn=Users,dc=example,dc=com
+  memberOf: cn=k8s-users,cn=Groups,dc=example,dc=com
   name: user-regular1
   sAMAccountName: user-regular1
-  objectCategory: CN=Person,CN=Schema,CN=Configuration,DC=example,DC=com
+  objectCategory: cn=Person,cn=Schema,cn=Configuration,dc=example,dc=com
   mail: user-regular1@example.com
 ====
 
 ====
 # user-regular2, Users, example.com
 
-  dn: CN=user-regular2,CN=Users,DC=example,DC=com
+  dn: cn=user-regular2,cn=Users,dc=example,dc=com
   objectClass: top
   objectClass: person
   objectClass: organizationalPerson
@@ -209,20 +230,20 @@ connectors:
   cn: user-regular2
   sn: Regular2
   givenName: User
-  distinguishedName: CN=user-regular2,CN=Users,DC=example,DC=com
+  distinguishedName: cn=user-regular2,cn=Users,dc=example,dc=com
   displayName: User Regular2
-  memberOf: CN=Domain Users,CN=Users,DC=example,DC=com
-  memberOf: CN=k8s-users,CN=Groups,DC=example,DC=com
+  memberOf: cn=Domain Users,cn=Users,dc=example,dc=com
+  memberOf: cn=k8s-users,cn=Groups,dc=example,dc=com
   name: user-regular2
   sAMAccountName: user-regular2
-  objectCategory: CN=Person,CN=Schema,CN=Configuration,DC=example,DC=com
+  objectCategory: cn=Person,cn=Schema,cn=Configuration,dc=example,dc=com
   mail: user-regular2@example.com
 ====
 
 ====
 # user-bind, Users, example.com
 
-  dn: CN=user-bind,CN=Users,DC=example,DC=com
+  dn: cn=user-bind,cn=Users,dc=example,dc=com
   objectClass: top
   objectClass: person
   objectClass: organizationalPerson
@@ -230,19 +251,19 @@ connectors:
   cn: user-bind
   sn: Bind
   givenName: User
-  distinguishedName: CN=user-bind,CN=Users,DC=example,DC=com
+  distinguishedName: cn=user-bind,cn=Users,dc=example,dc=com
   displayName: User Bind
-  memberOf: CN=Domain Users,CN=Users,DC=example,DC=com
+  memberOf: cn=Domain Users,cn=Users,dc=example,dc=com
   name: user-bind
   sAMAccountName: user-bind
-  objectCategory: CN=Person,CN=Schema,CN=Configuration,DC=example,DC=com
+  objectCategory: cn=Person,cn=Schema,cn=Configuration,dc=example,dc=com
   mail: user-bind@example.com
 ====
 
 ====
 # user-admin, Users, example.com
 
-  dn: CN=user-admin,CN=Users,DC=example,DC=com
+  dn: cn=user-admin,cn=Users,dc=example,dc=com
   objectClass: top
   objectClass: person
   objectClass: organizationalPerson
@@ -250,43 +271,43 @@ connectors:
   cn: user-admin
   sn:: Admin
   givenName: User
-  distinguishedName: CN=user-admin,CN=Users,DC=example,DC=com
+  distinguishedName: cn=user-admin,cn=Users,dc=example,dc=com
   displayName: User Admin
-  memberOf: CN=Domain Users,CN=Users,DC=example,DC=com
-  memberOf: CN=k8s-admins,CN=Groups,DC=example,DC=com
+  memberOf: cn=Domain Users,cn=Users,dc=example,dc=com
+  memberOf: cn=k8s-admins,cn=Groups,dc=example,dc=com
   name: user-admin
   sAMAccountName: user-admin
-  objectCategory: CN=Person,CN=Schema,CN=Configuration,DC=example,DC=com
+  objectCategory: cn=Person,cn=Schema,cn=Configuration,dc=example,dc=com
   mail: user-admin@example.com
 ====
 
 ====
 # k8s-users, Groups, example.com
 
-  dn: CN=k8s-users,CN=Groups,DC=example,DC=com
+  dn: cn=k8s-users,cn=Groups,dc=example,dc=com
   objectClass: top
   objectClass: group
   cn: k8s-users
-  member: CN=user-regular1,CN=Users,DC=example,DC=com
-  member: CN=user-regular2,CN=Users,DC=example,DC=com
-  distinguishedName: CN=k8s-users,CN=Groups,DC=example,DC=com
+  member: cn=user-regular1,cn=Users,dc=example,dc=com
+  member: cn=user-regular2,cn=Users,dc=example,dc=com
+  distinguishedName: cn=k8s-users,cn=Groups,dc=example,dc=com
   name: k8s-users
   sAMAccountName: k8s-users
-  objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=example,DC=com
+  objectCategory: cn=Group,cn=Schema,cn=Configuration,dc=example,dc=com
 ====
 
 ====
 # k8s-admins, Groups, example.com
 
-  dn: CN=k8s-admins,CN=Groups,DC=example,DC=com
+  dn: cn=k8s-admins,cn=Groups,dc=example,dc=com
   objectClass: top
   objectClass: group
   cn: k8s-admins
-  member: CN=user-admin,CN=Users,DC=example,DC=com
-  distinguishedName: CN=k8s-admins,CN=Groups,DC=example,DC=com
+  member: cn=user-admin,cn=Users,dc=example,dc=com
+  distinguishedName: cn=k8s-admins,cn=Groups,dc=example,dc=com
   name: k8s-admins
   sAMAccountName: k8s-admins
-  objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=example,DC=com
+  objectCategory: cn=Group,cn=Schema,cn=Configuration,dc=example,dc=com
 ====
 
 ==== Example: Dex LDAP Connector configuration (addons/dex/dex.yaml)
@@ -333,7 +354,7 @@ connectors:
     # server provides access for anonymous auth.
     # Please note that if the bind password contains a `$`, it has to be saved in an
     # environment variable which should be given as the value to `bindPW`.
-    bindDN: uid=seviceaccount,CN=Users,DC=example,DC=com
+    bindDN: uid=seviceaccount,cn=Users,dc=example,dc=com
     bindPW: password
 
     # The attribute to display in the provided password prompt. If unset, will
@@ -344,7 +365,7 @@ connectors:
     userSearch:
       # BaseDN to start the search from. It will translate to the query
       # "(&(objectClass=person)(uid=<username>))".
-      baseDN: CN=Users,DC=example,DC=com
+      baseDN: cn=Users,dc=example,dc=com
       # Optional filter to apply when searching the directory.
       filter: "(objectClass=person)"
 
@@ -363,7 +384,7 @@ connectors:
     groupSearch:
       # BaseDN to start the search from. It will translate to the query
       # "(&(objectClass=group)(member=<user uid>))".
-      baseDN: CN=Groups,DC=example,DC=com
+      baseDN: cn=Groups,dc=example,dc=com
       # Optional filter to apply when searching the directory.
       filter: "(objectClass=group)"
 
@@ -388,7 +409,7 @@ To do so, install the `openldap2-client` package on a computer in your network a
 . To add a new group, create a LDIF file (`create_groups.ldif`) like this:
 +
 ----
-dn: cn=GROUP,ou=Groups,dc=infra,dc=caasp,dc=local
+dn: cn=GROUP,ou=Groups,dc=example,dc=com
 changetype: add
 objectClass: top
 objectClass: posixGroup
@@ -405,7 +426,7 @@ cn: GROUP
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
 LDAP_NODE_PROTOCOL=:389                         # ldap(:389), secure (:636)
-BIND_DN="cn=admin,dc=infra,dc=caasp,dc=local"   # Admin User
+BIND_DN="cn=admin,dc=example,dc=com"            # Admin User
 LDIF_FILE=./create_groups.ldif                  # LDIF Configuration File
 ROOT_PASSWORD=                                  # Admin Password
 
@@ -417,7 +438,7 @@ ldapmodify -v -H ${LDAP_PROTOCOL}://${LDAP_NODE_FQDN}${LDAP_NODE_PROTOCOL} -D "$
 . To add a new user, create a LDIF file (`new_user.ldif`) like this:
 +
 ----
-dn: uid=USERID,ou=People,dc=infra,dc=caasp,dc=local
+dn: uid=USERID,ou=People,dc=example,dc=com
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: top
@@ -441,7 +462,7 @@ mail: E-MAIL_ADDRESS
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
 LDAP_NODE_PROTOCOL=:389                         # ldap(:389), secure (:636)
-BIND_DN="cn=admin,dc=infra,dc=caasp,dc=local"   # Admin User
+BIND_DN="cn=admin,dc=example,dc=com"            # Admin User
 LDIF_FILE=./new_user.ldif                       # LDIF Configuration File
 ROOT_PASSWORD=                                  # Admin Password
 
@@ -458,8 +479,8 @@ LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
 LDAP_NODE_PROTOCOL=:389                         # ldap(:389), secure (:636)
 USERID=user1
-BASE_DN="uid=${USERID},dc=infra,dc=caasp,dc=local"
-BIND_DN="cn=admin,dc=infra,dc=caasp,dc=local"   # Admin User
+BASE_DN="uid=${USERID},dc=example,dc=com"
+BIND_DN="cn=admin,dc=example,dc=com"            # Admin User
 ROOT_PASSWORD=                                  # Admin Password
 
 ldapsearch -v -x -H ${LDAP_PROTOCOL}://${LDAP_NODE_FQDN}${LDAP_NODE_PROTOCOL} -b "${BASE_DN}" -D "${BIND_DN}" -w ${ROOT_PASSWORD}
@@ -479,7 +500,7 @@ Change the User Password
 ====
 +
 ----
-dn: uid=USERID,ou=People,dc=infra,dc=caasp,dc=local
+dn: uid=USERID,ou=People,dc=example,dc=com
 changetype: modify
 replace: userPassword
 userPassword: PASSWORD
@@ -490,10 +511,10 @@ userPassword: PASSWORD
 . Add User to `Administrators` group.
 +
 ----
-dn: cn=Administrators,ou=Groups,dc=infra,dc=caasp,dc=local
+dn: cn=Administrators,ou=Groups,dc=example,dc=com
 changetype: modify
 add: uniqueMember
-uniqueMember: uid=USERID,ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=USERID,ou=People,dc=example,dc=com
 ----
 * USERID: with the user's ID.
 . Execute `ldapmodify` to change user attributes:
@@ -502,7 +523,7 @@ uniqueMember: uid=USERID,ou=People,dc=infra,dc=caasp,dc=local
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
 LDAP_NODE_PROTOCOL=:389                         # ldap(:389), secure (:636)
-BIND_DN="cn=admin,dc=infra,dc=caasp,dc=local"   # Admin User
+BIND_DN="cn=admin,dc=example,dc=com"            # Admin User
 LDIF_FILE=./modify_user.ldif                    # LDIF Configuration File
 ROOT_PASSWORD=                                  # Admin Password
 
@@ -516,7 +537,7 @@ The following procedure details how to delete a user from the LDAP server.
 . Create a LDIF file (`delete_user.ldif`) that specifies the distinguished name of the entry:
 +
 ----
-dn: uid=USER_ID,ou=People,dc=infra,dc=caasp,dc=local
+dn: uid=USER_ID,ou=People,dc=example,dc=com
 changetype: delete
 ----
 +
@@ -526,7 +547,7 @@ changetype: delete
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
 LDAP_NODE_PROTOCOL=:389                         # ldap(:389), secure (:636)
-BIND_DN="cn=admin,dc=infra,dc=caasp,dc=local"   # Admin User
+BIND_DN="cn=admin,dc=example,dc=com"            # Admin User
 LDIF_FILE=./delete_user.ldif                    # LDIF Configuration File
 ROOT_PASSWORD=                                  # Admin Password
 
