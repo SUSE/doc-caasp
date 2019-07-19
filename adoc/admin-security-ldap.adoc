@@ -19,7 +19,87 @@ DATA_DIR=<PWD>/389_ds_data                    # Directory Server Data
 IMAGE=registry.suse.org/caasp/v4/389-ds:beta  # Container Image 
 ----
 
-. execute `docker` command to deploy 389 Directory Server:
+. Execute `docker` command to deploy 389 Directory Server:
++
+----
+docker run --rm -it \
+	-p 389:389 \
+	-p 636:636 \
+	-e INSTANCE_NAME=<INSTANCE_NAME> \
+	-e ROOT_DN=<ROOT_DN> \
+	-e ROOT_PASSWORD=<ROOT_PASSWORD> \
+	-e SUFFIX=<SUFFIX> \
+	-v <DATA_DIR>:/data \
+	--name 389-ds <IMAGE>
+----
+
+=== 389 Directory Server with LDAPS
+
+The 389 Directory Server image `registry.suse.org/caasp/v4/389-ds:beta` will automatically generated self-signed certificate and key.  User can choose to replace their own certificate with following actions:
+
+. Exit running container:
+
+. Bash into container with previous mounted data direcory:
++
+----
+docker run --rm -it \
+  -p 389:389 \
+  -p 636:636 \
+  -v <DATA_DIR>:/data \
+  --entrypoint /bin/bash \
+  --name 389-ds <IMAGE>
+----
+
+. List certificate in `/etc/dirsrv/slapd-<INSTANCE_NAME>`
++
+----
+certutil -L -d . -f pwdfile.txt
+----
++
+----
+---- SAMPLE ----
+Certificate Nickname                                         Trust Attributes
+                                                             SSL,S/MIME,JAR/XPI
+ 
+Self-Signed-CA                                               CT,,
+Server-Cert                                                  u,u,u
+----
+
+. List key in `/etc/dirsrv/slapd-<INSTANCE_NAME>`
++
+----
+certutil -K -d . -f pwdfile.txt
+----
++
+----
+---- SAMPLE ----
+certutil: Checking token "NSS Certificate DB" in slot "NSS User Private Key and Certificate Services"
+< 0> rsa      6d4f98efe45328ff852b7e2ca5a24ad46844163a   NSS Certificate DB:Server-Cert
+----
+
+. Delete Existing CA and Certificate in  `/etc/dirsrv/slapd-<instance name>`
++
+----
+certutil -D -d . -n Self-Signed-CA
+certutil -F -k 6d4f98efe45328ff852b7e2ca5a24ad46844163a -d . -f pwdfile.txt
+----
+
+. Import certificate in `/etc/dirsrv/slapd-<instance name>`
++
+----
+openssl pkcs12 -export -inkey <key.pem> -in <cert.pem> -out <cert.pk12> -nodes -name "Server-Cert"
+pk12util -i <cert.pk12> -d .
+----
+
+. Import tootCA in `/etc/dirsrv/slapd-<instance name>`
++
+----
+certutil -A -d . -n "CA certificate" -t "CT,," -i <rootCA.pem>
+----
+
+. Exit container
+
+. Execute `docker` command to run 389 Directory Server with previous mounted directory:
 +
 ----
 docker run --rm -it \
