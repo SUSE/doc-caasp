@@ -6,7 +6,7 @@
 
 === Deploy an External 389 Directory Server with Automatically Generated Self-signed Certificate
 
-The 389 Directory Server image `registry.suse.com/caasp/v4/389-ds:beta` will automatically generated self-signed certificate and key. 389 Directory Server can be deployed with customized configuration and container command:
+The 389 Directory Server image `registry.suse.com/caasp/v4/389-ds:beta` will automatically generate self-signed certificate and key. 389 Directory Server can be deployed with customized configuration and container command:
 
 . Prepare customized 389 Directory configuration to enter in Terminal:
 +
@@ -19,7 +19,7 @@ DATA_DIR=<PWD>/389_ds_data                    # Directory Server Data
 IMAGE=registry.suse.com/caasp/v4/389-ds:beta  # Container Image 
 ----
 
-. Execute `docker` command to deploy 389 Directory Server. This will start non-TLS (389) and TLS (636) protocols together with automatically self-signed certificate and key.
+. Execute `docker` command to deploy 389 Directory Server. This will start non-TLS port (389) and TLS port (636) protocols together with automatically self-signed certificate and key.
 +
 ----
 docker run -d \
@@ -37,7 +37,11 @@ docker run -d \
 
 User can choose to replace their own certificate with following actions:
 
-. Exit running container:
+. Stop running container:
++
+----
+docker stop 389-ds
+----
 
 . Copy external certificate `<rootCA.pem>` to mounted data directory `<DATA_DIR>/config/``
 
@@ -79,21 +83,21 @@ certutil: Checking token "NSS Certificate DB" in slot "NSS User Private Key and 
 < 0> rsa      6d4f98efe45328ff852b7e2ca5a24ad46844163a   NSS Certificate DB:Server-Cert
 ----
 
-. Delete Existing CA and Certificate in  `/etc/dirsrv/slapd-<instance name>`
+. Delete Existing CA and Certificate in  `/etc/dirsrv/slapd-<INSTANCE_NAME>`
 +
 ----
 certutil -D -d . -n Self-Signed-CA
 certutil -F -k 6d4f98efe45328ff852b7e2ca5a24ad46844163a -d . -f pwdfile.txt
 ----
 
-. Import certificate in `/etc/dirsrv/slapd-<instance name>`
+. Import certificate in `/etc/dirsrv/slapd-<INSTANCE_NAME>`
 +
 ----
 openssl pkcs12 -export -inkey <key.pem> -in <cert.pem> -out <cert.pk12> -nodes -name "Server-Cert"
 pk12util -i <cert.pk12> -d .
 ----
 
-. Import rootCA in `/etc/dirsrv/slapd-<instance name>`
+. Import rootCA in `/etc/dirsrv/slapd-<INSTANCE_NAME>`
 +
 ----
 certutil -A -d . -n "CA certificate" -t "CT,," -i <rootCA.pem>
@@ -520,7 +524,7 @@ cn: GROUP
 ----
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
-LDAP_NODE_PROTOCOL=:389                         # ldap(:389), secure (:636)
+LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
 BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
 LDIF_FILE=./create_groups.ldif                  # LDIF Configuration File
 ROOT_PASSWORD=                                  # Admin Password
@@ -556,7 +560,7 @@ mail: E-MAIL_ADDRESS
 ----
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
-LDAP_NODE_PROTOCOL=:389                         # ldap(:389), secure (:636)
+LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
 BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
 LDIF_FILE=./new_user.ldif                       # LDIF Configuration File
 ROOT_PASSWORD=                                  # Admin Password
@@ -572,7 +576,7 @@ ldapadd -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D "<BIND_D
 ----
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
-LDAP_NODE_PROTOCOL=:389                         # ldap(:389), secure (:636)
+LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
 USERID=user1
 BASE_DN="uid=<USERID>,dc=example,dc=org"
 BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
@@ -617,7 +621,7 @@ uniqueMember: uid=USERID,ou=Users,dc=example,dc=org
 ----
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
-LDAP_NODE_PROTOCOL=:389                         # ldap(:389), secure (:636)
+LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
 BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
 LDIF_FILE=./modify_user.ldif                    # LDIF Configuration File
 ROOT_PASSWORD=                                  # Admin Password
@@ -641,7 +645,7 @@ changetype: delete
 ----
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
-LDAP_NODE_PROTOCOL=:389                         # ldap(:389), secure (:636)
+LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
 BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
 LDIF_FILE=./delete_user.ldif                    # LDIF Configuration File
 ROOT_PASSWORD=                                  # Admin Password
