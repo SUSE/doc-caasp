@@ -58,7 +58,7 @@ docker run --rm -it \
 . List certificates in `/etc/dirsrv/slapd-<INSTANCE_NAME>`
 +
 ----
-certutil -L -d /etc/dirsrv/slapd-<INSTANCE_NAME> -f pwdfile.txt
+certutil -L -d /etc/dirsrv/slapd-<INSTANCE_NAME> -f /etc/dirsrv/slapd-<INSTANCE_NAME>/pwdfile.txt
 ----
 +
 ----
@@ -73,7 +73,7 @@ Server-Cert                                                  u,u,u
 . List key in `/etc/dirsrv/slapd-<INSTANCE_NAME>`
 +
 ----
-certutil -K -d /etc/dirsrv/slapd-<INSTANCE_NAME> -f pwdfile.txt
+certutil -K -d /etc/dirsrv/slapd-<INSTANCE_NAME> -f /etc/dirsrv/slapd-<INSTANCE_NAME>/pwdfile.txt
 ----
 +
 ----
@@ -86,7 +86,7 @@ certutil: Checking token "NSS Certificate DB" in slot "NSS User Private Key and 
 +
 ----
 certutil -D -d /etc/dirsrv/slapd-<INSTANCE_NAME> -n Self-Signed-CA
-certutil -F -k 6d4f98efe45328ff852b7e2ca5a24ad46844163a -d /etc/dirsrv/slapd-<INSTANCE_NAME> -f pwdfile.txt
+certutil -F -k 6d4f98efe45328ff852b7e2ca5a24ad46844163a -d /etc/dirsrv/slapd-<INSTANCE_NAME> -f /etc/dirsrv/slapd-<INSTANCE_NAME>/pwdfile.txt
 ----
 
 . Import certificate in `/etc/dirsrv/slapd-<INSTANCE_NAME>`
