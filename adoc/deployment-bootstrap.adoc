@@ -68,34 +68,40 @@ The IP/FQDN must be reachable by every node of the cluster and therefore 127.0.0
 
 ==== Cluster configuration
 
-At this point you can perform some configurations before bootstrapping the cluster.
+Before bootstrapping the cluster, it is advisable to perform some configuration.
 
-===== Enable cloud provider integration
+===== Enabling cloud provider integration
 
-Enable cloud provider integration to take advantage of the underlying cloud platforms 
-to automatically manage resources like Load Balancer, Nodes (Instances), Network Routes 
-and Storage services. +
-If you want to enable cloud provider integration with different cloud platforms, 
-you have to initialize the cluster with flag `--cloud-provider <CLOUD PROVIDER>`. +
-Currently it is available only for `openstack` but more possibility will be added.
+Enable cloud provider integration to take advantage of the underlying cloud platforms
+and automatically manage resources like the Load Balancer, Nodes (Instances), Network Routes
+and Storage services.
+
+If you want to enable cloud provider integration with different cloud platforms,
+initialize the cluster with flag `--cloud-provider <CLOUD PROVIDER>`.
+The only currently available option is `openstack`, but more options are planned:
+
 
 ----
 skuba cluster init --control-plane <LB IP/FQDN> --cloud-provider openstack my-cluster
 ----
 
-It will create the directory `my-cluster/cloud/openstack` with `README.md` and `openstack.conf.template` in it.
-You have to copy `openstack.conf.template` or create a `openstack.conf` file inside `my-cluster/cloud/openstack`, 
-with the [supported contents] (https://kubernetes.io/docs/concepts/cluster-administration/cloud-providers/#openstack) +
+
+Running the above command will create a directory `my-cluster/cloud/openstack` with a
+`README.md` and an `openstack.conf.template` in it. Copy `openstack.conf.template`
+or create an `openstack.conf` file inside `my-cluster/cloud/openstack`,
+according to the supported format.
+The supported format and content can be found in the official Kubernetes documentation:
+
+https://kubernetes.io/docs/concepts/cluster-administration/cloud-providers/#openstack
 
 [WARNING]
 ====
-It is required that `my-cluster/cloud/openstack/openstack.conf` file is not accessible by others. 
+The file `my-cluster/cloud/openstack/openstack.conf` must not be freely accessible.
 Please remember to set proper file permissions for it, for example `600`.
 ====
 
+===== Example OpenStack cloud provider configuration
 ====
-# Example OpenStack cloud provider configuration
-
     [Global]
     auth-url="https://keystone.example.com:5000/v3" // <1>
     username="TestUser" // <2>
@@ -116,24 +122,40 @@ Please remember to set proper file permissions for it, for example `600`.
     bs-version=v2 // <15>
     ignore-volume-az=true // <16>
 ====
-<1> (required) Specifies the URL of the Keystone API used to authenticate the user. This value can be found in Horizon (the OpenStack control panel) under Project → Access and Security → API Access → Credentials.
+<1> (required) Specifies the URL of the Keystone API used to authenticate the user.
+This value can be found in Horizon (the OpenStack control panel).
+under Project > Access and Security > API Access > Credentials.
 <2> (required) Refers to the username of a valid user set in Keystone.
 <3> (required) Refers to the password of a valid user set in Keystone.
-<4> (required) Used to specify the id of the project where you want to create your resources
+<4> (required) Used to specify the ID of the project where you want to create your resources.
 <5> (optional) Used to specify the name of the domain your user belongs to.
-<6> (optional) Used to specify the identifier of the region to use when running on a multi-region OpenStack cloud. A region is a general division of an OpenStack deployment.
-<7> (optional) Used to specify the path to your custom CA file
-<8> (optional) Used to override automatic version detection. Valid values are `v1` or `v2`. Where no value is provided automatic detection will select the highest supported version exposed by the underlying OpenStack cloud.
-<9> (optional) Used to specify the id of the subnet you want to create your loadbalancer on. Can be found at Network > Networks. Click on the respective network to get its subnets.
+<6> (optional) Used to specify the identifier of the region to use when running on
+a multi-region OpenStack cloud. A region is a general division of an OpenStack deployment.
+<7> (optional) Used to specify the path to your custom CA file.
+<8> (optional) Used to override automatic version detection.
+Valid values are `v1` or `v2`. Where no value is provided automatic detection
+will select the highest supported version exposed by the underlying OpenStack cloud.
+<9> (optional) Used to specify the ID of the subnet you want to create your load balancer on.
+Can be found at Network > Networks. Click on the respective network to get its subnets.
 <10> (optional) If specified, will create a floating IP for the load balancer.
-<11> (optional) Indicates whether or not to create a health monitor for the Neutron load balancer. Valid values are true and false. The default is false. When true is specified then monitor-delay, monitor-timeout, and monitor-max-retries must also be set.
-<12> (optional) The time between sending probes to members of the load balancer. Ensure that you specify a valid time unit.
-<13> (optional) Maximum time for a monitor to wait for a ping reply before it times out. The value must be less than the delay value. Ensure that you specify a valid time unit. 
-<14> (optional) Number of permissible ping failures before changing the load balancer member’s status to INACTIVE. Must be a number between 1 and 10.
-<15> (optional) Used to override automatic version detection. Valid values are v1, v2, v3 and auto. When auto is specified automatic detection will select the highest supported version exposed by the underlying OpenStack cloud.
-<16> (optional) Influence availability zone use when attaching Cinder volumes. When Nova and Cinder have different availability zones, this should be set to `true`.
-+
-After setting options in `openstack.conf` file, please procceed with the bootstrapping procedure <<cluster.bootstrap>>.
+<11> (optional) Indicates whether or not to create a health monitor for the Neutron load balancer.
+Valid values are true and false. The default is false.
+When true is specified then monitor-delay, monitor-timeout, and monitor-max-retries must also be set.
+<12> (optional) The time between sending probes to members of the load balancer.
+Ensure that you specify a valid time unit.
+<13> (optional) Maximum time for a monitor to wait for a ping reply before it times out.
+The value must be less than the delay value. Ensure that you specify a valid time unit.
+<14> (optional) Number of permissible ping failures before changing the load balancer
+member’s status to INACTIVE. Must be a number between 1 and 10.
+<15> (optional) Used to override automatic version detection.
+Valid values are v1, v2, v3 and auto. When auto is specified automatic detection
+will select the highest supported version exposed by the underlying OpenStack cloud.
+<16> (optional) Influence availability zone use when attaching Cinder volumes.
+When Nova and Cinder have different availability zones, this should be set to `true`.
+
+
+
+After setting options in `openstack.conf` file, please proceed with bootstrapping procedure <<cluster.bootstrap>>.
 
 [IMPORTANT]
 ====
