@@ -18,7 +18,7 @@ SUFFIX="dc=example,dc=org"                      # Domain Suffix
 DATA_DIR=<PWD>/389_ds_data                      # Directory Server Data on Host Machine to Mount
 ----
 
-. Execute `docker` command to deploy 389 Directory Server in same Termimal. This will start a non-TLS port (389) and a TLS port (636) together with an automatically self-signed certificate and key.
+. Execute `docker` command to deploy 389 Directory Server in same Terminal. This will start a non-TLS port (389) and a TLS port (636) together with an automatically self-signed certificate and key.
 +
 ----
 docker run -d \
@@ -94,7 +94,7 @@ certutil -F -k 6d4f98efe45328ff852b7e2ca5a24ad46844163a -d /etc/dirsrv/slapd-<IN
 ----
 # KEY.PEM       Input key
 # CERT.PEM      Input certificate 
-# CERT.PK12     Output certifcate in pkcs12
+# CERT.PK12     Output certificate in pkcs12
 
 openssl pkcs12 -export -inkey <KEY.PEM> -in <CERT.PEM> -out <CERT.PK12> -nodes -name "Server-Cert"
 pk12util -i <CERT.PK12> -d /etc/dirsrv/slapd-<INSTANCE_NAME>
