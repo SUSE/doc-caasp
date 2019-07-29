@@ -14,12 +14,11 @@ The 389 Directory Server image `registry.suse.com/caasp/v4/389-ds:1.4.0` will au
 INSTANCE_NAME=localhost                         # Directory Server Name
 ROOT_DN="cn=admin,dc=example,dc=org"            # Admin Account
 ROOT_PASSWORD=                                  # Admin Password
-SUFFIX="dc=example,dc=org"                      # Suffix
-DATA_DIR=<PWD>/389_ds_data                      # Directory Server Data
-IMAGE=registry.suse.com/caasp/v4/389-ds:1.4.0   # Container Image 
+SUFFIX="dc=example,dc=org"                      # Domain Suffix
+DATA_DIR=<PWD>/389_ds_data                      # Directory Server Data on Host Machine to Mount
 ----
 
-. Execute `docker` command to deploy 389 Directory Server. This will start a non-TLS port (389) and a TLS port (636) together with an automatically self-signed certificate and key.
+. Execute `docker` command to deploy 389 Directory Server in same Termimal. This will start a non-TLS port (389) and a TLS port (636) together with an automatically self-signed certificate and key.
 +
 ----
 docker run -d \
@@ -30,7 +29,7 @@ docker run -d \
 	-e ROOT_PASSWORD=<ROOT_PASSWORD> \
 	-e SUFFIX=<SUFFIX> \
 	-v <DATA_DIR>:/data \
-	--name 389-ds <IMAGE>
+	--name 389-ds registry.suse.com/caasp/v4/389-ds:1.4.0
 ----
 
 === Deploying a 389 Directory Server with an external certificate
@@ -45,7 +44,7 @@ docker stop 389-ds
 
 . Copy external certificate you would like to use `<rootCA.pem>` to a mounted data directory `<DATA_DIR>/config/`
 
-. Bash into container with previous mounted data direcory:
+. Run bash in entrypoint to access container with mounted data directory from previous step:
 +
 ----
 docker run --rm -it \
@@ -53,7 +52,7 @@ docker run --rm -it \
   -p 636:636 \
   -v <DATA_DIR>:/data \
   --entrypoint /bin/bash \
-  --name 389-ds <IMAGE>
+  --name 389-ds registry.suse.com/caasp/v4/389-ds:1.4.0
 ----
 
 . List certificates in `/etc/dirsrv/slapd-<INSTANCE_NAME>`
@@ -93,6 +92,10 @@ certutil -F -k 6d4f98efe45328ff852b7e2ca5a24ad46844163a -d /etc/dirsrv/slapd-<IN
 . Import certificate in `/etc/dirsrv/slapd-<INSTANCE_NAME>`
 +
 ----
+# KEY.PEM       Input key
+# CERT.PEM      Input certificate 
+# CERT.PK12     Output certifcate in pkcs12
+
 openssl pkcs12 -export -inkey <KEY.PEM> -in <CERT.PEM> -out <CERT.PK12> -nodes -name "Server-Cert"
 pk12util -i <CERT.PK12> -d /etc/dirsrv/slapd-<INSTANCE_NAME>
 ----
@@ -105,7 +108,7 @@ certutil -A -d /etc/dirsrv/slapd-<INSTANCE_NAME> -n "CA certificate" -t "CT,," -
 
 . Exit container
 
-. Execute `docker` command to run 389 Directory Server with previous mounted directory:
+. Execute `docker` command to run 389 Directory Server with mounted data directory from previous step:
 +
 ----
 docker run -d \
@@ -116,7 +119,7 @@ docker run -d \
 	-e ROOT_PASSWORD=<ROOT_PASSWORD> \
 	-e SUFFIX=<SUFFIX> \
 	-v <DATA_DIR>:/data \
-	--name 389-ds <IMAGE>
+	--name 389-ds registry.suse.com/caasp/v4/389-ds:1.4.0
 ----
 
 === Examples
