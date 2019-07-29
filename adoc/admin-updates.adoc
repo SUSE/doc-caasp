@@ -4,6 +4,19 @@
 
 The update of {kube} components is handled via `skuba`.
 
+==== Updating from beta4 (0.7.1) to beta5 (0.8.1)
+
+Due to an internal change in the architecture, it is required to SSH to each of the nodes and perform the following step.
+
+----
+sudo zypper in -y patterns-caasp-Node-1.15 -patterns-caasp-Node
+----
+
+[IMPORTANT]
+====
+This step does not cause any service iterruption and can be run simultaneously on several nodes.
+====
+
 ==== An overview
 
 In order to get an overview of the updates available, you can run:
