@@ -101,19 +101,20 @@ Please remember to set proper file permissions for it, for example `600`.
 ====
 
 ===== Example OpenStack cloud provider configuration
+You can find those required parameters in OpenStack RC File v3.
 ====
     [Global]
-    auth-url="https://keystone.example.com:5000/v3" // <1>
-    username="TestUser" // <2>
-    password="Secure.Password123#" // <3>
-    tenant-id="05394ae447d74bc0b3ed2cca262c9b7c" // <4>
-    domain-name="DomainUser" // <5>
-    region="CustomRegion" // <6>
+    auth-url=<OS_AUTH_URL> // <1>
+    username=<OS_USERNAME> // <2>
+    password=<OS_PASSWORD> // <3>
+    tenant-id=<OS_PROJECT_ID> // <4>
+    domain-name=<OS_USER_DOMAIN_NAME> // <5>
+    region=<OS_REGION_NAME> // <6>
     ca-file="/etc/ssl/certs/SUSE_Trust_Root.pem" // <7>
     [LoadBalancer]
     lb-version=v2 // <8>
-    subnet-id="70041812-2387-41e4-a1cf-43ddddc83634" // <9>
-    floating-network-id="890584bc-da17-424b-9147-2dc8f3d69d64" // <10>
+    subnet-id=<PRIVATE_SUBNET_ID> // <9>
+    floating-network-id=<PUBLIC_NET_ID> // <10>
     create-monitor=yes // <11>
     monitor-delay=1m // <12>
     monitor-timeout=30s // <13>
