@@ -4,7 +4,7 @@
   <!ENTITY % entities SYSTEM "entity-decl.ent">
     %entities;
 ]>
-<chapter version="5.0" xml:id="cha.deploy.nodes"
+<chapter version="5.0" xml:id="cha-deploy-nodes"
  xmlns="http://docbook.org/ns/docbook"
  xmlns:xi="http://www.w3.org/2001/XInclude"
  xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -19,15 +19,15 @@
   This chapter details the procedures for installing the &admin_node;,
   master nodes and worker nodes. Make sure that you prepared the
   installation according to <xref
-  linkend="cha.deployment.preparation" />.
+  linkend="cha-deployment-preparation" />.
  </para>
- <sect1 xml:id="sec.deploy.nodes.admin_install">
+ <sect1 xml:id="sec-deploy-nodes-admin-install">
   <title>Installing the &Admin_Node;</title>
   <para>
    The procedure for installing the &admin_node; is identical whether or not
    you use &ay; for the rest of the cluster.
   </para>
-  <procedure xml:id="pro.deploy.nodes.admin_install">
+  <procedure xml:id="pro-deploy-nodes-admin-install">
    <step>
     <para>
      Connect or insert the &productname; installation media, then reboot the
@@ -131,7 +131,7 @@
         <command>SUSEConnect</command>. For details about registering
         with <command>SUSEConnect</command> and using an authenticated
         proxy server for registration, see <xref
-        linkend="sec.configuration.suseconnect" />.
+        linkend="sec-configuration-suseconnect" />.
        </para>
       </listitem>
      </varlistentry>
@@ -392,7 +392,7 @@
   </procedure>
  </sect1>
 
- <sect1 xml:id="sec.deploy.nodes.admin_install_cli">
+ <sect1 xml:id="sec-deploy-nodes-admin-install-cli">
   <title>Installing the &Admin_Node; with Command Line Interface</title>
   <important>
    <title>Do not use this for datacenter installations</title>
@@ -501,18 +501,18 @@
    </para>
    <para>
     For registering your nodes after the installation, refer to
-    <xref linkend="sec.configuration.suseconnect" />.
+    <xref linkend="sec-configuration-suseconnect" />.
    </para>
   </sect2>
  </sect1>
 
- <sect1 xml:id="sec.deploy.nodes.admin_configuration">
+ <sect1 xml:id="sec-deploy-nodes-admin-configuration">
   <title>Configuring the &Admin_Node;</title>
   <para>
    Before installing the other nodes, it is necessary to configure the
    &admin_node;.
   </para>
-  <procedure xml:id="pro.deploy.install.iso.config">
+  <procedure xml:id="pro-deploy-install-iso-config">
    <step>
     <para>
      After the &admin_node; has finished booting and you see the login
@@ -601,7 +601,7 @@
         If you intend to deploy &scf; on &productname;, or any other software
         that is installed with &helm; (the &kube; package manager), check the
         box to install &tiller;.
-<!-- (See <xref linkend="installing.helm"/>.) -->
+<!-- (See <xref linkend="installing-helm"/>.) -->
        </para>
       </listitem>
      </varlistentry>
@@ -1018,24 +1018,24 @@
      the cluster.
     </para>
     <para>
-     Continue with <xref linkend="sec.deploy.nodes.worker_install"/>.
+     Continue with <xref linkend="sec-deploy-nodes-worker-install"/>.
     </para>
    </step>
   </procedure>
  </sect1>
 
- <sect1 xml:id="sec.deploy.nodes.worker_install">
+ <sect1 xml:id="sec-deploy-nodes-worker-install">
   <title>Installing Master and Worker Nodes</title>
   <warning>
    <para>
     Before you can install the &worker_node;s of your new cluster, you need to
     install and configure the &admin_node;. Ensure that you have completed
-    the steps in <xref linkend="sec.deploy.nodes.admin_install"/> and
-    <xref linkend="sec.deploy.nodes.admin_configuration"/>.
+    the steps in <xref linkend="sec-deploy-nodes-admin-install"/> and
+    <xref linkend="sec-deploy-nodes-admin-configuration"/>.
    </para>
   </warning>
 
-  <sect2 xml:id="sec.deploy.nodes.openstack">
+  <sect2 xml:id="sec-deploy-nodes-openstack">
    <title>Installation on Cloud services</title>
    <para>
     If you are installing on an &ostack; based cloud using HEAT templates or
@@ -1051,21 +1051,21 @@
     </para>
     <para>
      Refer to:
-     <xref linkend="sec.deploy.requirements.system.cluster.salt_cluster_size"/>.
+     <xref linkend="sec-deploy-requirements-system-cluster-salt-cluster-size"/>.
     </para>
    </important>
    <para>
-    You can continue directly to <xref linkend="sec.deploy.install.bootstrap"/>.
+    You can continue directly to <xref linkend="sec-deploy-install-bootstrap"/>.
    </para>
   </sect2>
 
-  <sect2 xml:id="sec.deploy.nodes.worker_install.manual">
+  <sect2 xml:id="sec-deploy-nodes-worker-install-manual">
    <title>Manual Installation</title>
-   <procedure xml:id="pro.deploy.nodes.worker_install.manual">
+   <procedure xml:id="pro-deploy-nodes-worker-install-manual">
     <step>
      <para>
       Follow the same procedure as for installing the &admin_node; in
-      <xref linkend="sec.deploy.nodes.admin_install"/>, up
+      <xref linkend="sec-deploy-nodes-admin-install"/>, up
       until selection of the <guimenu>System Role</guimenu>.
      </para>
     </step>
@@ -1105,7 +1105,7 @@
     <step>
      <para>
       Once you have installed all desired machines, continue with
-      <xref linkend="sec.deploy.install.bootstrap"/>.
+      <xref linkend="sec-deploy-install-bootstrap"/>.
      </para>
      <important>
       <title>Adjust Salt Worker Threads For More Than 40 Nodes</title>
@@ -1116,14 +1116,14 @@
       </para>
       <para>
        Refer to:
-       <xref linkend="sec.deploy.requirements.system.cluster.salt_cluster_size"/>.
+       <xref linkend="sec-deploy-requirements-system-cluster-salt-cluster-size"/>.
       </para>
      </important>
     </step>
    </procedure>
   </sect2>
 
-  <sect2 xml:id="sec.deploy.nodes.worker_install.manual.autoyast">
+  <sect2 xml:id="sec-deploy-nodes-worker-install-manual-autoyast">
    <title>Automatic Installation Using &ay;</title>
    <para>
     Before installing &worker_node;s with &ay;, you need to obtain the URL
@@ -1134,7 +1134,7 @@
     <title>Using a modified &ay; control file</title>
     <para>
      You can customize various aspects of your installation by modifying the
-     default &ay; control file. Refer to: <xref linkend="sec.deploy.autoyast" />.
+     default &ay; control file. Refer to: <xref linkend="sec-deploy-autoyast" />.
     </para>
    </note>
    <note>
@@ -1147,7 +1147,7 @@
      session from the &admin_node;.
     </para>
    </note>
-   <procedure xml:id="pro.deploy.nodes.worker_install.manual.autoyast">
+   <procedure xml:id="pro-deploy-nodes-worker-install-manual-autoyast">
     <step>
      <para>
       Insert the &productname; DVD into the drive, then reboot the computer
@@ -1240,7 +1240,7 @@ autoyast=http://admin.example.com/autoyast ifcfg=eth0=192.168.100.11/24,192.168.
     <step>
      <para>
       Once you have installed all desired machines, continue with
-      <xref linkend="sec.deploy.install.bootstrap"/>.
+      <xref linkend="sec-deploy-install-bootstrap"/>.
      </para>
      <important>
       <title>Adjust Salt Worker Threads For More Than 40 Nodes</title>
@@ -1250,7 +1250,7 @@ autoyast=http://admin.example.com/autoyast ifcfg=eth0=192.168.100.11/24,192.168.
        threads before you continue.
       </para>
       <para>
-       Refer to: <xref linkend="sec.deploy.requirements.system.cluster.salt_cluster_size"/>.
+       Refer to: <xref linkend="sec-deploy-requirements-system-cluster-salt-cluster-size"/>.
       </para>
      </important>
     </step>
@@ -1258,7 +1258,7 @@ autoyast=http://admin.example.com/autoyast ifcfg=eth0=192.168.100.11/24,192.168.
   </sect2>
  </sect1>
 
- <sect1 xml:id="sec.deploy.install.bootstrap">
+ <sect1 xml:id="sec-deploy-install-bootstrap">
   <title>Bootstrapping the Cluster</title>
   <para>
    To complete the installation of your &productname; cluster, it is necessary
@@ -1269,9 +1269,9 @@ autoyast=http://admin.example.com/autoyast ifcfg=eth0=192.168.100.11/24,192.168.
   </para>
   <para>
    In case of problems, refer to <xref
-   linkend="sec.admin.troubleshooting.failed_bootstrap" />.
+   linkend="sec-admin-troubleshooting-failed-bootstrap" />.
   </para>
-  <procedure xml:id="pro.deploy.install.bootstrap">
+  <procedure xml:id="pro-deploy-install-bootstrap">
    <step>
     <para>
      Return to your admin node; with the &ay; instructions screen open from before.
@@ -1405,13 +1405,13 @@ autoyast=http://admin.example.com/autoyast ifcfg=eth0=192.168.100.11/24,192.168.
   </procedure>
  </sect1>
 
- <sect1 xml:id="sec.deploy.install.vmware_tools">
+ <sect1 xml:id="sec-deploy-install-vmware-tools">
   <title>Installing &vmware; Tools</title>
   <para>
    This section is only relevant for deployments on &vmware; ESX and
    ESXi environments. This step is not required if you are using
    virtual disk images as described in <xref
-   linkend="sec.deploy.preparation.disk_images" />, because
+   linkend="sec-deploy-preparation-disk-images" />, because
    <package>open-vm-tools</package> is already installed.
   </para>
   <para>
@@ -1432,7 +1432,7 @@ cmd.run 'transactional-update pkg install --no-confirm open-vm-tools'</command><
    <step>
     <para>
      Reboot all nodes using <literal>salt</literal>. If you are already running
-     a workload, also see <xref linkend="sec.admin.nodes.graceful_shutdown" />.
+     a workload, also see <xref linkend="sec-admin-nodes-graceful-shutdown" />.
     </para>
 <screen>&prompt.root.admin;<command>docker exec -it $(docker ps -q --filter name=salt-master) salt '*' system.reboot</command></screen>
    </step>

@@ -4,7 +4,7 @@
   <!ENTITY % entities SYSTEM "entity-decl.ent">
     %entities;
 ]>
-<chapter version="5.1" xml:id="cha.admin.logging"
+<chapter version="5.1" xml:id="cha-admin-logging"
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -37,7 +37,7 @@
    component.
   </para>
  </important>
- <sect1 xml:id="sec.admin.logging.intro">
+ <sect1 xml:id="sec-admin-logging-intro">
   <title>About &productname; Logging</title>
 
   <para>
@@ -71,7 +71,7 @@
    be used for debugging purposes only.
   </para>
 
-  <sect2 xml:id="sec.admin.logging.intro.log-levels">
+  <sect2 xml:id="sec-admin-logging-intro-log-levels">
    <title>Log levels</title>
    <para>
     There are two main components and their respective sub-components that
@@ -144,10 +144,10 @@
    </itemizedlist>
   </sect2>
  </sect1>
- <sect1 xml:id="sec.admin.logging.admin">
+ <sect1 xml:id="sec-admin-logging-admin">
   <title>Admin Node Logs</title>
 
-  <sect2 xml:id="sec.admin.logging.velum">
+  <sect2 xml:id="sec-admin-logging-velum">
    <title>&dashboard; Logs</title>
    <para>
     The &dashboard; logs will contain more details on error messages displayed
@@ -161,7 +161,7 @@
    </screen>
   </sect2>
 
-  <sect2 xml:id="sec.admin.logging.ldap">
+  <sect2 xml:id="sec-admin-logging-ldap">
    <title>OpenLDAP Logs</title>
    <para>
     The OpenLDAP logs contain information about the authentication of users in
@@ -176,7 +176,7 @@
     </screen>
   </sect2>
  </sect1>
- <sect1 xml:id="sec.admin.logging.salt">
+ <sect1 xml:id="sec-admin-logging-salt">
   <title>Salt Logging</title>
 
   <para>
@@ -200,7 +200,7 @@
    <filename>k8s_velum-mariadb</filename>.
   </para>
 
-  <sect2 xml:id="sec.admin.logging.salt.orchestration">
+  <sect2 xml:id="sec-admin-logging-salt-orchestration">
    <title>Salt Orchestration Log</title>
    <para>
     The <literal>Salt</literal> orchestration logs contains log entries about
@@ -249,7 +249,7 @@
    </para>
   </sect2>
 
-  <sect2 xml:id="sec.admin.logging.salt.master">
+  <sect2 xml:id="sec-admin-logging-salt-master">
    <title>Salt Master Log</title>
    <para>
     Retrieve the <literal>salt-master</literal> logs.
@@ -259,7 +259,7 @@ cat /var/log/salt/master</command>
     </screen>
   </sect2>
 
-  <sect2 xml:id="sec.admin.logging.salt.minion">
+  <sect2 xml:id="sec-admin-logging-salt-minion">
    <title>Salt Minion Logs</title>
    <para>
     Retrieve the <literal>salt-minion</literal> logs for all nodes. This will
@@ -276,7 +276,7 @@ salt '*' cmd.run "cat /var/log/salt/minion"</command>
     </screen>
   </sect2>
 
-  <sect2 xml:id="sec.admin.logging.log-levels.salt">
+  <sect2 xml:id="sec-admin-logging-log-levels-salt">
    <title>Salt Log Levels</title>
    <para>
     Salt provides different loglevels that apply both to the master and the
@@ -369,7 +369,7 @@ salt '*' cmd.run "cat /var/log/salt/minion"</command>
     <link xlink:href="https://docs.saltstack.com/en/latest/ref/configuration/logging/">Salt
     Log Levels (Upstream)</link>
    </para>
-   <sect3 xml:id="sec.admin.logging.log-levels.salt.set">
+   <sect3 xml:id="sec-admin-logging-log-levels-salt-set">
     <title>Setting A Different Log Level</title>
     <para>
      The <literal>salt-master</literal> configuration can be modified on the
@@ -395,7 +395,7 @@ salt '*' cmd.run "cat /var/log/salt/minion"</command>
    </sect3>
   </sect2>
  </sect1>
- <sect1 xml:id="sec.admin.logging.transactional-updates">
+ <sect1 xml:id="sec-admin-logging-transactional-updates">
   <title>Transactional Update Log</title>
 
   <para>
@@ -420,7 +420,7 @@ salt '*' cmd.run "cat /var/log/salt/minion"</command>
 
   <para>
    For more information on transactional-update, see:
-   <xref linkend="sec.admin.software.transactional-updates"/>
+   <xref linkend="sec-admin-software-transactional-updates"/>
   </para>
 
 <screen>
@@ -429,7 +429,7 @@ salt -P 'roles:(admin|kube-(master|minion)' \
 cmd.run "journalctl -u transactional-update"</command>
  </screen>
  </sect1>
- <sect1 xml:id="sec.admin.logging.kubernetes">
+ <sect1 xml:id="sec-admin-logging-kubernetes">
   <title>&kube; Audit Log</title>
 
   <para>
@@ -525,7 +525,7 @@ cmd.run "journalctl -u transactional-update"</command>
   </variablelist>
  </sect1>
 
- <sect1 xml:id="sec.admin.logging.log-levels.kubernetes">
+ <sect1 xml:id="sec-admin-logging-log-levels-kubernetes">
   <title>&kube; Log Levels</title>
   <para>
    For &kube; our default <literal>loglevel</literal> is <literal>2</literal>
@@ -600,7 +600,7 @@ cmd.run "journalctl -u transactional-update"</command>
     </listitem>
    </varlistentry>
   </variablelist>
-  <sect2 xml:id="sec.admin.logging.log-levels.kubernetes.set">
+  <sect2 xml:id="sec-admin-logging-log-levels-kubernetes-set">
    <title>Setting A Different Log Level</title>
    <procedure>
     <title>Modify &kube; Log Level Across The Cluster</title>
@@ -629,7 +629,7 @@ salt-run state.orchestrate orch.kubernetes</command>
    </para>
   </sect2>
  </sect1>
- <sect1 xml:id="sec.admin.logging.fluentd">
+ <sect1 xml:id="sec-admin-logging-fluentd">
   <title>External log collection</title>
 
   <para>
