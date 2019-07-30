@@ -25,7 +25,7 @@
    concerned with the <quote>what</quote>.
   </para>
 
-  <sect2 xml:id="auth.kubeconfig">
+  <sect2 xml:id="auth-kubeconfig">
    <title>Authentication</title>
    <para>
     Starting in &productname; 2, &kubectl; needs to authenticate against the
@@ -35,7 +35,7 @@
     name and password. Download the file from &dashboard; and save it as 
     <filename>$HOME/.kube/config</filename>.
    </para>
-   <tip xml:id="auth.login.kubeconfig">
+   <tip xml:id="auth-login-kubeconfig">
     <title>The KUBECONFIG variable</title>
     <para>
      &kubectl; uses an environment variable named <varname>KUBECONFIG</varname>
@@ -46,7 +46,7 @@
     <screen>&prompt.user;<command>export</command> <option>KUBECONFIG=<replaceable>/path/to/kube/config/file</replaceable></option></screen>
    </tip>
 
-   <note xml:id="auth.login.rootca">
+   <note xml:id="auth-login-rootca">
     <title>Obtaining the root CA certificate</title>
     <para>
      You can obtain the root CA certificate from any node in your cluster via SCP:
@@ -61,7 +61,7 @@
 
   </sect2>
 
-  <sect2 xml:id="auth.users">
+  <sect2 xml:id="auth-users">
    <title>Managing Users and Groups</title>
    <para>User information is stored in
     <phrase role="productname">OpenLDAP</phrase> running in a container on your
@@ -69,9 +69,9 @@
     for managing these users remotely. To do so, install the
     <package>openldap2</package> package on a computer in your network and make
     sure that computer can connect to the &admin_node; on port 389. For further
-    information, refer to <xref linkend="sec.caasp.installquick.netreqs"/>.
+    information, refer to <xref linkend="sec-caasp-installquick-netreqs"/>.
    </para>
-   <sect3 xml:id="auth.user.ldap-rootpw">
+   <sect3 xml:id="auth-user-ldap-rootpw">
     <title>Obtaining the OpenLDAP Password</title>
     <para>
      Before performing any administrative tasks on the <phrase
@@ -87,7 +87,7 @@
     </para>
    </sect3>
 
-   <sect3 xml:id="auth.users.add">
+   <sect3 xml:id="auth-users-add">
     <title>Adding New Users</title>
     <para>
      By default, when you create the first user in &dashboard; during bootstrap of
@@ -99,49 +99,49 @@
      To add a new user, create a LDIF file like this:
     </para>
 <screen>
-dn: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.add.uid"/>,ou=People,dc=infra,dc=caasp,dc=local
+dn: uid=<replaceable>userid</replaceable><co xml:id="co-auth-users-add-uid"/>,ou=People,dc=infra,dc=caasp,dc=local
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: top
-uid: <replaceable>userid</replaceable> <xref linkend="co.auth.users.add.uid" xrefstyle="select:label nopage"/>
-userPassword: <replaceable>password hash</replaceable> <co xml:id="co.auth.users.add.password"/>
-givenname: <replaceable>first name</replaceable> <co xml:id="co.auth.users.add.firstname"/>
-sn: <replaceable>surname</replaceable> <co xml:id="co.auth.users.add.surname"/>
-cn: <replaceable>full name</replaceable> <co xml:id="co.auth.users.add.fullname"/>
-mail: <replaceable>email address</replaceable> <co xml:id="co.auth.users.add.email"/>
+uid: <replaceable>userid</replaceable> <xref linkend="co-auth-users-add-uid" xrefstyle="select:label nopage"/>
+userPassword: <replaceable>password hash</replaceable> <co xml:id="co-auth-users-add-password"/>
+givenname: <replaceable>first name</replaceable> <co xml:id="co-auth-users-add-firstname"/>
+sn: <replaceable>surname</replaceable> <co xml:id="co-auth-users-add-surname"/>
+cn: <replaceable>full name</replaceable> <co xml:id="co-auth-users-add-fullname"/>
+mail: <replaceable>email address</replaceable> <co xml:id="co-auth-users-add-email"/>
 </screen>
     <para>
      Make sure to replace all the parameters indicated <replaceable>like
       this</replaceable> in the template above as follows:
     </para>
     <calloutlist>
-     <callout arearefs="co.auth.users.add.uid">
+     <callout arearefs="co-auth-users-add-uid">
       <para>
        User ID (UID) of the new user. Needs to be unique.
       </para>
      </callout>
-     <callout arearefs="co.auth.users.add.password">
+     <callout arearefs="co-auth-users-add-password">
       <para>
        The user's hashed password. Use <command>/usr/sbin/slappasswd</command>
        to generate the hash.
       </para>
      </callout>
-     <callout arearefs="co.auth.users.add.firstname">
+     <callout arearefs="co-auth-users-add-firstname">
       <para>
        The user's first name
       </para>
      </callout>
-     <callout arearefs="co.auth.users.add.surname">
+     <callout arearefs="co-auth-users-add-surname">
       <para>
        The user's last name
       </para>
      </callout>
-     <callout arearefs="co.auth.users.add.fullname">
+     <callout arearefs="co-auth-users-add-fullname">
       <para>
        The user's full name
       </para>
      </callout>
-     <callout arearefs="co.auth.users.add.email">
+     <callout arearefs="co-auth-users-add-email">
       <para>The user's e-mail address. It is used as the login name to
        &dashboard; and &kube;.</para>
      </callout>
@@ -158,14 +158,14 @@ mail: <replaceable>email address</replaceable> <co xml:id="co.auth.users.add.ema
 dn: cn=Administrators,ou=Groups,dc=infra,dc=caasp,dc=local
 changetype: modify
 add: uniqueMember
-uniqueMember: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.add.admin"/>,ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=<replaceable>userid</replaceable><co xml:id="co-auth-users-add-admin"/>,ou=People,dc=infra,dc=caasp,dc=local
     </screen>
     <para>
      Make sure to replace all the parameters indicated <replaceable>like
       this</replaceable> in the template above as follows:
     </para>
     <calloutlist>
-     <callout arearefs="co.auth.users.add.admin">
+     <callout arearefs="co-auth-users-add-admin">
       <para>The user ID (UID) of the user</para>
      </callout>
     </calloutlist>
@@ -176,28 +176,28 @@ uniqueMember: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.add
     <screen>&prompt.root;<command>ldapadd</command> -H ldap://<replaceable>ADMIN NODE IP</replaceable>:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP ADMIN PASSWORD</replaceable> -f <replaceable>LDIF FILE</replaceable></screen>
    </sect3>
 
-   <sect3 xml:id="auth.users.change-pw">
+   <sect3 xml:id="auth-users-change-pw">
     <title>Changing a User's Password</title>
     <para>
      To change a user's password, create a LDIF file like this:
     </para>
     <screen>
-dn: uid=<replaceable>userid</replaceable><co xml:id="co.auth.users.change-pw.uid"/>,ou=People,dc=infra,dc=caasp,dc=local
+dn: uid=<replaceable>userid</replaceable><co xml:id="co-auth-users-change-pw-uid"/>,ou=People,dc=infra,dc=caasp,dc=local
 changetype: modify
 modify: userPassword
-userPassword: <replaceable>password hash</replaceable><co xml:id="co.auth.users.change-pw.password"/>
+userPassword: <replaceable>password hash</replaceable><co xml:id="co-auth-users-change-pw-password"/>
     </screen>
     <para>
      Make sure to replace all the parameters indicated <replaceable>like
       this</replaceable> in the template above as follows:
     </para>
     <calloutlist>
-     <callout arearefs="co.auth.users.change-pw.uid">
+     <callout arearefs="co-auth-users-change-pw-uid">
       <para>
        User ID (UID) of the user.
       </para>
      </callout>
-     <callout arearefs="co.auth.users.change-pw.password">
+     <callout arearefs="co-auth-users-change-pw-password">
       <para>
        The user's new hashed password. Use
        <command>/usr/sbin/slappasswd</command> to generate the hash.
@@ -210,33 +210,33 @@ userPassword: <replaceable>password hash</replaceable><co xml:id="co.auth.users.
     <screen>&prompt.root;<command>ldapadd</command> -H ldap://<replaceable>ADMIN NODE IP</replaceable>;:389 -ZZ -D cn=admin,dc=infra,dc=caasp,dc=local -w <replaceable>LDAP ADMIN PASSWORD</replaceable> -f <replaceable>LDIF FILE</replaceable></screen>
    </sect3>
 
-   <sect3 xml:id="auth.group">
+   <sect3 xml:id="auth-group">
     <title>Adding New Groups</title>
     <para>
      Say you have users that you want to grant access to manage a single
      namespace in Kubernetes. To do this, first create your users as mentioned
-     in <xref linkend="auth.users.add"/>. Then create a new group:
+     in <xref linkend="auth-users-add"/>. Then create a new group:
     </para>
     <screen>
-dn: cn=<replaceable>group name</replaceable><co xml:id="co.auth.group.cn"/>,ou=Groups,dc=infra,dc=caasp,dc=local
+dn: cn=<replaceable>group name</replaceable><co xml:id="co-auth-group-cn"/>,ou=Groups,dc=infra,dc=caasp,dc=local
 objectclass: top
 objectclass: groupOfUniqueNames
-cn: <replaceable>group name</replaceable><xref linkend="co.auth.group.cn" xrefstyle="select:label nopage"/>
-uniqueMember: uid=<replaceable>member1</replaceable>,<co xml:id="co.auth.group.member"/>ou=People,dc=infra,dc=caasp,dc=local
-uniqueMember: uid=<replaceable>member2</replaceable>,<xref linkend="co.auth.group.member" xrefstyle="select:label nopage"/>ou=People,dc=infra,dc=caasp,dc=local
-uniqueMember: uid=<replaceable>member3</replaceable>,<xref linkend="co.auth.group.member" xrefstyle="select:label nopage"/>ou=People,dc=infra,dc=caasp,dc=local
+cn: <replaceable>group name</replaceable><xref linkend="co-auth-group-cn" xrefstyle="select:label nopage"/>
+uniqueMember: uid=<replaceable>member1</replaceable>,<co xml:id="co-auth-group-member"/>ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=<replaceable>member2</replaceable>,<xref linkend="co-auth-group-member" xrefstyle="select:label nopage"/>ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=<replaceable>member3</replaceable>,<xref linkend="co-auth-group-member" xrefstyle="select:label nopage"/>ou=People,dc=infra,dc=caasp,dc=local
     </screen>
     <para>
      Make sure to replace all the parameters indicated <replaceable>like
       this</replaceable> in the template above as follows:
     </para>
     <calloutlist>
-     <callout arearefs="co.auth.group.cn">
+     <callout arearefs="co-auth-group-cn">
       <para>
        The group's name.
       </para>
      </callout>
-     <callout arearefs="co.auth.group.member">
+     <callout arearefs="co-auth-group-member">
       <para>
        Members of the group. Repeat the <literal>uniqueMember</literal>
        attribute for every member of this group.
@@ -257,8 +257,8 @@ uniqueMember: uid=<replaceable>member3</replaceable>,<xref linkend="co.auth.grou
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: <replaceable>role name</replaceable><co xml:id="co.auth.group.role-name"/>
-  namespace: <replaceable>applicable namespace</replaceable><co xml:id="co.auth.group.role-namespace"/>
+  name: <replaceable>role name</replaceable><co xml:id="co-auth-group-role-name"/>
+  namespace: <replaceable>applicable namespace</replaceable><co xml:id="co-auth-group-role-namespace"/>
 # This set of rules amounts to "allow all"
 rules:
 - apiGroups: [""]
@@ -270,35 +270,35 @@ rules:
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: <replaceable>role binding name</replaceable><co xml:id="co.auth.group.role-binding-name"/>
-  namespace: <replaceable>applicable namespace</replaceable><xref linkend="co.auth.group.role-namespace" xrefstyle="select:label nopage"/>
+  name: <replaceable>role binding name</replaceable><co xml:id="co-auth-group-role-binding-name"/>
+  namespace: <replaceable>applicable namespace</replaceable><xref linkend="co-auth-group-role-namespace" xrefstyle="select:label nopage"/>
 subjects:
 - kind: Group
-  name: <replaceable>LDAP group name</replaceable><co xml:id="co.auth.group.ldap-group-name"/>
+  name: <replaceable>LDAP group name</replaceable><co xml:id="co-auth-group-ldap-group-name"/>
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: Role
-  name: <replaceable>role name</replaceable><xref linkend="co.auth.group.role-name" xrefstyle="select:label nopage"/>
+  name: <replaceable>role name</replaceable><xref linkend="co-auth-group-role-name" xrefstyle="select:label nopage"/>
   apiGroup: rbac.authorization.k8s.io
     </screen>
     <calloutlist>
-     <callout arearefs="co.auth.group.role-name">
+     <callout arearefs="co-auth-group-role-name">
       <para>
        Name of the new role in &kube;
       </para>
      </callout>
-     <callout arearefs="co.auth.group.role-namespace">
+     <callout arearefs="co-auth-group-role-namespace">
       <para>
        Namespace the new group should be allowed to access. Use
         <literal>default</literal> for &kube;' default namespace.
       </para>
      </callout>
-     <callout arearefs="co.auth.group.role-binding-name">
+     <callout arearefs="co-auth-group-role-binding-name">
       <para>
        Name of the role binding in &kube;
       </para>
      </callout>
-     <callout arearefs="co.auth.group.ldap-group-name">
+     <callout arearefs="co-auth-group-ldap-group-name">
       <para>
        Name of the corresponding group in LDAP
       </para>
@@ -320,7 +320,7 @@ roleRef:
  </sect2>
 
  </sect1>
- <sect1 xml:id="transactional.updates">
+ <sect1 xml:id="transactional-updates">
   <title>Handling Transactional Updates</title>
 
   <para>
@@ -379,7 +379,7 @@ roleRef:
    </para>
   </note>
 
-  <sect2 xml:id="transactional.updates.installation">
+  <sect2 xml:id="transactional-updates-installation">
    <title>Manual Installation of Updates</title>
    <para>
     After the <command>transactional-update</command> script has run on all
@@ -441,7 +441,7 @@ roleRef:
    </procedure>
   </sect2>
 
-  <sect2 xml:id="transactional.updates.disabling">
+  <sect2 xml:id="transactional-updates-disabling">
    <title>Disabling Transactional Updates</title>
    <para>
     Even though it is not recommended, you can disable transactional updates
@@ -459,7 +459,7 @@ roleRef:
 <screen><command>rebootmgrctl</command> <option>set-strategy off</option></screen>
   </sect2>
  </sect1>
- <sect1 xml:id="ptf.handling">
+ <sect1 xml:id="ptf-handling">
   <title>Handling Program Temporary Fixes</title>
 
   <para>
@@ -494,7 +494,7 @@ roleRef:
 <screen><command>transactional-update</command> <option>reboot ptf remove <replaceable>rpm &hellip; rpm</replaceable></option></screen>
  </sect1>
 
- <sect1 xml:id="commands.node.managment">
+ <sect1 xml:id="commands-node-managment">
   <title>Commands for Single Node Management</title>
 
   <para>
@@ -502,7 +502,7 @@ roleRef:
    your &cluster_node;s.
   </para>
 
-  <sect2 xml:id="commands.node.managment.issue-generator">
+  <sect2 xml:id="commands-node-managment-issue-generator">
    <title>The <command>issue-generator</command> Command</title>
    <para>
     The <command>issue-generator</command> creates a volatile temporary
@@ -541,7 +541,7 @@ roleRef:
    </note>
   </sect2>
 
-  <sect2 xml:id="commands.node.managment.transactional-update">
+  <sect2 xml:id="commands-node-managment-transactional-update">
    <title>The <command>transactional-update</command> Command</title>
    <para>
     The <command>transactional-update</command> enables you to install or
@@ -646,7 +646,7 @@ roleRef:
    </variablelist>
   </sect2>
 
-  <sect2 xml:id="commands.node.managment.create_autoyast_profile">
+  <sect2 xml:id="commands-node-managment-create-autoyast-profile">
    <title>The <command>create_autoyast_profile</command> Command</title>
    <para>
     The <command>create_autoyast_profile</command> command creates an autoyast
@@ -707,7 +707,7 @@ roleRef:
    </variablelist>
   </sect2>
  </sect1>
- <sect1 xml:id="node.managment">
+ <sect1 xml:id="node-managment">
   <title>Adding Nodes</title>
 
   <para>
@@ -721,7 +721,7 @@ roleRef:
    <step>
     <para>
      Prepare the node as described in
-     <xref linkend="sec.caasp.installquick.node"/>
+     <xref linkend="sec-caasp-installquick-node"/>
     </para>
    </step>
    <step>
@@ -768,7 +768,7 @@ roleRef:
    </step>
   </procedure>
  </sect1>
- <sect1 xml:id="cluster.monitoring">
+ <sect1 xml:id="cluster-monitoring">
   <title>Cluster Monitoring</title>
 
   <para>
@@ -786,18 +786,18 @@ roleRef:
    <listitem>
     <para>
      By using <emphasis>Heapster</emphasis>, for details refer to
-     <xref linkend="cluster.monitoring.heapster"/>.
+     <xref linkend="cluster-monitoring-heapster"/>.
     </para>
    </listitem>
    <listitem>
     <para>
      By using <emphasis>Grafana</emphasis>, for details refer to
-     <xref linkend="cluster.monitoring.grafana"/>.
+     <xref linkend="cluster-monitoring-grafana"/>.
     </para>
    </listitem>
   </itemizedlist>
 
-  <sect2 xml:id="cluster.monitoring.heapster">
+  <sect2 xml:id="cluster-monitoring-heapster">
    <title>Monitoring with Heapster</title>
    <para>
     <emphasis>Heapster</emphasis> is a tool that collects and interprets
@@ -815,7 +815,7 @@ roleRef:
    </para>
   </sect2>
 
-  <sect2 xml:id="cluster.monitoring.grafana">
+  <sect2 xml:id="cluster-monitoring-grafana">
    <title>Monitoring with Grafana</title>
    <para>
     <emphasis>Grafana</emphasis> is an analytics platform that processes data
