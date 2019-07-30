@@ -147,7 +147,7 @@ The mail attribute is used to create the RBAC rules.
 
 ===== Example 1: 389-ds Content LDIF
 
-Example LDIF configuration to create user `user-regular1` through LDAP command:
+Example LDIF configuration to create user `user-regular1` using an LDAP command:
 ====
 # user-regular1, Users, example.org
 
@@ -164,7 +164,7 @@ Example LDIF configuration to create user `user-regular1` through LDAP command:
   givenName: User
 ====
 
-Example LDIF configuration to create user `user-regular2` through LDAP command:
+Example LDIF configuration to create user `user-regular2` using an LDAP command:
 ====
 # user-regular2, Users, example.org
 
@@ -181,7 +181,7 @@ Example LDIF configuration to create user `user-regular2` through LDAP command:
   givenName: User
 ====
 
-Example LDIF configuration to create user `user-admin` through LDAP command:
+Example LDIF configuration to create user `user-admin` using an LDAP command:
 ====
 # user-admin, Users, example.org
 
@@ -198,7 +198,7 @@ Example LDIF configuration to create user `user-admin` through LDAP command:
   givenName: User
 ====
 
-Example LDIF configuration to create group `k8s-users` through LDAP command:
+Example LDIF configuration to create group `k8s-users` using an LDAP command:
 ====
 # k8s-users, Groups, example.org
 
@@ -210,7 +210,7 @@ Example LDIF configuration to create group `k8s-users` through LDAP command:
   memberUid: user-regular2
 ====
 
-Example LDIF configuration to create group `k8s-admins` through LDAP command:
+Example LDIF configuration to create group `k8s-admins` using an LDAP command:
 ====
 # k8s-admins, Groups, example.org
 
@@ -222,7 +222,7 @@ Example LDIF configuration to create group `k8s-admins` through LDAP command:
 ====
 
 ===== Example 2: Dex LDAP TLS Connector configuration (`addons/dex/dex.yaml`)
-Dex connector template configured to use 389-DS.
+Dex connector template configured to use 389-DS:
 ----
 connectors:
 - type: ldap
@@ -309,11 +309,11 @@ connectors:
       nameAttr: cn
 ----
 
-=== Active Directory
+==== Active Directory
 
-==== Example 1: Active Directory Content LDIF
+===== Example 1: Active Directory Content LDIF
 
-Example LDIF configuration to create user `user-regular1` through LDAP command:
+Example LDIF configuration to create user `user-regular1` using an LDAP command:
 ====
 # user-regular1, Users, example.org
 
@@ -335,7 +335,7 @@ Example LDIF configuration to create user `user-regular1` through LDAP command:
   mail: user-regular1@example.org
 ====
 
-Example LDIF configuration to create user `user-regular2` through LDAP command:
+Example LDIF configuration to create user `user-regular2` using an LDAP command:
 ====
 # user-regular2, Users, example.org
 
@@ -357,7 +357,7 @@ Example LDIF configuration to create user `user-regular2` through LDAP command:
   mail: user-regular2@example.org
 ====
 
-Example LDIF configuration to create user `user-bind` through LDAP command:
+Example LDIF configuration to create user `user-bind` using an LDAP command:
 ====
 # user-bind, Users, example.org
 
@@ -378,7 +378,7 @@ Example LDIF configuration to create user `user-bind` through LDAP command:
   mail: user-bind@example.org
 ====
 
-Example LDIF configuration to create user `user-admin` through LDAP command:
+Example LDIF configuration to create user `user-admin` using an LDAP command:
 ====
 # user-admin, Users, example.org
 
@@ -400,7 +400,7 @@ Example LDIF configuration to create user `user-admin` through LDAP command:
   mail: user-admin@example.org
 ====
 
-Example LDIF configuration to create group `k8s-users` through LDAP command:
+Example LDIF configuration to create group `k8s-users` suing an LDAP command:
 ====
 # k8s-users, Groups, example.org
 
@@ -416,7 +416,7 @@ Example LDIF configuration to create group `k8s-users` through LDAP command:
   objectCategory: cn=Group,cn=Schema,cn=Configuration,dc=example,dc=org
 ====
 
-Example LDIF configuration to create group `k8s-admins` through LDAP command:
+Example LDIF configuration to create group `k8s-admins` using an LDAP command:
 ====
 # k8s-admins, Groups, example.org
 
@@ -431,8 +431,8 @@ Example LDIF configuration to create group `k8s-admins` through LDAP command:
   objectCategory: cn=Group,cn=Schema,cn=Configuration,dc=example,dc=org
 ====
 
-==== Example 2: Dex Active Directory TLS Connector configuration (addons/dex/dex.yaml)
-Dex connector template configured to use Active Directory.
+===== Example 2: Dex Active Directory TLS Connector configuration (addons/dex/dex.yaml)
+Dex connector template configured to use Active Directory:
 ----
 connectors:
 - type: ldap
