@@ -4,7 +4,7 @@
   <!ENTITY % entities SYSTEM "entity-decl.ent">
     %entities;
 ]>
-<chapter version="5.0" xml:id="cluster.deployment"
+<chapter version="5.0" xml:id="cluster-deployment"
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -19,7 +19,7 @@
   This chapter gives an overview on how to run through a default installation
   of &productname; for the &amd64;/&intel64; architecture.
  </para>
- <sect1 xml:id="sec.caasp.installquick">
+ <sect1 xml:id="sec-caasp-installquick">
   <title>Installing &productname;</title>
 
   <para>
@@ -27,13 +27,13 @@
    &productnumber; cluster.
   </para>
 
-  <sect2 xml:id="sec.caasp.installquick.sysreqs">
+  <sect2 xml:id="sec-caasp-installquick-sysreqs">
    <title>System Requirements</title>
    <para>
     Before you begin the installation, please make sure your system meets all
     requirements listed below.
    </para>
-   <sect3 xml:id="sec.caasp.installquick.hwreqs">
+   <sect3 xml:id="sec-caasp-installquick-hwreqs">
     <title>Minimum Hardware Requirements</title>
     <itemizedlist mark="bullet" spacing="normal">
      <listitem>
@@ -55,7 +55,7 @@
      </listitem>
     </itemizedlist>
    </sect3>
-   <sect3 xml:id="sec.caasp.installquick.netreqs">
+   <sect3 xml:id="sec-caasp-installquick-netreqs">
     <title>Network Requirements</title>
     <itemizedlist mark="bullet" spacing="normal">
      <listitem>
@@ -85,7 +85,7 @@
      </listitem>
     </itemizedlist>
    </sect3>
-   <sect3 xml:id="sec.caasp.installquick.limits">
+   <sect3 xml:id="sec-caasp-installquick-limits">
     <title>Limitations</title>
     <itemizedlist mark="bullet" spacing="normal">
      <listitem>
@@ -102,13 +102,13 @@
    </sect3>
   </sect2>
 
-  <sect2 xml:id="sec.caasp.installquick.admin">
+  <sect2 xml:id="sec-caasp-installquick-admin">
    <title>Installing the Administration Node</title>
    <para>
     Use these instructions if there is no existing Linux system on your
     machine, or if you want to replace an existing Linux system.
    </para>
-   <procedure xml:id="pro.caasp.installquick.admin">
+   <procedure xml:id="pro-caasp-installquick-admin">
     <step>
      <para>
       Insert the &productname; DVD into the drive, then reboot the computer to
@@ -514,13 +514,13 @@
    </procedure>
   </sect2>
 
-  <sect2 xml:id="sec.caasp.installquick.conf">
+  <sect2 xml:id="sec-caasp-installquick-conf">
    <title>Initial Cluster Configuration</title>
    <para>
     In order to finalize the configuration of the &admin_node;, a few
     additional steps are required.
    </para>
-   <procedure xml:id="pro.caasp.installquick.conf">
+   <procedure xml:id="pro-caasp-installquick-conf">
     <step>
      <para>
       After the &admin_node; has finished booting and you see the login prompt,
@@ -611,13 +611,13 @@
      </informalfigure>
      <para>
       Click <guimenu>Next</guimenu> to proceed and install some cluster nodes
-      as described in <xref linkend="sec.caasp.installquick.node"/>.
+      as described in <xref linkend="sec-caasp-installquick-node"/>.
      </para>
     </step>
    </procedure>
   </sect2>
 
-  <sect2 xml:id="sec.caasp.installquick.node">
+  <sect2 xml:id="sec-caasp-installquick-node">
    <title>Installing Cluster Nodes</title>
    <para>
     Cluster nodes can be installed manually or with &ay;. Manual installation
@@ -643,16 +643,16 @@
    <para>
     Before you can set up a cluster node, you have to install and bootstrap an
     &admin_node; to run the administration dashboard. Refer to
-    <xref linkend="sec.caasp.installquick.admin"/> for information on how to
+    <xref linkend="sec-caasp-installquick-admin"/> for information on how to
     install the &admin_node;.
    </para>
-   <sect3 xml:id="sec.caasp.installquick.node.manual">
+   <sect3 xml:id="sec-caasp-installquick-node-manual">
     <title>Manual Installation</title>
-    <procedure xml:id="pro.caasp.installquick.node.manual">
+    <procedure xml:id="pro-caasp-installquick-node-manual">
      <step>
       <para>
        Follow the steps as described in
-       <xref linkend="sec.caasp.installquick.admin"/>
+       <xref linkend="sec-caasp-installquick-admin"/>
       </para>
      </step>
      <step>
@@ -686,14 +686,14 @@
      </step>
     </procedure>
    </sect3>
-   <sect3 xml:id="sec.caasp.installquick.node.ay">
+   <sect3 xml:id="sec-caasp-installquick-node-ay">
     <title>Installation with &ay;</title>
     <para>
      Please make sure you have finished the initial configuration described in
-     <xref linkend="sec.caasp.installquick.conf"/> before installing cluster
+     <xref linkend="sec-caasp-installquick-conf"/> before installing cluster
      nodes with &ay;.
     </para>
-    <procedure xml:id="pro.caasp.installquick.node.ay">
+    <procedure xml:id="pro-caasp-installquick-node-ay">
      <step>
       <para>
        Insert the &productname; DVD into the drive, then reboot the computer to
@@ -768,7 +768,7 @@
    </sect3>
   </sect2>
 
-  <sect2 xml:id="sec.caasp.installquick.bootstrap">
+  <sect2 xml:id="sec-caasp-installquick-bootstrap">
    <title>Bootstrapping the Cluster</title>
    <para>
     To complete the installation of your &productname; cluster, it is necessary
@@ -777,7 +777,7 @@
 <!-- cwickert 2017-07-23: FIXME We are already past AutoYaST -->
 <!-- This process leverages &ay; and is (almost) fully automated. -->
    </para>
-   <procedure xml:id="pro.caasp.installquick.bootstrap">
+   <procedure xml:id="pro-caasp-installquick-bootstrap">
     <step>
      <para>
       Point a web browser to
@@ -813,7 +813,7 @@
 <!-- cwickert 2017-07-23: FIXME explain relation of internal and external names -->
 <!-- Make sure the <guimenu>Hostname</guimenu> of the master matches the
       name configured as <guimenu>External Kubernetes API server FQDN</guimenu>
-      in <xref linkend="sec.caasp.installquick.conf"/>. If necessary, go
+      in <xref linkend="sec-caasp-installquick-conf"/>. If necessary, go
       <guimenu>Back</guimenu> to chance the setting accordingly. -->
      </para>
     </step>
