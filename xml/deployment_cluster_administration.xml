@@ -15,7 +15,7 @@
    <dm:translation>yes</dm:translation>
   </dm:docmanager>
  </info>
- <sect1 xml:id="transactional.updates">
+ <sect1 xml:id="transactional-updates">
   <title>Handling Transactional Updates</title>
 
   <para>
@@ -60,7 +60,7 @@
    after the next reboot of the system. The script can reboot the cluster
    itself or it can instruct the <literal>rebootmgr</literal> to schedule the
    reboot according to the configured policies (for details refer to
-   <xref linkend="reboot.managment"/>). Ensure that the cluster is rebooted as
+   <xref linkend="reboot-managment"/>). Ensure that the cluster is rebooted as
    soon as possible after the update installation is complete, otherwise all
    changes will be lost.
   </para>
@@ -77,7 +77,7 @@
    </para>
   </note>
 
-  <sect2 xml:id="transactional.updates.installation">
+  <sect2 xml:id="transactional-updates-installation">
    <title>Manual Installation of Updates</title>
    <para>
     After the <command>transactional-update</command> script, has run on all
@@ -139,7 +139,7 @@
    </procedure>
   </sect2>
 
-  <sect2 xml:id="transactional.updates.disabling">
+  <sect2 xml:id="transactional-updates-disabling">
    <title>Disabling Transactional Updates</title>
    <para>
     Even though we do not recommend that, you can disable transactional updates
@@ -157,7 +157,7 @@
 <screen>rebootmgrctl set-strategy off</screen>
   </sect2>
  </sect1>
- <sect1 xml:id="ptf.handling">
+ <sect1 xml:id="ptf-handling">
   <title>Handling Program Temporary Fixes</title>
 
   <para>
@@ -191,7 +191,7 @@
 
 <screen>transactional-update reboot ptf remove</screen>
  </sect1>
- <sect1 xml:id="reboot.managment">
+ <sect1 xml:id="reboot-managment">
   <title>Rebooting the Cluster</title>
 
   <para>
@@ -215,7 +215,7 @@ lock-group=default</screen>
    The meaning of the options is the following:
   </para>
 
-  <variablelist xml:id="reboot.managment.strategies">
+  <variablelist xml:id="reboot-managment-strategies">
    <varlistentry>
     <term><literal>window-start</literal>
     </term>
@@ -264,7 +264,7 @@ lock-group=default</screen>
         rebooting, machines specified in the <literal>lock-group</literal> are
         locked. If you configured the maintenance window, the lock is created
         within the configured window. For more details about lock group, refer
-        to <xref linkend="reboot.managment.locks"/>.
+        to <xref linkend="reboot-managment-locks"/>.
        </para>
       </listitem>
       <listitem>
@@ -290,7 +290,7 @@ lock-group=default</screen>
    </varlistentry>
   </variablelist>
 
-  <sect2 xml:id="reboot.managment.locks">
+  <sect2 xml:id="reboot-managment-locks">
    <title>Locking by Using etcd</title>
    <para>
     Typically you need to avoid rebooting of all cluster nodes at the same
@@ -385,7 +385,7 @@ lock-group=default</screen>
    </orderedlist>
   </sect2>
  </sect1>
- <sect1 xml:id="commands.cluster.managment">
+ <sect1 xml:id="commands-cluster-managment">
   <title>Commands for Cluster Management</title>
 
   <para>
@@ -393,7 +393,7 @@ lock-group=default</screen>
    your cluster.
   </para>
 
-  <sect2 xml:id="commands.cluster.managment.rebootmgctl">
+  <sect2 xml:id="commands-cluster-managment-rebootmgctl">
    <title>The <command>rebootmgrctl</command> Command</title>
    <para>
     The <command>rebootmgrctl</command> is a tool that enables you to control
@@ -446,7 +446,7 @@ lock-group=default</screen>
    </para>
 <screen>rebootmgrctl set-strategy <replaceable></replaceable></screen>
    <para>
-    For possible strategies refer to <xref linkend="reboot.managment"/>.
+    For possible strategies refer to <xref linkend="reboot-managment"/>.
    </para>
    <para>
     If you need to view the currently used reboot strategy, run the command:
@@ -483,7 +483,7 @@ lock-group=default</screen>
 <screen>rebootmgrctl unlock <replaceable>-group group_name</replaceable> <replaceable>machine_id</replaceable></screen>
   </sect2>
 
-  <sect2 xml:id="commands.cluster.managment.issue-generator">
+  <sect2 xml:id="commands-cluster-managment-issue-generator">
    <title>The <command>issue-generator</command> Command</title>
    <para>
     The <command>issue-generator</command> creates a volatile temporary
@@ -522,7 +522,7 @@ lock-group=default</screen>
    </note>
   </sect2>
 
-  <sect2 xml:id="commands.cluster.managment.transactional-update">
+  <sect2 xml:id="commands-cluster-managment-transactional-update">
    <title>The <command>transactional-update</command> Command</title>
    <para>
     The <command>transactional-update</command> enables you to install or
@@ -641,7 +641,7 @@ lock-group=default</screen>
    </variablelist>
   </sect2>
 
-  <sect2 xml:id="commands.cluster.managment.create_autoyast_profile">
+  <sect2 xml:id="commands-cluster-managment-create-autoyast-profile">
    <title>The <command>create_autoyast_profile</command> Command</title>
    <para>
     The <command>create_autoyast_profile</command> command creates an autoyast
@@ -702,7 +702,7 @@ lock-group=default</screen>
    </variablelist>
   </sect2>
  </sect1>
- <sect1 xml:id="node.managment">
+ <sect1 xml:id="node-managment">
   <title>Node Management</title>
 
   <para>
@@ -712,7 +712,7 @@ lock-group=default</screen>
    in that case make sure that you do not break the cluster.
   </para>
 
-  <sect2 xml:id="node.managment.adding">
+  <sect2 xml:id="node-managment-adding">
    <title>Adding Nodes</title>
    <para>
     You may need to add additional &kworker;s to your cluster. The following
@@ -723,7 +723,7 @@ lock-group=default</screen>
     <step>
      <para>
       Prepare the node as described in
-      <xref linkend="sec.caasp.installquick.node"/>
+      <xref linkend="sec-caasp-installquick-node"/>
      </para>
     </step>
     <step>
@@ -771,7 +771,7 @@ lock-group=default</screen>
    </procedure>
   </sect2>
 
-  <sect2 xml:id="node.managment.removing">
+  <sect2 xml:id="node-managment-removing">
    <title>Removing Nodes</title>
    <para>
     As each node in the cluster runs also an instance of
@@ -787,7 +787,7 @@ lock-group=default</screen>
    </para>
   </sect2>
  </sect1>
- <sect1 xml:id="cluster.monitoring">
+ <sect1 xml:id="cluster-monitoring">
   <title>Cluster Monitoring</title>
 
   <para>
@@ -805,18 +805,18 @@ lock-group=default</screen>
    <listitem>
     <para>
      By using <emphasis>Heapster</emphasis>, for details refer to
-     <xref linkend="cluster.monitoring.heapster"/>.
+     <xref linkend="cluster-monitoring-heapster"/>.
     </para>
    </listitem>
    <listitem>
     <para>
      By using <emphasis>Grafana</emphasis>, for details refer to
-     <xref linkend="cluster.monitoring.grafana"/>.
+     <xref linkend="cluster-monitoring-grafana"/>.
     </para>
    </listitem>
   </itemizedlist>
 
-  <sect2 xml:id="cluster.monitoring.heapster">
+  <sect2 xml:id="cluster-monitoring-heapster">
    <title>Monitoring with Heapster</title>
    <para>
     <emphasis>Heapster</emphasis> is a tool that collects and interprets
@@ -834,7 +834,7 @@ lock-group=default</screen>
    </para>
   </sect2>
 
-  <sect2 xml:id="cluster.monitoring.grafana">
+  <sect2 xml:id="cluster-monitoring-grafana">
    <title>Monitoring with Grafana</title>
    <para>
     <emphasis>Grafana</emphasis> is an analytics platform that processes data
