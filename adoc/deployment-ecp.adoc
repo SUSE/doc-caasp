@@ -63,17 +63,34 @@ You can set the timezone before deploying the nodes by modifying the following f
 # - systemctl restart sshd
 ----
 +
-. Enter the registration code for your nodes in `~/my-cluster/registration.auto.tfvars`:
+. Register your nodes by using the SUSE CaaSP Registration Code or by registering nodes against local SUSE Repository Mirroring Server in `~/my-cluster/registration.auto.tfvars`:
 +
 Substitute `REGISTRATION_CODE` for the code from <<registration_code>>.
 +
-[source,json]
 ----
+## To register CaaSP product please use one of the following method
+# - register against SUSE Customer Service, with SUSE CaaSP Product Registration Code
+# - register against local SUSE Repository Mirroring Server
+
 # SUSE CaaSP Product Registration Code
 caasp_registry_code = "REGISTRATION_CODE"
+
+# SUSE Repository Mirroring Server Name (FQDN)
+#rmt_server_name = "rmt.example.com"
 ----
 +
 This is required so all the deployed nodes can automatically register to {scc} and retrieve packages.
++
+. You can also enable Cloud Provider Integration with OpenStack in `~/my-cluster/cpi.auto.tfvars`:
++
+----
+# Enable CPI integration with OpenStack
+cpi_enable = true
+
+# Used to specify the name of to your custom CA file located in /etc/ssl/certs.
+# Upload CUSTOM_CA_FILE to this path on nodes before joining them to your cluster.
+#ca_file = "/etc/ssl/certs/<CUSTOM_CA_FILE>"
+----
 . Now you can deploy the nodes by running:
 +
 ----
