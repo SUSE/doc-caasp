@@ -4,7 +4,7 @@
   <!ENTITY % entities SYSTEM "entity-decl.ent">
     %entities;
 ]>
-<chapter version="5.0" xml:id="cha.admin"
+<chapter version="5.0" xml:id="cha-admin"
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -18,13 +18,13 @@
 
  <!-- FIXME, mnapp 04/09/18 fill in these sections
 
- <sect1 xml:id="sec.admin.concepts">
+ <sect1 xml:id="sec-admin-concepts">
   <title>Concepts</title>
  </sect1>
 
 -->
 
- <sect1 xml:id="sec.admin.kubernetes.install-kubectl">
+ <sect1 xml:id="sec-admin-kubernetes-install-kubectl">
   <title>Interacting With &kube;</title>
   <para>
    &kube; requires the use of <literal>kubectl</literal> for many tasks.
@@ -83,7 +83,7 @@
    </step>
    <step>
     <para>
-     To use kubectl to connect to a local machine you must perform <xref linkend="sec.admin.security.auth.kubeconfig" /> against the &kube; master node. Download the <filename>.kubeconfig</filename> file from &dashboard; and place it in <filename>˜/.kube/config</filename>.
+     To use kubectl to connect to a local machine you must perform <xref linkend="sec-admin-security-auth-kubeconfig" /> against the &kube; master node. Download the <filename>.kubeconfig</filename> file from &dashboard; and place it in <filename>˜/.kube/config</filename>.
     </para>
     <informalfigure>
      <mediaobject>
@@ -114,7 +114,7 @@ caasp3-worker-4   Ready     &lt;none&gt;    1d        v1.9.8</screen>
  </procedure>
  </sect1>
 
- <sect1 xml:id="sec.admin.salt">
+ <sect1 xml:id="sec-admin-salt">
   <title>Interacting with Salt</title>
   <para>
    You can run commands across all nodes in the cluster by running them via
@@ -138,7 +138,7 @@ cmd.run "<replaceable>df -h</replaceable>"</command>
    The output will be produced in your current terminal session.
   </para>
 
-  <sect2 xml:id="sec.admin.salt.worker_threads">
+  <sect2 xml:id="sec-admin-salt-worker-threads">
    <title>Adjusting The Number Of Salt Worker Threads</title>
    <para>
     It will sometimes be necessary to resize the &kube; cluster to adjust for
@@ -148,7 +148,7 @@ cmd.run "<replaceable>df -h</replaceable>"</command>
    </para>
    <para>
     For the correct value, refer to
-    <xref linkend="sec.deploy.requirements.system.cluster.salt_cluster_size"/>.
+    <xref linkend="sec-deploy-requirements-system-cluster-salt-cluster-size"/>.
    </para>
    <procedure>
     <title>Adjust The Salt Worker Count</title>
@@ -186,7 +186,7 @@ cmd.run "<replaceable>df -h</replaceable>"</command>
   </sect2>
  </sect1>
 
- <sect1 xml:id="sec.admin.nodes">
+ <sect1 xml:id="sec-admin-nodes">
   <title>Node Management</title>
   <para>
    After you complete the deployment and you bootstrap the cluster, you may
@@ -195,7 +195,7 @@ cmd.run "<replaceable>df -h</replaceable>"</command>
    in that case make sure that you do not break the cluster.
   </para>
 
-  <sect2 xml:id="sec.admin.nodes.add">
+  <sect2 xml:id="sec-admin-nodes-add">
    <title>Adding Nodes</title>
    <para>
     You may need to add additional &worker_node;s to your cluster. The
@@ -207,10 +207,10 @@ cmd.run "<replaceable>df -h</replaceable>"</command>
     Failure to upgrade all nodes to the same software versions will result in orchestration failures.
     </para>
    <para>
-    First upgrade the cluster nodes. For details, refer to <xref linkend="sec.admin.software.upgrade_caasp2.upgrade"/>
+    First upgrade the cluster nodes. For details, refer to <xref linkend="sec-admin-software-upgrade-caasp2-upgrade"/>
    </para>
    <para>
-    Then prepare the new node(s) as described in <xref linkend="sec.deploy.nodes.worker_install"/>
+    Then prepare the new node(s) as described in <xref linkend="sec-deploy-nodes-worker-install"/>
    </para>
    </important>
    <procedure>
@@ -268,7 +268,7 @@ cmd.run "<replaceable>df -h</replaceable>"</command>
     </step>
    </procedure>
 
-   <sect3 xml:id="sec.admin.nodes.create_autoyast_profile">
+   <sect3 xml:id="sec-admin-nodes-create-autoyast-profile">
      <title>The <command>create_autoyast_profile</command> Command</title>
      <para>
       The <command>create_autoyast_profile</command> command creates an autoyast
@@ -330,7 +330,7 @@ cmd.run "<replaceable>df -h</replaceable>"</command>
     </sect3>
   </sect2>
 
-  <sect2 xml:id="sec.admin.nodes.remove">
+  <sect2 xml:id="sec-admin-nodes-remove">
    <title>Removing Nodes</title>
    <warning>
     <para>
@@ -348,7 +348,7 @@ cmd.run "<replaceable>df -h</replaceable>"</command>
      you have, for example, three nodes in the <literal>etcd</literal> and you
      delete two of them, &productname; deletes one node, recovers the cluster
      and only if the recovery is successful, allows the next node to be removed.
-     Refer to: <xref linkend="sec.deploy.requirements.system.cluster.etcd_cluster_size"/>.
+     Refer to: <xref linkend="sec-deploy-requirements-system-cluster-etcd-cluster-size"/>.
     </para>
     <para>
      If a node runs just an <literal>etcd-proxy</literal>, there is nothing special
@@ -428,7 +428,7 @@ cmd.run "<replaceable>df -h</replaceable>"</command>
    </procedure>
   </sect2>
 
-  <sect2 xml:id="sec.admin.nodes.remove.unassigned">
+  <sect2 xml:id="sec-admin-nodes-remove-unassigned">
   <!-- FIXME mnapp 2018-07-03, replace terminology and screenshots once
   bsc#1100113 has been resolved -->
 
@@ -484,9 +484,9 @@ entrypoint.sh bundle exec rails runner 'puts Minion.find_by(minion_id: "<replace
   </sect2>
  </sect1>
 
- <sect1 xml:id="sec.admin.nodes.graceful_shutdown">
+ <sect1 xml:id="sec-admin-nodes-graceful-shutdown">
   <title>Graceful Shutdown and Startup</title>
-  <sect2 xml:id="sec.admin.nodes.graceful_shutdown.overview">
+  <sect2 xml:id="sec-admin-nodes-graceful-shutdown-overview">
    <title>Overview</title>
    <para>
     &kube;, being a self-healing solution, tries to keep all pods and
@@ -513,7 +513,7 @@ entrypoint.sh bundle exec rails runner 'puts Minion.find_by(minion_id: "<replace
     </para>
    </note>
   </sect2>
-  <sect2 xml:id="sec.admin.nodes.graceful_shutdown.nodes">
+  <sect2 xml:id="sec-admin-nodes-graceful-shutdown-nodes">
    <title>Node Types</title>
    <para>
     For shutting down and starting nodes, three different types of nodes
@@ -543,9 +543,9 @@ entrypoint.sh bundle exec rails runner 'puts Minion.find_by(minion_id: "<replace
     </listitem>
    </itemizedlist>
   </sect2>
-  <sect2 xml:id="sec.admin.nodes.graceful_shutdown.complete">
+  <sect2 xml:id="sec-admin-nodes-graceful-shutdown-complete">
    <title>Complete Shutdown</title>
-   <sect3 xml:id="sec.admin.nodes.graceful_shutdown.complete.shutdown">
+   <sect3 xml:id="sec-admin-nodes-graceful-shutdown-complete-shutdown">
     <title>Shutting Down</title>
     <para>
      All commands are executed on the admin node.
@@ -580,7 +580,7 @@ salt --async -G 'roles:kube-master' cmd.run 'systemctl poweroff'</command></scre
      </step>
     </procedure>
    </sect3>
-   <sect3 xml:id="sec.admin.nodes.graceful_shutdown.complete.startup">
+   <sect3 xml:id="sec-admin-nodes-graceful-shutdown-complete-startup">
     <title>Starting Up</title>
     <note>
      <title><literal>kubectl</literal> Needs Master Nodes To Function</title>
@@ -648,7 +648,7 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
     </procedure>
    </sect3>
   </sect2>
-  <sect2 xml:id="sec.admin.nodes.graceful_shutdown.segmented">
+  <sect2 xml:id="sec-admin-nodes-graceful-shutdown-segmented">
    <title>Segmented Reboots</title>
    <para>
     A sequential reboot of cluster segments is a way to completely
@@ -656,7 +656,7 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
     possible. However, downtime of services occurs if all pods of a
     service are forced on one node.
    </para>
-   <sect3 xml:id="sec.admin.nodes.graceful_shutdown.segmented.worker">
+   <sect3 xml:id="sec-admin-nodes-graceful-shutdown-segmented-worker">
     <title>Rebooting Worker Nodes</title>
     <para>
      The number of worker nodes to reboot at once depends on the number
@@ -702,21 +702,21 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
     </para>
    </sect3>
   </sect2>
-  <sect2 xml:id="sec.admin.nodes.graceful_shutdown.etcd">
+  <sect2 xml:id="sec-admin-nodes-graceful-shutdown-etcd">
    <title>Behavior of <literal>etcd</literal></title>
    <para>
     <command>etcd</command> requires special considerations for maintaining
-    cluster health and integrtiy. Refer to: <xref linkend="sec.deploy.requirements.system.cluster.etcd_cluster_size"/>.
+    cluster health and integrtiy. Refer to: <xref linkend="sec-deploy-requirements-system-cluster-etcd-cluster-size"/>.
    </para>
   </sect2>
  </sect1>
 
- <sect1 xml:id="sec.admin.scale_cluster">
+ <sect1 xml:id="sec-admin-scale-cluster">
   <title>Scaling the Cluster</title>
   <para>
    The default maximum number of nodes in a cluster is 40 for the minimum node
    configuration with 8GB of RAM.
-   Please refer to: <xref linkend="sec.deploy.requirements.hardware"/>.
+   Please refer to: <xref linkend="sec-deploy-requirements-hardware"/>.
   </para>
    <para>
    With more resources available, the Salt Master configuration needs to be
@@ -820,7 +820,7 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
     | grep -i worker_threads</command></screen>
  </sect1>
 
- <sect1 xml:id="sec.admin.velum.registry">
+ <sect1 xml:id="sec-admin-velum-registry">
   <title>Configuring Remote Container Registry</title>
   <para>
    A remote registry allows you to access container images locally.
@@ -846,7 +846,7 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
    </mediaobject>
   </informalfigure>
 
-  <sect2 xml:id="sec.admin.velum.registry.add">
+  <sect2 xml:id="sec-admin-velum-registry-add">
    <title>Adding A Remote Registry</title>
 
    <procedure>
@@ -938,7 +938,7 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
      <para>
       If you wish to define a mirror for this registry you can click on
       <guimenu>Add Mirror</guimenu> to do so. For details, refer to
-      <xref linkend="sec.admin.velum.mirror"/>
+      <xref linkend="sec-admin-velum-mirror"/>
      </para>
 
      <informalfigure>
@@ -967,7 +967,7 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
    </procedure>
   </sect2>
 
-  <sect2 xml:id="sec.admin.velum.registry.modify">
+  <sect2 xml:id="sec-admin-velum-registry-modify">
    <title>Modifying A Registry</title>
    <procedure>
     <step>
@@ -996,7 +996,7 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
    </procedure>
   </sect2>
 
-  <sect2 xml:id="sec.admin.velum.registry.remove">
+  <sect2 xml:id="sec-admin-velum-registry-remove">
    <title>Removing A Registry</title>
    <procedure>
     <step>
@@ -1027,7 +1027,7 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
   </sect2>
  </sect1>
 
- <sect1 xml:id="sec.admin.velum.mirror">
+ <sect1 xml:id="sec-admin-velum-mirror">
   <title>Configuring A Registry Mirror</title>
   <para>
    Similar to the
@@ -1050,7 +1050,7 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
    </mediaobject>
   </informalfigure>
 
-  <sect2 xml:id="sec.admin.velum.mirror.add">
+  <sect2 xml:id="sec-admin-velum-mirror-add">
    <title>Adding A Mirror</title>
    <procedure>
     <step>
@@ -1148,7 +1148,7 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
    </procedure>
   </sect2>
 
-  <sect2 xml:id="sec.admin.velum.mirror.modify">
+  <sect2 xml:id="sec-admin-velum-mirror-modify">
    <title>Modifying A Mirror</title>
    <procedure>
     <step>
@@ -1177,7 +1177,7 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
    </procedure>
   </sect2>
 
-  <sect2 xml:id="sec.admin.velum.mirror.remove">
+  <sect2 xml:id="sec-admin-velum-mirror-remove">
    <title>Removing A Mirror</title>
    <procedure>
     <step>
@@ -1207,7 +1207,7 @@ worker-4   Ready,SchedulingDisabled   &lt;none>    21h       v1.9.8
   </sect2>
  </sect1>
 
- <sect1 xml:id="sec.admin.compute_resources">
+ <sect1 xml:id="sec-admin-compute-resources">
   <title>Reserving Compute Resources</title>
   <para>
    By default, &kube; will allocate all available hardware resources of
