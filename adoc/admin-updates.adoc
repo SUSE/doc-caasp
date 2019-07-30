@@ -121,35 +121,12 @@ The control plane consists of these components:
 
 === Applying Updates
 
-[NOTE]
-====
-The following steps are temporary, the procedure is prone to change with the next update.
-====
-
 [IMPORTANT]
 ====
 Updates have to be applied separately to each node, starting with the control plane all the way down to the worker nodes.
 ====
 
-==== Preparation
-
-Before proceeding with update itself, some preparation is needed. SSH to each of the nodes and perform the following steps.
-
-. Disable the `skuba-update.timer`:
-+
-----
-sudo systemctl disable --now skuba-update.timer
-----
-. Update kubeadm to the newer version:
-+
-----
-sudo zypper install --force kubernetes-kubeadm=1.15.0 kubernetes-client=1.14.1 kubernetes-common=1.14.1 kubernetes-kubelet=1.14.1
-----
-Select the solution 3: `break kubernetes-kubeadm-[VERSION] by ignoring some of its dependencies`.
-
 ==== Applying The Update
-
-Now that you have done the required preparations, we can use `skuba` to:
 
 . Upgrade the master nodes:
 +
@@ -221,8 +198,6 @@ kubectl -n kube-system annotate ds kured weave.works/kured-node-lock='{"nodeID":
 ----
 
 This command modifies an annotation (`annotate`) on the daemonset (`ds`) named `kured`.
-You must replace `"nodeID"` with the ID of the cluster node that you wish to lock out of automatic reboots.
-Retrieve the ID by running `kubectl get nodes` and copying the value from the first column.
 
 ==== Manual unlock
 
