@@ -4,18 +4,15 @@
 
 The update of {kube} components is handled via `skuba`.
 
-==== Updating from beta4 (0.7.1) to beta5 (0.8.1)
+=== Updating from Beta 4 to Beta 5
+Due to an internal change in the architecture, this update requires a manual step.
+This step does not cause any service interruption and can be run simultaneously on several nodes.
 
-Due to an internal change in the architecture, it is required to SSH to each of the nodes and perform the following step.
+To safely update from skuba version 0.7.1 to 0.8.1, SSH to each of the nodes and run the following:
 
 ----
 sudo zypper in -y patterns-caasp-Node-1.15 -patterns-caasp-Node
 ----
-
-[IMPORTANT]
-====
-This step does not cause any service iterruption and can be run simultaneously on several nodes.
-====
 
 ==== An overview
 
