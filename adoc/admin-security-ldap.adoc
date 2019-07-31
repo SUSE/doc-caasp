@@ -1,21 +1,153 @@
 = External LDAP
 
-== Configuring An External LDAP Server
+== Configuring an external LDAP Server
 
-{productname} supports user authentication via external LDAP server like 389 Directory Server and Active Directory by updating the builtin Dex LDAP connector configuration.
+{productname} supports user authentication via an external LDAP server like 389
+Directory Server and Active Directory by updating the built-in Dex LDAP connector configuration.
 
-=== Examples
+=== Deploying an external 389 Directory Server with an automatically generated self-signed certificate
 
-In both directories, `user-regular1` and `user-regular2` are members of the `k8s-users` group, `user-admin` is a member of the `k8s-admins` group.
+The 389 Directory Server image `registry.suse.com/caasp/v4/389-ds:1.4.0`
+will automatically generate a self-signed certificate and key.
+The following instructions show how to deploy the 389 Directory Server
+with a customized configuration using container commands.
 
-For Active Directory, `user-bind` is a simple user which is a member of the default Domain Users group.
-Hence, we can use it to authenticate because has read-only access to Active Directory.
+. Prepare the customized 389 Directory configuration and enter it
+into the terminal in the following format:
++
+----
+INSTANCE_NAME=localhost                         # Directory Server Name
+ROOT_DN="cn=admin,dc=example,dc=org"            # Admin Account
+ROOT_PASSWORD=                                  # Admin Password
+SUFFIX="dc=example,dc=org"                      # Domain Suffix
+DATA_DIR=<PWD>/389_ds_data                      # Directory Server Data on Host Machine to Mount
+----
+
+. Execute the following `docker` command to deploy the 389 Directory Server in same terminal.
+This will start a non-TLS port (389) and a TLS port (636) together with an
+automatically self-signed certificate and key.
++
+----
+docker run -d \
+	-p 389:389 \
+	-p 636:636 \
+	-e INSTANCE_NAME=<INSTANCE_NAME> \
+	-e ROOT_DN=<ROOT_DN> \
+	-e ROOT_PASSWORD=<ROOT_PASSWORD> \
+	-e SUFFIX=<SUFFIX> \
+	-v <DATA_DIR>:/data \
+	--name 389-ds registry.suse.com/caasp/v4/389-ds:1.4.0
+----
+
+=== Deploying a 389 Directory Server with an external certificate
+
+To replace the automatically generated certificate with your own, follow these steps:
+
+. Stop the running container:
++
+----
+docker stop 389-ds
+----
+
+. Copy the external certificate `<rootCA.pem>` to a mounted data directory `<DATA_DIR>/config/`.
+
+. Run bash in entrypoint to access the container with the mounted data directory from previous step:
++
+----
+docker run --rm -it \
+  -p 389:389 \
+  -p 636:636 \
+  -v <DATA_DIR>:/data \
+  --entrypoint /bin/bash \
+  --name 389-ds registry.suse.com/caasp/v4/389-ds:1.4.0
+----
+
+. List the certificates in `/etc/dirsrv/slapd-<INSTANCE_NAME>`:
++
+----
+certutil -L -d /etc/dirsrv/slapd-<INSTANCE_NAME> -f /etc/dirsrv/slapd-<INSTANCE_NAME>/pwdfile.txt
+----
++
+The output of the above should resemble this:
++
+----
+Certificate Nickname                                         Trust Attributes
+                                                             SSL,S/MIME,JAR/XPI
+
+Self-Signed-CA                                               CT,,
+Server-Cert                                                  u,u,u
+----
+
+. List the key in `/etc/dirsrv/slapd-<INSTANCE_NAME>`:
++
+----
+certutil -K -d /etc/dirsrv/slapd-<INSTANCE_NAME> -f /etc/dirsrv/slapd-<INSTANCE_NAME>/pwdfile.txt
+----
++
+The output of the above command should resemble the following:
++
+----
+certutil: Checking token "NSS Certificate DB" in slot "NSS User Private Key and Certificate Services"
+< 0> rsa      6d4f98efe45328ff852b7e2ca5a24ad46844163a   NSS Certificate DB:Server-Cert
+----
+
+. Delete the existing CA and certificate in `/etc/dirsrv/slapd-<INSTANCE_NAME>`:
++
+----
+certutil -D -d /etc/dirsrv/slapd-<INSTANCE_NAME> -n Self-Signed-CA
+certutil -F -k 6d4f98efe45328ff852b7e2ca5a24ad46844163a -d /etc/dirsrv/slapd-<INSTANCE_NAME> -f /etc/dirsrv/slapd-<INSTANCE_NAME>/pwdfile.txt
+----
+
+. Import the certificate into `/etc/dirsrv/slapd-<INSTANCE_NAME>`:
++
+Replace <KEY.PEM> by the input key.
++
+Replace <CERT.PEM> by the input certificate.
++
+Replace <CERT.PK12> by the output certificate in pkcs12.
++
+----
+openssl pkcs12 -export -inkey <KEY.PEM> -in <CERT.PEM> -out <CERT.PK12> -nodes -name "Server-Cert"
+pk12util -i <CERT.PK12> -d /etc/dirsrv/slapd-<INSTANCE_NAME>
+----
+
+. Import the rootCA into `/etc/dirsrv/slapd-<INSTANCE_NAME>`
++
+----
+certutil -A -d /etc/dirsrv/slapd-<INSTANCE_NAME> -n "CA certificate" -t "CT,," -i <rootCA.pem>
+----
+
+. Exit the container.
+
+. Execute `docker` command to run the 389 Directory Server with a mounted data
+directory from previous step:
++
+----
+docker run -d \
+	-p 389:389 \
+	-p 636:636 \
+	-e INSTANCE_NAME=<INSTANCE_NAME> \
+	-e ROOT_DN=<ROOT_DN> \
+	-e ROOT_PASSWORD=<ROOT_PASSWORD> \
+	-e SUFFIX=<SUFFIX> \
+	-v <DATA_DIR>:/data \
+	--name 389-ds registry.suse.com/caasp/v4/389-ds:1.4.0
+----
+
+=== Examples of usage
+
+In both directories, `user-regular1` and `user-regular2` are members of the `k8s-users` group,
+`user-admin` is a member of the `k8s-admins` group.
+
+In Active Directory, `user-bind` is a simple user who is a member of the default Domain Users group.
+Hence, we can use him to authenticate, because has read-only access to Active Directory.
 The mail attribute is used to create the RBAC rules.
 
-==== 389 Directory Server
+==== 389 Directory Server:
 
-===== Example: 389-ds Content LDIF
+===== Example 1: 389-ds Content LDIF
 
+Example LDIF configuration to create user `user-regular1` using an LDAP command:
 ====
 # user-regular1, Users, example.org
 
@@ -32,6 +164,7 @@ The mail attribute is used to create the RBAC rules.
   givenName: User
 ====
 
+Example LDIF configuration to create user `user-regular2` using an LDAP command:
 ====
 # user-regular2, Users, example.org
 
@@ -48,6 +181,7 @@ The mail attribute is used to create the RBAC rules.
   givenName: User
 ====
 
+Example LDIF configuration to create user `user-admin` using an LDAP command:
 ====
 # user-admin, Users, example.org
 
@@ -64,6 +198,7 @@ The mail attribute is used to create the RBAC rules.
   givenName: User
 ====
 
+Example LDIF configuration to create group `k8s-users` using an LDAP command:
 ====
 # k8s-users, Groups, example.org
 
@@ -75,6 +210,7 @@ The mail attribute is used to create the RBAC rules.
   memberUid: user-regular2
 ====
 
+Example LDIF configuration to create group `k8s-admins` using an LDAP command:
 ====
 # k8s-admins, Groups, example.org
 
@@ -85,8 +221,8 @@ The mail attribute is used to create the RBAC rules.
   memberUid: user-admin
 ====
 
-==== Example: Dex LDAP TLS Connector configuration (`addons/dex/dex.yaml`)
-
+===== Example 2: Dex LDAP TLS Connector configuration (`addons/dex/dex.yaml`)
+Dex connector template configured to use 389-DS:
 ----
 connectors:
 - type: ldap
@@ -101,7 +237,7 @@ connectors:
     # otherwise.
     host: ldap.example.org:636
 
-    # Following field is required if the LDAP host is not using TLS (port 389).
+    # The following field is required if the LDAP host is not using TLS (port 389).
     # Because this option inherently leaks passwords to anyone on the same network
     # as dex, THIS OPTION MAY BE REMOVED WITHOUT WARNING IN A FUTURE RELEASE.
     #
@@ -173,10 +309,11 @@ connectors:
       nameAttr: cn
 ----
 
-=== Active Directory
+==== Active Directory
 
-==== Example: Active Directory Content LDIF
+===== Example 1: Active Directory Content LDIF
 
+Example LDIF configuration to create user `user-regular1` using an LDAP command:
 ====
 # user-regular1, Users, example.org
 
@@ -198,6 +335,7 @@ connectors:
   mail: user-regular1@example.org
 ====
 
+Example LDIF configuration to create user `user-regular2` using an LDAP command:
 ====
 # user-regular2, Users, example.org
 
@@ -219,6 +357,7 @@ connectors:
   mail: user-regular2@example.org
 ====
 
+Example LDIF configuration to create user `user-bind` using an LDAP command:
 ====
 # user-bind, Users, example.org
 
@@ -239,6 +378,7 @@ connectors:
   mail: user-bind@example.org
 ====
 
+Example LDIF configuration to create user `user-admin` using an LDAP command:
 ====
 # user-admin, Users, example.org
 
@@ -248,7 +388,7 @@ connectors:
   objectClass: organizationalPerson
   objectClass: user
   cn: user-admin
-  sn:: Admin
+  sn: Admin
   givenName: User
   distinguishedName: cn=user-admin,ou=Users,dc=example,dc=org
   displayName: User Admin
@@ -260,6 +400,7 @@ connectors:
   mail: user-admin@example.org
 ====
 
+Example LDIF configuration to create group `k8s-users` suing an LDAP command:
 ====
 # k8s-users, Groups, example.org
 
@@ -275,6 +416,7 @@ connectors:
   objectCategory: cn=Group,cn=Schema,cn=Configuration,dc=example,dc=org
 ====
 
+Example LDIF configuration to create group `k8s-admins` using an LDAP command:
 ====
 # k8s-admins, Groups, example.org
 
@@ -289,8 +431,8 @@ connectors:
   objectCategory: cn=Group,cn=Schema,cn=Configuration,dc=example,dc=org
 ====
 
-==== Example: Dex Active Directory TLS Connector configuration (addons/dex/dex.yaml)
-
+===== Example 2: Dex Active Directory TLS Connector configuration (addons/dex/dex.yaml)
+Dex connector template configured to use Active Directory:
 ----
 connectors:
 - type: ldap
@@ -382,15 +524,16 @@ base64 encoded PEM file can be generated by running:
 $ cat <root-ca-pem-file> | base64 | awk '{print}' ORS='' && echo
 ----
 
-== Managing Users and Groups
+== Managing users and groups
 
 You can use standard LDAP administration tools for managing these users remotely.
-To do so, install the `openldap2-client` package on a computer in your network and make sure that computer can connect to the LDAP server
+To do so, install the `openldap2-client` package on a computer in your network
+and make sure that the computer can connect to the LDAP server
 (Ex: 389 Directory Server) on port `389` or secure port `636`.
 
-=== Add New Group
+=== Adding a new group
 
-. To add a new group, create a LDIF file (`create_groups.ldif`) like this:
+. To add a new group, create an LDIF file (`create_groups.ldif`) like this:
 +
 ----
 dn: cn=GROUP,ou=Groups,dc=example,dc=org
@@ -409,17 +552,17 @@ cn: GROUP
 ----
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
-LDAP_NODE_PROTOCOL=:389                         # ldap(:389), secure (:636)
+LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
 BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
 LDIF_FILE=./create_groups.ldif                  # LDIF Configuration File
 ROOT_PASSWORD=                                  # Admin Password
 
-ldapmodify -v -H ${LDAP_PROTOCOL}://${LDAP_NODE_FQDN}${LDAP_NODE_PROTOCOL} -D "${BIND_DN}" -f ${LDIF_FILE} -w ${ROOT_PASSWORD}
+ldapmodify -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D "<BIND_DN>" -f <LDIF_FILE> -w <ROOT_PASSWORD>
 ----
 
 === Adding A New User
 
-. To add a new user, create a LDIF file (`new_user.ldif`) like this:
+. To add a new user, create an LDIF file (`new_user.ldif`) like this:
 +
 ----
 dn: uid=USERID,ou=Users,dc=example,dc=org
@@ -445,42 +588,44 @@ mail: E-MAIL_ADDRESS
 ----
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
-LDAP_NODE_PROTOCOL=:389                         # ldap(:389), secure (:636)
+LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
 BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
 LDIF_FILE=./new_user.ldif                       # LDIF Configuration File
 ROOT_PASSWORD=                                  # Admin Password
 
-ldapadd -v -H ${LDAP_PROTOCOL}://${LDAP_NODE_FQDN}${LDAP_NODE_PROTOCOL} -D "${BIND_DN}" -f ${LDIF_FILE} -w ${ROOT_PASSWORD}
+ldapadd -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D "<BIND_DN>" -f <LDIF_FILE> -w <ROOT_PASSWORD>
 ----
 
 
-=== Showing User Attributes
+=== Showing user attributes
 
-. To show the attributes of a user, use the ldapsearch command.
+. To show the attributes of a user, use the `ldapsearch` command.
 +
 ----
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
-LDAP_NODE_PROTOCOL=:389                         # ldap(:389), secure (:636)
+LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
 USERID=user1
-BASE_DN="uid=${USERID},dc=example,dc=org"
+BASE_DN="uid=<USERID>,dc=example,dc=org"
 BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
 ROOT_PASSWORD=                                  # Admin Password
 
-ldapsearch -v -x -H ${LDAP_PROTOCOL}://${LDAP_NODE_FQDN}${LDAP_NODE_PROTOCOL} -b "${BASE_DN}" -D "${BIND_DN}" -w ${ROOT_PASSWORD}
+ldapsearch -v -x -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -b "<BASE_DN>" -D "<BIND_DN>" -w <ROOT_PASSWORD>
 ----
 
-=== Changing User
+=== Modifying a user
 
 The following procedure details how to modify a user in the LDAP server.
-The example LDIF files detail how to change a user password and add a user to the `Administrators` group.
-To modify other fields, use the the password example and replace `userPassword` with other field names.
+The example LDIF files detail how to change a user password and add a user to the
+`Administrators` group.
+To modify other fields, use the the password example and replace `userPassword`
+with other field names.
 
-. Create a LDIF file (`modify_user.ldif`) that contains the change to the LDAP server.
+. Create an LDIF file (`modify_user.ldif`) that contains the change to the LDAP server.
 +
 [NOTE]
 ====
-Change the User Password
+Change the user password
 ====
 +
 ----
@@ -492,7 +637,7 @@ userPassword: PASSWORD
 +
 * USERID: with the user's ID.
 * PASSWORD: with the user's new hashed password.
-. Add User to `Administrators` group.
+. Add the user to `Administrators` group.
 +
 ----
 dn: cn=Administrators,ou=Groups,dc=example,dc=org
@@ -506,19 +651,19 @@ uniqueMember: uid=USERID,ou=Users,dc=example,dc=org
 ----
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
-LDAP_NODE_PROTOCOL=:389                         # ldap(:389), secure (:636)
+LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
 BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
 LDIF_FILE=./modify_user.ldif                    # LDIF Configuration File
 ROOT_PASSWORD=                                  # Admin Password
 
-ldapmodify -v -H ${LDAP_PROTOCOL}://${LDAP_NODE_FQDN}${LDAP_NODE_PROTOCOL} -D "${BIND_DN}" -f ${LDIF_FILE} -w ${ROOT_PASSWORD}
+ldapmodify -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D "<BIND_DN>" -f <LDIF_FILE> -w <ROOT_PASSWORD>
 ----
 
-=== Deleting User
+=== Deleting a user
 
 The following procedure details how to delete a user from the LDAP server.
 
-. Create a LDIF file (`delete_user.ldif`) that specifies the distinguished name of the entry:
+. Create an LDIF file (`delete_user.ldif`) that specifies the name of the entry:
 +
 ----
 dn: uid=USER_ID,ou=Users,dc=example,dc=org
@@ -526,14 +671,15 @@ changetype: delete
 ----
 +
 * USERID: with the user's ID.
-. Execute `ldapmodify` to delete user:
+. Execute `ldapmodify` to delete the user:
++
 ----
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
-LDAP_NODE_PROTOCOL=:389                         # ldap(:389), secure (:636)
+LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
 BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
 LDIF_FILE=./delete_user.ldif                    # LDIF Configuration File
 ROOT_PASSWORD=                                  # Admin Password
 
-ldapmodify -v -H ${LDAP_PROTOCOL}://${LDAP_NODE_FQDN}${LDAP_NODE_PROTOCOL} -D "${BIND_DN}" -f ${LDIF_FILE} -w ${ROOT_PASSWORD}
+ldapmodify -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D "<BIND_DN>" -f <LDIF_FILE> -w <ROOT_PASSWORD>
 ----
