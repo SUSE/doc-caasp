@@ -110,23 +110,38 @@ link:https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware
 |===
 |Node |Port |Protocol | Accessibility |Description
 
-.3+|All nodes
+.6+|All nodes
 |22
 |TCP
 |Internal
 |SSH (required in public clouds)
 
+|8471 - 8472
+|UDP
+|Internal
+|VXLAN traffic (used by Cilium)
+
 |10010
 |TCP
 |Internal
-|CRI-O stream port
+|CRI-O streaming port
+
+|10250
+|TCP
+|Internal
+|Kubelet (API server -> kubelet communication)
+
+|10256
+|TCP
+|Internal
+|kube-proxy health check
 
 |32000
 |TCP
 |External
 |Dex (OIDC Connect)
 
-.8+|Masters
+.5+|Masters
 |2379
 |TCP
 |Internal
@@ -142,21 +157,6 @@ link:https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware
 |Internal / External
 |Kubernetes API server
 
-|8471 - 8472
-|UDP
-|Internal
-|VXLAN traffic (used by Cilium)
-
-|10250
-|TCP
-|Internal
-|Kubelet
-
-|10256
-|TCP
-|Internal
-|kube-proxy
-
 |32000
 |TCP
 |External
@@ -167,21 +167,7 @@ link:https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware
 |External
 |Gangway (RBAC Authenticate)
 
-.5+|Workers
-|8471 - 8472
-|UDP
-|Internal
-|VXLAN traffic (used by Cilium)
-
-|10250
-|TCP
-|Internal
-|Kubelet
-
-|10256
-|TCP
-|Internal
-|kube-proxy
+.2+|Workers
 
 |32000
 |TCP
