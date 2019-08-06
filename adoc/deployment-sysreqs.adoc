@@ -126,11 +126,16 @@ link:https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware
 |External
 |Dex (OIDC Connect)
 
-.7+|Masters
-|2379 - 2380
+.8+|Masters
+|2379
 |TCP
 |Internal
-|etcd (peer-to-peer traffic)
+|etcd (client communication)
+
+|2380
+|TCP
+|Internal
+|etcd (server-to-server traffic)
 
 |6443 - 6444
 |TCP
@@ -162,12 +167,7 @@ link:https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware
 |External
 |Gangway (RBAC Authenticate)
 
-.7+|Workers
-|2379 - 2380
-|TCP
-|Internal
-|etcd (peer-to-peer traffic)
-
+.6+|Workers
 |4149
 |TCP
 |Internal
