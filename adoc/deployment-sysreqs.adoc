@@ -110,7 +110,7 @@ link:https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware
 |===
 |Node |Port |Protocol | Accessibility |Description
 
-.6+|All nodes
+.8+|All nodes
 |22
 |TCP
 |Internal
@@ -146,6 +146,11 @@ link:https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware
 |External
 |Dex (OIDC Connect)
 
+|32001
+|TCP
+|External
+|Gangway (RBAC Authenticate)
+
 .5+|Masters
 |2379
 |TCP
@@ -162,27 +167,6 @@ link:https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware
 |Internal / External
 |Kubernetes API server
 
-|32000
-|TCP
-|External
-|Dex (OIDC Connect)
-
-|32001
-|TCP
-|External
-|Gangway (RBAC Authenticate)
-
-.2+|Workers
-
-|32000
-|TCP
-|External
-|Dex (OIDC Connect)
-
-|32001
-|TCP
-|External
-|Gangway (RBAC Authenticate)
 |===
 
 ==== IP Addresses
