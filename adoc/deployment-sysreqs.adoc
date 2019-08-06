@@ -106,78 +106,95 @@ link:https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware
 
 ==== Ports
 
-[cols="2*.^,.^,.>"",options="header,autowidth"]
+[cols="3*.^,.^,.>"",options="header,autowidth"]
 |===
-|Node |Port |Accessibility |Description
+|Node |Port |Protocol | Accessibility |Description
 
 .3+|All nodes
 |22
+|TCP
 |Internal
 |SSH (required in public clouds)
 
 |10010
+|TCP
 |Internal
 |CRI-O stream port
 
 |32000
+|TCP
 |External
 |Dex (OIDC Connect)
 
 .7+|Masters
 |2379 - 2380
+|TCP
 |Internal
 |etcd (peer-to-peer traffic)
 
 |6443 - 6444
+|TCP
 |Internal / External
 |Kubernetes API server
 
 |8471 - 8472
+|UDP
 |Internal
 |VXLAN traffic (used by Cilium)
 
 |10250, 20255
+|TCP
 |Internal
 |Kubelet
 
 |10256
+|TCP
 |Internal
 |kube-proxy
 
 |32000
+|TCP
 |External
 |Dex (OIDC Connect)
 
 |32001
+|TCP
 |External
 |Gangway (RBAC Authenticate)
 
 .7+|Workers
 |2379 - 2380
+|TCP
 |Internal
 |etcd (peer-to-peer traffic)
 
 |4149
+|TCP
 |Internal
 |Kubelet
 
 |8471 - 8472
+|UDP
 |Internal
 |VXLAN traffic (used by Cilium)
 
 |10250
+|TCP
 |Internal
 |Kubelet
 
 |10256
+|TCP
 |Internal
 |kube-proxy
 
 |32000
+|TCP
 |External
 |Dex (OIDC Connect)
 
 |32001
+|TCP
 |External
 |Gangway (RBAC Authenticate)
 |===
