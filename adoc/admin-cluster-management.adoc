@@ -8,17 +8,15 @@ which simplifies Kubernetes cluster creation and reconfiguration.
 == Bootstrap and initial configuration
 
 Bootstrapping the cluster is the initial process of starting up a minimal
-viable cluster and joining the first master node.
+viable cluster and joining the first master node. Only the first master node needs to be bootstrapped,
+later nodes can simply be joined as described in <<Adding nodes>>.
 
 Before bootstrapping any nodes to the cluster,
 you need to create an initial cluster definition folder (initialize the cluster).
-
-This is done using `skuba cluster init` and its `control-plane` flag.
+This is done using `skuba cluster init` and its `--control-plane` flag.
 
 For a step by step guide on how to initialize the cluster, configure updates using `kured`
 and subsequently bootstrap nodes to it, refer to the _{productname} Deployment Guide_.
-
-Only the first master node needs to be bootstrapped, later nodes can simply be joined as described in <<Adding nodes>>.
 
 == Adding nodes
 
