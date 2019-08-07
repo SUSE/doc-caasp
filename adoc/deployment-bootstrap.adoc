@@ -192,45 +192,45 @@ When the cloud provider integration is enabled, it's very important to bootstrap
 this name will be used by the `Openstack` cloud controller manager to reconcile node metadata.
 ====
 
-===== Integrate External LDAP
+===== Integrate External LDAP TLS
 
 . Open the `Dex` `ConfigMap` in `my-cluster/addons/dex/dex.yaml`
-. Adapt the `ConfigMap` by adding LDAP configuration to the connector section of the `config.yaml` file. For detailed configurations for the LDAP connector, refer to https://github.com/dexidp/dex/blob/master/Documentation/connectors/ldap.md.
+. Adapt the `ConfigMap` by adding LDAP configuration to the connector section of the `config.yaml` file. For detailed configurations for the LDAP connector, refer to https://github.com/dexidp/dex/blob/v2.16.0/Documentation/connectors/ldap.md.
 ====
 # Example LDAP connector
 
     connectors:
     - type: ldap
-      id: ldap
-      name: openLDAP
+      id: 389ds
+      name: 389ds
       config:
-        host: dirsrv-389ds.kube-system.svc.cluster.local:389 // <1> <2>
-        insecureNoSSL: true
-        insecureSkipVerify: true
-        bindDN: cn=admin,dc=example,dc=org // <3>
-        bindPW: 'admin' // <4>
-        usernamePrompt: Email Address // <5>
+        host: ldap.example.org:636 // <1> <2>
+        rootCAData: <base64 encoded PEM file> // <3>
+        bindDN: cn=user-admin,ou=Users,dc=example,dc=org // <4>
+        bindPW: <Password of Bind DN> // <5>
+        usernamePrompt: Email Address // <6>
         userSearch:
-          baseDN: cn=People,dc=example,dc=org // <6>
-          filter: "(objectClass=person)" // <7>
-          username: mail // <8>
-          idAttr: DN // <9>
-          emailAttr: mail // <10>
-          nameAttr: uid // <11>
+          baseDN: ou=Users,dc=example,dc=org // <7>
+          filter: "(objectClass=person)" // <8>
+          username: mail // <9>
+          idAttr: DN // <10>
+          emailAttr: mail // <11>
+          nameAttr: cn // <12>
 ====
 <1> Host name of LDAP server reachable from the cluster.
 <2> The port on which to connect to the host (e.g. StartTLS: `389`, TLS: `636`).
-<3> Bind DN of user that can do user searches.
-<4> Password of the user.
-<5> Label of LDAP attribute users will enter to identify themselves (e.g. `username`).
-<6> BaseDN where users are located (e.g. `cn=users,dc=example,dc=com`).
-<7> Filter to specify type of user objects (e.g. "(objectClass=person)").
-<8> Attribute users will enter to identify themselves (here: `mail`).
-<9> Attribute used to identify user within the system (e.g. uid).
-<10> Attribute containing email of users.
-<11> Attribute used as username used within OIDC tokens.
+<3> LDAP server base64 encoded root CA certificate file (e.g. `cat <root-ca-pem-file> | base64 | awk '{print}' ORS='' && echo`)
+<4> Bind DN of user that can do user searches.
+<5> Password of the user.
+<6> Label of LDAP attribute users will enter to identify themselves (e.g. `username`).
+<7> BaseDN where users are located (e.g. `ou=Users,dc=example,dc=org`).
+<8> Filter to specify type of user objects (e.g. "(objectClass=person)").
+<9> Attribute users will enter to identify themselves (e.g. mail).
+<10> Attribute used to identify user within the system (e.g. DN).
+<11> Attribute containing the user's email.
+<12> Attribute used as username used within OIDC tokens.
 
-Besides the LDAP connector you can also setup other connectors. For additional connectors, refer to the available connector configurations in the Dex repository: https://github.com/dexidp/dex/tree/master/Documentation/connectors.
+Besides the LDAP connector you can also setup other connectors. For additional connectors, refer to the available connector configurations in the Dex repository: https://github.com/dexidp/dex/tree/v2.16.0/Documentation/connectors.
 
 ===== Prevent Nodes Running Special Workloads From Being Rebooted
 
