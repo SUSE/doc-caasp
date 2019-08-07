@@ -13,23 +13,32 @@ viable cluster and joining the first master node.
 Before bootstrapping any nodes to the cluster,
 you need to create an initial cluster definition folder (initialize the cluster).
 
-This is done using `skuba cluster init` and its `control-plane` flag.
+This is done using `skuba cluster init` and its `--control-plane` flag. Refer to the
+_{productname} Deployment Guide_ for instructions on how to initially set up the cluster.
 
-To ensure transparent transition and seamless compability with workloads running
-on the previous CaaS Platforms, the default configuration created is using CRI-O
-Container Engine in conjunction with Docker Linux capabilities. This means CaaSP v4.0
-containers will run on top of CRI-O with the additional Linux capabilities: `audit_write`, `setfcap` and `mknod`.
+=== Transitioning from Docker to CRI-O
 
-In case you value a vanilla CRI-O experience more than out-of-the-box Docker compatibility,
-this can be achieved by using the `--strict-cap-defaults` option. In that case,
-the configuration created by `skuba cluster init --strict-cap-defaults`
-might not be compatible with your previously running workloads,
-unless you explicitly define any additional Linux capabilities they require
+{productname} {productversion} *default configuration* uses the CRI-O Container Engine in conjunction with Docker Linux capabilities.
+This means {productname} {productversion} containers run on top of CRI-O with the following additional
+Linux capabilities: `audit_write`, `setfcap` and `mknod`.
+This measure ensures a transparent transition and seamless compatibility with workloads running
+on the previous {productname} versions and out-of-the-box Docker compatibility.
+
+In case you wish to use *unmodified CRI-O*,
+use the `--strict-cap-defaults` option during the initial setup when you run `skuba cluster init`,
+which will create the vanilla CRI-O configuration:
+
+[source,bash]
+skuba cluster init --strict-cap-defaults
+
+Please be aware that this might result in
+incompatibility with your previously running workloads,
+unless you explicitly define the additional Linux capabilities required
 on top of CRI-O defaults.
 
 [IMPORTANT]
 ====
-After the bootstrap of the kubernetes cluster there will be no easy
+After the bootstrap of the {kube} cluster there will be no easy
 way to revert this modification. Please choose wisely.
 ====
 
