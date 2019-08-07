@@ -6,34 +6,50 @@ RBAC uses the `rbac.authorization.k8s.io` API group to drive authorization decis
 
 The authentication components are deployed with {productname} installation. Administrators can update LDAP identity providers before or after platform deployment.
 After your {productname} deployment, administrators can then use {kube} RBAC to design user or group authorization.
-Users can access with a web browser to do the authentication and self-configure `kubectl` to access authorized resources.
+Users can access with a web browser or command line to do the authentication and self-configure `kubectl` to access authorized resources.
 
 == Authentication Flow
 
-Authentication is composed of two open source libraries:
+Authentication is composed of:
 
 * link:https://github.com/dexidp/dex[Dex] is an identity provider service (idP) that uses link:https://openid.net/connect/[OIDC] (Open ID Connect) to drive authentication for client application. It acts as portal to defer authentication to provider through connected identity providers(connectors).
-* link:https://github.com/heptiolabs/gangway[Gangway], a client application that enables authentication flow for your {productname}. User can login, authorize access and self-configure `kubectl`.
+* Client
+  . Web browser: link:https://github.com/heptiolabs/gangway[gangway], a web application that enables authentication flow for your {productname}. User can login, authorize access, download `kubeconfig` or self-configure `kubectl`.
+  . Command line: `skuba auth login`, a CLI application that enables authentication flow for your {productname}. User can login, authorize access, and got `kubeconfig`.
 
 For RBAC, administrators can use `kubectl` to create corresponding `RoleBinding` or `ClusterRoleBinding` for a user or group to limit resource access.
 
-image::oidc_flow.png[]
-// Source: suse-rbac-oidc-flow.xml (open with http://draw.io/app)
+=== Web Flow
+image::oidc_flow_web.png[]
+// Source: suse-rbac-oidc-flow-web.xml (open with http://draw.io/app)
 
 . User requests access through Gangway.
 . Gangway redirects to Dex.
 . Dex redirects to connected identity provider (connector). User login and approve access request are generated.
-. Dex continues with OIDC authentication flow on behalf of the user and creates/updates data to {kube}  CRDs.
+. Dex continues with OIDC authentication flow on behalf of the user and creates/updates data to {kube} CRDs.
 . Dex redirects the user to Gangway. This redirect includes (ID/refresh) tokens.
-. Gangway returns `kubectl` self-configure instructions to the user.
+. Gangway returns a link to download `kubeconfig` or self-configures`kubectl` instructions to the user.
 +
 image::rbac-configure-kubectl.png[]
 
 
-. User self-configures `kubectl`.
-. The `kubectl` connects to {kube} API-server.
-. {kube} CRDs validate {kube} API-server request and return response.
-. The `kubectl` connects to authorized {kube} resources through {kube} API-server.
+. User downloads `kubeconf` or self-configures `kubectl`.
+. User uses `kubectl` to connect {kube} apiserver.
+. {kube} CRDs validate {kube} apiserver request and return response.
+. The `kubectl` connects to authorized {kube} resources through {kube} apiserver.
+
+=== CLI Flow
+image::oidc_flow_cli.png[]
+// Source: suse-rbac-oidc-flow-cli.xml (open with http://draw.io/app)
+
+. User requests access through `skuba auth login` with Dex server URL, login username and password.
+. Dex uses received login username and password to login and approve access request to the connected identity providers(connectors).
+. Dex continues with OIDC authentication flow on behalf of the user and creates/updates data to {kube} CRDs.
+. Dex responds the ID token and refresh token to `skuba auth login`.
+. `skuba auth login` generates the kubeconfig file `kubeconf.txt`.
+. User uses `kubectl` to connect {kube} apiserver.
+. {kube} CRDs validate {kube} apiserver request and return response.
+. The `kubectl` connects to authorized {kube} resources through {kube} apiserver.
 
 == RBAC Operations
 
@@ -101,12 +117,18 @@ kubectl replace --force -f <cluster-name>/addons/dex/dex.yaml
 
 ==== Setup `kubectl`
 
-. Go to the login page at `+https://<CONTROL-PLANE IP/FQDN>:32001/+` in your browser.
-. Click "login".
+===== Web
+
+. Go to the login page at `+https://<CONTROL-PLANE IP/FQDN>:32001+` in your browser.
+. Click "Sign In".
 . Choose the login method.
 . Enter the login credentials.
-. Approve the access request.
-. Self-configure `kubectl` with provided setup instruction.
+. Download `kubeconfig` or self-configure `kubectl` with provided setup instruction.
+
+===== CLI
+
+. Use `skuba auth login` with Dex server URL `+https://<CONTROL-PLANE IP/FQDN>:32000+`, login username and password.
+. The kubeconfig `kubeconf.txt` generated locally.
 
 ==== Access {kube} Resources
 
