@@ -1,5 +1,5 @@
 [[bootstrap]]
-== Bootstrapping the cluster
+== Bootstrapping the Cluster
 
 Bootstrapping the cluster is the initial process of starting up the cluster
 and defining which of the nodes are masters and which workers. For maximum automation of this process
@@ -51,6 +51,7 @@ This can be achieved using the `ssh -A` command. Please refer to the man page
 of ssh to learn about the security implications of using this feature.
 ====
 
+==== Initializing the Cluster
 
 . Now you can initialize the cluster on the deployed machines.
 As `--control-plane` enter the IP/FQDN of your load balancer.
@@ -66,9 +67,36 @@ skuba cluster init --control-plane <LB IP/FQDN> my-cluster
 The IP/FQDN must be reachable by every node of the cluster and therefore 127.0.0.1/localhost can't be used.
 ====
 
+==== Transitioning from Docker to CRI-O
+
+{productname} {productversion} *default configuration* uses the CRI-O Container Engine in conjunction with Docker Linux capabilities.
+This means {productname} {productversion} containers run on top of CRI-O with the following additional
+Linux capabilities: `audit_write`, `setfcap` and `mknod`.
+This measure ensures a transparent transition and seamless compatibility with workloads running
+on the previous {productname} versions and out-of-the-box Docker compatibility.
+
+In case you wish to use *unmodified CRI-O*,
+use the `--strict-cap-defaults` option during the initial setup when you run `skuba cluster init`,
+which will create the vanilla CRI-O configuration:
+
+[source,bash]
+skuba cluster init --strict-cap-defaults
+
+Please be aware that this might result in
+incompatibility with your previously running workloads,
+unless you explicitly define the additional Linux capabilities required
+on top of CRI-O defaults.
+
+[IMPORTANT]
+====
+After the bootstrap of the {kube} cluster there will be no easy
+way to revert this modification. Please choose wisely.
+====
+
+
 ==== Cluster configuration
 
-Before bootstrapping the cluster, it is advisable to perform some configuration.
+Before bootstrapping the cluster, it is advisable to perform some additional configuration.
 
 ===== Enabling cloud provider integration
 
