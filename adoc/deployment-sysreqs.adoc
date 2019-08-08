@@ -106,80 +106,67 @@ link:https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware
 
 ==== Ports
 
-[cols="2*.^,.^,.>"",options="header,autowidth"]
+[cols="3*.^,.^,.>"",options="header,autowidth"]
 |===
-|Node |Port |Accessibility |Description
+|Node |Port |Protocol | Accessibility |Description
 
-.3+|All nodes
+.8+|All nodes
 |22
+|TCP
 |Internal
 |SSH (required in public clouds)
 
-|10010
+|4240
+|TCP + ICMP
 |Internal
-|CRI-O stream port
+|Cilium health check
+
+|8472
+|UDP
+|Internal
+|Cilium VXLAN
+
+|10250
+|TCP
+|Internal
+|Kubelet (API server -> kubelet communication)
+
+|10256
+|TCP
+|Internal
+|kube-proxy health check
+
+|30000 - 32767
+|TCP + UDP
+|Internal
+|Range of ports used by Kubernetes when allocating services of type `NodePort`
 
 |32000
+|TCP
 |External
 |Dex (OIDC Connect)
 
-.7+|Masters
-|2379 - 2380
-|Internal
-|etcd (peer-to-peer traffic)
+|32001
+|TCP
+|External
+|Gangway (RBAC Authenticate)
 
-|6443 - 6444
+.5+|Masters
+|2379
+|TCP
+|Internal
+|etcd (client communication)
+
+|2380
+|TCP
+|Internal
+|etcd (server-to-server traffic)
+
+|6443
+|TCP
 |Internal / External
 |Kubernetes API server
 
-|8471 - 8472
-|Internal
-|VXLAN traffic (used by Cilium)
-
-|10250, 20255
-|Internal
-|Kubelet
-
-|10256
-|Internal
-|kube-proxy
-
-|32000
-|External
-|Dex (OIDC Connect)
-
-|32001
-|External
-|Gangway (RBAC Authenticate)
-
-.7+|Workers
-|2379 - 2380
-|Internal
-|etcd (peer-to-peer traffic)
-
-|4149
-|Internal
-|Kubelet
-
-|8471 - 8472
-|Internal
-|VXLAN traffic (used by Cilium)
-
-|10250
-|Internal
-|Kubelet
-
-|10256
-|Internal
-|kube-proxy
-
-|32000
-|External
-|Dex (OIDC Connect)
-
-|32001
-|External
-|Gangway (RBAC Authenticate)
 |===
 
 ==== IP Addresses
