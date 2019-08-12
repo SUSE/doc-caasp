@@ -51,12 +51,29 @@ This can be achieved using the `ssh -A` command. Please refer to the man page
 of ssh to learn about the security implications of using this feature.
 ====
 
+By default `skuba` connects to the nodes as `root` user. A different user can
+be specified by the following flags:
+
+----
+--sudo --user <username>
+----
+
+[IMPORTANT]
+====
+You must configure `sudo` for the user to be able authenticate without password.
+Replace `USERNAME` with the user you created during installation. As root, run:
+
+----
+echo "USERNAME ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+----
+====
+
 ==== Initializing the Cluster
 
-. Now you can initialize the cluster on the deployed machines.
+Now you can initialize the cluster on the deployed machines.
 As `--control-plane` enter the IP/FQDN of your load balancer.
 If you do not use a load balancer use your first master node.
-+
+
 ----
 skuba cluster init --control-plane <LB IP/FQDN> my-cluster
 ----
