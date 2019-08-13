@@ -58,8 +58,13 @@ rbd create -s SIZE YOUR_VOLUME
 +
 . Create a pod that uses the image by executing the command bellow.
  This example is the minimal configuration for using a RADOS Block Device.
- Fill in the IP addresses and ports of your monitor nodes.
- The default port number is *6789*.
+ Fill in the IP addresses and ports of your monitor nodes under `MONITOR_IP` and `MONITOR_PORT`.
+ The default port number is *6789*. Substitute
+ `POD_NAME` and `CONTAINER_NAME` for a {kube} container and pod name of your choice.
+ `IMAGE_NAME` is the name you decide to give your container image, for example "opensuse/leap".
+ `RBD_POOL` is the RBD pool name,
+ please refer to the RBD documentation on instructions how to create the RBD pool.
+ https://docs.ceph.com/docs/mimic/rbd/rados-rbd-cmds/#create-a-block-device-pool
 +
 
 ----
@@ -105,7 +110,8 @@ kubectl get pod
 
 ----
 kubectl exec -it CONTAINER_NAME -- df -k ...
-/dev/rbd1               999320      1284    929224   0% /mnt/rbdvol
+Filesystem             1K-block    Used    Available Used%   Mounted on
+/dev/rbd1              999320      1284    929224    0%      /mnt/rbdvol
 ...
 ----
 //TODO: Could you indicate what this output means?
