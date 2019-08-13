@@ -6,34 +6,65 @@ RBAC uses the `rbac.authorization.k8s.io` API group to drive authorization decis
 
 The authentication components are deployed with {productname} installation. Administrators can update LDAP identity providers before or after platform deployment.
 After your {productname} deployment, administrators can then use {kube} RBAC to design user or group authorization.
-Users can access with a web browser to do the authentication and self-configure `kubectl` to access authorized resources.
+Users can access with a web browser or command line to do the authentication and self-configure `kubectl` to access authorized resources.
 
 == Authentication Flow
 
-Authentication is composed of two open source libraries:
+Authentication is composed of:
 
-* link:https://github.com/dexidp/dex[Dex] is an identity provider service (idP) that uses link:https://openid.net/connect/[OIDC] (Open ID Connect) to drive authentication for client application. It acts as portal to defer authentication to provider through connected identity providers(connectors).
-* link:https://github.com/heptiolabs/gangway[Gangway], a client application that enables authentication flow for your {productname}. User can login, authorize access and self-configure `kubectl`.
+* *Dex* (https://github.com/dexidp/dex) is an identity provider service
+(idP) that uses OIDC (Open ID Connect: https://openid.net/connect/)
+to drive authentication for client application.
+It acts as a portal to defer authentication to provider through connected
+identity providers(connectors).
+* *Client*:
+  . Web browser: *Gangway* (https://github.com/heptiolabs/gangway):
+  a web application that enables authentication flow for your {productname}.
+  User can login, authorize access, download `kubeconfig` or self-configure `kubectl`.
+  . Command line: `skuba auth login`, a CLI application that enables authentication
+  flow for your {productname}. User can login, authorize access, and got `kubeconfig`.
 
-For RBAC, administrators can use `kubectl` to create corresponding `RoleBinding` or `ClusterRoleBinding` for a user or group to limit resource access.
+For RBAC, administrators can use `kubectl` to create corresponding
+`RoleBinding` or `ClusterRoleBinding` for a user or group to limit resource access.
 
-image::oidc_flow.png[]
-// Source: suse-rbac-oidc-flow.xml (open with http://draw.io/app)
+=== Web Flow
+image::oidc_flow_web.png[]
+// Source: suse-rbac-oidc-flow-web.xml (open with http://draw.io/app)
 
 . User requests access through Gangway.
 . Gangway redirects to Dex.
-. Dex redirects to connected identity provider (connector). User login and approve access request are generated.
-. Dex continues with OIDC authentication flow on behalf of the user and creates/updates data to {kube}  CRDs.
-. Dex redirects the user to Gangway. This redirect includes (ID/refresh) tokens.
-. Gangway returns `kubectl` self-configure instructions to the user.
+. Dex redirects to connected identity provider (connector).
+User login and a request to approve access are generated.
+. Dex continues with OIDC authentication flow on behalf of the user
+and creates/updates data to {kube} CRDs.
+. Dex redirects the user to Gangway.
+This redirect includes (ID/refresh) tokens.
+. Gangway returns a link to download `kubeconfig` or self-configures `kubectl`
+instructions to the user.
 +
 image::rbac-configure-kubectl.png[]
 
 
-. User self-configures `kubectl`.
-. The `kubectl` connects to {kube} API-server.
-. {kube} CRDs validate {kube} API-server request and return response.
-. The `kubectl` connects to authorized {kube} resources through {kube} API-server.
+. User downloads `kubeconf` or self-configures `kubectl`.
+. User uses `kubectl` to connect to the {kube} API server.
+. {kube} CRDs validate the {kube} API server request and return a response.
+. The `kubectl` connects to the authorized {kube} resources through the {kube} API server.
+
+=== CLI Flow
+image::oidc_flow_cli.png[]
+// Source: suse-rbac-oidc-flow-cli.xml (open with http://draw.io/app)
+
+. User requests access through `skuba auth login` with the Dex server URL,
+username and password.
+. Dex uses received username and password to login and approve the access
+request to the connected identity providers (connectors).
+. Dex continues with the OIDC authentication flow on behalf of the user and
+creates/updates data to the {kube} CRDs.
+. Dex responds the ID token and refresh token to `skuba auth login`.
+. `skuba auth login` generates the kubeconfig file `kubeconf.txt`.
+. User uses `kubectl` to connect the {kube} API server.
+. {kube} CRDs validate the {kube} API server request and returns a response.
+. The `kubectl` connects to the authorized {kube} resources through {kube} API server.
 
 == RBAC Operations
 
@@ -44,7 +75,8 @@ image::rbac-configure-kubectl.png[]
 Administrators can create {kube} `RoleBinding` or `ClusterRoleBinding` for users.
 This grants permission to users on the {kube} cluster like in the example below.
 
-Create a `RoleBinding` for `<USER-1>`, `<USER-2>`, and `<GROUP-1>` using the `ClusterRole` `admin`.
+In order to create a `RoleBinding` for `<USER-1>`, `<USER-2>`, and `<GROUP-1>`
+using the `ClusterRole` `admin` you would run the following:
 
 ----
 $ kubectl create rolebinding admin --clusterrole=admin --user=<USER-1> --user=<USER-2> --group=<GROUP-1>
@@ -52,13 +84,16 @@ $ kubectl create rolebinding admin --clusterrole=admin --user=<USER-1> --user=<U
 
 ==== Update The Authentication Connector
 
-Administrators can update the authentication connector settings after {productname} deployment as follows:
+Administrators can update the authentication connector settings after {productname}
+deployment as follows:
 
 . Open the `dex` configmap in `<cluster name>/addons/dex/dex.yaml`
-. Adapt ConfigMap by adding LDAP configuration to the connector section of config.yaml data. The detailed configurations for LDAP connector, refer to https://github.com/dexidp/dex/blob/v2.16.0/Documentation/connectors/ldap.md.
+. Adapt ConfigMap by adding LDAP configuration to the connector section of the `config.yaml` data.
+For detailed configuration of the LDAP connector, refer to Dex documentation:
+https://github.com/dexidp/dex/blob/v2.16.0/Documentation/connectors/ldap.md.
+The following is an *example LDAP connector:*
 +
 ====
-# Example LDAP connector
 
   connectors:
   - type: ldap
@@ -84,14 +119,16 @@ Administrators can update the authentication connector settings after {productna
         groupAttr: member
         nameAttr: cn
 ====
-. base64 encoded PEM file can be generated by
+. A base64 encoded PEM file can be generated by running:
++
 ----
 $ cat <root-ca-pem-file> | base64 | awk '{print}' ORS='' && echo
 ----
+Besides the LDAP connector you can also set up other connectors.
+For additional connectors, refer to the available connector configurations in the Dex repository:
+https://github.com/dexidp/dex/tree/v2.16.0/Documentation/connectors.
 +
-Besides the LDAP connector you can also setup other connectors.
-For additional connectors, refer to the available connector configurations in the Dex repository: https://github.com/dexidp/dex/tree/v2.16.0/Documentation/connectors.
-. Update Dex deployment.
+. Update Dex deployment:
 +
 ----
 kubectl replace --force -f <cluster-name>/addons/dex/dex.yaml
@@ -99,14 +136,21 @@ kubectl replace --force -f <cluster-name>/addons/dex/dex.yaml
 
 === User Access
 
-==== Setup `kubectl`
+==== Setting up `kubectl`
 
-. Go to the login page at `+https://<CONTROL-PLANE IP/FQDN>:32001/+` in your browser.
-. Click "login".
+===== Web
+
+. Go to the login page at `+https://<CONTROL-PLANE IP/FQDN>:32001+` in your browser.
+. Click "Sign In".
 . Choose the login method.
 . Enter the login credentials.
-. Approve the access request.
-. Self-configure `kubectl` with provided setup instruction.
+. Download `kubeconfig` or self-configure `kubectl` with the provided setup instructions.
+
+===== CLI
+
+. Use `skuba auth login` with Dex server URL `+https://<CONTROL-PLANE IP/FQDN>:32000+`,
+login username and password.
+. The kubeconfig `kubeconf.txt` generated locally.
 
 ==== Access {kube} Resources
 
@@ -137,7 +181,8 @@ kube-system   kube-proxy-xsdf4                     1/1     Running   0          
 kube-system   kube-scheduler-my-master             1/1     Running   13         46d
 ----
 
-If the user does not have the right permissions to access a resource, they will receive a `Forbidden` message.
+If the user does not have the right permissions to access a resource,
+they will receive a `Forbidden` message.
 
 ----
 Error from server (Forbidden): pods is forbidden
