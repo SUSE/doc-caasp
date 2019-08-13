@@ -96,9 +96,6 @@ spec:
       readOnly: false
 *EOF*
 ----
-//TODO: Where do I get the input for POD_NAME, CONTAINER_NAME and IMAGE_NAME?
-//Can I just input any names I like?
-//Where do i get information for RBD_POOL and the monitors and their ports?
 . Verify that the pod exists and check its status:
 +
 
@@ -114,11 +111,8 @@ Filesystem             1K-block    Used    Available Used%   Mounted on
 /dev/rbd1              999320      1284    929224    0%      /mnt/rbdvol
 ...
 ----
-//TODO: Could you indicate what this output means?
-//What are the numbers and what do they signify?
 
 In case you need to delete the pod, run the following command:
-//TODO: why would I need to delete the pod that I just created?
 ----
 kubectl delete pod POD_NAME
 ----
