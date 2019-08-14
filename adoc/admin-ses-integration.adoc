@@ -14,14 +14,16 @@ Before you start with integrating {ses}, you need to ensure the following:
 You can check this by running `rpm -q ceph-common` and `rpm -q xfsprogs`.
 * The {productname} cluster can communicate with all of the following {ses} nodes:
 master, monitoring nodes, OSD nodes and the metadata server (in case you need a shared file system).
-For more details refer to the {ses} documentation: https://www.suse.com/documentation/suse-enterprise-storage/.
+For more details refer to the {ses} documentation:
+https://www.suse.com/documentation/suse-enterprise-storage/.
 * The {ses} cluster has a pool with RADOS Block Device (RBD) enabled.
 
 
 == Using RBD in a Pod
 
 RBD, also known as the Ceph Block Device or RADOS Block Device,
-is software that facilitates the storage of block-based data in the open source Ceph distributed storage system.
+is software that facilitates the storage of block-based data in the open source
+Ceph distributed storage system.
 The procedure below describes steps to take when you need to use a RADOS Block Device in a pod.
 
 . Retrieve the Ceph admin secret.
@@ -129,7 +131,8 @@ You can get the key value using the following command:
 ceph auth get-key client.admin
 ----
 or directly from `/etc/ceph/ceph.client.admin.keyring`.
-. Apply the configuration that includes the Ceph secret by using `kubectl apply`. Replace `CEPH_SECRET` with your Ceph secret.
+. Apply the configuration that includes the Ceph secret by using `kubectl apply`.
+Replace `CEPH_SECRET` with your Ceph secret.
 +
 
 ----
@@ -267,7 +270,14 @@ The RBD is not deleted.
 The following procedure describes how to attach a pod to a RDB dynamic persistent volume.
 
 .Procedure: Creating a Pod with RBD in Dynamic Persistent Volume
-. Retrieve the Ceph admin secret. Get the key value using command ``ceph auth get-key client.admin`` or, from the file [path]``/etc/ceph/ceph.client.admin.keyring`` .
+. Retrieve the Ceph admin secret.
+You can get the key value using the following command:
++
+----
+ceph auth get-key client.admin
+----
+or directly from `/etc/ceph/ceph.client.admin.keyring`.
+. Retrieve the Ceph *admin* secret.
 . Apply the configuration that includes the Ceph secret by using `kubectl apply`. Replace `CEPH_SECRET` with your Ceph secret.
 +
 
@@ -287,12 +297,12 @@ data:
 +
 
 ----
-``ceph auth get-or-create client.user mon "allow r" osd "allow class-read object_prefix rbd_children, allow rwx pool=RBD_POOL" -o ceph.client.kube.keyring``
+ceph auth get-or-create client.user mon "allow r" osd "allow class-read object_prefix rbd_children, allow rwx pool=RBD_POOL" -o ceph.client.user.keyring
 ----
 +
 Replace `RBD_POOL` with the RBD pool name.
 
-. Retrieve the Ceph admin secret. Get the key value using command ``ceph auth get-key client.admin`` or, from the file [path]``/etc/ceph/ceph.client.admin.keyring`` .
+. Retrieve the Ceph *user* secret. Get the key value using command ``ceph auth get-key client.user`` or, from the file [path]``/etc/ceph/ceph.client.user.keyring`` .
 . Apply the configuration that includes the Ceph secret by using `kubectl apply`. Replace `CEPH_SECRET` with your Ceph secret.
 +
 
@@ -408,8 +418,10 @@ The RBD is not deleted.
 The procedure below describes steps to take when you need to use a CephFS in a Pod.
 
 .Procedure: Using CephFS In A Pod
-. Retrieve the Ceph admin secret. Get the key value using command ``ceph auth get-key client.admin`` or, from the file [path]``/etc/ceph/ceph.client.admin.keyring`` .
-. Apply the configuration that includes the Ceph secret by using `kubectl apply`. Replace `CEPH_SECRET` with your Ceph secret.
+. Retrieve the Ceph admin secret. Get the key value using command ``ceph auth get-key client.admin``
+or, from the file [path]``/etc/ceph/ceph.client.admin.keyring`` .
+. Apply the configuration that includes the Ceph secret by using `kubectl apply`.
+Replace `CEPH_SECRET` with your Ceph secret.
 +
 
 ----
@@ -423,7 +435,9 @@ data:
   key: "$(echo CEPH_SECRET | base64)"
 *EOF*
 ----
-. Create a pod that uses the image by executing the following command. In this example it is a minimal configuration for using a `CephFS` volume. Fill in the IP addresses and ports of your monitor nodes. The default port number is ``6789``.
+. Create a pod that uses the image by executing the following command.
+In this example it is a minimal configuration for using a `CephFS` volume.
+Fill in the IP addresses and ports of your monitor nodes. The default port number is ``6789``.
 +
 
 ----
