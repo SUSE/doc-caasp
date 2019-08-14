@@ -1857,7 +1857,7 @@ Name: cn
    <title>Configuring External OIDC connector</title>
    <step>
     <para>
-     Log in to &dashboard;
+     Log in to &dashboard;.
     </para>
    </step>
    <step>
@@ -1868,22 +1868,22 @@ Name: cn
    </step>
    <step>
     <para>
-     Click on <guimenu>Add OIDC connector</guimenu> to add a new connector.
+     Click <guimenu>Add OIDC connector</guimenu> to add a new connector.
     </para>
    </step>
    <step>
     <para>
-     Configure the connector.
+     Configure the connector by filling in all the empty fields.
     </para>
    </step>
    <step>
     <para>
-     Test the connector.
+     Test the connector by clicking <guimenu>Test Connection</guimenu>.
     </para>
    </step>
    <step>
     <para>
-     Save your connector settings.
+     Save your connector settings by clicking <guimenu>Save</guimenu>.
     </para>
    </step>
   </procedure>
@@ -1905,7 +1905,8 @@ Name: cn
      <term>Name</term>
      <listitem>
       <para>
-       Name shown to user when selecting a connector
+       Name shown to the user when selecting a connector.
+       Set this to a name of your choice.
       </para>
      </listitem>
     </varlistentry>
@@ -1913,7 +1914,7 @@ Name: cn
    <sect3>
     <title>Provider</title>
     <para>
-     Basic settings for the OIDC provider
+     The following are the basic settings for the OIDC provider.
     </para>
     <variablelist>
      <varlistentry>
@@ -1929,11 +1930,9 @@ Name: cn
          The <guimenu>Provider URL</guimenu> field must use an https URL using a
          host reachable from both the cluster and the user's workstation.
          Additionally, the TLS certificate used by the provider must be trusted
-         by the cluster before testing.  Use the section 1.6.2 obtaining and
+         by the cluster before testing. Use the section 1.6.2 obtaining and
          installing root certificates procedure to add the issuing CA's public
-         certificate before adding an OIDC provider.
-         https://www.suse.com/documentation/suse-caasp-3/book_caasp_admin/data/sec_admin_security_certs.html#sec_admin_security_certs_installing_rootca
-         <!-- TODO: this link should be fixed. :D -->
+         certificate before adding an OIDC provider. See <xref linkend="sec-admin-security-certs-installing-rootca"/>
         </para>
        </note>
       </listitem>
@@ -1942,13 +1941,14 @@ Name: cn
       <term>Negotiate client auth</term>
       <listitem>
        <para>
-        Normally this should be left as "enabled", so the client will negotiate
-        supported auth methods with the provider.  Some old OIDC providers do
+        This option should normally be left as <guimenu>Enabled</guimenu>, 
+        so the client will negotiate
+        supported auth methods with the provider. Some old OIDC providers do
         not properly negotiate auth methods.  While most common providers are
-        detected automatically, some might not be known.  Only set this to
-        "disabled" if your OIDC provider requires credentials to be sent via
-        POST, does not publish that per the specs, and fails the connection
-        test.  This setting is very rarely needed.
+        detected automatically, some might not be known. Only set this to
+        <guimenu>Disbled</guimenu> if your OIDC provider requires credentials 
+        to be sent via POST, does not publish that per the specs, and fails the 
+        connection test. This setting is very rarely needed.
        </para>
       </listitem>
      </varlistentry>
@@ -1965,7 +1965,7 @@ Name: cn
         This is the URL the cluster will provide to the OIDC provider as the
         callback location after authentication.  Many OIDC providers require
         this information in order to set up a new client.  This field is
-        read-only, but presented to assist in configuration.
+        read-only and displayed to assist in configuration.
        </para>
       </listitem>
      </varlistentry>
@@ -1983,7 +1983,7 @@ Name: cn
       <listitem>
        <para>
         Secret (sometimes called "password") associated with the relying party's
-        client ID 
+        client ID.
        </para>
       </listitem>
      </varlistentry>
