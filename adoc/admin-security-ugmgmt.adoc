@@ -5,7 +5,7 @@ To do so, install the `openldap2-client` package on a computer in your network
 and make sure that the computer can connect to the LDAP server
 (Ex: 389 Directory Server) on port `389` or secure port `636`.
 
-=== Adding a new organization unit
+== Adding a new organization unit
 
 . To add a new organization unit, create an LDIF file (`create_ou_groups.ldif`) like this:
 +
@@ -31,7 +31,7 @@ ROOT_PASSWORD=                                  # Admin Password
 ldapmodify -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D "<BIND_DN>" -f <LDIF_FILE> -w <ROOT_PASSWORD>
 ----
 
-=== Removing an organization unit
+== Removing an organization unit
 
 . To remove an organization unit, create an LDIF file (`delete_ou_groups.ldif`) like this:
 +
@@ -54,7 +54,7 @@ ROOT_PASSWORD=                                  # Admin Password
 ldapmodify -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D "<BIND_DN>" -f <LDIF_FILE> -w <ROOT_PASSWORD>
 ----
 
-=== Adding a new group to an organization unit
+== Adding a new group to an organization unit
 
 . To add a new group to an organization unit, create an LDIF file (`create_groups.ldif`) like this:
 +
@@ -83,7 +83,7 @@ ROOT_PASSWORD=                                  # Admin Password
 ldapmodify -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D "<BIND_DN>" -f <LDIF_FILE> -w <ROOT_PASSWORD>
 ----
 
-=== Removing a group from organization unit
+== Removing a group from organization unit
 
 . To remove a group from an organization unit, create an LDIF file (`delete_ou_groups.ldif`) like this:
 +
