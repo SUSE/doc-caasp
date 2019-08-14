@@ -79,7 +79,7 @@ so to install the Tiller container image run:
 kubectl create serviceaccount --namespace kube-system tiller
 kubectl create clusterrolebinding tiller --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
 
-helm init --tiller-image registry.suse.com/caasp/v4/helm-tiller:2.8.2 --service-account tiller
+helm init --tiller-image registry.suse.com/caasp/v4/helm-tiller:{helm_tiller_version} --service-account tiller
 ----
 
 ////
