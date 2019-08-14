@@ -4,7 +4,6 @@
 {productname} offers {ses} as a storage solution for its containers,
 this chapter describes the steps required for successful integration.
 
-
 == Prerequisites
 
 
@@ -18,8 +17,13 @@ For more details refer to the {ses} documentation:
 https://www.suse.com/documentation/suse-enterprise-storage/.
 * The {ses} cluster has a pool with RADOS Block Device (RBD) enabled.
 
+== Procedures according to type of integration
 
-== Using RBD in a Pod
+The steps will differ in small details depending on whether you are using RBD or
+CephFS and dynamic or static persistent volumes.
+
+
+=== RBD in a Pod
 
 RBD, also known as the Ceph Block Device or RADOS Block Device,
 is software that facilitates the storage of block-based data in the open source
@@ -119,7 +123,7 @@ In case you need to delete the pod, run the following command:
 kubectl delete pod POD_NAME
 ----
 
-== RBD with Static Persistent Volumes
+=== RBD with Static Persistent Volumes
 
 
 The following procedure describes how to attach a pod to an RDB static persistent volume:
@@ -213,7 +217,7 @@ In this case we specified any volume with a size of 2G or larger.
 When the claim is removed the recycling policy will be followed.
 +
 
-. Create a pod that uses the persistent volume claim.
+. Create a pod that uses the persistent volume claim:
 +
 
 ----
@@ -235,7 +239,7 @@ spec:
       claimName: PV_NAME
 *EOF*
 ----
-. Verify that the pod exists and its status.
+. Verify that the pod exists and its status:
 +
 
 ----
@@ -264,21 +268,20 @@ When you delete the pod, the persistent volume claim is deleted as well.
 The RBD is not deleted.
 ====
 
-== RBD with Dynamic Persistent Volumes
+=== RBD with Dynamic Persistent Volumes
 
 
-The following procedure describes how to attach a pod to a RDB dynamic persistent volume.
+The following procedure describes how to attach a pod to an RDB dynamic persistent volume.
 
-.Procedure: Creating a Pod with RBD in Dynamic Persistent Volume
-. Retrieve the Ceph admin secret.
+. Retrieve the Ceph *admin* secret.
 You can get the key value using the following command:
 +
 ----
 ceph auth get-key client.admin
 ----
 or directly from `/etc/ceph/ceph.client.admin.keyring`.
-. Retrieve the Ceph *admin* secret.
-. Apply the configuration that includes the Ceph secret by using `kubectl apply`. Replace `CEPH_SECRET` with your Ceph secret.
+. Apply the configuration that includes the Ceph secret by using `kubectl apply`.
+Replace `CEPH_SECRET` with your Ceph secret.
 +
 
 ----
@@ -297,13 +300,21 @@ data:
 +
 
 ----
-ceph auth get-or-create client.user mon "allow r" osd "allow class-read object_prefix rbd_children, allow rwx pool=RBD_POOL" -o ceph.client.user.keyring
+ceph auth get-or-create client.user mon "allow r" osd "allow class-read object_prefix rbd_children,
+allow rwx pool=RBD_POOL" -o ceph.client.user.keyring
 ----
 +
 Replace `RBD_POOL` with the RBD pool name.
 
-. Retrieve the Ceph *user* secret. Get the key value using command ``ceph auth get-key client.user`` or, from the file [path]``/etc/ceph/ceph.client.user.keyring`` .
-. Apply the configuration that includes the Ceph secret by using `kubectl apply`. Replace `CEPH_SECRET` with your Ceph secret.
+. For a dynamic persisten volume, you will also need a user key.
+Retrieve the Ceph *user* secret by running:
++
+----
+ceph auth get-key client.user
+----
+or directly from `/etc/ceph/ceph.client.user.keyring`
+. Apply the configuration that includes the Ceph secret by with the `kubectl apply` command,
+replacing `CEPH_SECRET` with your own Ceph secret.
 +
 
 ----
@@ -383,7 +394,7 @@ spec:
       claimName: PVC_NAME
 *EOF*
 ----
-. Verify that the pod exists and its status.
+. Verify that the pod exists and check its status.
 +
 
 ----
@@ -412,16 +423,23 @@ When you delete the pod, the persistent volume claim is deleted as well.
 The RBD is not deleted.
 ====
 
-== Using CephFS in a Pod
+=== Using CephFS in a Pod
 
 
 The procedure below describes steps to take when you need to use a CephFS in a Pod.
 
 .Procedure: Using CephFS In A Pod
-. Retrieve the Ceph admin secret. Get the key value using command ``ceph auth get-key client.admin``
-or, from the file [path]``/etc/ceph/ceph.client.admin.keyring`` .
-. Apply the configuration that includes the Ceph secret by using `kubectl apply`.
-Replace `CEPH_SECRET` with your Ceph secret.
+
+
+. Retrieve the Ceph admin secret.
+You can get the key value using the following command:
++
+----
+ceph auth get-key client.admin
+----
+or directly from `/etc/ceph/ceph.client.admin.keyring`.
+. Apply the configuration that includes the Ceph secret by running `kubectl apply`.
+Replace `CEPH_SECRET` with your own Ceph secret and run the following:
 +
 
 ----
@@ -429,14 +447,14 @@ kubectl apply -f - << *EOF*
 apiVersion: v1
 kind: Secret
 metadata:
-  name: ceph-secret-admin
+  name: ceph-secret
 type: "kubernetes.io/rbd"
 data:
   key: "$(echo CEPH_SECRET | base64)"
 *EOF*
 ----
 . Create a pod that uses the image by executing the following command.
-In this example it is a minimal configuration for using a `CephFS` volume.
+This example shows the minimal configuration for a `CephFS` volume.
 Fill in the IP addresses and ports of your monitor nodes. The default port number is ``6789``.
 +
 
@@ -466,7 +484,7 @@ spec:
       readOnly: false
 *EOF*
 ----
-. Verify that the pod exists and its status:
+. Verify that the pod exists and check its status:
 +
 
 ----
@@ -488,14 +506,20 @@ In case you need to delete the pod, run the following command:
 kubectl delete pod POD_NAME
 ----
 
-== CephFS with Static Persistent Volumes
+=== CephFS with Static Persistent Volumes
 
 
-The following procedure describes how to attach a pod to a CephFS static persistent volume.
+The following procedure describes how to attach a pod to a CephFS static persistent volume:
 
-.Procedure: Creating a Pod with CephFS as Persistent Volume
-. Retrieve the Ceph admin secret. Get the key value using command ``ceph auth get-key client.admin`` or, from the file [path]``/etc/ceph/ceph.client.admin.keyring`` .
-. Apply the configuration that includes the Ceph secret by using `kubectl apply`. Replace `CEPH_SECRET` with your Ceph secret.
+. Retrieve the Ceph admin secret.
+You can get the key value using the following command:
++
+----
+ceph auth get-key client.admin
+----
+or directly from `/etc/ceph/ceph.client.admin.keyring`.
+. Apply the configuration that includes the Ceph secret by running `kubectl apply`.
+Replace `CEPH_SECRET` with your own Ceph secret and run the following:
 +
 
 ----
@@ -582,7 +606,7 @@ spec:
 
 *EOF*
 ----
-. Verify that the pod exists and its status.
+. Verify that the pod exists and check its status.
 +
 
 ----
