@@ -4,7 +4,7 @@
   <!ENTITY % entities SYSTEM "entity-decl.ent">
     %entities;
 ]>
-<chapter version="5.1" xml:id="cha.admin.software"
+<chapter version="5.1" xml:id="cha-admin-software"
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -16,7 +16,7 @@
   </dm:docmanager>
  </info>
 
- <sect1 xml:id="sec.admin.software.transactional-updates">
+ <sect1 xml:id="sec-admin-software-transactional-updates">
   <title>Transactional Updates</title>
 
   <para>
@@ -72,7 +72,7 @@
     snapshot is used and changes might be lost. If you perform manual updates
     or installation on your nodes, please make sure to reboot after each
     transaction. Refer to:
-    <xref linkend="sec.admin.software.transactional-updates.installation.manual"/>.
+    <xref linkend="sec-admin-software-transactional-updates-installation-manual"/>.
    </para>
   </note>
 
@@ -85,7 +85,7 @@
    bring the services and nodes back up.
   </para>
 
-  <sect2 xml:id="sec.admin.software.transactional-updates.command">
+  <sect2 xml:id="sec-admin-software-transactional-updates-command">
    <title>The <command>transactional-update</command> Command</title>
    <important>
     <title>Only use when requested by SUSE Support</title>
@@ -261,7 +261,7 @@
    </variablelist>
   </sect2>
 
-  <sect2 xml:id="sec.admin.software.transactional-updates.disabling">
+  <sect2 xml:id="sec-admin-software-transactional-updates-disabling">
    <title>Disabling Transactional Updates</title>
    <para>
     Even though it is not recommended, you can disable transactional updates by
@@ -277,13 +277,13 @@
    </note>
   </sect2>
 
-  <sect2 xml:id="sec.admin.software.transactional-updates.installation">
+  <sect2 xml:id="sec-admin-software-transactional-updates-installation">
    <title>Applying Updates</title>
    <note>
     <title>Registering nodes</title>
     <para>
      In order to update nodes, you must first register them at &scc;, &smt;, or &rmt;. If you did not register during the installation, see 
-     <xref linkend="sec.configuration.suseconnect"/>
+     <xref linkend="sec-configuration-suseconnect"/>
      &mdash; &productname; &productnumber; Deployment Guide.
     </para>
    </note>
@@ -380,7 +380,7 @@
     </step>
    </procedure>
 
-   <sect3 xml:id="sec.admin.software.transactional-updates.installation.manual">
+   <sect3 xml:id="sec-admin-software-transactional-updates-installation-manual">
     <title>Applying Updates Manually</title>
     <para>
      You can use <command>transactional-update</command> to apply updates
@@ -399,14 +399,14 @@
    </sect3>
   </sect2>
 
-  <sect2 xml:id="sec.admin.software.transactional-updates.recovering">
+  <sect2 xml:id="sec-admin-software-transactional-updates-recovering">
    <title>Recovering From Failed Updates</title>
    <para>
     Velum notifies you about failed updates. If the update failed,
     there are several things that can be the cause. The following list
     provides an overview of things to check. For general information
     about troubleshooting, read <xref
-    linkend="sec.admin.troubleshooting.overview" />.
+    linkend="sec-admin-troubleshooting-overview" />.
    </para>
    <warning>
     <title>Do Not Interfere with Transactional Updates</title>
@@ -416,7 +416,7 @@
     </para>
     <para>
      For details, see <xref
-     linkend="sec.admin.software.transactional-updates.command" />.
+     linkend="sec-admin-software-transactional-updates-command" />.
     </para>
    </warning>
    <variablelist>
@@ -427,8 +427,8 @@
        Velum uses &salt; to stop all services and reboot the node. Salt
        also takes care of adjusting configuration. Check the logs of
        the &salt; master and minions for error messages. For details,
-       see <xref linkend="sec.admin.logging.salt.master" /> and <xref
-       linkend="sec.admin.logging.salt.minion" />.
+       see <xref linkend="sec-admin-logging-salt-master" /> and <xref
+       linkend="sec-admin-logging-salt-minion" />.
       </para>
      </listitem>
     </varlistentry>
@@ -503,7 +503,7 @@ salt-run -l debug state.orchestrate orch.update</command></screen>
   </sect2>
  </sect1>
 
- <sect1 xml:id="sec.admin.software.patch">
+ <sect1 xml:id="sec-admin-software-patch">
   <title>Program Temporary Fixes</title>
 
   <para>
@@ -538,7 +538,7 @@ salt-run -l debug state.orchestrate orch.update</command></screen>
  <screen>&prompt.root;<command>transactional-update reboot ptf remove <replaceable>RPM1 RPM2 &hellip;</replaceable></command></screen>
  </sect1>
 
- <sect1 xml:id="sec.admin.software.upgrade_caasp2">
+ <sect1 xml:id="sec-admin-software-upgrade-caasp2">
   <title>Upgrading From &productname; 2</title>
   <warning>
    <title>Read This Section Carefully</title>
@@ -552,7 +552,7 @@ salt-run -l debug state.orchestrate orch.update</command></screen>
    released. You are strongly advised to upgrade to a supported release. These
    upgrades may involve manual intervention.
   </para>
-  <procedure xml:id="pro.admin.upgrade.procedure">
+  <procedure xml:id="pro-admin-upgrade-procedure">
    <title>Overview of Upgrade Procedure</title>
    <step>
     <para>
@@ -571,30 +571,27 @@ salt-run -l debug state.orchestrate orch.update</command></screen>
    <step>
     <para>
      Install all updates for &productname; 2. For details, see <xref
-     linkend= "sec.admin.software.upgrade_caasp2.prereq" />
+     linkend="sec-admin-software-upgrade-caasp2-prereq" />
     </para>
    </step>
    <step>
     <para>
      Disable automatic updates during the upgrade procedure. For
-     details, see <xref linkend=
-     "sec.admin.software.upgrade_caasp2.timer" />.
+     details, see <xref linkend="sec-admin-software-upgrade-caasp2-timer" />.
     </para>
    </step>
    <step>
     <para>
-     Upgrade the nodes. For details, refer to <xref linkend=
-     "sec.admin.software.upgrade_caasp2.upgrade" />.
+     Upgrade the nodes. For details, refer to <xref linkend="sec-admin-software-upgrade-caasp2-upgrade" />.
     </para>
    </step>
    <step>
     <para>
-     Reboot all nodes. For details, refer to <xref linkend=
-     "sec.admin.software.upgrade_caasp2.reboot" />.
+     Reboot all nodes. For details, refer to <xref linkend="sec-admin-software-upgrade-caasp2-reboot" />.
     </para>
    </step>
   </procedure>
-  <sect2 xml:id="sec.admin.software.upgrade_caasp2.prereq">
+  <sect2 xml:id="sec-admin-software-upgrade-caasp2-prereq">
    <title>Install &productname; 2 Updates</title>
    <para>
     Before you start the upgrade procedure to &productname; v3, you must ensure
@@ -645,7 +642,7 @@ retcode:
    </para>
   </sect2>
 
-   <sect2 xml:id="sec.admin.software.upgrade_caasp2.timer">
+   <sect2 xml:id="sec-admin-software-upgrade-caasp2-timer">
     <title>Disable Automatic Updates</title>
     <para>
     To begin with the upgrade procedure, you first must disable the automatic
@@ -694,7 +691,7 @@ retcode:
     </screen>
   </sect2>
 
-   <sect2 xml:id="sec.admin.software.upgrade_caasp2.upgrade">
+   <sect2 xml:id="sec-admin-software-upgrade-caasp2-upgrade">
     <title>Upgrading to &productname; 3</title>
     <para>
      Run the update command across your nodes.
@@ -758,7 +755,7 @@ retcode:
     </para>
    </sect2>
 
-   <sect2 xml:id="sec.admin.software.upgrade_caasp2.reboot">
+   <sect2 xml:id="sec-admin-software-upgrade-caasp2-reboot">
     <title>Reboot Cluster Nodes</title>
     <para>
      To complete the procedure, you must reboot the cluster nodes. To do this
@@ -773,19 +770,19 @@ retcode:
      <step>
       <para>
        Update the Admin node as described in
-       <xref linkend="sec.admin.software.transactional-updates.installation" />.
+       <xref linkend="sec-admin-software-transactional-updates-installation" />.
       </para>
      </step>
      <step>
       <para>
        Update the remaining nodes as described in
-       <xref linkend="sec.admin.software.transactional-updates.installation" />.
+       <xref linkend="sec-admin-software-transactional-updates-installation" />.
       </para>
      </step>
     </procedure>
    </sect2>
 
-  <sect2 xml:id="sec.admin.software.upgrade_caasp2.troubleshooting">
+  <sect2 xml:id="sec-admin-software-upgrade-caasp2-troubleshooting">
    <title>Troubleshooting</title>
    <para>
     In case the upgrade fails, please perform the support data collection by
@@ -796,7 +793,7 @@ retcode:
   </sect2>
  </sect1>
 
- <sect1 xml:id="sec.admin.software.install">
+ <sect1 xml:id="sec-admin-software-install">
   <title>Additional Software Installation</title>
   <para>
    Once your cluster is ready, you may want to deploy additional software
@@ -805,7 +802,7 @@ retcode:
    manager.
   </para>
 
-  <sect2 xml:id="sec.admin.software.toolchain">
+  <sect2 xml:id="sec-admin-software-toolchain">
    <title>Building Kernel Modules</title>
    <para>
     Some vendors will only provide certain kernel drivers or modules as source.
@@ -903,13 +900,13 @@ retcode:
    </procedure>
   </sect2>
 
-  <sect2 xml:id="sec.admin.software.helm">
+  <sect2 xml:id="sec-admin-software-helm">
    <title>Deploying &helm; and &tiller;</title>
    <para>
     &helm; has two parts: &helm; is the client and &tiller; is the server component.
     &helm; runs on your remote workstation that has access to your cluster, and
     &tiller; is installed as a container on &productname; when you run &dashboard;
-    for the first time. (See <xref linkend="sec.deploy.nodes.admin_configuration"/>.)
+    for the first time. (See <xref linkend="sec-deploy-nodes-admin-configuration"/>.)
    </para>
 
    <para>
@@ -951,7 +948,7 @@ helm-2.6.1-1.6.x86_64
    </para>
   </sect2>
 
- <sect2 xml:id="sec.admin.software.helm.installing-heapster">
+ <sect2 xml:id="sec-admin-software-helm-installing-heapster">
   <title>Example: Installing heapster</title>
   <important>
    <para>
@@ -1004,7 +1001,7 @@ heapster-default  1  Fri Jun 29 10:48:45 2018  DEPLOYED  heapster-0.2.7  kube-sy
   </sect2>
  </sect1>
 
- <sect1 xml:id="installing.kube.dashboard">
+ <sect1 xml:id="installing-kube-dashboard">
   <title>Installing &kube; Dashboard</title>
 
   <important>
@@ -1034,7 +1031,7 @@ heapster-default  1  Fri Jun 29 10:48:45 2018  DEPLOYED  heapster-0.2.7  kube-sy
    <step>
     <para>
      If <literal>heapster</literal> is not installed, refer to
-     <xref linkend="sec.admin.software.helm.installing-heapster"/>.
+     <xref linkend="sec-admin-software-helm-installing-heapster"/>.
     </para>
    </step>
    <step>

@@ -4,7 +4,7 @@
   <!ENTITY % entities SYSTEM "entity-decl.ent">
     %entities;
 ]>
-<chapter version="5.1" xml:id="cha.admin.troubleshooting"
+<chapter version="5.1" xml:id="cha-admin-troubleshooting"
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -22,7 +22,7 @@
   </abstract>
  </info>
 
- <sect1 xml:id="sec.admin.troubleshooting.overview">
+ <sect1 xml:id="sec-admin-troubleshooting-overview">
   <title>Overview</title>
   <para>
    This chapter is a collection of frequent problems that are reported
@@ -47,7 +47,7 @@
    While resolving a technical difficulty with SUSE Support, you may
    receive a so-called Program Temporary Fix (PTF). PTFs may be issued
    for various packages as RPMs. For details about handling PTFs, see
-   <xref linkend="sec.admin.software.patch" />.
+   <xref linkend="sec-admin-software-patch" />.
   </para>
   <para>
    For details about how to contact &suse; support, refer to <link
@@ -58,7 +58,7 @@
  </sect1>
 
 
- <sect1 xml:id="sec.admin.troubleshooting.node_acceptance">
+ <sect1 xml:id="sec-admin-troubleshooting-node-acceptance">
   <title>New Nodes Not Showing In &dashboard;</title>
   <para>
    All &productname; nodes must have a <filename>/etc/salt/minion.d/master.conf</filename>
@@ -175,11 +175,11 @@ entrypoint.sh bundle exec rails runner \
  </sect2>
  </sect1>
 
- <sect1 xml:id="sec.admin.troubleshooting.failed_bootstrap">
+ <sect1 xml:id="sec-admin-troubleshooting-failed-bootstrap">
   <title>Debugging Failed Bootstrap</title>
   <para>
    If the bootstrapping as described in <xref
-   linkend="sec.deploy.install.bootstrap" /> fails, there are several
+   linkend="sec-deploy-install-bootstrap" /> fails, there are several
    places to look for errors. The following procedure outlines where to
    start debugging.
   </para>
@@ -247,15 +247,15 @@ entrypoint.sh bundle exec rails runner \
   </procedure>
  </sect1>
 
- <sect1 xml:id="sec.admin.troubleshooting.failed_update">
+ <sect1 xml:id="sec-admin-troubleshooting-failed-update">
   <title>Recovering From Failed Update</title>
   <para>
    See <xref
-   linkend="sec.admin.software.transactional-updates.recovering" />.
+   linkend="sec-admin-software-transactional-updates-recovering" />.
   </para>
  </sect1>
 
- <sect1 xml:id="sec.admin.troubleshooting.etcd">
+ <sect1 xml:id="sec-admin-troubleshooting-etcd">
   <title>Checking <literal>etcd</literal> Health</title>
   <para>
    To work with <command>etcdctl</command>, you have to pass parameters
@@ -271,7 +271,7 @@ entrypoint.sh bundle exec rails runner \
 &prompt.root;<command>etcdctl cluster-health</command></screen>
  </sect1>
 
- <sect1 xml:id="sec.admin.troubleshooting.velum_ptf">
+ <sect1 xml:id="sec-admin-troubleshooting-velum-ptf">
   <title>Locking Installed Program Temporary Fixes</title>
   <para>
    It can happen that <command>zypper</command> removes an installed
@@ -315,7 +315,7 @@ entrypoint.sh bundle exec rails runner \
   </procedure>
  </sect1>
 
- <sect1 xml:id="sec.admin.troubleshooting.network_planning">
+ <sect1 xml:id="sec-admin-troubleshooting-network-planning">
   <title>Network Planning And Reconfiguration</title>
   <para>
    It is not possible to reconfigure the used IP ranges of &productname;
@@ -324,11 +324,11 @@ entrypoint.sh bundle exec rails runner \
   </para>
   <para>
    Additionally, keep the network requirements in mind, as stated in
-   <xref linkend="sec.deploy.requirements.network" />.
+   <xref linkend="sec-deploy-requirements-network" />.
   </para>
  </sect1>
 
- <sect1 xml:id="sec.admin.troubleshooting.proxy">
+ <sect1 xml:id="sec-admin-troubleshooting-proxy">
   <title>Using A Proxy Server With Authentication</title>
   <para>
    If you need to register the &admin_node; with &scc; over a proxy
@@ -338,11 +338,11 @@ entrypoint.sh bundle exec rails runner \
   <para>
    For information about setting authentication credentials and
    connecting to &scc; with <command>SUSEConnect</command>, see <xref
-   linkend="sec.configuration.suseconnect.proxy" />.
+   linkend="sec-configuration-suseconnect-proxy" />.
   </para>
  </sect1>
 
- <sect1 xml:id="sec.admin.troubleshooting.replace_certificates">
+ <sect1 xml:id="sec-admin-troubleshooting-replace-certificates">
   <title>Replacing TLS/SSL Certificates</title>
   <para>
    Sometimes certificates are not updated properly because they are
@@ -440,7 +440,7 @@ entrypoint.sh bundle exec rails runner \
    </step>
   </procedure>
  </sect1>
- <sect1 xml:id="sec.admin.troubleshooting.add_ca_cert">
+ <sect1 xml:id="sec-admin-troubleshooting-add-ca-cert">
   <title>Fixing <quote>x509: certificate signed by unknown authority</quote></title>
   <para>
    When interacting with &kube; you can run into the situation where your
@@ -459,15 +459,15 @@ entrypoint.sh bundle exec rails runner \
   </para>
   <para>
    For details about installing the root CA certificate, see <xref
-   linkend="sec.admin.security.certs.installing_rootca" />.
+   linkend="sec-admin-security-certs-installing-rootca" />.
   </para>
  </sect1>
- <sect1 xml:id="sec.admin.troubleshooting.lost_node">
+ <sect1 xml:id="sec-admin-troubleshooting-lost-node">
   <title>Replacing a Lost Node</title>
   <para>
    If your cluster loses a node, for example due to failed hardware,
-   remove the node as explained in <xref linkend="sec.admin.nodes.remove" />.
-   Then add a new node as described in <xref linkend="sec.admin.nodes.add" />.
+   remove the node as explained in <xref linkend="sec-admin-nodes-remove" />.
+   Then add a new node as described in <xref linkend="sec-admin-nodes-add" />.
   </para>
  </sect1>
 </chapter>

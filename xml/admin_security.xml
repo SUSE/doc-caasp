@@ -4,7 +4,7 @@
   <!ENTITY % entities SYSTEM "entity-decl.ent">
     %entities;
 ]>
-<chapter version="5.1" xml:id="cha.admin.security"
+<chapter version="5.1" xml:id="cha-admin-security"
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -22,7 +22,7 @@
    </para>
   </abstract>
  </info>
- <sect1 xml:id="sec.admin.security.auth.kubeconfig">
+ <sect1 xml:id="sec-admin-security-auth-kubeconfig">
   <title>Access Control Overview</title>
   <para>
    &productname; provides role-based access control (RBAC) to perform
@@ -42,7 +42,7 @@
       connects to an LDAP server to look up user information. To
       authenticate against the cluster, the
       <filename>kubeconfig</filename> file is used. For details, refer
-      to <xref linkend="sec.admin.kubernetes.install-kubectl" />.
+      to <xref linkend="sec-admin-kubernetes-install-kubectl" />.
      </para>
     </listitem>
    </varlistentry>
@@ -54,10 +54,9 @@
       (<emphasis>RBAC</emphasis>). For &kube;, RBAC defines which
       subjects can do which operations on API resources. Groups and
       users, called <emphasis>subjects</emphasis> in &kube;, are
-      managed with LDAP. For details, refer to <xref linkend=
-      "sec.admin.security.users" />. To define which operations, called
+      managed with LDAP. For details, refer to <xref linkend="sec-admin-security-users" />. To define which operations, called
       <emphasis>verbs</emphasis> in &kube;, are allowed for subjects,
-      refer to <xref linkend="sec.admin.security.role" />.
+      refer to <xref linkend="sec-admin-security-role" />.
      </para>
     </listitem>
    </varlistentry>
@@ -81,7 +80,7 @@
   </para>
  </sect1>
 
- <sect1 xml:id="sec.admin.security.admin">
+ <sect1 xml:id="sec-admin-security-admin">
   <title>Administrator Accounts</title>
   <para>
    By default there are two administrator accounts added to openLDAP:
@@ -128,7 +127,7 @@ c88a9c67056a74e0357befdff93f87bbe0904214
    </varlistentry>
    </variablelist>
 
-  <sect2 xml:id="sec.admin.security.admin.ldap_password">
+  <sect2 xml:id="sec-admin-security-admin-ldap-password">
    <title>Changing openLDAP Admin User Password</title>
    <procedure>
     <title>Changing openLDAP Admin User Password</title>
@@ -161,7 +160,7 @@ c88a9c67056a74e0357befdff93f87bbe0904214
    </procedure>
   </sect2>
 
-  <sect2 xml:id="sec.admin.security.admin.velum_admin_password">
+  <sect2 xml:id="sec-admin-security-admin-velum-admin-password">
    <title>Changing &dashboard; Admin Password</title>
    <para>
     Changing the &dashboard; admin password must be done in the openLDAP
@@ -220,7 +219,7 @@ $UNAME -s <replaceable>new_password</replaceable></command>
  </sect2>
  </sect1>
 
- <sect1 xml:id="sec.admin.security.ldap_preparation">
+ <sect1 xml:id="sec-admin-security-ldap-preparation">
   <title>Preparing LDAP Authentication</title>
   <para>
    To perform administrative tasks from a
@@ -258,7 +257,7 @@ cat /etc/openldap/pki/ca.crt > ~/ca.pem</command>
   </procedure>
  </sect1>
 
- <sect1 xml:id="sec.admin.security.users">
+ <sect1 xml:id="sec-admin-security-users">
   <title>Managing Users and Groups</title>
   <para>
    User information is stored in <phrase role="productname">OpenLDAP</phrase>
@@ -269,7 +268,7 @@ cat /etc/openldap/pki/ca.crt > ~/ca.pem</command>
    <literal>389</literal>.
   </para>
 
-  <sect2 xml:id="sec.admin.security.users.add">
+  <sect2 xml:id="sec-admin-security-users-add">
    <title>Adding New User</title>
    <para>
     By default, when you create the first user in &dashboard; during bootstrap
@@ -282,46 +281,46 @@ cat /etc/openldap/pki/ca.crt > ~/ca.pem</command>
      <para>
       To add a new user, create a LDIF file like this:
      </para>
-     <example xml:id="ex.admin.security.users.add">
+     <example xml:id="ex-admin-security-users-add">
       <title>LDIF File For a New User</title>
-<screen>dn: uid=<replaceable>USERID</replaceable><co xml:id="co.admin.security.users.add.uid"/>,ou=People,dc=infra,dc=caasp,dc=local
+<screen>dn: uid=<replaceable>USERID</replaceable><co xml:id="co-admin-security-users-add-uid"/>,ou=People,dc=infra,dc=caasp,dc=local
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: top
-uid: <replaceable>USERID</replaceable> <xref linkend="co.admin.security.users.add.uid" xrefstyle="select:label nopage"/>
-userPassword: <replaceable>PASSWORD_HASH</replaceable> <co xml:id="co.admin.security.users.add.password"/>
-givenname: <replaceable>FIRST_NAME</replaceable> <co xml:id="co.admin.security.users.add.firstname"/>
-sn: <replaceable>SURNAME</replaceable> <co xml:id="co.admin.security.users.add.surname"/>
-cn: <replaceable>FULL_NAME</replaceable> <co xml:id="co.admin.security.users.add.fullname"/>
-mail: <replaceable>E-MAIL_ADDRESS</replaceable> <co xml:id="co.admin.security.users.add.email"/></screen>
+uid: <replaceable>USERID</replaceable> <xref linkend="co-admin-security-users-add-uid" xrefstyle="select:label nopage"/>
+userPassword: <replaceable>PASSWORD_HASH</replaceable> <co xml:id="co-admin-security-users-add-password"/>
+givenname: <replaceable>FIRST_NAME</replaceable> <co xml:id="co-admin-security-users-add-firstname"/>
+sn: <replaceable>SURNAME</replaceable> <co xml:id="co-admin-security-users-add-surname"/>
+cn: <replaceable>FULL_NAME</replaceable> <co xml:id="co-admin-security-users-add-fullname"/>
+mail: <replaceable>E-MAIL_ADDRESS</replaceable> <co xml:id="co-admin-security-users-add-email"/></screen>
       <calloutlist>
-       <callout arearefs="co.admin.security.users.add.uid">
+       <callout arearefs="co-admin-security-users-add-uid">
         <para>
          User ID (UID) of the new user. Needs to be unique.
         </para>
        </callout>
-       <callout arearefs="co.admin.security.users.add.password">
+       <callout arearefs="co-admin-security-users-add-password">
         <para>
          The user's hashed password. Use <command>/usr/sbin/slappasswd</command>
          to generate the hash.
         </para>
        </callout>
-       <callout arearefs="co.admin.security.users.add.firstname">
+       <callout arearefs="co-admin-security-users-add-firstname">
         <para>
          The user's first name
         </para>
        </callout>
-       <callout arearefs="co.admin.security.users.add.surname">
+       <callout arearefs="co-admin-security-users-add-surname">
         <para>
          The user's last name
         </para>
        </callout>
-       <callout arearefs="co.admin.security.users.add.fullname">
+       <callout arearefs="co-admin-security-users-add-fullname">
         <para>
          The user's full name
         </para>
        </callout>
-       <callout arearefs="co.admin.security.users.add.email">
+       <callout arearefs="co-admin-security-users-add-email">
         <para>
          The user's e-mail address. It is used as the login name to &dashboard;
          and &kube;.
@@ -351,7 +350,7 @@ mail: <replaceable>E-MAIL_ADDRESS</replaceable> <co xml:id="co.admin.security.us
     -b uid=<replaceable>USERID</replaceable>,ou=People,dc=infra,dc=caasp,dc=local</command></screen>
   </sect2>
 
-  <sect2 xml:id="sec.admin.security.users.change.group">
+  <sect2 xml:id="sec-admin-security-users-change-group">
    <title>Changing User</title>
    <para>
     The following procedure details how to modify a user in the
@@ -365,19 +364,19 @@ mail: <replaceable>E-MAIL_ADDRESS</replaceable> <co xml:id="co.admin.security.us
      <para>
       Create a LDIF file that contains the change to the LDAP directory.
      </para>
-     <example xml:id="ex.admin.security.users.change_password">
+     <example xml:id="ex-admin-security-users-change-password">
       <title>Change User Password</title>
-<screen>dn: uid=<replaceable>USERID</replaceable><co xml:id="co.admin.security.users.change-pw.uid"/>,ou=People,dc=infra,dc=caasp,dc=local
+<screen>dn: uid=<replaceable>USERID</replaceable><co xml:id="co-admin-security-users-change-pw-uid"/>,ou=People,dc=infra,dc=caasp,dc=local
 changetype: modify
 replace: userPassword
-userPassword: <replaceable>PASSWORD</replaceable><co xml:id="co.admin.security.users.change-pw.password"/></screen>
+userPassword: <replaceable>PASSWORD</replaceable><co xml:id="co-admin-security-users-change-pw-password"/></screen>
       <calloutlist>
-       <callout arearefs="co.admin.security.users.change-pw.uid">
+       <callout arearefs="co-admin-security-users-change-pw-uid">
         <para>
          <replaceable>USERID</replaceable> with the user's ID.
         </para>
        </callout>
-       <callout arearefs="co.admin.security.users.change-pw.password">
+       <callout arearefs="co-admin-security-users-change-pw-password">
         <para>
          <replaceable>PASSWORD</replaceable> with the user's new hashed
          password. Use <command>/usr/sbin/slappasswd</command> to
@@ -386,14 +385,14 @@ userPassword: <replaceable>PASSWORD</replaceable><co xml:id="co.admin.security.u
        </callout>
       </calloutlist>
      </example>
-     <example xml:id="ex.admin.security.users.change_group">
+     <example xml:id="ex-admin-security-users-change-group">
       <title>Add User to Administrators Group</title>
 <screen>dn: cn=Administrators,ou=Groups,dc=infra,dc=caasp,dc=local
 changetype: modify
 add: uniqueMember
-uniqueMember: uid=<replaceable>USERID</replaceable><co xml:id="co.admin.security.users.add.admin"/>,ou=People,dc=infra,dc=caasp,dc=local</screen>
+uniqueMember: uid=<replaceable>USERID</replaceable><co xml:id="co-admin-security-users-add-admin"/>,ou=People,dc=infra,dc=caasp,dc=local</screen>
       <calloutlist>
-       <callout arearefs="co.admin.security.users.add.admin">
+       <callout arearefs="co-admin-security-users-add-admin">
         <para>
          <replaceable>USERID</replaceable> with the user's ID.
         </para>
@@ -411,7 +410,7 @@ uniqueMember: uid=<replaceable>USERID</replaceable><co xml:id="co.admin.security
    </procedure>
   </sect2>
 
-  <sect2 xml:id="sec.admin.security.users.delete">
+  <sect2 xml:id="sec-admin-security-users-delete">
    <title>Deleting User</title>
     <para>
      The following procedure details how to delete a user from the
@@ -436,12 +435,11 @@ changetype: delete</screen>
     </procedure>
   </sect2>
 
-  <sect2 xml:id="sec.admin.security.groups">
+  <sect2 xml:id="sec-admin-security-groups">
    <title>Adding New Group</title>
    <para>
     To grant users access to manage a single namespace in &kube;, first
-    create your users as mentioned in <xref linkend=
-    "sec.admin.security.users.add"/>. Then execute the following
+    create your users as mentioned in <xref linkend="sec-admin-security-users-add"/>. Then execute the following
     procedure.
    </para>
    <procedure>
@@ -449,22 +447,22 @@ changetype: delete</screen>
      <para>
        Create a LDIF file for a new group:
      </para>
-     <example xml:id="ex.admin.security.groups">
+     <example xml:id="ex-admin-security-groups">
       <title>LDIF File to Add a New Group</title>
-<screen>dn: cn=<replaceable>group name</replaceable><co xml:id="co.admin.security.groups.cn"/>,ou=Groups,dc=infra,dc=caasp,dc=local
+<screen>dn: cn=<replaceable>group name</replaceable><co xml:id="co-admin-security-groups-cn"/>,ou=Groups,dc=infra,dc=caasp,dc=local
 objectclass: top
 objectclass: groupOfUniqueNames
-cn: <replaceable>group name</replaceable><xref linkend="co.admin.security.groups.cn" xrefstyle="select:label nopage"/>
-uniqueMember: uid=<replaceable>member1</replaceable>,<co xml:id="co.admin.security.groups.member"/>ou=People,dc=infra,dc=caasp,dc=local
-uniqueMember: uid=<replaceable>member2</replaceable>,<xref linkend="co.admin.security.groups.member" xrefstyle="select:label nopage"/>ou=People,dc=infra,dc=caasp,dc=local
-uniqueMember: uid=<replaceable>member3</replaceable>,<xref linkend="co.admin.security.groups.member" xrefstyle="select:label nopage"/>ou=People,dc=infra,dc=caasp,dc=local</screen>
+cn: <replaceable>group name</replaceable><xref linkend="co-admin-security-groups-cn" xrefstyle="select:label nopage"/>
+uniqueMember: uid=<replaceable>member1</replaceable>,<co xml:id="co-admin-security-groups-member"/>ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=<replaceable>member2</replaceable>,<xref linkend="co-admin-security-groups-member" xrefstyle="select:label nopage"/>ou=People,dc=infra,dc=caasp,dc=local
+uniqueMember: uid=<replaceable>member3</replaceable>,<xref linkend="co-admin-security-groups-member" xrefstyle="select:label nopage"/>ou=People,dc=infra,dc=caasp,dc=local</screen>
       <calloutlist>
-       <callout arearefs="co.admin.security.groups.cn">
+       <callout arearefs="co-admin-security-groups-cn">
         <para>
          The group's name.
         </para>
        </callout>
-       <callout arearefs="co.admin.security.groups.member">
+       <callout arearefs="co-admin-security-groups-member">
         <para>
          Members of the group. Repeat the <literal>uniqueMember</literal>
          attribute for every member of this group.
@@ -484,7 +482,7 @@ uniqueMember: uid=<replaceable>member3</replaceable>,<xref linkend="co.admin.sec
    </procedure>
   </sect2>
  </sect1>
- <sect1 xml:id="sec.admin.security.role">
+ <sect1 xml:id="sec-admin-security-role">
   <title>Role Management</title>
   <para>
    &productname; uses <emphasis>role-based access control</emphasis>
@@ -495,7 +493,7 @@ uniqueMember: uid=<replaceable>member3</replaceable>,<xref linkend="co.admin.sec
    overview of resources, verbs and how to create roles. Roles can
    then be assigned to users and groups.
   </para>
-  <sect2 xml:id="sec.admin.security.role.verb">
+  <sect2 xml:id="sec-admin-security-role-verb">
    <title>List of Verbs</title>
    <para>
     This section provides an overview of the most common
@@ -578,7 +576,7 @@ uniqueMember: uid=<replaceable>member3</replaceable>,<xref linkend="co.admin.sec
     </varlistentry>
    </variablelist>
   </sect2>
-  <sect2 xml:id="sec.admin.security.role.resource">
+  <sect2 xml:id="sec-admin-security-role-resource">
    <title>List of Resources</title>
    <para>
     This section provides an overview of the most common
@@ -727,7 +725,7 @@ uniqueMember: uid=<replaceable>member3</replaceable>,<xref linkend="co.admin.sec
     </varlistentry>
    </variablelist>
   </sect2>
-  <sect2 xml:id="sec.admin.security.role.create">
+  <sect2 xml:id="sec-admin-security-role-create">
    <title>Create Role</title>
    <para>
     Roles are defined in YAML files. To apply role definitions to
@@ -745,41 +743,41 @@ uniqueMember: uid=<replaceable>member3</replaceable>,<xref linkend="co.admin.sec
     <screen>kind: Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: view-pods<co xml:id="co.admin.security.role.example1.name"/>
-  namespace: default<co xml:id="co.admin.security.role.example1.namespace"/>
+  name: view-pods<co xml:id="co-admin-security-role-example1-name"/>
+  namespace: default<co xml:id="co-admin-security-role-example1-namespace"/>
 rules:
-- apiGroups: [""]<co xml:id="co.admin.security.role.example1.apigroups"/>
-  resources: ["pods"]<co xml:id="co.admin.security.role.example1.resources"/>
-  verbs: ["get", "watch", "list"]<co xml:id="co.admin.security.role.example1.verbs"/></screen>
+- apiGroups: [""]<co xml:id="co-admin-security-role-example1-apigroups"/>
+  resources: ["pods"]<co xml:id="co-admin-security-role-example1-resources"/>
+  verbs: ["get", "watch", "list"]<co xml:id="co-admin-security-role-example1-verbs"/></screen>
     <calloutlist>
-       <callout arearefs="co.admin.security.role.example1.name">
+       <callout arearefs="co-admin-security-role-example1-name">
         <para>
          Name of the role. This is required to associate the rule with
-         a group or user. For details, refer to <xref linkend="sec.admin.security.role.create_binding" />.
+         a group or user. For details, refer to <xref linkend="sec-admin-security-role-create-binding" />.
         </para>
        </callout>
-       <callout arearefs="co.admin.security.role.example1.namespace">
+       <callout arearefs="co-admin-security-role-example1-namespace">
         <para>
          Namespace the new group should be allowed to access. Use
          <literal>default</literal> for &kube;' default namespace.
         </para>
        </callout>
-       <callout arearefs="co.admin.security.role.example1.apigroups">
+       <callout arearefs="co-admin-security-role-example1-apigroups">
         <para>
          &kube; API groups. Use <literal>""</literal> for the core group
          <literal>rbac.authorization.k8s.io</literal>.
         </para>
        </callout>
-       <callout arearefs="co.admin.security.role.example1.resources">
+       <callout arearefs="co-admin-security-role-example1-resources">
         <para>
          &kube; resources. For a list of available resources, refer to
-         <xref linkend="sec.admin.security.role.resource" />.
+         <xref linkend="sec-admin-security-role-resource" />.
         </para>
        </callout>
-       <callout arearefs="co.admin.security.role.example1.verbs">
+       <callout arearefs="co-admin-security-role-example1-verbs">
         <para>
          &kube; verbs. For a list of available verbs, refer to
-         <xref linkend="sec.admin.security.role.verb" />.
+         <xref linkend="sec-admin-security-role-verb" />.
         </para>
        </callout>
     </calloutlist>
@@ -794,40 +792,40 @@ rules:
     <screen>kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: admin-create-pods<co xml:id="co.admin.security.role.example2.name"/>
+  name: admin-create-pods<co xml:id="co-admin-security-role-example2-name"/>
 rules:
-- apiGroups: [""]<co xml:id="co.admin.security.role.example2.apigroups"/>
-  resources: ["pods"]<co xml:id="co.admin.security.role.example2.resources"/>
-  verbs: ["create"]<co xml:id="co.admin.security.role.example2.verbs"/></screen>
+- apiGroups: [""]<co xml:id="co-admin-security-role-example2-apigroups"/>
+  resources: ["pods"]<co xml:id="co-admin-security-role-example2-resources"/>
+  verbs: ["create"]<co xml:id="co-admin-security-role-example2-verbs"/></screen>
     <calloutlist>
-       <callout arearefs="co.admin.security.role.example2.name">
+       <callout arearefs="co-admin-security-role-example2-name">
         <para>
          Name of the role. This is required to associate the rule with
-         a group or user. For details, refer to <xref linkend="sec.admin.security.role.create_binding" />.
+         a group or user. For details, refer to <xref linkend="sec-admin-security-role-create-binding" />.
         </para>
        </callout>
-       <callout arearefs="co.admin.security.role.example2.apigroups">
+       <callout arearefs="co-admin-security-role-example2-apigroups">
         <para>
          &kube; API groups. Use <literal>""</literal> for the core group
          <literal>rbac.authorization.k8s.io</literal>.
         </para>
        </callout>
-       <callout arearefs="co.admin.security.role.example2.resources">
+       <callout arearefs="co-admin-security-role-example2-resources">
         <para>
          &kube; resources. For a list of available resources, refer to
-         <xref linkend="sec.admin.security.role.resource" />.
+         <xref linkend="sec-admin-security-role-resource" />.
         </para>
        </callout>
-       <callout arearefs="co.admin.security.role.example2.verbs">
+       <callout arearefs="co-admin-security-role-example2-verbs">
         <para>
          &kube; verbs. For a list of available verbs, refer to
-         <xref linkend="sec.admin.security.role.verb" />.
+         <xref linkend="sec-admin-security-role-verb" />.
         </para>
        </callout>
     </calloutlist>
    </example>
   </sect2>
-  <sect2 xml:id="sec.admin.security.role.create_binding">
+  <sect2 xml:id="sec-admin-security-role-create-binding">
    <title>Create Role Bindings</title>
    <para>
     To bind a group or user to a rule, create a YAML file that contains
@@ -837,7 +835,7 @@ rules:
     examples provide an overview about different use cases of role
     bindings.
    </para>
-   <example xml:id="ex.admin.security.groups.role">
+   <example xml:id="ex-admin-security-groups-role">
     <title>Binding a Group to a Role</title>
     <para>
      This example shows how to bind a group to a defined role.
@@ -845,38 +843,37 @@ rules:
 <screen>kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: <replaceable>ROLE_BINDING_NAME</replaceable><co xml:id="co.admin.security.groups.role-binding-name"/>
-  namespace: <replaceable>NAMESPACE</replaceable><co xml:id="co.admin.security.groups.role-namespace"/>
+  name: <replaceable>ROLE_BINDING_NAME</replaceable><co xml:id="co-admin-security-groups-role-binding-name"/>
+  namespace: <replaceable>NAMESPACE</replaceable><co xml:id="co-admin-security-groups-role-namespace"/>
 subjects:
 - kind: Group
-  name: <replaceable>LDAP_GROUP_NAME</replaceable><co xml:id="co.admin.security.groups.ldap-group-name"/>
+  name: <replaceable>LDAP_GROUP_NAME</replaceable><co xml:id="co-admin-security-groups-ldap-group-name"/>
   apiGroup: rbac.authorization.k8s.io
 roleRef:
 - kind: Role
-  name: <replaceable>ROLE_NAME</replaceable><co xml:id="co.admin.security.groups.role-name"/>
+  name: <replaceable>ROLE_NAME</replaceable><co xml:id="co-admin-security-groups-role-name"/>
   apiGroup: rbac.authorization.k8s.io</screen>
     <calloutlist>
-     <callout arearefs="co.admin.security.groups.role-binding-name">
+     <callout arearefs="co-admin-security-groups-role-binding-name">
       <para>
        Defines a name for this new role binding.
       </para>
      </callout>
-     <callout arearefs="co.admin.security.groups.role-namespace">
+     <callout arearefs="co-admin-security-groups-role-namespace">
       <para>
        Name of the namespace for which the binding applies.
       </para>
      </callout>
-     <callout arearefs="co.admin.security.groups.role-name">
+     <callout arearefs="co-admin-security-groups-role-name">
       <para>
        Name of the role used. For defining rules, refer to
-       <xref linkend="sec.admin.security.role.create" />.
+       <xref linkend="sec-admin-security-role-create" />.
       </para>
      </callout>
-     <callout arearefs="co.admin.security.groups.ldap-group-name">
+     <callout arearefs="co-admin-security-groups-ldap-group-name">
       <para>
        Name of the LDAP group to which this binding applies. For
-       creating groups, refer to <xref linkend=
-       "sec.admin.security.groups" />.
+       creating groups, refer to <xref linkend="sec-admin-security-groups" />.
       </para>
      </callout>
     </calloutlist>
@@ -884,7 +881,7 @@ roleRef:
   </sect2>
  </sect1>
 
- <sect1 xml:id="sec.admin.security.certs">
+ <sect1 xml:id="sec-admin-security-certs">
  <title>Certificates</title>
  <para>
   During the installation of &productname;, a CA (Certificate Authority)
@@ -905,7 +902,7 @@ roleRef:
   on each cluster node.
  </para>
 
- <sect2 xml:id="sec.admin.security.certs.renewal">
+ <sect2 xml:id="sec-admin-security-certs-renewal">
   <title>Certificate Renewal</title>
   <para>
    The CA certificate is valid for <literal>3650</literal> days (10 years)
@@ -922,7 +919,7 @@ roleRef:
   </para>
   <para>
    To manually renew certificates, refer to
-   <xref linkend="sec.admin.troubleshooting.replace_certificates"/>.
+   <xref linkend="sec-admin-troubleshooting-replace-certificates"/>.
   </para>
   <important>
    <title>Renewing Expired Certificates</title>
@@ -934,12 +931,12 @@ roleRef:
    </para>
    <para>
     If this still fails, you can replace the certificates manually. Refer to:
-    <xref linkend="sec.admin.troubleshooting.replace_certificates"/>.
+    <xref linkend="sec-admin-troubleshooting-replace-certificates"/>.
    </para>
   </important>
  </sect2>
 
- <sect2 xml:id="sec.admin.security.certs.installing_rootca">
+ <sect2 xml:id="sec-admin-security-certs-installing-rootca">
   <title>Obtaining and Installing Root CA Certificate</title>
   <procedure>
    <step>
@@ -981,7 +978,7 @@ roleRef:
  </sect2>
 </sect1>
 
- <sect1 xml:id="sec.admin.security.pod_policies">
+ <sect1 xml:id="sec-admin-security-pod-policies">
   <title>Pod Security Policies</title>
   <para>
    This section provides an overview of policy settings for pod
@@ -994,11 +991,11 @@ roleRef:
    definitions. All authenticated users and service accounts are given
    the role <literal>suse:caasp:psp:unprivileged</literal>. Other role
    bindings have to be created manually. For details about roles and
-   role bindings, refer to <xref linkend= "sec.admin.security.role" />.
+   role bindings, refer to <xref linkend="sec-admin-security-role" />.
   </para>
   <variablelist>
    <varlistentry>
-    <term><xref linkend="ex.admin.security.pod_policies.unprivileged"/></term>
+    <term><xref linkend="ex-admin-security-pod-policies-unprivileged"/></term>
     <listitem>
      <para>
       This is the default policy. It is a compromise between security
@@ -1008,7 +1005,7 @@ roleRef:
     </listitem>
    </varlistentry>
    <varlistentry>
-    <term><xref linkend="ex.admin.security.pod_policies.privileged"/></term>
+    <term><xref linkend="ex-admin-security-pod-policies-privileged"/></term>
     <listitem>
      <para>
       This policy has few restrictions and should only be given to
@@ -1018,7 +1015,7 @@ roleRef:
     </listitem>
    </varlistentry>
    <varlistentry>
-    <term><xref linkend="ex.admin.security.pod_policies.daemonset" /></term>
+    <term><xref linkend="ex-admin-security-pod-policies-daemonset" /></term>
     <listitem>
      <para>
       This example details how to define a privileged DaemonSet with a
@@ -1038,7 +1035,7 @@ roleRef:
   "&kubedoc;concepts/policy/pod-security-policy/"
   />.
   </para>
-  <example xml:id="ex.admin.security.pod_policies.unprivileged">
+  <example xml:id="ex-admin-security-pod-policies-unprivileged">
    <title>Unprivileged Pod Security Policy</title>
    <para>
     The unprivileged Pod Security Policy is intended to be a
@@ -1051,7 +1048,7 @@ roleRef:
 apiVersion: extensions/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: suse.caasp.psp.unprivileged<co xml:id="co.admin.security.pod_policies.unprivileged.name"/>
+  name: suse.caasp.psp.unprivileged<co xml:id="co-admin-security-pod-policies-unprivileged-name"/>
   annotations:
     seccomp.security.alpha.kubernetes.io/allowedProfileNames: docker/default
     seccomp.security.alpha.kubernetes.io/defaultProfileName: docker/default
@@ -1119,14 +1116,14 @@ spec:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: suse:caasp:psp:unprivileged<xref linkend="co.admin.security.pod_policies.unprivileged.name"/>
+  name: suse:caasp:psp:unprivileged<xref linkend="co-admin-security-pod-policies-unprivileged-name"/>
 rules:
   - apiGroups: ['extensions']
     resources: ['podsecuritypolicies']
     verbs: ['use']
-resourceNames: ['suse.caasp.psp.unprivileged']<xref linkend="co.admin.security.pod_policies.unprivileged.name"/></screen>
+resourceNames: ['suse.caasp.psp.unprivileged']<xref linkend="co-admin-security-pod-policies-unprivileged-name"/></screen>
    <calloutlist>
-    <callout arearefs="co.admin.security.pod_policies.unprivileged.name">
+    <callout arearefs="co-admin-security-pod-policies-unprivileged-name">
      <para>
       Make sure to change the policy and role name when adapting the
       example for your own policies.
@@ -1134,7 +1131,7 @@ resourceNames: ['suse.caasp.psp.unprivileged']<xref linkend="co.admin.security.p
     </callout>
    </calloutlist>
   </example>
-  <example xml:id="ex.admin.security.pod_policies.privileged">
+  <example xml:id="ex-admin-security-pod-policies-privileged">
    <title>Privileged Pod Security Policy</title>
    <para>
     The privileged Pod Security Policy is intended to be given only to
@@ -1145,7 +1142,7 @@ resourceNames: ['suse.caasp.psp.unprivileged']<xref linkend="co.admin.security.p
 apiVersion: extensions/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: suse.caasp.psp.privileged<co xml:id="co.admin.security.pod_policies.privileged.name"/>
+  name: suse.caasp.psp.privileged<co xml:id="co-admin-security-pod-policies-privileged-name"/>
   annotations:
     seccomp.security.alpha.kubernetes.io/defaultProfileName: docker/default
     seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
@@ -1209,14 +1206,14 @@ spec:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: suse:caasp:psp:privileged<xref linkend="co.admin.security.pod_policies.privileged.name"/>
+  name: suse:caasp:psp:privileged<xref linkend="co-admin-security-pod-policies-privileged-name"/>
 rules:
   - apiGroups: ['extensions']
     resources: ['podsecuritypolicies']
     verbs: ['use']
-resourceNames: ['suse.caasp.psp.privileged']<xref linkend="co.admin.security.pod_policies.privileged.name"/></screen>
+resourceNames: ['suse.caasp.psp.privileged']<xref linkend="co-admin-security-pod-policies-privileged-name"/></screen>
    <calloutlist>
-    <callout arearefs="co.admin.security.pod_policies.privileged.name">
+    <callout arearefs="co-admin-security-pod-policies-privileged-name">
      <para>
       Make sure to change the policy and role name when adapting the
       example for your own policies.
@@ -1224,7 +1221,7 @@ resourceNames: ['suse.caasp.psp.privileged']<xref linkend="co.admin.security.pod
     </callout>
    </calloutlist>
   </example>
-  <example xml:id="ex.admin.security.pod_policies.daemonset">
+  <example xml:id="ex-admin-security-pod-policies-daemonset">
    <title>Privileged DaemonSet</title>
    <para>
     This example details how to create a privileged DaemonSet which uses
@@ -1291,16 +1288,16 @@ spec:
   </example>
  </sect1>
 
- <sect1 xml:id="sec.admin.security.audit">
+ <sect1 xml:id="sec-admin-security-audit">
   <title>Security Audit Log</title>
 
   <para>
    To enable the &kube; security audit log please see:
-   <xref linkend="sec.admin.logging.kubernetes"/>
+   <xref linkend="sec-admin-logging-kubernetes"/>
   </para>
  </sect1>
 
- <sect1 xml:id="sec.admin.security.external.ldap">
+ <sect1 xml:id="sec-admin-security-external-ldap">
   <title>Configuring External LDAP Server</title>
   <para>
    You can configure the cluster to authenticate &dashboard; and &kube; users
@@ -1351,7 +1348,7 @@ spec:
    </step>
   </procedure>
 
-  <sect2 xml:id="sec.admin.security.external.ldap.configuration">
+  <sect2 xml:id="sec-admin-security-external-ldap-configuration">
    <title>LDAP Connector Settings</title>
    <note>
     <title>LDAP Anonymous Binding</title>
@@ -1598,7 +1595,7 @@ spec:
 
   </sect2>
 
-  <sect2 xml:id="sec.admin.security.external.ldap.examples">
+  <sect2 xml:id="sec-admin-security-external-ldap-examples">
    <title>Examples</title>
    <para>
     In both directories, <literal>user-regular1</literal> and
@@ -1617,7 +1614,7 @@ spec:
     The mail attribute is used to create the RBAC rules.
    </para>
 
-   <sect3 xml:id="sec.admin.security.external.ldap.examples.ad">
+   <sect3 xml:id="sec-admin-security-external-ldap-examples-ad">
     <title>Active Directory</title>
     <example>
      <title>Active Directory Content LDIF</title>
@@ -1753,7 +1750,7 @@ Name: sAMAccountName
     </example>
    </sect3>
 
-   <sect3 xml:id="sec.admin.security.external.ldap.examples.openldap">
+   <sect3 xml:id="sec-admin-security-external-ldap-examples-openldap">
     <title>openLDAP</title>
     <example>
      <title>openLDAP Content LDIF</title>
@@ -1850,7 +1847,7 @@ Name: cn
   </sect2>
  </sect1>
 
- <sect1 xml:id="sec.admin.security.external.oidc">
+ <sect1 xml:id="sec-admin-security-external-oidc">
   <title>Configuring External OIDC Provider</title>
   <para>
    You can configure the cluster to authenticate &dashboard; and &kube; users
@@ -1891,7 +1888,7 @@ Name: cn
    </step>
   </procedure>
 
-  <sect2 xml:id="sec.admin.security.external.oidc.configuration">
+  <sect2 xml:id="sec-admin-security-external-oidc-configuration">
    <title>OIDC Connector Settings</title>
    <informalfigure>
     <mediaobject>

@@ -4,7 +4,7 @@
   <!ENTITY % entities SYSTEM "entity-decl.ent">
     %entities;
 ]>
-<chapter version="5.0" xml:id="cha.deployment.scenarios"
+<chapter version="5.0" xml:id="cha-deployment-scenarios"
  xmlns="http://docbook.org/ns/docbook"
  xmlns:xi="http://www.w3.org/2001/XInclude"
  xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -15,7 +15,7 @@
    <dm:translation>yes</dm:translation>
   </dm:docmanager>
  </info>
- <sect1 xml:id="sec.deploy.scenarios.default">
+ <sect1 xml:id="sec-deploy-scenarios-default">
   <title>Default Scenario</title>
 
   <para>
@@ -35,7 +35,7 @@
    </mediaobject>
   </informalfigure>
  </sect1>
- <sect1 xml:id="sec.deploy.scenarios.airgap">
+ <sect1 xml:id="sec-deploy-scenarios-airgap">
   <title>Air gapped Deployment</title>
   <important>
    <title>Scope Of This Document</title>
@@ -67,7 +67,7 @@
       Read the concepts section.
      </para>
      <para>
-      <xref linkend="sec.deploy.scenarios.airgap.concepts"/>
+      <xref linkend="sec-deploy-scenarios-airgap-concepts"/>
      </para>
     </step>
     <step>
@@ -75,7 +75,7 @@
       Deploy mirror servers on external and internal networks.
      </para>
      <para>
-      <xref linkend="sec.deploy.scenarios.airgap.requirements.machines"/>
+      <xref linkend="sec-deploy-scenarios-airgap-requirements-machines"/>
      </para>
     </step>
     <step>
@@ -83,7 +83,7 @@
       Install &rmtool; on servers.
      </para>
      <para>
-      <xref linkend="sec.deploy.scenarios.airgap.rpm-repository"/>
+      <xref linkend="sec-deploy-scenarios-airgap-rpm-repository"/>
      </para>
     </step>
     <step>
@@ -91,7 +91,7 @@
       Configure container image registry on servers.
      </para>
      <para>
-      <xref linkend="sec.deploy.scenarios.airgap.container-registry"/>
+      <xref linkend="sec-deploy-scenarios-airgap-container-registry"/>
      </para>
     </step>
     <step>
@@ -99,7 +99,7 @@
       Configure Helm Chart repository on internal mirror.
      </para>
      <para>
-      <xref linkend="sec.deploy.scenarios.airgap.helm-charts"/>
+      <xref linkend="sec-deploy-scenarios-airgap-helm-charts"/>
      </para>
     </step>
     <step>
@@ -107,7 +107,7 @@
       Perform the &rmtool; update procedure to populate the RPM repository.
      </para>
      <para>
-      <xref linkend="sec.deploy.scenarios.airgap.rpm-repository.update"/>
+      <xref linkend="sec-deploy-scenarios-airgap-rpm-repository-update"/>
      </para>
     </step>
     <step>
@@ -116,7 +116,7 @@
       and registry services.
      </para>
      <para>
-      <xref linkend="sec.deploy.scenarios.airgap.rpm-repository.update"/>
+      <xref linkend="sec-deploy-scenarios-airgap-rpm-repository-update"/>
      </para>
     </step>
     <step>
@@ -125,23 +125,23 @@
       services on the internal network.
      </para>
      <para>
-      <xref linkend="sec.deploy.scenarios.airgap.caasp-deployment"/>
+      <xref linkend="sec-deploy-scenarios-airgap-caasp-deployment"/>
      </para>
      <para>
-      RPM Packages: <xref linkend="sec.deploy.scenarios.airgap.rpm-repository.client"/>
+      RPM Packages: <xref linkend="sec-deploy-scenarios-airgap-rpm-repository-client"/>
      </para>
      <para>
-      Helm Charts: <xref linkend="sec.deploy.scenarios.airgap.helm-charts.client"/>
+      Helm Charts: <xref linkend="sec-deploy-scenarios-airgap-helm-charts-client"/>
      </para>
      <para>
-      Container Images: <xref linkend="sec.deploy.scenarios.airgap.container-registry.client"/>
+      Container Images: <xref linkend="sec-deploy-scenarios-airgap-container-registry-client"/>
      </para>
     </step>
    </procedure>
 
   </sect2>
 
-  <sect2 xml:id="sec.deploy.scenarios.airgap.concepts">
+  <sect2 xml:id="sec-deploy-scenarios-airgap-concepts">
    <title>Concepts</title>
    <sect3>
     <title>Network Separation</title>
@@ -346,15 +346,15 @@
     </para>
     <para>
      For further information on registry mirror configuration, refer to
-     <xref linkend="sec.admin.velum.registry" /> and
-     <xref linkend="sec.admin.velum.mirror" />.
+     <xref linkend="sec-admin-velum-registry" /> and
+     <xref linkend="sec-admin-velum-mirror" />.
     </para>
    </sect3>
   </sect2>
 
-  <sect2 xml:id="sec.deploy.scenarios.airgap.requirements">
+  <sect2 xml:id="sec-deploy-scenarios-airgap-requirements">
    <title>Requirements</title>
-   <sect3 xml:id="sec.deploy.scenarios.airgap.requirements.machines">
+   <sect3 xml:id="sec-deploy-scenarios-airgap-requirements-machines">
     <title>Mirror Servers</title>
     <note>
      <title>Shared Mirror Server</title>
@@ -485,7 +485,7 @@
     </procedure>
    </sect3>
 
-   <sect3 xml:id="sec.deploy.scenarios.airgap.requirements.network">
+   <sect3 xml:id="sec-deploy-scenarios-airgap-requirements-network">
     <title>Networking</title>
     <note>
      <title>Additional Port Configuration</title>
@@ -555,8 +555,9 @@
      </para>
      <para>
       Place the certificate, CA certificate and key file in
-      <filename>/etc/rmt/ssl/</filename> as <filename>rmt-server.cert</filename>, <filename>rmt-ca.cert</filename>, and <filename>rmt-server.key</filename>.
-      These certificates will be re-used by all three mirror services.
+      <filename>/etc/rmt/ssl/</filename> as <filename>rmt-server.crt</filename>, <filename>rmt-ca.crt</filename>, and <filename>rmt-server.key</filename>. 
+      You will also need to remove the password from the private key. 
+      These certificates will be re-used by all three mirror services. 
      </para>
      <para>
       Make sure the CA certificate is available to &productname; system wide; so
@@ -567,7 +568,7 @@
     </sect4>
    </sect3>
 
-   <sect3 xml:id="sec.deploy.scenarios.airgap.requirements.storage">
+   <sect3 xml:id="sec-deploy-scenarios-airgap-requirements-storage">
     <title>Trusted Storage</title>
     <para>
      Transferring data from the external network mirror to the internal mirror
@@ -608,9 +609,9 @@
    </sect3>
   </sect2>
 
-  <sect2 xml:id="sec.deploy.scenarios.airgap.rpm-repository">
+  <sect2 xml:id="sec-deploy-scenarios-airgap-rpm-repository">
    <title>RPM Repository Mirror</title>
-   <sect3 xml:id="sec.deploy.scenarios.airgap.rpm-repository.mirror">
+   <sect3 xml:id="sec-deploy-scenarios-airgap-rpm-repository-mirror">
     <title>Mirror Configuration</title>
     <note>
      <title>Deploy The Mirror Before &productname; Cluster Deployment</title>
@@ -666,11 +667,11 @@
     <para>
      Now you need to perform the update procedure to do an initial sync of data
      between the upstream sources and the external mirror and the external and
-     internal mirrors. Refer to: <xref linkend="sec.deploy.scenarios.airgap.rpm-repository.update"/>.
+     internal mirrors. Refer to: <xref linkend="sec-deploy-scenarios-airgap-rpm-repository-update"/>.
     </para>
    </sect3>
 
-   <sect3 xml:id="sec.deploy.scenarios.airgap.rpm-repository.client">
+   <sect3 xml:id="sec-deploy-scenarios-airgap-rpm-repository-client">
     <title>Client Configuration</title>
     <para>
      <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/cha_rmt_client.html">Follow these instructions</link>
@@ -683,7 +684,7 @@
    </sect3>
   </sect2>
 
-  <sect2 xml:id="sec.deploy.scenarios.airgap.rpm-repository.update">
+  <sect2 xml:id="sec-deploy-scenarios-airgap-rpm-repository-update">
    <title>Updating RPM Repository Mirror</title>
    <para>
     <link xlink:href="https://www.suse.com/documentation/sles-15/book_rmt/data/sec_rmt_mirroring_export_import.html">Follow these instructions</link>
@@ -692,7 +693,7 @@
    </para>
   </sect2>
 
-  <sect2 xml:id="sec.deploy.scenarios.airgap.container-registry">
+  <sect2 xml:id="sec-deploy-scenarios-airgap-container-registry">
    <title>Container Registry Mirror</title>
    <note>
     <title>Mirroring Multiple Image Registries / Chart Repositories</title>
@@ -711,7 +712,7 @@
     </para>
    </note>
 
-   <sect3 xml:id="sec.deploy.scenarios.airgap.container-registry.mirror">
+   <sect3 xml:id="sec-deploy-scenarios-airgap-container-registry-mirror">
     <title>Mirror Configuration</title>
     <para>
      The container image registry is provided as a container image itself.
@@ -897,7 +898,7 @@ server {
        Replace <literal>USERNAME</literal> and <literal>PASSWORD</literal> with
        proper credentials of your choosing.
       </para>
-<screen>&prompt.root;<command>mkdir -p /etc/docker/registry/{auth,certs}</command>
+<screen>&prompt.root;<command>mkdir -p /etc/docker/registry/auth</command>
 &prompt.root;<command>docker run --entrypoint htpasswd registry.suse.com/sles12/registry:2.6.2 -Bbn <replaceable>USERNAME PASSWORD</replaceable> \
 > /etc/docker/registry/auth/htpasswd</command>
  </screen>
@@ -907,11 +908,6 @@ server {
        Create the <filename>/etc/docker/registry/config.yml</filename>
        configuration file.
       </para>
-      <!-- <para>
-       Replace <filename>/etc/docker/registry/certs/domain.crt</filename> and
-       <filename>/etc/docker/registry/certs/domain.key</filename> with the appropriate certificate
-       files for your organization.
-      </para> -->
 <screen>
 version: 0.1
 log:
@@ -937,7 +933,7 @@ health:
   storagedriver:
     enabled: true
     interval: 10s
-threshold: 3
+    threshold: 3
 </screen>
       <para>
        For more details on the configuration, refer to:
@@ -951,6 +947,7 @@ threshold: 3
       </para>
 <screen>&prompt.root;<command>docker run -d -p 5000:5000 --restart=always --name registry \
 -v /etc/docker/registry:/etc/docker/registry:ro \
+-v /etc/rmt/ssl:/etc/rmt/ssl:ro \
 -v <replaceable>/var/lib/registry</replaceable>:/var/lib/registry registry.suse.com/sles12/registry:2.6.2</command>
        </screen>
      </step>
@@ -1020,7 +1017,7 @@ health:
   storagedriver:
     enabled: true
     interval: 10s
-threshold: 3
+    threshold: 3
          </screen>
       <para>
        For more details on the configuration, refer to:
@@ -1044,7 +1041,7 @@ threshold: 3
     </para>
    </sect3>
 
-   <sect3 xml:id="sec.deploy.scenarios.airgap.container-registry.client">
+   <sect3 xml:id="sec-deploy-scenarios-airgap-container-registry-client">
     <title>Client Configuration</title>
     <para>
      Using the air gapped mirror works exactly like using a traditional
@@ -1062,19 +1059,19 @@ threshold: 3
       <para>
        Navigate to <guimenu>Settings &rarr; Mirrors</guimenu> and create a
        definition for your internal registry mirror as described in
-       <xref linkend="sec.admin.velum.mirror"/>.
+       <xref linkend="sec-admin-velum-mirror"/>.
       </para>
      </step>
     </procedure>
    </sect3>
   </sect2>
 
-  <sect2 xml:id="sec.deploy.scenarios.airgap.helm-charts">
+  <sect2 xml:id="sec-deploy-scenarios-airgap-helm-charts">
    <title>Helm Chart Repository Mirror</title>
    <important>
     <para>
      To make use of the helm charts, you must complete
-     <xref linkend="sec.deploy.scenarios.airgap.container-registry"/>.
+     <xref linkend="sec-deploy-scenarios-airgap-container-registry"/>.
     </para>
    </important>
    <para>
@@ -1087,11 +1084,11 @@ threshold: 3
     <title>Mirror Configuration</title>
     <para>
      Update the Helm chart repository by following the shared update procedure
-     <xref linkend="sec.deploy.scenarios.airgap.update"/>.
+     <xref linkend="sec-deploy-scenarios-airgap-update"/>.
     </para>
    </sect3>
 
-   <sect3 xml:id="sec.deploy.scenarios.airgap.helm-charts.client">
+   <sect3 xml:id="sec-deploy-scenarios-airgap-helm-charts-client">
     <title>Client Configuration</title>
     <para>
      Add the webserver as a repo to <command>helm</command>.
@@ -1112,7 +1109,7 @@ threshold: 3
     <para>
      This step needs to be performed on a machine where Helm is installed and
      configured to talk to the Tiller server in the &productname; cluster.
-     Refer to, <xref linkend="sec.admin.software.helm"/>.
+     Refer to, <xref linkend="sec-admin-software-helm"/>.
     </para>
     <para>
      <literal>suse-mirror</literal> will be the user-defined name for this
@@ -1124,7 +1121,7 @@ threshold: 3
    </sect3>
   </sect2>
 
-  <sect2 xml:id="sec.deploy.scenarios.airgap.update">
+  <sect2 xml:id="sec-deploy-scenarios-airgap-update">
    <title>Updating Registry Mirror And Helm Charts</title>
    <note>
     <title>Live Update Of Registry</title>
@@ -1196,7 +1193,7 @@ threshold: 3
     </para>
     <para>
      For <literal>--dest-creds</literal> you must use the credentials you
-     created during <xref linkend="sec.deploy.scenarios.airgap.container-registry.mirror" />.
+     created during <xref linkend="sec-deploy-scenarios-airgap-container-registry-mirror" />.
     </para>
 <screen>&prompt.user;<command>skopeo sync --dest-creds <replaceable>USERNAME:PASSWORD</replaceable> \
 dir:<replaceable>/tmp/skopeodata/registry.suse.com/</replaceable> <replaceable>docker://mymirror.local:5000</replaceable></command>
@@ -1290,14 +1287,14 @@ dir:<replaceable>/tmp/skopeodata/registry.suse.com/</replaceable> <replaceable>d
 
    <para>
     You can now deploy additional software on your &productname;. Refer to:
-    <xref linkend="sec.admin.software.install" />.
+    <xref linkend="sec-admin-software-install" />.
    </para>
   </sect2>
 
-  <sect2 xml:id="sec.deploy.scenarios.airgap.caasp-deployment">
+  <sect2 xml:id="sec-deploy-scenarios-airgap-caasp-deployment">
    <title>Deploying &productname;</title>
    <para>
-    Use the &productname; <xref linkend="book.caasp.deployment"/> as usual.
+    Use the &productname; <xref linkend="book-caasp-deployment"/> as usual.
     Some of the considerations below apply; depending of the chosen installation
     medium.
     </para>
@@ -1327,12 +1324,12 @@ dir:<replaceable>/tmp/skopeodata/registry.suse.com/</replaceable> <replaceable>d
     <title>Using a prebuilt image (eg: KVM, Xen)</title>
     <para>
      The node has to be registered against &rmtool;. Refer to:
-     <xref linkend="sec.deploy.scenarios.airgap.rpm-repository.client"/>.
+     <xref linkend="sec-deploy-scenarios-airgap-rpm-repository-client"/>.
     </para>
    </sect3>
   </sect2>
 
-  <sect2 xml:id="sec.deploy.scenarios.airgap.troubleshooting">
+  <sect2 xml:id="sec-deploy-scenarios-airgap-troubleshooting">
    <title>Troubleshooting</title>
    <sect3>
     <title>Skopeo Fails Because Of Self Signed Certificate</title>
@@ -1345,7 +1342,7 @@ dir:<replaceable>/tmp/skopeodata/registry.suse.com/</replaceable> <replaceable>d
    <sect3>
     <title>Registering An Existing Node against &rmtool;</title>
     <para>
-     Refer to: <xref linkend="sec.deploy.scenarios.airgap.rpm-repository.client"/>.
+     Refer to: <xref linkend="sec-deploy-scenarios-airgap-rpm-repository-client"/>.
     </para>
    </sect3>
   </sect2>

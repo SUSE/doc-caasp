@@ -4,7 +4,7 @@
   <!ENTITY % entities SYSTEM "entity-decl.ent">
     %entities;
 ]>
-<chapter version="5.1" xml:id="cha.admin.backup"
+<chapter version="5.1" xml:id="cha-admin-backup"
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -16,7 +16,7 @@
   </dm:docmanager>
  </info>
 
- <sect1 xml:id="sec.admin.assumptions">
+ <sect1 xml:id="sec-admin-assumptions">
   <title>Assumptions</title>
   <important>
    <title>Scope</title>
@@ -48,7 +48,7 @@
   </important>
  </sect1>
 
- <sect1 xml:id="sec.admin.backup">
+ <sect1 xml:id="sec-admin-backup">
  <title>Backup Scenarios</title>
  <note>
   <title>Recovering Failed Nodes</title>
@@ -64,7 +64,7 @@
   </para>
  </note>
 
-  <sect2 xml:id="sec.admin.backup.admin">
+  <sect2 xml:id="sec-admin-backup-admin">
    <title>Admin Node Failure</title>
    <para>
     We assume:
@@ -99,7 +99,7 @@
     </itemizedlist>
 
    <para>
-    The <xref linkend="sec.admin.backup.admin.restore"/> will involve deploying
+    The <xref linkend="sec-admin-backup-admin-restore"/> will involve deploying
     a new &admin_node; machine and restoring the previous data onto it.
     &productname; will then resume management of the cluster. Existing workloads
     should not be affected.
@@ -163,13 +163,13 @@ velum_production | gzip > <replaceable>/var/tmp/db-backup-$(date +'%Y-%m-%d').sq
    </procedure>
   </sect2>
 
-  <sect2 xml:id="sec.admin.backup.admin.restore">
+  <sect2 xml:id="sec-admin-backup-admin-restore">
    <title>Restore Procedure</title>
    <procedure>
     <step>
      <para>
       Set up a new machine for the &admin_node; by following
-      <xref linkend="sec.deploy.nodes.admin_install" />.
+      <xref linkend="sec-deploy-nodes-admin-install" />.
      </para>
      <para>
       Make sure the &admin_node; is registered against &scc; and has the latest
@@ -246,7 +246,7 @@ salt-key -A -y</command></screen>
   </sect2>
  </sect1>
 
- <sect1 xml:id="sec.admin.backup.general">
+ <sect1 xml:id="sec-admin-backup-general">
   <title>General Node Recovery</title>
   <note>
    <title>Force Removal Of Nodes</title>
@@ -272,7 +272,7 @@ salt-key -A -y</command></screen>
    </para>
   </important>
 
-  <sect2 xml:id="sec.admin.backup.general.master">
+  <sect2 xml:id="sec-admin-backup-general-master">
    <title>Master Node Failure</title>
    <para>
     We assume:
@@ -310,7 +310,7 @@ salt-key -A -y</command></screen>
     </para>
     <para>
      <literal>etcd</literal> quorum and fault tolerance limits are described in
-     <xref linkend="sec.deploy.requirements.system.cluster.etcd_cluster_size"/>.
+     <xref linkend="sec-deploy-requirements-system-cluster-etcd-cluster-size"/>.
     </para>
    </important>
 
@@ -326,12 +326,12 @@ salt-key -A -y</command></screen>
     your desired number of master nodes.
    </para>
    <para>
-    The <xref linkend="sec.admin.backup.general.restore"/> is the same as for Worker nodes but
+    The <xref linkend="sec-admin-backup-general-restore"/> is the same as for Worker nodes but
     you must consider quorum in any case.
    </para>
   </sect2>
 
-  <sect2 xml:id="sec.admin.backup.general.worker">
+  <sect2 xml:id="sec-admin-backup-general-worker">
    <title>Worker Node Failure</title>
    <para>
     We assume:
@@ -367,7 +367,7 @@ salt-key -A -y</command></screen>
    </para>
   </sect2>
 
-  <sect2 xml:id="sec.admin.backup.general.restore">
+  <sect2 xml:id="sec-admin-backup-general-restore">
    <title>Restore Procedure</title>
    <para>
     The restoration procedure does not concern itself with data stored on the
@@ -377,7 +377,7 @@ salt-key -A -y</command></screen>
    <procedure>
     <step>
      <para>
-     Remove the failed node: <xref linkend="sec.admin.nodes.remove" />
+     Remove the failed node: <xref linkend="sec-admin-nodes-remove" />
      </para>
     </step>
     <step>
@@ -387,7 +387,7 @@ salt-key -A -y</command></screen>
     </step>
     <step>
      <para>
-      Add a new master/worker node: <xref linkend="sec.deploy.nodes.worker_install" />
+      Add a new master/worker node: <xref linkend="sec-deploy-nodes-worker-install" />
      </para>
      <para>
       Since you already have an Admin node in place you can ignore the warning

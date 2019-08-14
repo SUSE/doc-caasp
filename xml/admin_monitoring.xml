@@ -4,7 +4,7 @@
   <!ENTITY % entities SYSTEM "entity-decl.ent">
     %entities;
 ]>
-<chapter version="5.0" xml:id="cha.admin.monitoring"
+<chapter version="5.0" xml:id="cha-admin-monitoring"
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -16,7 +16,7 @@
   </dm:docmanager>
  </info>
 
- <sect1 xml:id="sec.admin.monitoring.stack">
+ <sect1 xml:id="sec-admin-monitoring-stack">
   <title>Monitoring Stack On &kube;</title>
   <important>
    <title>Monitoring Example</title>
@@ -134,7 +134,7 @@ grafana.example.com                         IN  CNAME   monitoring.example.com
 <!-- FIXME mnapp 2018-11-06 Uncomment this once the section for ingress is ready
       <para>
       For more information on the <literal>NGINX Ingress Controller</literal>,
-      refer to: <xref linkend="book.user.ingress"/>
+      refer to: <xref linkend="book-user-ingress"/>
      </para> -->
    <procedure>
     <title>Configure And Deploy NGINX Ingress Controller</title>
@@ -937,7 +937,7 @@ continues with definition of dashboard JSON
   </sect2>
  </sect1>
 
- <sect1 xml:id="sec.admin.monitoring.health">
+ <sect1 xml:id="sec-admin-monitoring-health">
   <title>Health Checking</title>
 
   <para>
@@ -981,7 +981,7 @@ continues with definition of dashboard JSON
    </listitem>
   </itemizedlist>
 
-  <sect2 xml:id="sec.admin.monitoring.health.cluster">
+  <sect2 xml:id="sec-admin-monitoring-health-cluster">
    <title>Cluster Health Checks</title>
    <para>
     The basic check if a cluster is working correctly is based on a few
@@ -1010,7 +1010,7 @@ continues with definition of dashboard JSON
      Troubleshoot Clusters</link>
     </para>
    </note>
-   <sect3 xml:id="sec.admin.monitoring.health.cluster.kubernetes">
+   <sect3 xml:id="sec-admin-monitoring-health-cluster-kubernetes">
     <title>&kube; master</title>
     <para>
      All components in &kube; expose a <literal>/healthz</literal> endpoint.
@@ -1098,7 +1098,7 @@ ok
      </para>
     </note>
    </sect3>
-   <sect3 xml:id="sec.admin.monitoring.cluster.health.etcd">
+   <sect3 xml:id="sec-admin-monitoring-cluster-health-etcd">
     <title><literal>etcd</literal> Cluster</title>
     <para>
      Check that all machines that have the <literal>etcd</literal> role on the
@@ -1125,10 +1125,10 @@ ab040b25c2584bc8904971c0acbb250f:
    </screen>
     <para>
      More information on etcd cluster health can be found in
-     <xref linkend="sec.admin.nodes.graceful_shutdown.etcd"/>.
+     <xref linkend="sec-admin-nodes-graceful-shutdown-etcd"/>.
     </para>
    </sect3>
-   <sect3 xml:id="sec.admin.monitoring.cluster.health.components">
+   <sect3 xml:id="sec-admin-monitoring-cluster-health-components">
     <title>Running Components</title>
     <para>
      Check if the cluster has all required components running:
@@ -1149,14 +1149,14 @@ To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
    </sect3>
   </sect2>
 
-  <sect2 xml:id="sec.admin.monitoring.health.node">
+  <sect2 xml:id="sec-admin-monitoring-health-node">
    <title>Node Health Checks</title>
    <para>
     The basic check if a node is healthy consists of checking if
     <literal>kubelet</literal> and the CNI (Container Networking Interface) are
     working properly.
    </para>
-   <sect3 xml:id="sec.admin.monitoring.health.node.kubelet">
+   <sect3 xml:id="sec-admin-monitoring-health-node-kubelet">
     <title><literal>kubelet</literal></title>
     <para>
      Is the <literal>kubelet</literal> up and working in this node?
@@ -1353,7 +1353,7 @@ subjects:
     </sect4>
 
    </sect3>
-   <sect3 xml:id="sec.admin.monitoring.health.node.cni">
+   <sect3 xml:id="sec-admin-monitoring-health-node-cni">
     <title><literal>CNI</literal></title>
     <para>
      Is CNI (Container Networking Interface) working as expected in this node?
@@ -1380,7 +1380,7 @@ tiller-deploy   1         1         1            1           7d
    </sect3>
   </sect2>
 
-  <sect2 xml:id="sec.admin.monitoring.health.service">
+  <sect2 xml:id="sec-admin-monitoring-health-service">
    <title>Service/Application Health Checks</title>
    <para>
     If the deployed services contain a health endpoint, or if they contain an
@@ -1485,7 +1485,7 @@ tiller-deploy   1         1         1            1           7d
      </listitem>
     </varlistentry>
    </variablelist>
-   <sect3 xml:id="sec.admin.monitoring.health.service.livenessprobe">
+   <sect3 xml:id="sec-admin-monitoring-health-service-livenessprobe">
     <title>livenessProbe</title>
     <para>
      <link xlink:href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/">livenessProbes</link>
@@ -1506,7 +1506,7 @@ tiller-deploy   1         1         1            1           7d
      starting from <literal>initialDelaySeconds</literal>.
     </para>
    </sect3>
-   <sect3 xml:id="sec.admin.monitoring.health.service.readinessprobe">
+   <sect3 xml:id="sec-admin-monitoring-health-service-readinessprobe">
     <title>readinessProbe</title>
     <para>
      <link xlink:href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#define-readiness-probes">readinessProbes</link>
@@ -1536,7 +1536,7 @@ tiller-deploy   1         1         1            1           7d
    </sect3>
   </sect2>
 
-  <sect2 xml:id="sec.admin.monitoring.health.general">
+  <sect2 xml:id="sec-admin-monitoring-health-general">
    <title>General Health Checks</title>
    <para>
     We recommend to apply other best practices from system administration to
@@ -1544,7 +1544,7 @@ tiller-deploy   1         1         1            1           7d
     to &productname; and are beyond the scope of this document. To simplify
     performing tasks like disk usage checks, you can use
     <literal>salt</literal>. For more information see:
-    <xref linkend="sec.admin.salt"/>
+    <xref linkend="sec-admin-salt"/>
    </para>
   </sect2>
  </sect1>

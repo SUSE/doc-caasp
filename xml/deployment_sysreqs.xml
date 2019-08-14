@@ -4,7 +4,7 @@
   <!ENTITY % entities SYSTEM "entity-decl.ent">
     %entities;
 ]>
-<chapter version="5.0" xml:id="cha.deploy.requirements"
+<chapter version="5.0" xml:id="cha-deploy-requirements"
  xmlns="http://docbook.org/ns/docbook"
  xmlns:xi="http://www.w3.org/2001/XInclude"
  xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -20,7 +20,7 @@
   &productname;. Before you begin the installation, please make sure
   your system meets all requirements listed below.
  </para>
- <sect1 xml:id="sec.deploy.requirements.system.cluster">
+ <sect1 xml:id="sec-deploy-requirements-system-cluster">
   <title>Cluster Size Requirements</title>
   <para>
    &productname; is a dedicated cluster operating system and only functions in a
@@ -65,7 +65,7 @@
    the Release Notes on <link xlink:href="https://www.suse.com/releasenotes/"/>.
   </para>
 
-  <sect2 xml:id="sec.deploy.requirements.system.cluster.etcd_cluster_size">
+  <sect2 xml:id="sec-deploy-requirements-system-cluster-etcd-cluster-size">
    <title>etcd Cluster Sizing</title>
    <para>
     <literal>etcd</literal> is a distributed key-value store. Some
@@ -229,7 +229,7 @@
    </para>
   </sect2>
 
-  <sect2 xml:id="sec.deploy.requirements.system.cluster.salt_cluster_size">
+  <sect2 xml:id="sec-deploy-requirements-system-cluster-salt-cluster-size">
    <title>Salt Cluster Sizing</title>
    <para>
     &productname; relies on SaltStack (or Salt for short) to automate various
@@ -241,7 +241,7 @@
    <para>
     You must adjust the sizing of your &admin_node; RAM to allow for more
     minions/nodes in the cluster. 32GB can run up to 150 nodes.
-    Please refer to: <xref linkend="sec.deploy.requirements.hardware"/>.
+    Please refer to: <xref linkend="sec-deploy-requirements-hardware"/>.
    </para>
    <para>
     Up until a total cluster size of <literal>40</literal> nodes, no
@@ -293,12 +293,12 @@
     </para>
     <para>
      To adjust the number of Salt worker threads, refer to:
-     <xref linkend="sec.admin.salt.worker_threads"/>.
+     <xref linkend="sec-admin-salt-worker-threads"/>.
      </para>
   </sect2>
  </sect1>
 
- <sect1 xml:id="sec.deploy.requirements.environment">
+ <sect1 xml:id="sec-deploy-requirements-environment">
   <title>Supported Environments</title>
   <para>
    Regarding deployment scenarios, &suse; supports &productname; running in
@@ -390,9 +390,9 @@
       </important>
       <para>
        When using pre-installed disk images, read <xref
-       linkend="sec.deploy.preparation.disk_images.vmware" />. After
+       linkend="sec-deploy-preparation-disk-images-vmware" />. After
        bootstrapping the cluster, install the &vmware; tools. For
-       details, see <xref linkend= "sec.deploy.install.vmware_tools" />.
+       details, see <xref linkend="sec-deploy-install-vmware-tools" />.
       </para>
       <itemizedlist>
        <listitem>
@@ -449,6 +449,11 @@
        Oracle VM 3.3
       </para>
      </listitem>
+     <listitem>
+      <para>
+       Nutanix Acropolis
+      </para>
+     </listitem>
     </itemizedlist>
    </listitem>
    <listitem>
@@ -481,7 +486,7 @@
   </itemizedlist>
  </sect1>
 
- <sect1 xml:id="sec.deploy.requirements.storage">
+ <sect1 xml:id="sec-deploy-requirements-storage">
   <title>Container Data Storage</title>
   <para>
    Storage can be provided using:
@@ -512,7 +517,7 @@
   </itemizedlist>
  </sect1>
 
- <sect1 xml:id="sec.deploy.requirements.hardware">
+ <sect1 xml:id="sec-deploy-requirements-hardware">
   <title>Minimum Node Specification</title>
   <para>
    Each node in the cluster must meet the following minimum specifications. All
@@ -624,7 +629,7 @@
   </variablelist>
  </sect1>
 
- <sect1 xml:id="sec.deploy.requirements.network">
+ <sect1 xml:id="sec-deploy-requirements-network">
   <title>Network Requirements</title>
   <itemizedlist mark="bullet" spacing="normal">
    <listitem>
@@ -721,7 +726,7 @@
      environments where there are existing security policies, the following
      are the standard ports in use.
     </para>
-    <table xml:id="tab.deploy.requirements.ports">
+    <table xml:id="tab-deploy-requirements-ports">
      <title>Node types and open ports</title>
      <tgroup cols="4">
       <thead>
@@ -1027,7 +1032,7 @@
        <row>
         <entry>
          <para>
-          10250, 10255
+          10250
          </para>
         </entry>
         <entry>
@@ -1091,7 +1096,7 @@
   </para>
  </sect1>
 
- <sect1 xml:id="sec.deploy.requirements.public_cloud">
+ <sect1 xml:id="sec-deploy-requirements-public-cloud">
   <title>Public Cloud Requirements</title>
   <variablelist>
    <varlistentry>
@@ -1132,7 +1137,7 @@
   </variablelist>
  </sect1>
 
- <sect1 xml:id="sec.deploy.requirements.limits">
+ <sect1 xml:id="sec-deploy-requirements-limits">
   <title>Limitations</title>
   <itemizedlist mark="bullet" spacing="normal">
    <listitem>
