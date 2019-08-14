@@ -5,28 +5,38 @@ In order to deploy {productname} you need a workstation running {sle} 15 SP1 or 
 This workstation is called the "Management node".
 
 You need to have configured an SSH key pair that will be used to log into the
-created cluster nodes. This identity must be loaded into your users ssh-agent.
+created cluster nodes. This identity must be loaded into your users ssh-agent,
+and trusted by all nodes in the cluster.
 
 The correct configuration of this SSH key pair is mandatory to be able to use
 the installation tools; more specifically: `terraform` and `skuba`.
 
 [TIP]
 ====
-The `ssh-agent` process is usually started automatically by most UNIX
-environments. If that's not the case, invoke the `ssh-agent` command
-and follow the guidance given by the tool's output.
+The `ssh-agent` process is often started automatically by graphical
+desktop environments, or emulated by their "keyring" program (such as
+gnome-keyring). If that's not the case in your environment, consult the
+documentation for your desktop environment, or run the `ssh-agent` command in
+the terminal where you'll be running skuba.
 
-You can start the `ssh-agent` in the background by using the
-`eval "$(ssh-agent -s)"` command.
+You can start the `ssh-agent` in the background of a shell session by using
+the `eval "$(ssh-agent)"` command.  This will start the agent and set
+environment variables used for agent communication within the current session.
+A new terminal usually requires a new ssh-agent.
 
-You can load as many keys as you want into your agent using the
-`ssh-add <path to key>` command. Keys can also be password protected.
+You can load multiple keys into your agent using the `ssh-add <path to
+key>` command. Keys should be password-protected for security at rest.  The
+ssh-add command prompts for your password, then the agent caches the
+private key for a configurable lifetime.  The `-t lifetime` option to
+ssh-add specifies a maximum time to cache the key; see `man ssh-add` for
+more information.
 
-You can list all the identities loaded into the agent by using the
-`ssh-add -L` command.
+You can list fingerprints for all the identities loaded into the agent by
+using the `ssh-add -l` command.
 
 skuba will try all the identities loaded into the ssh-agent until one of
-them grants access to the node.
+them grants access to the node, or until the ssh server maximum
+authentication attempts are exhausted.
 
 It is also possible to forward the authentication agent connection from a
 host to another one. This can be useful if you intend to run skuba on

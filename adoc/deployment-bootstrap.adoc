@@ -25,26 +25,38 @@ sudo zypper in skuba
 
 === Cluster Deployment
 
-Make sure you have added the SSH identity (corresponding to the SSH key distributed above) to the ssh-agent on your workstation.
+Make sure you have added the SSH identity (corresponding to the public SSH key distributed above) to the ssh-agent on your workstation.
 This is a requirement for `skuba` (https://github.com/SUSE/skuba#prerequisites).
 
 [TIP]
 ====
-The `ssh-agent` process is usually started automatically by most UNIX
-environments. If that's not the case, invoke the `ssh-agent` command
-and follow the guidance given by the tool's output.
+The `ssh-agent` process is often started automatically by graphical
+desktop environments, or emulated by their "keyring" program (such as
+gnome-keyring). If that's not the case in your environment, consult the
+documentation for your desktop environment, or run the `ssh-agent` command in
+the terminal where you'll be running skuba.
 
-You can load as many keys as you want into your agent using the
-`ssh-add <path to key>` command. Keys can also be password protected.
+You can start the `ssh-agent` in the background of a shell session by using
+the `eval "$(ssh-agent)"` command.  This will start the agent and set
+environment variables used for agent communication within the current session.
+A new terminal usually requires a new ssh-agent.
 
-You can list all the identities loaded into the agent by using the
-`ssh-add -L` command.
+You can load multiple keys into your agent using the `ssh-add <path to
+key>` command. Keys should be password-protected for security at rest.  The
+ssh-add command prompts for your password, then the agent caches the
+private key for a configurable lifetime.  The `-t lifetime` option to
+ssh-add specifies a maximum time to cache the key; see `man ssh-add` for
+more information.
 
-`skuba` will try all the identities loaded into the ssh-agent until one of
-them grants access to the node.
+You can list fingerprints for all the identities loaded into the agent by
+using the `ssh-add -l` command.
+
+skuba will try all the identities loaded into the ssh-agent until one of
+them grants access to the node, or until the ssh server maximum
+authentication attempts are exhausted.
 
 It is also possible to forward the authentication agent connection from a
-host to another one. This can be useful if you intend to run `skuba` on
+host to another one. This can be useful if you intend to run skuba on
 a "jump host" and don't want to copy your private key to this node.
 
 This can be achieved using the `ssh -A` command. Please refer to the man page
@@ -272,7 +284,7 @@ spec:
 
 You can add any key/value labels to this selector:
 ----
---blocking-pod-selector=<LABEL KEY 1>=<LABLE VALUE 1>,<LABEL KEY 2>=<LABEL VALUE 2>
+--blocking-pod-selector=<LABEL KEY 1>=<LABEL VALUE 1>,<LABEL KEY 2>=<LABEL VALUE 2>
 ----
 
 Alternatively you can adapt the `kured` DaemonSet also later during runtime (after bootstrap) by editing `my-cluster/addons/kured/kured.yaml` and executing:
