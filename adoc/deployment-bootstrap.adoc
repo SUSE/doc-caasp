@@ -25,43 +25,11 @@ sudo zypper in skuba
 
 === Cluster Deployment
 
-Make sure you have added the SSH identity (corresponding to the public SSH key distributed above) to the ssh-agent on your workstation.
+Make sure you have added the SSH identity (corresponding to the public SSH key distributed above)
+to the ssh-agent on your workstation. For instructions on how to add the SSH identity,
+refer to <<ssh.configuration>>.
 This is a requirement for `skuba` (https://github.com/SUSE/skuba#prerequisites).
 
-[TIP]
-====
-The `ssh-agent` process is often started automatically by graphical
-desktop environments, or emulated by their "keyring" program (such as
-gnome-keyring). If that's not the case in your environment, consult the
-documentation for your desktop environment, or run the `ssh-agent` command in
-the terminal where you'll be running skuba.
-
-You can start the `ssh-agent` in the background of a shell session by using
-the `eval "$(ssh-agent)"` command.  This will start the agent and set
-environment variables used for agent communication within the current session.
-A new terminal usually requires a new ssh-agent.
-
-You can load multiple keys into your agent using the `ssh-add <path to
-key>` command. Keys should be password-protected for security at rest.  The
-ssh-add command prompts for your password, then the agent caches the
-private key for a configurable lifetime.  The `-t lifetime` option to
-ssh-add specifies a maximum time to cache the key; see `man ssh-add` for
-more information.
-
-You can list fingerprints for all the identities loaded into the agent by
-using the `ssh-add -l` command.
-
-skuba will try all the identities loaded into the ssh-agent until one of
-them grants access to the node, or until the ssh server maximum
-authentication attempts are exhausted.
-
-It is also possible to forward the authentication agent connection from a
-host to another one. This can be useful if you intend to run skuba on
-a "jump host" and don't want to copy your private key to this node.
-
-This can be achieved using the `ssh -A` command. Please refer to the man page
-of ssh to learn about the security implications of using this feature.
-====
 
 By default `skuba` connects to the nodes as `root` user. A different user can
 be specified by the following flags:
