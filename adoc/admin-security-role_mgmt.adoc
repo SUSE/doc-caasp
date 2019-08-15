@@ -107,7 +107,7 @@ This example allows to `get`, `watch` and `list` all `pods` in the namespace `de
 
 ----
 kind: Role
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: view-pods <1>
   namespace: default <2>
@@ -156,7 +156,7 @@ Note the `ClusterRole` value for [option]`kind`.
 
 ----
 kind: ClusterRole
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: admin-create-pods <6>
 rules:
@@ -206,7 +206,7 @@ This example shows how to bind a group to a defined role.
 
 ----
 kind: RoleBinding
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name:`ROLE_BINDING_NAME` <10>
   namespace:`NAMESPACE` <11>
