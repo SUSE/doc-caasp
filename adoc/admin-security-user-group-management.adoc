@@ -1,0 +1,234 @@
+= Managing Users and Groups
+
+You can use standard LDAP administration tools for managing organizations, groups and users remotely.
+To do so, install the `openldap2-client` package on a computer in your network
+and make sure that the computer can connect to the LDAP server
+(Ex: 389 Directory Server) on port `389` or secure port `636`.
+
+== Adding a New Organizational Unit
+
+. To add a new Organizational unit, create an LDIF file (`create_ou_groups.ldif`) like this:
++
+----
+dn: ou=OU_NAME,dc=example,dc=org
+changetype: add
+objectclass: top
+objectclass: organizationalUnit
+ou: OU_NAME
+----
++
+* Substitute OU_NAME with an organizational unit name of your choice.
+. Run `ladapmodify` to add the new Organizational unit:
++
+----
+LDAP_PROTOCOL=ldap                              # ldap, ldaps
+LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
+LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
+BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
+LDIF_FILE=./create_ou_groups.ldif               # LDIF Configuration File
+ROOT_PASSWORD=                                  # Admin Password
+
+ldapmodify -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D "<BIND_DN>" -f <LDIF_FILE> -w <ROOT_PASSWORD>
+----
+
+== Removing an Organizational Unit
+
+. To remove an Organizational unit, create an LDIF file (`delete_ou_groups.ldif`) like this:
++
+----
+dn: ou=OU_NAME,dc=example,dc=org
+changetype: delete
+----
++
+* Substitute OU_NAME the name of the organizational unit you would like to remove.
+. Execute `ladapmodify` to remove the organizational unit:
++
+----
+LDAP_PROTOCOL=ldap                              # ldap, ldaps
+LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
+LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
+BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
+LDIF_FILE=./delete_ou_groups.ldif               # LDIF Configuration File
+ROOT_PASSWORD=                                  # Admin Password
+
+ldapmodify -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D "<BIND_DN>" -f <LDIF_FILE> -w <ROOT_PASSWORD>
+----
+
+== Adding a New Group to an Organizational Unit
+
+. To add a new group to an Organizational unit, create an LDIF file (`create_groups.ldif`) like this:
++
+----
+dn: cn=GROUP,ou=OU_NAME,dc=example,dc=org
+changetype: add
+objectClass: top
+objectClass: groupOfUniqueNames
+gidNumber: GROUPID
+cn: GROUP
+----
++
+* GROUP: Group Name
+* OU_NAME: Organizational unit name
+* GROUPID: Group ID (GID) of the new group. This value should be a unique number.
+. Run `ladapmodify` to add the new group to the organizational unit:
++
+----
+LDAP_PROTOCOL=ldap                              # ldap, ldaps
+LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
+LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
+BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
+LDIF_FILE=./create_groups.ldif                  # LDIF Configuration File
+ROOT_PASSWORD=                                  # Admin Password
+
+ldapmodify -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D "<BIND_DN>" -f <LDIF_FILE> -w <ROOT_PASSWORD>
+----
+
+== Removing a Group from Organizational unit
+
+. To remove a group from an organizational unit, create an LDIF file (`delete_ou_groups.ldif`) like this:
++
+----
+dn: cn=GROUP,ou=OU_NAME,dc=example,dc=org
+changetype: delete
+----
++
+* GROUP: Group name
+* OU_NAME: Organizational unit name
+. Execute `ladapmodify` to remove the group from the Organizational unit:
++
+----
+LDAP_PROTOCOL=ldap                              # ldap, ldaps
+LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
+LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
+BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
+LDIF_FILE=./delete_ou_groups.ldif               # LDIF Configuration File
+ROOT_PASSWORD=                                  # Admin Password
+
+ldapmodify -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D "<BIND_DN>" -f <LDIF_FILE> -w <ROOT_PASSWORD>
+----
+
+=== Adding A New User
+
+. To add a new user, create an LDIF file (`new_user.ldif`) like this:
++
+----
+dn: uid=USERID,ou=OU_NAME,dc=example,dc=org
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: top
+uid: USERID
+userPassword: PASSWORD_HASH
+givenname: FIRST_NAME
+sn: SURNAME
+cn: FULL_NAME
+mail: E-MAIL_ADDRESS
+----
++
+* USERID: User ID (UID) of the new user. This value must be a unique number.
+* OU_NAME: Organizational unit name
+* PASSWORD_HASH: The user's hashed password. Use `/usr/sbin/slappasswd` to generate the hash.
+* FIRST_NAME: The user's first name
+* SURNAME: The user's last name
+* FULL_NAME: The user's full name
+* E-MAIL_ADDRESS: The user's e-mail address
+. Execute `ldapadd` to add the new user:
++
+----
+LDAP_PROTOCOL=ldap                              # ldap, ldaps
+LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
+LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
+BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
+LDIF_FILE=./new_user.ldif                       # LDIF Configuration File
+ROOT_PASSWORD=                                  # Admin Password
+
+ldapadd -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D
+"<BIND_DN>" -f <LDIF_FILE> -w <ROOT_PASSWORD>
+----
+
+
+=== Showing user attributes
+
+. To show the attributes of a user, use the `ldapsearch` command.
++
+----
+LDAP_PROTOCOL=ldap                              # ldap, ldaps
+LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
+LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
+USERID=user1
+BASE_DN="uid=<USERID>,dc=example,dc=org"
+BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
+ROOT_PASSWORD=                                  # Admin Password
+
+ldapsearch -v -x -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -b
+"<BASE_DN>" -D "<BIND_DN>" -w <ROOT_PASSWORD>
+----
+
+=== Modifying a user
+
+The following procedure shows how to modify a user in the LDAP server.
+See the LDIF files for examples of how to change a user password and add a user to the
+`Administrators` group.
+To modify other fields, you can use the password example, replacing `userPassword`
+with other field names you want to change.
+
+. Create an LDIF file (`modify_user.ldif`), which contains the change to the LDAP server:
++
+----
+dn: uid=USERID,ou=OU_NAME,dc=example,dc=org
+changetype: modify
+replace: userPassword
+userPassword: NEW_PASSWORD
+----
++
+* USERID: The desired user's ID
+* OU_NAME: Organizational unit name
+* NEW_PASSWORD: The user's new hashed password.
+. Add the user to `Administrators` group.
++
+----
+dn: cn=Administrators,ou=Groups,dc=example,dc=org
+changetype: modify
+add: uniqueMember
+uniqueMember: uid=USERID,ou=OU_NAME,dc=example,dc=org
+----
+* USERID: Substitute with the user's ID.
+* OU_NAME: Organizational unit name
+. Execute `ldapmodify` to change user attributes:
++
+----
+LDAP_PROTOCOL=ldap                              # ldap, ldaps
+LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
+LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
+BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
+LDIF_FILE=./modify_user.ldif                    # LDIF Configuration File
+ROOT_PASSWORD=                                  # Admin Password
+
+ldapmodify -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D
+"<BIND_DN>" -f <LDIF_FILE> -w <ROOT_PASSWORD>
+----
+
+=== Deleting a user
+
+To delete a user from the LDAP server, follow these steps:
+
+. Create an LDIF file (`delete_user.ldif`) that specifies the name of the entry:
++
+----
+dn: uid=USER_ID,ou=OU_NAME,dc=example,dc=org
+changetype: delete
+----
++
+* USERID: Substitute this with the user's ID.
+* OU_NAME: Organizational unit name
+. Run `ldapmodify` to delete the user:
++
+----
+LDAP_PROTOCOL=ldap                              # ldap, ldaps
+LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
+LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
+BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
+LDIF_FILE=./delete_user.ldif                    # LDIF Configuration File
+ROOT_PASSWORD=                                  # Admin Password
+
+ldapmodify -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D "<BIND_DN>" -f <LDIF_FILE> -w <ROOT_PASSWORD>
+----
