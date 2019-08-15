@@ -23,8 +23,8 @@ eval "$(ssh-agent)"
 This will start the agent and set environment variables used for agent
 communication within the current session. This has to be the same terminal session
 that you run the `skuba` commands in. A new terminal usually requires a new ssh-agent.
-. In some desktop environments the ssh-agent will also automatically load the SSH keys.
-To add an SSH keys manually, use the `ssh-add` command:
+In some desktop environments the ssh-agent will also automatically load the SSH keys.
+To add an SSH key manually, use the `ssh-add` command:
 +
 ----
 ssh-add <path_to_key>
@@ -32,12 +32,12 @@ ssh-add <path_to_key>
 +
 [TIP]
 ====
-If you are adding the SHH key manually, specify the full path.
+If you are adding the SSH key manually, specify the full path.
 For example: `/home/sles/.ssh/id_rsa`
 ====
 
 You can load multiple keys into your agent using the `ssh-add <path_to_key>` command.
-Keys should be password protected for security measures. The
+Keys should be password protected as a security measure. The
 ssh-add command will prompt for your password, then the agent caches the
 private key for a configurable lifetime. The `-t lifetime` option to
 ssh-add specifies a maximum time to cache the key. See `man ssh-add` for
