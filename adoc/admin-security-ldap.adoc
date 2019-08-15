@@ -1,12 +1,12 @@
-= Configuring an external LDAP Server
+= Configuring an External LDAP Server
 
 {productname} supports user authentication via an external LDAP server like 389
 Directory Server and Active Directory by updating the built-in Dex LDAP connector configuration.
 
-== Deploying an external 389 Directory Server with an automatically generated self-signed certificate
+== Deploying an External 389 Directory Server
 
 The 389 Directory Server image `registry.suse.com/caasp/v4/389-ds:1.4.0`
-will automatically generate a self-signed certificate and key.
+will *automatically generate a self-signed certificate* and key.
 The following instructions show how to deploy the 389 Directory Server
 with a customized configuration using container commands.
 
@@ -37,7 +37,7 @@ docker run -d \
 	--name 389-ds registry.suse.com/caasp/v4/389-ds:1.4.0
 ----
 
-== Deploying a 389 Directory Server with an external certificate
+== Deploying a 389 Directory Server with an External Certificate
 
 To replace the automatically generated certificate with your own, follow these steps:
 
@@ -132,7 +132,7 @@ docker run -d \
 	--name 389-ds registry.suse.com/caasp/v4/389-ds:1.4.0
 ----
 
-== Examples of usage
+== Examples of Usage
 
 In both directories, `user-regular1` and `user-regular2` are members of the `k8s-users` group,
 `user-admin` is a member of the `k8s-admins` group.
