@@ -209,3 +209,39 @@ roleRef:
        Name of the LDAP group to which this binding applies.
 
 ====
+
+[[_ex.admin.security.groups.role]]
+.Binding a Group to a CluseterRole
+====
+This example shows how to bind a group to a defined cluster role.
+
+----
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: `CLUSTER_ROLE_BINDING_NAME` <14>
+  namespace:`NAMESPACE` <15>
+subjects:
+  kind: Group
+  name: `CLUSTER_GROUP_NAME` <17>
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: `CLUSER_ROLE_NAME` <16>
+  apiGroup: rbac.authorization.k8s.io
+----
+
+<14>
+       Defines a name for this new cluster role binding.
+
+<15>
+       Name of the namespace for which the cluster binding applies.
+
+<17>
+       Name of the role used. For defining rules, refer to
+       <<_sec.admin.security.role.create>>.
+
+<16>
+       Name of the cluster group to which this binding applies.
+
+====
