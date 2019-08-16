@@ -89,7 +89,11 @@ machines - leave empty if no additional packages need to be installed.
 *Note*: Do not remove any of the pre-filled values in the `packages` section. This can render
 your cluster unusable. You can add more packages but do not remove any of the
 default packages listed.
-<7> `authorized_keys`: List of ssh-public-keys that will be injected into the cluster nodes, allowing you to be able to log in into them via SSH as `sles` user.
+<7> `authorized_keys`: List of ssh public keys that will be injected into the
+cluster nodes, allowing you to be able to log in into them via SSH as `sles`
+user.  Copy and paste the text from the _keyname_.pub file here, *not* the
+private key.  At least one of the keys must match a key loaded into your
+`ssh-agent`.
 <8> `ntp_servers`: A list of `ntp` servers you would like to use with `chrony`.
 # end::tf_openstack[]
 
