@@ -2,7 +2,8 @@
 == Deployment Preparations
 
 In order to deploy {productname} you need a workstation running {sle} 15 SP1 or similar {opensuse} equivalent.
-This workstation is called the "Management" machine.
+This workstation is called the "Management machine". Important files are generated
+and must be maintained on this machine, but it is not a member of the skuba cluster. 
 
 You need to have configured an SSH key pair that will be used to log into the
 created cluster nodes. This identity must be loaded into your users ssh-agent.
@@ -116,7 +117,7 @@ during the cluster bootstrap. To simplify configuration you can reserve the IPs
 needed for the cluster nodes and pre-configure these in the load balancer.
 
 The load balancer needs access to port `6443` on the `apiserver` (all master nodes)
-in the cluster. It also needs access to Gangway port `32001` and Dex port `32000` 
+in the cluster. It also needs access to Gangway port `32001` and Dex port `32000`
 on all master and worker nodes in the cluster for RBAC authentication.
 
 We recommend performing regular HTTPS health checks each master node `/healthz`
