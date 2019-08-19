@@ -4,8 +4,8 @@
 {productname}
 uses _role-based access control_ authorization for {kube}
 .
-Roles define, which _subjects_ (users or groups) can use which _verbs_ (operations) on __resources__.
-The following sections provide an overview of resources, verbs and how to create roles.
+Roles define, which _subjects_ (users or groups) can use which _verbs_ (operations) on which __resources__.
+The following sections provide an overview of the resources, verbs and how to create roles.
 Roles can then be assigned to users and groups.
 
 [[_sec.admin.security.role.verb]]
@@ -112,7 +112,7 @@ metadata:
   name: view-pods <1>
   namespace: default <2>
 rules:
-- apiGroups: [""] <3>
+- apiGroups: [""] <3>q
   resources: ["pods"] <4>
   verbs: ["get", "watch", "list"] <5>
 ----
@@ -175,7 +175,7 @@ To bind a group or user to a rule, create a YAML file that contains the role bin
 Then apply the binding with `kubectl apply -f YAML_FILE`.
 The following examples provide an overview about different use cases of role bindings.
 
-[[_ex.admin.security.groups.role]]
+[[q]]
 .Binding a Group to a Role
 ====
 This example shows how to bind a group to a defined role.
@@ -210,7 +210,7 @@ roleRef:
 
 ====
 
-[[_ex.admin.security.groups.role]]
+[[_ex.admin.security.groups.cluster.role]]
 .Binding a Group to a CluseterRole
 ====
 This example shows how to bind a group to a defined cluster role.
