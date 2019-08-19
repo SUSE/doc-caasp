@@ -1,0 +1,247 @@
+[[_sec.admin.security.role]]
+= Role Management
+
+{productname}
+uses _role-based access control_ authorization for {kube}
+.
+Roles define, which _subjects_ (users or groups) can use which _verbs_ (operations) on which __resources__.
+The following sections provide an overview of the resources, verbs and how to create roles.
+Roles can then be assigned to users and groups.
+
+[[_sec.admin.security.role.verb]]
+== List of Verbs
+
+
+This section provides an overview of the most common _verbs_ (operations) used for defining roles.
+Verbs correspond to sub-commands of `kubectl`.
+
+create::
+Create a resource.
+
+delete::
+Delete resources.
+
+deletecollection::
+Delete a collection of CronJob.
+
+get::
+Display individual resource.
+
+list::
+Display collections.
+
+patch::
+Update an API object in place.
+
+proxy::
+Allows running {kubectl}
+in a mode where it acts as a reverse proxy.
+
+update::
+Update fields of a resource, for example annotations or labels.
+
+watch::
+Watch resource.
+
+
+[[_sec.admin.security.role.resource]]
+== List of Resources
+
+
+This section provides an overview of the most common _resources_ used for defining roles.
+
+Autoscaler::
+https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+
+ConfigMaps::
+https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
+
+Cronjob::
+https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/
+
+DaemonSet::
+https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/
+
+Deployment::
+https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+
+Ingress::
+https://kubernetes.io/docs/concepts/services-networking/ingress/
+
+Job::
+https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/
+
+Namespace::
+https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
+
+Node::
+https://kubernetes.io/docs/concepts/architecture/nodes/
+
+Pod::
+https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/
+
+Persistent Volumes::
+https://kubernetes.io/docs/concepts/storage/persistent-volumes/
+
+Secrets::
+https://kubernetes.io/docs/concepts/configuration/secret/
+
+Service::
+https://kubernetes.io/docs/concepts/services-networking/service/
+
+ReplicaSets::
+https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+
+
+[[_sec.admin.security.role.create]]
+== Create Role
+
+
+Roles are defined in YAML files.
+To apply role definitions to {kube}, use `kubectl apply -f YAML_FILE`.
+The following examples provide an overview about different use cases of roles.
+
+.Simple Role for Core Resource
+====
+This example allows to `get`, `watch` and `list` all `pods` in the namespace `default`.
+
+----
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: view-pods <1>
+  namespace: default <2>
+rules:
+- apiGroups: [""] <3>q
+  resources: ["pods"] <4>
+  verbs: ["get", "watch", "list"] <5>
+----
+<1>
+         Name of the role. This is required to associate the rule with
+         a group or user. For details, refer to <<_sec.admin.security.role.create_binding>>.
+
+<2>
+         Namespace the new group should be allowed to access. Use
+         `default` for {kube}' default namespace.
+
+<3>
+         {kube} API groups. Use `""` for the core group.
+
+<4>
+         {kube} resources. For a list of available resources, refer to
+         <<_sec.admin.security.role.resource>>.
+
+<5>
+         {kube} verbs. For a list of available verbs, refer to
+         <<_sec.admin.security.role.verb>>.
+
+====
+
+.Cluster Role for Creation of Pods
+====
+This example creates a cluster role to allow `create pods` clusterwide.
+Note the `ClusterRole` value for [option]`kind`.
+
+----
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: admin-create-pods <6>
+rules:
+- apiGroups: [""] <7>
+  resources: ["pods"] <8>
+  verbs: ["create"] <9>
+----
+<6>
+         Name of the role. This is required to associate the rule with
+         a group or user. For details, refer to <<_sec.admin.security.role.create_binding>>.
+
+<7>
+         {kube} API groups. Use `""` for the core group.
+
+<8>
+         {kube} resources. For a list of available resources, refer to <<_sec.admin.security.role.resource>>.
+
+<9>
+         {kube} verbs. For a list of available verbs, refer to <<_sec.admin.security.role.verb>>.
+
+====
+
+[[_sec.admin.security.role.create_binding]]
+== Create Role Bindings
+
+
+To bind a group or user to a rule, create a YAML file that contains the role binding description.
+Then apply the binding with `kubectl apply -f YAML_FILE`.
+The following examples provide an overview about different use cases of role bindings.
+
+[[q]]
+.Binding a Group to a Role
+====
+This example shows how to bind a group to a defined role.
+
+----
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name:`ROLE_BINDING_NAME` <10>
+  namespace:`NAMESPACE` <11>
+subjects:
+- kind: Group
+  name:`LDAP_GROUP_NAME` <12>
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+- kind: Role
+  name:`ROLE_NAME` <13>
+  apiGroup: rbac.authorization.k8s.io
+----
+<10>
+       Defines a name for this new role binding.
+
+<11>
+       Name of the namespace for which the binding applies.
+
+<13>
+       Name of the role used. For defining rules, refer to
+       <<_sec.admin.security.role.create>>.
+
+<12>
+       Name of the LDAP group to which this binding applies.
+
+====
+
+[[_ex.admin.security.groups.cluster.role]]
+.Binding a Group to a CluseterRole
+====
+This example shows how to bind a group to a defined cluster role.
+
+----
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: `CLUSTER_ROLE_BINDING_NAME` <14>
+  namespace:`NAMESPACE` <15>
+subjects:
+  kind: Group
+  name: `CLUSTER_GROUP_NAME` <17>
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: `CLUSER_ROLE_NAME` <16>
+  apiGroup: rbac.authorization.k8s.io
+----
+
+<14>
+       Defines a name for this new cluster role binding.
+
+<15>
+       Name of the namespace for which the cluster binding applies.
+
+<17>
+       Name of the role used. For defining rules, refer to
+       <<_sec.admin.security.role.create>>.
+
+<16>
+       Name of the cluster group to which this binding applies.
+
+====
