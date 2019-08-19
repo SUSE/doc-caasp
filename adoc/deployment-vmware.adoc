@@ -173,20 +173,20 @@ like `sudo`, `VMWare tools` and adding the {kube} dependencies.
 [TIP]
 Steps 1-3 may be skipped, if they were already performed in YaST during the {sle} installation.
 
-. Register the SLES15-SP1 system. Substitute `REGISTRATION_CODE` for the code from <<registration_code>>.
+. Register the SLES15-SP1 system. Substitute `CAASP_REGISTRATION_CODE` for the code from <<registration_code>>.
 +
 ----
-SUSEConnect -r REGISTRATION_CODE
+SUSEConnect -r CAASP_REGISTRATION_CODE
 ----
 . Register the `Containers` module (free of charge)
 +
 ----
 SUSEConnect -p sle-module-containers/15.1/x86_64
 ----
-. Register the {productname} module. Substitute `REGISTRATION_CODE` for the code from <<registration_code>>.
+. Register the {productname} module. Substitute `CAASP_REGISTRATION_CODE` for the code from <<registration_code>>.
 +
 ----
-SUSEConnect -p caasp/4.0/x86_64 -r REGISTRATION_CODE
+SUSEConnect -p caasp/4.0/x86_64 -r CAASP_REGISTRATION_CODE
 ----
 // . Install `open-vm-tools`
 // +
@@ -273,12 +273,12 @@ mv terraform.tfvars.example terraform.tfvars
 include::deployment-terraform-example.adoc[tag=tf_vmware]
 . Enter the registration code for your nodes in `~/my-cluster/registration.auto.tfvars`:
 +
-Substitute `REGISTRATION_CODE` for the code from <<registration_code>>.
+Substitute `CAASP_REGISTRATION_CODE` for the code from <<registration_code>>.
 +
 [source,json]
 ----
 # SUSE CaaSP Product Registration Code
-caasp_registry_code = "REGISTRATION_CODE"
+caasp_registry_code = "CAASP_REGISTRATION_CODE"
 ----
 +
 This is required so all the deployed nodes can automatically register to {scc} and retrieve packages.

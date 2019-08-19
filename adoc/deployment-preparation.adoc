@@ -82,7 +82,7 @@ endif::[]
 
 ifeval::['{release_type}' == 'public']
 If you wish to beta test {productname} {productmajor}, please send an e-mail
-to beta-programs@lists.suse.com to request a {scc} subscription and a registration code.
+to beta-programs@lists.suse.com to request a {scc} subscription and a {productname} registration code.
 endif::[]
 
 === Installation tools
@@ -96,11 +96,11 @@ Enable the modules during the operating system installation or activate them usi
 
 [source,bash]
 ----
-sudo SUSEConnect -r REGISTRATION_CODE # <1>
+sudo SUSEConnect -r CAASP_REGISTRATION_CODE # <1>
 sudo SUSEConnect -p sle-module-containers/15.1/x86_64 # <2>
-sudo SUSEConnect -p caasp/4.0/x86_64 -r REGISTRATION_CODE # <3>
+sudo SUSEConnect -p caasp/4.0/x86_64 -r CAASP_REGISTRATION_CODE # <3>
 ----
-<1> Activate {sle} (Skip if you already have an activated operating system)
+<1> Activate {sle}
 <2> Add the free `Containers` module
 <3> Add the {productname} extension with your registration code
 
