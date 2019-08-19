@@ -9,7 +9,7 @@ and defining which of the nodes are masters and which workers. For maximum autom
 
 ==== Install `skuba`
 
-First you need to install `skuba` on your local workstation:
+First you need to install `skuba` on a management machine, like your local workstation:
 
 . Add the SLE15 SP1 extension containing `skuba`. This also requires the "containers" module.
 +
@@ -17,11 +17,18 @@ First you need to install `skuba` on your local workstation:
 SUSEConnect -p sle-module-containers/15.1/x86_64
 SUSEConnect -p caasp/4.0/x86_64 -r <Registration Code>
 ----
-. Install `skuba`:
+. Install the management pattern with:
 +
 ----
-sudo zypper in skuba
+zypper in -t pattern SUSE-CaaSP-Management
 ----
+
+[TIP]
+====
+Example deployment configuration files for each deployment scenario are installed
+under `/usr/share/caasp/terraform/`, or in case of the Bare metal deployment:
+`/usr/share/caasp/autoyast/`.
+====
 
 === Cluster Deployment
 
