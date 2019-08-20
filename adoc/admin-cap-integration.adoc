@@ -1,0 +1,150 @@
+= {suse} {cap} Integration
+
+{productname} offers {cap} for modern application delivery,
+this chapter describes the steps required for successful integration.
+
+== Prerequisites
+
+Before you start with integrating {cap}, you need to ensure the following:
+
+* The {productname} cluster did not use the `--strict-cap-defaults` option
+during the initial setup when you run `skuba cluster init`.
+This ensures presence of extra CRI-O capabilities compatible for docker containers.
+For more details refer to the
+_{productname} Deployment Guide, Transitioning from Docker to CRI-O_.
+* The {productname} cluster has `swapaccount=1` set on all worker nodes.
++
+----
+sudo sed -i -r 's|^(GRUB_CMDLINE_LINUX_DEFAULT=)\"(.*.)\"|\1\"\2swapaccount=1 \"|' /etc/default/grub
+sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+sudo systemctl reboot
+----
+* The {productname} cluster has no restrictions to {cap} ports.
+For more details refer to the {cap} documentation: https://www.suse.com/documentation/cloud-application-platform-1/singlehtml/book_cap_guides/book_cap_guides.html .
+* `Helm` and `Tiller` installed on node where you run `skuba` and `kubectl` command.
++
+----
+sudo zypper install helm
+
+kubectl create serviceaccount --namespace kube-system tiller
+kubectl create clusterrolebinding tiller --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+
+helm init --tiller-image registry.suse.com/caasp/v4/helm-tiller:{helm_tiller_version} --service-account tiller
+----
+
+== Procedures
+. Create a storage class. For precise steps, refer to <<_RBD-dynamic-persistent-volumes>>
+
+. Add `Helm` chart repository.
++
+----
+helm repo add suse https://kubernetes-charts.suse.com/
+----
+
+. Map the {productname} master node external IP address to the `<cap-domain>` and
+`uaa.<cap-domain>` on your DNS server.
+For testing purposes you can also use `/etc/hosts`
++
+----
+<caasp_master_node_external_ip>	<caasp_master_node_external_ip>.omg.howdoi.website
+<caasp_master_node_external_ip>	uaa.<caasp_master_node_external_ip>.omg.howdoi.website
+----
+
+. Create shared value file. This will be used for CAP `uaa`, `cf`, and
+`console` charts. Substitute the values enclosed in `< >` for specific values.
++
+----
+cat << *EOF* > custom_values.yaml
+env:
+  DOMAIN: <cap-domain>
+  UAA_HOST: uaa.<cap-domain>
+
+kube:
+  external_ips:
+  - <caasp_master_node_external_ip>
+  - <caasp_master_node_internal_ip>
+  storage_class:
+    persistent: <storage_class_name>
+
+secrets:
+  # CLUSTER_ADMIN_PASSWORD is for user login access
+  CLUSTER_ADMIN_PASSWORD: <secure_password>
+  # UAA_ADMIN_CLIENT_SECRET is for OAuth client
+  UAA_ADMIN_CLIENT_SECRET: <secure_secret>
+*EOF*
+----
+
+. Deploy `uaa`:
++
+----
+helm install suse/uaa --name uaa --namespace uaa --values custom_values.yaml
+
+kubectl -n uaa get pod ...
+NAME                        READY   STATUS      RESTARTS   AGE
+mysql-0                     1/1     Running     0          21h
+secret-generation-1-wr76g   0/1     Completed   0          21h
+uaa-0                       1/1     Running     1          21h
+...
+----
+
+. Verify uaa OAuth - this should return a JSON Object:
++
+----
+curl --insecure https://uaa.<cap-domain>:2793/.well-known/openid-configuration
+----
+
+. Deploy `cf`:
++
+----
+SECRET=$(kubectl get pods --namespace uaa -o jsonpath='{.items[?(.metadata.name=="uaa-0")].spec.containers[?(.name=="uaa")].env[?(.name=="INTERNAL_CA_CERT")].valueFrom.secretKeyRef.name}')
+
+CA_CERT="$(kubectl get secret $SECRET --namespace uaa -o jsonpath="{.data['internal-ca-cert']}" | base64 --decode -)"
+
+helm install suse/cf --name scf --namespace scf --values custom_values.yaml --set "secrets.UAA_CA_CERT=${CA_CERT}"
+
+kubectl -n scf get pod ...
+NAME                            READY   STATUS      RESTARTS   AGE
+adapter-0                       2/2     Running     0          56m
+api-group-0                     2/2     Running     0          49m
+bits-0                          1/1     Running     0          57m
+blobstore-0                     2/2     Running     0          56m
+cc-clock-0                      2/2     Running     0          61m
+cc-uploader-0                   2/2     Running     0          61m
+cc-worker-0                     2/2     Running     0          61m
+cf-usb-group-0                  1/1     Running     0          53m
+diego-api-0                     2/2     Running     0          61m
+diego-brain-0                   2/2     Running     0          61m
+diego-cell-0                    2/2     Running     0          57m
+diego-ssh-0                     2/2     Running     0          61m
+doppler-0                       2/2     Running     0          56m
+locket-0                        2/2     Running     0          61m
+log-api-0                       2/2     Running     0          55m
+log-cache-scheduler-0           2/2     Running     0          56m
+mysql-0                         1/1     Running     0          55m
+nats-0                          2/2     Running     0          57m
+nfs-broker-0                    1/1     Running     0          61m
+post-deployment-setup-1-vrbcv   0/1     Completed   0          61m
+router-0                        2/2     Running     0          57m
+routing-api-0                   2/2     Running     0          61m
+secret-generation-1-l9bf7       0/1     Completed   0          61m
+syslog-scheduler-0              2/2     Running     0          61m
+tcp-router-0                    2/2     Running     0          61m
+...
+----
+
+. Deploy `console`:
++
+----
+helm install suse/console --name console --namespace console --values custom_values.yaml
+
+kubectl -n console get pod ...
+NAME                         READY   STATUS      RESTARTS   AGE
+stratos-0                    3/3     Running     1          54m
+stratos-db-8d658bbf5-nsng6   1/1     Running     0          54m
+volume-migration-1-s96cc     0/1     Completed   0          54m
+....
+----
+
+A successful deployment allows you to access {cap} console via a web browser at
+https://<domain-name>:8443/login. The default username is admin and the password
+is the `secure_password` you have set in one of the steps above.
