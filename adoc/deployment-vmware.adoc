@@ -1,4 +1,4 @@
-== Deployment on VMWare
+== Deployment on VMware
 
 .Preparation Required
 [NOTE]
@@ -20,27 +20,14 @@ solution that directs access to the master nodes.
 
 [IMPORTANT]
 ====
-VMWare vSPhere doesn't offer a load-balancer solution. Please expose port `6443`
+VMware vSPhere doesn't offer a load-balancer solution. Please expose port `6443`
 for the {kube} api-servers on the master nodes on a local load balancer using
 round-robin 1:1 port forwarding.
 ====
 
 === VM preparation for creating a template
 
-. Temporarily enable SSH access to one of the ESXi nodes in the vSphere WebUI
-as described at link:https://kb.vmware.com/s/article/2004746[]
-. Log in to the node.
-Replace `vmware.esxi.node` with the hostname of your SSH enabled node.
-+
-----
-ssh root@vmware.esxi.node
-----
-. Change to a data volume and create a new directory to hold the installation media
-+
-----
-cd /vmfs/volumes/my-directory/
-----
-. Download the pre-built ISO image of SUSE SLES15-SP1 for VMWare from {jeos_product_page_url}
+. Upload the ISO image {isofile} to desired VMware datastore.
 
 Now you can create a new base VM for {productname} within the designated resource
 pool through the vSphere WebUI:
@@ -204,7 +191,7 @@ systemctl enable cloud-init cloud-init-local cloud-config cloud-final
 SUSEConnect -d; SUSEConnect --cleanup
 ----
 
-. Do a cleanup of the SLE image for converting into a VMWare template. As root, run:
+. Do a cleanup of the SLE image for converting into a VMware template. As root, run:
 +
 ----
 rm /etc/machine-id /var/lib/zypp/AnonymousUniqueId \
@@ -224,7 +211,7 @@ snapper create -d "Initial snapshot for caasp template" -t single
 shutdown -h now
 ----
 
-==== Creating the VMWare Template
+==== Creating the VMware Template
 
 Now you can convert the VM into a template in VMware (or repeat this action block for each VM).
 
