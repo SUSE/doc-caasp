@@ -35,6 +35,12 @@ this is necessary for all node operations.
 - `--target <IP/FQDN>` is the IP address or FQDN of the relevant machine.
 - `<node-name>` is how you decide to name the node you are adding.
 
+[IMPORTANT]
+====
+New master nodes that you didn't initially include in your Terraform's configuration have
+to be manually added to your load balancer's configuration.
+====
+
 To add a new *worker* node, you would run something like:
 
 [source,bash]
@@ -66,6 +72,12 @@ so it is the safest way to remove the node.
 
 [source,bash]
 skuba node remove <node-name>
+
+[IMPORTANT]
+====
+After the removal of a master node you have to manually delete its entries
+from your load balancer's configuration.
+====
 
 == Reconfiguring nodes
 
