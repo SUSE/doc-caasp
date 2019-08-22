@@ -130,17 +130,24 @@ Updates have to be applied separately to each node, starting with the control pl
 
 . Upgrade the master nodes:
 +
-During the upgrade to a newer version, the apiserver will be unavailable so it is recommended to remove the server from the load balancer pool before the upgrade to avoid any connection issues.
+[TIP]
+====
+During the upgrade to a newer version, the apiserver will be unavailable so it is recommended to remove the node from the load balancer pool before the upgrade to avoid any connection issues.
+====
 +
 ----
 skuba node upgrade apply --target <master-node-ip> --user <user> --sudo
 ----
 . When all master nodes are upgraded, upgrade the worker nodes as well:
 +
+[NOTE]
+====
+During the upgrade to a newer version, all the pods in the worker node will be restarted so it is recommanded to drain the pods if the application requires the high availablity. In most cases, the restart by the upgrade will be covered by replicaSet.
+====
++
 ----
 skuba node upgrade apply --target <worker-node-ip> --user <user> --sudo
 ----
-
 * Verify that your cluster nodes are upgraded by running:
 +
 ----
