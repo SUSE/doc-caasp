@@ -98,7 +98,7 @@ private key.  At least one of the keys must match a key loaded into your
 # end::tf_openstack[]
 
 [[tf.vmware]]
-=== Terraform VMWare Configuration
+=== Terraform VMware Configuration
 # tag::tf_vmware[]
 [source,json]
 ----
@@ -117,8 +117,11 @@ vsphere_resource_pool = "My_RP" // <4>
 # template name the machines will be copied from
 template_name = "sles15-sp1-caasp" // <5>
 
+# IMPORTANT: Replace by "efi" string in case your template was created by using EFI firmware
+firmware = "bios"
+
 # prefix that all of the booted machines will use
-# IMPORTANT, please enter unique identifier below as value of
+# IMPORTANT: please enter unique identifier below as value of
 # stack_name variable to not interfere with other deployments
 stack_name = "caasp-v4" // <6>
 
