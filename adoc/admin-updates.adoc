@@ -147,12 +147,6 @@ skuba node upgrade apply --target <worker-node-ip> --user <user> --sudo
 skuba cluster upgrade plan
 ----
 
-* To enable the automatic OS updates again, SSH to each of the nodes and enable the `skuba-update.timer`:
-+
-----
-sudo systemctl enable --now skuba-update.timer
-----
-
 [TIP]
 ====
 The upgrade via `skuba node upgrade apply` will
