@@ -234,12 +234,22 @@ this name will be used by the `Openstack` cloud controller manager to reconcile 
 <11> Attribute containing the user's email.
 <12> Attribute used as username used within OIDC tokens.
 
-Besides the LDAP connector you can also setup other connectors. For additional connectors, refer to the available connector configurations in the Dex repository: https://github.com/dexidp/dex/tree/v2.16.0/Documentation/connectors.
+Besides the LDAP connector you can also setup other connectors.
+For additional connectors, refer to the available connector configurations
+in the Dex repository: https://github.com/dexidp/dex/tree/v2.16.0/Documentation/connectors.
 
 ===== Prevent Nodes Running Special Workloads From Being Rebooted
 
+Some nodes might run specially treated workloads (pods).
+
+To prevent downtime of those workloads and the respective node,
+it is possible to flag the pod with `--blocking-pod-selector=<POD_NAME>`.
+Any node running this workload will not be rebooted via `kured` and needs to
+be rebooted manually.
+
 . Open the `kured` deployment in `my-cluster/addons/kured/kured.yaml`
-. Adapt the `DaemonSet` by adding one of the following flags to the `command` section of the `kured` container:
+. Adapt the `DaemonSet` by adding one of the following flags to the `command`
+section of the `kured` container:
 +
 ----
 ---
@@ -273,7 +283,8 @@ This will restart all `kured` pods with the additional configuration flags.
 
 [NOTE]
 ====
-By default, **any** prometheus alert blocks a node from reboot. However you can filter specific alerts to be ignored via the `--alert-filter-regexp` flag.
+By default, **any** prometheus alert blocks a node from reboot.
+However you can filter specific alerts to be ignored via the `--alert-filter-regexp` flag.
 ====
 
 . Open the `kured` deployment in `my-cluster/addons/kured/kured.yaml`
