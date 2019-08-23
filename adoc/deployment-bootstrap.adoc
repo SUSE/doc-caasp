@@ -238,6 +238,10 @@ Besides the LDAP connector you can also setup other connectors. For additional c
 
 ===== Prevent Nodes Running Special Workloads From Being Rebooted
 
+Some nodes might run specially treated workloads (pods) on a node.
+
+To prevent downtime of those workloads and its node, it is possible to flag a pod by a `--blocking-pod-selector=<NAME OF POD>`. Any node running this workload will not be rebooted via `kured` and needs to be rebooted manually.
+
 . Open the `kured` deployment in `my-cluster/addons/kured/kured.yaml`
 . Adapt the `DaemonSet` by adding one of the following flags to the `command` section of the `kured` container:
 +
