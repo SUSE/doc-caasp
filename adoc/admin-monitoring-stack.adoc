@@ -312,7 +312,7 @@ alertmanager:
     ## Use an existing PersistentVolumeClaim (my-pvc)
     #existingClaim: my-pvc
 
-## AlertManager is configured through alertmanager.yml. This file and any others
+## Alertmanager is configured through alertmanager.yml. This file and any others
 ## listed in alertmanagerFiles will be mounted into the alertmanager pod.
 ## See configuration options https://prometheus.io/docs/alerting/configuration/
 #alertmanagerFiles:
@@ -500,16 +500,16 @@ serverFiles:
           description: '{{ $labels.node }} has insufficient available memory'
 ----
 
-. You should now be able to see you AlertManager, depending on your network configuration
+. You should now be able to see you Alertmanager, depending on your network configuration
 * NodePort: https://prometheus-alertmanager.example.com:30443
 * ClusterIP with external IP(s): https://prometheus-alertmanager.example.com
 
 === Grafana
 
-Starting from Grafana 5.0, it is possible to dynamically provision the data sources and dashbords via files.
+Starting from Grafana 5.0, it is possible to dynamically provision the data sources and dashboards via files.
 In {kube} cluster, these files are provided via the utilization of `ConfigMap`, editing a `ConfigMap` will result by the modification of the configuration without having to delete/recreate the pod.
 
-. Configure Grafana provisoning
+. Configure Grafana provisioning
 +
 Create the default datasource configuration file _grafana-datasources.yaml_ which point to our Prometheus server
 +
@@ -634,7 +634,7 @@ There are two ways to add dashboards to Grafana:
 * Build your own dashboard
   Deploy your own dashboard by configuration file containing the dashboard definition.
 
-  . Create your dashboard defintion file as a `ConfigMap`, for example [path]`grafana-dashboards-caasp-cluster.yaml`.
+  . Create your dashboard definition file as a `ConfigMap`, for example [path]`grafana-dashboards-caasp-cluster.yaml`.
 
 +
 ----
@@ -675,13 +675,13 @@ kubectl apply -f grafana-dashboards-caasp-cluster.yaml
 ----
 
 +
-You can find a couple of dashboard examples for {productname} in the https://github.com/SUSE/monitoring[SUSE monitoring] on GitHub. This repo provides dashboards to visualize {kube} cluster resources.
+You can find a couple of dashboard examples for {productname} in the https://github.com/SUSE/caasp-monitoring[CaaSP monitoring] on GitHub. This repo provides dashboards to visualize {kube} cluster resources.
 
 == Monitoring
 
 === Prometheus Jobs
 
-The promethus upstream helm chart includes the following pre-defined jobs that will scrapes metrics from these jobs using service discovery.
+The Prometheus upstream helm chart includes the following pre-defined jobs that will scrapes metrics from these jobs using service discovery.
 
 * prometheus: Get metrics from prometheus server
 * kubernetes-apiservers: Get metrics from {kube} apiserver
@@ -690,11 +690,11 @@ The promethus upstream helm chart includes the following pre-defined jobs that w
 * kubernetes-service-endpoints: Get metrics from Services which have annotation `prometheus.io/scrape=true` in the metadata
 * kubernetes-pods: Get metrics from Pods which have annotation `prometheus.io/port=true` in the metadata
 
-If you wanna monitor new pods and services, you don't need to change `prometheus.yaml` but add annotation `prometheus.io/scrape=true`, `prometheus.io/port=<target-port>` and `prometheus.io/path=<metric-endpoint>` to your pods and services metadata. Promethus will automatically scraped the target.
+If you wanna monitor new pods and services, you don't need to change `prometheus.yaml` but add annotation `prometheus.io/scrape=true`, `prometheus.io/port=<target-port>` and `prometheus.io/path=<metric-endpoint>` to your pods and services metadata. Prometheus will automatically scraped the target.
 
-=== Etcd Cluster
+=== ETCD Cluster
 
-Etcd server expose metrics on `/metrics` endpoint. Prometheus jobs does not scrapes it by default. Edit `prometheus.yaml` if you wanna monitor etcd cluster. Since etcd cluster run in https, so we need certificate to access the endpoint.
+ETCD server expose metrics on `/metrics` endpoint. Prometheus jobs does not scrapes it by default. Edit `prometheus.yaml` if you wanna monitor etcd cluster. Since etcd cluster run in https, so we need certificate to access the endpoint.
 
 . At one of the master node, create etcd certificate to secret in monitoring namespace
 +
@@ -733,7 +733,7 @@ alertmanager:
     ## Use an existing PersistentVolumeClaim (my-pvc)
     #existingClaim: my-pvc
 
-## AlertManager is configured through alertmanager.yml. This file and any others
+## Alertmanager is configured through alertmanager.yml. This file and any others
 ## listed in alertmanagerFiles will be mounted into the alertmanager pod.
 ## See configuration options https://prometheus.io/docs/alerting/configuration/
 #alertmanagerFiles:
