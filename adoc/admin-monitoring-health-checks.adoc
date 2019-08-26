@@ -1,11 +1,17 @@
 = Health Checks
 
-Although {kube} cluster takes care of a lot of the traditional deployment problems with its self-healing capabilities, it is considered good practice to monitor the availability and health of your services and applications to react to problems should they go beyond these automated measures.
+Although {kube} cluster takes care of a lot of the traditional deployment
+problems with its self-healing capabilities, it is considered good practice to
+monitor the availability and health of your services and applications to react
+to problems should they go beyond these automated measures.
 
-A very basic (visual) health check can be achieved by accessing https://kubernetes.io/docs/tasks/debug-application-cluster/resource-usage-monitoring/#cadvisor[cAdvisor] on the admin node at port `4194`.
+A very basic (visual) health check can be achieved by accessing cAdvisor
+https://kubernetes.io/docs/tasks/debug-application-cluster/resource-usage-monitoring/#cadvisor
+on the admin node at port `4194`.
 It will show a basic statistics UI about the cluster resources.
 
-A complete set of instructions on how to monitor and maintain the health of you cluster is, however, beyond the scope of this document.
+A complete set of instructions on how to monitor and maintain the health of
+you cluster is, however, beyond the scope of this document.
 
 There are three levels of health checks.
 
@@ -18,22 +24,27 @@ There are three levels of health checks.
 The basic check if a cluster is working correctly is based on a few criteria:
 
 * Are all services running as expected?
-* Is there at least one {kube} master fully working? Even if the deployment is configured to be highly available, it's useful to know if `kube-controller-manager` is down on one of the machines.
+* Is there at least one {kube} master fully working? Even if the deployment is
+configured to be highly available, it's useful to know if
+`kube-controller-manager` is down on one of the machines.
 
 [NOTE]
 ====
-For further understanding cluster health information, consider reading https://kubernetes.io/docs/tasks/debug-application-cluster/debug-cluster/[Kubernetes:Troubleshoot Clusters]
+For further understanding cluster health information, consider reading
+https://kubernetes.io/docs/tasks/debug-application-cluster/debug-cluster/
 ====
 
 === {kube} master
 
-All components in {kube} cluster expose a `/healthz` endpoint. The expected (healthy) HTTP response status code is `200`.
+All components in {kube} cluster expose a `/healthz` endpoint. The expected
+(healthy) HTTP response status code is `200`.
 
 The minimal services for the master to work properly are:
 
 - kube-apiserver:
 +
-The component that receives your requests from `kubectl` and from the rest of the {kube} components. The URL is https://<CONTROL-PLANE-IP/FQDN>:6443/healthz
+The component that receives your requests from `kubectl` and from the rest of
+the {kube} components. The URL is https://<CONTROL-PLANE-IP/FQDN>:6443/healthz
 +
 * Local Check
 +
@@ -50,7 +61,8 @@ curl -k -i https://<CONTROL-PLANE-IP/FQDN>:6443/healthz
 
 - kube-controller-manager:
 +
-The component that contains the control loop, driving current state to the desired state. The URL is http://<CONTROL-PLANE-IP/FQDN>:10252/healthz
+The component that contains the control loop, driving current state to the
+desired state. The URL is http://<CONTROL-PLANE-IP/FQDN>:10252/healthz
 +
 * Local Check
 +
@@ -67,7 +79,8 @@ curl -i http://<CONTROL-PLANE-IP/FQDN>:10252/healthz
 
 - kube-scheduler:
 +
-The component that schedules workloads to nodes. The URL is http://<CONTROL-PLANE-IP/FQDN>:10251/healthz
+The component that schedules workloads to nodes. The URL is
+http://<CONTROL-PLANE-IP/FQDN>:10251/healthz
 +
 * Local Check
 +
@@ -85,41 +98,52 @@ curl -i http://<CONTROL-PLANE-IP/FQDN>:10251/healthz
 .High-Availability Environments
 [NOTE]
 ====
-In a HA environment you can monitor `kube-apiserver` on `https://<LOAD-BALANCER-IP/FQDN>:6443/healthz`.
+In a HA environment you can monitor `kube-apiserver` on
+`https://<LOAD-BALANCER-IP/FQDN>:6443/healthz`.
 
 If any master node is running correctly you will receive a valid response.
 
 This does, however, not mean that all master nodes necessarily work correctly.
-To ensure that all master nodes work properly, the health checks must be repeated individually for each master node deployed.
+To ensure that all master nodes work properly, the health checks must be
+repeated individually for each master node deployed.
 
-This endpoint will return a successful HTTP response if the cluster is operational; otherwise it will fail.
+This endpoint will return a successful HTTP response if the cluster is
+operational; otherwise it will fail.
 It will for example check that it can access `etcd` too.
 This should not be used to infer that the overall cluster health is ideal.
-It will return a successful response even when only minimal operational cluster health exists.
+It will return a successful response even when only minimal operational
+cluster health exists.
 
-To probe for full cluster health, you must perform individual health checking for all machines individually.
+To probe for full cluster health, you must perform individual health
+checking for all machines individually.
 ====
 
 === ETCD Cluster
 
-The etcd cluster expose a endpoint `/health`. The expected (healthy) HTTP response body is `{"health":"true"}`. The etcd cluster is access by HTTPS only. So we need to have etcd certificates.
+The etcd cluster expose a endpoint `/health`. The expected (healthy)
+HTTP response body is `{"health":"true"}`. The etcd cluster is access by
+HTTPS only. So we need to have etcd certificates.
 
 * Local Check
 +
 [source,bash]
 ----
-curl --cacert /etc/kubernetes/pki/etcd/ca.crt --cert /etc/kubernetes/pki/etcd/healthcheck-client.crt --key /etc/kubernetes/pki/etcd/healthcheck-client.key https://localhost:2379/health
+curl --cacert /etc/kubernetes/pki/etcd/ca.crt
+--cert /etc/kubernetes/pki/etcd/healthcheck-client.crt
+--key /etc/kubernetes/pki/etcd/healthcheck-client.key https://localhost:2379/health
 ----
 * Remote Check (make sure firewall allows port `2379`)
 +
 [source,bash]
 ----
-curl --cacert <etcd-root-ca-cert> --cert <etcd-client-cert> --key <etcd-client-key> https://<CONTROL-PLANE-IP/FQDN>:2379/health
+curl --cacert <etcd-root-ca-cert> --cert <etcd-client-cert>
+--key <etcd-client-key> https://<CONTROL-PLANE-IP/FQDN>:2379/health
 ----
 
 == Node Health Checks
 
-Performs basic check of a node health. This consists of checking kubelet endpoint and CNI (Container Networking Interface) pod state.
+Performs basic check of a node health. This consists of checking kubelet
+endpoint and CNI (Container Networking Interface) pod state.
 
 === kubelet
 
@@ -127,14 +151,18 @@ Is the kubelet up and working in this node?
 
 The kubelet has two ports exposed on all machines:
 
-* Port https/10250: exposes kubelet services to the entire cluster and is available from all nodes using authentication.
+* Port https/10250: exposes kubelet services to the entire cluster and
+is available from all nodes using authentication.
 * Port http/10248: is only available on local host.
 
-You can perform an HTTP request to the endpoint to find out if the kubelet is healthy on that machine. The expected (healthy) HTTP response status code `200`.
+You can perform an HTTP request to the endpoint to find out if the
+kubelet is healthy on that machine. The expected (healthy) HTTP response
+status code `200`.
 
 * Local Check
 +
-If for example there is an agent running on each node, this agent can simply fetch the local healthz port:
+If for example there is an agent running on each node, this agent can simply
+fetch the local healthz port:
 +
 [source,bash]
 ----
@@ -143,17 +171,26 @@ curl -i http://localhost:10248/healthz
 
 * Remote Check
 +
-There are two ways to fetch endpoints remotely (metrics, healthz etc.). Both methods use HTTPS and a token.
+There are two ways to fetch endpoints remotely (metrics, healthz etc.).
+Both methods use HTTPS and a token.
 +
-The first one is executed against the APIServer and mostly used with Prometheus and Kubernetes discovery https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config[kubernetes_sd_config], it allows automatic discovery of the nodes and avoids the task of defining monitoring for each node.
+The first one is executed against the APIServer and mostly used with Prometheus
+and Kubernetes discovery kubernetes_sd_config
+(https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config),
+it allows automatic discovery of the nodes and avoids the task of defining monitoring for each node.
 +
-The second method directly talks to kubelet can be used in more traditional monitoring where one must configure each node to be checked.
+The second method directly talks to kubelet can be used in more traditional
+monitoring where one must configure each node to be checked.
 +
 ** Configuration and Token retrieval
 +
-Create a Service Account (monitoring) with a secondary Token (monitoring-secret-token) associated. The token will be used in HTTP requests to authenticate against the APIserver.
+Create a Service Account (monitoring) with a secondary Token (monitoring-secret-token)
+associated. The token will be used in HTTP requests to authenticate against the APIserver.
 +
-This Service Account can only fetch information about nodes and pods. It is best practice to not use the default created token. Using a secondary token is also easier for management. Create a file [path]`kubelet.yaml` with the following as content.
+This Service Account can only fetch information about nodes and pods.
+It is best practice to not use the default created token. Using a secondary
+token is also easier for management. Create a file [path]`kubelet.yaml` with
+the following as content.
 +
 ----
 ---
@@ -214,7 +251,8 @@ Export the token to an environment variable:
 +
 [source,bash]
 ----
-TOKEN=$(kubectl -n kube-system get secrets monitoring-secret-token -o jsonpath='{.data.token}' | base64 -d)
+TOKEN=$(kubectl -n kube-system get secrets monitoring-secret-token
+-o jsonpath='{.data.token}' | base64 -d)
 ----
 +
 This token can now be passed in headers in the form: "Authorization: Bearer $TOKEN"
@@ -223,7 +261,10 @@ Now export important values as environment variables.
 +
 
 ** Enviroment Variables Setup
-. Choose a Kubernetes master node or worker node. The `NODE_IP_FQDN` here must be a node's IP address or FQDN. The `NODE_NAME` here must be a node name in your Kubernetes cluster. Export the variables `NODE_IP_FQDN` and `NODE_NAME` so it can be reused.
+. Choose a Kubernetes master node or worker node. The `NODE_IP_FQDN` here must
+be a node's IP address or FQDN. The `NODE_NAME` here must be a node name in
+your Kubernetes cluster. Export the variables `NODE_IP_FQDN` and `NODE_NAME`
+so it can be reused.
 +
 [source,bash]
 ----
@@ -235,17 +276,20 @@ NODE_NAME=worker0
 +
 [source,bash]
 ----
-TOKEN=$(kubectl -n kube-system get secrets monitoring-secret-token -o jsonpath='{.data.token}' | base64 -d)
+TOKEN=$(kubectl -n kube-system get secrets monitoring-secret-token
+-o jsonpath='{.data.token}' | base64 -d)
 ----
 
-. Get control plane <IP/FQDN> from the configuration file. You can skip this step if you only want to use the kubelet endpoint.
+. Get control plane <IP/FQDN> from the configuration file. You can skip this
+step if you only want to use the kubelet endpoint.
 +
 [source,bash]
 ----
 CONTROL_PLANE=$(kubectl config view | grep server | cut -f 2- -d ":" | tr -d " ")
 ----
 +
-Now the key information to retrieve data from the endpoints should be available in the environment and you can poll the endpoints.
+Now the key information to retrieve data from the endpoints should be available
+in the environment and you can poll the endpoints.
 
 ** Fetching Information from kubelet Endpoint (make sure firewall allows port `10250`)
 . Fetching metrics
@@ -275,26 +319,30 @@ curl -k https://$NODE_IP_FQDN:10250/healthz --header "Authorization: Bearer $TOK
 +
 [source,bash]
 ----
-curl -k $CONTROL_PLANE/api/v1/nodes/$NODE_NAME/proxy/metrics --header "Authorization: Bearer $TOKEN"
+curl -k $CONTROL_PLANE/api/v1/nodes/$NODE_NAME/proxy/metrics --header
+"Authorization: Bearer $TOKEN"
 ----
 
 . Fetching cAdvisor
 +
 [source,bash]
 ----
-curl -k $CONTROL_PLANE/api/v1/nodes/$NODE_NAME/proxy/metrics/cadvisor --header "Authorization: Bearer $TOKEN"
+curl -k $CONTROL_PLANE/api/v1/nodes/$NODE_NAME/proxy/metrics/cadvisor --header
+"Authorization: Bearer $TOKEN"
 ----
 
 . Fetching healthz
 +
 [source,bash]
 ----
-curl -k $CONTROL_PLANE/api/v1/nodes/$NODE_NAME/proxy/healthz --header "Authorization: Bearer $TOKEN"
+curl -k $CONTROL_PLANE/api/v1/nodes/$NODE_NAME/proxy/healthz --header
+"Authorization: Bearer $TOKEN"
 ----
 
 === CNI
 
-Is CNI (Container Networking Interface) working as expected in this node? If not, `coredns` can not start. Check if the `coredns` service is running.
+Is CNI (Container Networking Interface) working as expected in this node?
+If not, `coredns` can not start. Check if the `coredns` service is running.
 [source,bash]
 ----
 kubectl get deployments -n kube-system
@@ -305,21 +353,26 @@ oidc-dex          1/1     1            1           8d
 oidc-gangway      1/1     1            1           8d
 ----
 
-If `coredns` is running and you are able to create pods then you can be certain that CNI and your CNI plugin are working correctly.
+If `coredns` is running and you are able to create pods then you can be certain
+that CNI and your CNI plugin are working correctly.
 
 There's also the https://kubernetes.io/docs/tasks/debug-application-cluster/monitor-node-health/[Monitor Node Health] check. This is a `DaemonSet` that runs on every node, and reports to the `apiserver` back as `NodeCondition` and `Events`.
 
 == Service/Application Health Checks
 
-If the deployed services contain a health endpoint, or if they contain an endpoint that can be used to determine if the service is up, you can use `livenessProbes` and/or `readinessProbes`.
+If the deployed services contain a health endpoint, or if they contain an endpoint
+that can be used to determine if the service is up, you can use `livenessProbes`
+and/or `readinessProbes`.
 
 .Health check endpoints vs. functional endpoints
 [NOTE]
 ====
 A proper health check is always preferred if designed correctly.
 
-Despite the fact that any endpoint could potentially be used to infer if your application is up, a specific health endpoint in your application is preferred.
-Such an endpoint will only respond affirmatively when all your setup code on the server has finished and the application is running in a desired state.
+Despite the fact that any endpoint could potentially be used to infer if your
+application is up, a specific health endpoint in your application is preferred.
+Such an endpoint will only respond affirmatively when all your setup code on
+the server has finished and the application is running in a desired state.
 ====
 
 The `livenessProbes` and `readinessProbes` share configuration options and probe types.
@@ -334,7 +387,8 @@ successThreshold::
 Number of minimum consecutive successes for the probe to be considered successful (Default: 1).
 
 failureThreshold::
-Number of times this probe is allowed to fail in order to assume that the service is not responding (Default: 3).
+Number of times this probe is allowed to fail in order to assume that the service
+is not responding (Default: 3).
 
 timeoutSeconds::
 Number of seconds after which the probe times out (Default: 1).
@@ -342,7 +396,8 @@ Number of seconds after which the probe times out (Default: 1).
 There are different options for the `livenessProbes` to check:
 
 Command::
-A command executed within a container; a reture code of 0 means success. All other return codes mean failure.
+A command executed within a container; a reture code of 0 means success.
+All other return codes mean failure.
 
 TCP::
 If a TCP connection can be established is considered success.
@@ -352,22 +407,39 @@ Any HTTP response between `200` and `400` indicates success.
 
 === livenessProbe
 
-https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/[livenessProbes] are used to detect running but misbehaving pods/a service that might be running (the process didn't die), but that is not responding as expected.
+livenessProbes
 
-Probes are executed by each `kubelet` against the pods that define them and that are running in that specific node.
+https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
+are used to detect running but misbehaving pods/a service that might be running
+(the process didn't die), but that is not responding as expected.
 
-When a `livenessProbe` fails, {kube} will automatically restart the pod and increase the `RESTARTS` count for that pod.
+Probes are executed by each `kubelet` against the pods that define them and that
+are running in that specific node.
+
+When a `livenessProbe` fails, {kube} will automatically restart the pod and
+increase the `RESTARTS` count for that pod.
 
 These probes will be executed every `periodSeconds` starting from `initialDelaySeconds`.
 
 === readinessProbe
 
-https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#define-readiness-probes[readinessProbes] are used to wait for processes that take some time to start. Despite the container running, it might be performing some time consuming initializatoin operations. During this time, you don't want {kube} to route traffic to that specific pod; also, you don't want that container to be restarted because it will appear unresponsive.
+readinessProbes
+https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#define-readiness-probes
+are used to wait for processes that take some time to start. Despite the container running,
+it might be performing some time consuming initializatoin operations.
+During this time, you don't want {kube} to route traffic to that specific pod;
+also, you don't want that container to be restarted because it will appear unresponsive.
 
-These probes will be executed every `periodSeconds` starting from `initialDelaySeconds` until the service is ready.
+These probes will be executed every `periodSeconds` starting from `initialDelaySeconds`
+until the service is ready.
 
-Both probe types can be used at the same time. The `livenessProbe` will ensure that if a service is running yet misbehaving, it will be restarted, and `readinessProbe` will ensure that {kube}  won't route traffic to that specific pod until it's considered to be fully functional and running.
+Both probe types can be used at the same time. The `livenessProbe` will ensure
+that if a service is running yet misbehaving, it will be restarted, and `readinessProbe`
+will ensure that {kube}  won't route traffic to that specific pod until it's considered
+to be fully functional and running.
 
 == General Health Checks
 
-We recommend to apply other best practices from system administration to your monitoring and health checking approach. These steps are not specific to {productname} and are beyond the scope of this document. 
+We recommend to apply other best practices from system administration to your
+monitoring and health checking approach. These steps are not specific to {productname}
+and are beyond the scope of this document.
