@@ -52,13 +52,13 @@ kubectl create namespace monitoring
 ----
 . Create DNS entries
 +
-In this example, we will use a worker node with IP `192.168.1.113` to expose our services.
+In this example, we will use a worker node with public IP `10.86.4.158` (private IP `192.168.0.5`).
 +
 You should configure proper DNS names in any production environment.
 These values are only for example purposes.
 +
 ----
-monitoring.example.com                      IN  A       192.168.1.113
+monitoring.example.com                      IN  A       10.86.4.158
 prometheus.example.com                      IN  CNAME   monitoring.example.com
 prometheus-alertmanager.example.com         IN  CNAME   monitoring.example.com
 grafana.example.com                         IN  CNAME   monitoring.example.com
@@ -67,7 +67,7 @@ grafana.example.com                         IN  CNAME   monitoring.example.com
 Or add this entry to /etc/hosts
 +
 ----
-192.168.1.113 prometheus.example.com prometheus-alertmanager.example.com grafana.example.com
+10.86.4.158 prometheus.example.com prometheus-alertmanager.example.com grafana.example.com
 ----
 
 . Create certificates
@@ -119,12 +119,12 @@ serviceAccount:
   name: nginx-ingress
 
 # Publish services on port HTTPS/443
-# These services are exposed on the node with IP 192.168.1.113
+# These services are exposed on the node with private IP 192.168.0.5
 controller:
   service:
     enableHttp: false
     externalIPs:
-      - 192.168.1.113
+      - 192.168.0.5
 ----
 
 . Deploy the upstream helm chart and pass along our configuration values file.

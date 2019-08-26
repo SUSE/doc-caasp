@@ -22,8 +22,7 @@ The basic check if a cluster is working correctly is based on a few criteria:
 
 [NOTE]
 ====
-For further understanding cluster health information, consider reading https://kubernetes.io/docs/tasks/debug-application-cluster/debug-cluster/[Kubernetes:
-     Troubleshoot Clusters]
+For further understanding cluster health information, consider reading https://kubernetes.io/docs/tasks/debug-application-cluster/debug-cluster/[Kubernetes:Troubleshoot Clusters]
 ====
 
 === {kube} master
@@ -111,9 +110,12 @@ The etcd cluster expose a endpoint `/health`. The expected (healthy) HTTP respon
 ----
 curl --cacert /etc/kubernetes/pki/etcd/ca.crt --cert /etc/kubernetes/pki/etcd/healthcheck-client.crt --key /etc/kubernetes/pki/etcd/healthcheck-client.key https://localhost:2379/health
 ----
-* Remote Check
+* Remote Check (make sure firewall allows port `2379`)
 +
-The etcd cluster is not allowed remote check due to the etcd server could be access in {kube} clusters only.
+[source,bash]
+----
+curl --cacert <etcd-root-ca-cert> --cert <etcd-client-cert> --key <etcd-client-key> https://<CONTROL-PLANE-IP/FQDN>:2379/health
+----
 
 == Node Health Checks
 
