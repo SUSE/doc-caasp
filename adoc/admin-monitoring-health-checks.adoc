@@ -1,4 +1,4 @@
-= Cluster Health Check
+= Health Checks
 
 Although {kube} cluster takes care of a lot of the traditional deployment problems with its self-healing capabilities, it is considered good practice to monitor the availability and health of your services and applications to react to problems should they go beyond these automated measures.
 
@@ -34,7 +34,7 @@ The minimal services for the master to work properly are:
 
 - kube-apiserver:
 +
-The component that receives your requests from `kubectl` and from the rest of the {kube} components. The URL is https://<MASTER-NODE-IP-ADDRESS/FQDN>:6443/healthz
+The component that receives your requests from `kubectl` and from the rest of the {kube} components. The URL is https://<CONTROL-PLANE-IP/FQDN>:6443/healthz
 +
 * Local Check
 +
@@ -46,12 +46,12 @@ curl -k -i https://localhost:6443/healthz
 +
 [source,bash]
 ----
-curl -k -i https://<MASTER-NODE-IP-ADDRESS/FQDN>:6443/healthz
+curl -k -i https://<CONTROL-PLANE-IP/FQDN>:6443/healthz
 ----
 
 - kube-controller-manager:
 +
-The component that contains the control loop, driving current state to the desired state. The URL is http://<MASTER-NODE-IP-ADDRESS/FQDN>:10252/healthz
+The component that contains the control loop, driving current state to the desired state. The URL is http://<CONTROL-PLANE-IP/FQDN>:10252/healthz
 +
 * Local Check
 +
@@ -63,12 +63,12 @@ curl -i http://localhost:10252/healthz
 +
 [source,bash]
 ----
-curl -i http://localhost:10252/healthz
+curl -i http://<CONTROL-PLANE-IP/FQDN>:10252/healthz
 ----
 
 - kube-scheduler:
 +
-The component that schedules workloads to nodes. The URL is http://<MASTER-NODE-IP-ADDRESS/FQDN>:10251/healthz
+The component that schedules workloads to nodes. The URL is http://<CONTROL-PLANE-IP/FQDN>:10251/healthz
 +
 * Local Check
 +
@@ -80,13 +80,13 @@ curl -i http://localhost:10251/healthz
 +
 [source,bash]
 ----
-curl -i http://localhost:10251/healthz
+curl -i http://<CONTROL-PLANE-IP/FQDN>:10251/healthz
 ----
 
 .High-Availability Environments
 [NOTE]
 ====
-In a HA environment you can monitor `kube-apiserver` on `https://MASTER-NODE-LOADBALANCER:6443/healthz`.
+In a HA environment you can monitor `kube-apiserver` on `https://<LOAD-BALANCER-IP/FQDN>:6443/healthz`.
 
 If any master node is running correctly you will receive a valid response.
 
@@ -101,7 +101,7 @@ It will return a a successful response even when only minimal operational cluste
 To probe for full cluster health, you must perform individual health checking for all machines individually.
 ====
 
-=== `Etcd` Cluster
+=== ETCD Cluster
 
 The etcd cluster expose a endpoint `/health`. The expected (healthy) HTTP response body is `{"health":"true"}`. The etcd cluster is access by HTTPS only. So we need to have etcd certificates.
 
@@ -117,13 +117,13 @@ The etcd cluster is not allowed remote check due to the etcd server could be acc
 
 == Node Health Checks
 
-The basic check if a node is healthy consists of checking if `kubelet` and the CNI (Container Networking Interface) are working properly.
+Performs basic check of a node health. This consists of checking kubelet endpoint and CNI (Container Networking Interface) pod state.
 
-=== `kubelet`
+=== kubelet
 
-Is the `kubelet` up and working in this node?
+Is the kubelet up and working in this node?
 
-The `kubelet` has two ports exposed on all machines:
+The kubelet has two ports exposed on all machines:
 
 * Port https/10250: exposes kubelet services to the entire cluster and is available from all nodes using authentication.
 * Port http/10248: is only available on local host.
@@ -220,12 +220,12 @@ This token can now be passed in headers in the form: "Authorization: Bearer $TOK
 Now export important values as environment variables.
 +
 
-** Testing Token Remotely
-. Choose a Kubernetes master node or worker node. The `NODE_IP` here must be a node's IP address or FQDN. The `NODE_NAME` here must be a node name in your Kubernetes cluster. Export the variables `NODE_IP` and `NODE_NAME` so it can be reused.
+** Enviroment Variables Setup
+. Choose a Kubernetes master node or worker node. The `NODE_IP_FQDN` here must be a node's IP address or FQDN. The `NODE_NAME` here must be a node name in your Kubernetes cluster. Export the variables `NODE_IP_FQDN` and `NODE_NAME` so it can be reused.
 +
 [source,bash]
 ----
-NODE_IP="10.86.4.158"
+NODE_IP_FQDN="10.86.4.158"
 NODE_NAME=worker0
 ----
 
@@ -236,11 +236,11 @@ NODE_NAME=worker0
 TOKEN=$(kubectl -n kube-system get secrets monitoring-secret-token -o jsonpath='{.data.token}' | base64 -d)
 ----
 
-. Get APISERVER from the configuration file. You can skip this step if you only want to use the kubelet endpoint.
+. Get control plane <IP/FQDN> from the configuration file. You can skip this step if you only want to use the kubelet endpoint.
 +
 [source,bash]
 ----
-APISERVER=$(kubectl config view | grep server | cut -f 2- -d ":" | tr -d " ")
+CONTROL_PLANE=$(kubectl config view | grep server | cut -f 2- -d ":" | tr -d " ")
 ----
 +
 Now the key information to retrieve data from the endpoints should be available in the environment and you can poll the endpoints.
@@ -250,21 +250,21 @@ Now the key information to retrieve data from the endpoints should be available 
 +
 [source,bash]
 ----
-curl -k https://$NODE_IP:10250/metrics --header "Authorization: Bearer $TOKEN"
+curl -k https://$NODE_IP_FQDN:10250/metrics --header "Authorization: Bearer $TOKEN"
 ----
 
 . Fetching cAdvisor
 +
 [source,bash]
 ----
-curl -k https://$NODE_IP:10250/metrics/cadvisor --header "Authorization: Bearer $TOKEN"
+curl -k https://$NODE_IP_FQDN:10250/metrics/cadvisor --header "Authorization: Bearer $TOKEN"
 ----
 
 . Fetching healthz
 +
 [source,bash]
 ----
-curl -k https://$NODE_IP:10250/healthz --header "Authorization: Bearer $TOKEN"
+curl -k https://$NODE_IP_FQDN:10250/healthz --header "Authorization: Bearer $TOKEN"
 ----
 
 ** Fetching Information from APISERVER Endpoint
@@ -273,27 +273,26 @@ curl -k https://$NODE_IP:10250/healthz --header "Authorization: Bearer $TOKEN"
 +
 [source,bash]
 ----
-curl -k $APISERVER/api/v1/nodes/$NODE_NAME/proxy/metrics --header "Authorization: Bearer $TOKEN"
+curl -k $CONTROL_PLANE/api/v1/nodes/$NODE_NAME/proxy/metrics --header "Authorization: Bearer $TOKEN"
 ----
 
 . Fetching cAdvisor
 +
 [source,bash]
 ----
-curl -k $APISERVER/api/v1/nodes/$NODE_NAME/proxy/metrics/cadvisor --header "Authorization: Bearer $TOKEN"
+curl -k $CONTROL_PLANE/api/v1/nodes/$NODE_NAME/proxy/metrics/cadvisor --header "Authorization: Bearer $TOKEN"
 ----
 
 . Fetching healthz
 +
 [source,bash]
 ----
-curl -k $APISERVER/api/v1/nodes/$NODE_NAME/proxy/healthz --header "Authorization: Bearer $TOKEN"
+curl -k $CONTROL_PLANE/api/v1/nodes/$NODE_NAME/proxy/healthz --header "Authorization: Bearer $TOKEN"
 ----
 
-=== `CNI`
+=== CNI
 
-Is CNI (Container Networking Interface) working as expected in this node? If not, `coredns` can not start.
-Check if the `coredns` service is running.
+Is CNI (Container Networking Interface) working as expected in this node? If not, `coredns` can not start. Check if the `coredns` service is running.
 [source,bash]
 ----
 kubectl get deployments -n kube-system
