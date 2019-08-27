@@ -33,10 +33,10 @@ and worker nodes individually.
 
 [source,bash]
 ----
-supportconfig
-tar -xvJf /var/log/nts_*.txz
-cd nts*
-cat kubernetes.txt crio.txt
+sudo supportconfig
+sudo tar -xvJf /var/log/nts_*.txz
+cd /var/log/nts*
+sudo cat kubernetes.txt crio.txt
 ----
 
 The result is a TAR archive of files. Each of the tar files should be given a name that can be used to identify which
@@ -45,4 +45,4 @@ cluster node it was created on.
 After opening a Service Request (SR), you can upload the TAR archives to Global Technical Support.
 
 The data will help to locate the issue you reported and assist you in solving the problem.
-For details, see https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_adm_support.html.
+For details, see https://www.suse.com/documentation/sles-15/book_sle_admin/data/cha_adm_support.html.
