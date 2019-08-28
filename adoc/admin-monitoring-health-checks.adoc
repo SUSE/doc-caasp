@@ -265,7 +265,7 @@ TOKEN=$(kubectl -n kube-system get secrets monitoring-secret-token
 -o jsonpath='{.data.token}' | base64 -d)
 ----
 +
-This token can now be passed in headers in the form: "Authorization: Bearer $TOKEN"
+This token can now be passed through the `--header` argument as: "Authorization: Bearer $TOKEN".
 +
 Now export important values as environment variables:
 +
