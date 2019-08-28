@@ -47,6 +47,16 @@ After opening a Service Request (SR), you can upload the TAR archives to Global 
 The data will help to locate the issue you reported and assist you in solving the problem.
 For details, see https://www.suse.com/documentation/sles-15/book_sle_admin/data/cha_adm_support.html.
 
+== Debugging Cluster Deployment Failed
+
+If the cluster deployment fails, please re-run the command again with setting verbosity level to 1 `-v=1`.
+
+For example, if bootstraps the first master node of the cluster fails, re-run the command like
+[source,bash]
+----
+skuba node bootstrap --user sles --sudo --target <IP/FQDN> <NODE NAME> -v=1
+----
+
 == x509: certificate signed by unknown authority
 
 When interacting with Kubernetes, you might run into the situation where your existing configuration for the authentication has changed (cluster has been rebuild, certificates have been switched.)
