@@ -57,6 +57,12 @@ For example, if bootstraps the first master node of the cluster fails, re-run th
 skuba node bootstrap --user sles --sudo --target <IP/FQDN> <NODE NAME> -v=1
 ----
 
+== Network Planning And Reconfiguration
+
+It is not possible to reconfigure the used IP ranges of SUSE CaaS Platform once the deployment is complete. Therefore, carefully plan for required IP ranges and future scenarios.
+
+Additionally, keep the network requirements in mind, as stated in Deployment Guide Networking chapter.
+
 == x509: certificate signed by unknown authority
 
 When interacting with Kubernetes, you might run into the situation where your existing configuration for the authentication has changed (cluster has been rebuild, certificates have been switched.)
