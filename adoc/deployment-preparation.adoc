@@ -120,8 +120,9 @@ Setting up a load balancer is mandatory in any production environment.
 ====
 
 {productname} requires a load balancer to distribute workload between the deployed
-master nodes of the cluster. A failure tolerant {productname} cluster will
-always use more than one load balancer since that becomes a "single point of failure".
+master nodes of the cluster. A failure tolerant {productname} cluster will always
+use more than one control plane node as well as more than one load balancer,
+so there is not a single point of failure.
 
 There are many ways to configure a load balancer. This documentation can not
 describe all possible combinations of load balancer configurations and thus
