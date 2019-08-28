@@ -136,15 +136,21 @@ For VMware you must configure a load balancer manually and allow it access to
 all master nodes created during <<bootstrap>>.
 
 The load balancer should be configured before the actual deployment. It is needed
-during the cluster bootstrap. To simplify configuration you can reserve the IPs
-needed for the cluster nodes and pre-configure these in the load balancer.
+during the cluster bootstrap, and also during upgrades. To simplify configuration
+you can reserve the IPs needed for the cluster nodes and pre-configure these in
+the load balancer.
 
 The load balancer needs access to port `6443` on the `apiserver` (all master nodes)
 in the cluster. It also needs access to Gangway port `32001` and Dex port `32000`
 on all master and worker nodes in the cluster for RBAC authentication.
 
-We recommend performing regular HTTPS health checks each master node `/healthz`
-endpoint to verify that the node is responsive.
+We recommend performing regular HTTPS health checks on each master node `/healthz`
+endpoint to verify that the node is responsive. This is particularly important during
+upgrades, when a master node restarts the apiserver. During this rather short time
+window all requests have to go to another master node's apiserver. The master node
+that is being upgraded will have to be marked INACTIVE on the load balancer pool
+at least during the restart of the apiserver. We are providing reasonable defaults
+for that on our default openstack load balancer {tf} configuration.
 
 The following is an example of a possible load balancer configuration based on {sle} 15 SP1 and `nginx`.
 
