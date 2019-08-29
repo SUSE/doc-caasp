@@ -1,4 +1,4 @@
-== Deployment on VMWare
+== Deployment on VMware
 
 .Preparation Required
 [NOTE]
@@ -20,27 +20,14 @@ solution that directs access to the master nodes.
 
 [IMPORTANT]
 ====
-VMWare vSPhere doesn't offer a load-balancer solution. Please expose port `6443`
+VMware vSPhere doesn't offer a load-balancer solution. Please expose port `6443`
 for the {kube} api-servers on the master nodes on a local load balancer using
 round-robin 1:1 port forwarding.
 ====
 
 === VM preparation for creating a template
 
-. Temporarily enable SSH access to one of the ESXi nodes in the vSphere WebUI
-as described at link:https://kb.vmware.com/s/article/2004746[]
-. Log in to the node.
-Replace `vmware.esxi.node` with the hostname of your SSH enabled node.
-+
-----
-ssh root@vmware.esxi.node
-----
-. Change to a data volume and create a new directory to hold the installation media
-+
-----
-cd /vmfs/volumes/my-directory/
-----
-. Download the pre-built image of SUSE SLES15-SP1 for VMWare from {jeos_product_page_url}
+. Upload the ISO image {isofile} to desired VMware datastore.
 
 Now you can create a new base VM for {productname} within the designated resource
 pool through the vSphere WebUI:
@@ -85,12 +72,6 @@ image::vmware_step6b.png[width=80%,pdfwidth=80%]
 .. Confirm the process with menu:Next[].
 
 ==== {sls} installation
-
-[NOTE]
-====
-Use {ay} and ensure to use a staged frozen patchlevel via SMT/SUSE Manager to ensure a 100% reproducible setup.
-For the moment (until an {ay} template is available) follow the procedure below.
-====
 
 Power on the newly created VM and install the system over graphical remote console:
 
@@ -167,11 +148,11 @@ image::vmware_step17.png[width=80%,pdfwidth=80%]
 ==== Preparation of the VM as a template
 
 In order to run {productname} on the created VMs, you must configure and install some additional packages
-like `sudo`, `VMWare tools` and adding the {kube} dependencies.
+like `sudo`, `cloud-init` and `open-vm-tools`.
 
 .Activate extensions during {sle} installation with YaST
 [TIP]
-Steps 1-3 may be skipped, if they were already performed in YaST during the {sle} installation.
+Steps 1-4 may be skipped, if they were already performed in YaST during the {sle} installation.
 
 . Register the SLES15-SP1 system. Substitute `CAASP_REGISTRATION_CODE` for the code from <<registration_code>>.
 +
@@ -183,33 +164,21 @@ SUSEConnect -r CAASP_REGISTRATION_CODE
 ----
 SUSEConnect -p sle-module-containers/15.1/x86_64
 ----
+. Register the `Public Cloud` module for basic `cloud-init` package (free of charge)
++
+----
+SUSEConnect -p sle-module-public-cloud/15.1/x86_64
+----
 . Register the {productname} module. Substitute `CAASP_REGISTRATION_CODE` for the code from <<registration_code>>.
 +
 ----
 SUSEConnect -p caasp/4.0/x86_64 -r CAASP_REGISTRATION_CODE
 ----
-// . Install `open-vm-tools`
-// +
-// ----
-// zypper in open-vm-tools # in my case it was installed and enabled automatically during sles installation
-// systemctl status vmtoolsd; systemctl status vgauthd.service
-// ----
-. Copy your public SSH key for the user used for `skuba` bootstrap (normally `sles`) which will be used for {productname} deployment:
-+
-----
-ssh-copy-id -i ~/.ssh/id_rsa.pub sles@vm-template.host
-----
 . Install required packages. As root, run:
 +
 ----
-zypper in -t pattern SUSE-CaaSP-Node
+zypper in sudo cloud-init cloud-init-vmware-guestinfo open-vm-tools
 ----
-. Configure `sudo` for the user to be able authenticate without password. Replace `USERNAME` with the user you created during installation. As root, run:
-+
-----
-echo "USERNAME ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-----
-
 . Enable the installed `cloud-init` services. As root, run:
 +
 ----
@@ -219,10 +188,10 @@ systemctl enable cloud-init cloud-init-local cloud-config cloud-final
 . Deregister from `scc`:
 +
 ----
-SUSEConnect -d
+SUSEConnect -d; SUSEConnect --cleanup
 ----
 
-. Do a cleanup of the SLE image for converting into a VMWare template. As root, run:
+. Do a cleanup of the SLE image for converting into a VMware template. As root, run:
 +
 ----
 rm /etc/machine-id /var/lib/zypp/AnonymousUniqueId \
@@ -242,7 +211,7 @@ snapper create -d "Initial snapshot for caasp template" -t single
 shutdown -h now
 ----
 
-==== Creating the VMWare Template
+==== Creating the VMware Template
 
 Now you can convert the VM into a template in VMware (or repeat this action block for each VM).
 
@@ -254,7 +223,7 @@ Name it reasonably so you can later identify the template. The template will be 
 ==== Terraform
 
 . Find the {tf} template files for {soc} in `/usr/share/caasp/terraform/vmware` (which was installed as part of the management
-pattern (`sudo zypper in -t pattern SUSE-CaaSP-Management`)).
+pattern (`sudo zypper in patterns-caasp-Management`)).
 Copy this folder to a location of your choice as the files need adjustment.
 +
 ----
@@ -294,6 +263,7 @@ to the keyring, so the machine running `skuba` can `ssh` into the machines:
 export VSPHERE_SERVER="<server_address"
 export VSPHERE_USER="<username>"
 export VSPHERE_PASSWORD="<password>"
+export VSPHERE_ALLOW_UNVERIFIED_SSL=true # In case you are using custom certificate for accessing vsphere API
 
 ssh-add <path_to_private_ssh_key_from_tfvars>
 ----
@@ -306,55 +276,19 @@ terraform plan
 terraform apply
 ----
 
-.Skip self-signed certificate verification
-[TIP]
-In case you are using a self-signed certificate you need to skip its verification, as Terraform vsphere provider is not supporting it, thus `terraform plan` will fail. To do this, type the following in your terminal session: `export VSPHERE_ALLOW_UNVERIFIED_SSL=true`
-
 ==== Setup by hand
-
-. Right-click on the template and select menu:New VM from This Template...[] and name it something like `caasp4-master-0`.
-.. Select storage `datastore` and the designated resource pool.
-
-Repeat these steps until you have created the desired number of machines comprising your cluster.
+For each VM deployment follow the {ay} installation method used for deployment on
+Bare metal machines as described in <<deployment_bare_metal>>.
 
 [IMPORTANT]
 ====
-Make sure to give each VM a clear name that shows it's purpose in the cluster e.g.
+Make sure to give each VM in VMware a clear name that shows it's purpose in the cluster e.g.
 
+* `caasp-master-0`
 * `caasp-worker-0`
 * `caasp-worker-1`
-* `caasp-master-0`
-* `caasp-master-1`
 
 You will need these names during bootstrapping of the cluster.
 ====
 . Power on the newly created VMs.
 . You need to know the FQDN/IP for each of the created VMs during the bootstrap process.
-. Once the VMs booted up, log in via SSH and run the following command to regenerate the Machine ID `/etc/machine-id`:
-+
-----
-sudo dbus-uuidgen --ensure
-sudo systemd-machine-id-setup
-----
-
-=== Installing {productname} packages
-
-Install {productname} related packages to each node. You can alternatively pre-install them during the creation of the template but
-then you are limited to installing old versions of the packages with the template and updating manually afterwards.
-
-.Use terminal multiplexing
-[TIP]
-====
-These steps have to be performed on each VM that you just created; thus it can be time consuming.
-Use a terminal with multiplex support or something like link:https://parallel-ssh.org/[Parallel SSH (pssh)]
-to perform commands or control SSH sessions across multiple machines simultaneously.
-====
-
-Install the following packages on each node:
-
-* kubernetes-kubeadm
-* kubernetes-client
-
-----
-sudo zypper in kubernetes-kubeadm kubernetes-kubelet kubernetes-client cri-o cni-plugins
-----

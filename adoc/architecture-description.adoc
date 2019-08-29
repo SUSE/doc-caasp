@@ -78,7 +78,7 @@ Versioning scheme: `x.y.z`
 == Supported Platforms
 
 * SUSE OpenStack Cloud 8
-* VMWare ESXi 6.0.0 Update 3
+* VMware ESXi 6.0.0 Update 3
 * Bare Metal
 
 == Supported Architectures
@@ -612,7 +612,9 @@ For removing a node, the following command has to be executed:
 ----
 
 If the node to be removed is a master, specific actions will be
-automatically executed, like removing the etcd member from the cluster.
+automatically executed, like removing the etcd member from the cluster. 
+Note that this node cannot be added back to the cluster or any other 
+skuba-initiated kubernetes cluster without reinstalling first.
 
 === Monitoring
 

@@ -5,7 +5,8 @@
 Currently we support:
 
 * SUSE OpenStack Cloud 8.
-* VMWare ESXi {vmware_version}
+* VMware ESXi {vmware_version}
+* Bare Metal x86_64
 
 == Nodes
 
@@ -151,7 +152,7 @@ link:https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware
 |External
 |Gangway (RBAC Authenticate)
 
-.5+|Masters
+.3+|Masters
 |2379
 |TCP
 |Internal
@@ -172,7 +173,8 @@ link:https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware
 ==== IP Addresses
 
 All nodes must be assigned static IP addresses that must not be changed manually afterwards.
-Communication
+
+===== Communication
 
 Please make sure that all your Kubernetes components can communicate with each other.
 This might require the configuration of routing when using multiple network adapters per node.

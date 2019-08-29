@@ -1,4 +1,4 @@
-/= Troubleshooting
+//= Troubleshooting
 
 This chapter summarizes frequent problems that can occur while using {productname}
 and their solutions.
@@ -7,14 +7,14 @@ Additionally, {suse} support collects problems and their solutions online at lin
 
 == The `supportconfig` tool
 
-As a first step for any troubleshooting/debugging effort you need to find out
+As a first step for any troubleshooting/debugging effort, you need to find out
 where the problem is caused. For this purpose we ship the `supportconfig` tool
 and plugin with {productname}. With a simple command you can collect and compile
 a variety of details about your cluster to enable {suse} support to pinpoint
 the potential cause of an issue.
 
-In case of problems, a detailed system report can be created with the `supportconfig` command line tool.
-It will collect information about the system such as:
+In case of problems, a detailed system report can be created with the
+`supportconfig` command line tool. It will collect information about the system such as:
 
 * Current Kernel version
 * Hardware information
@@ -24,10 +24,12 @@ It will collect information about the system such as:
 
 [TIP]
 ====
-A full list of of the data collected by `supportconfig` can be found link:https://github.com/SUSE/supportutils-plugin-suse-caasp/blob/master/README.md[here].
+A full list of of the data collected by `supportconfig` can be found under
+https://github.com/SUSE/supportutils-plugin-suse-caasp/blob/master/README.md.
 ====
 
-To collect all relevant logs run the `supportconfig` command on all the master and worker nodes individually.
+To collect all relevant logs run the `supportconfig` command on all the master
+and worker nodes individually.
 
 [source,bash]
 ----
@@ -42,5 +44,5 @@ cluster node it was created on.
 
 After opening a Service Request (SR), you can upload the TAR archives to Global Technical Support.
 
-The data will help to locate the issue you reported and to assist you in solving the problem.
-For details, see link:https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_adm_support.html[].
+The data will help to locate the issue you reported and assist you in solving the problem.
+For details, see https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_adm_support.html.

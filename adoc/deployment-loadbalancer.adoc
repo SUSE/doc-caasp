@@ -70,17 +70,46 @@ stream {
         proxy_timeout 3s;
         proxy_pass k8s-masters;
     }
+
+    upstream dex-backends {
+        #hash $remote_addr consistent; // <1>
+        server master00:32000 weight=1 max_fails=1; // <2>
+        server master01:32000 weight=1 max_fails=1;
+        server master02:32000 weight=1 max_fails=1;
+    }
+    server {
+        listen 32000;
+        proxy_connect_timeout 1s;
+        proxy_timeout 3s;
+        proxy_pass dex-backends; // <3>
+    }
+    upstream gangway-backends {
+        #hash $remote_addr consistent; // <1>
+        server master00:32001 weight=1 max_fails=1; // <2>
+        server master01:32001 weight=1 max_fails=1;
+        server master02:32001 weight=1 max_fails=1;
+    }
+    server {
+        listen 32001;
+        proxy_connect_timeout 1s;
+        proxy_timeout 3s;
+        proxy_pass gangway-backends; // <3>
+    }
 }
 ----
 <1> **Note:** To enable session persistence, uncomment the `hash` option
 so the same client will always be redirected to the same server except if this
 server is unavailable.
 <2> Replace the individual `masterXX` with the IP/FQDN of your actual master nodes (one entry each) in the `upstream k8s-masters` section.
+<3> Dex port 32000 and Gangway port 32001 must be accessible through the load balancer for RBAC authentication
 . Configure `firewalld` to open up port `6443`. As root, run:
 +
 [source,bash]
 ----
 firewall-cmd --zone=public --permanent --add-port=6443/tcp
+firewall-cmd --zone=public --permanent --add-port=32000/tcp
+firewall-cmd --zone=public --permanent --add-port=32001/tcp
+firewall-cmd --reload
 ----
 . Start and enable Nginx. As root, run:
 +
