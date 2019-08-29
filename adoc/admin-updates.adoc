@@ -4,7 +4,6 @@
 
 The update of {kube} components is handled via `skuba`.
 
-
 ==== Generating and Overview of Available Updates
 
 In order to get an overview of the updates available, you can run:
@@ -107,33 +106,48 @@ The control plane consists of these components:
 * cri-o
 =====
 
-=== Applying Updates
 
-[IMPORTANT]
-====
-Updates have to be applied separately to each node, starting with the control plane all the way down to the worker nodes.
-====
+=== Updating Nodes
 
-==== Applying The Update
+Updates have to be applied separately to each node, starting with the control
+plane all the way down to the worker nodes.
+
+Note that the upgrade via `skuba node upgrade apply` will:
+
+* Upgrade the containerized control plane.
+* Upgrade the rest of the {kube} system stack (`kubelet`, `cri-o`).
+* Restart services.
+
+During the upgrade to a newer version, the API server will be unavailable so it
+is recommended to remove the node you are upgrading from the load balancer pool
+before the upgrade to avoid any connection issues.
+
+During the upgrade all the pods in the worker node will be restarted so it is
+recommended to drain the pods if your application requires high availability.
+In most cases, the restart is handled by replicaSet.
+
+
+==== How To Update Nodes
 
 . Upgrade the master nodes:
-+
-During the upgrade to a newer version, the apiserver will be unavailable so it is recommended to remove the server from the load balancer pool before the upgrade to avoid any connection issues.
 +
 ----
 skuba node upgrade apply --target <master-node-ip> --user <user> --sudo
 ----
++
 . When all master nodes are upgraded, upgrade the worker nodes as well:
 +
 ----
 skuba node upgrade apply --target <worker-node-ip> --user <user> --sudo
 ----
-
-* Verify that your cluster nodes are upgraded by running:
++
+. Verify that your cluster nodes are upgraded by running:
 +
 ----
 skuba cluster upgrade plan
 ----
+
+=== Base OS Updates
 
 [TIP]
 ====
@@ -144,12 +158,10 @@ The upgrade via `skuba node upgrade apply` will
 * Restart services
 ====
 
-=== Base OS
-
 Base Operating System updates are handled by `skuba-update`, which works together
 with the `kured` reboot daemon.
 
-==== Disable automatic updates
+==== Disabling Automatic Updates
 
 Nodes added to a cluster have the service `skuba-update.timer`, which is responsible for running automatic updates, activated by default.
 This service is calling `skuba-update` utility and it can be configured with the `/etc/sysconfig/skuba-update` file.
@@ -171,7 +183,7 @@ It is not required to reload or restart `skuba-update.timer`.
 The `--annotate-only` flag makes `skuba-update` utility to only check if updates are available and annotate the node accordingly.
 When this flag is activated no updates are installed at all.
 
-==== Completely disable reboots
+==== Completely Disabling Reboots
 
 If you would like to take care of reboots manually, either as a temporary measure or permanently, you can disable them by creating a lock:
 
@@ -181,7 +193,7 @@ kubectl -n kube-system annotate ds kured weave.works/kured-node-lock='{"nodeID":
 
 This command modifies an annotation (`annotate`) on the daemonset (`ds`) named `kured`.
 
-==== Manual unlock
+==== Manual Unlock
 
 In exceptional circumstances, such as a node experiencing a permanent failure whilst rebooting, manual intervention may be required to remove the cluster lock:
 
