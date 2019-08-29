@@ -122,7 +122,7 @@ Setting up a load balancer is mandatory in any production environment.
 {productname} requires a load balancer to distribute workload between the deployed
 master nodes of the cluster. A failure tolerant {productname} cluster will always
 use more than one control plane node as well as more than one load balancer,
-so there is not a single point of failure.
+so there isn't a single point of failure.
 
 There are many ways to configure a load balancer. This documentation can not
 describe all possible combinations of load balancer configurations and thus
@@ -136,7 +136,7 @@ For VMware you must configure a load balancer manually and allow it access to
 all master nodes created during <<bootstrap>>.
 
 The load balancer should be configured before the actual deployment. It is needed
-during the cluster bootstrap, and also during upgrades. To simplify configuration
+during the cluster bootstrap, and also during upgrades. To simplify configuration,
 you can reserve the IPs needed for the cluster nodes and pre-configure these in
 the load balancer.
 
@@ -147,9 +147,9 @@ on all master and worker nodes in the cluster for RBAC authentication.
 We recommend performing regular HTTPS health checks on each master node `/healthz`
 endpoint to verify that the node is responsive. This is particularly important during
 upgrades, when a master node restarts the apiserver. During this rather short time
-window all requests have to go to another master node's apiserver. The master node
+window, all requests have to go to another master node's apiserver. The master node
 that is being upgraded will have to be marked INACTIVE on the load balancer pool
-at least during the restart of the apiserver. We are providing reasonable defaults
+at least during the restart of the apiserver. We provide reasonable defaults
 for that on our default openstack load balancer {tf} configuration.
 
 The following is an example of a possible load balancer configuration based on {sle} 15 SP1 and `nginx`.
