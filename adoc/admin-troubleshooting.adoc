@@ -5,7 +5,7 @@ and their solutions.
 
 Additionally, {suse} support collects problems and their solutions online at link:https://www.suse.com/support/kb/?id=SUSE_CaaS_Platform[] .
 
-== The `supportconfig` tool
+== The `supportconfig` Tool
 
 As a first step for any troubleshooting/debugging effort, you need to find out
 where the problem is caused. For this purpose we ship the `supportconfig` tool
@@ -57,14 +57,7 @@ For example, if bootstraps the first master node of the cluster fails, re-run th
 skuba node bootstrap --user sles --sudo --target <IP/FQDN> <NODE NAME> -v=1
 ----
 
-== Network Planning And Reconfiguration
-
-It is not possible to reconfigure the used IP ranges of {productname} once the deployment is complete.
-Therefore, carefully plan for required IP ranges and future scenarios.
-
-Additionally, keep the network requirements in mind, as stated in _{productname} Deployment Guide, Networking chapter_.
-
-== x509: certificate signed by unknown authority
+== Error `x509: certificate signed by unknown authority`
 
 When interacting with Kubernetes, you might run into the situation where your existing configuration for the authentication has changed (cluster has been rebuild, certificates have been switched.)
 
