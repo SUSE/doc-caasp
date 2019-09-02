@@ -52,7 +52,7 @@ kubectl create namespace monitoring
 ----
 . Create DNS entries
 +
-In this example, we will use a worker node with public IP `10.86.4.158` (private IP `192.168.0.5`).
+In this example, we will use a worker node with IP `10.86.4.158`.
 +
 You should configure proper DNS names in any production environment.
 These values are only for example purposes.
@@ -106,7 +106,7 @@ controller:
       https: 30443
 ----
 +
-* **ClusterIP with external IP(s)**: The services will be exposed on specific nodes of the cluster, at port `443` for `HTTPS`.
+* **External IPs**: The services will be exposed on specific nodes of the cluster, at port `443` for `HTTPS`.
 +
 ----
 # Enable the creation of pod security policy
@@ -119,12 +119,12 @@ serviceAccount:
   name: nginx-ingress
 
 # Publish services on port HTTPS/443
-# These services are exposed on the node with private IP 192.168.0.5
+# These services are exposed on the node with IP 10.86.4.158
 controller:
   service:
     enableHttp: false
     externalIPs:
-      - 192.168.0.5
+      - 10.86.4.158
 ----
 
 . Deploy the upstream helm chart and pass along our configuration values file.
@@ -400,7 +400,7 @@ prometheus-server-6488f6c4cd-5n9w8               2/2       Running   0          
 
 . At this stage, the Prometheus Expression browser/API should be accessible, depending on your network configuration
 * NodePort: https://prometheus.example.com:30443
-* ClusterIP with external IP(s): https://prometheus.example.com
+* External IPs: https://prometheus.example.com
 
 === Alertmanager Configuration Example
 
@@ -502,7 +502,7 @@ serverFiles:
 
 . You should now be able to see you Alertmanager, depending on your network configuration
 * NodePort: https://prometheus-alertmanager.example.com:30443
-* ClusterIP with external IP(s): https://prometheus-alertmanager.example.com
+* External IPs: https://prometheus-alertmanager.example.com
 
 === Grafana
 
@@ -615,7 +615,7 @@ grafana-dbf7ddb7d-fxg6d                          3/3       Running   0          
 At this stage, Grafana should be accessible, depending on your network configuration
 
 * NodePort: https://grafana.example.com:30443
-* ClusterIP with external IP(s): https://grafana.example.com
+* External IPs: https://grafana.example.com
 
 . Now you can add Grafana dashboards.
 
