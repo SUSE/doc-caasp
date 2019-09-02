@@ -5,7 +5,7 @@ and their solutions.
 
 Additionally, {suse} support collects problems and their solutions online at link:https://www.suse.com/support/kb/?id=SUSE_CaaS_Platform[] .
 
-== The `supportconfig` tool
+== The `supportconfig` Tool
 
 As a first step for any troubleshooting/debugging effort, you need to find out
 where the problem is caused. For this purpose we ship the `supportconfig` tool
@@ -33,10 +33,10 @@ and worker nodes individually.
 
 [source,bash]
 ----
-supportconfig
-tar -xvJf /var/log/nts_*.txz
-cd nts*
-cat kubernetes.txt crio.txt
+sudo supportconfig
+sudo tar -xvJf /var/log/nts_*.txz
+cd /var/log/nts*
+sudo cat kubernetes.txt crio.txt
 ----
 
 The result is a TAR archive of files. Each of the tar files should be given a name that can be used to identify which
@@ -45,4 +45,41 @@ cluster node it was created on.
 After opening a Service Request (SR), you can upload the TAR archives to Global Technical Support.
 
 The data will help to locate the issue you reported and assist you in solving the problem.
-For details, see https://www.suse.com/documentation/sles-12/book_sle_admin/data/cha_adm_support.html.
+For details, see https://www.suse.com/documentation/sles-15/book_sle_admin/data/cha_adm_support.html.
+
+== Debugging Cluster Deployment Failed
+
+If the cluster deployment fails, please re-run the command again with setting verbosity level to 1 `-v=1`.
+
+For example, if bootstraps the first master node of the cluster fails, re-run the command like
+[source,bash]
+----
+skuba node bootstrap --user sles --sudo --target <IP/FQDN> <NODE NAME> -v=1
+----
+
+== Error `x509: certificate signed by unknown authority`
+
+When interacting with Kubernetes, you might run into the situation where your existing configuration for the authentication has changed (cluster has been rebuild, certificates have been switched.)
+
+In such a case you might see an error message in the output of your CLI or Web browser.
+
+----
+x509: certificate signed by unknown authority
+----
+
+This message indicates that your current system does not know the Certificate Authority (CA) that signed the SSL certificates used for encrypting the communication to the cluster. You then need to add or update the Root CA certificate in your local trust store.
+
+. Obtain the root CA certificate from on of the {kube} cluster node, at the location `/etc/kubernetes/pki/ca.crt`
+
+. Copy the root CA certificate into your local machine directory `/etc/pki/trust/anchors/`
+
+. Update the cache for know CA certificates
++
+[source,bash]
+----
+sudo update-ca-certificates
+----
+
+== Replacing a Lost Node
+
+If your cluster loses a node, for example due to failed hardware, remove the node as explained in Removing Nodes refer to <<removing_nodes>>. Then add a new node as described in Adding nodes refer to <<adding_nodes>>.

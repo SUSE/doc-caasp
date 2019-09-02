@@ -18,6 +18,7 @@ This is done using `skuba cluster init` and its `--control-plane` flag.
 For a step by step guide on how to initialize the cluster, configure updates using `kured`
 and subsequently bootstrap nodes to it, refer to the _{productname} Deployment Guide_.
 
+[[adding_nodes]]
 == Adding nodes
 
 Once you have added the first master node to the cluster using `skuba node bootstrap`,
@@ -46,6 +47,7 @@ To add a new *worker* node, you would run something like:
 [source,bash]
 skuba node join --role worker --user sles --sudo --target 10.86.2.164 worker1
 
+[[removing_nodes]]
 == Removing nodes
 
 === Temporary Removal
