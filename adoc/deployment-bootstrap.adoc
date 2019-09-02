@@ -13,12 +13,14 @@ First you need to install `skuba` on a management machine, like your local works
 
 . Add the SLE15 SP1 extension containing `skuba`. This also requires the "containers" module.
 +
+[source,bash]
 ----
 SUSEConnect -p sle-module-containers/15.1/x86_64
 SUSEConnect -p caasp/4.0/x86_64 -r <Registration Code>
 ----
 . Install the management pattern with:
 +
+[source,bash]
 ----
 zypper in -t pattern SUSE-CaaSP-Management
 ----
@@ -41,6 +43,7 @@ This is a requirement for `skuba` (https://github.com/SUSE/skuba#prerequisites).
 By default `skuba` connects to the nodes as `root` user. A different user can
 be specified by the following flags:
 
+[source,bash]
 ----
 --sudo --user <username>
 ----
@@ -50,6 +53,7 @@ be specified by the following flags:
 You must configure `sudo` for the user to be able authenticate without password.
 Replace `USERNAME` with the user you created during installation. As root, run:
 
+[source,bash]
 ----
 echo "USERNAME ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 ----
@@ -61,6 +65,7 @@ Now you can initialize the cluster on the deployed machines.
 As `--control-plane` enter the IP/FQDN of your load balancer.
 If you do not use a load balancer use your first master node.
 
+[source,bash]
 ----
 skuba cluster init --control-plane <LB IP/FQDN> my-cluster
 ----
@@ -84,7 +89,9 @@ use the `--strict-cap-defaults` option during the initial setup when you run `sk
 which will create the vanilla CRI-O configuration:
 
 [source,bash]
+----
 skuba cluster init --strict-cap-defaults
+----
 
 Please be aware that this might result in
 incompatibility with your previously running workloads,
@@ -112,7 +119,7 @@ If you want to enable cloud provider integration with different cloud platforms,
 initialize the cluster with flag `--cloud-provider <CLOUD PROVIDER>`.
 The only currently available option is `openstack`, but more options are planned:
 
-
+[source,bash]
 ----
 skuba cluster init --control-plane <LB IP/FQDN> --cloud-provider openstack my-cluster
 ----
@@ -268,11 +275,13 @@ spec:
 ----
 
 You can add any key/value labels to this selector:
+[source,bash]
 ----
 --blocking-pod-selector=<LABEL KEY 1>=<LABEL VALUE 1>,<LABEL KEY 2>=<LABEL VALUE 2>
 ----
 
 Alternatively you can adapt the `kured` DaemonSet also later during runtime (after bootstrap) by editing `my-cluster/addons/kured/kured.yaml` and executing:
+[source,bash]
 ----
 kubectl apply -f my-cluster/addons/kured/kured.yaml
 ----
@@ -313,6 +322,7 @@ The <PROMETHEUS SERVER URL> needs to contain the protocol (`http://` or `https:/
 ====
 
 Alternatively you can adapt the `kured` DaemonSet also later during runtime (after bootstrap) by editing `my-cluster/addons/kured/kured.yaml` and executing:
+[source,bash]
 ----
 kubectl apply -f my-cluster/addons/kured/kured.yaml
 ----
@@ -334,6 +344,19 @@ that allow full administrator access to your cluster.
 Apply best practices for access control to this folder.
 ====
 +
+.Custom root CA certificate
+[TIP]
+====
+During cluster bootstrap, {skuba} generates root CA certficiate by default. Administrators could deploy {kube} cluster with your own custom root CA certificate. Please refers to the _{productname} Admin Guide_.
+====
++
+[IMPORTANT]
+.Custom root CA certificate
+====
+Plan carefully for the custom root CA certificate, it is not possible to reconfigure the custom root CA certificate once the deployment is complete.
+====
++
+[source,bash]
 ----
 cd my-cluster
 skuba node bootstrap --user sles --sudo --target <IP/FQDN> <NODE NAME>
@@ -347,6 +370,7 @@ The files will be stored in the `my-cluster` directory specified in step one.
 Replace the `<IP/FQDN>` with the IP for the machine.
 Replace `<NODE NAME>` with a unique identifier for example "master-two".
 +
+[source,bash]
 ----
 skuba node join --role master --user sles --sudo --target <IP/FQDN> <NODE NAME>
 ----
@@ -355,11 +379,13 @@ skuba node join --role master --user sles --sudo --target <IP/FQDN> <NODE NAME>
 Replace the `<IP/FQDN>` with the IP for the machine.
 Replace `<NODE NAME>` with a unique identifier for example "worker-one".
 +
+[source,bash]
 ----
 skuba node join --role worker --user sles --sudo --target <IP/FQDN> <NODE NAME>
 ----
 . Verify the nodes that you added
 +
+[source,bash]
 ----
 skuba cluster status
 ----
@@ -382,6 +408,7 @@ The IP/FQDN must be reachable by every node of the cluster and therefore 127.0.0
 
 You can install and use kubectl by installing the kubernetes-client package from the {productname} extension.
 
+[source,bash]
 ----
 sudo zypper in kubernetes-client
 ----
