@@ -21,7 +21,9 @@ and subsequently bootstrap nodes to it, refer to the _{productname} Deployment G
 == Adding nodes
 
 Once you have added the first master node to the cluster using `skuba node bootstrap`,
-use the `skuba node join` command to add more nodes.
+use the `skuba node join` command to add more nodes. Joining master or worker nodes to
+an existing cluster should be done sequentially, meaning the nodes have to be added
+one after another and not more of them in parallel.
 
 [source,bash]
 skuba node join --role <master/worker> --user <user-name> --sudo --target <IP/FQDN> <node-name>
@@ -41,10 +43,6 @@ New master nodes that you didn't initially include in your Terraform's configura
 to be manually added to your load balancer's configuration.
 ====
 
-[IMPORTANT]
-====
-Joining master or worker nodes to an existing cluster should be done in a sequential way.
-====
 
 To add a new *worker* node, you would run something like:
 
@@ -67,8 +65,8 @@ https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/#use-kubec
 
 [IMPORTANT]
 ====
-Nodes removed with this method can not be added back to the cluster or any other 
-skuba-initiated cluster. You must reinstall the entire node and then join it 
+Nodes removed with this method can not be added back to the cluster or any other
+skuba-initiated cluster. You must reinstall the entire node and then join it
 again to the cluster.
 ====
 
