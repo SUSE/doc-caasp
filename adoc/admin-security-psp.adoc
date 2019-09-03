@@ -10,12 +10,12 @@ measure implemented by {kube} to control which specifications a pod must meet
 to be allowed to run in the cluster. They control various aspects of execution of
 pods and interactions with other parts of the software infrastructure.
 
-You can find more general information about {psp} in the link:https://kubernetes.io/docs/concepts/policy/pod-security-policy/[Kubernetes Docs]
+You can find more general information about {psp} in the link:https://kubernetes.io/docs/concepts/policy/pod-security-policy/[Kubernetes Docs].
 
 User access to the cluster is controlled via "Role Based Access Control (RBAC)".
-Each {psp} is associated to one or more users or
+Each {psp} is associated with one or more users or
 service accounts so they are allowed to launch pods with the associated
-specifications. The policies are associated to users or  service accounts via
+specifications. The policies are associated with users or  service accounts via
 role bindings.
 
 [WARNING]
@@ -53,9 +53,9 @@ The policy definitions are embedded in the link:https://github.com/SUSE/skuba/bl
 
 During the bootstrap with `skuba`, the policy files will be stored on your
 workstation in the cluster definition folder under `addons/psp`. These policy files
-will be installed automatically to all cluster nodes.
+will be installed automatically for all cluster nodes.
 
-The filenames of the files created are:
+The file names of the files created are:
 
 * `podsecuritypolicy-unprivileged.yaml`
 +
@@ -168,7 +168,7 @@ subjects:
 == Creating a PodSecurityPolicy
 
 In order to properly secure and run your {kube} workloads you must configure
-RBAC rules for your desired users and create {psp} that enable your respective
+RBAC rules for your desired users create a {psp} adequate for your respective
 workloads and then link the user accounts to the {psp} using (Cluster)RoleBinding.
 
 https://kubernetes.io/docs/concepts/policy/pod-security-policy/

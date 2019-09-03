@@ -21,7 +21,7 @@ SUFFIX="dc=example,dc=org"                      # Domain Suffix
 DATA_DIR=<PWD>/389_ds_data                      # Directory Server Data on Host Machine to Mount
 ----
 
-. Execute the following `docker` command to deploy the 389 Directory Server in same terminal.
+. Execute the following `docker` command to deploy the 389 Directory Server in the same terminal.
 This will start a non-TLS port (389) and a TLS port (636) together with an
 automatically self-signed certificate and key.
 +
@@ -49,7 +49,7 @@ docker stop 389-ds
 
 . Copy the external certificate `<rootCA.pem>` to a mounted data directory `<DATA_DIR>/config/`.
 
-. Run bash in entrypoint to access the container with the mounted data directory from previous step:
+. Run bash in entrypoint to access the container with the mounted data directory from the previous step:
 +
 ----
 docker run --rm -it \
@@ -98,18 +98,18 @@ certutil -F -k 6d4f98efe45328ff852b7e2ca5a24ad46844163a -d /etc/dirsrv/slapd-<IN
 
 . Import the certificate into `/etc/dirsrv/slapd-<INSTANCE_NAME>`:
 +
-Replace <KEY.PEM> by the input key.
+Replace <KEY.PEM> with the input key.
 +
-Replace <CERT.PEM> by the input certificate.
+Replace <CERT.PEM> with the input certificate.
 +
-Replace <CERT.PK12> by the output certificate in pkcs12.
+Replace <CERT.PK12> with the output certificate in pkcs12.
 +
 ----
 openssl pkcs12 -export -inkey <KEY.PEM> -in <CERT.PEM> -out <CERT.PK12> -nodes -name "Server-Cert"
 pk12util -i <CERT.PK12> -d /etc/dirsrv/slapd-<INSTANCE_NAME>
 ----
 
-. Import the rootCA into `/etc/dirsrv/slapd-<INSTANCE_NAME>`
+. Import the rootCA into `/etc/dirsrv/slapd-<INSTANCE_NAME>` .
 +
 ----
 certutil -A -d /etc/dirsrv/slapd-<INSTANCE_NAME> -n "CA certificate" -t "CT,," -i <rootCA.pem>
@@ -117,8 +117,8 @@ certutil -A -d /etc/dirsrv/slapd-<INSTANCE_NAME> -n "CA certificate" -t "CT,," -
 
 . Exit the container.
 
-. Execute `docker` command to run the 389 Directory Server with a mounted data
-directory from previous step:
+. Execute the `docker` command to run the 389 Directory Server with a mounted data
+directory from the previous step:
 +
 ----
 docker run -d \
@@ -135,10 +135,10 @@ docker run -d \
 == Examples of Usage
 
 In both directories, `user-regular1` and `user-regular2` are members of the `k8s-users` group,
-`user-admin` is a member of the `k8s-admins` group.
+and `user-admin` is a member of the `k8s-admins` group.
 
-In Active Directory, `user-bind` is a simple user who is a member of the default Domain Users group.
-Hence, we can use him to authenticate, because has read-only access to Active Directory.
+In Active Directory, `user-bind` is a simple user that is a member of the default Domain Users group.
+Hence, we can use it to authenticate, because it has read-only access to Active Directory.
 The mail attribute is used to create the RBAC rules.
 
 === 389 Directory Server:
@@ -147,7 +147,6 @@ The mail attribute is used to create the RBAC rules.
 
 Example LDIF configuration to create user `user-regular1` using an LDAP command:
 ====
-# user-regular1, Users, example.org
 
   dn: cn=user-regular1,ou=Users,dc=example,dc=org
   cn: User Regular1
@@ -164,7 +163,6 @@ Example LDIF configuration to create user `user-regular1` using an LDAP command:
 
 Example LDIF configuration to create user `user-regular2` using an LDAP command:
 ====
-# user-regular2, Users, example.org
 
   dn: cn=user-regular2,ou=Users,dc=example,dc=org
   cn: User Regular2
@@ -181,7 +179,6 @@ Example LDIF configuration to create user `user-regular2` using an LDAP command:
 
 Example LDIF configuration to create user `user-admin` using an LDAP command:
 ====
-# user-admin, Users, example.org
 
   dn: cn=user-admin,ou=Users,dc=example,dc=org
   cn: User Admin
@@ -198,7 +195,6 @@ Example LDIF configuration to create user `user-admin` using an LDAP command:
 
 Example LDIF configuration to create group `k8s-users` using an LDAP command:
 ====
-# k8s-users, Groups, example.org
 
   dn: cn=k8s-users,ou=Groups,dc=example,dc=org
   gidNumber: 500
@@ -210,7 +206,6 @@ Example LDIF configuration to create group `k8s-users` using an LDAP command:
 
 Example LDIF configuration to create group `k8s-admins` using an LDAP command:
 ====
-# k8s-admins, Groups, example.org
 
   dn: cn=k8s-admins,ou=Groups,dc=example,dc=org
   gidNumber: 100
@@ -219,7 +214,7 @@ Example LDIF configuration to create group `k8s-admins` using an LDAP command:
   memberUid: user-admin
 ====
 
-==== Example 2: Dex LDAP TLS Connector configuration (`addons/dex/dex.yaml`)
+==== Example 2: Dex LDAP TLS Connector Configuration (`addons/dex/dex.yaml`)
 Dex connector template configured to use 389-DS:
 ----
 connectors:
@@ -313,7 +308,6 @@ connectors:
 
 Example LDIF configuration to create user `user-regular1` using an LDAP command:
 ====
-# user-regular1, Users, example.org
 
   dn: cn=user-regular1,ou=Users,dc=example,dc=org
   objectClass: top
@@ -335,7 +329,6 @@ Example LDIF configuration to create user `user-regular1` using an LDAP command:
 
 Example LDIF configuration to create user `user-regular2` using an LDAP command:
 ====
-# user-regular2, Users, example.org
 
   dn: cn=user-regular2,ou=Users,dc=example,dc=org
   objectClass: top
@@ -357,7 +350,6 @@ Example LDIF configuration to create user `user-regular2` using an LDAP command:
 
 Example LDIF configuration to create user `user-bind` using an LDAP command:
 ====
-# user-bind, Users, example.org
 
   dn: cn=user-bind,ou=Users,dc=example,dc=org
   objectClass: top
@@ -378,7 +370,6 @@ Example LDIF configuration to create user `user-bind` using an LDAP command:
 
 Example LDIF configuration to create user `user-admin` using an LDAP command:
 ====
-# user-admin, Users, example.org
 
   dn: cn=user-admin,ou=Users,dc=example,dc=org
   objectClass: top
@@ -398,9 +389,8 @@ Example LDIF configuration to create user `user-admin` using an LDAP command:
   mail: user-admin@example.org
 ====
 
-Example LDIF configuration to create group `k8s-users` suing an LDAP command:
+Example LDIF configuration to create group `k8s-users` using an LDAP command:
 ====
-# k8s-users, Groups, example.org
 
   dn: cn=k8s-users,ou=Groups,dc=example,dc=org
   objectClass: top
@@ -416,7 +406,6 @@ Example LDIF configuration to create group `k8s-users` suing an LDAP command:
 
 Example LDIF configuration to create group `k8s-admins` using an LDAP command:
 ====
-# k8s-admins, Groups, example.org
 
   dn: cn=k8s-admins,ou=Groups,dc=example,dc=org
   objectClass: top
@@ -429,7 +418,7 @@ Example LDIF configuration to create group `k8s-admins` using an LDAP command:
   objectCategory: cn=Group,cn=Schema,cn=Configuration,dc=example,dc=org
 ====
 
-==== Example 2: Dex Active Directory TLS Connector configuration (addons/dex/dex.yaml)
+==== Example 2: Dex Active Directory TLS Connector Configuration (addons/dex/dex.yaml)
 Dex connector template configured to use Active Directory:
 ----
 connectors:
