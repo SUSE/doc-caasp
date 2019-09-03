@@ -18,7 +18,7 @@ ou: OU_NAME
 ----
 +
 * Substitute OU_NAME with an organizational unit name of your choice.
-. Run `ladapmodify` to add the new Organizational unit:
+. Run `ldapmodify` to add the new Organizational unit:
 +
 ----
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
@@ -41,7 +41,7 @@ changetype: delete
 ----
 +
 * Substitute OU_NAME the name of the organizational unit you would like to remove.
-. Execute `ladapmodify` to remove the organizational unit:
+. Execute `ldapmodify` to remove the organizational unit:
 +
 ----
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
@@ -70,7 +70,7 @@ cn: GROUP
 * GROUP: Group Name
 * OU_NAME: Organizational unit name
 * GROUPID: Group ID (GID) of the new group. This value should be a unique number.
-. Run `ladapmodify` to add the new group to the organizational unit:
+. Run `ldapmodify` to add the new group to the organizational unit:
 +
 ----
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
@@ -94,7 +94,7 @@ changetype: delete
 +
 * GROUP: Group name
 * OU_NAME: Organizational unit name
-. Execute `ladapmodify` to remove the group from the Organizational unit:
+. Execute `ldapmodify` to remove the group from the Organizational unit:
 +
 ----
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
