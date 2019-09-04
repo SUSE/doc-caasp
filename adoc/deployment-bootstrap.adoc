@@ -222,15 +222,15 @@ this name will be used by the `Openstack` cloud controller manager to reconcile 
           nameAttr: cn // <12>
 ====
 <1> Host name of LDAP server reachable from the cluster.
-<2> The port on which to connect to the host (e.g. StartTLS: `389`, TLS: `636`).
-<3> LDAP server base64 encoded root CA certificate file (e.g. `cat <root-ca-pem-file> | base64 | awk '{print}' ORS='' && echo`)
+<2> The port on which to connect to the host (for example StartTLS: `389`, TLS: `636`).
+<3> LDAP server base64 encoded root CA certificate file (for example `cat <root-ca-pem-file> | base64 | awk '{print}' ORS='' && echo`)
 <4> Bind DN of user that can do user searches.
 <5> Password of the user.
-<6> Label of LDAP attribute users will enter to identify themselves (e.g. `username`).
-<7> BaseDN where users are located (e.g. `ou=Users,dc=example,dc=org`).
-<8> Filter to specify type of user objects (e.g. "(objectClass=person)").
-<9> Attribute users will enter to identify themselves (e.g. mail).
-<10> Attribute used to identify user within the system (e.g. DN).
+<6> Label of LDAP attribute users will enter to identify themselves (for example `username`).
+<7> BaseDN where users are located (for example `ou=Users,dc=example,dc=org`).
+<8> Filter to specify type of user objects (for example "(objectClass=person)").
+<9> Attribute users will enter to identify themselves (for example mail).
+<10> Attribute used to identify user within the system (for example DN).
 <11> Attribute containing the user's email.
 <12> Attribute used as username used within OIDC tokens.
 
@@ -324,7 +324,7 @@ This will restart all `kured` pods with the additional configuration flags.
 . Switch to the new directory.
 . Now bootstrap a master node.
 For `--target` enter the IP address of your first master node.
-Replace `<NODE NAME>` with a unique identifier for example "master-one".
+Replace `<NODE NAME>` with a unique identifier, for example "master-one".
 +
 .Secure configuration files access
 [WARNING]
@@ -345,7 +345,7 @@ The files will be stored in the `my-cluster` directory specified in step one.
 . Add additional master nodes to the cluster.
 +
 Replace the `<IP/FQDN>` with the IP for the machine.
-Replace `<NODE NAME>` with a unique identifier for example "master-two".
+Replace `<NODE NAME>` with a unique identifier, for example "master-two".
 +
 ----
 skuba node join --role master --user sles --sudo --target <IP/FQDN> <NODE NAME>
@@ -353,7 +353,7 @@ skuba node join --role master --user sles --sudo --target <IP/FQDN> <NODE NAME>
 . Add a worker to the cluster.
 +
 Replace the `<IP/FQDN>` with the IP for the machine.
-Replace `<NODE NAME>` with a unique identifier for example "worker-one".
+Replace `<NODE NAME>` with a unique identifier, for example "worker-one".
 +
 ----
 skuba node join --role worker --user sles --sudo --target <IP/FQDN> <NODE NAME>
