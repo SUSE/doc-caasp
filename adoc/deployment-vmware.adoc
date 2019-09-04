@@ -4,7 +4,7 @@
 [NOTE]
 You must have completed <<deployment.preparations>> to proceed.
 
-=== Environment description
+=== Environment Description
 
 [NOTE]
 ====
@@ -25,9 +25,9 @@ for the {kube} api-servers on the master nodes on a local load balancer using
 round-robin 1:1 port forwarding.
 ====
 
-=== VM preparation for creating a template
+=== VM Preparation for Creating a Template
 
-. Upload the ISO image {isofile} to desired VMware datastore.
+. Upload the ISO image {isofile} to the desired VMware datastore.
 
 Now you can create a new base VM for {productname} within the designated resource
 pool through the vSphere WebUI:
@@ -40,15 +40,15 @@ image::vmware_step1.png[width=80%,pdfwidth=80%]
 . Select a `Compute Resource` that will run the VM.
 +
 image::vmware_step2.png[width=80%,pdfwidth=80%]
-. Select the storage used by the VM.
+. Select the storage to be used by the VM.
 +
 image::vmware_step3.png[width=80%,pdfwidth=80%]
 . Select `ESXi 6.7 and later` from compatibility.
 +
 image::vmware_step4.png[width=80%,pdfwidth=80%]
-. Select menu:Guest OS Family[Linux] and menu:Guest OS Version[SUSE Linux Enterprise 15 (64 Bit)].
+. Select menu:Guest OS Family[Linux] and menu:Guest OS Version[SUSE Linux Enterprise 15 (64-bit)].
 +
-*Note*: You will manually select the correct installation media in the next step.
+*Note*: You will manually select the correct installation medium in the next step.
 +
 image::vmware_step5.png[width=80%,pdfwidth=80%]
 . Now customize the hardware settings.
@@ -56,35 +56,34 @@ image::vmware_step5.png[width=80%,pdfwidth=80%]
 image::vmware_step6.png[width=80%,pdfwidth=80%]
 .. Select menu:CPU[2].
 .. Select menu:Memory[4096 MB].
-.. Select menu:New Hard disk[40GB], menu:New Hard disk[Disk Provisioning > Thin Provision].
+.. Select menu:New Hard disk[40 GB], menu:New Hard disk[Disk Provisioning > Thin Provision].
 .. Select menu:New SCSI Controller[LSI Logic Parallel SCSI controller (default)] and change it to "VMware Paravirtualized".
 .. Select menu:New Network[VM Network], menu:New Network[Adapter Type > VMXNET3].
 +
-("VM Network" sets up a bridged network which provides a public IP address reachable within a company)
+("VM Network" sets up a bridged network which provides a public IP address reachable within a company.)
 .. Select menu:New CD/DVD[Datastore ISO File].
-.. Tick the box menu:New CD/DVD[Connect At Power On] to be able boot from ISO/DVD.
-.. The click on "Browse" next to the `CD/DVD Media` field to select the downloaded ISO image on desired datastore.
-.. Go to tab VM Options.
+.. Check the box menu:New CD/DVD[Connect At Power On] to be able boot from ISO/DVD.
+.. Then click on "Browse" next to the `CD/DVD Media` field to select the downloaded ISO image on the desired datastore.
+.. Go to the VM Options tab.
 +
 image::vmware_step6b.png[width=80%,pdfwidth=80%]
 .. Select menu:Boot Options[].
-.. Select menu:Firmware[Bios].
+.. Select menu:Firmware[BIOS].
 .. Confirm the process with menu:Next[].
 
-==== {sls} installation
+==== {sls} Installation
 
 Power on the newly created VM and install the system over graphical remote console:
 
 . Enter registration code for SLES in YaST.
 . Confirm the update repositories prompt with "Yes".
 . Remove the check mark in the "Hide Development Versions" box.
-.
 . Make sure the following modules are selected on the "Extension and Module Selection" screen:
 +
 image::vmware_extension.png[width=80%,pdfwidth=80%]
 ** SUSE CaaS Platform 4.0 x86_64 (BETA)
 ** Basesystem Module
-** Containers Module (this will automatically be ticked when you select {productname})
+** Containers Module (this will automatically be checked when you select {productname})
 ** Public Cloud Module
 . Enter the registration code to unlock the {productname} extension.
 . Select menu:System Role[Minimal] on the "System Role" screen.
@@ -92,10 +91,10 @@ image::vmware_extension.png[width=80%,pdfwidth=80%]
 . Select "Start with current proposal".
 +
 image::vmware_step8.png[width=80%,pdfwidth=80%]
-.. Keep `sda1` as BIOS partition
+.. Keep `sda1` as BIOS partition.
 .. Remove the root `/` partition.
 +
-Select the device in "System View" on the left (Default: `/dev/sda2`) and click "Delete". Confirm with "Yes".
+Select the device in "System View" on the left (default: `/dev/sda2`) and click "Delete". Confirm with "Yes".
 +
 image::vmware_step9.png[width=80%,pdfwidth=80%]
 .. Remove the `/home` partition.
@@ -118,7 +117,7 @@ image::vmware_step13.png[width=80%,pdfwidth=80%]
 *** Enable Snapshots
 *** Mount Device
 *** Mount Point `/`
-. You should be left with 2 partitions. Now click "Accept".
+. You should be left with two partitions. Now click "Accept".
 +
 image::vmware_step7.png[width=80%,pdfwidth=80%]
 . Confirm the partitioning changes.
@@ -126,8 +125,8 @@ image::vmware_step7.png[width=80%,pdfwidth=80%]
 image::vmware_step14.png[width=80%,pdfwidth=80%]
 . Click "Next".
 . Configure your timezone and click "Next".
-. Create a user with the Username `sles` and specify a password.
-.. Tick the box menu:Local User[Use this password for system administrator].
+. Create a user with the username `sles` and specify a password.
+.. Check the box menu:Local User[Use this password for system administrator].
 +
 image::vmware_step15.png[width=80%,pdfwidth=80%]
 . Click "Next".
@@ -136,16 +135,16 @@ image::vmware_step15.png[width=80%,pdfwidth=80%]
 ... Disable the Firewall (click on `(disable)`).
 ... Enable the SSH service (click on `(enable)`).
 .. Scroll to the `kdump` section of the software description and click on the title.
-. In the "Kdump Start-Up" screen select menu:Enable/Disable Kdump[Disable Kdump].
+. In the "Kdump Start-Up" screen, select menu:Enable/Disable Kdump[Disable Kdump].
 .. Confirm with "OK".
 +
 image::vmware_step16.png[width=80%,pdfwidth=80%]
-. Click "Install". Confirm the installation by clicking "Install" in the popup dialog.
+. Click "Install". Confirm the installation by clicking "Install" in the pop-up dialog.
 . Finish the installation and confirm system reboot with "OK".
 +
 image::vmware_step17.png[width=80%,pdfwidth=80%]
 
-==== Preparation of the VM as a template
+==== Preparation of the VM as a Template
 
 In order to run {productname} on the created VMs, you must configure and install some additional packages
 like `sudo`, `cloud-init` and `open-vm-tools`.
@@ -159,12 +158,12 @@ Steps 1-4 may be skipped, if they were already performed in YaST during the {sle
 ----
 SUSEConnect -r CAASP_REGISTRATION_CODE
 ----
-. Register the `Containers` module (free of charge)
+. Register the `Containers` module (free of charge):
 +
 ----
 SUSEConnect -p sle-module-containers/15.1/x86_64
 ----
-. Register the `Public Cloud` module for basic `cloud-init` package (free of charge)
+. Register the `Public Cloud` module for basic `cloud-init` package (free of charge):
 +
 ----
 SUSEConnect -p sle-module-public-cloud/15.1/x86_64
@@ -198,7 +197,7 @@ rm /etc/machine-id /var/lib/zypp/AnonymousUniqueId \
 /var/lib/systemd/random-seed /var/lib/dbus/machine-id \
 /var/lib/wicked/*
 ----
-. Cleanup btrfs snapshots and create one with initial state:
+. Clean up btrfs snapshots and create one with initial state:
 +
 ----
 snapper list
@@ -237,7 +236,7 @@ cd ~/caasp/deployment/vmware/
 ----
 mv terraform.tfvars.example terraform.tfvars
 ----
-. Edit the `terraform.tfvars` file and add modify the following variables:
+. Edit the `terraform.tfvars` file and add/modify the following variables:
 +
 include::deployment-terraform-example.adoc[tag=tf_vmware]
 . Enter the registration code for your nodes in `~/my-cluster/registration.auto.tfvars`:
@@ -250,7 +249,7 @@ Substitute `CAASP_REGISTRATION_CODE` for the code from <<registration_code>>.
 caasp_registry_code = "CAASP_REGISTRATION_CODE"
 ----
 +
-This is required so all the deployed nodes can automatically register to {scc} and retrieve packages.
+This is required so all the deployed nodes can automatically register with {scc} and retrieve packages.
 
 Once the files are adjusted, `terraform` needs to know about the `vSphere` server
 and the login details for it; these can be exported as environment variables or
@@ -276,13 +275,13 @@ terraform plan
 terraform apply
 ----
 
-==== Setup by hand
-For each VM deployment follow the {ay} installation method used for deployment on
-Bare metal machines as described in <<deployment_bare_metal>>.
+==== Setup by Hand
+For each VM deployment, follow the {ay} installation method used for deployment on
+bare metal machines as described in <<deployment_bare_metal>>.
 
 [IMPORTANT]
 ====
-Make sure to give each VM in VMware a clear name that shows it's purpose in the cluster e.g.
+Make sure to give each VM in VMware a clear name that shows its purpose in the cluster, for example
 
 * `caasp-master-0`
 * `caasp-worker-0`
