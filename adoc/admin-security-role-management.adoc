@@ -174,15 +174,15 @@ This example shows how to bind a group to a defined role.
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name:`ROLE_BINDING_NAME` <1>
-  namespace:`NAMESPACE` <2>
+  name: ROLE_BINDING_NAME <1>
+  namespace: NAMESPACE <2>
 subjects:
 - kind: Group
-  name:`LDAP_GROUP_NAME` <3>
+  name: LDAP_GROUP_NAME <3>
   apiGroup: rbac.authorization.k8s.io
 roleRef:
 - kind: Role
-  name:`ROLE_NAME` <4>
+  name: ROLE_NAME <4>
   apiGroup: rbac.authorization.k8s.io
 ----
 <1> Defines a name for this new role binding.
@@ -205,15 +205,15 @@ This example shows how to bind a group to a defined cluster role.
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: `CLUSTER_ROLE_BINDING_NAME` <1>
-  namespace:`NAMESPACE` <2>
+  name: CLUSTER_ROLE_BINDING_NAME <1>
+  namespace: NAMESPACE <2>
 subjects:
   kind: Group
-  name: `CLUSTER_GROUP_NAME` <3>
+  name: CLUSTER_GROUP_NAME <3>
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: ClusterRole
-  name: `CLUSER_ROLE_NAME` <4>
+  name: CLUSER_ROLE_NAME <4>
   apiGroup: rbac.authorization.k8s.io
 ----
 
