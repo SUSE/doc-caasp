@@ -12,8 +12,8 @@ Currently we support:
 
 You will need at least two machines:
 
-* 1 Master Node
-* 1 Worker Node
+* 1 master node
+* 1 worker node
 
 {productname} {productversion} supports deployments with a single or multiple master nodes.
 Production environments must be deployed with multiple master nodes for resilience.
@@ -26,39 +26,39 @@ The minimal viable failure tolerant production environment configuration consist
 
 === Hardware
 
-==== Master nodes
+==== Master Nodes
 
 Up to 5 worker nodes *(minimum)*:
 
 * Storage: 50 GB+
 * (v)CPU: 2
 * RAM: 4 GB
-* Network: Minimum 1GB/s, (faster is preferred)
+* Network: Minimum 1Gb/s (faster is preferred)
 
 Up to 10 worker nodes:
 
 * Storage: 50 GB+
 * (v)CPU: 2
 * RAM: 8 GB
-* Network: Minimum 1GB/s, (faster is preferred)
+* Network: Minimum 1Gb/s (faster is preferred)
 
 Up to 100 worker nodes:
 
 * Storage: 50 GB+
 * (v)CPU: 4
 * RAM: 16 GB
-* Network: Minimum 1GB/s (faster is preferred)
+* Network: Minimum 1Gb/s (faster is preferred)
 
 Up to 250 worker nodes:
 
 * Storage: 50 GB+
 * (v)CPU: 8
 * RAM: 16 GB
-* Network: Minimum 1GB/s (faster is preferred)
+* Network: Minimum 1Gb/s (faster is preferred)
 
 [IMPORTANT]
 ====
-Using a minimum of 2 (v)CPU is a hard requirement, deploying
+Using a minimum of 2 (v)CPUs is a hard requirement, deploying
 a cluster with less processing units is not possible.
 ====
 
@@ -71,10 +71,10 @@ A worker node requires the following resources:
 
 Based on these values, the *minimal* configuration of a worker node is:
 
-* Storage: Depending on workloads, minimum 20-30GB to hold the base OS and required packages. Mount additional storage volumes as needed.
+* Storage: Depending on workloads, minimum 20-30 GB to hold the base OS and required packages. Mount additional storage volumes as needed.
 * (v)CPU: 1
 * RAM: 2 GB
-* Network: Minimum 1GB/s (faster is preferred)
+* Network: Minimum 1Gb/s (faster is preferred)
 
 Calculate the size of the required (v)CPU by adding up the base requirements, the estimated additional essential cluster components (logging agent, monitoring agent, configuration management, etc.) and the estimated CPU workloads:
 
@@ -91,10 +91,10 @@ These values are provided as a guide to work in most cases. They may vary based 
 
 ==== Storage Performance
 
-For Master and Worker nodes you must ensure storage performance of at least 500 sequential IOPS with disk bandwidth depending on your cluster size.
+For master and worker nodes you must ensure storage performance of at least 500 sequential IOPS with disk bandwidth depending on your cluster size.
 
-    "Typically 50 sequential IOPS (e.g., a 7200 RPM disk) is required.
-    For heavily loaded clusters, 500 sequential IOPS (e.g., a typical local SSD
+    "Typically 50 sequential IOPS (for example, a 7200 RPM disk) is required.
+    For heavily loaded clusters, 500 sequential IOPS (for example, a typical local SSD
     or a high performance virtualized block device) is recommended."
 
     "Typically 10MB/s will recover 100MB data within 15 seconds.
@@ -172,11 +172,11 @@ link:https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware
 
 ==== IP Addresses
 
-All nodes must be assigned static IP addresses that must not be changed manually afterwards.
+All nodes must be assigned static IP addresses, which must not be changed manually afterwards.
 
 [IMPORTANT]
 ====
-Plan carefully for required IP ranges and future scenarios as 
+Plan carefully for required IP ranges and future scenarios as
 it is not possible to reconfigure the IP ranges once the deployment is complete.
 ====
 
@@ -191,7 +191,7 @@ Configure firewall and other network security to allow communication on the defa
 
 ==== Performance
 
-All master nodes of the cluster must have a minimum 1GB/s network connection to fulfill the requirements for etcd.
+All master nodes of the cluster must have a minimum 1Gb/s network connection to fulfill the requirements for etcd.
 
     "1GbE is sufficient for common etcd deployments. For large etcd clusters,
     a 10GbE network will reduce mean time to recovery."

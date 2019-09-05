@@ -1,20 +1,20 @@
-== Configuring HTTP/HTTPS proxy for {crio}
+== Configuring HTTP/HTTPS Proxy for {crio}
 
 In some cases you must configure the container runtime to use a proxy to pull
 container images. To configure this for {crio} you must modify the file
 `/etc/sysconfig/crio`.
 
-. First define the hostnames that should be used without a proxy (`NO_PROXY`).
+. First define the host names that should be used without a proxy (`NO_PROXY`).
 . Then define which proxies should be used by the HTTP and HTTPS connections
 (`HTTP_PROXY` and `HTTPS_PROXY`).
-. After you have saved the changes restart the container runtime with
+. After you have saved the changes, restart the container runtime with
 +
 [source,bash]
 ----
 systemctl restart crio
 ----
 
-=== Configuration example
+=== Configuration Example
 
 * Proxy server without authentication
 +

@@ -2,7 +2,7 @@
 
 === Updating Kubernetes Components
 
-The update of {kube} components is handled via `skuba`.
+Updating of {kube} components is handled via `skuba`.
 
 ==== Generating and Overview of Available Updates
 
@@ -151,21 +151,21 @@ skuba cluster upgrade plan
 
 [TIP]
 ====
-The upgrade via `skuba node upgrade apply` will
+The upgrade via `skuba node upgrade apply` will:
 
-* Upgrade the containerized control plane
-* Upgrade the rest of the {kube} system stack (`kubelet`, `cri-o`)
-* Restart services
+* upgrade the containerized control plane.
+* upgrade the rest of the {kube} system stack (`kubelet`, `cri-o`).
+* restart services.
 ====
 
-Base Operating System updates are handled by `skuba-update`, which works together
+Base operating system updates are handled by `skuba-update`, which works together
 with the `kured` reboot daemon.
 
 ==== Disabling Automatic Updates
 
 Nodes added to a cluster have the service `skuba-update.timer`, which is responsible for running automatic updates, activated by default.
-This service is calling `skuba-update` utility and it can be configured with the `/etc/sysconfig/skuba-update` file.
-To disable the automatic updates on a node simply `ssh` to it and then configure the skuba-update service by editing `/etc/sysconfig/skuba-update` file with the following runtime options:
+This service calls the `skuba-update` utility and it can be configured with the `/etc/sysconfig/skuba-update` file.
+To disable the automatic updates on a node, simply `ssh` to it and then configure the skuba-update service by editing the `/etc/sysconfig/skuba-update` file with the following runtime options:
 
 ----
 ## Path           : System/Management
@@ -180,7 +180,7 @@ SKUBA_UPDATE_OPTIONS="--annotate-only"
 [TIP]
 It is not required to reload or restart `skuba-update.timer`.
 
-The `--annotate-only` flag makes `skuba-update` utility to only check if updates are available and annotate the node accordingly.
+The `--annotate-only` flag makes the `skuba-update` utility only check if updates are available and annotate the node accordingly.
 When this flag is activated no updates are installed at all.
 
 ==== Completely Disabling Reboots

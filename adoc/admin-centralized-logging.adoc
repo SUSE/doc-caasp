@@ -1,14 +1,14 @@
 = Centralized Logging
 
-Centralized Logging is a means of collecting logs from CaaS Platform for centralized management.
+Centralized Logging is a means of collecting logs from the {productname} for centralized management.
 It forwards system and Kubernetes cluster logs to a specified external logging service,
 for example, Rsyslog server.
 
-Collecting logs in a central location can serve for audit or debug purposes or to analyze and visually present data.
+Collecting logs in a central location can be useful for audit or debug purposes or to analyze and visually present data.
 
-== Types of logs
+== Types of Logs
 
-You can log the following groups of services. See the <<Deployment>>
+You can log the following groups of services. See <<Deployment>>
 for more information on how to select and customize the logs.
 
 Kubernetes System Components::
@@ -32,10 +32,10 @@ OS Components::
 * Zypper
 * Network (wicked)
 
-Centralized logging is also restricted to the following protocols: UDP, TCP, TCP + TLS, TCP + mTLS.
+Centralized Logging is also restricted to the following protocols: UDP, TCP, TCP + TLS, TCP + mTLS.
 
 
-== Log formats
+== Log Formats
 
 The two supported syslog message formats are *RFC 5424* and *RFC 3164*.
 
@@ -72,7 +72,7 @@ sudo zypper install helm
 
 - As of {productname} {productversion},
 Tiller is not part of the {productname} package repository,
-so to install the Tiller container image run:
+so to install the Tiller container image, run:
 
 [source,bash]
 ----
@@ -137,13 +137,13 @@ for instance after log agents shutdown, restart or in case of an unresponsive re
 The queue files are located under `/var/lib/{RELEASE_NAME}-log-agent-rsyslog` on every node in the cluster.
 Queue files remain even after the log agents are deleted.
 
-The buffered queue can be enable/disable with following parameter:
+The buffered queue can be enabled/disabled with the following parameter:
 
 `*queue.enabled*`, default value = false
 
 Setting `queue.enabled` to `false` means that data will be stored in-memory only.
 Setting the parameter to `true` will set the data store to a mixture of in-memory and in-disk.
-Data will then store in memory until the queue is filled up, after which storing is switched to disk.
+Data will then be stored in memory until the queue is filled up, after which storing is switched to disk.
 Enabling the queue also automatically saves the queue to disk at service shutdown.
 
 Additional parameters to define queue size and its disk usage are:
@@ -151,7 +151,7 @@ Additional parameters to define queue size and its disk usage are:
 `*queue.size*`, default value = 50000
 
 This option sets the number of messages allowed for the in-memory queue.
-This setting effects the Kubernetes cluster logs (`kubernetes-control-plane` and `kubernetes-user-name-space`).
+This setting affects the Kubernetes cluster logs (`kubernetes-control-plane` and `kubernetes-user-name-space`).
 
 
 `*queue.maxDiskSpace*`, default value = 2147483648
@@ -184,9 +184,9 @@ Options with empty default values are set as not specified.
 |queue.maxDiskSpace|sets maximum Rsyslog queue disk space in bytes|2147483648
 |queue.size|sets Rsyslog queue size in bytes|50000
 |resources.limits.cpu|sets CPU limits|
-|resources.limits.memory|sets memory limits|512Mi
-|resources.requests.cpu|sets CPU for request|100m
-|resources.requests.memory|sets memory for request|512Mi
+|resources.limits.memory|sets memory limits|512 Mi
+|resources.requests.cpu|sets CPU for requests|100m
+|resources.requests.memory|sets memory for requests|512 Mi
 |resumeInterval|specifies time (seconds) after failure before retry is attempted|30
 |resumeRetryCount|sets number of retries after first failure before the log is discarded. -1 is unlimited|-1
 |server.tls.clientCert|sets TLS client certificate|
