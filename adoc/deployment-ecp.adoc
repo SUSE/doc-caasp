@@ -9,7 +9,7 @@ You will use {tf} to deploy the required master and worker cluster nodes (plus a
 
 . Download the SUSE OpenStack Cloud RC file.
 .. Log in to SUSE OpenStack Cloud.
-.. Click on your username in the upper right hand corner to reveal the dropdown menu.
+.. Click on your username in the upper right hand corner to reveal the drop-down menu.
 .. Click on menu:Download OpenStack RC File v3[].
 .. Save the file to your workstation.
 .. Load the file into your shell environment using the following command,
@@ -18,18 +18,18 @@ replacing DOWNLOADED_RC_FILE with the name your file:
 ----
 source DOWNLOADED_RC_FILE.sh
 ----
-.. Enter the password for the RC file. This should be same credentials that you use to log in to {soc}.
+.. Enter the password for the RC file. This should be same the credentials that you use to log in to {soc}.
 . Get the SLES15-SP1 image.
 .. Download the pre-built image of SUSE SLES15-SP1 for {soc} from {jeos_product_page_url}.
 .. Upload the image to your {soc}.
 
 .The default user is 'sles'
 [NOTE]
-The SUSE SLES15-SP1 images for {soc} come with pre-defined user `sles`, which you use to log into the cluster nodes. This user has been configured for password-less 'sudo' and is the one recommended to be used by {tf} and `skuba`.
+The SUSE SLES15-SP1 images for {soc} come with predefined user `sles`, which you use to log in to the cluster nodes. This user has been configured for password-less 'sudo' and is the one recommended to be used by {tf} and `skuba`.
 
-=== Deploying the cluster nodes
+=== Deploying the Cluster Nodes
 
-. Find the {tf} template files for {soc} in `/usr/share/caasp/terraform/openstack` (which was installed as part of the management pattern (`sudo zypper in -t pattern SUSE-CaaSP-Management`)).
+. Find the {tf} template files for {soc} in `/usr/share/caasp/terraform/openstack` (which was installed as part of the management pattern - `sudo zypper in -t pattern SUSE-CaaSP-Management`).
 Copy this folder to a location of your choice as the files need adjustment.
 +
 ----
@@ -43,7 +43,7 @@ cd ~/caasp/deployment/openstack/
 ----
 mv terraform.tfvars.example terraform.tfvars
 ----
-. Edit the `terraform.tfvars` file and add modify the following variables:
+. Edit the `terraform.tfvars` file and add/modify the following variables:
 +
 include::deployment-terraform-example.adoc[tags=tf_openstack]
 +
@@ -53,7 +53,7 @@ You can set the timezone before deploying the nodes by modifying the following f
 
 * `~/caasp/deployment/openstack/cloud-init/common.tpl`
 ====
-. (Optional) If you absolutely need to be able to SSH into your cluster nodes using password instead of key-based authentication, this is the best time to set it globally for all of your nodes. If you do this later, you will have to do it manually. To set this, modify the cloud-init configuration and comment-out the related SSH configuration:
+. (Optional) If you absolutely need to be able to SSH into your cluster nodes using password instead of key-based authentication, this is the best time to set it globally for all of your nodes. If you do this later, you will have to do it manually. To set this, modify the cloud-init configuration and comment out the related SSH configuration:
 `~/caasp/deployment/openstack/cloud-init/common.tpl`
 +
 ----
@@ -80,7 +80,7 @@ caasp_registry_code = "CAASP_REGISTRATION_CODE"
 #rmt_server_name = "rmt.example.com"
 ----
 +
-This is required so all the deployed nodes can automatically register to {scc} and retrieve packages.
+This is required so all the deployed nodes can automatically register with {scc} and retrieve packages.
 +
 . You can also enable Cloud Provider Integration with OpenStack in `~/caasp/deployment/openstack/cpi.auto.tfvars`:
 +
@@ -106,32 +106,32 @@ Terraform will now provision all the machines and network infrastructure for the
 .Note down IP/FQDN for nodes
 [IMPORTANT]
 ====
-The IP addresses of the generated machines will be displayed in the terraform
+The IP addresses of the generated machines will be displayed in the Terraform
 output during the cluster node deployment. You need these IP addresses to
 deploy {productname} to the cluster.
 
-If you need to find an IP addresses later on you can run `terraform output` within the directory you performed the deployment from `~/caasp/deployment/openstack` directory or perform the following steps:
+If you need to find an IP address later on, you can run `terraform output` within the directory you performed the deployment from the `~/caasp/deployment/openstack` directory or perform the following steps:
 
-. Log in to {soc} and click on menu:Network[Load Balancers]. Find the one with the string you entered in the terraform configuration above e.g. "testing-lb".
-. Note down the "Floating IP". If you have configured a FQDN for this IP, use the hostname instead.
+. Log in to {soc} and click on menu:Network[Load Balancers]. Find the one with the string you entered in the Terraform configuration above, for example "testing-lb".
+. Note down the "Floating IP". If you have configured an FQDN for this IP, use the host name instead.
 +
 image::deploy-loadbalancer-ip.png[]
 . Now click on menu:Compute[Instances].
-. Switch the filter dropdown to `Instance Name` and enter the string you specified for `stack_name` in the `terraform.tfvars` file.
-. Find the Floating IPs on each of the nodes of your cluster.
+. Switch the filter dropdown box to `Instance Name` and enter the string you specified for `stack_name` in the `terraform.tfvars` file.
+. Find the floating IPs on each of the nodes of your cluster.
 ====
 
-=== Logging into the cluster nodes
+=== Logging in to the Cluster Nodes
 
-. Connecting into the cluster nodes can be accomplished only via SSH key-based authentication thanks to the ssh-public key injection done earlier via {tf}. You can use the predefined `sles` user to log in.
+. Connecting to the cluster nodes can be accomplished only via SSH key-based authentication thanks to the ssh-public key injection done earlier via {tf}. You can use the predefined `sles` user to log in.
 +
-If the ssh-agent is running in the background run:
+If the ssh-agent is running in the background, run:
 +
 ----
 ssh sles@<node-ip-address>
 ----
 +
-Without the ssh-agent running run:
+Without the ssh-agent running, run:
 +
 ----
 ssh sles@<node-ip-address> -i <path-to-your-ssh-private-key>
@@ -139,13 +139,13 @@ ssh sles@<node-ip-address> -i <path-to-your-ssh-private-key>
 +
 . Once connected, you can execute commands using password-less `sudo`. In addition to that, you can also set a password if you prefer to.
 +
-To set the *root password* run:
+To set the *root password*, run:
 +
 ----
 sudo passwd
 ----
 +
-To set the *sles user's password* run:
+To set the *sles user's password*, run:
 +
 ----
 sudo passwd sles
@@ -155,18 +155,23 @@ sudo passwd sles
 .Password authentication has been disabled
 [IMPORTANT]
 ====
-Under the default settings you always need your SSH key to access the machines. Even after setting a password for either `root` or `sles` user, you will be unable to log in via SSH using their passwords respectively. You will most likely receive a `Permission denied (publickey)` error. This mechanism has been deliberately disabled because of security best practices. However, if this environment does not fit your workflows, you can change it at your own risk by modifying the SSH configuration:
+Under the default settings you always need your SSH key to access the machines.
+Even after setting a password for either `root` or `sles` user, you will be unable
+to log in via SSH using their respective passwords. You will most likely receive a
+`Permission denied (publickey)` error. This mechanism has been deliberately disabled
+because of security best practices. However, if this setup does not fit your workflows,
+you can change it at your own risk by modifying the SSH configuration:
 under `/etc/ssh/sshd_config`
 
-To allow password SSH authentication set:
+To allow password SSH authentication, set:
 ----
 + PasswordAuthentication yes
 ----
-To allow login as root via SSH set:
+To allow login as root via SSH, set:
 ----
 + PermitRootLogin yes
 ----
-For the changes to take effect you need to restart the SSH service by running
+For the changes to take effect, you need to restart the SSH service by running:
 ----
 sudo systemctl restart sshd.service
 ----

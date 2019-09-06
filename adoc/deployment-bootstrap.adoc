@@ -2,7 +2,7 @@
 == Bootstrapping the Cluster
 
 Bootstrapping the cluster is the initial process of starting up the cluster
-and defining which of the nodes are masters and which workers. For maximum automation of this process
+and defining which of the nodes are masters and which are workers. For maximum automation of this process,
 {productname} uses the `skuba` package.
 
 === Preparation
@@ -26,7 +26,7 @@ zypper in -t pattern SUSE-CaaSP-Management
 [TIP]
 ====
 Example deployment configuration files for each deployment scenario are installed
-under `/usr/share/caasp/terraform/`, or in case of the Bare metal deployment:
+under `/usr/share/caasp/terraform/`, or in case of the bare metal deployment:
 `/usr/share/caasp/autoyast/`.
 ====
 
@@ -47,7 +47,7 @@ be specified by the following flags:
 
 [IMPORTANT]
 ====
-You must configure `sudo` for the user to be able authenticate without password.
+You must configure `sudo` for the user to be able to authenticate without password.
 Replace `USERNAME` with the user you created during installation. As root, run:
 
 ----
@@ -68,7 +68,7 @@ skuba cluster init --control-plane <LB IP/FQDN> my-cluster
 
 [IMPORTANT]
 ====
-The IP/FQDN must be reachable by every node of the cluster and therefore 127.0.0.1/localhost can't be used.
+The IP/FQDN must be reachable by every node of the cluster and therefore 127.0.0.1/localhost cannot be used.
 ====
 
 ==== Transitioning from Docker to CRI-O
@@ -98,18 +98,18 @@ way to revert this modification. Please choose wisely.
 ====
 
 
-==== Cluster configuration
+==== Cluster Configuration
 
 Before bootstrapping the cluster, it is advisable to perform some additional configuration.
 
-===== Enabling cloud provider integration
+===== Enabling Cloud Provider Integration
 
 Enable cloud provider integration to take advantage of the underlying cloud platforms
 and automatically manage resources like the Load Balancer, Nodes (Instances), Network Routes
 and Storage services.
 
 If you want to enable cloud provider integration with different cloud platforms,
-initialize the cluster with flag `--cloud-provider <CLOUD PROVIDER>`.
+initialize the cluster with the flag `--cloud-provider <CLOUD PROVIDER>`.
 The only currently available option is `openstack`, but more options are planned:
 
 
@@ -132,8 +132,8 @@ The file `my-cluster/cloud/openstack/openstack.conf` must not be freely accessib
 Please remember to set proper file permissions for it, for example `600`.
 ====
 
-===== Example OpenStack cloud provider configuration
-You can find those required parameters in OpenStack RC File v3.
+===== Example OpenStack Cloud Provider Configuration
+You can find the required parameters in OpenStack RC File v3.
 ====
     [Global]
     auth-url=<OS_AUTH_URL> // <1>
@@ -166,7 +166,7 @@ under Project > Access and Security > API Access > Credentials.
 a multi-region OpenStack cloud. A region is a general division of an OpenStack deployment.
 <7> (optional) Used to specify the path to your custom CA file.
 <8> (optional) Used to override automatic version detection.
-Valid values are `v1` or `v2`. Where no value is provided automatic detection
+Valid values are `v1` or `v2`. Where no value is provided, automatic detection
 will select the highest supported version exposed by the underlying OpenStack cloud.
 <9> (optional) Used to specify the ID of the subnet you want to create your load balancer on.
 Can be found at Network > Networks. Click on the respective network to get its subnets.
@@ -181,19 +181,19 @@ The value must be less than the delay value. Ensure that you specify a valid tim
 <14> (optional) Number of permissible ping failures before changing the load balancer
 member’s status to INACTIVE. Must be a number between 1 and 10.
 <15> (optional) Used to override automatic version detection.
-Valid values are v1, v2, v3 and auto. When auto is specified automatic detection
+Valid values are v1, v2, v3 and auto. When auto is specified, automatic detection
 will select the highest supported version exposed by the underlying OpenStack cloud.
-<16> (optional) Influence availability zone use when attaching Cinder volumes.
+<16> (optional) Influences availability zone, use when attaching Cinder volumes.
 When Nova and Cinder have different availability zones, this should be set to `true`.
 
 
 
-After setting options in `openstack.conf` file, please proceed with bootstrapping procedure <<cluster.bootstrap>>.
+After setting options in the `openstack.conf` file, please proceed with the bootstrapping procedure <<cluster.bootstrap>>.
 
 [IMPORTANT]
 ====
-When the cloud provider integration is enabled, it's very important to bootstrap and join nodes with the same node names that they have inside `Openstack`, as
-this name will be used by the `Openstack` cloud controller manager to reconcile node metadata.
+When cloud provider integration is enabled, it's very important to bootstrap and join nodes with the same node names that they have inside `Openstack`, as
+these names will be used by the `Openstack` cloud controller manager to reconcile node metadata.
 ====
 
 ===== Integrate External LDAP TLS
@@ -222,23 +222,23 @@ this name will be used by the `Openstack` cloud controller manager to reconcile 
           nameAttr: cn // <12>
 ====
 <1> Host name of LDAP server reachable from the cluster.
-<2> The port on which to connect to the host (e.g. StartTLS: `389`, TLS: `636`).
-<3> LDAP server base64 encoded root CA certificate file (e.g. `cat <root-ca-pem-file> | base64 | awk '{print}' ORS='' && echo`)
+<2> The port on which to connect to the host (for example StartTLS: `389`, TLS: `636`).
+<3> LDAP server base64 encoded root CA certificate file (for example `cat <root-ca-pem-file> | base64 | awk '{print}' ORS='' && echo`)
 <4> Bind DN of user that can do user searches.
 <5> Password of the user.
-<6> Label of LDAP attribute users will enter to identify themselves (e.g. `username`).
-<7> BaseDN where users are located (e.g. `ou=Users,dc=example,dc=org`).
-<8> Filter to specify type of user objects (e.g. "(objectClass=person)").
-<9> Attribute users will enter to identify themselves (e.g. mail).
-<10> Attribute used to identify user within the system (e.g. DN).
+<6> Label of LDAP attribute users will enter to identify themselves (for example `username`).
+<7> BaseDN where users are located (for example `ou=Users,dc=example,dc=org`).
+<8> Filter to specify type of user objects (for example "(objectClass=person)").
+<9> Attribute users will enter to identify themselves (for example mail).
+<10> Attribute used to identify user within the system (for example DN).
 <11> Attribute containing the user's email.
-<12> Attribute used as username used within OIDC tokens.
+<12> Attribute used as username within OIDC tokens.
 
-Besides the LDAP connector you can also setup other connectors.
+Besides the LDAP connector you can also set up other connectors.
 For additional connectors, refer to the available connector configurations
 in the Dex repository: https://github.com/dexidp/dex/tree/v2.16.0/Documentation/connectors.
 
-===== Prevent Nodes Running Special Workloads From Being Rebooted
+===== Prevent Nodes Running Special Workloads from Being Rebooted
 
 Some nodes might run specially treated workloads (pods).
 
@@ -279,7 +279,7 @@ kubectl apply -f my-cluster/addons/kured/kured.yaml
 
 This will restart all `kured` pods with the additional configuration flags.
 
-==== Prevent Nodes With Any Prometheus Alerts From Being Rebooted
+==== Prevent Nodes with Any Prometheus Alerts from Being Rebooted
 
 [NOTE]
 ====
@@ -320,11 +320,11 @@ kubectl apply -f my-cluster/addons/kured/kured.yaml
 This will restart all `kured` pods with the additional configuration flags.
 
 [[cluster.bootstrap]]
-==== Cluster bootstrap
+==== Cluster Bootstrap
 . Switch to the new directory.
 . Now bootstrap a master node.
 For `--target` enter the IP address of your first master node.
-Replace `<NODE NAME>` with a unique identifier for example "master-one".
+Replace `<NODE NAME>` with a unique identifier, for example, "master-one".
 +
 .Secure configuration files access
 [WARNING]
@@ -345,7 +345,7 @@ The files will be stored in the `my-cluster` directory specified in step one.
 . Add additional master nodes to the cluster.
 +
 Replace the `<IP/FQDN>` with the IP for the machine.
-Replace `<NODE NAME>` with a unique identifier for example "master-two".
+Replace `<NODE NAME>` with a unique identifier, for example, "master-two".
 +
 ----
 skuba node join --role master --user sles --sudo --target <IP/FQDN> <NODE NAME>
@@ -353,7 +353,7 @@ skuba node join --role master --user sles --sudo --target <IP/FQDN> <NODE NAME>
 . Add a worker to the cluster.
 +
 Replace the `<IP/FQDN>` with the IP for the machine.
-Replace `<NODE NAME>` with a unique identifier for example "worker-one".
+Replace `<NODE NAME>` with a unique identifier, for example, "worker-one".
 +
 ----
 skuba node join --role worker --user sles --sudo --target <IP/FQDN> <NODE NAME>
@@ -375,7 +375,7 @@ worker-one   SUSE Linux Enterprise Server 15 SP1   4.12.14-110-default   cri-o:/
 
 [IMPORTANT]
 ====
-The IP/FQDN must be reachable by every node of the cluster and therefore 127.0.0.1/localhost can't be used.
+The IP/FQDN must be reachable by every node of the cluster and therefore 127.0.0.1/localhost cannot be used.
 ====
 
 === Using kubectl
@@ -398,7 +398,7 @@ To talk to your cluster, simply symlink the generated configuration file to `~/.
 ln -s ~/clusters/my-cluster/admin.conf ~/.kube/config
 ----
 
-Then you can perform all cluster operations as usual. For example checking cluster status with either:
+Then you can perform all cluster operations as usual. For example, checking cluster status with either:
 
 * `skuba cluster status`
 +

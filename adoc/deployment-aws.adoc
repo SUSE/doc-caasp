@@ -10,12 +10,12 @@ top of those.
 
 . Download the AWS credentials
 .. Log in to the AWS console.
-.. Click on your username in the upper right hand corner to reveal the dropdown menu.
+.. Click on your username in the upper right hand corner to reveal the drop-down menu.
 .. Click on My Security Credentials.
 .. Click Create Access Key on the Security Credentials tab.
 .. Note down the newly created _Access_ and _Secret_ keys.
 
-=== Deploying the cluster nodes
+=== Deploying the Cluster Nodes
 
 . On the management machine, find the {tf} template files for AWS in
 `/usr/share/caasp/terraform/aws` (which was installed as part of the management
@@ -33,7 +33,7 @@ cd ~/caasp/deployment/aws/
 ----
 mv terraform.tfvars.example terraform.tfvars
 ----
-. Edit the `terraform.tfvars` file and add modify the following variables:
+. Edit the `terraform.tfvars` file and add/modify the following variables:
 +
 include::deployment-terraform-example.adoc[tags=tf_aws]
 +
@@ -53,7 +53,7 @@ Substitute `CAASP_REGISTRATION_CODE` for the code from <<registration_code>>.
 caasp_registry_code = "CAASP_REGISTRATION_CODE"
 ----
 +
-This is required so all the deployed nodes can automatically register to {scc} and retrieve packages.
+This is required so all the deployed nodes can automatically register with {scc} and retrieve packages.
 . Now you can deploy the nodes by running:
 +
 ----
@@ -83,12 +83,12 @@ The IP addresses of the generated machines will be displayed in the terraform
 output during the cluster node deployment. You need these IP addresses to
 deploy {productname} to the cluster.
 
-If you need to find an IP addresses later on you can run `terraform output` within
-the directory you performed the deployment from `~/caasp/deployment/aws` directory or
+If you need to find an IP address later on, you can run `terraform output` within
+the directory you performed the deployment from the `~/caasp/deployment/aws` directory or
 perform the following steps:
 
 . Log in to the AWS Console and click on menu:Load Balancers[]. Find the one with the
-string you entered in the {tf} configuration above e.g. `testing-lb`.
+string you entered in the {tf} configuration above, for example `testing-lb`.
 . Note down the "DNS name".
 +
 . Now click on menu:Instances[].

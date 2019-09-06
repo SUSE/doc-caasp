@@ -1,15 +1,15 @@
 = {suse} {cap} Integration
 
-{productname} offers {cap} for modern application delivery,
-this chapter describes the steps required for successful integration.
+{productname} offers {cap} for modern application delivery.
+This chapter describes the steps required for successful integration.
 
 == Prerequisites
 
-Before you start with integrating {cap}, you need to ensure the following:
+Before you start integrating {cap}, you need to ensure the following:
 
 * The {productname} cluster did not use the `--strict-cap-defaults` option
-during the initial setup when you run `skuba cluster init`.
-This ensures presence of extra CRI-O capabilities compatible for docker containers.
+during the initial setup when you ran `skuba cluster init`.
+This ensures the presence of extra CRI-O capabilities compatible with docker containers.
 For more details refer to the
 _{productname} Deployment Guide, Transitioning from Docker to CRI-O_.
 * The {productname} cluster has `swapaccount=1` set on all worker nodes.
@@ -19,9 +19,9 @@ sudo sed -i -r 's|^(GRUB_CMDLINE_LINUX_DEFAULT=)\"(.*.)\"|\1\"\2swapaccount=1 \"
 sudo grub2-mkconfig -o /boot/grub2/grub.cfg
 sudo systemctl reboot
 ----
-* The {productname} cluster has no restrictions to {cap} ports.
-For more details refer to the {cap} documentation: https://www.suse.com/documentation/cloud-application-platform-1/singlehtml/book_cap_guides/book_cap_guides.html .
-* `Helm` and `Tiller` installed on node where you run `skuba` and `kubectl` command.
+* The {productname} cluster has no restrictions for {cap} ports.
+For more details refer to the {cap} documentation: https://www.suse.com/documentation/cloud-application-platform-1/book-cap-guides/data/book-cap-guides.html.
+* `Helm` and `Tiller` are installed on the node where you run the `skuba` and `kubectl` commands.
 +
 ----
 sudo zypper install helm
@@ -33,9 +33,9 @@ helm init --tiller-image registry.suse.com/caasp/v4/helm-tiller:{helm_tiller_ver
 ----
 
 == Procedures
-. Create a storage class. For precise steps, refer to <<_RBD-dynamic-persistent-volumes>>
+. Create a storage class. For precise steps, refer to <<_RBD-dynamic-persistent-volumes>>.
 
-. Add `Helm` chart repository.
+. Add the `Helm` chart repository.
 +
 ----
 helm repo add suse https://kubernetes-charts.suse.com/
@@ -43,15 +43,15 @@ helm repo add suse https://kubernetes-charts.suse.com/
 
 . Map the {productname} master node external IP address to the `<cap-domain>` and
 `uaa.<cap-domain>` on your DNS server.
-For testing purposes you can also use `/etc/hosts`
+For testing purposes you can also use `/etc/hosts`.
 +
 ----
 <caasp_master_node_external_ip>	<caasp_master_node_external_ip>.omg.howdoi.website
 <caasp_master_node_external_ip>	uaa.<caasp_master_node_external_ip>.omg.howdoi.website
 ----
 
-. Create shared value file. This will be used for CAP `uaa`, `cf`, and
-`console` charts. Substitute the values enclosed in `< >` for specific values.
+. Create a shared value file. This will be used for CAP `uaa`, `cf`, and
+`console` charts. Substitute the values enclosed in `< >` with specific values.
 +
 ----
 cat << *EOF* > custom_values.yaml
@@ -87,7 +87,7 @@ uaa-0                       1/1     Running     1          21h
 ...
 ----
 
-. Verify uaa OAuth - this should return a JSON Object:
+. Verify uaa OAuth -- this should return a JSON object:
 +
 ----
 curl --insecure https://uaa.<cap-domain>:2793/.well-known/openid-configuration
@@ -145,6 +145,6 @@ volume-migration-1-s96cc     0/1     Completed   0          54m
 ....
 ----
 
-A successful deployment allows you to access {cap} console via a web browser at
+A successful deployment allows you to access {cap} console via a Web browser at
 https://<domain-name>:8443/login. The default username is admin and the password
 is the `secure_password` you have set in one of the steps above.

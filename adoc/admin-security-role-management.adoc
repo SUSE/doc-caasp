@@ -2,7 +2,7 @@
 = Role Management
 
 {productname}
-uses _role-based access control_ authorization for {kube}
+uses _role-based access control_ authorization for {kube}.
 .
 Roles define, which _subjects_ (users or groups) can use which _verbs_ (operations) on which __resources__.
 The following sections provide an overview of the resources, verbs and how to create roles.
@@ -22,7 +22,7 @@ delete::
 Delete resources.
 
 deletecollection::
-Delete a collection of a resource (can only be invoked using the {kube} API). 
+Delete a collection of a resource (can only be invoked using the {kube} API).
 
 get::
 Display individual resource.
@@ -34,8 +34,7 @@ patch::
 Update an API object in place.
 
 proxy::
-Allows running {kubectl}
-in a mode where it acts as a reverse proxy.
+Allows running `kubectl` in a mode where it acts as a reverse proxy.
 
 update::
 Update fields of a resource, for example annotations or labels.
@@ -175,20 +174,20 @@ This example shows how to bind a group to a defined role.
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name:`ROLE_BINDING_NAME` <1>
-  namespace:`NAMESPACE` <2>
+  name: ROLE_BINDING_NAME <1>
+  namespace: NAMESPACE <2>
 subjects:
 - kind: Group
-  name:`LDAP_GROUP_NAME` <3>
+  name: LDAP_GROUP_NAME <3>
   apiGroup: rbac.authorization.k8s.io
 roleRef:
 - kind: Role
-  name:`ROLE_NAME` <4>
+  name: ROLE_NAME <4>
   apiGroup: rbac.authorization.k8s.io
 ----
 <1> Defines a name for this new role binding.
 
-<2> Name of the namespace for which the binding applies.
+<2> Name of the namespace to which the binding applies.
 
 <3> Name of the LDAP group to which this binding applies.
 
@@ -198,7 +197,7 @@ roleRef:
 ====
 
 [[_ex.admin.security.groups.cluster.role]]
-.Binding a Group to a CluseterRole
+.Binding a Group to a Cluster Role
 ====
 This example shows how to bind a group to a defined cluster role.
 
@@ -206,21 +205,21 @@ This example shows how to bind a group to a defined cluster role.
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: `CLUSTER_ROLE_BINDING_NAME` <1>
-  namespace:`NAMESPACE` <2>
+  name: CLUSTER_ROLE_BINDING_NAME <1>
+  namespace: NAMESPACE <2>
 subjects:
   kind: Group
-  name: `CLUSTER_GROUP_NAME` <3>
+  name: CLUSTER_GROUP_NAME <3>
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: ClusterRole
-  name: `CLUSER_ROLE_NAME` <4>
+  name: CLUSER_ROLE_NAME <4>
   apiGroup: rbac.authorization.k8s.io
 ----
 
 <1> Defines a name for this new cluster role binding.
 
-<2> Name of the namespace for which the cluster binding applies.
+<2> Name of the namespace to which the cluster binding applies.
 
 <3> Name of the cluster group to which this binding applies.
 
