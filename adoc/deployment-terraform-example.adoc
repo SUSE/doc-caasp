@@ -33,7 +33,7 @@ external_net = "floating"
 subnet_cidr = "172.28.0.0/24"
 
 # Number of master nodes
-masters = 1 // <3>
+masters = 3 // <3>
 
 # Number of worker nodes
 workers = 2 // <4>
@@ -65,7 +65,9 @@ repositories = {} // <5>
 
 # Define required packages to be installed/removed. Do not change those.
 packages = [  // <6>
-  "kernel-default-base"
+  "kernel-default",
+  "-kernel-default-base",
+  "new-package-to-install"
 ]
 
 # ssh keys to inject into all the nodes
