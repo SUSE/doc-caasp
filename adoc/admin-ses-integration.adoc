@@ -1,8 +1,8 @@
 = {ses} Integration
 
 
-{productname} offers {ses} as a storage solution for its containers,
-this chapter describes the steps required for successful integration.
+{productname} offers {ses} as a storage solution for its containers.
+This chapter describes the steps required for successful integration.
 
 == Prerequisites
 
@@ -17,7 +17,7 @@ For more details refer to the {ses} documentation:
 https://www.suse.com/documentation/suse-enterprise-storage/.
 * The {ses} cluster has a pool with RADOS Block Device (RBD) enabled.
 
-== Procedures according to type of integration
+== Procedures According to Type of Integration
 
 The steps will differ in small details depending on whether you are using RBD or
 CephFS and dynamic or static persistent volumes.
@@ -54,7 +54,7 @@ data:
 ----
 . Create an image in the SES cluster.
 To do that, run the following command on the {master_node},
-replacing `SIZE` with the size of the image, or example `2G`,
+replacing `SIZE` with the size of the image, for example `2G`,
 and `YOUR_VOLUME` with the name of the image.
 +
 
@@ -69,7 +69,7 @@ rbd create -s SIZE YOUR_VOLUME
  `POD_NAME` and `CONTAINER_NAME` for a {kube} container and pod name of your choice.
  `IMAGE_NAME` is the name you decide to give your container image, for example "opensuse/leap".
  `RBD_POOL` is the RBD pool name,
- please refer to the RBD documentation on instructions how to create the RBD pool.
+ please refer to the RBD documentation for instructions on how to create the RBD pool:
  https://docs.ceph.com/docs/mimic/rbd/rados-rbd-cmds/#create-a-block-device-pool
 +
 
@@ -150,14 +150,15 @@ data:
   key: "$(echo CEPH_SECRET | base64)"
 *EOF*
 ----
-. Create an image in the SES cluster. On the {master_node} , run the following command:
+. Create an image in the SES cluster. On the {master_node}, run the following command:
 +
 
 ----
 rbd create -s SIZE YOUR_VOLUME
 ----
 +
-Replace `SIZE` with the size of the image, for example `2G` (2 Gigabyte), and `YOUR_VOLUME` is the name of the image.
+Replace `SIZE` with the size of the image, for example `2G` (2 gigabytes),
+and `YOUR_VOLUME` with the name of the image.
 . Create the persistent volume:
 +
 
@@ -214,7 +215,7 @@ Use the _gibibit_ notation, for example ``2Gi``.
 NOTE: This persistent volume claim does not explicitly list the volume.
 Persistent volume claims work by picking any volume that meets the criteria from a pool.
 In this case we specified any volume with a size of 2G or larger.
-When the claim is removed the recycling policy will be followed.
+When the claim is removed, the recycling policy will be followed.
 +
 
 . Create a pod that uses the persistent volume claim:
@@ -245,7 +246,7 @@ spec:
 ----
 kubectl get pod
 ----
-. Once pod is running, check the volume:
+. Once the pod is running, check the volume:
 +
 
 ----
@@ -308,14 +309,14 @@ allow rwx pool=RBD_POOL" -o ceph.client.user.keyring
 +
 Replace `RBD_POOL` with the RBD pool name.
 
-. For a dynamic persisten volume, you will also need a user key.
+. For a dynamic persistent volume, you will also need a user key.
 Retrieve the Ceph *user* secret by running:
 +
 ----
 ceph auth get-key client.user
 ----
 or directly from `/etc/ceph/ceph.client.user.keyring`
-. Apply the configuration that includes the Ceph secret by with the `kubectl apply` command,
+. Apply the configuration that includes the Ceph secret by running the `kubectl apply` command,
 replacing `CEPH_SECRET` with your own Ceph secret.
 +
 
@@ -402,7 +403,7 @@ spec:
 ----
 kubectl get pod
 ----
-. Once pod is running, check the volume:
+. Once the pod is running, check the volume:
 +
 
 ----
@@ -428,7 +429,7 @@ The RBD is not deleted.
 === Using CephFS in a Pod
 
 
-The procedure below describes steps to take when you need to use a CephFS in a Pod.
+The procedure below describes steps to take when you need to use a CephFS in a pod.
 
 .Procedure: Using CephFS In A Pod
 
@@ -614,7 +615,7 @@ spec:
 ----
 kubectl get pod
 ----
-. Once pod is running, check the volume by running:
+. Once the pod is running, check the volume by running:
 +
 
 ----
