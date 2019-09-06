@@ -112,6 +112,34 @@ sudo zypper in -t pattern SUSE-CaaSP-Management
 This will install the `skuba` command line tool and `{tf}`; as well
 as various default configurations and examples.
 
+
+[NOTE]
+.Using a Proxy Server
+====
+
+Sometimes, you need a proxy server to be able to connects the SUSE Customer Center.
+To do that:
+
+. Expose the environmental variable `http_proxy`:
++
+----
+export http_proxy=http://PROXY_IP_FQDN:PROXY_PORT
+----
++
+. Replace `PROXY_IP_FQDN` by the IP address or a fully qualified domain name (FQDN) of the
+proxy server and `PROXY_PORT` by its port.
+. If you need a proxy server with basic authentication, create the file `/root/.curlrc`
+with the following content:
++
+----
+--proxy-user "USER:PASSWORD"
+----
++
+Replace `USER` and `PASSWORD` with the credentials of an allowed user for the proxy server.
+
+====
+
+
 === Load Balancer
 
 [IMPORTANT]
