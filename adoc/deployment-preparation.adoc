@@ -89,21 +89,33 @@ sudo zypper in -t pattern SUSE-CaaSP-Management
 This will install the `skuba` command line tool and `{tf}`; as well
 as various default configurations and examples.
 
-[NOTE] Using a Proxy Server
+
+[NOTE]
+.Using a Proxy Server
 ====
+
 Sometimes, you need a proxy server to be able to connects the SUSE Customer Center.
-Expose environment variable http_proxy
+To do that:
+
+. Expose the environmental variable `http_proxy`:
++
 ----
 export http_proxy=http://PROXY_IP_FQDN:PROXY_PORT
 ----
-Replace PROXY_IP_FQDN with the ip address or fully qualified domain name of the proxy server and PROXY_PORT with its port.
-
-If proxy server with basic authentication, create the file `/root/.curlrc` with the content:
++
+. Replace `PROXY_IP_FQDN` by the IP address or a fully qualified domain name (FQDN) of the
+proxy server and `PROXY_PORT` by its port.
+. If you need a proxy server with basic authentication, create the file `/root/.curlrc`
+with the following content:
++
 ----
 --proxy-user "USER:PASSWORD"
 ----
-Replace USER and PASSWORD with the credentials of an allowed user for the proxy server.
++
+Replace `USER` and `PASSWORD` with the credentials of an allowed user for the proxy server.
+
 ====
+
 
 === Load Balancer
 
@@ -132,7 +144,7 @@ during the cluster bootstrap. To simplify configuration you can reserve the IPs
 needed for the cluster nodes and pre-configure these in the load balancer.
 
 The load balancer needs access to port `6443` on the `apiserver` (all master nodes)
-in the cluster. It also needs access to Gangway port `32001` and Dex port `32000` 
+in the cluster. It also needs access to Gangway port `32001` and Dex port `32000`
 on all master and worker nodes in the cluster for RBAC authentication.
 
 We recommend performing regular HTTPS health checks each master node `/healthz`
