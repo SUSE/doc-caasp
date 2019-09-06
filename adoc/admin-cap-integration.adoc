@@ -15,7 +15,7 @@ _{productname} Deployment Guide, Transitioning from Docker to CRI-O_.
 * The {productname} cluster has `swapaccount=1` set on all worker nodes.
 +
 ----
-sudo sed -i -r 's|^(GRUB_CMDLINE_LINUX_DEFAULT=)\"(.*.)\"|\1\"\2swapaccount=1 \"|' /etc/default/grub
+grep "swapaccount=1" /etc/default/grub || sudo sed -i -r 's|^(GRUB_CMDLINE_LINUX_DEFAULT=)\"(.*.)\"|\1\"\2 swapaccount=1 \"|' /etc/default/grub
 sudo grub2-mkconfig -o /boot/grub2/grub.cfg
 sudo systemctl reboot
 ----
