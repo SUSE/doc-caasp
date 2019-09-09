@@ -147,9 +147,16 @@ Replace `USER` and `PASSWORD` with the credentials of an allowed user for the pr
 Setting up a load balancer is mandatory in any production environment.
 ====
 
+<<<<<<< HEAD
 {productname} requires a load balancer to distribute work load between the deployed
 master nodes of the cluster. A failure-tolerant {productname} cluster will
 always use more than one load balancer since that becomes a "single point of failure".
+=======
+{productname} requires a load balancer to distribute workload between the deployed
+master nodes of the cluster. A failure tolerant {productname} cluster will always
+use more than one control plane node as well as more than one load balancer,
+so there isn't a single point of failure.
+>>>>>>> lb-upgrade
 
 There are many ways to configure a load balancer. This documentation cannot
 describe all possible combinations of load balancer configurations and thus
@@ -163,15 +170,31 @@ For VMware you must configure a load balancer manually and allow it access to
 all master nodes created during <<bootstrap>>.
 
 The load balancer should be configured before the actual deployment. It is needed
+<<<<<<< HEAD
 during the cluster bootstrap. To simplify configuration you can reserve the IPs
 needed for the cluster nodes and preconfigure these in the load balancer.
+=======
+during the cluster bootstrap, and also during upgrades. To simplify configuration,
+you can reserve the IPs needed for the cluster nodes and pre-configure these in
+the load balancer.
+>>>>>>> lb-upgrade
 
 The load balancer needs access to port `6443` on the `apiserver` (all master nodes)
 in the cluster. It also needs access to Gangway port `32001` and Dex port `32000`
 on all master and worker nodes in the cluster for RBAC authentication.
 
+<<<<<<< HEAD
 We recommend performing regular HTTPS health checks for each master node `/healthz`
 endpoint to verify that the node is responsive.
+=======
+We recommend performing regular HTTPS health checks on each master node `/healthz`
+endpoint to verify that the node is responsive. This is particularly important during
+upgrades, when a master node restarts the apiserver. During this rather short time
+window, all requests have to go to another master node's apiserver. The master node
+that is being upgraded will have to be marked INACTIVE on the load balancer pool
+at least during the restart of the apiserver. We provide reasonable defaults
+for that on our default openstack load balancer {tf} configuration.
+>>>>>>> lb-upgrade
 
 The following is an example of a possible load balancer configuration based on {sle} 15 SP1 and `nginx`.
 
