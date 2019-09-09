@@ -347,13 +347,11 @@ Apply best practices for access control to this folder.
 .Custom root CA certificate
 [TIP]
 ====
-During cluster bootstrap, {skuba} generates root CA certficiate by default. Administrators could deploy {kube} cluster with your own custom root CA certificate. Please refers to the _{productname} Admin Guide_.
-====
-+
-[IMPORTANT]
-.Custom root CA certificate
-====
-Plan carefully for the custom root CA certificate, it is not possible to reconfigure the custom root CA certificate once the deployment is complete.
+During cluster bootstrap, {skuba} automatically generates a root CA certificate.
+You can however also deploy the {kube} cluster with your own custom root CA certificate.
+Please refer to the for more information _{productname} Admin Guide_ on custom certificates.
+Plan carefully when using a custom root CA certificate,
+it is not possible to reconfigure it once deployment is complete.
 ====
 +
 [source,bash]
@@ -374,7 +372,7 @@ Replace `<NODE NAME>` with a unique identifier for example "master-two".
 ----
 skuba node join --role master --user sles --sudo --target <IP/FQDN> <NODE NAME>
 ----
-. Add a worker to the cluster.
+. Add a worker to the cluster:
 +
 Replace the `<IP/FQDN>` with the IP for the machine.
 Replace `<NODE NAME>` with a unique identifier for example "worker-one".
@@ -383,7 +381,7 @@ Replace `<NODE NAME>` with a unique identifier for example "worker-one".
 ----
 skuba node join --role worker --user sles --sudo --target <IP/FQDN> <NODE NAME>
 ----
-. Verify the nodes that you added
+. Verify that the nodes have been added:
 +
 [source,bash]
 ----
@@ -391,8 +389,7 @@ skuba cluster status
 ----
 +
 The output should look like this:
-+# instance user name
-username = "sles"
++
 ----
 NAME         OS-IMAGE                              KERNEL-VERSION        CONTAINER-RUNTIME   HAS-UPDATES   HAS-DISRUPTIVE-UPDATES
 master-one   SUSE Linux Enterprise Server 15 SP1   4.12.14-110-default   cri-o://1.13.3      <none>        <none>

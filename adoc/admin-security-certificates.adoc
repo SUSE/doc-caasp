@@ -1,18 +1,26 @@
 = Certificates
 
-During the installation of {productname}, a CA (Certificate Authority) certificate is generated; that is then used to authenticate and verify all communications. The process also creates and distributes client certificates for the components.
+During the installation of {productname}, a CA (Certificate Authority) certificate is generated,
+which is then used to authenticate and verify all communication. This process also creates
+and distributes client certificates for the components.
 
-Communication is secured with TLS v1.2 using the AES 128 CBC cipher. All client certificates are 4096 Bit RSA encrypted.
+== Communication Security
+Communication is secured with TLS v1.2 using the AES 128 CBC cipher.
+All client certificates are 4096 Bit RSA encrypted.
 
-The CA certificate is valid for 3650 days (10 years) by default. The client certificates are valid for 365 days (1 year) by default.
+== Certificate Validity
+The CA certificate is valid for 3650 days (10 years) by default.
+Client certificates are valid for 365 days (1 year) by default.
 
-Certificates are located in `/etc/kubernetes/pki` on each master nodes. Three root CA required for {productname} are
+== Certificate Location
+Certificates are located under `/etc/kubernetes/pki` on all master nodes.
+Three root CA required for {productname} are:
 
-* {kube} apiserver: path `/etc/kubernetes/pki/ca.{crt.key}`
-* front-end proxy: path `/etc/kubernetes/pki/front-proxy-ca.{crt.key}`
-* etcd: path `/etc/kubernetes/pki/etcd/ca.{crt.key}`
+* {kube} apiserver: `/etc/kubernetes/pki/ca.{crt.key}`
+* Front-end proxy: `/etc/kubernetes/pki/front-proxy-ca.{crt.key}`
+* Etcd: `/etc/kubernetes/pki/etcd/ca.{crt.key}`
 
-The following certificates are managed by `kubeadm`.
+The following certificates are managed by `kubeadm`:
 
 [%header,cols=4*]
 |===
@@ -72,7 +80,8 @@ The following certificates are managed by `kubeadm`.
 |Server,Client
 |===
 
-The following certificates are created by `skuba` and are stored in {kube} cluster `Secret` resource.
+The following certificates are created by `skuba` and are stored in the {kube} cluster
+`Secret` resource:
 
 [%header,cols=4*]
 |===
@@ -97,13 +106,15 @@ The following certificates are created by `skuba` and are stored in {kube} clust
 |Client
 |===
 
-== Deployment with custom root CA certificate
+== Deployment with a Custom Root CA Certificate
 
-Administrators can provide custom root CA certificates during cluster deployment and decide which root CA components to replace or replace all.
+Administrators can provide custom root CA certificates during cluster deployment
+and decide which root CA components to replace or if to replace all.
 
-After `skuba cluster init`, go to the generated folder. Create a `pki` folder and put your custom root CA certificate into `pki` folder.
+After you have run `skuba cluster init`, go to the `my-cluster` folder that has been generated,
+Create a `pki` folder and put your custom root CA certificate into the `pki` folder.
 
-* Replace {kube} apiserver root CA certificate:
+* Replacing the {kube} apiserver root CA certificate:
 +
 [source,bash]
 ----
@@ -114,7 +125,7 @@ chmod 644 my-cluster/pki/ca.crt
 chmod 600 my-cluster/pki/ca.key
 ----
 
-* Replace front-end proxy root CA certificate:
+* Replacing the front-end proxy root CA certificate:
 +
 [source,bash]
 ----
@@ -125,7 +136,7 @@ chmod 644 my-cluster/pki/front-proxy-ca.crt
 chmod 600 my-cluster/pki/front-proxy-ca.key
 ----
 
-* Replace etcd root CA certificate:
+* Replacing the etcd root CA certificate:
 +
 [source,bash]
 ----
@@ -136,25 +147,30 @@ chmod 644 my-cluster/pki/etcd/ca.crt
 chmod 600 my-cluster/pki/etcd/ca.key
 ----
 
-Then bootstrap the cluster with `skuba node bootstrap`.
+After this process bootstrap the cluster with `skuba node bootstrap`.
 
-== Automatic certificate renewal
+== Automatic Certificate Renewal
 
-The {productname} renews all the certificates automatically during control plane update <<handling_updates>>.
+{productname} renews all certificates automatically during the control plane
+update, see <<handling_updates>>.
 
 [NOTE]
 ====
 It is a best practice to update your {kube} cluster frequently to stay secure.
 ====
 
-== Manual certificate renewal
+== Manual Certificate Renewal
 
-. Renewal certificate managed by `kubeadm`:
-+
 [IMPORTANT]
 ====
-If you are running multiple master nodes, administrators need to run the following commands on all the master nodes sequentially.
+If you are running multiple master nodes, you need to run the followings
+commands sequentially on all master nodes.
 ====
+
+=== Renewing Certificates Managed by `kubeadm`
+
+. To SSH into the master node, renew all `kubeadm` certificates and reboot,
+run the following:
 +
 [source,bash]
 ----
@@ -163,7 +179,7 @@ sudo kubeadm alpha certs renew all
 sudo reboot
 ----
 +
-Copy the renewed `admin.conf` from one of the master nodes to your local environment.
+. Copy the renewed `admin.conf` from one of the master nodes to your local environment:
 +
 [source,bash]
 ----
@@ -171,18 +187,20 @@ ssh <username>@<master-node-ip-address/fqdn>
 sudo cat /etc/kubernetes/admin.conf
 ----
 
-. Renewal certificate created by `skuba`:
-+
-Login to master node and regenerate the certificates.
+=== Renewing Certificates Created by `skuba`:
 
-* Replace oidc-dex secret:
+. Log in to the master node and regenerate the certificates:
++
+* Replace the oidc-dex secret:
 +
 [source,bash]
 ----
 cd /etc/kubernetes/pki
 ----
 +
-Sign the oidc-dex server certificate with root CA `ca.crt/ca.key` and SAN as <control-plane-ip-address/fqdn>. Then update the {kube} cluster secret data `ca.crt`, `tls.crt`, and `tls.key` with base64 encoded.
+Sign the oidc-dex server certificate with the root CA `ca.crt/ca.key` and SAN
+as <control-plane-ip-address/fqdn>. Then update the {kube} cluster secret data
+`ca.crt`, `tls.crt`, and `tls.key` with base64 encoded:
 +
 [source,bash]
 ----
@@ -191,14 +209,16 @@ sudo kubectl --kubeconfig=admin.conf edit secret oidc-dex-cert -n kube-system
 sudo kubectl --kubeconfig=admin.conf delete pod -lapp=oidc-dex -n kube-system
 ----
 
-* Replace oidc-gangway secret:
+* Replace the oidc-gangway secret:
 +
 [source,bash]
 ----
 cd /etc/kubernetes/pki
 ----
 +
-Sign the oidc-gangway server certificate with root CA `ca.crt/ca.key` and SAN as <control-plane-ip-address/fqdn>. Then update the secret data `ca.crt`, `tls.crt`, and `tls.key` with base64 encoded.
+Sign the oidc-gangway server certificate with the root CA `ca.crt/ca.key` and SAN
+as <control-plane-ip-address/fqdn>. Then update the secret data `ca.crt`,
+`tls.crt`, and `tls.key` with base64 encoded.
 +
 [source,bash]
 ----
