@@ -43,14 +43,14 @@ You can set timezone in before deploying the nodes by modifying the files:
 
 * `~/caasp/deployment/aws/cloud-init/cloud-init.yaml.tpl`
 ====
-. Enter the registration code for your nodes in `~/caasp/deployment/aws/registration.auto.tfvars`:
+. Enter the product key for your nodes in `~/caasp/deployment/aws/registration.auto.tfvars`:
 +
-Substitute `CAASP_REGISTRATION_CODE` for the code from <<registration_code>>.
+Substitute `CAASP_PRODUCT_KEY` for the code from <<registration_code>>.
 +
 [source,json]
 ----
-# SUSE CaaSP Product Registration Code
-caasp_registry_code = "CAASP_REGISTRATION_CODE"
+# SUSE CaaSP Product Key
+caasp_registry_code = "CAASP_PRODUCT_KEY"
 ----
 +
 This is required so all the deployed nodes can automatically register with {scc} and retrieve packages.

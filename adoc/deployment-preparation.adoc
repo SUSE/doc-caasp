@@ -59,30 +59,30 @@ This can be achieved using the `ssh -A` command. Please refer to the man page
 of `ssh` to learn about the security implications of using this feature.
 
 
-[[registration_code]]
-=== Registration Code
+[[product_key]]
+=== Product Key
 
 [NOTE]
 ====
-The registration code for {productname} {productmajor} also contains the activation
+The product key for {productname} {productmajor} also contains the activation
 permissions for the underlying {sle} operating system. You can use your {productname}
-registration code to activate the {sle} 15 SP1 subscription during installation.
+product key to activate the {sle} 15 SP1 subscription during installation.
 ====
 
 ifeval::['{release_type}' == 'internal']
-You need a subscription registration code to use {productname}. You can retrieve your
-registration code from {scc}.
+You need a subscription product key to use {productname}. You can retrieve your
+product key from {scc}.
 
 * Login to https://scc.suse.com
 * Navigate to menu:Internal tools[Products]
 * Search for "caasp"
 * Select menu:SUSE CaaS Platform[4.0 > x86_64 alpha]
-* Copy the menu:Registration Code[]
+* Copy the menu:Product Key[]
 endif::[]
 
 ifeval::['{release_type}' == 'public']
 If you wish to beta test {productname} {productmajor}, please send an e-mail
-to beta-programs@lists.suse.com to request a {scc} subscription and a {productname} registration code.
+to beta-programs@lists.suse.com to request a {scc} subscription and a {productname} product key.
 endif::[]
 
 === Installation Tools
@@ -96,13 +96,13 @@ Enable the modules during the operating system installation or activate them usi
 
 [source,bash]
 ----
-sudo SUSEConnect -r CAASP_REGISTRATION_CODE # <1>
+sudo SUSEConnect -r CAASP_PRODUCT_KEY # <1>
 sudo SUSEConnect -p sle-module-containers/15.1/x86_64 # <2>
-sudo SUSEConnect -p caasp/4.0/x86_64 -r CAASP_REGISTRATION_CODE # <3>
+sudo SUSEConnect -p caasp/4.0/x86_64 -r CAASP_PRODUCT_KEY # <3>
 ----
 <1> Activate {sle}
 <2> Add the free `Containers` module
-<3> Add the {productname} extension with your registration code
+<3> Add the {productname} extension with your product key
 
 Install the required tools:
 ----
