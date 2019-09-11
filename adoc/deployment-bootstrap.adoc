@@ -1,28 +1,263 @@
 ifeval::["{guide}" == "deployment"]
 [[bootstrap]]
+
 endif::[]
 ifeval::["{guide}" == "deplquick"]
 [[q.bootstrap]]
 endif::[]
+
 === Cluster Deployment
 
-==== Cluster initialization
-. Initialize the cluster on the deployed machines.
-As `--control-plane` enter the IP/FQDN of your load balancer. If you do not use a load balancer use your first master node.
+== Bootstrapping the Cluster
+
+Bootstrapping the cluster is the initial process of starting up the cluster
+and defining which of the nodes are masters and which are workers. For maximum automation of this process,
+{productname} uses the `skuba` package.
+
+=== Preparation
+
+==== Install `skuba`
+
+First you need to install `skuba` on a management machine, like your local workstation:
+
+. Add the SLE15 SP1 extension containing `skuba`. This also requires the "containers" module.
 +
+----
+SUSEConnect -p sle-module-containers/15.1/x86_64
+SUSEConnect -p caasp/4.0/x86_64 -r <Product Key>
+----
+. Install the management pattern with:
++
+----
+zypper in -t pattern SUSE-CaaSP-Management
+----
+
+[TIP]
+====
+Example deployment configuration files for each deployment scenario are installed
+under `/usr/share/caasp/terraform/`, or in case of the bare metal deployment:
+`/usr/share/caasp/autoyast/`.
+====
+
+=== Cluster Deployment
+
+Make sure you have added the SSH identity (corresponding to the public SSH key distributed above)
+to the ssh-agent on your workstation. For instructions on how to add the SSH identity,
+refer to <<ssh.configuration>>.
+This is a requirement for `skuba` (https://github.com/SUSE/skuba#prerequisites).
+
+
+By default `skuba` connects to the nodes as `root` user. A different user can
+be specified by the following flags:
+
+----
+--sudo --user <username>
+----
+
+[IMPORTANT]
+====
+You must configure `sudo` for the user to be able to authenticate without password.
+Replace `USERNAME` with the user you created during installation. As root, run:
+
+----
+echo "USERNAME ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+----
+====
+
+==== Initializing the Cluster
+
+Now you can initialize the cluster on the deployed machines.
+As `--control-plane` enter the IP/FQDN of your load balancer.
+If you do not use a load balancer use your first master node.
+
 ----
 skuba cluster init --control-plane <LB IP/FQDN> my-cluster
 ----
-`cluster init` generates the folder named `my-cluster` and initializes the directory that will hold the configuration for the cluster.
+`cluster init` generates the folder named `my-cluster` and initializes the directory that will hold the configuration (`kubeconfig`) for the cluster.
 
-==== Cluster configuration
+[IMPORTANT]
+====
+The IP/FQDN must be reachable by every node of the cluster and therefore 127.0.0.1/localhost cannot be used.
+====
 
-At this point you can perform some configurations before bootstrapping the cluster.
+==== Transitioning from Docker to CRI-O
 
-===== Prevent nodes running special workloads from being rebooted
+{productname} {productversion} *default configuration* uses the CRI-O Container Engine in conjunction with Docker Linux capabilities.
+This means {productname} {productversion} containers run on top of CRI-O with the following additional
+Linux capabilities: `audit_write`, `setfcap` and `mknod`.
+This measure ensures a transparent transition and seamless compatibility with workloads running
+on the previous {productname} versions and out-of-the-box Docker compatibility.
+
+In case you wish to use *unmodified CRI-O*,
+use the `--strict-cap-defaults` option during the initial setup when you run `skuba cluster init`,
+which will create the vanilla CRI-O configuration:
+
+[source,bash]
+skuba cluster init --strict-cap-defaults
+
+Please be aware that this might result in
+incompatibility with your previously running workloads,
+unless you explicitly define the additional Linux capabilities required
+on top of CRI-O defaults.
+
+[IMPORTANT]
+====
+After the bootstrap of the {kube} cluster there will be no easy
+way to revert this modification. Please choose wisely.
+====
+
+==== Cluster Configuration
+
+Before bootstrapping the cluster, it is advisable to perform some additional configuration.
+
+===== Enabling Cloud Provider Integration
+
+Enable cloud provider integration to take advantage of the underlying cloud platforms
+and automatically manage resources like the Load Balancer, Nodes (Instances), Network Routes
+and Storage services.
+
+If you want to enable cloud provider integration with different cloud platforms,
+initialize the cluster with the flag `--cloud-provider <CLOUD PROVIDER>`.
+The only currently available option is `openstack`, but more options are planned:
+
+
+----
+skuba cluster init --control-plane <LB IP/FQDN> --cloud-provider openstack my-cluster
+----
+
+
+Running the above command will create a directory `my-cluster/cloud/openstack` with a
+`README.md` and an `openstack.conf.template` in it. Copy `openstack.conf.template`
+or create an `openstack.conf` file inside `my-cluster/cloud/openstack`,
+according to the supported format.
+The supported format and content can be found in the official Kubernetes documentation:
+
+https://kubernetes.io/docs/concepts/cluster-administration/cloud-providers/#openstack
+
+[WARNING]
+====
+The file `my-cluster/cloud/openstack/openstack.conf` must not be freely accessible.
+Please remember to set proper file permissions for it, for example `600`.
+====
+
+===== Example OpenStack Cloud Provider Configuration
+You can find the required parameters in OpenStack RC File v3.
+====
+    [Global]
+    auth-url=<OS_AUTH_URL> // <1>
+    username=<OS_USERNAME> // <2>
+    password=<OS_PASSWORD> // <3>
+    tenant-id=<OS_PROJECT_ID> // <4>
+    domain-name=<OS_USER_DOMAIN_NAME> // <5>
+    region=<OS_REGION_NAME> // <6>
+    ca-file="/etc/ssl/certs/SUSE_Trust_Root.pem" // <7>
+    [LoadBalancer]
+    lb-version=v2 // <8>
+    subnet-id=<PRIVATE_SUBNET_ID> // <9>
+    floating-network-id=<PUBLIC_NET_ID> // <10>
+    create-monitor=yes // <11>
+    monitor-delay=1m // <12>
+    monitor-timeout=30s // <13>
+    monitor-max-retries=3 // <14>
+    [BlockStorage]
+    bs-version=v2 // <15>
+    ignore-volume-az=true // <16>
+====
+<1> (required) Specifies the URL of the Keystone API used to authenticate the user.
+This value can be found in Horizon (the OpenStack control panel).
+under Project > Access and Security > API Access > Credentials.
+<2> (required) Refers to the username of a valid user set in Keystone.
+<3> (required) Refers to the password of a valid user set in Keystone.
+<4> (required) Used to specify the ID of the project where you want to create your resources.
+<5> (optional) Used to specify the name of the domain your user belongs to.
+<6> (optional) Used to specify the identifier of the region to use when running on
+a multi-region OpenStack cloud. A region is a general division of an OpenStack deployment.
+<7> (optional) Used to specify the path to your custom CA file.
+<8> (optional) Used to override automatic version detection.
+Valid values are `v1` or `v2`. Where no value is provided, automatic detection
+will select the highest supported version exposed by the underlying OpenStack cloud.
+<9> (optional) Used to specify the ID of the subnet you want to create your load balancer on.
+Can be found at Network > Networks. Click on the respective network to get its subnets.
+<10> (optional) If specified, will create a floating IP for the load balancer.
+<11> (optional) Indicates whether or not to create a health monitor for the Neutron load balancer.
+Valid values are true and false. The default is false.
+When true is specified then monitor-delay, monitor-timeout, and monitor-max-retries must also be set.
+<12> (optional) The time between sending probes to members of the load balancer.
+Ensure that you specify a valid time unit.
+<13> (optional) Maximum time for a monitor to wait for a ping reply before it times out.
+The value must be less than the delay value. Ensure that you specify a valid time unit.
+<14> (optional) Number of permissible ping failures before changing the load balancer
+member’s status to INACTIVE. Must be a number between 1 and 10.
+<15> (optional) Used to override automatic version detection.
+Valid values are v1, v2, v3 and auto. When auto is specified, automatic detection
+will select the highest supported version exposed by the underlying OpenStack cloud.
+<16> (optional) Influences availability zone, use when attaching Cinder volumes.
+When Nova and Cinder have different availability zones, this should be set to `true`.
+
+
+
+After setting options in the `openstack.conf` file, please proceed with the bootstrapping procedure <<cluster.bootstrap>>.
+
+[IMPORTANT]
+====
+When cloud provider integration is enabled, it's very important to bootstrap and join nodes with the same node names that they have inside `Openstack`, as
+these names will be used by the `Openstack` cloud controller manager to reconcile node metadata.
+====
+
+===== Integrate External LDAP TLS
+
+. Open the `Dex` `ConfigMap` in `my-cluster/addons/dex/dex.yaml`
+. Adapt the `ConfigMap` by adding LDAP configuration to the connector section of the `config.yaml` file. For detailed configurations for the LDAP connector, refer to https://github.com/dexidp/dex/blob/v2.16.0/Documentation/connectors/ldap.md.
+====
+# Example LDAP connector
+
+    connectors:
+    - type: ldap
+      id: 389ds
+      name: 389ds
+      config:
+        host: ldap.example.org:636 // <1> <2>
+        rootCAData: <base64 encoded PEM file> // <3>
+        bindDN: cn=user-admin,ou=Users,dc=example,dc=org // <4>
+        bindPW: <Password of Bind DN> // <5>
+        usernamePrompt: Email Address // <6>
+        userSearch:
+          baseDN: ou=Users,dc=example,dc=org // <7>
+          filter: "(objectClass=person)" // <8>
+          username: mail // <9>
+          idAttr: DN // <10>
+          emailAttr: mail // <11>
+          nameAttr: cn // <12>
+====
+<1> Host name of LDAP server reachable from the cluster.
+<2> The port on which to connect to the host (for example StartTLS: `389`, TLS: `636`).
+<3> LDAP server base64 encoded root CA certificate file (for example `cat <root-ca-pem-file> | base64 | awk '{print}' ORS='' && echo`)
+<4> Bind DN of user that can do user searches.
+<5> Password of the user.
+<6> Label of LDAP attribute users will enter to identify themselves (for example `username`).
+<7> BaseDN where users are located (for example `ou=Users,dc=example,dc=org`).
+<8> Filter to specify type of user objects (for example "(objectClass=person)").
+<9> Attribute users will enter to identify themselves (for example mail).
+<10> Attribute used to identify user within the system (for example DN).
+<11> Attribute containing the user's email.
+<12> Attribute used as username within OIDC tokens.
+
+Besides the LDAP connector you can also set up other connectors.
+For additional connectors, refer to the available connector configurations
+in the Dex repository: https://github.com/dexidp/dex/tree/v2.16.0/Documentation/connectors.
+
+===== Prevent Nodes Running Special Workloads from Being Rebooted
+
+Some nodes might run specially treated workloads (pods).
+
+To prevent downtime of those workloads and the respective node,
+it is possible to flag the pod with `--blocking-pod-selector=<POD_NAME>`.
+Any node running this workload will not be rebooted via `kured` and needs to
+be rebooted manually.
 
 . Open the `kured` deployment in `my-cluster/addons/kured/kured.yaml`
-. Adapt the `DaemonSet` by adding one of the following flags to the `command` section of the `kured` container:
+. Adapt the `DaemonSet` by adding one of the following flags to the `command`
+section of the `kured` container:
 +
 ----
 ---
@@ -42,7 +277,7 @@ spec:
 
 You can add any key/value labels to this selector:
 ----
---blocking-pod-selector=<LABEL KEY 1>=<LABLE VALUE 1>,<LABEL KEY 2>=<LABEL VALUE 2>
+--blocking-pod-selector=<LABEL KEY 1>=<LABEL VALUE 1>,<LABEL KEY 2>=<LABEL VALUE 2>
 ----
 
 Alternatively you can adapt the `kured` DaemonSet also later during runtime (after bootstrap) by editing `my-cluster/addons/kured/kured.yaml` and executing:
@@ -52,11 +287,12 @@ kubectl apply -f my-cluster/addons/kured/kured.yaml
 
 This will restart all `kured` pods with the additional configuration flags.
 
-===== Prevent nodes with any prometheus alerts from being rebooted
+===== Prevent Nodes with Any Prometheus Alerts from Being Rebooted
 
 [NOTE]
 ====
-By default, **any** prometheus alert blocks a node from reboot. However you can filter specific alerts to be ignored via the `--alert-filter-regexp` flag.
+By default, **any** prometheus alert blocks a node from reboot.
+However you can filter specific alerts to be ignored via the `--alert-filter-regexp` flag.
 ====
 
 . Open the `kured` deployment in `my-cluster/addons/kured/kured.yaml`
@@ -91,17 +327,19 @@ kubectl apply -f my-cluster/addons/kured/kured.yaml
 
 This will restart all `kured` pods with the additional configuration flags.
 
-==== Cluster bootstrap
-
+[[cluster.bootstrap]]
+==== Cluster Bootstrap
 . Switch to the new directory.
 . Now bootstrap a master node.
 For `--target` enter the IP address of your first master node.
-Replace `<NODE NAME>` with a unique identifier for example "master-one".
+Replace `<NODE NAME>` with a unique identifier, for example, "master-one".
 +
 .Secure configuration files access
 [WARNING]
 ====
-The directory created during this step contains configuration files that allow full administrator access to your cluster. Apply best practices for access control to this folder.
+The directory created during this step contains configuration files
+that allow full administrator access to your cluster.
+Apply best practices for access control to this folder.
 ====
 +
 ----
@@ -109,12 +347,13 @@ cd my-cluster
 skuba node bootstrap --user sles --sudo --target <IP/FQDN> <NODE NAME>
 ----
 This will bootstrap the specified node as the first master in the cluster.
-The process will generate authentication certificates and the `admin.conf` file that is used for authentication against the cluster.
+The process will generate authentication certificates and the `admin.conf`
+file that is used for authentication against the cluster.
 The files will be stored in the `my-cluster` directory specified in step one.
 . Add additional master nodes to the cluster.
 +
 Replace the `<IP/FQDN>` with the IP for the machine.
-Replace `<NODE NAME>` with a unique identifier for example "master-two".
+Replace `<NODE NAME>` with a unique identifier, for example, "master-two".
 +
 ----
 skuba node join --role master --user sles --sudo --target <IP/FQDN> <NODE NAME>
@@ -122,7 +361,7 @@ skuba node join --role master --user sles --sudo --target <IP/FQDN> <NODE NAME>
 . Add a worker to the cluster.
 +
 Replace the `<IP/FQDN>` with the IP for the machine.
-Replace `<NODE NAME>` with a unique identifier for example "worker-one".
+Replace `<NODE NAME>` with a unique identifier, for example, "worker-one".
 +
 ----
 skuba node join --role worker --user sles --sudo --target <IP/FQDN> <NODE NAME>
@@ -134,12 +373,18 @@ skuba cluster status
 ----
 +
 The output should look like this:
-+
++# instance user name
+username = "sles"
 ----
 NAME         OS-IMAGE                              KERNEL-VERSION        CONTAINER-RUNTIME   HAS-UPDATES   HAS-DISRUPTIVE-UPDATES
 master-one   SUSE Linux Enterprise Server 15 SP1   4.12.14-110-default   cri-o://1.13.3      <none>        <none>
 worker-one   SUSE Linux Enterprise Server 15 SP1   4.12.14-110-default   cri-o://1.13.3      <none>        <none>
 ----
+
+[IMPORTANT]
+====
+The IP/FQDN must be reachable by every node of the cluster and therefore 127.0.0.1/localhost cannot be used.
+====
 
 === Using kubectl
 
@@ -161,7 +406,7 @@ To talk to your cluster, simply symlink the generated configuration file to `~/.
 ln -s ~/clusters/my-cluster/admin.conf ~/.kube/config
 ----
 
-Then you can perform all cluster operations as usual. For example checking cluster status with either:
+Then you can perform all cluster operations as usual. For example, checking cluster status with either:
 
 * `skuba cluster status`
 +
@@ -175,15 +420,20 @@ or
 ----
 # kubectl get pods --all-namespaces
 
-NAMESPACE     NAME                                READY     STATUS    RESTARTS   AGE
-kube-system   coredns-86c58d9df4-5zftb            1/1       Running   0          2m
-kube-system   coredns-86c58d9df4-fct4m            1/1       Running   0          2m
-kube-system   etcd-my-master                      1/1       Running   0          1m
-kube-system   kube-apiserver-my-master            1/1       Running   0          1m
-kube-system   kube-controller-manager-my-master   1/1       Running   0          1m
-kube-system   kube-flannel-ds-amd64-b6krs         1/1       Running   0          53s
-kube-system   kube-flannel-ds-amd64-v7kt7         1/1       Running   0          2m
-kube-system   kube-proxy-5qxnt                    1/1       Running   0          2m
-kube-system   kube-proxy-746ws                    1/1       Running   0          53s
-kube-system   kube-scheduler-my-master            1/1       Running   0          1m
+NAMESPACE     NAME                                    READY     STATUS    RESTARTS   AGE
+kube-system   coredns-86c58d9df4-5zftb                1/1       Running   0          2m
+kube-system   coredns-86c58d9df4-fct4m                1/1       Running   0          2m
+kube-system   etcd-my-master                          1/1       Running   0          1m
+kube-system   kube-apiserver-my-master                1/1       Running   0          1m
+kube-system   kube-controller-manager-my-master       1/1       Running   0          1m
+kube-system   cilium-operator-7d6ddddbf5-dmbhv        1/1       Running   0          51s
+kube-system   cilium-qjt9h                            1/1       Running   0          53s
+kube-system   cilium-szkqc                            1/1       Running   0          2m
+kube-system   kube-proxy-5qxnt                        1/1       Running   0          2m
+kube-system   kube-proxy-746ws                        1/1       Running   0          53s
+kube-system   kube-scheduler-my-master                1/1       Running   0          1m
+kube-system   kured-ztnfj                             1/1       Running   0          2m
+kube-system   kured-zv696                             1/1       Running   0          2m
+kube-system   oidc-dex-55fc689dc-b9bxw                1/1       Running   0          2m
+kube-system   oidc-gangway-7b7fbbdbdf-ll6l8           1/1       Running   0          2m
 ----

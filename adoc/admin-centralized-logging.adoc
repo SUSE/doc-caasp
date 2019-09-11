@@ -1,14 +1,14 @@
 === Centralized Logging
 
-Centralized Logging is a means of collecting logs from CaaS Platform for centralized management.
+Centralized Logging is a means of collecting logs from the {productname} for centralized management.
 It forwards system and Kubernetes cluster logs to a specified external logging service,
 for example, Rsyslog server.
 
-Collecting logs in a central location can serve for audit or debug purposes or to analyze and visually present data.
+Collecting logs in a central location can be useful for audit or debug purposes or to analyze and visually present data.
 
 ==== Types of logs
 
-You can log the following groups of services. See the <<Deployment>>
+You can log the following groups of services. See <<Deployment>>
 for more information on how to select and customize the logs.
 
 Kubernetes System Components::
@@ -32,7 +32,7 @@ OS Components::
 * Zypper
 * Network (wicked)
 
-Centralized logging is also restricted to the following protocols: UDP, TCP, TCP + TLS, TCP + mTLS.
+Centralized Logging is also restricted to the following protocols: UDP, TCP, TCP + TLS, TCP + mTLS.
 
 
 ==== Log formats
@@ -51,10 +51,10 @@ Example RFC 3164
 
 Example RFC 5424
 ----
-<133>1 2019-05-30T08:28:38.784214+00:00 master0 k8s.pod/kube-system/kube-apiserver-master0/kube-apiserver - - [kube_meta namespace_id=1e030def-81db-11e9-a62b-fa163e1876c9 container_name=kube-apiserver creation_timestamp=2019-05-29T06:29:31Z host=master0 namespace_name=kube-system master_url=https://kubernetes.default.svc.cluster.local:443 pod_id=4aaf10f9-81db-11e9-a62b-fa163e1876c9 pod_name=kube-apiserver-master0] 2019-05-30T08:28:38.783780355+00:00 stderr F I0530 08:28:38.783710       1 log.go:172] http: TLS handshake error from 172.28.0.19:45888: tls: client offered only unsupported versions: [300]
+<133>1 2019-05-30T08:28:38.784214+00:00 master0 k8s.pod/kube-system/kube-apiserver-master0/kube-apiserver - - [kube_meta namespace_id="1e030def-81db-11e9-a62b-fa163e1876c9" container_name="kube-apiserver" creation_timestamp="2019-05-29T06:29:31Z" host="master0" namespace_name="kube-system" master_url="https://kubernetes.default.svc.cluster.local:443" pod_id="4aaf10f9-81db-11e9-a62b-fa163e1876c9" pod_name="kube-apiserver-master0"] 2019-05-30T08:28:38.783780355+00:00 stderr F I0530 08:28:38.783710       1 log.go:172] http: TLS handshake error from 172.28.0.19:45888: tls: client offered only unsupported versions: [300]
 ----
 
-
+[[helm_tiller_install]]
 ==== Installing Helm and Tiller
 
 In order to successfully use Centralized Logging, you first need to install `Helm` and `Tiller`.
@@ -72,14 +72,14 @@ sudo zypper install helm
 
 - As of {productname} {productversion},
 Tiller is not part of the {productname} package repository,
-so to install the Tiller container image run:
+so to install the Tiller container image, run:
 
 [source,bash]
 ----
 kubectl create serviceaccount --namespace kube-system tiller
 kubectl create clusterrolebinding tiller --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
 
-helm init --tiller-image registry.suse.com/caasp/v4/helm-tiller:2.8.2 --service-account tiller
+helm init --tiller-image registry.suse.com/caasp/v4/helm-tiller:{helm_tiller_version} --service-account tiller
 ----
 
 ////
@@ -137,13 +137,13 @@ for instance after log agents shutdown, restart or in case of an unresponsive re
 The queue files are located under `/var/lib/{RELEASE_NAME}-log-agent-rsyslog` on every node in the cluster.
 Queue files remain even after the log agents are deleted.
 
-The buffered queue can be enable/disable with following parameter:
+The buffered queue can be enabled/disabled with the following parameter:
 
 `*queue.enabled*`, default value = false
 
 Setting `queue.enabled` to `false` means that data will be stored in-memory only.
 Setting the parameter to `true` will set the data store to a mixture of in-memory and in-disk.
-Data will then store in memory until the queue is filled up, after which storing is switched to disk.
+Data will then be stored in memory until the queue is filled up, after which storing is switched to disk.
 Enabling the queue also automatically saves the queue to disk at service shutdown.
 
 Additional parameters to define queue size and its disk usage are:
@@ -151,7 +151,7 @@ Additional parameters to define queue size and its disk usage are:
 `*queue.size*`, default value = 50000
 
 This option sets the number of messages allowed for the in-memory queue.
-This setting effects the Kubernetes cluster logs (`kubernetes-control-plane` and `kubernetes-user-name-space`).
+This setting affects the Kubernetes cluster logs (`kubernetes-control-plane` and `kubernetes-user-name-space`).
 
 
 `*queue.maxDiskSpace*`, default value = 2147483648
@@ -184,9 +184,9 @@ Options with empty default values are set as not specified.
 |queue.maxDiskSpace|sets maximum Rsyslog queue disk space in bytes|2147483648
 |queue.size|sets Rsyslog queue size in bytes|50000
 |resources.limits.cpu|sets CPU limits|
-|resources.limits.memory|sets memory limits|512Mi
-|resources.requests.cpu|sets CPU for request|100m
-|resources.requests.memory|sets memory for request|512Mi
+|resources.limits.memory|sets memory limits|512 Mi
+|resources.requests.cpu|sets CPU for requests|100m
+|resources.requests.memory|sets memory for requests|512 Mi
 |resumeInterval|specifies time (seconds) after failure before retry is attempted|30
 |resumeRetryCount|sets number of retries after first failure before the log is discarded. -1 is unlimited|-1
 |server.tls.clientCert|sets TLS client certificate|

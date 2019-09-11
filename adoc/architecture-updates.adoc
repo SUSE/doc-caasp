@@ -33,11 +33,13 @@ The output of the command will look like that:
 
 [source,bash]
 ----
-NAME                OS-IMAGE     KERNEL-VERSION                CONTAINER-RUNTIME   HAS-UPDATES   HAS-DISRUPTIVE-UPDATES
-ag-master-caasp-0   SLE 15 SP1   4.12.14-1p150.12.28-default   docker://18.6.1     yes           yes
-ag-master-caasp-1   SLE 15 SP1   4.12.14-1p150.12.28-default   docker://18.6.1     yes           yes
-ag-master-caasp-2   SLE 15 SP1   4.12.14-1p150.12.28-default   docker://18.6.1     yes           yes
-ag-worker-caasp-0   SLE 15 SP1   4.12.14-1p150.12.28-default   docker://18.6.1     yes           yes
+NAME        OS-IMAGE                              KERNEL-VERSION           KUBELET-VERSION   CONTAINER-RUNTIME   HAS-UPDATES   HAS-DISRUPTIVE-UPDATES
+master00   SUSE Linux Enterprise Server 15 SP1   4.12.14-197.15-default   v1.15.2           cri-o://1.15.0      no            no
+master01   SUSE Linux Enterprise Server 15 SP1   4.12.14-197.15-default   v1.15.2           cri-o://1.15.0      no            no
+master02   SUSE Linux Enterprise Server 15 SP1   4.12.14-197.15-default   v1.15.2           cri-o://1.15.0      no            no
+worker00   SUSE Linux Enterprise Server 15 SP1   4.12.14-197.15-default   v1.15.2           cri-o://1.15.0      no            no
+worker01   SUSE Linux Enterprise Server 15 SP1   4.12.14-197.15-default   v1.15.2           cri-o://1.15.0      no            no
+worker02   SUSE Linux Enterprise Server 15 SP1   4.12.14-197.15-default   v1.15.2           cri-o://1.15.0      no            no
 ----
 
 ==== Node reboots
@@ -119,7 +121,7 @@ distributed by SUSE, and in case there is, I want to upgrade to it in a controll
 
 * In order to find out if there’s a new Kubernetes version available, I will run the following
 command in a machine that has access to the init configuration:
-** `skuba cluster upgrade check`
+** `skuba cluster upgrade plan`
 * If there’s a new version available, it will be reported in the terminal.
 * I can now decide to upgrade the cluster as follows, all command executed from a
 machine that contains the folder where `kubeadm cluster init` was executed, and with an

@@ -555,7 +555,7 @@
      </para>
      <para>
       Place the certificate, CA certificate and key file in
-      <filename>/etc/rmt/ssl/</filename> as <filename>rmt-server.cert</filename>, <filename>rmt-ca.cert</filename>, and <filename>rmt-server.key</filename>.
+      <filename>/etc/rmt/ssl/</filename> as <filename>rmt-server.crt</filename>, <filename>rmt-ca.crt</filename>, and <filename>rmt-server.key</filename>.
       These certificates will be re-used by all three mirror services.
      </para>
      <para>
@@ -924,14 +924,14 @@ auth:
 storage:
   cache:
     blobdescriptor: inmemory
-  file system:
+  filesystem:
     rootdirectory: /var/lib/registry
 http:
   addr: 0.0.0.0:5000
   headers:
     X-Content-Type-Options: [nosniff]
   tls:
-    certificate: /etc/rmt/ssl/rmt-server.cert
+    certificate: /etc/rmt/ssl/rmt-server.crt
     key: /etc/rmt/ssl/rmt-server.key
 health:
   storagedriver:
@@ -1004,7 +1004,7 @@ log:
 storage:
   cache:
     blobdescriptor: inmemory
-  file system:
+  filesystem:
     rootdirectory: /var/lib/registry
   maintenance:
     readonly:
@@ -1014,7 +1014,7 @@ http:
   headers:
     X-Content-Type-Options: [nosniff]
   tls:
-    certificate: /etc/rmt/ssl/rmt-server.cert
+    certificate: /etc/rmt/ssl/rmt-server.crt
     key: /etc/rmt/ssl/rmt-server.key
 health:
   storagedriver:

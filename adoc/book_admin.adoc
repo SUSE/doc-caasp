@@ -13,7 +13,7 @@ include::entities.adoc[]
 :docinfo: shared,private-head
 //:author: Markus Napp
 //:author: Nora Kořánová
-
+:release_type: public
 :guide: admin
 
 [[caas.admin]]
@@ -26,7 +26,6 @@ This guide describes general and specialized administrative tasks for {productna
 --
 endif::[]
 
-[preface]
 == About This Guide
 
 include::common_disclaimer.adoc[Disclaimer]
@@ -41,18 +40,44 @@ include::common_intro_feedback.adoc[Feedback]
 
 include::common_intro_typography.adoc[]
 
+== Cluster Management
+
+include::admin-cluster-management.adoc[Cluster management,leveloffset=+1]
+
+
 == Security
 
-include::admin-security-psp.adoc[Pod Security Policies]
-// include::admin-skecurity-rbac.adoc[Role Based Access Control (RBAC)]
+include::admin-security-role-management.adoc[leveloffset=+2]
+
+include::admin-security-user-group-management.adoc[Group Management, leveloffset=+2]
+
+include::admin-security-rbac.adoc[Role Based Access Control (RBAC),leveloffset=+2]
+
+include::admin-security-ldap.adoc[External LDAP, leveloffset=+2]
+
+include::admin-security-psp.adoc[Pod Security Policies,leveloffset=+2]
 
 == Cluster Updates
 
 include::admin-updates.adoc[Cluster Updates]
 
+== Monitoring
+
+include::admin-monitoring-stack.adoc[Monitoring Stack, leveloffset=+2]
+
+include::admin-monitoring-health-checks.adoc[Health Checks, leveloffset=+2]
+
 == Logging
 
-include::admin-centralized-logging.adoc[]
+include::admin-centralized-logging.adoc[leveloffset=+2]
+
+// {ses} Integration
+
+include::admin-ses-integration.adoc[SES Integration, leveloffset=+1]
+
+// {cap} Integration
+
+include::admin-cap-integration.adoc[leveloffset=+1]
 
 == Miscellaneous
 
@@ -63,6 +88,13 @@ include::admin-crio-registries.adoc[CRI-O Registry Configuration]
 //include::admin-security-rbac.adoc[Role Based Access Control (RBAC)]
 
 include::admin-flexvolume.adoc[Flexvolume Configuration]
+
+== Troubleshooting
+
+include::admin-troubleshooting.adoc[Troubleshooting,leveloffset=+1]
+
+// Glossary
+//include::common_glossary.adoc[Glossary]
 
 // Changelog
 [appendix]

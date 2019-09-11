@@ -1,8 +1,9 @@
 include::entities.adoc[]
 
+[[deployment_bare_metal]]
 === Deployment on Bare Metal
 
-==== Environment description
+==== Environment Description
 
 [IMPORTANT]
 ====
@@ -14,20 +15,27 @@ solution that directs access to the master nodes.
 [NOTE]
 ====
 The {ay} file found in `skuba` is a template. It has the base requirements.
-This {ay} file should act as a guide and should be updated with your companies standards.
+This {ay} file should act as a guide and should be updated with your company's standards.
 ====
 
 [NOTE]
 ====
-To account for hardware/platform specific setup criteria (legacy BIOS vs. (U)EFI, drive partitioning, networking etc.),
+To account for hardware/platform-specific setup criteria (legacy BIOS vs. (U)EFI, drive partitioning, networking, etc.),
 you must adjust the {ay} file to your needs according to the requirements.
 +
 Refer to the official {ay} documentation for more information: link:https://www.suse.com/documentation/sles-15/singlehtml/book_autoyast/book_autoyast.html[{ay} Guide].
 ====
 
-==== {ay} preparation
+==== Hardware Prerequisites
 
-. Obtain example {ay} file from `/usr/share/caasp/autoyast/bare-metal/autoyast.xml`
+Deployment with {ay} will require a minimum *disk size of 40 GB*.
+10 GB out of that total space will be reserved for container images without any workloads,
+for the root partition (30 GB) and the EFI system partition (200 MB).
+
+=== {ay} Preparation
+
+. On the management machine, get an example {ay} file from `/usr/share/caasp/autoyast/bare-metal/autoyast.xml`,
+(which was installed earlier on as part of the management pattern (`sudo zypper in -t pattern SUSE-CaaSP-Management`).
 . Copy the file to a suitable location to modify it. Name the file `autoyast.xml`.
 . Modify the following places in the {ay} (and any additional places that are required by your specific configuration/environment).
 Refer to the official {ay} documentation for more information:
@@ -63,7 +71,7 @@ Update the {ay} file with your registration keys and company best practices and 
 Your {productname} registration key can be used to both activate {sle} 15 SP1 and enable the extension.
 ====
 +
-. Host the {ay} files on a web server reachable inside the network your are installing the cluster in.
+. Host the {ay} files on a Web server reachable inside the network your are installing the cluster in.
 
 ==== Provisioning The Cluster Nodes
 
@@ -71,13 +79,13 @@ Once the {ay} file is available in the network that the machines will be configu
 
 The default production scenario consists of 8 nodes:
 
-* 2 Load Balancers
-* 3 Masters
-* 3 Workers
+* 2 load balancers
+* 3 masters
+* 3 workers
 
 Depending on the type of load balancer you wish to use, you need to deploy at least 6 machines to serve as cluster nodes and provide 2 load balancers from the environment.
 
-The load balancer must point at the machines that are dedicated to be used as `master` nodes in the future cluster.
+The load balancer must point at the machines that are assigned to be used as `master` nodes in the future cluster.
 
 [TIP]
 If you do not wish to use infrastructure load balancers, please deploy additional machines and refer to <<loadbalancer>>.
@@ -93,6 +101,9 @@ link:deployment-bootstrap.adoc[bootstrap guide].
 
 [NOTE]
 ====
-Use AutoYaST and ensure to use a staged frozen patchlevel via RMT/SUSE Manager to ensure 100% reproducible setup.
+Use AutoYaST and make sure to use a staged frozen patchlevel via RMT/SUSE Manager to ensure a 100% reproducible setup.
 link:https://www.suse.com/documentation/sles-15/singlehtml/book_rmt/book_rmt.html#cha.rmt_client[RMT Guide]
 ====
+
+Once the machines have been installed using the {ay} file, you are now ready to bootstrap your cluster:
+link:deployment-bootstrap.adoc[bootstrap guide].

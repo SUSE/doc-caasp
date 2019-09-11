@@ -3,47 +3,96 @@
 Currently we support:
 
 * SUSE OpenStack Cloud 8.
-* VMWare ESXi {vmware_version}
+* VMware ESXi {vmware_version}
+* Bare Metal x86_64
 
 === Nodes
 
 You will need at least two machines:
 
-* 1 Master Node
-* 1 Worker Node
+* 1 master node
+* 1 worker node
 
 {productname} {productversion} supports deployments with a single or multiple master nodes.
 Production environments must be deployed with multiple master nodes for resilience.
 
+The minimal viable failure tolerant production environment configuration consists of:
+
+* 3 master nodes
+* 3 worker nodes
+* 2 load balancers
+
 === Hardware
 
-==== Master
+==== Master Nodes
+
+Up to 5 worker nodes *(minimum)*:
 
 * Storage: 50 GB+
 * (v)CPU: 2
-* RAM: 2 GB
-* Network: Minimum 1GB/s, faster preferred
+* RAM: 4 GB
+* Network: Minimum 1Gb/s (faster is preferred)
+
+Up to 10 worker nodes:
+
+* Storage: 50 GB+
+* (v)CPU: 2
+* RAM: 8 GB
+* Network: Minimum 1Gb/s (faster is preferred)
+
+Up to 100 worker nodes:
+
+* Storage: 50 GB+
+* (v)CPU: 4
+* RAM: 16 GB
+* Network: Minimum 1Gb/s (faster is preferred)
+
+Up to 250 worker nodes:
+
+* Storage: 50 GB+
+* (v)CPU: 8
+* RAM: 16 GB
+* Network: Minimum 1Gb/s (faster is preferred)
 
 [IMPORTANT]
 ====
-Using a minimum of 2 (v)CPU is a hard requirement, deploying
-a cluster with less is not possible.
+Using a minimum of 2 (v)CPUs is a hard requirement, deploying
+a cluster with less processing units is not possible.
 ====
 
-==== Worker
+==== Worker nodes
 
-* Storage: Depending on workloads, minimum 20-30GB to hold base OS and required packages
-** Mount additional storage volumes as needed
-* (v)CPU: 2
+A worker node requires the following resources:
+
+* CPU cores: 0.250
+* RAM: 1.2 GB
+
+Based on these values, the *minimal* configuration of a worker node is:
+
+* Storage: Depending on workloads, minimum 20-30 GB to hold the base OS and required packages. Mount additional storage volumes as needed.
+* (v)CPU: 1
 * RAM: 2 GB
-* Network: Minimum 1GB/s, faster preferred
+* Network: Minimum 1Gb/s (faster is preferred)
+
+Calculate the size of the required (v)CPU by adding up the base requirements, the estimated additional essential cluster components (logging agent, monitoring agent, configuration management, etc.) and the estimated CPU workloads:
+
+* 0.250 (base requirements) + 0.250 (estimated additional cluster components) + estimated workload CPU requirements
+
+Calculate the size of the RAM using the same formula:
+
+* 1.2 GB (base requirements) + 500 MB (estimated additional cluster components) + estimated workload RAM requirements
+
+[NOTE]
+====
+These values are provided as a guide to work in most cases. They may vary based on the type of the running workloads.
+====
 
 ==== Storage Performance
 
-For Master and Worker nodes you must ensure storage performance of at least 500 sequential IOPS with disk bandwidth depending on your cluster size.
+For master and worker nodes you must ensure storage performance of at least 500 sequential IOPS with disk bandwidth depending on your cluster size.
 
-    "Typically 50 sequential IOPS (e.g., a 7200 RPM disk) is required.
-    For heavily loaded clusters, 500 sequential IOPS (e.g., a typical local SSD
+    "Typically 50 sequential IOPS (for example, a 7200 RPM disk) is required.
+    For heavily loaded clusters, 500 sequential IOPS (for example, a typical local SSD
     or a high performance virtualized block device) is recommended."
 
     "Typically 10MB/s will recover 100MB data within 15 seconds.
@@ -56,74 +105,80 @@ link:https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware
 
 ==== Ports
 
-[cols="2*.^,.^,.>"",options="header,autowidth"]
+[cols="3*.^,.^,.>"",options="header,autowidth"]
 |===
-|Node |Port |Accessibility |Description
+|Node |Port |Protocol | Accessibility |Description
 
-.2+|All nodes
+.8+|All nodes
 |22
+|TCP
 |Internal
 |SSH (required in public clouds)
 
-|10010
+|4240
+|TCP
 |Internal
-|CRI-O stream port
+|Cilium health check
 
-.6+|Masters
-|2379 - 2380
+|8472
+|UDP
 |Internal
-|etcd (peer-to-peer traffic)
+|Cilium VXLAN
 
-|6443 - 6444
+|10250
+|TCP
+|Internal
+|Kubelet (API server -> kubelet communication)
+
+|10256
+|TCP
+|Internal
+|kube-proxy health check
+
+|30000 - 32767
+|TCP + UDP
+|Internal
+|Range of ports used by Kubernetes when allocating services of type `NodePort`
+
+|32000
+|TCP
+|External
+|Dex (OIDC Connect)
+
+|32001
+|TCP
+|External
+|Gangway (RBAC Authenticate)
+
+.3+|Masters
+|2379
+|TCP
+|Internal
+|etcd (client communication)
+
+|2380
+|TCP
+|Internal
+|etcd (server-to-server traffic)
+
+|6443
+|TCP
 |Internal / External
 |Kubernetes API server
 
-|8471 - 8472
-|Internal
-|VXLAN traffic (used by Cilium)
-
-|10250, 20255
-|Internal
-|Kubelet
-
-|10256
-|Internal
-|kube-proxy
-
-|32000
-|External
-|Dex (OIDC Connect)
-
-.6+|Workers
-|2379 - 2380
-|Internal
-|etcd (peer-to-peer traffic)
-
-|4149
-|Internal
-|Kubelet
-
-|8471 - 8472
-|Internal
-|VXLAN traffic (used by Cilium)
-
-|10250
-|Internal
-|Kubelet
-
-|10256
-|Internal
-|kube-proxy
-
-|32000
-|External
-|Dex (OIDC Connect)
 |===
 
 ==== IP Addresses
 
-All nodes must be assigned static IP addresses that must not be changed manually afterwards.
-Communication
+All nodes must be assigned static IP addresses, which must not be changed manually afterwards.
+
+[IMPORTANT]
+====
+Plan carefully for required IP ranges and future scenarios as
+it is not possible to reconfigure the IP ranges once the deployment is complete.
+====
+
+===== Communication
 
 Please make sure that all your Kubernetes components can communicate with each other.
 This might require the configuration of routing when using multiple network adapters per node.
@@ -134,7 +189,7 @@ Configure firewall and other network security to allow communication on the defa
 
 ==== Performance
 
-All master nodes of the cluster must have a minimum 1GB/s network connection to fulfill the requirements for etcd.
+All master nodes of the cluster must have a minimum 1Gb/s network connection to fulfill the requirements for etcd.
 
     "1GbE is sufficient for common etcd deployments. For large etcd clusters,
     a 10GbE network will reduce mean time to recovery."
