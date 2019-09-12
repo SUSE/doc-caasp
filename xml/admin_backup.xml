@@ -201,9 +201,21 @@ velum_production | gzip > <replaceable>/var/tmp/db-backup-$(date +'%Y-%m-%d').sq
       Run the following command to unpack the data backup:
      </para>
 <screen>&prompt.root;<command>tar xzf <replaceable>backup-admin-node-[date].tgz</replaceable> \
+--exclude='usr/share' \
 --exclude='mariadb*' \
 --exclude='55-returner-credentials.conf' \
 -C / 2> /var/tmp/log.txt</command></screen>
+    </step>
+    <step>
+     <para>
+      Now you have to unpack some of that data again into the read-only portion
+      of the filesystem. You can do that by using <command>transasctional-update shell</command>
+     </para>
+     <screen>
+      &prompt.root;<command>transactional-update shell</command>
+      &prompt.root;<command>tar xzf backup-admin-node-[date].tgz --exclude='mariadb*' --exclude='55-returner-credentials.conf' -C /</command>
+      &prompt.root;<command>exit</command>
+     </screen>
      <para>
       Run the following command to load the database backup into the MariaDB
       container. Make sure to replace <literal>[date]</literal> with the actual
