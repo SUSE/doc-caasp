@@ -26,7 +26,7 @@ The following certificates are managed by `kubeadm`:
 |===
 |Common Name
 |Parent CA
-|Path
+|Path (`/etc/kubernetes/pki/`)
 |Kind
 
 |kubernetes
@@ -107,6 +107,13 @@ The following certificates are created by `skuba` and are stored in the {kube} c
 |===
 
 == Deployment with a Custom Root CA Certificate
+
+[WARNING]
+====
+Please plan carefully when deploying with a custom root CA certificate. This certificate
+can not be reconfigured once deployed and requires a full re-installation of the
+cluster to replace.
+====
 
 Administrators can provide custom root CA certificates during cluster deployment
 and decide which root CA components to replace or if to replace all.

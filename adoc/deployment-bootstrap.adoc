@@ -349,9 +349,15 @@ Apply best practices for access control to this folder.
 ====
 During cluster bootstrap, {skuba} automatically generates a root CA certificate.
 You can however also deploy the {kube} cluster with your own custom root CA certificate.
-Please refer to the for more information _{productname} Admin Guide_ on custom certificates.
-Plan carefully when using a custom root CA certificate,
-it is not possible to reconfigure it once deployment is complete.
+
+Please refer to the _{productname} Admin Guide_ for more information on custom certificates.
+====
++
+[WARNING]
+====
+Please plan carefully when deploying with a custom root CA certificate. This certificate
+can not be reconfigured once deployed and requires a full re-installation of the
+cluster to replace.
 ====
 +
 [source,bash]
