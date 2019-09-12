@@ -1,0 +1,11 @@
+= Access Control
+
+Users access the API using `kubectl`, client libraries, or by making REST requests. Both human users and {kube} service accounts can be authorized for API access. When a request reaches the API, it goes through several stages, that can be explained with the following three questions:
+
+. Authentication: It answers to the question *who are you?* This is accomplished via client certificates, bearer tokens, an authenticating proxy, or HTTP basic auth to authenticate API requests through authentication plugins.
+
+. Authorization: It answers to the question *what kind of access do you have?* This is accomplished via RBAC API, that is a set of permissions for the previously authenticated user. Permissions are purely additive (there are no "deny" rules). A role can be defined within a namespace with a Role, or cluster-wide with a ClusterRole.
+
+. Admission Control: It answers to the question *what are you trying to do?* This is accomplished via admission controllers. They can modify (mutate) or validate (accept or reject) requests.
+
+Unlike authentication and authorization, if any admission controller rejects, then the request is immediately rejected.

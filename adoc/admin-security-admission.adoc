@@ -1,0 +1,27 @@
+= Admission Controllers
+
+== Introduction
+
+After user authentication and authorization, *admission* takes place to complete the access control for the {kube} API. As the final step in the access control process, admission enhances the security layer by mandating a reasonable security baseline across a specific namespace or the entire cluster. The built-in {psp} admission controller is perhaps the most prominent example of it. Apart from the security aspect, admission controllers can enforce custom policies to adhere to certain best-practices such as having good labels, annotation, resource limits, or other settings. It is worth noticing that instead of only validating the request, admission controllers are also capable of fixing it by mutating it, such as automatically adding resource limits if the user forgets to.
+
+The admission is controlled by admission controllers which may only be configured by the cluster administrator. The admission control process proceeds in *two phases*:
+
+ . In the first phase, *mutating* admission controllers are run. If it's needed, they are empowered to automatically change the requested object to comply with certain cluster policies by making modifications to it.
+ . In the second phase, *validating* admission controllers are run. Based on the results of the previous mutating phase, an admission controller can either allow the request to proceed and reach `etcd` or deny it.
+
+[IMPORTANT]
+====
+If any of the controllers in either phase reject the request, the entire request is rejected immediately and an error is returned to the end-user.
+====
+
+== Admission controllers
+
+The complete list of admission controllers can be found at https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#what-does-each-admission-controller-do
+
+The default admission controllers enabled in {product} are:
+
+----
+"NamespaceLifecycle,LimitRanger,ServiceAccount,TaintNodesByCondition,Priority,DefaultTolerationSeconds,DefaultStorageClass,PersistentVolumeClaimResize,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota, NodeRestriction,PodSecurityPolicy"
+----
+
+Any modification prior to the creation of the cluster will be overwritten by these settings. The ability to add or remove individual admission controllers will be provided within the next upcoming releases of the {product}.
