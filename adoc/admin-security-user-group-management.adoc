@@ -126,7 +126,11 @@ mail: E-MAIL_ADDRESS
 +
 * USERID: User ID (UID) of the new user. This value must be a unique number.
 * OU_NAME: organizational unit name
-* PASSWORD_HASH: The user's hashed password. Use `/usr/sbin/slappasswd` to generate the hash.
+* PASSWORD_HASH: The user's hashed password. Use `/usr/sbin/slappasswd` to generate the SSHA hash.
++
+----
+/usr/sbin/slappasswd -s <USER_PASSWORD>
+----
 * FIRST_NAME: The user's first name
 * SURNAME: The user's last name
 * FULL_NAME: The user's full name
