@@ -18,13 +18,23 @@ You will need at least two machines:
 {productname} {productversion} supports deployments with a single or multiple master nodes.
 Production environments must be deployed with multiple master nodes for resilience.
 
+All communication to the cluster is done through a load balancer talking to the respective nodes.
+For that reason any failure tolerant environment must provide at least two load balancers for incoming communication.
+
 The minimal viable failure tolerant production environment configuration consists of:
 
 * 3 master nodes
 * 3 worker nodes
 * 2 load balancers
+* 1 management workstation
 
 === Hardware
+
+==== Management Workstation
+
+In order to deploy and control a {productname} cluster you will need at least one
+machine capable of running `skuba`. This typically is a regular desktop workstation or laptop
+running SLE 15 SP1 or later.
 
 ==== Master Nodes
 
