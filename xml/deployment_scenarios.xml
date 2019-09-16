@@ -555,9 +555,9 @@
      </para>
      <para>
       Place the certificate, CA certificate and key file in
-      <filename>/etc/rmt/ssl/</filename> as <filename>rmt-server.crt</filename>, <filename>rmt-ca.crt</filename>, and <filename>rmt-server.key</filename>. 
-      You will also need to remove the password from the private key. 
-      These certificates will be re-used by all three mirror services. 
+      <filename>/etc/rmt/ssl/</filename> as <filename>rmt-server.crt</filename>, <filename>rmt-ca.crt</filename>, and <filename>rmt-server.key</filename>.
+      You will also need to remove the password from the private key.
+      These certificates will be re-used by all three mirror services.
      </para>
      <para>
       Make sure the CA certificate is available to &productname; system wide; so
@@ -1149,6 +1149,23 @@ health:
      Download all charts from the repository to the file system
      (e.g. <filename>/tmp/charts</filename>).
      </para>
+     <note>
+      <para>
+       You can skip downloading all charts by selectively downloading them with
+       <command>helm</command> and then mirroring only the downloaded charts.
+      </para>
+      <screen>
+       #Repeat this step for all relevant charts
+       <command>helm fetch --untar --untardir <replaceable>/tmp/important-charts</replaceable> <replaceable>NAME_OF_CHART</replaceable></command>
+       #Once all charts are downloaded run:
+       <command>helm-mirror inspect-images <replaceable>/tmp/charts</replaceable> -o skopeo=<replaceable>selective.yaml</replaceable></command>
+       #Download the images using Skopeo:
+       <command>skopeo sync --source-yaml selective.yaml dir:<replaceable>/tmp/skopeodata</replaceable></command>
+      </screen>
+      <para>
+       Then you just proceed with the procedure as for a full repository mirror.
+      </para>
+     </note>
      <para>
       This action will download all charts and overwrite the existing Helm
       chart repository URL. Replace <literal>http://charts.mymirror.local</literal>
