@@ -1155,12 +1155,12 @@ health:
        <command>helm</command> and then mirroring only the downloaded charts.
       </para>
       <screen>
-       #Repeat this step for all relevant charts
-       <command>helm fetch --untar --untardir <replaceable>/tmp/important-charts</replaceable> <replaceable>NAME_OF_CHART</replaceable></command>
-       #Once all charts are downloaded run:
-       <command>helm-mirror inspect-images <replaceable>/tmp/charts</replaceable> -o skopeo=<replaceable>selective.yaml</replaceable></command>
-       #Download the images using Skopeo:
-       <command>skopeo sync --source-yaml selective.yaml dir:<replaceable>/tmp/skopeodata</replaceable></command>
+ #Repeat this step for all relevant charts
+ <command>helm fetch --untar --untardir <replaceable>/tmp/important-charts</replaceable> <replaceable>NAME_OF_CHART</replaceable></command>
+ #Once all charts are downloaded run:
+ <command>helm-mirror inspect-images <replaceable>/tmp/important-charts</replaceable> -o skopeo=<replaceable>selective.yaml</replaceable></command>
+ #Download the images using Skopeo:
+ <command>skopeo sync --source-yaml <replaceable>selective.yaml</replaceable> dir:<replaceable>/tmp/skopeodata</replaceable></command>
       </screen>
       <para>
        Then you just proceed with the procedure as for a full repository mirror.
