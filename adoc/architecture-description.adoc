@@ -78,7 +78,7 @@ Versioning scheme: `x.y.z`
 == Supported Platforms
 
 * SUSE OpenStack Cloud 8
-* VMware ESXi 6.0.0 Update 3
+* VMware ESXi {vmware_version}
 * Bare Metal
 
 == Supported Architectures
@@ -89,8 +89,8 @@ Versioning scheme: `x.y.z`
 
 All long-lived components run in containers, with the exception of:
 
-* kubelet
-* cri-o
+* Kubelet
+* CRI-O
 
 All Kubernetes components critical to the infrastructure are created
 inside the `kube-system` namespace. As a user, you can create as many
@@ -114,11 +114,11 @@ to deploy a node to the cluster are installable via a pattern. This pattern
 will automatically be installed by `skuba` when bootstrapping or
 joining a node.
 
-** extension to base OS image
-** software distribution channels
-** packages
-** container ecosystem
-*** helm
+** Extension to base OS image
+** Software distribution channels
+** Packages
+** Container ecosystem
+*** Helm
 *** SUSE container registry
 
 include::architecture-updates.adoc[leveloffset=+2]
