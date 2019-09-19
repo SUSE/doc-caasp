@@ -16,7 +16,7 @@
   </dm:docmanager>
  </info>
 
- 
+
  <sect1 xml:id="sec-user-deployment-kubernetes-dashboard">
   <title>Installing &kube; Dashboard</title>
 
@@ -60,10 +60,10 @@ kube-system  heapster-default-heapster-659d4f8787-6vtkq  2/2  Running  0  2m</sc
    <title>Installation of &kube; Dashboard</title>
    <step>
     <para>
-     Apply the <literal><link xlink:href="https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml">kubernetes-dashboard</link></literal> manifest from the &kube; GitHub project. This will automatically create the necessary services and RBAC settings to use the dashboard.
+     Apply the <literal><link xlink:href="https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml">kubernetes-dashboard</link></literal> manifest from the &kube; GitHub project. This will automatically create the necessary services and RBAC settings to use the dashboard.
     </para>
 <screen>&prompt.user;<command>kubectl apply -f \
-https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml</command>
+https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml</command>
 secret "kubernetes-dashboard-certs" created
 serviceaccount "kubernetes-dashboard" created
 role.rbac.authorization.k8s.io "kubernetes-dashboard-minimal" created
