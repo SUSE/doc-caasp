@@ -35,8 +35,8 @@ amount of permissions/restrictions.
 All pods running the containers for the basic {productname} software are
 deployed into the `kube-system` namespace and run with the "privileged" policy.
 
-All authenticated users and service accounts have a RoleBinding to run
-pods using the privileged policy in the `kube-system` namespace.
+All authenticated system users (`group system:authenticated`) and service accounts in kube-system (`system:serviceaccounts:kube-system`)
+have a RoleBinding (`suse:caasp:psp:privileged`) to run pods using the privileged policy in the kube-system namespace.
 
 Any other pods launched in any other namespace are, by default, deployed in
 unprivileged mode.
