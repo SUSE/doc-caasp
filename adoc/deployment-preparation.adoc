@@ -8,6 +8,13 @@ and must be maintained on this machine, but it is not a member of the skuba clus
 [[ssh.configuration]]
 === Basic SSH Key Configuration
 
+[NOTE]
+====
+The use of `ssh-agent` comes with some implications for security that you should take into consideration.
+
+link:http://rabexc.org/posts/pitfalls-of-ssh-agents[The pitfalls of using ssh-agent]
+====
+
 To log in to the created cluster nodes, you need to configure an SSH key pair and
 load it into your user's `ssh-agent` program. This is also mandatory in order to be able to use
 the installation tools `terraform` and `skuba`. In a later deployment step,
