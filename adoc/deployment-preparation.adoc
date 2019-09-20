@@ -13,6 +13,10 @@ and must be maintained on this machine, but it is not a member of the skuba clus
 The use of `ssh-agent` comes with some implications for security that you should take into consideration.
 
 link:http://rabexc.org/posts/pitfalls-of-ssh-agents[The pitfalls of using ssh-agent]
+
+To avoid these risks please make sure to either use `ssh-agent -t <timeout>` and specify a time
+after which the agent will self-terminate or terminate the agent yourself before logging out by running
+`ssh-agent -k`.
 ====
 
 To log in to the created cluster nodes, you need to configure an SSH key pair and
