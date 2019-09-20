@@ -110,6 +110,12 @@ The control plane consists of these components:
 
 === Updating Nodes
 
+[NOTE]
+====
+It is recommended to use a load balancer with active health checks and pool management that
+will take care of adding/removing nodes to/from the pool during this process.
+====
+
 Updates have to be applied separately to each node, starting with the control
 plane all the way down to the worker nodes.
 
@@ -119,13 +125,11 @@ Note that the upgrade via `skuba node upgrade apply` will:
 * Upgrade the rest of the {kube} system stack (`kubelet`, `cri-o`).
 * Restart services.
 
-During the upgrade to a newer version, the API server will be unavailable so it
-is recommended to remove the node you are upgrading from the load balancer pool
-before the upgrade to avoid any connection issues.
+During the upgrade to a newer version, the API server will be unavailable.
 
 During the upgrade all the pods in the worker node will be restarted so it is
 recommended to drain the pods if your application requires high availability.
-In most cases, the restart is handled by replicaSet.
+In most cases, the restart is handled by `replicaSet`.
 
 
 ==== How To Update Nodes
