@@ -74,7 +74,7 @@ sudo zypper install helm
 Tiller is not part of the {productname} package repository,
 so to install the Tiller container image, run:
 
-[source,bash]
+[source,bash,subs="attributes"]
 ----
 kubectl create serviceaccount --namespace kube-system tiller
 kubectl create clusterrolebinding tiller --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
