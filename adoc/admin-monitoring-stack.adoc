@@ -78,76 +78,10 @@ In this example, the domains are named after the components they represent. `pro
 
 == Installation
 
-=== NGINX Ingress Controller
-
-Configure and deploy NGINX ingress controller
-
-. Choose which networking configuration the ingress controller should have. Create a file [path]`nginx-ingress-config-values.yaml` with one of the following examples as content.
-
-* **NodePort**: The services will be publicly exposed on each node of the cluster, including master nodes, at port `30443` for `HTTPS`.
-+
-----
-# Enable the creation of pod security policy
-podSecurityPolicy:
-  enabled: true
-
-# Create a specific service account
-serviceAccount:
-  create: true
-  name: nginx-ingress
-
-# Publish services on port HTTPS/30443
-# These services are exposed on each node
-controller:
-  service:
-    enableHttp: false
-    type: NodePort
-    nodePorts:
-      https: 30443
-----
-+
-* **External IPs**: The services will be exposed on specific nodes of the cluster, at port `443` for `HTTPS`.
-+
-----
-# Enable the creation of pod security policy
-podSecurityPolicy:
-  enabled: true
-
-# Create a specific service account
-serviceAccount:
-  create: true
-  name: nginx-ingress
-
-# Publish services on port HTTPS/443
-# These services are exposed on the node with IP 10.86.4.158
-controller:
-  service:
-    enableHttp: false
-    externalIPs:
-      - 10.86.4.158
-----
-
-. Deploy the upstream helm chart and pass along our configuration values file.
-+
-TIP: For instructions on how to install Helm and Tiller refer to <<helm_tiller_install>>.
-+
-[source,bash]
-----
-helm install --name nginx-ingress stable/nginx-ingress \
---namespace monitoring \
---values nginx-ingress-config-values.yaml
-----
-
-+
-The result should be two running pods:
-+
-[source,bash]
-----
-kubectl -n monitoring get pod
-NAME                                             READY     STATUS    RESTARTS   AGE
-nginx-ingress-controller-74cffccfc-p8xbb         1/1       Running   0          4s
-nginx-ingress-default-backend-6b9b546dc8-mfkjk   1/1       Running   0          4s
-----
+[IMPORTANT]
+====
+Please make sure you have the <<nginx-ingress>> installed and configured.
+====
 
 === TLS
 
