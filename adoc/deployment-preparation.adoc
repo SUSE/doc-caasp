@@ -70,18 +70,18 @@ This can be achieved using the `ssh -A` command. Please refer to the man page
 of `ssh` to learn about the security implications of using this feature.
 
 
-[[product_key]]
+[[registration_code]]
 === Product Key
 
 [NOTE]
 ====
-The product key for {productname} {productmajor} also contains the activation
+The registration code for {productname} {productmajor} also contains the activation
 permissions for the underlying {sle} operating system. You can use your {productname}
-product key to activate the {sle} 15 SP1 subscription during installation.
+registration code to activate the {sle} 15 SP1 subscription during installation.
 ====
 
-You need a subscription product key to use {productname}. You can retrieve your
-product key from {scc}.
+You need a subscription registration code to use {productname}. You can retrieve your
+registration code from {scc}.
 
 * Login to https://scc.suse.com
 * Navigate to menu:Products[]]
@@ -100,13 +100,13 @@ Enable the modules during the operating system installation or activate them usi
 
 [source,bash]
 ----
-sudo SUSEConnect -r CAASP_PRODUCT_KEY # <1>
+sudo SUSEConnect -r CAASP_REGISTRATION_CODE # <1>
 sudo SUSEConnect -p sle-module-containers/15.1/x86_64 # <2>
-sudo SUSEConnect -p caasp/4.0/x86_64 -r CAASP_PRODUCT_KEY # <3>
+sudo SUSEConnect -p caasp/4.0/x86_64 -r CAASP_REGISTRATION_CODE # <3>
 ----
 <1> Activate {sle}
 <2> Add the free `Containers` module
-<3> Add the {productname} extension with your product key
+<3> Add the {productname} extension with your registration code
 
 Install the required tools:
 ----
