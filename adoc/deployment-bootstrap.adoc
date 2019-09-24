@@ -421,18 +421,13 @@ sudo zypper in kubernetes-client
 Alternatively you can install from upstream: https://kubernetes.io/docs/tasks/tools/install-kubectl/.
 ====
 
-To talk to your cluster, simply symlink the generated configuration file to `~/.kube/config`.
+[NOTE]
+====
+To talk to your cluster you must be in the `my-cluster` directory when running commands so it can find the `admin.conf` file.
+====
 
-[source,bash]
-----
-ln -s ~/clusters/my-cluster/admin.conf ~/.kube/config
-----
+You can run commands against your cluster like usual. For example:
 
-Then you can perform all cluster operations as usual. For example, checking cluster status with either:
-
-* `skuba cluster status`
-+
-or
 * `kubectl get nodes -o wide`
 +
 or
