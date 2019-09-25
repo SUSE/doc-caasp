@@ -55,6 +55,8 @@ TIP: For instructions on how to install Helm and Tiller refer to <<helm_tiller_i
 +
 [source,bash]
 ----
+kubectl create namespace nginx-ingress
+
 helm install --name nginx-ingress stable/nginx-ingress \
 --namespace nginx-ingress \
 --values nginx-ingress-config-values.yaml
