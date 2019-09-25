@@ -152,8 +152,6 @@ skuba node upgrade apply --target <worker-node-ip> --user <user> --sudo
 skuba cluster upgrade plan
 ----
 
-=== Base OS Updates
-
 [TIP]
 ====
 The upgrade via `skuba node upgrade apply` will:
@@ -162,6 +160,8 @@ The upgrade via `skuba node upgrade apply` will:
 * upgrade the rest of the {kube} system stack (`kubelet`, `cri-o`).
 * restart services.
 ====
+
+=== Base OS Updates
 
 Base operating system updates are handled by `skuba-update`, which works together
 with the `kured` reboot daemon.
