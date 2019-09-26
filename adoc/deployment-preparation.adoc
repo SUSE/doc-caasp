@@ -55,11 +55,26 @@ private key for a configurable lifetime. The `-t lifetime` option to
 ssh-add specifies a maximum time to cache the key. See `man ssh-add` for
 more information.
 
+.Usage of multiple identities with `ssh-agent`
 [NOTE]
 ====
-Skuba will try all the identities loaded into the ssh-agent until one of
-them grants access to the node, or until the ssh server maximum
-authentication attempts are exhausted.
+Skuba will try all the identities loaded into the `ssh-agent` until one of
+them grants access to the node, or until the SSH servers' maximum authentication attempts are exhausted.
+This could lead to undesired messages in SSH or other security/authentication logs on your local machine.
+
+If you wish to avoid authentication attempts with identities irrelevant to {productname}, please configure
+a specific `Host` and `IdentityFile` combination in your local `~/.ssh/config`.
+
+For example:
+
+----
+Host caasp.cluster
+  HostName cluster.fqdn.domain
+  ForwardAgent yes
+  User sles
+  IdentityFile /home/sles/.ssh/id_rsa
+----
+
 ====
 
 ==== Forwarding the Authentication Agent Connection
