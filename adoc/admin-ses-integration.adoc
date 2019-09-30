@@ -62,12 +62,11 @@ and `YOUR_VOLUME` with the name of the image.
 rbd create -s SIZE YOUR_VOLUME
 ----
 +
-. Create a pod that uses the image by executing the command bellow.
- This example is the minimal configuration for using a RADOS Block Device.
- Fill in the IP addresses and ports of your monitor nodes under `MONITOR_IP` and `MONITOR_PORT`.
- The default port number is *6789*. Substitute
- `POD_NAME` and `CONTAINER_NAME` for a {kube} container and pod name of your choice.
- `IMAGE_NAME` is the name you decide to give your container image, for example "opensuse/leap".
+. Create a pod that uses the image by executing the command below.
+ This example is the minimal configuration for using a RADOS Block Device. +
+ Fill in the IP addresses and ports of your monitor nodes under `MONITOR_IP` and `MONITOR_PORT`. The default port number is *6789*. +
+ Substitute `POD_NAME` and `CONTAINER_NAME` for a {kube} container and pod name of your choice. +
+ `IMAGE_NAME` is the name you decide to give your container image, for example "opensuse/leap". +
  `RBD_POOL` is the RBD pool name,
  please refer to the RBD documentation for instructions on how to create the RBD pool:
  https://docs.ceph.com/docs/mimic/rbd/rados-rbd-cmds/#create-a-block-device-pool
@@ -512,7 +511,7 @@ kubectl delete pod POD_NAME
 === Using CephFS with Static Persistent Volumes
 
 
-The following procedure describes how to attach a pod to a CephFS static persistent volume:
+The following procedure describes how to attach a CephFS static persistent volume to a pod:
 
 . Retrieve the Ceph admin secret.
 You can get the key value using the following command:
