@@ -23,9 +23,14 @@ For that reason any failure tolerant environment must provide at least two load 
 
 The minimal viable failure tolerant production environment configuration consists of:
 
+.Cluster nodes:
 * 3 master nodes
-* 3 worker nodes
-* 2 load balancers
+* 2 worker nodes
+
+.Additional systems:
+* Fault tolerant load balancing solution
++
+(for example {sle} {hasi} with `pacemaker` and `haproxy`)
 * 1 management workstation
 
 === Hardware
