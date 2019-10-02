@@ -3,7 +3,7 @@
 Cluster management refers to several processes in the life cycle of a cluster and
 its individual nodes: bootstrapping, joining and removing nodes.
 For maximum automation and ease {productname} uses the `skuba` tool,
-which simplifies Kubernetes cluster creation and reconfiguration.
+which simplifies {kube} cluster creation and reconfiguration.
 
 == Bootstrap and Initial Configuration
 
@@ -55,13 +55,11 @@ skuba node join --role worker --user sles --sudo --target 10.86.2.164 worker1
 
 === Temporary Removal
 
-If you wish to remove a node temporarily, the recommended approach is to first drain the node using `kubectl`.
-This will also cordon off the node, so that it doesn't receive any new workloads.
+If you wish to remove a node temporarily, the recommended approach is to first drain the node.
 
 When you want to bring the node back, you only have to uncordon it.
 
-Refer to the official Kubernetes documentation for more information:
-https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/#use-kubectl-drain-to-remove-a-node-from-service
+TIP: For instructions on how to perform these operations refer to <<node_operations>>.
 
 === Permanent Removal
 
@@ -87,8 +85,45 @@ from your load balancer's configuration.
 
 == Reconfiguring Nodes
 
-To reconfigure a node, for example to change the node's role from worker to master, you will need to use a combination of commands.
+To reconfigure a node, for example to change the node's role from worker to master,
+you will need to use a combination of commands.
 
 . Run `skuba node remove <node-name>`.
 . Reinstall the node from scratch.
 . Run `skuba node join --role <desired-role> --user <user-name> --sudo --target <IP/FQDN> <node-name>`.
+
+[[node_operations]]
+== Node Operations
+
+=== Uncordon and Cordon
+
+These to commands respectively define if a node is marked as `schedulable` or `unschedulable`.
+This means that a node is allowed to or not allowed to receive any new workloads.
+This can be useful when troubleshooting a node.
+
+To mark a node as `unschedulable` run:
+
+[source,bash]
+kubectl cordon <node-name>
+
+To mark a node as `schedulable` run:
+
+[source,bash]
+kubectl uncordon <node-name>
+
+=== Draining Nodes
+
+Draining a node consists of evicting all the running pods from the current node in order to perform maintenance.
+This is a mandatory step in order to ensure a proper functioning of the workloads.
+This is achieved using `kubectl`.
+
+To drain a node run:
+
+[source,bash]
+kubectl drain <node-name>
+
+This action will also implicitly cordon the node.
+Therefore once the maintenance is done, uncordon the node to set it back to schedulable.
+
+Refer to the official {kube} documentation for more information:
+https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/#use-kubectl-drain-to-remove-a-node-from-service

@@ -82,4 +82,43 @@ sudo update-ca-certificates
 
 == Replacing a Lost Node
 
-If your cluster loses a node, for example due to failed hardware, remove the node as explained in Removing Nodes refer to <<removing_nodes>>. Then add a new node as described in Adding nodes refer to <<adding_nodes>>.
+If your cluster loses a node, for example due to failed hardware,
+remove the node as explained in <<removing_nodes>>.
+Then add a new node as described in <<adding_nodes>>.
+
+== Rebooting an Undrained Node with RBD Volumes Mapped
+
+Rebooting a cluster node always requires a preceding `drain`.
+In some cases, draining the nodes first might not be possible and some problem can occur during reboot if some RBD volumes are mapped to the nodes.
+
+In this situation, apply the following steps.
+
+. Make sure kubelet and crio are stopped:
++
+[source,bash]
+----
+systemctl stop kubelet crio
+----
+
+. Unmount every RBD device `/dev/rbd*` before rebooting. For example:
++
+[source,bash]
+----
+umount -vAf /dev/rbd0
+----
+
+If there are several device mounted, this little script can be used to avoid manual unmounting:
+
+[source,bash]
+----
+#!/usr/bin/env bash
+
+while grep "rbd" /proc/mounts > /dev/null 2>&1; do
+  for dev in $(lsblk -p -o NAME | grep "rbd"); do
+    if $(mountpoint -x $dev > /dev/null 2>&1); then
+      echo ">>> umounting $dev"
+      umount -vAf "$dev"
+    fi
+  done
+done
+----
