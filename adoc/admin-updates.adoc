@@ -5,7 +5,7 @@
 
 Updating of {kube} components is handled via `skuba`.
 
-==== Generating and Overview of Available Updates
+==== Generating an Overview of Available Platform Updates
 
 In order to get an overview of the updates available, you can run:
 
@@ -94,7 +94,6 @@ Latest Kubernetes version: 1.15.0
 Unable to plan node upgrade: at least one control plane does not tolerate the current cluster version
 ----
 
-
 [TIP]
 =====
 The control plane consists of these components:
@@ -106,6 +105,42 @@ The control plane consists of these components:
 * kubelet
 * cri-o
 =====
+
+
+==== Generating an Overview of Available Addon Updates
+
+In order to get an overview of the addon updates available, you can run:
+
+----
+skuba addon upgrade plan
+----
+
+This will show you a list of updates (if available) for different addons
+installed on the cluster:
+
+----
+skuba version: 1.0.0 (release) 20190927 go1.12.9
+Current Kubernetes cluster version: 1.15.2
+Latest Kubernetes version: 1.15.2
+
+Addon upgrades:
+  - cilium: 1.5.3 -> 1.5.3 (manifest version from 0 to 4)
+  - kured: 1.2.0 -> 1.3.0
+  - dex: 2.16.0 -> 2.16.1
+  - gangway: 3.1.0 -> 3.1.0 (manifest version from 1 to 2)
+  - psp: 1.0.0 -> 1.1.0
+----
+
+If the cluster is already running the latest available
+versions, the output should look like this:
+
+----
+skuba version: 1.0.0 (release) 20190927 go1.12.9
+Current Kubernetes cluster version: 1.15.2
+Latest Kubernetes version: 1.15.2
+
+Congratulations! Addons are already at the latest version available
+----
 
 
 === Updating Nodes
