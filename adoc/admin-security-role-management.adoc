@@ -122,7 +122,8 @@ rules:
 <2> Namespace the new group should be allowed to access. Use `default`
 for {kube}' default namespace.
 
-<3> {kube} API groups. Use `""` for the core group.
+<3> {kube} API groups. Use `""` for the core group. Use
+`kubectl api-resources` to list all API groups.
 
 <4> {kube} resources. For a list of available resources, refer to
  <<_sec.admin.security.role.resource>>.
@@ -149,7 +150,8 @@ rules:
 ----
 <1>  a group or user. For details, refer to <<_sec.admin.security.role.create_binding>>.
 
-<2> {kube} API groups. Use `""` for the core group.
+<2> {kube} API groups. Use `""` for the core group. Use
+`kubectl api-resources` to list all API groups.
 
 <3> {kube} resources. For a list of available resources, refer to <<_sec.admin.security.role.resource>>.
 
@@ -206,24 +208,21 @@ kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: CLUSTER_ROLE_BINDING_NAME <1>
-  namespace: NAMESPACE <2>
 subjects:
   kind: Group
-  name: CLUSTER_GROUP_NAME <3>
+  name: CLUSTER_GROUP_NAME <2>
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: ClusterRole
-  name: CLUSER_ROLE_NAME <4>
+  name: CLUSER_ROLE_NAME <3>
   apiGroup: rbac.authorization.k8s.io
 ----
 
 <1> Defines a name for this new cluster role binding.
 
-<2> Name of the namespace to which the cluster binding applies.
+<2> Name of the LDAP group to which this binding applies.
 
-<3> Name of the cluster group to which this binding applies.
-
-<4> Name of the role used. For defining rules, refer to <<_sec.admin.security.role.create>>.
+<3> Name of the role used. For defining rules, refer to <<_sec.admin.security.role.create>>.
 
 
 ====
