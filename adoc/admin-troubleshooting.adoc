@@ -28,8 +28,12 @@ A full list of of the data collected by `supportconfig` can be found under
 https://github.com/SUSE/supportutils-plugin-suse-caasp/blob/master/README.md.
 ====
 
-To collect all relevant logs, run the `supportconfig` command on all the master
+[IMPORTANT]
+====
+To collect all the relevant logs, run the `supportconfig` command on all the master
 and worker nodes individually.
+====
+
 
 [source,bash]
 ----
@@ -39,15 +43,52 @@ cd /var/log/nts*
 sudo cat kubernetes.txt crio.txt
 ----
 
-The result is a TAR archive of files. Each of the tar files should be given a name that can be used to identify which
+The result is a `TAR` archive of files. Each of the `*.txz` files should be given a name that can be used to identify which
 cluster node it was created on.
 
 After opening a Service Request (SR), you can upload the TAR archives to Global Technical Support.
 
-The data will help to locate the issue you reported and assist you in solving the problem.
+The data will help to debug the issue you reported and assist you in solving the problem.
 For details, see https://www.suse.com/documentation/sles-15/book_sle_admin/data/cha_adm_support.html.
 
-== Debugging Cluster Deployment Failed
+== Cluster definition directory
+
+Apart from the logs provided by running the `supportconfig` tool, an additional set of data might be required for
+debugging purposes. This information is located at the Management node, under your cluster definition directory.
+This folder contains important and sensitive information about your CaaSP cluster and it's the one
+from where you issue `skuba` commands.
+
+[TIP]
+====
+If the problem you are facing is related to your production environment, do **not** upload the `admin.conf` as this would
+give us direct access to your cluster! Same applies for `pki` directory, since this also contains sensitive information
+(ca cert and key). In case this is needed, we will setup a special call for you.
+====
+
+Create a `TAR` archive by compressing the cluster definition directory.
+[source,bash]
+----
+# Read the TIP above
+# Move the admin.conf and pki directory to another safe location
+tar -czvf cluster.tar.gz /path/to/cluster/definition/directory
+----
+
+After opening a Service Request (SR), you can upload the TAR archive to Global Technical Support.
+
+== Debugging SLES Nodes provision
+
+If terraform fails to setup the required SLES infrastructure for your cluster, please provide the configuration
+you applied in a form of a TAR archive.
+
+Create a `TAR` archive by compressing the terraform.
+[source,bash]
+----
+tar -czvf terraform.tar.gz /path/to/terraform/configuration
+----
+
+After opening a Service Request (SR), you can upload the TAR archive to Global Technical Support.
+
+== Debugging Cluster Deployment
 
 If the cluster deployment fails, please re-run the command again with setting verbosity level to 1 `-v=1`.
 
@@ -55,6 +96,25 @@ For example, if bootstraps the first master node of the cluster fails, re-run th
 [source,bash]
 ----
 skuba node bootstrap --user sles --sudo --target <IP/FQDN> <NODE NAME> -v=1
+----
+
+However, if the `join` procedure fails at the last final steps, re-running it might _not_ help. To verify
+this, please list the current member nodes of your cluster and look for the one who failed.
+
+[source,bash]
+----
+kubectl get nodes
+----
+
+If the node that failed to `join` is nevertheless listed in the output as part of your cluster,
+then this is a bad indicator. This node cannot be reseted back to a clean state anymore and it's not safe to keep
+it online in this _unknown_ state. As a result, instead of trying to fix its existing configuration either by hand or re-running
+the join/bootstrap command, we would highly recommend you to remove this node completely from your cluster and
+then replace it with a new one.
+
+[source,bash]
+----
+skuba node remove <NODE NAME> --drain-timeout 5s
 ----
 
 == Error `x509: certificate signed by unknown authority`
