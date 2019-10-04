@@ -151,8 +151,28 @@ and automatically manage resources like the Load Balancer, Nodes (Instances), Ne
 and Storage services.
 
 If you want to enable cloud provider integration with different cloud platforms,
-initialize the cluster with the flag `--cloud-provider <CLOUD_PROVIDER>`.
-The only currently available option is `openstack`, but more options are planned:
+initialize the cluster with the flag `--cloud-provider <CLOUD PROVIDER>`.
+The only currently available options are `openstack` and `aws`,
+but more options are planned.
+
+.Cleanup
+[IMPORTANT]
+====
+By enabling CPI providers your Kubernetes cluster will be able to
+provision cloud resources on its own (eg: Load Balancers, Persistent Volumes).
+You will have to manually clean these resources before you destroy the cluster
+with {tf}.
+
+Not removing resources like Load Balancers created by the CPI will result in
+{tf} timing out during `destroy` operations.
+
+Persistent volumes created with the `retain` policy will exist inside of
+the external cloud infrastructure even after the cluster is removed.
+====
+
+====== OpenStack CPI
+
+Define the cluster using the following command:
 
 [source,bash]
 ----
@@ -236,6 +256,31 @@ After setting options in the `openstack.conf` file, please proceed with <<cluste
 When cloud provider integration is enabled, it's very important to bootstrap and join nodes with the same node names that they have inside `Openstack`, as
 these names will be used by the `Openstack` cloud controller manager to reconcile node metadata.
 ====
+
+====== Amazon Web Services (AWS) CPI
+
+Define the cluster using the following command:
+
+[source,bash]
+----
+skuba cluster init --control-plane <LB IP/FQDN> --cloud-provider aws my-cluster
+----
+
+Running the above command will create a directory `my-cluster/cloud/aws` with a
+`README.md` file in it. No further configuration files are needed.
+
+The supported format and content can be found in the
+link:https://kubernetes.io/docs/concepts/cluster-administration/cloud-providers/#aws[official Kubernetes documentation].
+
+
+[IMPORTANT]
+====
+When cloud provider integration is enabled, it's very important to bootstrap and join nodes with the same node names that they have inside `AWS`, as
+these names will be used by the `AWS` cloud controller manager to reconcile node metadata.
+
+You can use the "private dns" values provided by the {tf} output.
+====
+
 
 ===== Integrate External LDAP TLS
 
