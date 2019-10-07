@@ -408,7 +408,7 @@ The IP/FQDN must be reachable by every node of the cluster and therefore 127.0.0
 
 === Using kubectl
 
-You can install and use kubectl by installing the kubernetes-client package from the {productname} extension.
+You can install and use `kubectl` by installing the `kubernetes-client` package from the {productname} extension.
 
 [source,bash]
 ----
@@ -420,9 +420,21 @@ sudo zypper in kubernetes-client
 Alternatively you can install from upstream: https://kubernetes.io/docs/tasks/tools/install-kubectl/.
 ====
 
-[NOTE]
+To talk to your cluster, you must be in the `my-cluster` directory when running commands so it can find the `admin.conf` file.
+
+.Setting up `kubeconfig`
+[TIP]
 ====
-To talk to your cluster you must be in the `my-cluster` directory when running commands so it can find the `admin.conf` file.
+To make usage of {kube} tools easier, you can store a copy of the `admin.conf` file as link:https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/[kubeconfig].
+
+[source,bash]
+----
+mkdir -p ~/.kube
+cp admin.conf ~/.kube/config
+----
+
+[WARNING]
+The configuration file contains sensitive information and must be handled in a secure fashion. Copying it to a shared user directory might grant access to unwanted users.
 ====
 
 You can run commands against your cluster like usual. For example:
