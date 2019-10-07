@@ -23,7 +23,7 @@ For production environments, we recommend the use of link:https://www.suse.com/d
 +
 [source,bash]
 ----
-SUSEConnect -r $PRODUCT_KEY
+SUSEConnect -r CAASP_REGISTRATION_CODE
 ----
 . Install Nginx:
 +
@@ -208,7 +208,7 @@ zypper in haproxy
 . Write the configuration in `/etc/haproxy/haproxy.cfg`:
 +
 ----
-global 
+global
   log /dev/log local0 info // <1>
   chroot /var/lib/haproxy // <2>
   user haproxy
