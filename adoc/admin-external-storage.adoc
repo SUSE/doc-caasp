@@ -1,0 +1,12 @@
+= Configuring External Storage
+
+Because {productname} delivers the minimum packages required to support kubernetes not every package needed for every backing storage solution will be installed on the nodes. As each node is {sle}, you can use your already in place tools for deploying and managing packages.
+
+If using autoyast or terraform these packages can easily be installed when initializing the node.
+
+As an example, Ceph requires the folowing packages to be installed:
+
+* `nfs-client`
+* `xfsprogs`
+* `ceph-common`
+
