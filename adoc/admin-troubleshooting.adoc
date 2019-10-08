@@ -28,8 +28,11 @@ A full list of of the data collected by `supportconfig` can be found under
 https://github.com/SUSE/supportutils-plugin-suse-caasp/blob/master/README.md.
 ====
 
-To collect all relevant logs, run the `supportconfig` command on all the master
+[IMPORTANT]
+====
+To collect all the relevant logs, run the `supportconfig` command on all the master
 and worker nodes individually.
+====
 
 [source,bash]
 ----
@@ -39,15 +42,57 @@ cd /var/log/nts*
 sudo cat kubernetes.txt crio.txt
 ----
 
-The result is a TAR archive of files. Each of the tar files should be given a name that can be used to identify which
+The result is a `TAR` archive of files. Each of the `*.txz` files should be given a name that can be used to identify which
 cluster node it was created on.
 
-After opening a Service Request (SR), you can upload the TAR archives to Global Technical Support.
+After opening a Service Request (SR), you can upload the `TAR` archives to {suse} Global Technical Support.
 
-The data will help to locate the issue you reported and assist you in solving the problem.
+The data will help to debug the issue you reported and assist you in solving the problem.
 For details, see https://www.suse.com/documentation/sles-15/book_sle_admin/data/cha_adm_support.html.
 
-== Debugging Cluster Deployment Failed
+== Cluster definition directory
+
+Apart from the logs provided by running the `supportconfig` tool, an additional set of data might be required for
+debugging purposes. This information is located at the Management node, under your cluster definition directory.
+This folder contains important and sensitive information about your {productname} cluster and it's the one
+from where you issue `skuba` commands.
+
+[WARNING]
+====
+If the problem you are facing is related to your production environment, do **not** upload the `admin.conf` as this would
+expose access to your cluster to anyone in possession of the collected information!
+The same precautions apply for the `pki` directory, since this also contains sensitive information (CA cert and key).
+
+In this case add `--exclude='./my-cluster/admin.conf' --exclude='./my-cluster/pki/'` to the command in the following example.
+Make sure to replace `./my-cluster` with the actual path of your cluster definition folder.
+
+If you need to debug issues with your private certificates, a separate call with {suse} support must be scheduled to help you.
+====
+
+Create a `TAR` archive by compressing the cluster definition directory.
+[source,bash]
+----
+# Read the TIP above
+# Move the admin.conf and pki directory to another safe location or exclude from packaging
+tar -czvf cluster.tar.gz /home/user/my-cluster/
+----
+
+After opening a Service Request (SR), you can upload the `TAR` archive to {suse} Global Technical Support.
+
+== Debugging SLES Nodes provision
+
+If {tf} fails to setup the required {sles} infrastructure for your cluster, please provide the configuration
+you applied in a form of a TAR archive.
+
+Create a `TAR` archive by compressing the {tf}.
+[source,bash]
+----
+tar -czvf terraform.tar.gz /path/to/terraform/configuration
+----
+
+After opening a Service Request (SR), you can upload the TAR archive to Global Technical Support.
+
+== Debugging Cluster Deployment
 
 If the cluster deployment fails, please re-run the command again with setting verbosity level to 1 `-v=1`.
 
@@ -57,10 +102,28 @@ For example, if bootstraps the first master node of the cluster fails, re-run th
 skuba node bootstrap --user sles --sudo --target <IP/FQDN> <NODE NAME> -v=1
 ----
 
+However, if the `join` procedure fails at the last final steps, re-running it might _not_ help. To verify
+this, please list the current member nodes of your cluster and look for the one who failed.
+
+[source,bash]
+----
+kubectl get nodes
+----
+
+If the node that failed to `join` is nevertheless listed in the output as part of your cluster,
+then this is a bad indicator. This node cannot be reset back to a clean state anymore and it's not safe to keep
+it online in this _unknown_ state. As a result, instead of trying to fix its existing configuration either by hand or re-running
+the join/bootstrap command, we would highly recommend you to remove this node completely from your cluster and
+then replace it with a new one.
+
+[source,bash]
+----
+skuba node remove <NODE NAME> --drain-timeout 5s
+----
+
 == Error `x509: certificate signed by unknown authority`
 
-When interacting with Kubernetes, you might run into the situation where your existing configuration for the authentication has changed (cluster has been rebuild, certificates have been switched.)
-
+When interacting with {kube}, you might run into the situation where your existing configuration for the authentication has changed (cluster has been rebuild, certificates have been switched.)
 In such a case you might see an error message in the output of your CLI or Web browser.
 
 ----
@@ -70,9 +133,7 @@ x509: certificate signed by unknown authority
 This message indicates that your current system does not know the Certificate Authority (CA) that signed the SSL certificates used for encrypting the communication to the cluster. You then need to add or update the Root CA certificate in your local trust store.
 
 . Obtain the root CA certificate from on of the {kube} cluster node, at the location `/etc/kubernetes/pki/ca.crt`
-
 . Copy the root CA certificate into your local machine directory `/etc/pki/trust/anchors/`
-
 . Update the cache for know CA certificates
 +
 [source,bash]
@@ -82,8 +143,7 @@ sudo update-ca-certificates
 
 == Replacing a Lost Node
 
-If your cluster loses a node, for example due to failed hardware,
-remove the node as explained in <<removing_nodes>>.
+If your cluster loses a node, for example due to failed hardware, remove the node as explained in <<removing_nodes>>.
 Then add a new node as described in <<adding_nodes>>.
 
 == Rebooting an Undrained Node with RBD Volumes Mapped
@@ -93,13 +153,12 @@ In some cases, draining the nodes first might not be possible and some problem c
 
 In this situation, apply the following steps.
 
-. Make sure kubelet and crio are stopped:
+. Make sure kubelet and {crio} are stopped:
 +
 [source,bash]
 ----
 systemctl stop kubelet crio
 ----
-
 . Unmount every RBD device `/dev/rbd*` before rebooting. For example:
 +
 [source,bash]
