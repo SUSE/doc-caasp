@@ -40,3 +40,40 @@ https://cilium.readthedocs.io/en/v1.5/gettingstarted/memcached/
 
 Making security policies on clusters on AWS::
 https://cilium.readthedocs.io/en/v1.5/gettingstarted/aws/
+
+[[cilium.disable_ipv6]]
+==== Disable IPv6
+
+. Switch to the cluster file directory (e.g `my-cluster`).
+
+. In the cilium file `./addons/cni/cilium.yaml`, edit the args for the container
+with the name `cilium-agent` within the DaemonSet `cilium` to add "--enable-ipv6=false".
+This part should look like this (the args are subject to changes):
++
+[source,yaml]
+----
+      containers:
+      - image: registry.suse.com/caasp/v4/cilium
+        imagePullPolicy: IfNotPresent
+        name: cilium-agent
+        command: [ "cilium-agent" ]
+        args:
+          - "--debug=$(CILIUM_DEBUG)"
+          - "--disable-envoy-version-check"
+          - "-t=vxlan"
+          - "--kvstore=etcd"
+          - "--kvstore-opt=etcd.config=/var/lib/etcd-config/etcd.config"
+          - "--disable-ipv4=$(DISABLE_IPV4)"
+          - "--container-runtime=crio"
+          - "--enable-ipv6=false"
+----
+
+. There is nothing to do if this configuration is modified before the
+bootstrap of the cluster as it will be automatically applied.
+If the cluster is already bootstrapped, it is required to apply the changes:
++
+[source,bash]
+----
+kubectl apply -f ./addons/cni/cilium.yaml
+----
+The cilium pods will then be recreated one by one with the new parameters.

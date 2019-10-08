@@ -203,12 +203,38 @@ The management workstation needs at least the following networking permissions:
 
 |===
 
-==== IP Addresses
+==== IPv6
 
 [WARNING]
 ====
-Using IPv6 addresses is currently not supported.
+Using IPv6 addresses is currently not supported but it is not disabled.
 ====
+
+A common practice to disable IPv6 at the node level is to configure the following kernel parameter:
+[source]
+----
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+----
+
+An other common way is to disable IPv6 when the kernel start by passing the following kernel parameter to the bootloader (GRUB):
+[source]
+----
+ipv6.disable=1
+----
+
+[WARNING]
+====
+This is not sufficient because Cilium will still try to enable IPv6 since it is the default behaviour.
+The first option will result in IPv6 not being disabled and the second will lead to Cilium not being able to start.
+====
+
+[IMPORTANT]
+====
+If you really want to disable IPv6, refer to <<cilium.disable_ipv6>>.
+====
+
+==== IP Addresses
 
 All nodes must be assigned static IPv4 addresses, which must not be changed manually afterwards.
 
