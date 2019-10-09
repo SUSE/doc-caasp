@@ -109,6 +109,19 @@ way to revert this modification. Please choose wisely.
 
 Before bootstrapping the cluster, it is advisable to perform some additional configuration.
 
+===== Configuring {kube} Services
+
+Inspect the `kubeadm-init.conf` file inside your cluster definition and set extra configuration settings supported by `kubeadm`.
+The latest supported version is {kubeadm_api_version}.
+Later, when you later run `skuba node bootstrap`, it will read `kubeadm-init.conf`
+and will forcefully set certain settings to the ones required by {productname}.
+It is advisable to specifically adjust the network settings to make sure there are no conflicting ranges:
+
+----
+podSubnet: 10.244.0.0/16
+serviceSubnet: 10.96.0.0/12
+----
+
 ===== Enabling Cloud Provider Integration
 
 Enable cloud provider integration to take advantage of the underlying cloud platforms
