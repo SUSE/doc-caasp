@@ -1,0 +1,79 @@
+[[software-installation]]
+= Software Installation
+
+Applications that will be deployed to {kube} will typically contain all the required software to be executed.
+In some cases, especially when it comes to the hardware layer abstraction (storage backends, GPU), additional packages
+must be installed on the underlying operating system outside of {kube}.
+
+[NOTE]
+====
+The following examples show installation of required packages for `Ceph`, please adjust the list of
+packages and repositories to whichever software you need to install.
+
+While you can install any software package from the {sles} ecosystem this falls outside of the support scope for {productname}.
+====
+
+== Initial Rollout
+
+During the rollout of nodes you can use either {ay} or {tf} (depending on your chosen deployment type)
+to automatically install packages to all nodes.
+
+For example, to install additional packages required by the `Ceph` storage backend you can modify
+your `autoyast.xml` or `tfvars.yml` files to include the additional repositories and instructions to
+install `xfsprogs` and `ceph-common`.
+
+. `tfvars.yml`
++
+[source,yaml]
+----
+# EXAMPLE:
+# repositories = {
+#   repository1 = "http://example.my.repo.com/repository1/"
+#   repository2 = "http://example.my.repo.com/repository2/"
+# }
+repositories = {
+        ....
+}
+
+# Minimum required packages. Do not remove them.
+# Feel free to add more packages
+packages = [
+  "kernel-default",
+  "-kernel-default-base",
+  "ca-certificates-suse",
+  "xfsprogs",
+  "ceph-common"
+]
+----
+. `autoyast.xml`
++
+[source,xml]
+----
+<!-- install required packages -->
+<software>
+  <image/>
+  <products config:type="list">
+    <product>SLES</product>
+  </products>
+  <instsource/>
+  <patterns config:type="list">
+    <pattern>base</pattern>
+    <pattern>enhanced_base</pattern>
+    <pattern>minimal_base</pattern>
+    <pattern>basesystem</pattern>
+  </patterns>
+  <packages config:type="list">
+    <package>ceph-common</package>
+    <package>xfsprogs</package>
+  </packages>
+</software>
+----
+
+== Existing Cluster
+
+To install software on existing cluster nodes, you must use `zypper` on each node individually.
+Simply log in to a node via SSH and run:
+
+----
+sudo zypper in ceph-common xfsprogs
+----
