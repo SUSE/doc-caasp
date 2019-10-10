@@ -1,6 +1,22 @@
 [[software-installation]]
 = Software Installation
 
+Software can be installed in three basic layers
+
+Base OS layer::
+Linux RPM packages, Kernel etc.. Installation via {ay},{tf} or {zypper}
+
+{kube} Stack::
+Software that helps/controls execution of workloads in {kube}
+
+Container image::
+Here it entirely depends on the actual makeup of the container what can be installed and how.
+Please refer to your respecitve container image documentation for further details.
+[NOTE]
+Installation of software in container images is beyond the scope of this document.
+
+== Base OS
+
 Applications that will be deployed to {kube} will typically contain all the required software to be executed.
 In some cases, especially when it comes to the hardware layer abstraction (storage backends, GPU), additional packages
 must be installed on the underlying operating system outside of {kube}.
@@ -13,7 +29,7 @@ packages and repositories to whichever software you need to install.
 While you can install any software package from the {sles} ecosystem this falls outside of the support scope for {productname}.
 ====
 
-== Initial Rollout
+=== Initial Rollout
 
 During the rollout of nodes you can use either {ay} or {tf} (depending on your chosen deployment type)
 to automatically install packages to all nodes.
@@ -69,7 +85,7 @@ packages = [
 </software>
 ----
 
-== Existing Cluster
+=== Existing Cluster
 
 To install software on existing cluster nodes, you must use `zypper` on each node individually.
 Simply log in to a node via SSH and run:
@@ -78,8 +94,10 @@ Simply log in to a node via SSH and run:
 sudo zypper in ceph-common xfsprogs
 ----
 
+== {kube} stack
+
 [[helm_tiller_install]]
-== Installing Helm and Tiller
+=== Installing Helm and Tiller
 
 - As of {productname} {productversion},
 Helm is part of the {productname} package repository, so to use Centralized Logging,
