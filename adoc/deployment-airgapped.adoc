@@ -115,7 +115,7 @@ You will need to create a mirror server inside the internal network; which acts 
 
 The three main sources that must be replaced are:
 
-* {suse}{mos} RPM packages
+* {suse}{sls} RPM packages
 +
 Provided by the {suse}
 package repositories
@@ -160,8 +160,7 @@ You must enable the `Containers` module in addition to the modules enabled by de
 All enabled modules need to be mirrored inside the air gapped network in order to provide the necessary software for other parts of this scenario.
 
 {rmt}
-will provide a repository server that holds the packages and related metadata for {mos}
-; to install them like from the upstream repository.
+will provide a repository server that holds the packages and related metadata for {sls}; to install them like from the upstream repository.
 Data is synchronized once a day to the external mirror automatically or can be forced via the CLI.
 
 You can copy this data to your trusted storage at any point and update the internal mirror.
