@@ -54,37 +54,37 @@ The steps that must be performed for an air gapped installation are:
 
 . Read the concepts section.
 +
-<<_sec.deploy.scenarios.airgap.concepts>>
+<<airgap-concepts>>
 . Deploy mirror servers on external and internal networks.
 +
-<<_sec.deploy.scenarios.airgap.requirements.machines>>
+<<airgap-requirements-machines>>
 . Install {rmt} on servers.
 +
-<<_sec.deploy.scenarios.airgap.rpm_repository>>
+<<airgap-rpm_repository>>
 . Configure container image registry on servers.
 +
-<<_sec.deploy.scenarios.airgap.container_registry>>
+<<airgap-container_registry>>
 . Configure Helm Chart repository on internal mirror.
 +
-<<_sec.deploy.scenarios.airgap.helm_charts>>
+<<airgap-helm_charts>>
 . Perform the {rmt} update procedure to populate the RPM repository.
 +
-<<_sec.deploy.scenarios.airgap.rpm_repository.update>>
+<<airgap-rpm_repository-update>>
 . Perform the shared update procedure to populate the Helm chart repository and registry services.
 +
-<<_sec.deploy.scenarios.airgap.rpm_repository.update>>
+<<airgap-rpm_repository-update>>
 . Deploy {productname} and configure the nodes to use the respective services on the internal network.
 +
-<<_sec.deploy.scenarios.airgap.caasp_deployment>>
+<<airgap-caasp_deployment>>
 +
-RPM Packages: <<_sec.deploy.scenarios.airgap.rpm_repository.client>>
+RPM Packages: <<airgap-rpm_repository-client>>
 +
-Helm Charts: <<_sec.deploy.scenarios.airgap.helm_charts.client>>
+Helm Charts: <<airgap-helm_charts-client>>
 +
-Container Images: <<_sec.deploy.scenarios.airgap.container_registry.client>>
+Container Images: <<airgap-container_registry-client>>
 
 
-[[_sec.deploy.scenarios.airgap.concepts]]
+[[airgap-concepts]]
 == Concepts
 
 === Network Separation
@@ -145,7 +145,6 @@ Once the replacement sources are in place, the key components are reconfigured t
 
 === RPM Package Repository Mirroring
 
-
 Mirroring of the RPM repositories is handled by the https://documentation.suse.com/sles/15-SP1/single-html/SLES-rmt/#book-rmt[Repository Mirroring Tool] for {sls}
  15.
 The tool provides functionality that mirrors the upstream {suse}
@@ -195,12 +194,12 @@ manifests to use the mirrors.
 The requests are passed through the container engine which forwards them to the configured mirrors.
 For example: All images with a prefix `registry.suse.com/` will be automatically pulled from the configured (internal) mirror instead.
 
-For further information on registry mirror configuration, refer to <<_sec.admin.velum.registry>> and <<_sec.admin.velum.mirror>>.
+For further information on registry mirror configuration, refer to link:https://documentation.suse.com/suse-caasp/4/single-html/caasp-admin/#_configuring_container_registries_for_cri_o[].
 
-[[_sec.deploy.scenarios.airgap.requirements]]
+[[airgap-requirements]]
 == Requirements
 
-[[_sec.deploy.scenarios.airgap.requirements.machines]]
+[[airgap-requirements-machines]]
 === Mirror Servers
 
 .Shared Mirror Server
@@ -250,7 +249,7 @@ Add additional mirror servers (behind a load balancer) if you require additional
 . Make sure you have https://documentation.suse.com/sles/15-SP1/single-html/SLES-dockerquick/#Preparation[enabled the Containers module] on both servers.
 
 
-[[_sec.deploy.scenarios.airgap.requirements.network]]
+[[airgap-requirements-network]]
 === Networking
 
 .Additional Port Configuration
@@ -306,7 +305,7 @@ system wide; so they can be used by the deployed components.
 You can add system wide certificates in {dashboard}menu:Settings → System wide certificates[]
 .
 
-[[_sec.deploy.scenarios.airgap.requirements.storage]]
+[[airgap-requirements-storage]]
 === Trusted Storage
 
 Transferring data from the external network mirror to the internal mirror can be performed in many ways.
@@ -337,10 +336,10 @@ Please make sure to adjust the mountpoint in the respective command to where the
 Data integrity checks, duplication, backup, and secure handling procedures of trusted storage are beyond the scope of this document.
 ====
 
-[[_sec.deploy.scenarios.airgap.rpm_repository]]
+[[airgap-rpm_repository]]
 == RPM Repository Mirror
 
-[[_sec.deploy.scenarios.airgap.rpm_repository.mirror]]
+[[airgap-rpm_repository-mirror]]
 === Mirror Configuration
 
 .Deploy The Mirror Before {productname}Cluster Deployment
@@ -370,24 +369,21 @@ On the internal mirror, you can enter any random characters since the registrati
 sudo systemctl disable rmt-server-sync.timer
 ----
 
-
 Now you need to perform the update procedure to do an initial sync of data between the upstream sources and the external mirror and the external and internal mirrors.
-Refer to: <<_sec.deploy.scenarios.airgap.rpm_repository.update>>.
+Refer to: <<airgap-rpm_repository-update>>.
 
-[[_sec.deploy.scenarios.airgap.rpm_repository.client]]
+[[airgap-rpm_repository-client]]
 === Client Configuration
 
 https://documentation.suse.com/sles/15-SP1/single-html/SLES-rmt/#cha-rmt-client[Follow these instructions] to configure all {productname}
  nodes to use the package repository mirror server in the air gapped network.
 
-
-
-[[_sec.deploy.scenarios.airgap.rpm_repository.update]]
+[[airgap-rpm_repository-update]]
 == Updating RPM Repository Mirror
 
 https://documentation.suse.com/sles/15-SP1/single-html/SLES-rmt/#sec-rmt-mirroring-export-import[Follow these instructions] to update the external server, transfer the data to a storage device, and use that device to update the air gapped server.
 
-[[_sec.deploy.scenarios.airgap.container_registry]]
+[[airgap-container_registry]]
 == Container Registry Mirror
 
 .Mirroring Multiple Image Registries / Chart Repositories
@@ -401,9 +397,8 @@ We highly recommend running separate helm chart and container registry mirrors f
 Additional mirror registries must be run on separate mirror servers for technical reasons.
 ====
 
-[[_sec.deploy.scenarios.airgap.container_registry.mirror]]
+[[airgap-container_registry-mirror]]
 === Mirror Configuration
-
 
 The container image registry is provided as a container image itself.
 You must download the registry container from {suse}
@@ -423,7 +418,6 @@ The steps needed to run your own full container image registry are not part of t
 For more information you can refer to: https://documentation.suse.com/sles/15-SP1/single-html/SLES-dockerquick/#sec-docker-registry-definition[SLES15 - Docker Open Source Engine Guide: What is Docker Registry?].
 ====
 
-
 We will re-use the nginx webserver that is running as part of {rmt}
 to act as a reverse proxy for the container image registry service and to serve the chart repository files.
 This step is not necessary for the external host.
@@ -434,7 +428,6 @@ This step is not necessary for the external host.
 +
 Replace `mymirror.local` with the hostname of your mirror server for which you created the SSL certificates.
 +
-
 ----
 upstream docker-registry {
     server 127.0.0.1:5000;
@@ -483,7 +476,6 @@ server {
 +
 Replace `mymirror.local` with the hostname of your mirror server for which you created the SSL certificates.
 +
-
 ----
 server {
   listen 443   ssl;
@@ -504,62 +496,53 @@ server {
 ----
 . Restart nginx for the changes to take effect.
 +
-
 ----
 sudo ``systemctl restart nginx``
 ----
-
 
 .Procedure: Set Up The External Mirror
 . SSH into the external mirror server.
 . Install [path]``docker`` , [path]``helm-mirror`` and [path]``skopeo`` .
 +
-
 ----
 sudo zypper in docker helm-mirror skopeo
 ----
 . Start the docker service and enable it at boot time:
 +
-
 ----
 sudo ``systemctl enable --now docker.service``
 ----
 // TODO: The docker registry image does not exist for SLE15
 . Pull the registry container image from {suse} .
 +
-
 ----
 sudo ``docker pull registry.suse.com/sles12/registry:2.6.2``
 ----
 . Save the pulled image to a `$$.$$tar` file.
 +
-
 ----
 sudo ``docker save -o /tmp/registry.tar registry.suse.com/sles12/registry:2.6.2``
 ----
 . Connect the trusted storage to the external mirror. Copy the registry image onto the storage.
 +
-
 ----
-{prompt.user}``mv /tmp/registry.tar /mnt/storage/registry.tar``
+mv /tmp/registry.tar /mnt/storage/registry.tar
 ----
 . Create basic authentication credentials for the container image registry.
 +
 Replace `USERNAME` and `PASSWORD` with proper credentials of your choosing.
 +
-
 ----
 sudo ``mkdir -p /etc/docker/registry/{auth,certs}`` sudo ``docker run --entrypoint htpasswd registry.suse.com/sles12/registry:2.6.2 -Bbn USERNAME PASSWORD \
 > /etc/docker/registry/auth/htpasswd``
 ----
 . Create the [path]``/etc/docker/registry/config.yml`` configuration file.
 +
-
 [NOTE]
 ====
 Setting up a required authentication seems to break, when using `crio` as the client, so the internal registry does not use any authentication.
 ====
-
++
 ----
 version: 0.1
 log:
@@ -588,42 +571,35 @@ For more details on the configuration, refer to: https://docs.docker.com/registr
 Registry: Configuration]
 . Start the registry container.
 +
-
 ----
 sudo ``docker run -d -p 5000:5000 --restart=always --name registry \
 -v /etc/docker/registry:/etc/docker/registry:ro \
 -v /var/lib/registry:/var/lib/registry registry.suse.com/sles12/registry:2.6.2``
 ----
 
-
 .Procedure: Set Up Internal Mirror
 . SSH into the internal mirror server.
 . Install [path]``docker`` .
 +
-
 ----
 sudo zypper in docker
 ----
 . Start the docker service and enable it at boot time:
 +
-
 ----
 sudo ``systemctl enable --now docker.service``
 ----
 . Connect the trusted storage to the internal mirror and load the registry container image to the local file system.
 +
-
 ----
 sudo ``docker load -i /mnt/storage/registry.tar``
 ----
 . Create the [path]``/etc/docker/registry/config.yml`` configuration file.
 +
-
 ----
 sudo ``mkdir -p /etc/docker/registry/``
 ----
 +
-
 ----
 version: 0.1
 log:
@@ -655,17 +631,15 @@ For more details on the configuration, refer to: https://docs.docker.com/registr
 Registry: Configuration]
 . Start the registry container.
 +
-
 ----
 sudo ``docker run -d -p 5000:5000 --restart=always --name registry \
 -v /etc/docker/registry:/etc/docker/registry:ro \
 -v /var/lib/registry:/var/lib/registry registry.suse.com/sles12/registry:2.6.2``
 ----
 
-
 Now, you should have the registries set up and listening on port `5000` on their respective servers.
 
-[[_sec.deploy.scenarios.airgap.container_registry.client]]
+[[airgap-container_registry-client]]
 === Client Configuration
 
 Configure `/etc/containers/registries.conf` to setup the mirroring from `registry.suse.com` to the `internal mirror`.
@@ -680,43 +654,40 @@ mirror = [{ location = "internal.mirror"}]
 # insecure = true
 ----
 
-For detailed information about the configuration format see <<admin-crio-registries.adoc>>.
+For detailed information about the configuration format see <<admin-crio-registries>>.
 
 
-[[_sec.deploy.scenarios.airgap.helm_charts]]
+[[airgap-helm_charts]]
 == Helm Chart Repository Mirror
 
 [IMPORTANT]
 ====
-To make use of the helm charts, you must complete <<_sec.deploy.scenarios.airgap.container_registry>>.
+To make use of the helm charts, you must complete <<airgap-container_registry>>.
 ====
-
 
 The helm charts will require images available from a registry mirror.
 The charts themselves are served on a simple webserver and do not require any particular configuration apart from basic networking availability and a hostname.
 
 === Mirror Configuration
 
-Update the Helm chart repository by following the shared update procedure <<_sec.deploy.scenarios.airgap.update>>.
+Update the Helm chart repository by following the shared update procedure <<airgap-update>>.
 
-[[_sec.deploy.scenarios.airgap.helm_charts.client]]
+[[airgap-helm_charts-client]]
 === Client Configuration
-
 
 Add the webserver as a repo to `helm`.
 
 This step needs to be performed on a machine where Helm is installed and configured to talk to the Tiller server in the {productname}
-cluster.
-Refer to, <<_sec.admin.software.helm>>.
+cluster. Refer to, <<sec.admin.software.helm>>.
 
 `suse-mirror` will be the user-defined name for this repository listed by Helm.
 The name of the repository must adhere to https://docs.helm.sh/chart_best_practices/#chart-names[Helm Chart naming conventions].
 
 ----
-{prompt.user}``helm repo add suse-mirror https://<charts.mymirror.local>``
+helm repo add suse-mirror https://<charts.mymirror.local>
 ----
 
-[[_sec.deploy.scenarios.airgap.update]]
+[[airgap-update]]
 == Updating Registry Mirror And Helm Charts
 
 .Live Update Of Registry
@@ -725,7 +696,6 @@ The name of the repository must adhere to https://docs.helm.sh/chart_best_practi
 There is no need to stop the container image registry services while doing the update procedures.
 All changed images will be re-indexed automatically.
 ====
-
 
 Helm charts and container images must be refreshed in the same procedure, otherwise charts might refer to image versions that are not mirrored or you are mirroring outdated image versions that cause the chart deployment to fail.
 
@@ -737,24 +707,24 @@ This action will download all charts and overwrite the existing Helm chart repos
 Replace `http://charts.mymirror.local` with the hostname of the webserver providing the Helm chart repository on the internal network.
 +
 ----
-{prompt.user}``mkdir /tmp/charts``
+mkdir /tmp/charts
 ----
 +
 ----
-{prompt.user}``cd /tmp/charts``
+cd /tmp/charts
 ----
 +
 ----
-{prompt.user}``helm-mirror --new-root-url http://charts.mymirror.local https://kubernetes-charts.suse.com /tmp/charts``
+helm-mirror --new-root-url http://charts.mymirror.local https://kubernetes-charts.suse.com /tmp/charts
 ----
 . Translate the chart information into the `skopeo` format.
 +
 ----
-{prompt.user}``mkdir /tmp/skopeodata``
+mkdir /tmp/skopeodata
 ----
 +
 ----
-{prompt.user}``helm-mirror inspect-images /tmp/charts -o skopeo=sync.yaml``
+helm-mirror inspect-images /tmp/charts -o skopeo=sync.yaml
 ----
 +
 .Ignoring Chart Errors
@@ -762,12 +732,10 @@ NOTE: The `helm-mirror` tool will attempt to render and inspect all downloaded c
 Some charts will have values that are filled from environment data on their source repository and produce errors.
 You can still proceed with this step by using the `--ignore-errors` flag.
 +
-
 . Download all the referenced images using `skopeo`.
 +
-
 ----
-{prompt.user}``skopeo sync --source-yaml sync.yaml dir:/tmp/skopeodata``
+skopeo sync --source-yaml sync.yaml dir:/tmp/skopeodata
 ----
 +
 `skopeo` will automatically create a directory named after the hostname of the registry from which you are downloading the images.
@@ -775,37 +743,30 @@ The final path will be something like [path]``/tmp/skopeodata/registry.suse.com/
 .
 . Populate the local registry with the downloaded data.
 +
-For `--dest-creds` you must use the credentials you created during <<_sec.deploy.scenarios.airgap.container_registry.mirror>>.
+For `--dest-creds` you must use the credentials you created during <<airgap-container_registry-mirror>>.
 +
-
 ----
 {prompt.user}``skopeo sync --dest-creds USERNAME:PASSWORD \
 dir:/tmp/skopeodata/registry.suse.com/ docker://mymirror.local:5000``
 ----
 . After the synchronization is done, you can remove the [path]``skopeodata`` directory.
 +
-
 ----
-{prompt.user}``rm -rf /tmp/skopeodata``
+rm -rf /tmp/skopeodata
 ----
-
 
 .Procedure: Transfer Data To Secure Storage
 . Connect the trusted storage to the external mirror.
 . Transfer the container image data to the trusted storage. This will remove all files and directories that are no longer present on the external host from the trusted storage.
 +
-
 ----
-{prompt.user}``rsync -aP /var/lib/registry/ /mnt/storage/registry/ --delete``
+rsync -aP /var/lib/registry/ /mnt/storage/registry/ --delete
 ----
 . Transfer the helm chart data to the trusted storage.
 +
-
 ----
-{prompt.user}``rsync -aP /tmp/charts/ /mnt/storage/charts --delete``
+rsync -aP /tmp/charts/ /mnt/storage/charts --delete
 ----
-
-
 .Procedure: Update Internal Mirror
 . Connect the trusted storage to the internal mirror.
 . Transfer the container image data to the internal mirror. This will remove all files and directories that are no longer present on the trusted storage from the internal mirror.
@@ -813,72 +774,57 @@ dir:/tmp/skopeodata/registry.suse.com/ docker://mymirror.local:5000``
 The target directory is [path]``/var/lib/registry``
 .
 +
-
 ----
-{prompt.user}``rsync -aP /mnt/storage/registry/ /var/lib/registry/ --delete``
+rsync -aP /mnt/storage/registry/ /var/lib/registry/ --delete
 ----
 . Transfer the helm chart data to the internal mirror. This will remove all charts that do not exist on the trusted storage. If you have added any charts to the location manually, please back up these first and restore after the sync from the trusted storage is done.
 +
-
 ----
-{prompt.user}``rsync -aP /mnt/storage/charts/ /srv/www/charts/ --delete``
+rsync -aP /mnt/storage/charts/ /srv/www/charts/ --delete
 ----
 . Set the file permissions and ownership to `555` and ``nginx:nginx``.
 +
-
 ----
 sudo ``chown -R nginx:nginx /srv/www/charts`` sudo ``chmod -R 555 /srv/www/charts/``
 ----
 
-
 .Procedure: Refresh information on the {productname}cluster
 . Update the repository information on the machine on which you are using Helm to install software to the cluster.
 +
-
 ----
-{prompt.user}``helm repo update``
+helm repo update
 ----
-
-
++
 You can now deploy additional software on your {productname}
-.
-Refer to: <<_sec.admin.software.install>>.
+Refer to: link:https://documentation.suse.com/suse-caasp/4/single-html/caasp-admin/#software-installation[].
 
-[[_sec.deploy.scenarios.airgap.caasp_deployment]]
+[[airgap-caasp_deployment]]
 == Deploying {productname}
 
-
-Use the {productname}<<_book.caasp.deployment>> as usual.
+Use the {productname} link:https://documentation.suse.com/suse-caasp/4/single-html/caasp-deployment/[Deployment Guide] as usual.
 Some of the considerations below apply; depending of the chosen installation medium.
 
-Make sure to add the CA certificate of your {rmt}
-server as a systemwide certificate in {dashboard}
-during the {productname}
-deployment.
+Make sure to add the CA certificate of your {rmt} server as a systemwide certificate in {dashboard}
+during the {productname} deployment.
 
 === Using the ISO
 
-
-From {yast}
-register the node against the {rmt}
-server.
-This will ensure the node zypper repositories are pointed against {rmt}
-.
+From {yast} register the node against the {rmt} server.
+This will ensure the node zypper repositories are pointed against {rmt}.
 Moreover, all the available updates are going to be installed and there is no need to install updates using `transactional-update` right after the installation.
 
-=== Using AutoYast
+=== Using {ay}
 
-Ensure the admin node is registered against {rmt}
-, that will ensure the nodes that are provisioned by AutoYaST are registered against {rmt}
+Ensure the admin node is registered against {rmt}, that will ensure the nodes that are provisioned by {ay} are registered against {rmt}
 to have all the updates applied.
 
 === Using a prebuilt image (eg: KVM, Xen)
 
 The node has to be registered against {rmt}
 .
-Refer to: <<_sec.deploy.scenarios.airgap.rpm_repository.client>>.
+Refer to: <<airgap-rpm_repository-client>>.
 
-[[_sec.deploy.scenarios.airgap.troubleshooting]]
+[[airgap-troubleshooting]]
 == Troubleshooting
 
 === Skopeo Fails Because Of Self Signed Certificate
@@ -887,4 +833,4 @@ If you are using a self-signed certificate for the registry you can use the `--d
 
 === Registering An Existing Node against {rmt}
 
-Refer to: <<_sec.deploy.scenarios.airgap.rpm_repository.client>>.
+Refer to: <<airgap-rpm_repository-client>>.
