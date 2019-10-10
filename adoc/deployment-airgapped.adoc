@@ -1,5 +1,3 @@
-include::entities.adoc[]
-
 = Airgapped deployment
 :doctype: book
 :sectnums:
@@ -654,7 +652,7 @@ mirror = [{ location = "internal.mirror"}]
 # insecure = true
 ----
 
-For detailed information about the configuration format see <<admin-crio-registries>>.
+For detailed information about the configuration format see https://documentation.suse.com/suse-caasp/4/single-html/caasp-admin/#_configuring_container_registries_for_cri_o.
 
 
 [[airgap-helm_charts]]
@@ -678,7 +676,7 @@ Update the Helm chart repository by following the shared update procedure <<airg
 Add the webserver as a repo to `helm`.
 
 This step needs to be performed on a machine where Helm is installed and configured to talk to the Tiller server in the {productname}
-cluster. Refer to, <<sec.admin.software.helm>>.
+cluster.
 
 `suse-mirror` will be the user-defined name for this repository listed by Helm.
 The name of the repository must adhere to https://docs.helm.sh/chart_best_practices/#chart-names[Helm Chart naming conventions].
