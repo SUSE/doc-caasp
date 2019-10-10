@@ -75,7 +75,24 @@ Running this command will work even if the target virtual machine is down,
 so it is the safest way to remove the node.
 
 [source,bash]
-skuba node remove <node-name>
+====
+skuba node remove <node-name> [flags]
+====
+
+[NOTE]
+====
+Per default, node removal has an unlimited timeout on waiting for the node to drain.
+If the node is unreachable it can not be drained and thus the removal will fail or get stuck indefinitely.
+You can specify a time after which removal will be performed without waiting for the node to
+drain with the flag `--drain-timeout <duration>`.
+
+For example, waiting for the node to drain for 1 minute and 5 seconds:
+----
+skuba node remove caasp-worker1 --drain-timeout 1m5s
+----
+
+For a list of supported time formats run `skuba node remove -h`.
+====
 
 [IMPORTANT]
 ====
