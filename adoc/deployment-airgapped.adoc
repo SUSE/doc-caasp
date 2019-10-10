@@ -119,12 +119,10 @@ Provided by the {suse}
 package repositories
 * Helm installation charts
 +
-Provided by the {suse}
-helm chart repository (https://kubernetes-charts.suse.com/)
+Provided by the {suse} helm chart repository (`+https://kubernetes-charts.suse.com/+`)
 * Container images
 +
-Provided by the {suse}
-container registry (https://registry.suse.com)
+Provided by the {suse} container registry (`+https://registry.suse.com+`)
 
 
 You will provide replacements for these resources on a dedicated server inside your internal (air gapped) network.
@@ -151,30 +149,25 @@ This is intended to minimize reliance on {suse}
  infrastructure for updating large volumes of machines.
 The air gapped deployment uses the same technology to provide the packages locally for the air gapped environment.
 
-{sls}
-bundles software packages into so called modules.
+{sls} bundles software packages into so called modules.
 You must enable the `Containers` module in addition to the modules enabled by default.
 All enabled modules need to be mirrored inside the air gapped network in order to provide the necessary software for other parts of this scenario.
 
-{rmt}
-will provide a repository server that holds the packages and related metadata for {sls}; to install them like from the upstream repository.
+{rmt} will provide a repository server that holds the packages and related metadata for {sls}; to install them like from the upstream repository.
 Data is synchronized once a day to the external mirror automatically or can be forced via the CLI.
 
 You can copy this data to your trusted storage at any point and update the internal mirror.
 
 === Helm Chart and Container Image Mirroring
 
-{productname}
-uses https://www.helm.sh/[Helm] as one method to install additional software on the cluster.
+{productname} uses https://www.helm.sh/[Helm] as one method to install additional software on the cluster.
 The logic behind this relies on ``Charts``, which are configuration files that tell {kube}
  how to deploy software and its dependencies.
 The actual software installed using this method is delivered as ``container images``.
 The download location of the container image is stored inside the Helm chart.
 
-Container images are provided by {suse}
-and others on so called registries.
-The {suse}
-container registry is used to update the {productname}
+Container images are provided by {suse} and others on so called registries.
+The {suse} container registry is used to update the {productname}
 components.
 
 To mirror container images inside the air gapped environment, you will run two container image registry services that are used to pull and in turn serve these images.
@@ -209,7 +202,6 @@ clusters or a very large number of nodes accessing the mirrors, you should incre
 Storage sizing depends on your intended update frequency and data retention model.
 If you want to keep snapshots or images of repository states at various points, you must increase storage size accordingly.
 ====
-
 
 You will need to provide and maintain at least two machines in addition to your {productname}
 cluster.
@@ -284,15 +276,16 @@ You will need SSL/TLS certificates to secure services on each server.
 
 On the air gapped network, certificates need to cover the hostname of your server and the subdomains for the registry (``registry.``) and helm chart repository (``charts.``). You must add corresponding aliases to the certificate.
 
+[TIP]
 You can use wildcard certificates to cover the entire hostname.
 
 The certificates will replace the self-signed certificate created by {rmt}
 during the setup of the mirror servers.
 
-Place the certificate, CA certificate and key file in [path]``/etc/rmt/ssl/``
- as [path]``rmt-server.cert``
-, [path]``rmt-ca.cert``
-, and [path]``rmt-server.key``
+Place the certificate, CA certificate and key file in ``/etc/rmt/ssl/``
+ as ``rmt-server.cert``
+, ``rmt-ca.cert``
+, and ``rmt-server.key``
 .
 These certificates will be re-used by all three mirror services.
 
@@ -323,7 +316,7 @@ We recommend external storage with at least ``128 GB``.
 .Mount Point For Storage In Examples
 [NOTE]
 ====
-In the following procedures, we will assume the storage (when connected) is mounted on [path]``/mnt/storage``
+In the following procedures, we will assume the storage (when connected) is mounted on ``/mnt/storage``
 .
 Please make sure to adjust the mountpoint in the respective command to where the device is actually available.
 ====
@@ -422,7 +415,7 @@ This step is not necessary for the external host.
 
 .Procedure: Set Up Reverse Proxy and Virtual Host
 . SSH into the internal mirror server.
-. Create a virtual host configuration file [path]``/etc/nginx/vhosts.d/registry-server-https.conf`` .
+. Create a virtual host configuration file ``/etc/nginx/vhosts.d/registry-server-https.conf`` .
 +
 Replace `mymirror.local` with the hostname of your mirror server for which you created the SSL certificates.
 +
@@ -470,7 +463,7 @@ server {
     }
 }
 ----
-. Create a virtual host configuration file [path]``/etc/nginx/vhosts.d/charts-server-https.conf`` .
+. Create a virtual host configuration file ``/etc/nginx/vhosts.d/charts-server-https.conf`` .
 +
 Replace `mymirror.local` with the hostname of your mirror server for which you created the SSL certificates.
 +
@@ -495,12 +488,12 @@ server {
 . Restart nginx for the changes to take effect.
 +
 ----
-sudo ``systemctl restart nginx``
+sudo systemctl restart nginx
 ----
 
 .Procedure: Set Up The External Mirror
 . SSH into the external mirror server.
-. Install [path]``docker`` , [path]``helm-mirror`` and [path]``skopeo`` .
+. Install ``docker`` , ``helm-mirror`` and ``skopeo`` .
 +
 ----
 sudo zypper in docker helm-mirror skopeo
@@ -508,18 +501,18 @@ sudo zypper in docker helm-mirror skopeo
 . Start the docker service and enable it at boot time:
 +
 ----
-sudo ``systemctl enable --now docker.service``
+sudo systemctl enable --now docker.service
 ----
 // TODO: The docker registry image does not exist for SLE15
 . Pull the registry container image from {suse} .
 +
 ----
-sudo ``docker pull registry.suse.com/sles12/registry:2.6.2``
+sudo docker pull registry.suse.com/sles12/registry:2.6.2
 ----
 . Save the pulled image to a `$$.$$tar` file.
 +
 ----
-sudo ``docker save -o /tmp/registry.tar registry.suse.com/sles12/registry:2.6.2``
+sudo docker save -o /tmp/registry.tar registry.suse.com/sles12/registry:2.6.2
 ----
 . Connect the trusted storage to the external mirror. Copy the registry image onto the storage.
 +
@@ -531,10 +524,11 @@ mv /tmp/registry.tar /mnt/storage/registry.tar
 Replace `USERNAME` and `PASSWORD` with proper credentials of your choosing.
 +
 ----
-sudo ``mkdir -p /etc/docker/registry/{auth,certs}`` sudo ``docker run --entrypoint htpasswd registry.suse.com/sles12/registry:2.6.2 -Bbn USERNAME PASSWORD \
-> /etc/docker/registry/auth/htpasswd``
+sudo mkdir -p /etc/docker/registry/{auth,certs}
+sudo docker run --entrypoint htpasswd registry.suse.com/sles12/registry:2.6.2 -Bbn USERNAME PASSWORD \
+> /etc/docker/registry/auth/htpasswd
 ----
-. Create the [path]``/etc/docker/registry/config.yml`` configuration file.
+. Create the ``/etc/docker/registry/config.yml`` configuration file.
 +
 [NOTE]
 ====
@@ -570,14 +564,14 @@ Registry: Configuration]
 . Start the registry container.
 +
 ----
-sudo ``docker run -d -p 5000:5000 --restart=always --name registry \
+sudo docker run -d -p 5000:5000 --restart=always --name registry \
 -v /etc/docker/registry:/etc/docker/registry:ro \
--v /var/lib/registry:/var/lib/registry registry.suse.com/sles12/registry:2.6.2``
+-v /var/lib/registry:/var/lib/registry registry.suse.com/sles12/registry:2.6.2
 ----
 
 .Procedure: Set Up Internal Mirror
 . SSH into the internal mirror server.
-. Install [path]``docker`` .
+. Install ``docker`` .
 +
 ----
 sudo zypper in docker
@@ -585,17 +579,17 @@ sudo zypper in docker
 . Start the docker service and enable it at boot time:
 +
 ----
-sudo ``systemctl enable --now docker.service``
+sudo systemctl enable --now docker.service
 ----
 . Connect the trusted storage to the internal mirror and load the registry container image to the local file system.
 +
 ----
-sudo ``docker load -i /mnt/storage/registry.tar``
+sudo docker load -i /mnt/storage/registry.tar
 ----
-. Create the [path]``/etc/docker/registry/config.yml`` configuration file.
+. Create the ``/etc/docker/registry/config.yml`` configuration file.
 +
 ----
-sudo ``mkdir -p /etc/docker/registry/``
+sudo mkdir -p /etc/docker/registry/
 ----
 +
 ----
@@ -630,9 +624,9 @@ Registry: Configuration]
 . Start the registry container.
 +
 ----
-sudo ``docker run -d -p 5000:5000 --restart=always --name registry \
+sudo docker run -d -p 5000:5000 --restart=always --name registry \
 -v /etc/docker/registry:/etc/docker/registry:ro \
--v /var/lib/registry:/var/lib/registry registry.suse.com/sles12/registry:2.6.2``
+-v /var/lib/registry:/var/lib/registry registry.suse.com/sles12/registry:2.6.2
 ----
 
 Now, you should have the registries set up and listening on port `5000` on their respective servers.
@@ -653,7 +647,6 @@ mirror = [{ location = "internal.mirror"}]
 ----
 
 For detailed information about the configuration format see https://documentation.suse.com/suse-caasp/4/single-html/caasp-admin/#_configuring_container_registries_for_cri_o.
-
 
 [[airgap-helm_charts]]
 == Helm Chart Repository Mirror
@@ -699,7 +692,7 @@ Helm charts and container images must be refreshed in the same procedure, otherw
 
 .Procedure: Pull Data From Upstream Sources
 . SSH into the mirror server on the external network.
-. Download all charts from the repository to the file system (e.g. [path]``/tmp/charts`` ).
+. Download all charts from the repository to the file system (e.g. ``/tmp/charts`` ).
 +
 This action will download all charts and overwrite the existing Helm chart repository URL.
 Replace `http://charts.mymirror.local` with the hostname of the webserver providing the Helm chart repository on the internal network.
@@ -737,7 +730,7 @@ skopeo sync --source-yaml sync.yaml dir:/tmp/skopeodata
 ----
 +
 `skopeo` will automatically create a directory named after the hostname of the registry from which you are downloading the images.
-The final path will be something like [path]``/tmp/skopeodata/registry.suse.com/``
+The final path will be something like ``/tmp/skopeodata/registry.suse.com/``
 .
 . Populate the local registry with the downloaded data.
 +
@@ -747,7 +740,7 @@ For `--dest-creds` you must use the credentials you created during <<airgap-cont
 {prompt.user}``skopeo sync --dest-creds USERNAME:PASSWORD \
 dir:/tmp/skopeodata/registry.suse.com/ docker://mymirror.local:5000``
 ----
-. After the synchronization is done, you can remove the [path]``skopeodata`` directory.
+. After the synchronization is done, you can remove the ``skopeodata`` directory.
 +
 ----
 rm -rf /tmp/skopeodata
@@ -769,8 +762,7 @@ rsync -aP /tmp/charts/ /mnt/storage/charts --delete
 . Connect the trusted storage to the internal mirror.
 . Transfer the container image data to the internal mirror. This will remove all files and directories that are no longer present on the trusted storage from the internal mirror.
 +
-The target directory is [path]``/var/lib/registry``
-.
+The target directory is ``/var/lib/registry``.
 +
 ----
 rsync -aP /mnt/storage/registry/ /var/lib/registry/ --delete
@@ -783,7 +775,7 @@ rsync -aP /mnt/storage/charts/ /srv/www/charts/ --delete
 . Set the file permissions and ownership to `555` and ``nginx:nginx``.
 +
 ----
-sudo ``chown -R nginx:nginx /srv/www/charts`` sudo ``chmod -R 555 /srv/www/charts/``
+sudo chown -R nginx:nginx /srv/www/charts sudo chmod -R 555 /srv/www/charts/
 ----
 
 .Procedure: Refresh information on the {productname}cluster
