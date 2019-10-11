@@ -19,11 +19,12 @@ For production environments, we recommend the use of link:https://www.suse.com/d
 
 === Configuring the Load Balancer
 
-. Register SLES:
+. Register SLES and enable the "Server Applications" module:
 +
 [source,bash]
 ----
 SUSEConnect -r CAASP_REGISTRATION_CODE
+SUSEConnect --product sle-module-server-applications/15.1/x86_64
 ----
 . Install Nginx:
 +
@@ -170,6 +171,13 @@ If no connection succeeds within this interval (2x5s), the node will be marked a
 
 === Configuring the Load Balancer
 
+. Register SLES and enable the "Server Applications" module:
++
+[source,bash]
+----
+SUSEConnect -r CAASP_REGISTRATION_CODE
+SUSEConnect --product sle-module-server-applications/15.1/x86_64
+----
 . Configure `/dev/log` for HAProxy chroot (optional)
 +
 This step is only required when `HAProxy` is configured to run in a jail directory (chroot). This is highly recommended since it increases the security of `HAProxy`.
