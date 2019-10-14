@@ -229,10 +229,12 @@ This is not sufficient because Cilium will still try to enable IPv6 since it is 
 The first option will result in IPv6 not being disabled and the second will lead to Cilium not being able to start.
 ====
 
+ifeval::['{deployment_scenario}' != 'quick']
 [IMPORTANT]
 ====
 If you really want to disable IPv6, refer to <<cilium-disable-ipv6>>.
 ====
+endif::[]
 
 ==== IP Addresses
 
