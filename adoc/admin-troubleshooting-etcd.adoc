@@ -1,0 +1,147 @@
+= ETCD Troubleshooting
+
+== Introduction
+
+This document aims to describe debugging a {etcd} cluster.
+
+The required etcd logs are part of the `supportconfig`, a utility that collects all the required information for debugging a problem. The rest of the document provides information on how you can obtain these information manually.
+
+== ETCD container
+
+ETCD is a distributed reliable key-value store for the most critical data of a distributed system. It is running **only on the master** nodes in a form a container application. For instance, in a cluster with 3 master nodes, it is expected
+to have 3 etcd instances as well:
+
+[source,bash]
+----
+kubectl get pods -n kube-system -l component=etcd
+NAME                            READY   STATUS    RESTARTS   AGE
+etcd-vm072044.qa.prv.suse.net   1/1     Running   1          7d
+etcd-vm072050.qa.prv.suse.net   1/1     Running   1          7d
+etcd-vm073033.qa.prv.suse.net   1/1     Running   1          7d
+----
+
+The specific configuration which `etcd` is using to start, is the following:
+
+[source,bash]
+----
+etcd \
+      --advertise-client-urls=https://<YourMasterNodeIP>:2379 \
+      --cert-file=/etc/kubernetes/pki/etcd/server.crt  \
+      --client-cert-auth=true --data-dir=/var/lib/etcd \
+      --initial-advertise-peer-urls=https://<YourMasterNodeIP>:2380 \
+      --initial-cluster=vm072050.qa.prv.suse.net=https://<YourMasterNodeIP>:2380 \
+      --key-file=/etc/kubernetes/pki/etcd/server.key \
+      --listen-client-urls=https://127.0.0.1:2379,https://<YourMasterNodeIP>:2379 \
+      --listen-peer-urls=https://<YourMasterNodeIP>:2380 \
+      --name=vm072050.qa.prv.suse.net \
+      --peer-cert-file=/etc/kubernetes/pki/etcd/peer.crt \
+      --peer-client-cert-auth=true \
+      --peer-key-file=/etc/kubernetes/pki/etcd/peer.key \
+      --peer-trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt \
+      --snapshot-count=10000 --trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt
+----
+
+[NOTE]
+====
+For more information related to ETCD, we **highly** recommend you to read https://etcd.io/docs/v3.4.0/faq/[ETCD FAQ] page.
+====
+
+== logging
+
+Since `etcd` is running in a container, that means it is not controlled by `systemd`, thus any commands related to that (e.g. `journalctl`) will fail, therefore you need to use container debugging approach instead.
+
+[NOTE]
+====
+To use the following commands, you need to connect (e.g. via SSH) to the master node where the etcd pod is running.
+====
+
+To see the `etcd` logs, connect to a {kube} master node and then run as root:
+[source,bash]
+----
+ssh sles@<master-node>
+sudo bash # connect as root
+etcdcontainer=$(crictl ps --label io.kubernetes.container.name=etcd --quiet)
+crictl logs -f $etcdcontainer
+----
+
+== etcdctl
+
+`etcdctl` is a command line client for `etcd`. The new version of CaaSP is using the `v3` API. For that, you need to make sure to set environment variable `ETCDCTL_API=3` before using it. Apart from that, you need to provide the required keys and certificates for authentication and authorization, via `ETCDCTL_CACERT`, `ETCDCTL_CERT` and `ETCDCTL_KEY` environment variables. Last but not least, you need to also specify the endpoint via `ETCDCTL_ENDPOINTS` environment variable.
+
+
+* **Example**
++
+To find out if your network and disk latency are fast enough, you can benchmark your node using the `etcdctl check perf` command. To do this, frist connect to a {kube} master node:
++
+[source,bash]
+----
+ssh sles@<master-node>
+sudo bash # login as root
+----
++
+and then run as root:
++
+[source,bash]
+----
+etcdcontainer=$(crictl ps --label io.kubernetes.container.name=etcd --quiet)
+crictl exec $etcdcontainer sh -c \
+"ETCDCTL_ENDPOINTS='https://127.0.0.1:2379' \
+ETCDCTL_CACERT='/etc/kubernetes/pki/etcd/ca.crt' \
+ETCDCTL_CERT='/etc/kubernetes/pki/etcd/server.crt' \
+ETCDCTL_KEY='/etc/kubernetes/pki/etcd/server.key' \
+ETCDCTL_API=3 \
+etcdctl check perf"
+----
+
+== curl as an alternative
+
+For most of the `etcdctl` commands, there is an alternative way to fetch the same information via `curl`. First you need to connect to the master node and then issue a `curl` command against the ETCD endpoint. Here's an example of the information which `supportconfig` is collecting:
+
+* Health check:
+[source,bash]
+----
+sudo curl -Ls --cacert /etc/kubernetes/pki/etcd/ca.crt \
+--key /etc/kubernetes/pki/etcd/server.key \
+--cert /etc/kubernetes/pki/etcd/server.crt https://localhost:2379/health
+----
+
+* Member list
+[source,bash]
+----
+sudo curl -Ls --cacert /etc/kubernetes/pki/etcd/ca.crt \
+--key /etc/kubernetes/pki/etcd/server.key \
+--cert /etc/kubernetes/pki/etcd/server.crt https://localhost:2379/v2/members
+----
+
+* Leader information
+[source,bash]
+----
+# available only from the master node where ETCD **leader** runs
+sudo curl -Ls --cacert /etc/kubernetes/pki/etcd/ca.crt \
+--key /etc/kubernetes/pki/etcd/server.key \
+--cert /etc/kubernetes/pki/etcd/server.crt https://localhost:2379/v2/stats/leader
+----
+
+* Current member information
+[source,bash]
+----
+sudo curl -Ls --cacert /etc/kubernetes/pki/etcd/ca.crt \
+--key /etc/kubernetes/pki/etcd/server.key \
+--cert /etc/kubernetes/pki/etcd/server.crt https://localhost:2379/v2/stats/self
+----
+
+* Statistics
+[source,bash]
+----
+sudo curl -Ls --cacert /etc/kubernetes/pki/etcd/ca.crt \
+--key /etc/kubernetes/pki/etcd/server.key \
+--cert /etc/kubernetes/pki/etcd/server.crt https://localhost:2379/v2/stats/store
+----
+
+* Metrics
+[source,bash]
+----
+sudo curl -Ls --cacert /etc/kubernetes/pki/etcd/ca.crt \
+--key /etc/kubernetes/pki/etcd/server.key \
+--cert /etc/kubernetes/pki/etcd/server.crt https://localhost:2379/metrics
+----
