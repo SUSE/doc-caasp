@@ -532,7 +532,7 @@ sudo docker run --entrypoint htpasswd registry.suse.com/sles12/registry:2.6.2 -B
 +
 [NOTE]
 ====
-Setting up a required authentication seems to break, when using `crio` as the client, so the internal registry does not use any authentication.
+Setting up a required authentication seems to break, when using {crio} as the client, so the internal registry does not use any authentication.
 ====
 +
 ----
@@ -801,18 +801,18 @@ during the {productname} deployment.
 
 From {yast} register the node against the {rmt} server.
 This will ensure the node zypper repositories are pointed against {rmt}.
-Moreover, all the available updates are going to be installed and there is no need to install updates using `transactional-update` right after the installation.
+Moreover, all the available updates are going to be installed and there is no need to manually install updates right after the installation.
 
 === Using {ay}
 
 Ensure the admin node is registered against {rmt}, that will ensure the nodes that are provisioned by {ay} are registered against {rmt}
 to have all the updates applied.
 
-=== Using a prebuilt image (eg: KVM, Xen)
-
-The node has to be registered against {rmt}
-.
-Refer to: <<airgap-rpm_repository-client>>.
+// === Using a prebuilt image (eg: KVM, Xen)
+//
+// The node has to be registered against {rmt}
+// .
+// Refer to: <<airgap-rpm_repository-client>>.
 
 [[airgap-troubleshooting]]
 == Troubleshooting
