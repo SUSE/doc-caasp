@@ -76,7 +76,7 @@ skuba cluster init --control-plane <LB IP/FQDN> my-cluster
 The IP/FQDN must be reachable by every node of the cluster and therefore 127.0.0.1/localhost cannot be used.
 ====
 
-==== Transitioning from Docker to CRI-O
+===== Transitioning from Docker to CRI-O
 
 {productname} {productversion} *default configuration* uses the CRI-O Container Engine in conjunction with Docker Linux capabilities.
 This means {productname} {productversion} containers run on top of CRI-O with the following additional
@@ -105,23 +105,33 @@ way to revert this modification. Please choose wisely.
 ====
 
 
-==== Cluster Configuration
-
-Before bootstrapping the cluster, it is advisable to perform some additional configuration.
-
-===== Configuring {kube} Services
+==== Configuring {kube} Services
 
 Inspect the `kubeadm-init.conf` file inside your cluster definition and set extra configuration settings supported by `kubeadm`.
 The latest supported version is {kubeadm_api_version}.
-Later, when you later run `skuba node bootstrap`, it will read `kubeadm-init.conf`
+Later, when you later run `skuba node bootstrap`, `kubeadm` will read `kubeadm-init.conf`
 and will forcefully set certain settings to the ones required by {productname}.
-It is advisable to specifically adjust the network settings to make sure there are no conflicting ranges:
+
+===== Network Settings
+*It is vital that you adjust the networking settings* inside `kubeadm-init.conf`.
+This must be performed before the bootstrap and planned carefully,
+because the settings cannot be adjusted after deployment is complete.
+The default settings are the following:
 
 ----
 networking:
   podSubnet: 10.244.0.0/16
   serviceSubnet: 10.96.0.0/12
 ----
+
+The `podSubnet` IP range must be big enough to contain all IP addresses for all PODs planned for the cluster.
+The subnet also mustn't conflict with services from outside of the cluster, for example external databases, file services, etc.
+This also holds for `serviceSubnet`: the IP range must not conflict with external services and needs to be broad enough for all services planned for the cluster.
+
+
+==== Cluster Configuration
+
+Before bootstrapping the cluster, it is advisable to perform some additional configuration.
 
 ===== Enabling Cloud Provider Integration
 
