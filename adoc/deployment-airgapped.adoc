@@ -14,11 +14,9 @@ fashion.
 
 [NOTE]
 ====
-
 Air gapped deployment can be performed with any of the other deployment types
 and includes a set of steps that need to be performed before, or during the
 deployment steps of the concrete deployment.
-
 ====
 
 .Scope Of This Document
@@ -124,7 +122,6 @@ Provided by the {suse} helm chart repository (`+https://kubernetes-charts.suse.c
 +
 Provided by the {suse} container registry (`+https://registry.suse.com+`)
 
-
 You will provide replacements for these resources on a dedicated server inside your internal (air gapped) network.
 
 The internal mirror must be updated with data retrieved from the original upstream sources; in a trusted and secure fashion.
@@ -135,7 +132,6 @@ Updating of mirrors happens in three stages.
 . Update the external mirror from upstream.
 . Transfer the updated data onto a trusted storage device.
 . Update the internal mirror from the trusted storage device.
-
 
 Once the replacement sources are in place, the key components are reconfigured to use the mirrors as their main sources.
 
@@ -226,7 +222,6 @@ This machine will host the `{rmt}` for RPM packages, and `container image regist
 *** 8 GB RAM
 *** 500 GB Storage
 
-
 .Adjust Number Of Mirror Servers
 [IMPORTANT]
 ====
@@ -238,7 +233,6 @@ Add additional mirror servers (behind a load balancer) if you require additional
 . https://documentation.suse.com/sles/15-SP1/single-html/SLES-installquick/#art-sle-installquick[Set up two SUSE Linux Enterprise Server 15 machines] one on the internal network and one on the air gapped network.
 . Make sure you have https://documentation.suse.com/sles/15-SP1/single-html/SLES-dockerquick/#Preparation[enabled the Containers module] on both servers.
 . Make sure you have https://documentation.suse.com/sles/15-SP1/single-html/SLES-rmt/#cha-rmt-installation[Repository Mirroring Tool installed] on both server.
-
 
 [[airgap-requirements-network]]
 === Networking
@@ -252,7 +246,6 @@ Configure your network to allow for this communication accordingly.
 
 ==== Ports
 
-
 The external mirror server must be able to exchange outgoing traffic with upstream sources on ports `80` and ``443``.
 
 All members of the {productname}
@@ -263,9 +256,7 @@ You must configure at least these ports in all firewalls between the cluster and
 * 443 HTTPS - {rmt} Server and Helm chart repository mirror
 * 5000 HTTPS - Container image registry
 
-
 ==== Hostnames / FQDN
-
 
 You need to define fully qualified domain names (FQDN) for both of the mirror servers in their respective network.
 These hostnames are the basis for the required SSL certificates and are used by the components to access the respective mirror sources.
@@ -283,20 +274,18 @@ You can use wildcard certificates to cover the entire hostname.
 The certificates can be replaced with the self-signed certificate, or you can re-use the certificates created by {rmt} during the setup of the mirror servers.
 
 Place the certificate, CA certificate and key file in ``/etc/rmt/ssl/``
- as ``rmt-server.cert``
-, ``rmt-ca.cert``
-, and ``rmt-server.key``
-.
+as ``rmt-server.cert``, ``rmt-ca.cert``, and ``rmt-server.key``.
+
 These certificates can be re-used by all three mirror services.
 
 Make sure the CA certificate is available to {productname}
 system wide; so they can be used by the deployed components.
-You can add system wide certificates with following commands on all nodes.
+
+You can add system wide certificates with following commands on all nodes:
 ----
 sudo cp /etc/rmt/ssl/rmt-ca.crt /etc/pki/trust/anchors/
 sudo update-ca-certificates
 ----
-.
 
 [[airgap-requirements-storage]]
 === Trusted Storage
