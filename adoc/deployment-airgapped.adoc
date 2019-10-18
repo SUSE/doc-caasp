@@ -14,11 +14,9 @@ fashion.
 
 [NOTE]
 ====
-
 Air gapped deployment can be performed with any of the other deployment types
 and includes a set of steps that need to be performed before, or during the
 deployment steps of the concrete deployment.
-
 ====
 
 .Scope Of This Document
@@ -124,7 +122,6 @@ Provided by the {suse} helm chart repository (`+https://kubernetes-charts.suse.c
 +
 Provided by the {suse} container registry (`+https://registry.suse.com+`)
 
-
 You will provide replacements for these resources on a dedicated server inside your internal (air gapped) network.
 
 The internal mirror must be updated with data retrieved from the original upstream sources; in a trusted and secure fashion.
@@ -135,7 +132,6 @@ Updating of mirrors happens in three stages.
 . Update the external mirror from upstream.
 . Transfer the updated data onto a trusted storage device.
 . Update the internal mirror from the trusted storage device.
-
 
 Once the replacement sources are in place, the key components are reconfigured to use the mirrors as their main sources.
 
@@ -150,7 +146,7 @@ This is intended to minimize reliance on {suse}
 The air gapped deployment uses the same technology to provide the packages locally for the air gapped environment.
 
 {sls} bundles software packages into so called modules.
-You must enable the `Containers` module in addition to the modules enabled by default.
+You must enable the `{productname}`, `{sls}` and `Containers Module` modules in addition to the modules enabled by default.
 All enabled modules need to be mirrored inside the air gapped network in order to provide the necessary software for other parts of this scenario.
 
 {rmt} will provide a repository server that holds the packages and related metadata for {sls}; to install them like from the upstream repository.
@@ -226,7 +222,6 @@ This machine will host the `{rmt}` for RPM packages, and `container image regist
 *** 8 GB RAM
 *** 500 GB Storage
 
-
 .Adjust Number Of Mirror Servers
 [IMPORTANT]
 ====
@@ -237,7 +232,7 @@ Add additional mirror servers (behind a load balancer) if you require additional
 .Procedure: Provision Mirror Servers
 . https://documentation.suse.com/sles/15-SP1/single-html/SLES-installquick/#art-sle-installquick[Set up two SUSE Linux Enterprise Server 15 machines] one on the internal network and one on the air gapped network.
 . Make sure you have https://documentation.suse.com/sles/15-SP1/single-html/SLES-dockerquick/#Preparation[enabled the Containers module] on both servers.
-
+. Make sure you have https://documentation.suse.com/sles/15-SP1/single-html/SLES-rmt/#cha-rmt-installation[Repository Mirroring Tool installed] on both server.
 
 [[airgap-requirements-network]]
 === Networking
@@ -251,7 +246,6 @@ Configure your network to allow for this communication accordingly.
 
 ==== Ports
 
-
 The external mirror server must be able to exchange outgoing traffic with upstream sources on ports `80` and ``443``.
 
 All members of the {productname}
@@ -262,9 +256,7 @@ You must configure at least these ports in all firewalls between the cluster and
 * 443 HTTPS - {rmt} Server and Helm chart repository mirror
 * 5000 HTTPS - Container image registry
 
-
 ==== Hostnames / FQDN
-
 
 You need to define fully qualified domain names (FQDN) for both of the mirror servers in their respective network.
 These hostnames are the basis for the required SSL certificates and are used by the components to access the respective mirror sources.
@@ -279,22 +271,21 @@ On the air gapped network, certificates need to cover the hostname of your serve
 [TIP]
 You can use wildcard certificates to cover the entire hostname.
 
-The certificates will replace the self-signed certificate created by {rmt}
-during the setup of the mirror servers.
+The certificates can be replaced with the self-signed certificate, or you can re-use the certificates created by {rmt} during the setup of the mirror servers.
 
 Place the certificate, CA certificate and key file in ``/etc/rmt/ssl/``
- as ``rmt-server.cert``
-, ``rmt-ca.cert``
-, and ``rmt-server.key``
-.
-These certificates will be re-used by all three mirror services.
+as ``rmt-server.cert``, ``rmt-ca.cert``, and ``rmt-server.key``.
 
-// TODO: Certificates no longer handled in Velum.
-// Can be copied by hand / config management onto the nodes.
+These certificates can be re-used by all three mirror services.
+
 Make sure the CA certificate is available to {productname}
 system wide; so they can be used by the deployed components.
-You can add system wide certificates in {dashboard}menu:Settings → System wide certificates[]
-.
+
+You can add system wide certificates with following commands on all nodes:
+----
+sudo cp /etc/rmt/ssl/rmt-ca.crt /etc/pki/trust/anchors/
+sudo update-ca-certificates
+----
 
 [[airgap-requirements-storage]]
 === Trusted Storage
@@ -339,9 +330,6 @@ Data integrity checks, duplication, backup, and secure handling procedures of tr
 The mirror on the air gapped network must be running and populated before
 ====
 
-.Procedure: Install {rmt}On The Mirror Servers
-. Install the {rmt} on both mirror servers as described in https://documentation.suse.com/sles/15-SP1/single-html/SLES-rmt/#cha-rmt-installation[these instructions].
-
 .Procedure: Configure The External Mirror
 . Connect the external mirror to {scc} as described in https://documentation.suse.com/sles/15-SP1/single-html/SLES-rmt/#sec-rmt-mirroring-credentials[these instructions].
 +
@@ -350,13 +338,14 @@ IMPORTANT: During the installation of {rmt}
 you will be asked for login credentials.
 On the external mirror, you need to enter your {scc}
 login credentials to register.
-On the internal mirror, you can enter any random characters since the registration will not be possible without an internet connection to {scc}
+On the internal mirror, you can skip the {scc} login since the registration will not be possible without an internet connection to {scc}
 .
 +
 .Procedure: Configure The Internal Mirror
 . You need to disable the automatic repository sync on the internal server. Otherwise it will attempt to download information from {scc} which can not be reached from inside the air gapped network.
 +
 ----
+sudo systemctl stop rmt-server-sync.timer
 sudo systemctl disable rmt-server-sync.timer
 ----
 
@@ -691,7 +680,7 @@ cluster.
 The name of the repository must adhere to https://docs.helm.sh/chart_best_practices/#chart-names[Helm Chart naming conventions].
 
 ----
-helm repo add suse-mirror https://<charts.mymirror.local>
+helm repo add suse-mirror https://charts.<mymirror.local>
 ----
 
 [[airgap-update]]
@@ -840,3 +829,7 @@ If you are using a self-signed certificate for the registry you can use the `--d
 === Registering An Existing Node against {rmt}
 
 Refer to: <<airgap-rpm_repository-client>>.
+
+=== Helm chart connection terminated by HTTPS TO HTTP
+
+When registry mirror is using virtual repository URL. You may need to manually modify the Helm chart index.yaml and point the correct HTTPS base URL.
