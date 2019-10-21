@@ -113,8 +113,9 @@ Later, when you later run `skuba node bootstrap`, `kubeadm` will read `kubeadm-i
 and will forcefully set certain settings to the ones required by {productname}.
 
 ===== Network Settings
-It is important that you adjust the networking settings inside `kubeadm-init.conf` before the bootstrap.
-This must also be planned carefully,
+The default network settings inside `kubeadm-init.conf` are viable for production clusters and adjusting them is optional.
+If you however wish to change the pod and service subnets, it is important that you do so before the bootstrap.
+The subnet ranges must be planned carefully,
 because the settings cannot be adjusted after deployment is complete.
 The default settings are the following:
 
@@ -126,7 +127,7 @@ networking:
 
 The `podSubnet` IP range must be big enough to contain all IP addresses for all PODs planned for the cluster.
 The subnet also mustn't conflict with services from outside of the cluster - external databases, file services, etc.
-This also holds for `serviceSubnet`: the IP range must not conflict with external services and needs to be broad enough for all services planned for the cluster.
+This also holds for `serviceSubnet` - the IP range must not conflict with external services and needs to be broad enough for all services planned for the cluster.
 
 
 ==== Cluster Configuration
