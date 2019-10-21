@@ -57,7 +57,7 @@ TIP: For instructions on how to install Helm and Tiller refer to <<helm_tiller_i
 ----
 kubectl create namespace nginx-ingress
 
-helm install --name nginx-ingress stable/nginx-ingress \
+helm install --name nginx-ingress suse/nginx-ingress \
 --namespace nginx-ingress \
 --values nginx-ingress-config-values.yaml
 ----
@@ -67,7 +67,7 @@ The result should be two running pods:
 +
 [source,bash]
 ----
-kubectl -n monitoring get pod
+kubectl -n nginx-ingress get pod
 NAME                                             READY     STATUS    RESTARTS   AGE
 nginx-ingress-controller-74cffccfc-p8xbb         1/1       Running   0          4s
 nginx-ingress-default-backend-6b9b546dc8-mfkjk   1/1       Running   0          4s
