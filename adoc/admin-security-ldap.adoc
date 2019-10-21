@@ -157,58 +157,82 @@ cat <root-ca-pem-file> | base64 | awk '{print}' ORS='' && echo
 
 ==== Example 1: 389-ds Content LDIF
 
+Exmaple LDIF configuration to create organization 'Users' using an LDAP command:
+
+====
+
+  dn: ou=Users,dc=example,dc=org
+  changetype: add
+  objectclass: top
+  objectclass: organizationalUnit
+  ou: Users
+====
+
 Example LDIF configuration to create user `user-regular1` using an LDAP command:
 ====
 
-  dn: cn=user-regular1,ou=Users,dc=example,dc=org
-  cn: User Regular1
+  dn: uid=user-regular1,ou=Users,dc=example,dc=org
+  changetype: add
+  uid: user-regular1
+  objectClass: posixaccount
+  objectClass: inetOrgPerson
+  objectClass: person
+  objectClass: inetUser
+  objectClass: organizationalPerson
   uidNumber: 1200
   gidNumber: 500
-  objectClass: inetOrgPerson
-  objectClass: organizationalPerson
-  objectClass: person
-  uid: user-regular1
+  givenName: User
   mail: user-regular1@example.org
   sn: Regular1
-  givenName: User
+  homeDirectory: /home/regular1
+  cn: User Regular1
 ====
 
 Example LDIF configuration to create user `user-regular2` using an LDAP command:
 ====
 
-  dn: cn=user-regular2,ou=Users,dc=example,dc=org
-  cn: User Regular2
+  dn: uid=user-regular2,ou=Users,dc=example,dc=org
+  changetype: add
+  uid: user-regular2
+  objectClass: posixaccount
+  objectClass: inetOrgPerson
+  objectClass: person
+  objectClass: inetUser
+  objectClass: organizationalPerson
   uidNumber: 1300
   gidNumber: 500
-  objectClass: inetOrgPerson
-  objectClass: organizationalPerson
-  objectClass: person
-  uid: user-regular2
-  mail: user-regular2@example.org
-  sn: Regular2
   givenName: User
+  mail: user-regular2@example.org
+  sn: Regular1
+  homeDirectory: /home/regular2
+  cn: User Regular2
 ====
 
 Example LDIF configuration to create user `user-admin` using an LDAP command:
 ====
 
-  dn: cn=user-admin,ou=Users,dc=example,dc=org
-  cn: User Admin
+  dn: uid=user-admin,ou=Users,dc=example,dc=org
+  changetype: add
+  uid: user-admin
+  objectClass: posixaccount
+  objectClass: inetOrgPerson
+  objectClass: person
+  objectClass: inetUser
+  objectClass: organizationalPerson
   uidNumber: 1000
   gidNumber: 100
-  objectClass: inetOrgPerson
-  objectClass: organizationalPerson
-  objectClass: person
-  uid: user-admin
+  givenName: User
   mail: user-admin@example.org
   sn: Admin
-  givenName: User
+  homeDirectory: /home/admin
+  cn: User Admin
 ====
 
 Example LDIF configuration to create group `k8s-users` using an LDAP command:
 ====
 
   dn: cn=k8s-users,ou=Groups,dc=example,dc=org
+  changetype: add
   gidNumber: 500
   objectClass: posixGroup
   cn: k8s-users
@@ -220,6 +244,7 @@ Example LDIF configuration to create group `k8s-admins` using an LDAP command:
 ====
 
   dn: cn=k8s-admins,ou=Groups,dc=example,dc=org
+  changetype: add
   gidNumber: 100
   objectClass: posixGroup
   cn: k8s-admins
