@@ -94,18 +94,18 @@ the server configuration in your {ay} file. To do so add the following section:
 <reg_server_cert_fingerprint_type>SHA1</reg_server_cert_fingerprint_type>
 <reg_server_cert_fingerprint>0C:A4:A1:06:AD:E2:A2:AA:D0:08:28:95:05:91:4C:07:AD:13:78:FE</reg_server_cert_fingerprint> // <3>
 <slp_discovery config:type="boolean">false</slp_discovery>
-
-
-sle-module-containers
-15.1
-x86_64
-
-
-caasp
-4.0
-x86_64
-
-
+<addons config:type="list">
+  <addon>
+    <name>sle-module-containers</name>
+    <version>15.1</version>
+    <arch>x86_64</arch>
+  </addon>
+  <addon>
+    <name>caasp</name>
+    <version>4.0</version>
+    <arch>x86_64</arch>
+  </addon>
+</addons>
 </suse_register>
 ----
 <1> Provide FQDN of the {RMT} server
