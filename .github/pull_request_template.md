@@ -15,6 +15,9 @@ Relates to:
 # Enable maintainer updates
 Please enable maintainer updates so we can push commits into your branch to make collaboration and reviews easier.
 
+# Do not force push your branch
+Please avoid force pushing to branches that are subject of pull requests. Force pushing breaks maintainer commits in many cases and is very hard (if not impossible) to untangle for backporting.
+
 # Labels
 Please set any (and all) appropriate labels that describe the status of the PR.
 
