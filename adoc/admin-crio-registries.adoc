@@ -1,6 +1,15 @@
 == Configuring Container Registries for {crio}
 
-Every registry-related configuration needs to be done in the TOML file
+[IMPORTANT]
+====
+The configuration example in this text uses `VERSION 2` of the {crio} registries
+configuration syntax. It is not compatible with the `VERSION 1` syntax present
+in some upstream examples.
+
+Please refer to: https://raw.githubusercontent.com/containers/image/master/docs/containers-registries.conf.5.md
+====
+
+Every registry-related configuration needs to be done in the link:https://github.com/toml-lang/toml[TOML] file
 `/etc/containers/registries.conf`. After any change of this file, CRI-O
 needs to be restarted.
 
@@ -14,10 +23,20 @@ single registry entry within that configuration could be added like this:
 blocked = false
 insecure = false
 location = "example.net/bar"
-prefix = "example.com/foo"
+prefix = "example.com/foo/images"
 mirror = [
     { location = "example-mirror-0.local", insecure = false },
     { location = "example-mirror-1.local", insecure = true, mirror-by-digest-only = true }
+]
+
+[[registry]]
+blocked = false
+insecure = false
+location = "example.net/mymirror"
+prefix = "example.com/mirror/images"
+mirror = [
+    { location = "example-mirror-2.local", insecure = false, mirror-by-digest-only = true },
+    { location = "example-mirror-3.local", insecure = true }
 ]
 unqualified-search = false
 ----
