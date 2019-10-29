@@ -85,186 +85,255 @@ Some of these information are required for debugging certain cases. The data col
 via `supportconfig` in such cases are following:
 
 * etcd.txt (_master nodes_)
-
++
 ----
-        curl -Ls --cacert /etc/kubernetes/pki/etcd/ca.crt --key /etc/kubernetes/pki/etcd/server.key --cert /etc/kubernetes/pki/etcd/server.crt https://localhost:2379/health
-        curl -Ls --cacert /etc/kubernetes/pki/etcd/ca.crt --key /etc/kubernetes/pki/etcd/server.key --cert /etc/kubernetes/pki/etcd/server.crt https://localhost:2379/v2/members
-        curl -Ls --cacert /etc/kubernetes/pki/etcd/ca.crt --key /etc/kubernetes/pki/etcd/server.key --cert /etc/kubernetes/pki/etcd/server.crt https://localhost:2379/v2/stats/leader
-        curl -Ls --cacert /etc/kubernetes/pki/etcd/ca.crt --key /etc/kubernetes/pki/etcd/server.key --cert /etc/kubernetes/pki/etcd/server.crt https://localhost:2379/v2/stats/self
-        curl -Ls --cacert /etc/kubernetes/pki/etcd/ca.crt --key /etc/kubernetes/pki/etcd/server.key --cert /etc/kubernetes/pki/etcd/server.crt https://localhost:2379/v2/stats/store
-        curl -Ls --cacert /etc/kubernetes/pki/etcd/ca.crt --key /etc/kubernetes/pki/etcd/server.key --cert /etc/kubernetes/pki/etcd/server.crt https://localhost:2379/metrics
-        etcdcontainer=$(crictl ps --label io.kubernetes.container.name=etcd --quiet)
-        crictl exec $etcdcontainer sh -c \"ETCDCTL_ENDPOINTS='https://127.0.0.1:2379' ETCDCTL_CACERT='/etc/kubernetes/pki/etcd/ca.crt' ETCDCTL_CERT='/etc/kubernetes/pki/etcd/server.crt' ETCDCTL_KEY='/etc/kubernetes/pki/etcd/server.key' ETCDCTL_API=3 etcdctl check perf\"
-        crictl logs -t $etcdcontainer
-        crictl stats --id $etcdcontainer
-        etcdpod=$(crictl ps | grep etcd | awk -F ' ' '{ print $9 }')
-        crictl inspectp $etcdpod
+curl -Ls --cacert /etc/kubernetes/pki/etcd/ca.crt --key /etc/kubernetes/pki/etcd/server.key --cert /etc/kubernetes/pki/etcd/server.crt https://localhost:2379/health
+curl -Ls --cacert /etc/kubernetes/pki/etcd/ca.crt --key /etc/kubernetes/pki/etcd/server.key --cert /etc/kubernetes/pki/etcd/server.crt https://localhost:2379/v2/members
+curl -Ls --cacert /etc/kubernetes/pki/etcd/ca.crt --key /etc/kubernetes/pki/etcd/server.key --cert /etc/kubernetes/pki/etcd/server.crt https://localhost:2379/v2/stats/leader
+curl -Ls --cacert /etc/kubernetes/pki/etcd/ca.crt --key /etc/kubernetes/pki/etcd/server.key --cert /etc/kubernetes/pki/etcd/server.crt https://localhost:2379/v2/stats/self
+curl -Ls --cacert /etc/kubernetes/pki/etcd/ca.crt --key /etc/kubernetes/pki/etcd/server.key --cert /etc/kubernetes/pki/etcd/server.crt https://localhost:2379/v2/stats/store
+curl -Ls --cacert /etc/kubernetes/pki/etcd/ca.crt --key /etc/kubernetes/pki/etcd/server.key --cert /etc/kubernetes/pki/etcd/server.crt https://localhost:2379/metrics
+
+etcdcontainer=$(crictl ps --label io.kubernetes.container.name=etcd --quiet)
+
+crictl exec $etcdcontainer sh -c \"ETCDCTL_ENDPOINTS='https://127.0.0.1:2379' ETCDCTL_CACERT='/etc/kubernetes/pki/etcd/ca.crt' ETCDCTL_CERT='/etc/kubernetes/pki/etcd/server.crt' ETCDCTL_KEY='/etc/kubernetes/pki/etcd/server.key' ETCDCTL_API=3 etcdctl check perf\"
+
+crictl logs -t $etcdcontainer
+
+crictl stats --id $etcdcontainer
+
+etcdpod=$(crictl ps | grep etcd | awk -F ' ' '{ print $9 }')
+
+crictl inspectp $etcdpod
 ----
 
 [NOTE]
 ====
-For more information about ETCD look at include::admin-troubleshooting-etcd.adoc[etcd troubleshooting].
+For more information about `etcd`, refer to <<troubleshooting-etcd>>.
 ====
 
 * kubernetes.txt (_all nodes_)
-
++
 ----
-    export KUBECONFIG=/etc/kubernetes/admin.conf
-    kubectl version
-    kubectl api-versions
-    kubectl config view
-    kubectl -n kube-system get pods
-    kubectl get events --sort-by=.metadata.creationTimestamp
-    kubectl get nodes
-    kubectl get all -A
-    kubectl get nodes -o yaml
+export KUBECONFIG=/etc/kubernetes/admin.conf
+
+kubectl version
+
+kubectl api-versions
+
+kubectl config view
+
+kubectl -n kube-system get pods
+
+kubectl get events --sort-by=.metadata.creationTimestamp
+
+kubectl get nodes
+
+kubectl get all -A
+
+kubectl get nodes -o yaml
 ----
 
 * kubernetes-cluster-info.txt (_all nodes_)
-
++
 ----
-    export KUBECONFIG=/etc/kubernetes/admin.conf
-    kubectl cluster-info dump --output-directory="/var/log/kubernetes"
-    # a copy of kubernetes logs /var/log/kubernetes
+export KUBECONFIG=/etc/kubernetes/admin.conf
+
+# a copy of kubernetes logs /var/log/kubernetes
+kubectl cluster-info dump --output-directory="/var/log/kubernetes"
 ----
 
 * kubelet.txt (_all nodes_)
-
++
 ----
-    systemctl status --full kubelet
-    journalctl -u kubelet
-    cat /var/lib/kubelet/config.yaml
-    # a copy of kubernetes manifests /etc/kubernetes/manifests"
+systemctl status --full kubelet
+
+journalctl -u kubelet
+
+# a copy of kubernetes manifests /etc/kubernetes/manifests"
+cat /var/lib/kubelet/config.yaml
 ----
 
 * oidc-gangway.txt (_all nodes_)
-
++
 ----
-    container=$(crictl ps --label io.kubernetes.container.name="oidc-gangway" --quiet)
-    crictl logs -t $container
-    crictl inspect $container
-    pod=$(crictl ps | grep "oidc-gangway" | awk -F ' ' '{ print $9 }')
-    crictl inspectp $pod
+container=$(crictl ps --label io.kubernetes.container.name="oidc-gangway" --quiet)
+
+crictl logs -t $container
+
+crictl inspect $container
+
+pod=$(crictl ps | grep "oidc-gangway" | awk -F ' ' '{ print $9 }')
+
+crictl inspectp $pod
 ----
 
 * oidc-dex.txt (_worker nodes_)
-
++
 ----
-    container=$(crictl ps --label io.kubernetes.container.name="oidc-dex" --quiet)
-    crictl logs -t $container
-    crictl inspect $container
-    pod=$(crictl ps | grep "oidc-dex" | awk -F ' ' '{ print $9 }')
-    crictl inspectp $pod
+container=$(crictl ps --label io.kubernetes.container.name="oidc-dex" --quiet)
+
+crictl logs -t $container
+
+crictl inspect $container
+
+pod=$(crictl ps | grep "oidc-dex" | awk -F ' ' '{ print $9 }')
+
+crictl inspectp $pod
 ----
 
 * cilium-agent.txt (_all nodes_)
-
++
 ----
-    container=$(crictl ps --label io.kubernetes.container.name="cilium-agent" --quiet)
-    crictl logs -t $container
-    crictl inspect $container
-    pod=$(crictl ps | grep "cilium-agent" | awk -F ' ' '{ print $9 }')
-    crictl inspectp $pod
+container=$(crictl ps --label io.kubernetes.container.name="cilium-agent" --quiet)
+
+crictl logs -t $container
+
+crictl inspect $container
+
+pod=$(crictl ps | grep "cilium-agent" | awk -F ' ' '{ print $9 }')
+
+crictl inspectp $pod
 ----
 
 * cilium-operator.txt (_only from the worker node is runs_)
-
++
 ----
-    container=$(crictl ps --label io.kubernetes.container.name="cilium-operator" --quiet)
-    crictl logs -t $container
-    crictl inspect $container
-    pod=$(crictl ps | grep "cilium-operator" | awk -F ' ' '{ print $9 }')
-    crictl inspectp $pod
+container=$(crictl ps --label io.kubernetes.container.name="cilium-operator" --quiet)
+
+crictl logs -t $container
+
+crictl inspect $container
+
+pod=$(crictl ps | grep "cilium-operator" | awk -F ' ' '{ print $9 }')
+
+crictl inspectp $pod
 ----
 
 * kured.txt (_all nodes_)
-
++
 ----
-    container=$(crictl ps --label io.kubernetes.container.name="kured" --quiet)
-    crictl logs -t $container
-    crictl inspect $container
-    pod=$(crictl ps | grep "kured" | awk -F ' ' '{ print $9 }')
-    crictl inspectp $pod
-----
+container=$(crictl ps --label io.kubernetes.container.name="kured" --quiet)
 
+crictl logs -t $container
+
+crictl inspect $container
+
+pod=$(crictl ps | grep "kured" | awk -F ' ' '{ print $9 }')
+
+crictl inspectp $pod
+----
 
 * coredns.txt (_worker nodes)
-
++
 ----
-    container=$(crictl ps --label io.kubernetes.container.name="coredns" --quiet)
-    crictl logs -t $container
-    crictl inspect $container
-    pod=$(crictl ps | grep "coredns" | awk -F ' ' '{ print $9 }')
-    crictl inspectp $pod
+container=$(crictl ps --label io.kubernetes.container.name="coredns" --quiet)
+
+crictl logs -t $container
+
+crictl inspect $container
+
+pod=$(crictl ps | grep "coredns" | awk -F ' ' '{ print $9 }')
+
+crictl inspectp $pod
 ----
 
 * kube-apiserver.txt (_master nodes_)
-
++
 ----
-    container=$(crictl ps --label io.kubernetes.container.name="kube-apiserver" --quiet)
-    crictl logs -t $container
-    crictl inspect $container
-    pod=$(crictl ps | grep "kube-apiserver" | awk -F ' ' '{ print $9 }')
-    crictl inspectp $pod
+container=$(crictl ps --label io.kubernetes.container.name="kube-apiserver" --quiet)
+
+crictl logs -t $container
+
+crictl inspect $container
+
+pod=$(crictl ps | grep "kube-apiserver" | awk -F ' ' '{ print $9 }')
+
+crictl inspectp $pod
 ----
 
 * kube-proxy.txt (_all nodes_)
-
++
 ----
-    container=$(crictl ps --label io.kubernetes.container.name="kube-proxy" --quiet)
-    crictl logs -t $container
-    crictl inspect $container
-    pod=$(crictl ps | grep "kube-proxy" | awk -F ' ' '{ print $9 }')
-    crictl inspectp $pod
+container=$(crictl ps --label io.kubernetes.container.name="kube-proxy" --quiet)
+
+crictl logs -t $container
+
+crictl inspect $container
+
+pod=$(crictl ps | grep "kube-proxy" | awk -F ' ' '{ print $9 }')
+
+crictl inspectp $pod
 ----
 
 * kube-scheduler.txt (_master nodes_)
-
++
 ----
-    container=$(crictl ps --label io.kubernetes.container.name="kube-scheduler" --quiet)
-    crictl logs -t $container
-    crictl inspect $container
-    pod=$(crictl ps | grep "kube-scheduler" | awk -F ' ' '{ print $9 }')
-    crictl inspectp $pod
+container=$(crictl ps --label io.kubernetes.container.name="kube-scheduler" --quiet)
+
+crictl logs -t $container
+
+crictl inspect $container
+
+pod=$(crictl ps | grep "kube-scheduler" | awk -F ' ' '{ print $9 }')
+
+crictl inspectp $pod
 ----
 
 * kube-controller-manager.txt (_master nodes_)
-
++
 ----
-    container=$(crictl ps --label io.kubernetes.container.name="kube-controller-manager" --quiet)
-    crictl logs -t $container
-    crictl inspect $container
-    pod=$(crictl ps | grep "kube-controller-manager" | awk -F ' ' '{ print $9 }')
-    crictl inspectp $pod
+container=$(crictl ps --label io.kubernetes.container.name="kube-controller-manager" --quiet)
+
+crictl logs -t $container
+
+crictl inspect $container
+
+pod=$(crictl ps | grep "kube-controller-manager" | awk -F ' ' '{ print $9 }')
+
+crictl inspectp $pod
 ----
 
 * kube-system.txt (_all nodes_)
-
++
 ----
-    export KUBECONFIG=/etc/kubernetes/admin.conf
-    kubectl get all -n kube-system -o yaml
+export KUBECONFIG=/etc/kubernetes/admin.conf
+
+kubectl get all -n kube-system -o yaml
 ----
 
 * crio.txt (_all_nodes_)
++
 ----
-    crictl version
-    systemctl status --full crio.service
-    crictl info
-    crictl images
-    crictl ps --all
-    crictl stats --all
-    journalctl -u crio
-    # a copy of /etc/crictl.yaml
-    # a copy of /etc/sysconfig/crio
-    # a copy of /etc/crio/crio.conf
-    # a copy of every file under /etc/crio/
-    # Run the following three commands for every container using this loop:
-    for i in $(crictl  ps -a 2>/dev/null | grep -v "CONTAINER" | awk '{print $1}');
-    do
-        crictl stats --id $i
-        crictl logs $i
-        crictl inspect $i
-    done
+crictl version
+
+systemctl status --full crio.service
+
+crictl info
+
+crictl images
+
+crictl ps --all
+
+crictl stats --all
+
+journalctl -u crio
+
+# a copy of /etc/crictl.yaml
+
+# a copy of /etc/sysconfig/crio
+
+# a copy of /etc/crio/crio.conf
+
+# a copy of every file under /etc/crio/
+
+# Run the following three commands for every container using this loop:
+for i in $(crictl  ps -a 2>/dev/null | grep -v "CONTAINER" | awk '{print $1}');
+do
+    crictl stats --id $i
+    crictl logs $i
+    crictl inspect $i
+done
 ----
 
 == Debugging SLES Nodes provision
