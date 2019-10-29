@@ -42,29 +42,21 @@ cd /var/log/nts*
 sudo cat kubernetes.txt crio.txt
 ----
 
-The result is a `TAR` archive of files. Each of the `*.txz` files should be given a name that can be used to identify which
-cluster node it was created on.
+The result is a `TAR` archive of files. Each of the `*.txz` files should be given a name that can be used to identify which cluster node it was created on.
 
 After opening a Service Request (SR), you can upload the `TAR` archives to {suse} Global Technical Support.
 
-The data will help to debug the issue you reported and assist you in solving the problem.
-For details, see https://www.suse.com/documentation/sles-15/book_sle_admin/data/cha_adm_support.html.
+The data will help to debug the issue you reported and assist you in solving the problem. For details, see https://www.suse.com/documentation/sles-15/book_sle_admin/data/cha_adm_support.html.
 
 == Cluster definition directory
 
-Apart from the logs provided by running the `supportconfig` tool, an additional set of data might be required for
-debugging purposes. This information is located at the Management node, under your cluster definition directory.
-This folder contains important and sensitive information about your {productname} cluster and it's the one
-from where you issue `skuba` commands.
+Apart from the logs provided by running the `supportconfig` tool, an additional set of data might be required for debugging purposes. This information is located at the Management node, under your cluster definition directory. This folder contains important and sensitive information about your {productname} cluster and it's the one from where you issue `skuba` commands.
 
 [WARNING]
 ====
-If the problem you are facing is related to your production environment, do **not** upload the `admin.conf` as this would
-expose access to your cluster to anyone in possession of the collected information!
-The same precautions apply for the `pki` directory, since this also contains sensitive information (CA cert and key).
+If the problem you are facing is related to your production environment, do **not** upload the `admin.conf` as this would expose access to your cluster to anyone in possession of the collected information! The same precautions apply for the `pki` directory, since this also contains sensitive information (CA cert and key).
 
-In this case add `--exclude='./my-cluster/admin.conf' --exclude='./my-cluster/pki/'` to the command in the following example.
-Make sure to replace `./my-cluster` with the actual path of your cluster definition folder.
+In this case add `--exclude='./my-cluster/admin.conf' --exclude='./my-cluster/pki/'` to the command in the following example. Make sure to replace `./my-cluster` with the actual path of your cluster definition folder.
 
 If you need to debug issues with your private certificates, a separate call with {suse} support must be scheduled to help you.
 ====
@@ -75,6 +67,8 @@ Create a `TAR` archive by compressing the cluster definition directory.
 # Read the TIP above
 # Move the admin.conf and pki directory to another safe location or exclude from packaging
 tar -czvf cluster.tar.gz /home/user/my-cluster/
+# If the error is related to Terraform, please copy the terraform configuration files as well
+tar -czvf cluster.tar.gz /home/user/my-terraform-configuration/
 ----
 
 After opening a Service Request (SR), you can upload the `TAR` archive to {suse} Global Technical Support.
