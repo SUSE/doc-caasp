@@ -155,14 +155,21 @@ that each request is correctly distributed in a round robin way.
 [[loadbalancer.haproxy]]
 == HAProxy TCP Load Balancer with Active Checks
 
+`HAProxy` is a very powerful load balancer which, unlike `nginx`, can be used in production.
+The version used at this date is the `1.8.7`.
+
 [IMPORTANT]
 ====
 The configuration of an HA cluster is out of the scope of this document.
 ====
 
-`HAProxy` is a very powerful load balancer which, unlike `nginx`, can be used in production.
-`HAProxy` is available in link:https://www.suse.com/documentation/sle-ha-15/index.html[{sle} {hasi} 15].
-The version used at this date is the `1.8.7`.
+.Package Support
+[WARNING]
+====
+`HAProxy` is available as a supported package with a link:https://www.suse.com/documentation/sle-ha-15/index.html[{sle} {hasi} 15] subscription.
+
+Alternatively, you can install `HAProxy` from link:https://packagehub.suse.com/packages/haproxy/[{pkghub}] but you will not receive product support for this component.
+====
 
 The default mechanism is *round-robin* so each request will be distributed to a different server.
 
@@ -177,6 +184,17 @@ If no connection succeeds within this interval (2x5s), the node will be marked a
 ----
 SUSEConnect -r CAASP_REGISTRATION_CODE
 SUSEConnect --product sle-module-server-applications/15.1/x86_64
+----
+. Enable the source for the `haproxy` package:
+* If you are using the {sle} {hasi}
++
+----
+SUSEConnect --product sle-ha/15.1/x86_64 -r ADDITIONAL_REGCODE
+----
+* If you want the free (unsupported) package:
++
+----
+SUSEConnect --product PackageHub/15.1/x86_64
 ----
 . Configure `/dev/log` for HAProxy chroot (optional)
 +
@@ -214,7 +232,6 @@ Enabling the service will make the changes persistent after a reboot.
 ----
 systemctl enable --now bindmount-dev-log-haproxy-chroot.service
 ----
-
 . Install HAProxy:
 +
 [source,bash]
