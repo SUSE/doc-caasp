@@ -208,7 +208,7 @@ The management workstation needs at least the following networking permissions:
 The link:https://kubernetes.io/docs/concepts/cluster-administration/networking/[{kube} networking model] requires that your nodes have IP forwarding enabled in the kernel.
 `skuba` checks this value when installing your cluster and installs a rule in `/etc/sysctl.d/90-skuba-net-ipv4-ip-forward.conf` to make it persistent.
 
-Other software can potentially install rules with higher priority overriding this value and causing the cluster to fail.
+Other software can potentially install rules with higher priority overriding this value and causing machines to not behave as expected after rebooting.
 
 You can manually check if this is enabled using the following command:
 
