@@ -156,6 +156,25 @@ chmod 600 my-cluster/pki/etcd/ca.key
 
 After this process bootstrap the cluster with `skuba node bootstrap`.
 
+=== Extracting Certificate And Key From Combined PEM File
+
+Some PKIs will issue certificates and keys in a combined `.pem` file.
+In order to use the contained certificate, you must extract them into separate files using `openssl`.
+
+. Extract the certificate:
++
+[source,bash]
+----
+openssl x509 -in /path/to/file.pem -out /path/to/file.crt
+----
+. Extract the key:
++
+[source,bash]
+----
+openssl rsa -in /path/to/file.pem -out /path/to/file.key
+----
+
+
 == Automatic Certificate Renewal
 
 {productname} renews all certificates automatically during the control plane
