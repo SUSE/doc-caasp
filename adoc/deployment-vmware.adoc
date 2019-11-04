@@ -221,9 +221,9 @@ Name it reasonably so you can later identify the template. The template will be 
 
 ==== Terraform
 
-. Find the {tf} template files for {vmware} in `/usr/share/caasp/terraform/vmware` (which was installed as part of the management
-pattern (`sudo zypper in patterns-caasp-Management`)).
-Copy this folder to a location of your choice as the files need adjustment.
+. Find the {tf} template files for {vmware} in `/usr/share/caasp/terraform/vmware` which was installed as part of the management
+pattern (`sudo zypper in patterns-caasp-Management`).
+Copy this folder to a location of your choice; as the files need to be adjusted.
 +
 ----
 mkdir -p ~/caasp/deployment/
@@ -279,6 +279,7 @@ terraform apply
 For each VM deployment, follow the {ay} installation method used for deployment on
 bare metal machines as described in <<deployment_bare_metal>>.
 
+.Virtual Machine Naming
 [IMPORTANT]
 ====
 Make sure to give each VM in VMware a clear name that shows its purpose in the cluster, for example
@@ -289,5 +290,25 @@ Make sure to give each VM in VMware a clear name that shows its purpose in the c
 
 You will need these names during bootstrapping of the cluster.
 ====
+
+.Regenerating Machine ID
+[IMPORTANT]
+====
+During the template preparation you will have removed the machine ID from the template image.
+This ID is required for proper functionality in the cluster and must be (re-)generated on each machine.
+
+Log in to each virtual machine created from the template and run:
+
+----
+dbus-uuidgen --ensure
+systemd-machine-id-setup
+systemctl restart systemd-journald
+----
+
+This will regenerate the `machine id` values for `DBUS` (`/var/lib/dbus/machine-id`) and `systemd` (`/etc/machine-id`) and restart the logging service to make use of the new IDs.
+====
+
 . Power on the newly created VMs.
+. Generate new machine IDs on each node.
 . You need to know the FQDN/IP for each of the created VMs during the bootstrap process.
+. Continue with bootstrapping/joining of nodes.
