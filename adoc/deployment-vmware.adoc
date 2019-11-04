@@ -275,21 +275,13 @@ terraform plan
 terraform apply
 ----
 
-==== Setup by Hand
+==== Setup with {ay}
 For each VM deployment, follow the {ay} installation method used for deployment on
 bare metal machines as described in <<deployment_bare_metal>>.
 
-.Virtual Machine Naming
-[IMPORTANT]
-====
-Make sure to give each VM in VMware a clear name that shows its purpose in the cluster, for example
-
-* `caasp-master-0`
-* `caasp-worker-0`
-* `caasp-worker-1`
-
-You will need these names during bootstrapping of the cluster.
-====
+==== Setup by Hand
+Deploy the template to your created VMs. After that, boot into the node and configure
+the OS as needed.
 
 .Regenerating Machine ID
 [IMPORTANT]
