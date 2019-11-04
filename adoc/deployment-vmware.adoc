@@ -14,6 +14,7 @@ These instructions are based on `VMware ESXi {vmware_version}`.
 [IMPORTANT]
 ====
 These instructions currently do not describe how to set up a load balancer.
+
 This will be added in future versions. You must provide your own load balancing
 solution that directs access to the master nodes.
 ====
@@ -25,7 +26,13 @@ for the {kube} api-servers on the master nodes on a local load balancer using
 round-robin 1:1 port forwarding.
 ====
 
-=== VM Preparation for Creating a Template
+=== Setup with {ay}
+For each VM deployment, follow the {ay} installation method used for deployment on
+bare metal machines as described in <<deployment_bare_metal>>.
+
+=== Setup using VMWare Template
+
+==== VM Preparation for Creating a Template
 
 . Upload the ISO image {isofile} to the desired VMware datastore.
 
@@ -75,7 +82,7 @@ image::vmware_step6b.png[width=80%,pdfwidth=80%]
 
 Power on the newly created VM and install the system over graphical remote console:
 
-. Enter registration code for SLES in YaST.
+. Enter registration code for {sle} in {yast}.
 . Confirm the update repositories prompt with "Yes".
 . Remove the check mark in the "Hide Development Versions" box.
 . Make sure the following modules are selected on the "Extension and Module Selection" screen:
@@ -149,9 +156,9 @@ image::vmware_step17.png[width=80%,pdfwidth=80%]
 In order to run {productname} on the created VMs, you must configure and install some additional packages
 like `sudo`, `cloud-init` and `open-vm-tools`.
 
-.Activate extensions during {sle} installation with YaST
+.Activate extensions during {sle} installation with {yast}
 [TIP]
-Steps 1-4 may be skipped, if they were already performed in YaST during the {sle} installation.
+Steps 1-4 may be skipped, if they were already performed in {yast} during the {sle} installation.
 
 . Register the SLES15-SP1 system. Substitute `CAASP_REGISTRATION_CODE` for the code from <<registration_code>>.
 +
@@ -219,7 +226,7 @@ Name it reasonably so you can later identify the template. The template will be 
 
 === Deploying VMs from the Template
 
-==== Terraform
+==== Using Terraform
 
 . Find the {tf} template files for {vmware} in `/usr/share/caasp/terraform/vmware` which was installed as part of the management
 pattern (`sudo zypper in patterns-caasp-Management`).
@@ -275,17 +282,26 @@ terraform plan
 terraform apply
 ----
 
-==== Setup with {ay}
-For each VM deployment, follow the {ay} installation method used for deployment on
-bare metal machines as described in <<deployment_bare_metal>>.
-
 ==== Setup by Hand
+
+[NOTE]
+====
+Full instructions for the manual setup and configuration are currently not in sope of this document.
+====
+
 Deploy the template to your created VMs. After that, boot into the node and configure
 the OS as needed.
+
+. Power on the newly created VMs
+. Generate new machine IDs on each node
+. You need to know the FQDN/IP for each of the created VMs during the bootstrap process
+. Continue with bootstrapping/joining of nodes
 
 .Regenerating Machine ID
 [IMPORTANT]
 ====
+In case you are not using {tf} or {ay} you must regenerate machine IDs manually.
+
 During the template preparation you will have removed the machine ID from the template image.
 This ID is required for proper functionality in the cluster and must be (re-)generated on each machine.
 
@@ -299,8 +315,3 @@ systemctl restart systemd-journald
 
 This will regenerate the `machine id` values for `DBUS` (`/var/lib/dbus/machine-id`) and `systemd` (`/etc/machine-id`) and restart the logging service to make use of the new IDs.
 ====
-
-. Power on the newly created VMs.
-. Generate new machine IDs on each node.
-. You need to know the FQDN/IP for each of the created VMs during the bootstrap process.
-. Continue with bootstrapping/joining of nodes.
