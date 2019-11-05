@@ -315,3 +315,13 @@ systemctl restart systemd-journald
 
 This will regenerate the `machine id` values for `DBUS` (`/var/lib/dbus/machine-id`) and `systemd` (`/etc/machine-id`) and restart the logging service to make use of the new IDs.
 ====
+
+=== Container Runtime Proxy
+
+[IMPORTANT]
+====
+{crio} proxy settings must be adjusted manually on all nodes before joining the cluster!
+====
+
+In some environments you must configure the container runtime to access the container registries through a proxy.
+In this case, please refer to: https://documentation.suse.com/suse-caasp/4/single-html/caasp-admin/#_configuring_httphttps_proxy_for_cri_o[{productname} Admin Guide: Configuring HTTP/HTTPS Proxy for CRI-O]
