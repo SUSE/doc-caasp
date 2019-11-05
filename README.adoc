@@ -54,6 +54,11 @@ To contribute to the documentation you will use AsciiDoc syntax.
   directly from https://github.com/openSUSE/suse-xsl/[Github].
 * If you are running a (recent) version of openSUSE, you can install our documentation toolchain with the following command:
 `sudo /sbin/OneClickInstallUI https://gitlab.nue.suse.com/susedoc/doc-ymp/raw/master/Documentation.ymp`
+* If you don't want to download the entire documentation toolchain, you can also build documentation using DAPS inside a Docker container with https://github.com/openSUSE/daps2docker[daps2docker]:
+** Clone the daps2docker repository.
+** Change directory to the folder which contains your documentation source files (`doc-caasp`). 
+** Execute the `daps2docker.sh` file, for example by running `../daps2docker/daps2docker.sh .`.
+** Follow the commandline instructions for further building options.  
 * Basic daps usage:
 ** `$ daps -d DC-<YOUR_BOOK> validate`: Make sure what you have written is
     well-formed XML and valid DocBook 5
