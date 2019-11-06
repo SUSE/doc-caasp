@@ -265,10 +265,9 @@ entrypoint.sh bundle exec rails runner \
    Use SSH to log into one of the cluster nodes, for example your first master.
    The following command provides an example for using <command>etcdctl</command>.
   </para>
-<screen>&prompt.root;<command>set -a</command>
-&prompt.root;<command>source /etc/sysconfig/etcdctl</command>
+<screen>&prompt.root;<command>set -a; source /etc/sysconfig/etcdctl; set +a</command>
 &prompt.root;<command>export ETCDCTL_API=3</command>
-&prompt.root;<command>etcdctl cluster-health</command></screen>
+&prompt.root;<command>etcdctl endpoint status --cluster</command></screen>
  </sect1>
 
  <sect1 xml:id="sec-admin-troubleshooting-velum-ptf">
