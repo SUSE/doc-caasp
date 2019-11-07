@@ -53,6 +53,18 @@ The `skuba` CLI package is available from the {productname} module.
 You will need a valid {sle} and {productname} subscription to install this tool on the workstation.
 ====
 
+.Storage Sizing
+[IMPORTANT]
+====
+The storage sizes in the following lists are absolute minimum configurations.
+
+Sizing of the storage for worker nodes depends largely on the expected amount of container images, their size and change rate.
+The basic operating system for all nodes might also include snapshots (when using `btrfs`) that can quickly fill up existing space.
+
+We recommend provisioning a separate storage partition for container images on each (worker) node that can be adjusted in size when needed.
+Storage for `/var/lib/containers` on the worker nodes should be approximately 50GB in addition to the base OS storage.
+====
+
 ==== Master Nodes
 
 Up to 5 worker nodes *(minimum)*:
