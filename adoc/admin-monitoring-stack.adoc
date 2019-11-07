@@ -393,13 +393,11 @@ alertmanagerFiles:
       email_configs:
       - to: 'admin@example.com'
 ----
-
 . Replace the empty set of rules `rules: {}` in the `serverFiles` section of the configuration file.
 +
 For more information on how to configure alerts, refer to: https://prometheus.io/docs/alerting/notification_examples/[Prometheus:
 Alerting - Notification Template Examples]
 +
-
 ----
 serverFiles:
   alerts: {}
@@ -433,8 +431,12 @@ serverFiles:
         annotations:
           description: '{{ $labels.node }} has insufficient available memory'
 ----
-
-. You should now be able to see you Alertmanager, depending on your network configuration
+. To apply the changed configuration, run:
++
+----
+helm upgrade prometheus stable/prometheus --namespace monitoring --values prometheus-config-values.yaml
+----
+. You should now be able to see your Alertmanager, depending on your network configuration
 * NodePort: https://prometheus-alertmanager.example.com:30443
 * External IPs: https://prometheus-alertmanager.example.com
 
