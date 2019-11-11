@@ -557,7 +557,7 @@ At this stage, Grafana should be accessible, depending on your network configura
 
 ==== Adding Grafana Dashboards
 
-There are two ways to add dashboards to Grafana:
+There are 3 ways to add dashboards to Grafana:
 
 * Deploy an existing dashboard from https://grafana.com/dashboards[Grafana dashboards]
   . Open the deployed Grafana in your browser and log in.
@@ -566,6 +566,19 @@ There are two ways to add dashboards to Grafana:
   . Paste the URL (for example) `https://grafana.com/dashboards/3131` into the first input field to import the "Kubernetes All Nodes" Grafana Dashboard. After pasting in the url, the view will change to another form.
   . Now select the "Prometheus" datasource in the `prometheus` field and click on the import button.
   . The browser will redirect you to your newly created dashboard.
+
+* Use our https://github.com/SUSE/caasp-monitoring[pre-built dashboards] to monitor the {productname} system
+
++
+[source,bash]
+----
+# monitor SUSE CaaS Platform cluster
+kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-monitoring/master/grafana-dashboards-caasp-cluster.yaml
+# monitor etcd
+kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-monitoring/master/grafana-dashboards-caasp-etcd-cluster.yaml
+# monitor namespaces
+kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-monitoring/master/grafana-dashboards-caasp-namespaces.yaml
+----
 
 * Build your own dashboard
   Deploy your own dashboard by configuration file containing the dashboard definition.
@@ -609,9 +622,6 @@ continues with definition of dashboard JSON
 ----
 kubectl apply -f grafana-dashboards-caasp-cluster.yaml
 ----
-
-+
-You can find a couple of dashboard examples for {productname} in the https://github.com/SUSE/caasp-monitoring[CaaSP monitoring] on GitHub. This repo provides dashboards to visualize {kube} cluster resources.
 
 == Monitoring
 
