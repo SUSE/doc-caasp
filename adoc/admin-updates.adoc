@@ -1,11 +1,10 @@
 [[handling_updates]]
-== Handling Updates
 
-=== Updating Kubernetes Components
+== Updating Kubernetes Components
 
 Updating of {kube} components is handled via `skuba`.
 
-==== Generating an Overview of Available Platform Updates
+=== Generating an Overview of Available Platform Updates
 
 In order to get an overview of the updates available, you can run:
 
@@ -101,7 +100,7 @@ The control plane consists of these components:
 =====
 
 
-==== Generating an Overview of Available Addon Updates
+=== Generating an Overview of Available Addon Updates
 
 In order to get an overview of the addon updates available, you can run:
 
@@ -135,7 +134,7 @@ Congratulations! Addons are already at the latest version available
 ----
 
 
-=== Updating Nodes
+== Updating Nodes
 
 [NOTE]
 ====
@@ -159,7 +158,7 @@ recommended to drain the pods if your application requires high availability.
 In most cases, the restart is handled by `replicaSet`.
 
 
-==== How To Update Nodes
+=== How To Update Nodes
 
 . Upgrade the master nodes:
 +
@@ -188,12 +187,12 @@ The upgrade via `skuba node upgrade apply` will:
 * restart services.
 ====
 
-=== Base OS Updates
+== Base OS Updates
 
 Base operating system updates are handled by `skuba-update`, which works together
 with the `kured` reboot daemon.
 
-==== Disabling Automatic Updates
+=== Disabling Automatic Updates
 
 Nodes added to a cluster have the service `skuba-update.timer`, which is responsible for running automatic updates, activated by default.
 This service calls the `skuba-update` utility and it can be configured with the `/etc/sysconfig/skuba-update` file.
@@ -215,7 +214,7 @@ It is not required to reload or restart `skuba-update.timer`.
 The `--annotate-only` flag makes the `skuba-update` utility only check if updates are available and annotate the node accordingly.
 When this flag is activated no updates are installed at all.
 
-==== Completely Disabling Reboots
+=== Completely Disabling Reboots
 
 If you would like to take care of reboots manually, either as a temporary measure or permanently, you can disable them by creating a lock:
 
@@ -225,7 +224,7 @@ kubectl -n kube-system annotate ds kured weave.works/kured-node-lock='{"nodeID":
 
 This command modifies an annotation (`annotate`) on the daemonset (`ds`) named `kured`.
 
-==== Manual Unlock
+=== Manual Unlock
 
 In exceptional circumstances, such as a node experiencing a permanent failure whilst rebooting, manual intervention may be required to remove the cluster lock:
 
