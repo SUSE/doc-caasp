@@ -111,21 +111,21 @@ Pods/containers/applications that are planned to be hosted on these workers.
 
 A worker node requires the following resources:
 
-* CPU cores: 0.250
+* CPU cores: 1.250
 * RAM: 1.2 GB
 
 Based on these values, the *minimal* configuration of a worker node is:
 
 * Storage: Depending on workloads, minimum 20-30 GB to hold the base OS and required packages. Mount additional storage volumes as needed.
-* (v)CPU: 1
+* (v)CPU: 2
 * RAM: 2 GB
 * Network: Minimum 1Gb/s (faster is preferred)
 
 Calculate the size of the required (v)CPU by adding up the base requirements, the estimated additional essential cluster components (logging agent, monitoring agent, configuration management, etc.) and the estimated CPU workloads:
 
-* 0.250 (base requirements) + 0.250 (estimated additional cluster components) + estimated workload CPU requirements
+* 1.250 (base requirements) + 0.250 (estimated additional cluster components) + estimated workload CPU requirements
 
-Calculate the size of the RAM using the same formula:
+Calculate the size of the RAM using a similar formula:
 
 * 1.2 GB (base requirements) + 500 MB (estimated additional cluster components) + estimated workload RAM requirements
 
