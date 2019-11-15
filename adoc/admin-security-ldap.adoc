@@ -455,8 +455,9 @@ Example LDIF configuration to create group `k8s-admins` using an LDAP command:
   objectCategory: cn=Group,cn=Schema,cn=Configuration,dc=example,dc=org
 ====
 
-==== Example 2: Dex Active Directory TLS Connector Configuration (addons/dex/dex.yaml)
-Dex connector template configured to use Active Directory:
+==== Example 2: Dex Active Directory TLS Connector Configuration
+Run `kubectl --namespace=kube-system edit configmap oidc-dex-config` to edit Dex ConfigMap.
+Configure Dex ConfigMap to use Active Directory using the following template:
 ----
 connectors:
 - type: ldap
