@@ -44,7 +44,9 @@ docker stop 389-ds
 ----
 
 . Copy the external certificate `Server-Cert-Key.pem`, `Server-Cert.crt`, and `pwdfile-import.txt` to a mounted data directory `<DATA_DIR>/config/`.
-
+- Server-Cert-Key.pem: PRIVATE KEY.
+- Server-Cert.crt: CERTIFICATE.
+- pwdfile-import.txt: Password for the PRIVATE KEY.
 . Execute the `docker` command to run the 389 Directory Server with a mounted data
 directory from the previous step:
 +
