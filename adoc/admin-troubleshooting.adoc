@@ -350,7 +350,7 @@ If the cluster deployment fails, please re-run the command again with setting ve
 For example, if bootstraps the first master node of the cluster fails, re-run the command like
 [source,bash]
 ----
-skuba node bootstrap --user sles --sudo --target <IP/FQDN> <NODE NAME> -v=10
+skuba node bootstrap --user sles --sudo --target <IP/FQDN> <NODE_NAME> -v=10
 ----
 
 However, if the `join` procedure fails at the last final steps, re-running it might _not_ help. To verify
@@ -369,7 +369,7 @@ then replace it with a new one.
 
 [source,bash]
 ----
-skuba node remove <NODE NAME> --drain-timeout 5s
+skuba node remove <NODE_NAME> --drain-timeout 5s
 ----
 
 == Error `x509: certificate signed by unknown authority`

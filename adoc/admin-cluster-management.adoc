@@ -27,16 +27,16 @@ an existing cluster should be done sequentially, meaning the nodes have to be ad
 one after another and not more of them in parallel.
 
 [source,bash]
-skuba node join --role <master/worker> --user <user-name> --sudo --target <IP/FQDN> <node-name>
+skuba node join --role <MASTER/WORKER> --user <USER_NAME> --sudo --target <IP/FQDN> <NODE_NAME>
 
 The mandatory flags for the join command are `--role`, `--user`, `--sudo` and `--target`.
 
 - `--role` serves to specify if the node is a *master* or *worker*.
 - `--sudo` is for running the command with superuser privileges,
 which is necessary for all node operations.
-- `<user-name>` is the name of the user that exists on your SLES machine (default: `sles`).
+- `<USER_NAME>` is the name of the user that exists on your SLES machine (default: `sles`).
 - `--target <IP/FQDN>` is the IP address or FQDN of the relevant machine.
-- `<node-name>` is how you decide to name the node you are adding.
+- `<NODE_NAME>` is how you decide to name the node you are adding.
 
 [IMPORTANT]
 ====
@@ -76,7 +76,7 @@ so it is the safest way to remove the node.
 
 [source,bash]
 ----
-skuba node remove <node-name> [flags]
+skuba node remove <NODE_NAME> [flags]
 ----
 
 [NOTE]
@@ -84,7 +84,7 @@ skuba node remove <node-name> [flags]
 Per default, node removal has an unlimited timeout on waiting for the node to drain.
 If the node is unreachable it can not be drained and thus the removal will fail or get stuck indefinitely.
 You can specify a time after which removal will be performed without waiting for the node to
-drain with the flag `--drain-timeout <duration>`.
+drain with the flag `--drain-timeout <DURATION>`.
 
 For example, waiting for the node to drain for 1 minute and 5 seconds:
 ----
@@ -105,9 +105,9 @@ from your load balancer's configuration.
 To reconfigure a node, for example to change the node's role from worker to master,
 you will need to use a combination of commands.
 
-. Run `skuba node remove <node-name>`.
+. Run `skuba node remove <NODE_NAME>`.
 . Reinstall the node from scratch.
-. Run `skuba node join --role <desired-role> --user <user-name> --sudo --target <IP/FQDN> <node-name>`.
+. Run `skuba node join --role <DESIRED_ROLE> --user <USER_NAME> --sudo --target <IP/FQDN> <NODE_NAME>`.
 
 [[node_operations]]
 == Node Operations
@@ -121,12 +121,12 @@ This can be useful when troubleshooting a node.
 To mark a node as `unschedulable` run:
 
 [source,bash]
-kubectl cordon <node-name>
+kubectl cordon <NODE_NAME>
 
 To mark a node as `schedulable` run:
 
 [source,bash]
-kubectl uncordon <node-name>
+kubectl uncordon <NODE_NAME>
 
 === Draining Nodes
 
@@ -137,7 +137,7 @@ This is achieved using `kubectl`.
 To drain a node run:
 
 [source,bash]
-kubectl drain <node-name>
+kubectl drain <NODE_NAME>
 
 This action will also implicitly cordon the node.
 Therefore once the maintenance is done, uncordon the node to set it back to schedulable.

@@ -79,12 +79,12 @@ creates/updates data to the {kube} CRDs.
 Administrators can create {kube} `RoleBinding` or `ClusterRoleBinding` for users.
 This grants permission to users on the {kube} cluster like in the example below.
 
-In order to create a `RoleBinding` for `<USER-1>`, `<USER-2>`, and `<GROUP-1>`
+In order to create a `RoleBinding` for `<USER_1>`, `<USER_2>`, and `<GROUP_1>`
 using the `ClusterRole` `admin` you would run the following:
 
 [source,bash]
 ----
-kubectl create rolebinding admin --clusterrole=admin --user=<USER-1> --user=<USER-2> --group=<GROUP-1>
+kubectl create rolebinding admin --clusterrole=admin --user=<USER_1> --user=<USER_2> --group=<GROUP_1>
 ----
 
 ==== Update the Authentication Connector
@@ -111,9 +111,9 @@ The following is an *example LDAP connector:*
     name: 389ds
     config:
       host: ldap.example.org:636
-      rootCAData: <base64 encoded PEM file>
+      rootCAData: <BASE64_ENCODED_PEM_FILE>
       bindDN: cn=user-admin,ou=Users,dc=example,dc=org
-      bindPW: <Password of Bind DN>
+      bindPW: <BIND_DN_PASSWORD>
       usernamePrompt: Email Address
       userSearch:
         baseDN: ou=Users,dc=example,dc=org
@@ -133,7 +133,7 @@ The following is an *example LDAP connector:*
 +
 [source,bash]
 ----
-cat <root-ca-pem-file> | base64 | awk '{print}' ORS='' && echo
+cat <ROOT_CA_PEM_FILE> | base64 | awk '{print}' ORS='' && echo
 ----
 Besides the LDAP connector you can also set up other connectors.
 For additional connectors, refer to the available connector configurations in the Dex repository:
@@ -154,7 +154,7 @@ kubectl --namespace=kube-system delete pod -l app=oidc-gangway
 
 ===== In the Web Browser
 
-. Go to the login page at `+https://<CONTROL-PLANE IP/FQDN>:32001+` in your browser.
+. Go to the login page at `+https://<CONTROL_PLANE_IP/FQDN>:32001+` in your browser.
 . Click "Sign In".
 . Choose the login method.
 . Enter the login credentials.
@@ -162,7 +162,7 @@ kubectl --namespace=kube-system delete pod -l app=oidc-gangway
 
 ===== Using the CLI
 
-. Use `skuba auth login` with Dex server URL `+https://<CONTROL-PLANE IP/FQDN>:32000+`,
+. Use `skuba auth login` with Dex server URL `+https://<CONTROL_PLANE_IP/FQDN>:32000+`,
 login username and password.
 . The kubeconfig `kubeconf.txt` is generated locally.
 

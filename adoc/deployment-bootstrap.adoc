@@ -16,7 +16,7 @@ First you need to install `skuba` on a management machine, like your local works
 [source,bash]
 ----
 SUSEConnect -p sle-module-containers/15.1/x86_64
-SUSEConnect -p caasp/4.0/x86_64 -r <Product Key>
+SUSEConnect -p caasp/4.0/x86_64 -r <PRODUCT_KEY>
 ----
 . Install the management pattern with:
 +
@@ -55,13 +55,13 @@ be specified by the following flags:
 
 [source,bash]
 ----
---sudo --user <username>
+--sudo --user <USERNAME>
 ----
 
 [IMPORTANT]
 ====
 You must configure `sudo` for the user to be able to authenticate without password.
-Replace `USERNAME` with the user you created during installation. As root, run:
+Replace `<USERNAME>` with the user you created during installation. As root, run:
 
 [source,bash]
 ----
@@ -77,7 +77,7 @@ If you do not use a load balancer use your first master node.
 
 [source,bash]
 ----
-skuba cluster init --control-plane <LB IP/FQDN> my-cluster
+skuba cluster init --control-plane <LB_IP/FQDN> my-cluster
 ----
 `cluster init` generates the folder named `my-cluster` and initializes the directory that will hold the configuration (`kubeconfig`) for the cluster.
 
@@ -151,12 +151,12 @@ and automatically manage resources like the Load Balancer, Nodes (Instances), Ne
 and Storage services.
 
 If you want to enable cloud provider integration with different cloud platforms,
-initialize the cluster with the flag `--cloud-provider <CLOUD PROVIDER>`.
+initialize the cluster with the flag `--cloud-provider <CLOUD_PROVIDER>`.
 The only currently available option is `openstack`, but more options are planned:
 
 [source,bash]
 ----
-skuba cluster init --control-plane <LB IP/FQDN> --cloud-provider openstack my-cluster
+skuba cluster init --control-plane <LB_IP/FQDN> --cloud-provider openstack my-cluster
 ----
 
 
@@ -250,9 +250,9 @@ these names will be used by the `Openstack` cloud controller manager to reconcil
       name: 389ds
       config:
         host: ldap.example.org:636 // <1> <2>
-        rootCAData: <base64 encoded PEM file> // <3>
+        rootCAData: <BASE64_ENCODED_PEM_FILE> // <3>
         bindDN: cn=user-admin,ou=Users,dc=example,dc=org // <4>
-        bindPW: <Password of Bind DN> // <5>
+        bindPW: <BIND_DN_PASSWORD> // <5>
         usernamePrompt: Email Address // <6>
         userSearch:
           baseDN: ou=Users,dc=example,dc=org // <7>
@@ -305,13 +305,13 @@ spec:
         ...
           command:
             - /usr/bin/kured
-            - --blocking-pod-selector=name=<NAME OF POD>
+            - --blocking-pod-selector=name=<POD_NAME>
 ----
 
 You can add any key/value labels to this selector:
 [source,bash]
 ----
---blocking-pod-selector=<LABEL KEY 1>=<LABEL VALUE 1>,<LABEL KEY 2>=<LABEL VALUE 2>
+--blocking-pod-selector=<LABEL_KEY_1>=<LABEL_VALUE_1>,<LABEL_KEY_2>=<LABEL_VALUE_2>
 ----
 
 Alternatively you can adapt the `kured` DaemonSet also later during runtime (after bootstrap) by editing `my-cluster/addons/kured/kured.yaml` and executing:
@@ -346,13 +346,13 @@ spec:
         ...
           command:
             - /usr/bin/kured
-            - --prometheus-url=<PROMETHEUS SERVER URL>
+            - --prometheus-url=<PROMETHEUS_SERVER_URL>
             - --alert-filter-regexp=^(RebootRequired|AnotherBenignAlert|...$
 ----
 
 [IMPORTANT]
 ====
-The <PROMETHEUS SERVER URL> needs to contain the protocol (`http://` or `https://`)
+The <PROMETHEUS_SERVER_URL> needs to contain the protocol (`http://` or `https://`)
 ====
 
 Alternatively you can adapt the `kured` DaemonSet also later during runtime (after bootstrap) by editing `my-cluster/addons/kured/kured.yaml` and executing:
@@ -368,7 +368,7 @@ This will restart all `kured` pods with the additional configuration flags.
 . Switch to the new directory.
 . Now bootstrap a master node.
 For `--target` enter the FQDN of your first master node.
-Replace `<NODE NAME>` with a unique identifier, for example, "master-one".
+Replace `<NODE_NAME>` with a unique identifier, for example, "master-one".
 +
 .Secure configuration files access
 [WARNING]
@@ -397,7 +397,7 @@ cluster to replace.
 [source,bash]
 ----
 cd my-cluster
-skuba node bootstrap --user sles --sudo --target <IP/FQDN> <NODE NAME>
+skuba node bootstrap --user sles --sudo --target <IP/FQDN> <NODE_NAME>
 ----
 This will bootstrap the specified node as the first master in the cluster.
 The process will generate authentication certificates and the `admin.conf`
@@ -406,20 +406,20 @@ The files will be stored in the `my-cluster` directory specified in step one.
 . Add additional master nodes to the cluster.
 +
 Replace the `<IP/FQDN>` with the IP for the machine.
-Replace `<NODE NAME>` with a unique identifier, for example, "master-two".
+Replace `<NODE_NAME>` with a unique identifier, for example, "master-two".
 +
 [source,bash]
 ----
-skuba node join --role master --user sles --sudo --target <IP/FQDN> <NODE NAME>
+skuba node join --role master --user sles --sudo --target <IP/FQDN> <NODE_NAME>
 ----
 . Add a worker to the cluster:
 +
 Replace the `<IP/FQDN>` with the IP for the machine.
-Replace `<NODE NAME>` with a unique identifier, for example, "worker-one".
+Replace `<NODE_NAME>` with a unique identifier, for example, "worker-one".
 +
 [source,bash]
 ----
-skuba node join --role worker --user sles --sudo --target <IP/FQDN> <NODE NAME>
+skuba node join --role worker --user sles --sudo --target <IP/FQDN> <NODE_NAME>
 ----
 . Verify that the nodes have been added:
 +

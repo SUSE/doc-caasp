@@ -16,7 +16,7 @@ You will use {tf} to deploy the required master and worker cluster nodes (plus a
 replacing DOWNLOADED_RC_FILE with the name your file:
 +
 ----
-source DOWNLOADED_RC_FILE.sh
+source <DOWNLOADED_RC_FILE>.sh
 ----
 .. Enter the password for the RC file. This should be same the credentials that you use to log in to {soc}.
 . Get the SLES15-SP1 image.
@@ -66,7 +66,7 @@ You can set the timezone before deploying the nodes by modifying the following f
 +
 . Register your nodes by using the SUSE CaaSP Product Key or by registering nodes against local SUSE Repository Mirroring Server in `~/caasp/deployment/openstack/registration.auto.tfvars`:
 +
-Substitute `CAASP_REGISTRATION_CODE` for the code from <<registration_code>>.
+Substitute `<CAASP_REGISTRATION_CODE>` for the code from <<registration_code>>.
 +
 ----
 ## To register CaaSP product please use one of the following method
@@ -74,7 +74,7 @@ Substitute `CAASP_REGISTRATION_CODE` for the code from <<registration_code>>.
 # - register against local SUSE Repository Mirroring Server
 
 # SUSE CaaSP Product Key
-caasp_registry_code = "CAASP_REGISTRATION_CODE"
+caasp_registry_code = "<CAASP_REGISTRATION_CODE>"
 
 # SUSE Repository Mirroring Server Name (FQDN)
 #rmt_server_name = "rmt.example.com"
@@ -128,13 +128,13 @@ image::deploy-loadbalancer-ip.png[]
 If the ssh-agent is running in the background, run:
 +
 ----
-ssh sles@<node-ip-address>
+ssh sles@<NODE_IP_ADDRESS>
 ----
 +
 Without the ssh-agent running, run:
 +
 ----
-ssh sles@<node-ip-address> -i <path-to-your-ssh-private-key>
+ssh sles@<NODE_IP_ADDRESS> -i <PATH_TO_YOUR_SSH_PRIVATE_KEY>
 ----
 +
 . Once connected, you can execute commands using password-less `sudo`. In addition to that, you can also set a password if you prefer to.

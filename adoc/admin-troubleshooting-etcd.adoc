@@ -26,14 +26,14 @@ The specific configuration which `etcd` is using to start, is the following:
 [source,bash]
 ----
 etcd \
-      --advertise-client-urls=https://<YourMasterNodeIP>:2379 \
+      --advertise-client-urls=https://<YOUR_MASTER_NODE_IP_ADDRESS>:2379 \
       --cert-file=/etc/kubernetes/pki/etcd/server.crt  \
       --client-cert-auth=true --data-dir=/var/lib/etcd \
-      --initial-advertise-peer-urls=https://<YourMasterNodeIP>:2380 \
-      --initial-cluster=vm072050.qa.prv.suse.net=https://<YourMasterNodeIP>:2380 \
+      --initial-advertise-peer-urls=https://<YOUR_MASTER_NODE_IP_ADDRESS>:2380 \
+      --initial-cluster=vm072050.qa.prv.suse.net=https://<YOUR_MASTER_NODE_IP_ADDRESS>:2380 \
       --key-file=/etc/kubernetes/pki/etcd/server.key \
-      --listen-client-urls=https://127.0.0.1:2379,https://<YourMasterNodeIP>:2379 \
-      --listen-peer-urls=https://<YourMasterNodeIP>:2380 \
+      --listen-client-urls=https://127.0.0.1:2379,https://<YOUR_MASTER_NODE_IP_ADDRESS>:2379 \
+      --listen-peer-urls=https://<YOUR_MASTER_NODE_IP_ADDRESS>:2380 \
       --name=vm072050.qa.prv.suse.net \
       --peer-cert-file=/etc/kubernetes/pki/etcd/peer.crt \
       --peer-client-cert-auth=true \
@@ -59,7 +59,7 @@ To use the following commands, you need to connect (e.g. via SSH) to the master 
 To see the `etcd` logs, connect to a {kube} master node and then run as root:
 [source,bash]
 ----
-ssh sles@<master-node>
+ssh sles@<MASTER_NODE>
 sudo bash # connect as root
 etcdcontainer=$(crictl ps --label io.kubernetes.container.name=etcd --quiet)
 crictl logs -f $etcdcontainer
@@ -76,7 +76,7 @@ To find out if your network and disk latency are fast enough, you can benchmark 
 +
 [source,bash]
 ----
-ssh sles@<master-node>
+ssh sles@<MASTER_NODE>
 sudo bash # login as root
 ----
 +

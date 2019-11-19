@@ -44,7 +44,7 @@ The minimal services for the master to work properly are:
 - kube-apiserver:
 +
 The component that receives your requests from `kubectl` and from the rest of
-the {kube} components. The URL is https://<CONTROL-PLANE-IP/FQDN>:6443/healthz
+the {kube} components. The URL is https://<CONTROL_PLANE_IP/FQDN>:6443/healthz
 +
 * Local Check
 +
@@ -56,13 +56,13 @@ curl -k -i https://localhost:6443/healthz
 +
 [source,bash]
 ----
-curl -k -i https://<CONTROL-PLANE-IP/FQDN>:6443/healthz
+curl -k -i https://<CONTROL_PLANE_IP/FQDN>:6443/healthz
 ----
 
 - kube-controller-manager:
 +
 The component that contains the control loop, driving current state to the
-desired state. The URL is http://<CONTROL-PLANE-IP/FQDN>:10252/healthz
+desired state. The URL is http://<CONTROL_PLANE_IP/FQDN>:10252/healthz
 +
 * Local Check
 +
@@ -76,13 +76,13 @@ Make sure firewall allows port `10252`.
 +
 [source,bash]
 ----
-curl -i http://<CONTROL-PLANE-IP/FQDN>:10252/healthz
+curl -i http://<CONTROL_PLANE_IP/FQDN>:10252/healthz
 ----
 
 - kube-scheduler:
 +
 The component that schedules workloads to nodes. The URL is
-http://<CONTROL-PLANE-IP/FQDN>:10251/healthz
+http://<CONTROL_PLANE_IP/FQDN>:10251/healthz
 +
 * Local Check
 +
@@ -96,14 +96,14 @@ Make sure firewall allows port `10251`.
 +
 [source,bash]
 ----
-curl -i http://<CONTROL-PLANE-IP/FQDN>:10251/healthz
+curl -i http://<CONTROL_PLANE_IP/FQDN>:10251/healthz
 ----
 
 .High-Availability Environments
 [NOTE]
 ====
 In a HA environment you can monitor `kube-apiserver` on
-`https://<LOAD-BALANCER-IP/FQDN>:6443/healthz`.
+`https://<LOAD_BALANCER_IP/FQDN>:6443/healthz`.
 
 If any one of the master nodes is running correctly, you will receive a valid response.
 
@@ -142,8 +142,8 @@ Make sure firewall allows port `2379`.
 +
 [source,bash]
 ----
-curl --cacert <etcd-root-ca-cert> --cert <etcd-client-cert>
---key <etcd-client-key> https://<CONTROL-PLANE-IP/FQDN>:2379/health
+curl --cacert <ETCD_ROOT_CA_CERT> --cert <ETCD_CLIENT_CERT>
+--key <ETCD_CLIENT_KEY> https://<CONTROL_PLANE_IP/FQDN>:2379/health
 ----
 
 == Node Health Checks

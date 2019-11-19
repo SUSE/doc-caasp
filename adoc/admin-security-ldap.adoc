@@ -296,7 +296,7 @@ connectors:
     # Please note that if the bind password contains a `$`, it has to be saved in an
     # environment variable which should be given as the value to `bindPW`.
     bindDN: cn=user-admin,ou=Users,dc=example,dc=org
-    bindPW: <Password of Bind DN>
+    bindPW: <BIND DN PASSWORD>
 
     # The attribute to display in the provided password prompt. If unset, will
     # display "Username"
@@ -305,13 +305,13 @@ connectors:
     # User search maps a username and password entered by a user to a LDAP entry.
     userSearch:
       # BaseDN to start the search from. It will translate to the query
-      # "(&(objectClass=person)(mail=<username>))".
+      # "(&(objectClass=person)(mail=<USERNAME>))".
       baseDN: ou=Users,dc=example,dc=org
       # Optional filter to apply when searching the directory.
       filter: "(objectClass=person)"
 
       # username attribute used for comparing user entries. This will be translated
-      # and combined with the other filter as "(<attr>=<username>)".
+      # and combined with the other filter as "(<attr>=<USERNAME>)".
       username: mail
       # The following three fields are direct mappings of attributes on the user entry.
       # String representation of the user.
@@ -324,7 +324,7 @@ connectors:
       # Group search queries for groups given a user entry.
       groupSearch:
       # BaseDN to start the search from. It will translate to the query
-      # "(&(objectClass=group)(member=<user uid>))".
+      # "(&(objectClass=group)(member=<USER_UID>))".
       baseDN: ou=Groups,dc=example,dc=org
       # Optional filter to apply when searching the directory.
       filter: "(objectClass=posixGroup)"
@@ -510,13 +510,13 @@ connectors:
     # User search maps a username and password entered by a user to a LDAP entry.
     userSearch:
       # BaseDN to start the search from. It will translate to the query
-      # "(&(objectClass=person)(mail=<username>))".
+      # "(&(objectClass=person)(mail=<USERNAME>))".
       baseDN: ou=Users,dc=example,dc=org
       # Optional filter to apply when searching the directory.
       filter: "(objectClass=person)"
 
       # username attribute used for comparing user entries. This will be translated
-      # and combined with the other filter as "(<attr>=<username>)".
+      # and combined with the other filter as "(<attr>=<USERNAME>)".
       username: mail
       # The following three fields are direct mappings of attributes on the user entry.
       # String representation of the user.
@@ -529,7 +529,7 @@ connectors:
     # Group search queries for groups given a user entry.
     groupSearch:
       # BaseDN to start the search from. It will translate to the query
-      # "(&(objectClass=group)(member=<user uid>))".
+      # "(&(objectClass=group)(member=<USER_UID>))".
       baseDN: ou=Groups,dc=example,dc=org
       # Optional filter to apply when searching the directory.
       filter: "(objectClass=group)"
