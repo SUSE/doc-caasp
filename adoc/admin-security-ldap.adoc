@@ -14,7 +14,6 @@ with a customized configuration using container commands.
 into the terminal in the following format:
 +
 ----
-INSTANCE_NAME=localhost                         # Directory Server Name
 ROOT_DN="cn=admin,dc=example,dc=org"            # Admin Account
 ROOT_PASSWORD=                                  # Admin Password
 SUFFIX="dc=example,dc=org"                      # Domain Suffix
@@ -29,7 +28,6 @@ automatically self-signed certificate and key.
 docker run -d \
 	-p 389:389 \
 	-p 636:636 \
-	-e INSTANCE_NAME=<INSTANCE_NAME> \
 	-e ROOT_DN=<ROOT_DN> \
 	-e ROOT_PASSWORD=<ROOT_PASSWORD> \
 	-e SUFFIX=<SUFFIX> \
@@ -47,72 +45,43 @@ To replace the automatically generated certificate with your own, follow these s
 docker stop 389-ds
 ----
 
-. Copy the external certificate `<rootCA.pem>` to a mounted data directory `<DATA_DIR>/config/`.
+. Copy the external private key `Server-Cert.crt`, certificate `Server-Cert.csr`, and password `pwdfile-import.txt` to a mounted data directory `<DATA_DIR>/config/`.
 
 . Run bash in entrypoint to access the container with the mounted data directory from the previous step:
 +
 ----
 docker run --rm -it \
-  -p 389:389 \
-  -p 636:636 \
   -v <DATA_DIR>:/data \
   --entrypoint /bin/bash \
-  --name 389-ds registry.suse.com/caasp/v4/389-ds:1.4.0
+  --name 389-ds-cert registry.suse.com/caasp/v4/389-ds:1.4.0
 ----
 
-. List the certificates in `/etc/dirsrv/slapd-<INSTANCE_NAME>`:
+. Creating Server-Cert hash link in `/data/config`:
 +
 ----
-certutil -L -d /etc/dirsrv/slapd-<INSTANCE_NAME> -f /etc/dirsrv/slapd-<INSTANCE_NAME>/pwdfile.txt
-----
-+
-The output of the above should resemble this:
-+
-----
-Certificate Nickname                                         Trust Attributes
-                                                             SSL,S/MIME,JAR/XPI
-
-Self-Signed-CA                                               CT,,
-Server-Cert                                                  u,u,u
+/usr/bin/c_rehash /data/config/
 ----
 
-. List the key in `/etc/dirsrv/slapd-<INSTANCE_NAME>`:
+. Deleting and reinitialize Server-Cert database in `/data/config:
 +
 ----
-certutil -K -d /etc/dirsrv/slapd-<INSTANCE_NAME> -f /etc/dirsrv/slapd-<INSTANCE_NAME>/pwdfile.txt
-----
-+
-The output of the above command should resemble the following:
-+
-----
-certutil: Checking token "NSS Certificate DB" in slot "NSS User Private Key and Certificate Services"
-< 0> rsa      6d4f98efe45328ff852b7e2ca5a24ad46844163a   NSS Certificate DB:Server-Cert
+echo > /data/config/pwdfile.txt
+rm -f /data/config/*.db
+/usr/bin/certutil -N --empty-password -d /data/config
 ----
 
-. Delete the existing CA and certificate in `/etc/dirsrv/slapd-<INSTANCE_NAME>`:
+. Importing the `ca.crt` to Server-Cert database in `/data/config`:
 +
 ----
-certutil -D -d /etc/dirsrv/slapd-<INSTANCE_NAME> -n Self-Signed-CA
-certutil -F -k 6d4f98efe45328ff852b7e2ca5a24ad46844163a -d /etc/dirsrv/slapd-<INSTANCE_NAME> -f /etc/dirsrv/slapd-<INSTANCE_NAME>/pwdfile.txt
-----
-
-. Import the certificate into `/etc/dirsrv/slapd-<INSTANCE_NAME>`:
-+
-Replace <KEY.PEM> with the input key.
-+
-Replace <CERT.PEM> with the input certificate.
-+
-Replace <CERT.PK12> with the output certificate in pkcs12.
-+
-----
-openssl pkcs12 -export -inkey <KEY.PEM> -in <CERT.PEM> -out <CERT.PK12> -nodes -name "Server-Cert"
-pk12util -i <CERT.PK12> -d /etc/dirsrv/slapd-<INSTANCE_NAME>
+/usr/bin/certutil -A -n Self-Signed-CA -t "CT,," -a -i /data/ssca/ca.crt -d /data/config -f /data/config/pwdfile.txt
 ----
 
-. Import the rootCA into `/etc/dirsrv/slapd-<INSTANCE_NAME>` .
+. Importing the certificate to Server-Cert database in `/data/config`:
 +
 ----
-certutil -A -d /etc/dirsrv/slapd-<INSTANCE_NAME> -n "CA certificate" -t "CT,," -i <rootCA.pem>
+/usr/bin/openssl pkcs12 -export -inkey /data/config/Server-Cert-Key.pem -in /data/config/Server-Cert.crt -out /data/config/Server-Cert.p12 -nodes -name "Server-Cert" -passin file:/data/config/pwdfile-import.txt -passout file:/data/config/pwdfile.txt
+/usr/bin/pk12util -i /data/config/Server-Cert.p12 -d /data/config -w /data/config/pwdfile.txt
+/bin/rm -f /data/config/Server-Cert.p12
 ----
 
 . Exit the container.
@@ -121,15 +90,7 @@ certutil -A -d /etc/dirsrv/slapd-<INSTANCE_NAME> -n "CA certificate" -t "CT,," -
 directory from the previous step:
 +
 ----
-docker run -d \
-	-p 389:389 \
-	-p 636:636 \
-	-e INSTANCE_NAME=<INSTANCE_NAME> \
-	-e ROOT_DN=<ROOT_DN> \
-	-e ROOT_PASSWORD=<ROOT_PASSWORD> \
-	-e SUFFIX=<SUFFIX> \
-	-v <DATA_DIR>:/data \
-	--name 389-ds registry.suse.com/caasp/v4/389-ds:1.4.0
+docker start 389-ds
 ----
 
 == Examples of Usage
