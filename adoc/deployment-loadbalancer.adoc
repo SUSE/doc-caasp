@@ -23,7 +23,7 @@ For production environments, we recommend the use of link:https://www.suse.com/d
 +
 [source,bash]
 ----
-SUSEConnect -r <CAASP_REGISTRATION_CODE>
+SUSEConnect -r CAASP_REGISTRATION_CODE
 SUSEConnect --product sle-module-server-applications/15.1/x86_64
 ----
 . Install Nginx:
@@ -242,7 +242,7 @@ zypper in haproxy
 +
 [NOTE]
 ====
-Replace the individual `masterXX` with the IP/FQDN of your actual master nodes (one entry each) in the `server` lines.
+Replace the individual `<MASTER_XX>` with the IP/FQDN of your actual master nodes (one entry each) in the `server` lines.
 ====
 +
 ----
@@ -276,23 +276,23 @@ listen stats // <4>
 listen apiserver // <6>
   bind   *:6443
   option httpchk GET /healthz
-  server master00 master00:6443
-  server master01 master01:6443
-  server master02 master02:6443
+  server <MASTER_00> <MASTER_00>:6443
+  server <MASTER_01> <MASTER_01>:6443
+  server <MASTER_02> <MASTER_02>:6443
 
 listen dex // <7>
   bind   *:32000
   option httpchk GET /healthz
-  server master00 master00:32000
-  server master01 master01:32000
-  server master02 master02:32000
+  server <MASTER_00> <MASTER_00>:32000
+  server <MASTER_01> <MASTER_01>:32000
+  server <MASTER_02> <MASTER_02>:32000
 
 listen gangway // <8>
   bind   *:32001
   option httpchk GET /
-  server master00 master00:32001
-  server master01 master01:32001
-  server master02 master02:32001
+  server <MASTER_00> <MASTER_00>:32001
+  server <MASTER_01> <MASTER_01>:32001
+  server <MASTER_02> <MASTER_02>:32001
 ----
 <1> Forward the logs to systemd journald, the log level can be set to `debug` to increase verbosity.
 <2> Define if it will run in a `chroot`.
