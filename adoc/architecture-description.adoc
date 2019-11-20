@@ -490,7 +490,7 @@ From within your cluster definition folder, you can bootstrap your
 first master machine:
 
 ----
-~/clusters/my-cluster$ skuba node bootstrap --user sles --sudo --target <IP address/FQDN> <nodename>
+~/clusters/my-cluster$ skuba node bootstrap --user sles --sudo --target <IP_ADDRESS/FQDN> <NODENAME>
 ----
 
 This operation will read the `kubeadm-init.conf` file inside your
@@ -525,10 +525,10 @@ Adding new master nodes to the cluster can be achieved by executing
 the following `skuba` command:
 
 ----
-~/clusters/my-cluster$ skuba node join --role master --user sles --sudo --target <IP address/FQDN> <nodename>
+~/clusters/my-cluster$ skuba node join --role master --user sles --sudo --target <IP_ADDRESS/FQDN> <NODENAME>
 ----
 
-This operation will try to read the `kubeadm-join.conf.d/<IP address/FQDN>.conf`
+This operation will try to read the `kubeadm-join.conf.d/<IP_ADDRESS/FQDN>.conf`
 file if it exists. This allows you to set specific settings for this
 new node prior to joining it (a similar procedure to how
 `kubeadm-init.conf` file behaves when bootstrapping). If this file
@@ -547,10 +547,10 @@ Adding new worker nodes to the cluster can be achieved by executing
 the following `skuba` command:
 
 ----
-~/clusters/my-cluster$ skuba node join --role worker --user sles --sudo --target <IP address/FQDN> <nodename>
+~/clusters/my-cluster$ skuba node join --role worker --user sles --sudo --target <IP_ADDRESS/FQDN> <NODENAME>
 ----
 
-This operation will try to read the `kubeadm-join.conf.d/<IP address/FQDN>.conf`
+This operation will try to read the `kubeadm-join.conf.d/<IP_ADDRESS/FQDN>.conf`
 file if it exists. This allows you to set specific settings for this
 new node prior to joining it (a similar procedure to how
 `kubeadm-init.conf` file behaves when bootstrapping). If this file
@@ -568,7 +568,7 @@ being removed or other nodes for that matter is required.
 For removing a node, the following command has to be executed:
 
 ----
-~/clusters/my-cluster$ skuba node remove <nodename>
+~/clusters/my-cluster$ skuba node remove <NODENAME>
 ----
 
 If the node to be removed is a master, specific actions will be

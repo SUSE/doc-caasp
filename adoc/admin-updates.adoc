@@ -37,7 +37,7 @@ Upgrade path to update from 1.14.1 to 1.15.0:
 Similarly, you can also fetch this information on a per-node basis with the following command:
 
 ----
-skuba node upgrade plan <node>
+skuba node upgrade plan <NODE>
 ----
 
 For example, if the cluster has a node named `worker0` which is running the latest available versions, the output should look like this:
@@ -163,13 +163,13 @@ In most cases, the restart is handled by `replicaSet`.
 . Upgrade the master nodes:
 +
 ----
-skuba node upgrade apply --target <master-node-ip> --user <user> --sudo
+skuba node upgrade apply --target <MASTER_NODE_IP> --user <USER> --sudo
 ----
 +
 . When all master nodes are upgraded, upgrade the worker nodes as well:
 +
 ----
-skuba node upgrade apply --target <worker-node-ip> --user <user> --sudo
+skuba node upgrade apply --target <WORKER_NODE_IP> --user <USER> --sudo
 ----
 +
 . Verify that your cluster nodes are upgraded by running:

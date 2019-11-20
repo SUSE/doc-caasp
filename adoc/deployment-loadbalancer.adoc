@@ -242,7 +242,8 @@ zypper in haproxy
 +
 [NOTE]
 ====
-Replace the individual `masterXX` with the IP/FQDN of your actual master nodes (one entry each) in the `server` lines.
+Replace the individual `<MASTER_XX_IP_ADDRESS>` with the IP of your actual master nodes (one entry each) in the `server` lines.
+Feel free to leave the name argument in the `server` lines (`master00` and etc.) as is - it only serves as a label that will show up in the haproxy logs.
 ====
 +
 ----
@@ -276,32 +277,32 @@ listen stats // <4>
 listen apiserver // <6>
   bind   *:6443
   option httpchk GET /healthz
-  server master00 master00:6443
-  server master01 master01:6443
-  server master02 master02:6443
+  server master00 <MASTER_00_IP_ADDRESS>:6443
+  server master01 <MASTER_01_IP_ADDRESS>:6443
+  server master02 <MASTER_02_IP_ADDRESS>:6443
 
 listen dex // <7>
   bind   *:32000
   option httpchk GET /healthz
-  server master00 master00:32000
-  server master01 master01:32000
-  server master02 master02:32000
+  server master00 <MASTER_00_IP_ADDRESS>:32000
+  server master01 <MASTER_01_IP_ADDRESS>:32000
+  server masetr02 <MASTER_02_IP_ADDRESS>:32000
 
 listen gangway // <8>
   bind   *:32001
   option httpchk GET /
-  server master00 master00:32001
-  server master01 master01:32001
-  server master02 master02:32001
+  server master00 <MASTER_00_IP_ADDRESS>:32001
+  server master01 <MASTER_01_IP_ADDRESS>:32001
+  server master02 <MASTER_02_IP_ADDRESS>:32001
 ----
 <1> Forward the logs to systemd journald, the log level can be set to `debug` to increase verbosity.
 <2> Define if it will run in a `chroot`.
 <3> This timeout is set to `24h` in order to allow long connections when accessing pod logs or port forwarding.
 <4> URL to expose `HAProxy` stats on port `9000`, it is accessible at `+http://loadbalancer:9000/stats+`
 <5> The performed health checks will expect a `200` return code
-<6> Kubernetes apiserver listening on port `6443`, the checks are performed against `+https://masterXX:6443/healthz+`
-<7> Dex listening on port `32000`, it must be accessible through the load balancer for RBAC authentication, the checks are performed against `+https://masterXX:32000/healthz+`
-<8> Gangway listening on port `32001`, it must be accessible through the load balancer for RBAC authentication, the checks are performed against `+https://masterXX:32001/+`
+<6> Kubernetes apiserver listening on port `6443`, the checks are performed against `+https://MASTER_XX_IP_ADDRESS:6443/healthz+`
+<7> Dex listening on port `32000`, it must be accessible through the load balancer for RBAC authentication, the checks are performed against `+https://MASTER_XX_IP_ADDRESS:32000/healthz+`
+<8> Gangway listening on port `32001`, it must be accessible through the load balancer for RBAC authentication, the checks are performed against `+https://MASTER_XX_IP_ADDRESS:32001/+`
 . Configure `firewalld` to open up port `6443`. As root, run:
 +
 [source,bash]

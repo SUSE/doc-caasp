@@ -126,8 +126,8 @@ Create a `pki` folder and put your custom root CA certificate into the `pki` fol
 [source,bash]
 ----
 mkdir -p my-cluster/pki
-cp <custom-apiserver-rootca-cert-path> my-cluster/pki/ca.crt
-cp <custom-apiserver-rootca-key-path> my-cluster/pki/ca.key
+cp <CUSTOM_APISERVER_ROOTCA_CERT_PATH> my-cluster/pki/ca.crt
+cp <CUSTOM_APISERVER_ROOTCA_KEY_PATH> my-cluster/pki/ca.key
 chmod 644 my-cluster/pki/ca.crt
 chmod 600 my-cluster/pki/ca.key
 ----
@@ -137,8 +137,8 @@ chmod 600 my-cluster/pki/ca.key
 [source,bash]
 ----
 mkdir -p my-cluster/pki
-cp <custom-frontproxy-rootca-cert-path> my-cluster/pki/front-proxy-ca.crt
-cp <custom-frontproxy-rootca-key-path> my-cluster/pki/front-proxy-ca.key
+cp <CUSTOM_FRONTPROXY_ROOTCA_CERT_PATH> my-cluster/pki/front-proxy-ca.crt
+cp <CUSTOM_FRONTPROXY_ROOTCA_KEY_PATH> my-cluster/pki/front-proxy-ca.key
 chmod 644 my-cluster/pki/front-proxy-ca.crt
 chmod 600 my-cluster/pki/front-proxy-ca.key
 ----
@@ -148,8 +148,8 @@ chmod 600 my-cluster/pki/front-proxy-ca.key
 [source,bash]
 ----
 mkdir -p my-cluster/pki/etcd
-cp <custom-etcd-rootca-cert-path> my-cluster/pki/etcd/ca.crt
-cp <custom-etcd-rootca-key-path> my-cluster/pki/etcd/ca.key
+cp <CUSTOM_ETCD_ROOTCA_CERT_PATH> my-cluster/pki/etcd/ca.crt
+cp <CUSTOM_ETCD_ROOTCA_KEY_PATH> my-cluster/pki/etcd/ca.key
 chmod 644 my-cluster/pki/etcd/ca.crt
 chmod 600 my-cluster/pki/etcd/ca.key
 ----
@@ -200,7 +200,7 @@ run the following:
 +
 [source,bash]
 ----
-ssh <username>@<master-node-ip-address/fqdn>
+ssh <USERNAME>@<MASTER_NODE_IP_ADDRESS/FQDN>
 sudo kubeadm alpha certs renew all
 sudo reboot
 ----
@@ -209,7 +209,7 @@ sudo reboot
 +
 [source,bash]
 ----
-ssh <username>@<master-node-ip-address/fqdn>
+ssh <USERNAME>@<MASTER_NODE_IP_ADDRESS/FQDN>
 sudo cat /etc/kubernetes/admin.conf
 ----
 
@@ -225,7 +225,7 @@ cd /etc/kubernetes/pki
 ----
 +
 Sign the oidc-dex server certificate with the root CA `ca.crt/ca.key` and SAN
-as <control-plane-ip-address/fqdn>. Then update the {kube} cluster secret data
+as <CONTROL_PLANE_IP_ADDRESS/FQDN>. Then update the {kube} cluster secret data
 `ca.crt`, `tls.crt`, and `tls.key` with base64 encoded:
 +
 [source,bash]
@@ -243,7 +243,7 @@ cd /etc/kubernetes/pki
 ----
 +
 Sign the oidc-gangway server certificate with the root CA `ca.crt/ca.key` and SAN
-as <control-plane-ip-address/fqdn>. Then update the secret data `ca.crt`,
+as <CONTROL_PLANE_IP_ADDRESS/FQDN>. Then update the secret data `ca.crt`,
 `tls.crt`, and `tls.key` with base64 encoded.
 +
 [source,bash]

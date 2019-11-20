@@ -363,7 +363,7 @@ alertmanagerFiles:
       smtp_from: alertmanager@example.com
       smtp_smarthost: smtp.example.com:587
       smtp_auth_username: admin@example.com
-      smtp_auth_password: <password>
+      smtp_auth_password: <PASSWORD>
       smtp_require_tls: true
 
     route:
@@ -493,7 +493,7 @@ Create a file _grafana-config-values.yaml_ with the appropriate values
 +
 ----
 # Configure admin password
-adminPassword: <password>
+adminPassword: <PASSWORD>
 
 # Ingress configuration
 ingress:
@@ -636,7 +636,7 @@ The Prometheus upstream helm chart includes the following predefined jobs that w
 * kubernetes-service-endpoints: Get metrics from Services which have annotation `prometheus.io/scrape=true` in the metadata
 * kubernetes-pods: Get metrics from Pods which have annotation `prometheus.io/port=true` in the metadata
 
-If you wanna monitor new pods and services, you don't need to change `prometheus.yaml` but add annotation `prometheus.io/scrape=true`, `prometheus.io/port=<target-port>` and `prometheus.io/path=<metric-endpoint>` to your pods and services metadata. Prometheus will automatically scraped the target.
+If you wanna monitor new pods and services, you don't need to change `prometheus.yaml` but add annotation `prometheus.io/scrape=true`, `prometheus.io/port=<TARGET_PORT>` and `prometheus.io/path=<METRIC_ENDPOINT>` to your pods and services metadata. Prometheus will automatically scraped the target.
 
 === ETCD Cluster
 
