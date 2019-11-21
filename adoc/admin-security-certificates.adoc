@@ -281,7 +281,7 @@ cat /etc/kubernetes/pki.bak/oidc-dex-cert.yaml | grep tls.crt | awk '{print $2}'
 cat /etc/kubernetes/pki.bak/oidc-dex-cert.yaml | grep tls.key | awk '{print $2}' | base64 --decode | sudo tee /etc/kubernetes/pki.bak/oidc-dex.key > /dev/null
 ----
 +
-Sign the oidc-dex server certificate with the CA certificate/key `/etc/kubernetes/pki/ca.crt` and `/etc/kubernetes/pki/ca.key`, make sure that the signed server certificate SAN have to be the same as origin is. To get the origin SAN IP address(es) and DNS(s):
+Sign the oidc-dex server certificate with the CA certificate/key `/etc/kubernetes/pki/ca.crt` and `/etc/kubernetes/pki/ca.key`, make sure that the signed server certificate SAN is the same as the origin. To get the original SAN IP address(es) and DNS(s), run:
 +
 [source,bash]
 ----
