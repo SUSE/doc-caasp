@@ -304,7 +304,7 @@ sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf delete pod -lapp=oidc-gangw
 +
 [IMPORTANT]
 ====
-You need to generate kubelet server certificate for all the nodes, and the kubelet server key only exists on the control plane nodes. Therefore, after re-signed kubelet server certificate/key for worker nodes, you have to copy the worker nodes kubelet server certificate/key from control plane node.
+You need to generate kubelet server certificate for all the nodes on one of control plane nodes, because the kubelet CA certificate key only exists on the control plane nodes. Therefore, after generating re-signed kubelet server certificate/key for worker nodes, you have to copy each kubelet server certificate/key from the control plane node to the corresponding worker node.
 ====
 +
 Sign each node kubelet server certificate with the CA `kubelet-ca.crt/kubelet-ca.key` and SAN as origin was. Then update the kubelet server certificate and key file
