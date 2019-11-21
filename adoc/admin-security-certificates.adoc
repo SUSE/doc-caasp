@@ -345,7 +345,7 @@ Backup the original kubelet certificates and keys.
 sudo cp -r /var/lib/kubelet/pki /var/lib/kubelet/pki.bak
 ----
 +
-Sign each node kubelet server certificate with the CA certificate/key `/var/lib/kubelet/pki/kubelet-ca.crt` and `/var/lib/kubelet/pki/kubelet-ca.key`, make sure that the signed server certificate SAN have to be the same as origin is. To get the origin SAN IP address(es) and DNS(s):
+Sign each node kubelet server certificate with the CA certificate/key `/var/lib/kubelet/pki/kubelet-ca.crt` and `/var/lib/kubelet/pki/kubelet-ca.key`, make sure that the signed server certificate SAN is the same as the origin. To get the original SAN IP address(es) and DNS(s), run:
 +
 [source,bash]
 ----
