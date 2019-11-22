@@ -308,12 +308,18 @@ server:
 #serverFiles:
 #  prometheus.yml:
 ----
-
-. Deploy the upstream helm chart and pass our configuration values file.
+. Add SUSE helm charts repository
 +
 [source,bash]
 ----
-helm install --name prometheus stable/prometheus \
+helm repo add suse https://kubernetes-charts.suse.com
+----
++
+. Deploy SUSE prometheus helm chart and pass our configuration values file.
++
+[source,bash]
+----
+helm install --name prometheus suse/prometheus \
 --namespace monitoring \
 --values prometheus-config-values.yaml
 ----
@@ -434,7 +440,7 @@ serverFiles:
 . To apply the changed configuration, run:
 +
 ----
-helm upgrade prometheus stable/prometheus --namespace monitoring --values prometheus-config-values.yaml
+helm upgrade prometheus suse/prometheus --namespace monitoring --values prometheus-config-values.yaml
 ----
 . You should now be able to see your Alertmanager, depending on your network configuration
 * NodePort: https://prometheus-alertmanager.example.com:30443
@@ -528,12 +534,17 @@ sidecar:
     enabled: true
     label: grafana_dashboard
 ----
-
-. Deploy the upstream helm chart and pass our configuration values file
+. Add SUSE helm charts repository
 +
 [source,bash]
 ----
-helm install --name grafana stable/grafana \
+helm repo add suse https://kubernetes-charts.suse.com
+----
+. Deploy SUSE grafana helm chart and pass our configuration values file
++
+[source,bash]
+----
+helm install --name grafana suse/grafana \
 --namespace monitoring \
 --values grafana-config-values.yaml
 ----
@@ -627,7 +638,7 @@ kubectl apply -f grafana-dashboards-caasp-cluster.yaml
 
 === Prometheus Jobs
 
-The Prometheus upstream helm chart includes the following predefined jobs that will scrapes metrics from these jobs using service discovery.
+The Prometheus SUSE helm chart includes the following predefined jobs that will scrapes metrics from these jobs using service discovery.
 
 * prometheus: Get metrics from prometheus server
 * kubernetes-apiservers: Get metrics from {kube} apiserver
@@ -752,7 +763,7 @@ server:
 +
 [source,bash]
 ----
-helm upgrade prometheus stable/prometheus \
+helm upgrade prometheus suse/prometheus \
 --namespace monitoring \
 --values prometheus-config-values.yaml
 ----
