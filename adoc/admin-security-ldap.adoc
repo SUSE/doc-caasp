@@ -214,8 +214,10 @@ Example LDIF configuration to create group `k8s-users` using an LDAP command:
   dn: cn=k8s-users,ou=Groups,dc=example,dc=org
   changetype: add
   gidNumber: 500
+  objectClass: groupOfNames
   objectClass: posixGroup
   cn: k8s-users
+  ou: Groups
   memberUid: user-regular1
   memberUid: user-regular2
 ====
@@ -226,8 +228,10 @@ Example LDIF configuration to create group `k8s-admins` using an LDAP command:
   dn: cn=k8s-admins,ou=Groups,dc=example,dc=org
   changetype: add
   gidNumber: 100
+  objectClass: groupOfNames
   objectClass: posixGroup
   cn: k8s-admins
+  ou: Groups
   memberUid: user-admin
 ====
 
@@ -275,13 +279,8 @@ connectors:
     # server provides access for anonymous auth.
     # Please note that if the bind password contains a `$`, it has to be saved in an
     # environment variable which should be given as the value to `bindPW`.
-<<<<<<< HEAD
-    bindDN: cn=user-admin,ou=Users,dc=example,dc=org
-    bindPW: <BIND_DN_PASSWORD>
-=======
     bindDN: cn=Directory Manager
     bindPW: <Password of Bind DN>
->>>>>>> Make changes to conform updated entrypoint and fix #496, #497, #499, #500
 
     # The attribute to display in the provided password prompt. If unset, will
     # display "Username"
@@ -300,7 +299,7 @@ connectors:
       username: mail
       # The following three fields are direct mappings of attributes on the user entry.
       # String representation of the user.
-      idAttr: dn
+      idAttr: DN
       # Required. Attribute to map to Email.
       emailAttr: mail
       # Maps to display name of users. No default value.
@@ -317,7 +316,7 @@ connectors:
       # Following two fields are used to match a user to a group. It adds an additional
       # requirement to the filter that an attribute in the group must match the user's
       # attribute value.
-      userAttr: dn
+      userAttr: uid
       groupAttr: memberUid
 
       # Represents group name.
@@ -443,12 +442,8 @@ Example LDIF configuration to create group `k8s-admins` using an LDAP command:
 ====
 
 ==== Example 2: Dex Active Directory TLS Connector Configuration
-<<<<<<< HEAD
 Run `kubectl --namespace=kube-system edit configmap oidc-dex-config` to edit Dex ConfigMap.
 Configure Dex ConfigMap to use Active Directory using the following template:
-=======
-Dex connector template configured to use Active Directory:
->>>>>>> Make changes to conform updated entrypoint and fix #496, #497, #499, #500
 ----
 connectors:
 - type: ldap

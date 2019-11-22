@@ -112,27 +112,21 @@ The following is an *example LDAP connector:*
     name: 389ds
     config:
       host: ldap.example.org:636
-<<<<<<< HEAD
-      rootCAData: <BASE64_ENCODED_PEM_FILE>
-      bindDN: cn=user-admin,ou=Users,dc=example,dc=org
-      bindPW: <BIND_DN_PASSWORD>
-=======
       rootCAData: <base64 encoded PEM file>
       bindDN: cn=Directory Manager
       bindPW: <Password of Bind DN>
->>>>>>> Make changes to conform updated entrypoint and fix #496, #497, #499, #500
       usernamePrompt: Email Address
       userSearch:
         baseDN: ou=Users,dc=example,dc=org
         filter: "(objectClass=person)"
         username: mail
-        idAttr: dn
+        idAttr: DN
         emailAttr: mail
         nameAttr: cn
       groupSearch:
         baseDN: ou=Groups,dc=example,dc=org
         filter: "(objectClass=groupOfNames)"
-        userAttr: dn
+        userAttr: uid
         groupAttr: memberUid
         nameAttr: cn
 ====
