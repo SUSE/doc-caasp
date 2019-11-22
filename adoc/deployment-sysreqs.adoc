@@ -47,15 +47,18 @@ In order to deploy and control a {productname} cluster you will need at least on
 machine capable of running `skuba`. This typically is a regular desktop workstation or laptop
 running SLE 15 SP1 or later.
 
-[NOTE]
-====
 The `skuba` CLI package is available from the {productname} module.
 You will need a valid {sle} and {productname} subscription to install this tool on the workstation.
-====
 
-.Storage Sizing
+
+.Time Synchronization
 [IMPORTANT]
 ====
+It is vital that the management workstation runs an NTP client and that time synchronization is configured to the same NTP servers, which you will use later to synchronize the cluster nodes.
+====
+
+==== Storage Sizing
+
 The storage sizes in the following lists are absolute minimum configurations.
 
 Sizing of the storage for worker nodes depends largely on the expected amount of container images, their size and change rate.
@@ -63,9 +66,9 @@ The basic operating system for all nodes might also include snapshots (when usin
 
 We recommend provisioning a separate storage partition for container images on each (worker) node that can be adjusted in size when needed.
 Storage for `/var/lib/containers` on the worker nodes should be approximately 50GB in addition to the base OS storage.
-====
 
-==== Master Nodes
+
+===== Master Nodes
 
 Up to 5 worker nodes *(minimum)*:
 
@@ -101,7 +104,7 @@ Using a minimum of 2 (v)CPUs is a hard requirement, deploying
 a cluster with less processing units is not possible.
 ====
 
-==== Worker nodes
+===== Worker nodes
 
 [IMPORTANT]
 ====
