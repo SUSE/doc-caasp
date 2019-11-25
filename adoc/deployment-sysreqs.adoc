@@ -168,7 +168,7 @@ Please plan generously for workload and the expected size of the networks before
 The default pod subnet is `10.244.0.0/16`. It allows for 65536 IP addresses overall.
 Assignment of CIDR's is by default `/24` (254 usable IP addresses per node).
 
-The default node allocation of `/24` means a hard cluster node limit of 254 since this is the number of `/24` ranges that fit in a `/16` range.
+The default node allocation of `/24` means a hard cluster node limit of 256 since this is the number of `/24` ranges that fit in a `/16` range.
 
 Depending on the size of the nodes that you are planning to use (in terms of resources), or on the number of nodes you are planning to have,
 the CIDR can be adjusted to be bigger on a per node basis but the cluster would accommodate less nodes overall.
