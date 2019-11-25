@@ -159,6 +159,30 @@ The management workstation needs at least the following networking permissions:
 * Access to the `apiserver` (the load balancer should expose it, port `6443`), that will in turn talk to any master in the cluster
 * Access to Dex on the configured `NodePort` (the load balancer should expose it, port `32000`) so when the OIDC token has expired, `kubectl` can request a new token using the refresh token
 
+==== Sub-Network Sizing
+
+[IMPORTANT]
+====
+The service subnet and pod subnet must not overlap.
+
+Please plan generously for workload and the expected size of the networks before bootstrapping.
+====
+
+The default pod subnet is `10.244.0.0/16`. It allows for 65536 IP addresses overall.
+Assignment of CIDR's is by default `/24` (254 usable IP addresses per node).
+
+The default node allocation of `/24` means a hard cluster node limit of 256 since this is the number of `/24` ranges that fit in a `/16` range.
+
+Depending on the size of the nodes that you are planning to use (in terms of resources), or on the number of nodes you are planning to have,
+the CIDR can be adjusted to be bigger on a per node basis but the cluster would accommodate less nodes overall.
+
+If you are planning to use more or less pods per node or have a higher number of nodes, you can adjust these settings to match your requirements.
+Please make sure that the networks are suitably sized to adjust to future changes in the cluster.
+
+You can also adjust the service subnet size, this subnet must not overlap with the pod CIDR, and it should be big enough to accommodate all services.
+
+For more advanced network requirements please refer to: https://docs.cilium.io/en/v1.6/concepts/ipam/#address-management
+
 ==== Ports
 
 [cols="3*.^,.^,.>"",options="header,autowidth"]
