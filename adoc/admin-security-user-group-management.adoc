@@ -24,11 +24,11 @@ ou: OU_NAME
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
 LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
-BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
+BIND_DN="cn=Directory Manager"                  # Admin User
 LDIF_FILE=./create_ou_groups.ldif               # LDIF Configuration File
-ROOT_PASSWORD=                                  # Admin Password
+DS_DM_PASSWORD=                                 # Admin Password
 
-ldapmodify -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D "<BIND_DN>" -f <LDIF_FILE> -w <ROOT_PASSWORD>
+ldapmodify -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D "<BIND_DN>" -f <LDIF_FILE> -w <DS_DM_PASSWORD>
 ----
 
 == Removing an Organizational Unit
@@ -47,11 +47,11 @@ changetype: delete
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
 LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
-BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
+BIND_DN="cn=Directory Manager"                  # Admin User
 LDIF_FILE=./delete_ou_groups.ldif               # LDIF Configuration File
-ROOT_PASSWORD=                                  # Admin Password
+DS_DM_PASSWORD=                                 # Admin Password
 
-ldapmodify -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D "<BIND_DN>" -f <LDIF_FILE> -w <ROOT_PASSWORD>
+ldapmodify -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D "<BIND_DN>" -f <LDIF_FILE> -w <DS_DM_PASSWORD>
 ----
 
 == Adding a New Group to an Organizational Unit
@@ -62,7 +62,7 @@ ldapmodify -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D "<BIN
 dn: cn=GROUP,ou=OU_NAME,dc=example,dc=org
 changetype: add
 objectClass: top
-objectClass: groupOfUniqueNames
+objectClass: groupOfNames
 gidNumber: GROUPID
 cn: GROUP
 ----
@@ -76,11 +76,11 @@ cn: GROUP
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
 LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
-BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
+BIND_DN="cn=Directory Manager"                  # Admin User
 LDIF_FILE=./create_groups.ldif                  # LDIF Configuration File
-ROOT_PASSWORD=                                  # Admin Password
+DS_DM_PASSWORD=                                 # Admin Password
 
-ldapmodify -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D "<BIND_DN>" -f <LDIF_FILE> -w <ROOT_PASSWORD>
+ldapmodify -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D "<BIND_DN>" -f <LDIF_FILE> -w <DS_DM_PASSWORD>
 ----
 
 == Removing a Group from an Organizational Unit
@@ -100,11 +100,11 @@ changetype: delete
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
 LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
-BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
+BIND_DN="cn=Directory Manager"                  # Admin User
 LDIF_FILE=./delete_ou_groups.ldif               # LDIF Configuration File
-ROOT_PASSWORD=                                  # Admin Password
+DS_DM_PASSWORD=                                 # Admin Password
 
-ldapmodify -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D "<BIND_DN>" -f <LDIF_FILE> -w <ROOT_PASSWORD>
+ldapmodify -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D "<BIND_DN>" -f <LDIF_FILE> -w <DS_DM_PASSWORD>
 ----
 
 === Adding a New User
@@ -126,10 +126,18 @@ mail: E-MAIL_ADDRESS
 +
 * USERID: User ID (UID) of the new user. This value must be a unique number.
 * OU_NAME: organizational unit name
-* PASSWORD_HASH: The user's hashed password. Use `/usr/sbin/slappasswd` to generate the SSHA hash.
+* PASSWORD_HASH: The user's hashed password.SSHA_PASSWORD: The user's new hashed password. 
++
+Use `/usr/sbin/slappasswd` to generate the SSHA hash.
 +
 ----
 /usr/sbin/slappasswd -h {SSHA} -s <USER_PASSWORD>
+----
++
+Use `/usr/bin/pwdhash` to generate the SSHA hash.
++
+----
+/usr/bin/pwdhash -s SSHA $ <USER_PASSWORD>
 ----
 * FIRST_NAME: The user's first name
 * SURNAME: The user's last name
@@ -141,12 +149,12 @@ mail: E-MAIL_ADDRESS
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
 LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
-BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
+BIND_DN="cn=Directory Manager"                  # Admin User
 LDIF_FILE=./new_user.ldif                       # LDIF Configuration File
-ROOT_PASSWORD=                                  # Admin Password
+DS_DM_PASSWORD=                                 # Admin Password
 
 ldapadd -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D
-"<BIND_DN>" -f <LDIF_FILE> -w <ROOT_PASSWORD>
+"<BIND_DN>" -f <LDIF_FILE> -w <DS_DM_PASSWORD>
 ----
 
 
@@ -160,21 +168,43 @@ LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
 LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
 USERID=user1
 BASE_DN="uid=<USERID>,dc=example,dc=org"
-BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
-ROOT_PASSWORD=                                  # Admin Password
+BIND_DN="cn=Directory Manager"                  # Admin User
+DS_DM_PASSWORD=                                 # Admin Password
 
 ldapsearch -v -x -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -b
-"<BASE_DN>" -D "<BIND_DN>" -w <ROOT_PASSWORD>
+"<BASE_DN>" -D "<BIND_DN>" -w <DS_DM_PASSWORD>
 ----
 
 === Modifying a User
 
 The following procedure shows how to modify a user in the LDAP server.
-See the LDIF files for examples of how to change a user password and add a user to the
+See the LDIF files for examples of how to change rootdn password, a user password and add a user to the
 `Administrators` group.
 To modify other fields, you can use the password example, replacing `userPassword`
 with other field names you want to change.
 
+. Create an LDIF file (`modify_rootdn.ldif`), which contains the change to the LDAP server:
++
+----
+dn: cn=config
+changetype: modify
+replace: nsslapd-rootpw
+nsslapd-rootpw: NEW_PASSWORD
+----
++
+* NEW_PASSWORD: The user's new hashed password. Use `/usr/sbin/slappasswd` to generate the SSHA hash.
++
+Use `/usr/sbin/slappasswd` to generate the SSHA hash.
++
+----
+/usr/sbin/slappasswd -h {SSHA} -s <USER_PASSWORD>
+----
++
+Use `/usr/bin/pwdhash` to generate the SSHA hash.
++
+----
+/usr/bin/pwdhash -s SSHA $ <USER_PASSWORD>
+----
 . Create an LDIF file (`modify_user.ldif`), which contains the change to the LDAP server:
 +
 ----
@@ -188,8 +218,16 @@ userPassword: NEW_PASSWORD
 * OU_NAME: organizational unit name
 * NEW_PASSWORD: The user's new hashed password. Use `/usr/sbin/slappasswd` to generate the SSHA hash.
 +
+Use `/usr/sbin/slappasswd` to generate the SSHA hash.
++
 ----
 /usr/sbin/slappasswd -h {SSHA} -s <USER_PASSWORD>
+----
++
+Use `/usr/bin/pwdhash` to generate the SSHA hash.
++
+----
+/usr/bin/pwdhash -s SSHA $ <USER_PASSWORD>
 ----
 . Add the user to the `Administrators` group:
 +
@@ -207,12 +245,12 @@ uniqueMember: uid=USERID,ou=OU_NAME,dc=example,dc=org
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
 LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
-BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
+BIND_DN="cn=Directory Manager"                  # Admin User
 LDIF_FILE=./modify_user.ldif                    # LDIF Configuration File
-ROOT_PASSWORD=                                  # Admin Password
+DS_DM_PASSWORD=                                 # Admin Password
 
 ldapmodify -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D
-"<BIND_DN>" -f <LDIF_FILE> -w <ROOT_PASSWORD>
+"<BIND_DN>" -f <LDIF_FILE> -w <DS_DM_PASSWORD>
 ----
 
 === Deleting a User
@@ -234,9 +272,24 @@ changetype: delete
 LDAP_PROTOCOL=ldap                              # ldap, ldaps
 LDAP_NODE_FQDN=localhost                        # FQDN of 389 Directory Server
 LDAP_NODE_PROTOCOL=:389                         # Non-TLS (:389), TLS (:636)
-BIND_DN="cn=admin,dc=example,dc=org"            # Admin User
+BIND_DN="cn=Directory Manager"                  # Admin User
 LDIF_FILE=./delete_user.ldif                    # LDIF Configuration File
-ROOT_PASSWORD=                                  # Admin Password
+DS_DM_PASSWORD=                                 # Admin Password
 
-ldapmodify -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D "<BIND_DN>" -f <LDIF_FILE> -w <ROOT_PASSWORD>
+ldapmodify -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL> -D "<BIND_DN>" -f <LDIF_FILE> -w <DS_DM_PASSWORD>
+----
+
+=== Changing Your own LDAP Password from CLI
+
+To perform a change to your own user password from CLI.
+
+----
+LDAP_PROTOCOL=ldap                                  # ldap, ldaps
+LDAP_NODE_FQDN=localhost                            # FQDN of 389 Directory Server
+LDAP_NODE_PROTOCOL=:389                             # Non-TLS (:389), TLS (:636)
+BIND_DN=                                            # User's binding dn
+DS_DM_PASSWORD=                                     # Old Password
+NEW_DS_DM_PASSWORD=                                 # New Password
+
+ldappasswd -v -H <LDAP_PROTOCOL>://<LDAP_NODE_FQDN><LDAP_NODE_PROTOCOL>  -x -D "<BIND_DN>" -w <DS_DM_PASSWORD> -a <DS_DM_PASSWORD> -s <NEW_DS_DM_PASSWORD>
 ----
