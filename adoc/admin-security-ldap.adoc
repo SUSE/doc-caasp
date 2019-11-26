@@ -1,13 +1,13 @@
 = Configuring an External LDAP Server
 
-{productname} supports user authentication via an external LDAP server like 389
-Directory Server and Active Directory by updating the built-in Dex LDAP connector configuration.
+{productname} supports user authentication via an external LDAP server like "389
+Directory Server" (389-ds) and "Active Directory" by updating the built-in Dex LDAP connector configuration.
 
 == Deploying an External 389 Directory Server
 
 The 389 Directory Server image `registry.suse.com/caasp/v4/389-ds:1.4.0`
 will *automatically generate a self-signed certificate* and key.
-The following instructions show how to deploy the 389 Directory Server
+The following instructions show how to deploy the "389 Directory Server"
 with a customized configuration using container commands.
 
 . Prepare the customized 389 Directory configuration and enter it
@@ -19,18 +19,18 @@ DS_SUFFIX="dc=example,dc=org"                   # Domain Suffix
 DATA_DIR=<PWD>/389_ds_data                      # Directory Server Data on Host Machine to Mount
 ----
 
-. Execute the following `docker` command to deploy the 389 Directory Server in the same terminal.
-This will start a non-TLS port (389) and a TLS port (636) together with an
+. Execute the following `docker` command to deploy 389-ds in the same terminal.
+This will start a non-TLS port (`389`) and a TLS port (`636`) together with an
 automatically self-signed certificate and key.
 +
 ----
 docker run -d \
-	-p 389:3389 \
-	-p 636:636 \
-	-e DS_DM_PASSWORD=<DS_DM_PASSWORD> \
-	-e DS_SUFFIX=<DS_SUFFIX> \
-	-v <DATA_DIR>:/data \
-	--name 389-ds registry.suse.com/caasp/v4/389-ds:1.4.0
+-p 389:3389 \
+-p 636:636 \
+-e DS_DM_PASSWORD=<DS_DM_PASSWORD> \
+-e DS_SUFFIX=<DS_SUFFIX> \
+-v <DATA_DIR>:/data \
+--name 389-ds registry.suse.com/caasp/v4/389-ds:1.4.0
 ----
 
 == Deploying a 389 Directory Server with an External Certificate
@@ -44,9 +44,9 @@ docker stop 389-ds
 ----
 
 . Copy the external certificate `Server-Cert-Key.pem`, `Server-Cert.crt`, and `pwdfile-import.txt` to a mounted data directory `<DATA_DIR>/config/`.
-- Server-Cert-Key.pem: PRIVATE KEY.
-- Server-Cert.crt: CERTIFICATE.
-- pwdfile-import.txt: Password for the PRIVATE KEY.
+- `Server-Cert-Key.pem`: PRIVATE KEY.
+- `Server-Cert.crt`: CERTIFICATE.
+- `pwdfile-import.txt`: Password for the PRIVATE KEY.
 . Execute the `docker` command to run the 389 Directory Server with a mounted data
 directory from the previous step:
 +
@@ -54,18 +54,20 @@ directory from the previous step:
 docker start 389-ds
 ----
 
-Known Issues:
+=== Known Issues
 
-- The error message is actually a warning for 1.4.0 389ds when replace external certificates. 
+- This error message is actually a warning for 389-ds version `1.4.0` when replacing external certificates.
 +
 ----
 ERR - attrcrypt_cipher_init - No symmetric key found for cipher AES in backend exampleDB, attempting to create one...
 INFO - attrcrypt_cipher_init - Key for cipher AES successfully generated and stored
 ERR - attrcrypt_cipher_init - No symmetric key found for cipher 3DES in backend exampleDB, attempting to create one...
-INFO - attrcrypt_cipher_init - Key for cipher 3DES successfully generated and stored 
+INFO - attrcrypt_cipher_init - Key for cipher 3DES successfully generated and stored
 ----
 +
-It is due to encrypted the key is stored in the `dse.ldif`. When replacing the key and certificate in `/data/config`, 389ds will search in `dse.ldif` for symmetric key and create one if not exist. Per 389ds plan, there is a fix planned but it's to to rely on the `nssdb` material solely.
+It is due to the encrypted key being stored in the `dse.ldif`.
+When replacing the key and certificate in `/data/config`, 389ds will search in `dse.ldif` for a symmetric key and create one if it does not exist.
+389-ds developers are planning a fix that switches 389-ds to use the `nssdb` exclusively.
 
 == Examples of Usage
 
@@ -154,7 +156,7 @@ Example LDIF configuration to create user `user-regular1` using an LDAP command:
   homeDirectory: /home/regular1
   cn: User Regular1
 ====
-SSHA_PASSWORD: The user's new hashed password. 
+SSHA_PASSWORD: The user's new hashed password.
 Use `/usr/sbin/slappasswd` to generate the SSHA hash.
 ----
 /usr/sbin/slappasswd -h {SSHA} -s <USER_PASSWORD>
@@ -183,7 +185,7 @@ Example LDIF configuration to create user `user-regular2` using an LDAP command:
   homeDirectory: /home/regular2
   cn: User Regular2
 ====
-SSHA_PASSWORD: The user's new hashed password. 
+SSHA_PASSWORD: The user's new hashed password.
 Use `/usr/sbin/slappasswd` to generate the SSHA hash.
 ----
 /usr/sbin/slappasswd -h {SSHA} -s <USER_PASSWORD>
@@ -212,7 +214,7 @@ Example LDIF configuration to create user `user-admin` using an LDAP command:
   homeDirectory: /home/admin
   cn: User Admin
 ====
-SSHA_PASSWORD: The user's new hashed password. 
+SSHA_PASSWORD: The user's new hashed password.
 Use `/usr/sbin/slappasswd` to generate the SSHA hash.
 ----
 /usr/sbin/slappasswd -h {SSHA} -s <USER_PASSWORD>
