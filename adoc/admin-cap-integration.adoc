@@ -21,16 +21,7 @@ sudo systemctl reboot
 ----
 * The {productname} cluster has no restrictions for {cap} ports.
 For more details refer to the {cap} documentation: https://www.suse.com/documentation/cloud-application-platform-1/book-cap-guides/data/book-cap-guides.html.
-* `Helm` and `Tiller` are installed on the node where you run the `skuba` and `kubectl` commands.
-+
-----
-sudo zypper install helm
-
-kubectl create serviceaccount --namespace kube-system tiller
-kubectl create clusterrolebinding tiller --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
-
-helm init --tiller-image registry.suse.com/caasp/v4/helm-tiller:{helm_tiller_version} --service-account tiller
-----
+* `Helm` and `Tiller` are installed on the node where you run the `skuba` and `kubectl` commands. For instructions on how to install Helm and Tiller refer to <<helm_tiller_install>>.
 
 == Procedures
 . Create a storage class. For precise steps, refer to <<_RBD-dynamic-persistent-volumes>>.
