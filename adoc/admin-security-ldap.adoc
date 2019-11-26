@@ -54,6 +54,19 @@ directory from the previous step:
 docker start 389-ds
 ----
 
+Known Issues:
+
+- The error message is actually a warning for 1.4.0 389ds when replace external certificates. 
++
+----
+ERR - attrcrypt_cipher_init - No symmetric key found for cipher AES in backend exampleDB, attempting to create one...
+INFO - attrcrypt_cipher_init - Key for cipher AES successfully generated and stored
+ERR - attrcrypt_cipher_init - No symmetric key found for cipher 3DES in backend exampleDB, attempting to create one...
+INFO - attrcrypt_cipher_init - Key for cipher 3DES successfully generated and stored 
+----
++
+It is due to encrypted the key is stored in the `dse.ldif`. When replacing the key and certificate in `/data/config`, 389ds will search in `dse.ldif` for symmetric key and create one if not exist. Per 389ds plan, there is a fix planned but it's to to rely on the `nssdb` material solely.
+
 == Examples of Usage
 
 In both directories, `user-regular1` and `user-regular2` are members of the `k8s-users` group,
