@@ -259,7 +259,7 @@ You can use wildcard certificates to cover the entire hostname.
 The certificates can be replaced with the self-signed certificate, or you can re-use the certificates created by {rmt} during the setup of the mirror servers.
 
 Place the certificate, CA certificate and key file in ``/etc/rmt/ssl/``
-as ``rmt-server.cert``, ``rmt-ca.cert``, and ``rmt-server.key``.
+as ``rmt-server.crt``, ``rmt-ca.cert``, and ``rmt-server.key``.
 
 These certificates can be re-used by all three mirror services.
 
@@ -556,7 +556,7 @@ Registry: Configuration]
 . Start the registry container.
 +
 ----
-sudo docker run -d -p 5000:5000 --restart=always --name registry \
+sudo docker run -d -p 5000:5000 -v /etc/rmt/ssl:/etc/rmt/ssl:ro --restart=always --name registry \
 -v /etc/docker/registry:/etc/docker/registry:ro \
 -v /var/lib/registry:/var/lib/registry registry.suse.com/sles12/registry:2.6.2
 ----
@@ -602,7 +602,7 @@ http:
   headers:
     X-Content-Type-Options: [nosniff]
   tls:
-    certificate: /etc/rmt/ssl/rmt-server.cert
+    certificate: /etc/rmt/ssl/rmt-server.crt
     key: /etc/rmt/ssl/rmt-server.key
 health:
   storagedriver:
@@ -616,7 +616,7 @@ Registry: Configuration]
 . Start the registry container.
 +
 ----
-sudo docker run -d -p 5000:5000 --restart=always --name registry \
+sudo docker run -d -p 5000:5000 -v /etc/rmt/ssl:/etc/rmt/ssl:ro --restart=always --name registry \
 -v /etc/docker/registry:/etc/docker/registry:ro \
 -v /var/lib/registry:/var/lib/registry registry.suse.com/sles12/registry:2.6.2
 ----
