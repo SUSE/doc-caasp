@@ -97,10 +97,9 @@ sudo zypper in ceph-common xfsprogs
 == {kube} stack
 
 [[helm_tiller_install]]
-=== Installing Helm and Tiller
+=== Installing Helm
 
-- As of {productname} {productversion},
-Helm is part of the {productname} package repository, so to use Centralized Logging,
+As of {productname} 4.0.2, Helm is part of the {productname} package repository, so to use this,
 you only need to run the following command from the location where you normally run `skuba` commands:
 
 [source,bash]
@@ -108,18 +107,96 @@ you only need to run the following command from the location where you normally 
 sudo zypper install helm
 ----
 
-- As of {productname} {productversion}, Tiller is not part of the {productname} package repository,
-so to install the Tiller container image, run:
+=== Installing Tiller
 
-[source,bash,subs="attributes"]
+As of {productname} 4.0.2, Tiller is not part of the {productname} package repository but it is available as a
+helm chart from the chart. To install the Tiller server, choose either way to deploy the Tiller server:
+
+==== Unsecured Tiller Deployment
+
+This will install Tiller without additional certificate security.
+
+[source,bash]
+----
+kubectl create serviceaccount --namespace kube-system tiller
+
+kubectl create clusterrolebinding tiller \
+--clusterrole=cluster-admin \
+--serviceaccount=kube-system:tiller
+
+helm init --tiller-image registry.suse.com/caasp/v4/helm-tiller:{helm_tiller_version} \
+--service-account tiller
+----
+
+==== Secured Tiller Deployment with SSL/TLS
+
+This installs tiller with SSL/TLS certificate security.
+
+. Prepare CA certificate
++
+In some cases you want to create self-signed certificates for testing purpose. This is not recommended for the production environment. If you are using proper CA signed certificates or using existed {kube} cluster CA certificates, you could skip this step.
++
+[source,bash]
+----
+openssl genrsa -out ca.key 2048
+openssl req -key ca.key -new -x509 -days 3650 -sha256 -out ca.crt -extensions v3_ca
+----
+
+. Prepare Tiller server certificate
++
+[source,bash]
+----
+openssl genrsa -out tiller.key 2048
+openssl req -key tiller.key -new -sha256 -out tiller.csr
+openssl x509 -req -CA ca.crt -CAkey ca.key -CAcreateserial -in tiller.csr -out tiller.crt -days 365
+----
+
+. Prepare Helm client certificate
++
+[source,bash]
+----
+openssl genrsa -out helm.key 2048
+openssl req -key helm.key -new -sha256 -out helm.csr
+openssl x509 -req -CA ca.crt -CAkey ca.key -CAcreateserial -in helm.csr -out helm.crt -days 365
+----
+
+. Deploy Tiller server with SSL/TLS
++
+[source,bash]
 ----
 kubectl create serviceaccount --namespace kube-system tiller
 kubectl create clusterrolebinding tiller --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
 
-helm init --tiller-image registry.suse.com/caasp/v4/helm-tiller:{helm_tiller_version} --service-account tiller
+helm init --tiller-tls --tiller-tls-verify --tiller-tls-cert tiller.crt \
+--tiller-tls-key tiller.key --tls-ca-cert ca.crt \
+--tiller-image registry.suse.com/caasp/v4/helm-tiller:{helm_tiller_version} \
+--service-account tiller
+----
+
+. Configure Helm client with SSL/TLS
++
+Setup $HELM_HOME environment and copy the CA certificate, helm client certificate and key to the $HELM_HOME path.
++
+[source,bash]
+----
+export HELM_HOME=<path/to/helm/home>
+
+cp ca.crt $HELM_HOME/ca.pem
+cp helm.crt $HELM_HOME/cert.pem
+cp helm.key $HELM_HOME/key.pem
+----
++
+Then, for helm commands, pass flag `--tls`. For example:
+[source,bash]
++
+----
+helm ls --tls [flags]
+helm install --tls <CHART> [flags]
+helm upgrade --tls <RELEASE_NAME> <CHART> [flags]
+helm del --tls <RELEASE_NAME> [flags]
 ----
 
 ////
 Note: When Helm is included in v4, Tiller server will be automatically installed after CaaS Platform setup.
-So we probably  just need to mention that we use it and that it's installed automatically.
+So we probably just need to mention that we use it and that it's installed automatically.
 ////

@@ -21,16 +21,7 @@ sudo systemctl reboot
 ----
 * The {productname} cluster has no restrictions for {cap} ports.
 For more details refer to the {cap} documentation: https://www.suse.com/documentation/cloud-application-platform-1/book-cap-guides/data/book-cap-guides.html.
-* `Helm` and `Tiller` are installed on the node where you run the `skuba` and `kubectl` commands.
-+
-----
-sudo zypper install helm
-
-kubectl create serviceaccount --namespace kube-system tiller
-kubectl create clusterrolebinding tiller --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
-
-helm init --tiller-image registry.suse.com/caasp/v4/helm-tiller:{helm_tiller_version} --service-account tiller
-----
+* `Helm` and `Tiller` are installed on the node where you run the `skuba` and `kubectl` commands. For instructions on how to install Helm and Tiller refer to <<helm_tiller_install>>.
 
 == Procedures
 . Create a storage class. For precise steps, refer to <<_RBD-dynamic-persistent-volumes>>.
@@ -41,13 +32,13 @@ helm init --tiller-image registry.suse.com/caasp/v4/helm-tiller:{helm_tiller_ver
 helm repo add suse https://kubernetes-charts.suse.com/
 ----
 
-. Map the {productname} master node external IP address to the `<cap-domain>` and
-`uaa.<cap-domain>` on your DNS server.
+. Map the {productname} master node external IP address to the `<CAP_DOMAIN>` and
+`uaa.<CAP_DOMAIN>` on your DNS server.
 For testing purposes you can also use `/etc/hosts`.
 +
 ----
-<caasp_master_node_external_ip>	<caasp_master_node_external_ip>.omg.howdoi.website
-<caasp_master_node_external_ip>	uaa.<caasp_master_node_external_ip>.omg.howdoi.website
+<CAASP_MASTER_NODE_EXTERNAL_IP>	<CAASP_MASTER_NODE_EXTERNAL_IP>.omg.howdoi.website
+<CAASP_MASTER_NODE_EXTERNAL_IP>	uaa.<CAASP_MASTER_NODE_EXTERNAL_IP>.omg.howdoi.website
 ----
 
 . Create a shared value file. This will be used for CAP `uaa`, `cf`, and
@@ -56,21 +47,21 @@ For testing purposes you can also use `/etc/hosts`.
 ----
 cat << *EOF* > custom_values.yaml
 env:
-  DOMAIN: <cap-domain>
-  UAA_HOST: uaa.<cap-domain>
+  DOMAIN: <CAP_DOMAIN>
+  UAA_HOST: uaa.<CAP_DOMAIN>
 
 kube:
   external_ips:
-  - <caasp_master_node_external_ip>
-  - <caasp_master_node_internal_ip>
+  - <CAASP_MASTER_NODE_EXTERNAL_IP>
+  - <CAASP_MASTER_NODE_INTERNAL_IP>
   storage_class:
-    persistent: <storage_class_name>
+    persistent: <STORAGE_CLASS_NAME>
 
 secrets:
   # CLUSTER_ADMIN_PASSWORD is for user login access
-  CLUSTER_ADMIN_PASSWORD: <secure_password>
+  CLUSTER_ADMIN_PASSWORD: <SECURE_PASSWORD>
   # UAA_ADMIN_CLIENT_SECRET is for OAuth client
-  UAA_ADMIN_CLIENT_SECRET: <secure_secret>
+  UAA_ADMIN_CLIENT_SECRET: <SECURE_SECRET>
 *EOF*
 ----
 
@@ -90,7 +81,7 @@ uaa-0                       1/1     Running     1          21h
 . Verify uaa OAuth -- this should return a JSON object:
 +
 ----
-curl --insecure https://uaa.<cap-domain>:2793/.well-known/openid-configuration
+curl --insecure https://uaa.<CAP_DOMAIN>:2793/.well-known/openid-configuration
 ----
 
 . Deploy `cf`:
@@ -146,5 +137,5 @@ volume-migration-1-s96cc     0/1     Completed   0          54m
 ----
 
 A successful deployment allows you to access {cap} console via a Web browser at
-https://<domain-name>:8443/login. The default username is admin and the password
-is the `secure_password` you have set in one of the steps above.
+https://<DOMAIN_NAME>:8443/login. The default username is admin and the password
+is the `<SECURE_PASSWORD>` you have set in one of the steps above.

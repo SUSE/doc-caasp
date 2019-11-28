@@ -47,15 +47,18 @@ In order to deploy and control a {productname} cluster you will need at least on
 machine capable of running `skuba`. This typically is a regular desktop workstation or laptop
 running SLE 15 SP1 or later.
 
-[NOTE]
-====
 The `skuba` CLI package is available from the {productname} module.
 You will need a valid {sle} and {productname} subscription to install this tool on the workstation.
-====
 
-.Storage Sizing
+
+.Time Synchronization
 [IMPORTANT]
 ====
+It is vital that the management workstation runs an NTP client and that time synchronization is configured to the same NTP servers, which you will use later to synchronize the cluster nodes.
+====
+
+==== Storage Sizing
+
 The storage sizes in the following lists are absolute minimum configurations.
 
 Sizing of the storage for worker nodes depends largely on the expected amount of container images, their size and change rate.
@@ -63,9 +66,9 @@ The basic operating system for all nodes might also include snapshots (when usin
 
 We recommend provisioning a separate storage partition for container images on each (worker) node that can be adjusted in size when needed.
 Storage for `/var/lib/containers` on the worker nodes should be approximately 50GB in addition to the base OS storage.
-====
 
-==== Master Nodes
+
+===== Master Nodes
 
 Up to 5 worker nodes *(minimum)*:
 
@@ -101,7 +104,7 @@ Using a minimum of 2 (v)CPUs is a hard requirement, deploying
 a cluster with less processing units is not possible.
 ====
 
-==== Worker nodes
+===== Worker nodes
 
 [IMPORTANT]
 ====
@@ -155,6 +158,30 @@ The management workstation needs at least the following networking permissions:
 * SSH access to all machines in the cluster
 * Access to the `apiserver` (the load balancer should expose it, port `6443`), that will in turn talk to any master in the cluster
 * Access to Dex on the configured `NodePort` (the load balancer should expose it, port `32000`) so when the OIDC token has expired, `kubectl` can request a new token using the refresh token
+
+==== Sub-Network Sizing
+
+[IMPORTANT]
+====
+The service subnet and pod subnet must not overlap.
+
+Please plan generously for workload and the expected size of the networks before bootstrapping.
+====
+
+The default pod subnet is `10.244.0.0/16`. It allows for 65536 IP addresses overall.
+Assignment of CIDR's is by default `/24` (254 usable IP addresses per node).
+
+The default node allocation of `/24` means a hard cluster node limit of 256 since this is the number of `/24` ranges that fit in a `/16` range.
+
+Depending on the size of the nodes that you are planning to use (in terms of resources), or on the number of nodes you are planning to have,
+the CIDR can be adjusted to be bigger on a per node basis but the cluster would accommodate less nodes overall.
+
+If you are planning to use more or less pods per node or have a higher number of nodes, you can adjust these settings to match your requirements.
+Please make sure that the networks are suitably sized to adjust to future changes in the cluster.
+
+You can also adjust the service subnet size, this subnet must not overlap with the pod CIDR, and it should be big enough to accommodate all services.
+
+For more advanced network requirements please refer to: https://docs.cilium.io/en/v1.6/concepts/ipam/#address-management
 
 ==== Ports
 
