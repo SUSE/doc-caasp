@@ -17,8 +17,8 @@ installed on the cluster. If the cluster is already running the latest available
 versions, the output should look like this:
 
 ----
-Current Kubernetes cluster version: 1.15.0
-Latest Kubernetes version: 1.15.0
+Current Kubernetes cluster version: 1.16.2
+Latest Kubernetes version: 1.16.2
 
 Congratulations! You are already at the latest version available
 ----
@@ -27,11 +27,11 @@ If the cluster has a new patch-level or minor {kube} version available, the
 output should look like this:
 
 ----
-Current Kubernetes cluster version: 1.14.1
-Latest Kubernetes version: 1.15.0
-Upgrade path to update from 1.14.1 to 1.15.0:
- - 1.14.1 -> 1.14.2
- - 1.14.2 -> 1.15.0
+Current Kubernetes cluster version: 1.15.2
+Latest Kubernetes version: 1.16.2
+
+Upgrade path to update from 1.15.2 to 1.16.2:
+ - 1.15.2 -> 1.16.2
 ----
 
 Similarly, you can also fetch this information on a per-node basis with the following command:
@@ -43,8 +43,8 @@ skuba node upgrade plan <NODE>
 For example, if the cluster has a node named `worker0` which is running the latest available versions, the output should look like this:
 
 ----
-Current Kubernetes cluster version: 1.15.0
-Latest Kubernetes version: 1.15.0
+Current Kubernetes cluster version: 1.16.2
+Latest Kubernetes version: 1.16.2
 
 Node worker0 is up to date
 ----
@@ -52,28 +52,32 @@ Node worker0 is up to date
 On the other hand, if this same node has a new patch-level or minor {kube} version available, the output should look like this:
 
 ----
-Current Kubernetes cluster version: 1.14.1
-Latest Kubernetes version: 1.15.0
+Current Kubernetes cluster version: 1.15.2
+Latest Kubernetes version: 1.16.2
+
+Current Node version: 1.15.2
 
 Component versions in worker0
-  - kubelet: 1.14.1 -> 1.15.0
-  - cri-o: 1.14.1 -> 1.15.0
+  - kubelet: 1.15.2 -> 1.16.2
+  - cri-o: 1.15.0 -> 1.16.0
 ----
 
 You will get a similar output if there is a version available on a master node
 (named `master0` in this example):
 
 ----
-Current Kubernetes cluster version: 1.14.1
-Latest Kubernetes version: 1.15.0
+Current Kubernetes cluster version: 1.15.2
+Latest Kubernetes version: 1.16.2
+
+Current Node version: 1.15.2
 
 Component versions in master0
-  - apiserver: 1.14.1 -> 1.15.0
-  - controller-manager: 1.14.1 -> 1.15.0
-  - scheduler: 1.14.1 -> 1.15.0
-  - etcd: 3.3.11 -> 3.3.11
-  - kubelet: 1.14.1 -> 1.15.0
-  - cri-o: 1.14.1 -> 1.15.0
+  - apiserver: 1.15.2 -> 1.16.2
+  - controller-manager: 1.15.2 -> 1.16.2
+  - scheduler: 1.15.2 -> 1.16.2
+  - etcd: 3.3.11 -> 3.3.15
+  - kubelet: 1.15.2 -> 1.16.2
+  - cri-o: 1.15.0 -> 1.16.0
 ----
 
 It may happen that the {kube} version on the control plane is too outdated
