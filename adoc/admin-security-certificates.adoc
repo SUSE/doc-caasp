@@ -236,6 +236,11 @@ Enduser faces oidc-dex and oidc-gangway server to do authentication and authoriz
 Due to the trusted CA certificate key is not handle by skuba, the administrator have to handle to server certificate rotation manually if the certificate expires.
 ====
 
+[WARNING]
+====
+The oidc-dex and oidc-gangway server certificate and key would be replaced when `skuba addon upgrade apply` contains dex or gangway addon upgrade. Make sure to reapply your changes after running `skuba addon upgrade apply`, had you modified the default settings of oidc-dex and oidc-gangway addons.
+====
+
 * Replace the oidc-dex server certificate:
 
 . Backup the original oidc-dex server certificate and key from secret resource.
@@ -326,8 +331,7 @@ kubectl delete pod -lapp=oidc-gangway -n kube-system
 
 == Automatic Certificate Renewal
 
-{productname} renews all certificates automatically during the control plane
-update, see <<handling_updates>>.
+{productname} renews all certificates excludes oidc-dex ang oidc-gangway automatically during the control plane update, see <<handling_updates>>.
 
 [NOTE]
 ====
