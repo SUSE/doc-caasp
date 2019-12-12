@@ -297,24 +297,9 @@ the OS as needed.
 . You need to know the FQDN/IP for each of the created VMs during the bootstrap process
 . Continue with bootstrapping/joining of nodes
 
-[[machine-id-regen]]
-.Regenerating Machine ID
-[IMPORTANT]
+[TIP]
 ====
-In case you are not using {tf} or {ay} you must regenerate machine IDs manually.
-
-During the template preparation you will have removed the machine ID from the template image.
-This ID is required for proper functionality in the cluster and must be (re-)generated on each machine.
-
-Log in to each virtual machine created from the template and run:
-
-----
-dbus-uuidgen --ensure
-systemd-machine-id-setup
-systemctl restart systemd-journald
-----
-
-This will regenerate the `machine id` values for `DBUS` (`/var/lib/dbus/machine-id`) and `systemd` (`/etc/machine-id`) and restart the logging service to make use of the new IDs.
+To manually generate the unique `machine-id` please refer to: <<machine-id-regen>>.
 ====
 
 === Container Runtime Proxy
