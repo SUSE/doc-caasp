@@ -104,6 +104,19 @@ registration code from {scc}.
 * Select menu:SUSE CaaS Platform[4.0 > x86_64]
 * Copy the menu:Registration Code[]
 
+[[machine-id]]
+=== Unique Machine IDs
+During deployment of the cluster nodes, each machine will be assigned a unique ID in the `/etc/machine-id` file by {tf} or {ay}.
+If you are using any (semi-)manual methods of deployments that involve cloning of machines and deploying from templates,
+you must make sure to delete this file before creating the template.
+
+If two nodes are deployed with the same `machine-id`, they will not be correctly recognized by `skuba`.
+
+[TIP]
+====
+To manually generate the unique `machine-id` please refer to: <<machine-id-regen>>.
+====
+
 === Installation Tools
 
 For any deployment type you will need `skuba` and `{tf}`. These packages are
