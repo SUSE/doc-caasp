@@ -345,12 +345,14 @@ After opening a Service Request (SR), you can upload the TAR archive to Global T
 
 == Debugging Cluster Deployment
 
-If the cluster deployment fails, please re-run the command again with setting verbosity level to 10 `-v=10`.
+== Debugging Cluster Deployment
+
+If the cluster deployment fails, please re-run the command again with setting verbosity level to 5 `-v=5`.
 
 For example, if bootstraps the first master node of the cluster fails, re-run the command like
 [source,bash]
 ----
-skuba node bootstrap --user sles --sudo --target <IP/FQDN> <NODE_NAME> -v=10
+skuba node bootstrap --user sles --sudo --target <IP/FQDN> <NODE_NAME> -v=5
 ----
 
 However, if the `join` procedure fails at the last final steps, re-running it might _not_ help. To verify
