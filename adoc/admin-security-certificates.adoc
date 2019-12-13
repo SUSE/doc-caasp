@@ -154,8 +154,8 @@ can not be reconfigured once deployed and requires a full re-installation of the
 cluster to replace.
 ====
 
-Administrators can provide custom CA certificates during cluster deployment and decide which CA components to replace
-(multiple CA certificates) or if to replace all certificates with a single CA certificate.
+Administrators can provide custom CA certificates (root CAs or intermediate CAs)
+during cluster deployment and decide which CA components to replace (multiple CA certificates) or if to replace all with a single CA certificate.
 
 After you have run `skuba cluster init`, go to the `my-cluster` folder that has been generated,
 Create a `pki` folder and put your custom CA certificate into the `pki` folder.
@@ -476,4 +476,296 @@ chmod 644 /var/lib/kubelet/pki/kubelet.crt
 chmod 600 /var/lib/kubelet/pki/kubelet.key
 
 sudo systemctl restart kubelet
+----
+
+== How To Generate Certificates
+
+[[trusted_signed_certificate]]
+=== Trusted 3rd-Party Signed Certificate
+
+[[trusted_server_certificate]]
+==== Server Certificate
+
+. Generate a private key by following the steps below from a terminal window:
++
+[source,bash]
+----
+openssl genrsa -aes256 -out server.key 2048
+----
++
+Type the pass phrase to protect the key and press [Enter]
++
+Re-enter the pass phrase.
+. Create a file _server.conf_ with the appropriate values
++
+----
+[req]
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+prompt = no
+
+[req_distinguished_name]
+C = CZ // <1>
+ST = CZ // <2>
+L = Prague // <3>
+O = example // <4>
+OU = com // <5>
+CN = server.example.com // <6>
+emailAddress = admin@example.com // <7>
+
+[v3_req]
+basicConstraints = critical,CA:FALSE
+keyUsage = critical,digitalSignature,keyEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[alt_names]
+IP.1 = <SERVER-IP-ADDRESS> // <8>
+DNS.1 = <SERVER-FQDN> // <9>
+----
+<1> Country Name (2 letter code).
+<2> State or Province Name (full name).
+<3> Locality Name (eg, city).
+<4> Organization Name (eg, company).
+<5> Organizational Unit Name (eg, section).
+<6> Common Name (e.g. server FQDN or YOUR name)
+<7> Email Address
+<8> Server IP address if present. Add more IP.X below if the server has more than one IP address.
+Remove IP.1 if the server uses FQDN.
+<9> Server FQDN if present. Add more DNS.X below if the server has more than one domain name.
+Remove DNS.1 if the server uses an IP address.
+
+. Generate a certificate signing request (CSR)
++
+[source,bash]
+----
+openssl req -new -key server.key -config server.conf -out server.csr
+----
+Enter the pass phrase of the private key created in Step 1.
++
+Check the certificate signing request (CSR)
++
+[source,bash]
+----
+openssl req -text -noout -verify -in server.csr
+----
+
+. Sign the certificate
++
+Send the certificate signing request (CSR) to the 3rd party for signing.
+You should receive the following files in return:
++
+.. Server certificate (public key)
+.. Intermediate CA and/or bundles that chain to the Trusted Root CA
+
+[[trusted_client_certificate]]
+==== Client Certificate
+
+. Generate a private key by following the steps below from a terminal window:
++
+[source,bash]
+----
+openssl genrsa -aes256 -out client.key 2048
+----
++
+Type the pass phrase to protect the key and press [Enter]
++
+Re-enter the pass phrase.
+. Create a file _client.conf_ with the appropriate values
++
+----
+[req]
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+prompt = no
+
+[req_distinguished_name]
+C = CZ // <1>
+ST = CZ // <2>
+L = Prague // <3>
+O = example // <4>
+OU = com // <5>
+CN = client.example.com // <6>
+emailAddress = admin@example.com // <7>
+
+[v3_req]
+basicConstraints = critical,CA:FALSE
+keyUsage = critical,digitalSignature,keyEncipherment
+extendedKeyUsage = clientAuth
+----
+<1> Country Name (2 letter code).
+<2> State or Province Name (full name).
+<3> Locality Name (eg, city).
+<4> Organization Name (eg, company).
+<5> Organizational Unit Name (eg, section).
+<6> Common Name (e.g. client FQDN or YOUR name)
+<7> Email Address
+
+. Generate a certificate signing request (CSR)
++
+[source,bash]
+----
+openssl req -new -key client.key -config client.conf -out client.csr
+----
+Enter the pass phrase of the private key created in Step 1.
++
+Check the certificate signing request (CSR)
++
+[source,bash]
+----
+openssl req -text -noout -verify -in client.csr
+----
+
+. Sign the certificate
++
+Send the certificate signing request (CSR) to the 3rd party for signing.
+You should receive the following files in return:
++
+.. Client certificate (public key)
+.. Intermediate CA and/or bundles that chain to the Trusted Root CA
+
+[[self_signed_certificate]]
+=== Self-signed Server Certificate
+
+[WARNING]
+====
+Do not use self-signed certificates in production environments.
+There is severe risk of Man-in-the-middle attacks.
+Use proper trusted 3rd-party signed certificates.
+====
+
+In some cases you want to create self-signed certificates for testing.
+If you are using proper trusted 3rd-party CA signed certificates, skip the following steps and refer to <<trusted_server_certificate>>.
+
+[[self_signed_ca_certificate]]
+==== CA Certificate
+
+. Create a file _ca.conf_ with the appropriate values
++
+----
+[req]
+distinguished_name = req_distinguished_name
+x509_extensions = v3_ca
+prompt = no
+
+[req_distinguished_name]
+C = CZ // <1>
+ST = CZ // <2>
+L = Prague // <3>
+O = example // <4>
+OU = com // <5>
+CN = Root CA // <6>
+emailAddress = admin@example.com // <7>
+
+[v3_ca]
+basicConstraints = critical,CA:TRUE
+keyUsage = critical,digitalSignature,keyEncipherment,keyCertSign
+----
+
+. Sign the CA certificate
++
+[source,bash]
+----
+openssl genrsa -out ca.key 2048
+openssl req -key ca.key -new -x509 -days 3650 -sha256 -config ca.conf -out ca.crt
+----
+
+[[self_signed_server_certificate]]
+==== Server Certificate
+
+. Create a file _server.conf_ with the appropriate values
++
+----
+[req]
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+prompt = no
+
+[req_distinguished_name]
+C = CZ // <1>
+ST = CZ // <2>
+L = Prague // <3>
+O = example // <4>
+OU = com // <5>
+CN = example.com // <6>
+emailAddress = admin@example.com // <7>
+
+[v3_req]
+basicConstraints = critical,CA:FALSE
+keyUsage = critical,digitalSignature,keyEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[alt_names]
+IP.1 = <SERVER-IP-ADDRESS> // <8>
+DNS.1 = <SERVER-FQDN> // <9>
+----
+<1> Country Name (2 letter code).
+<2> State or Province Name (full name).
+<3> Locality Name (eg, city).
+<4> Organization Name (eg, company).
+<5> Organizational Unit Name (eg, section).
+<6> Common Name (e.g. server FQDN or YOUR name)
+<7> Email Address
+<8> Server IP address if present. Add more IP.X below if the server has more than one IP address.
+Remove IP.1 if the server uses FQDN.
+<9> Server FQDN if present. Add more DNS.X below if the server has more than one domain name.
+Remove DNS.1 if the server uses an IP address.
+
+. Generate the certificate
++
+[source,bash]
+----
+openssl genrsa -out server.key 2048
+openssl req -key server.key -new -sha256 -out server.csr -config server.conf
+openssl x509 -req -CA ca.crt -CAkey ca.key -CAcreateserial -in server.csr -out server.crt -days 365 -extensions v3_req -extfile server.conf
+----
++
+Check the signed certificate
++
+[source,bash]
+----
+openssl x509 -text -noout -in server.crt
+----
+
+[[self_signed_client_certificate]]
+==== Client Certificate
+
+. Create a file _client.conf_ with the appropriate values
++
+----
+[req]
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+prompt = no
+
+[req_distinguished_name]
+C = CZ // <1>
+ST = CZ // <2>
+L = Prague // <3>
+O = example // <4>
+OU = com // <5>
+CN = client.example.com // <6>
+emailAddress = admin@example.com // <7>
+
+[v3_req]
+basicConstraints = critical,CA:FALSE
+keyUsage = critical,digitalSignature,keyEncipherment
+extendedKeyUsage = clientAuth
+----
+
+. Generate the certificate
++
+[source,bash]
+----
+openssl genrsa -out client.key 2048
+openssl req -key client.key -new -sha256 -out client.csr -config client.conf
+openssl x509 -req -CA ca.crt -CAkey ca.key -CAcreateserial -in client.csr -out client.crt -days 365 -extensions v3_req -extfile client.conf
+----
++
+Check the signed certificate
++
+[source,bash]
+----
+openssl x509 -text -noout -in client.crt
 ----

@@ -72,7 +72,7 @@ Or add this entry to /etc/hosts
 
 . Create certificates
 +
-You will need SSL certificates for the shared resources.
+You will need TLS certificates for the shared resources.
 If you are deploying in a predefined network environment, please get proper certificates from your network administrator.
 In this example, the domains are named after the components they represent. `prometheus.example.com`, `prometheus-alertmanager.example.com` and `grafana.example.com`
 
@@ -107,8 +107,13 @@ Later configuration steps require secret names to be specified.
 
 ==== Trusted Certificates
 
-Import trusted certificate to {kube} cluster. In this example, trusted certificate are `monitoring.key` and `monitoring.crt`.
+Please refer to <<trusted_server_certificate>> on how to sign the trusted certificate.
+The `server.conf` for DNS.1 is `prometheus.example.com`, DNS.2 is `prometheus-alertmanager.example.com` and DNS.3 `grafana.example.com`.
 
+Then, import your trusted certificate into the {kube} cluster.
+In this example, trusted certificates are `monitoring.key` and `monitoring.crt`.
+
+Add TLS secret to {kube} cluster
 [source,bash]
 ----
 kubectl create -n monitoring secret tls monitoring-tls  \
@@ -118,57 +123,13 @@ kubectl create -n monitoring secret tls monitoring-tls  \
 
 ==== Self-signed Certificates (optional)
 
-In some cases you want to create self-signed certificates for testing of the stack. This is not recommended. If you are using proper CA signed certificates, you must skip this entirely.
+Please refer to <<self_signed_server_certificate>> on how to signed the self-sigend certificate.
+The `server.conf` for DNS.1 is `prometheus.example.com`, DNS.2 is `prometheus-alertmanager.example.com` and DNS.3 `grafana.example.com`.
 
-[IMPORTANT]
-Do not use self-signed certificates in production environments.
-There is severe risk of Man-in-the-middle attacks.
-Use proper certificates signed by your CA.
+Then, import your self-signed certificate into the {kube} cluster.
+In this example, self-signed certificates are `monitoring.key` and `monitoring.crt`.
 
-. Create a file _openssl.conf_ with the appropriate values
-+
-----
-[req]
-distinguished_name = req_distinguished_name
-req_extensions = v3_req
-default_md = sha256
-default_bits = 4096
-prompt=no
-
-[req_distinguished_name]
-C = CZ
-ST = CZ
-L = Prague
-O = example
-OU = monitoring
-CN = example.com
-emailAddress = admin@example.com
-
-[v3_req]
-basicConstraints = CA:FALSE
-keyUsage = keyEncipherment, dataEncipherment
-extendedKeyUsage = serverAuth
-subjectAltName = @alt_names
-
-[alt_names]
-DNS.1 = prometheus.example.com
-DNS.2 = prometheus-alertmanager.example.com
-DNS.3 = grafana.example.com
-----
-+
-This certificate uses Subject Alternative Names so it can be used for Prometheus and Grafana.
-
-. Generate certificate
-+
-[source,bash]
-----
-openssl req -x509 -nodes -days 365 -newkey rsa:4096 \
--keyout ./monitoring.key -out ./monitoring.crt \
--config ./openssl.conf -extensions 'v3_req'
-----
-
-. Add TLS secret to {kube} cluster
-+
+Add TLS secret to {kube} cluster
 [source,bash]
 ----
 kubectl create -n monitoring secret tls monitoring-tls  \
@@ -495,7 +456,6 @@ In production environments you must configure persistent storage.
 
 ** Use an existing PersistentVolumeClaim
 ** Use a StorageClass (preferred)
-
 +
 Create a file _grafana-config-values.yaml_ with the appropriate values
 +
@@ -536,6 +496,7 @@ sidecar:
     enabled: true
     label: grafana_dashboard
 ----
+
 . Add SUSE helm charts repository
 +
 [source,bash]
@@ -596,8 +557,7 @@ kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-monitoring/master/
 * Build your own dashboard
   Deploy your own dashboard by configuration file containing the dashboard definition.
 
-  . Create your dashboard definition file as a `ConfigMap`, for example [path]`grafana-dashboards-caasp-cluster.yaml`.
-
+. Create your dashboard definition file as a `ConfigMap`, for example [path]`grafana-dashboards-caasp-cluster.yaml`.
 +
 ----
 ---
@@ -629,7 +589,7 @@ continues with definition of dashboard JSON
 [...]
 ----
 
-  . Apply the `ConfigMap` to the cluster.
+. Apply the `ConfigMap` to the cluster.
 +
 [source,bash]
 ----
