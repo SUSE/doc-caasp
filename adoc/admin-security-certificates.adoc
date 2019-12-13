@@ -154,7 +154,7 @@ can not be reconfigured once deployed and requires a full re-installation of the
 cluster to replace.
 ====
 
-Administrators can provide custom CA certificates (root CAs or intermediate CAs) 
+Administrators can provide custom CA certificates (root CAs or intermediate CAs)
 during cluster deployment and decide which CA components to replace (multiple CA certificates) or if to replace all with a single CA certificate.
 
 After you have run `skuba cluster init`, go to the `my-cluster` folder that has been generated,
@@ -365,7 +365,7 @@ chmod 600 /var/lib/kubelet/pki/kubelet.key
 sudo systemctl restart kubelet
 ----
 
-== How To Generate Certificate
+== How To Generate Certificates
 
 [[trusted_signed_certificate]]
 === Trusted 3rd-Party Signed Certificate
@@ -373,7 +373,7 @@ sudo systemctl restart kubelet
 [[trusted_server_certificate]]
 ==== Server Certificate
 
-. Generate a private key by following the steps below from a terminal window
+. Generate a private key by following the steps below from a terminal window:
 +
 [source,bash]
 ----
@@ -383,7 +383,6 @@ openssl genrsa -aes256 -out server.key 2048
 Type the pass phrase to protect the key and press [Enter]
 +
 Re-enter the pass phrase.
-
 . Create a file _server.conf_ with the appropriate values
 +
 ----
@@ -418,8 +417,10 @@ DNS.1 = <SERVER-FQDN> // <9>
 <5> Organizational Unit Name (eg, section).
 <6> Common Name (e.g. server FQDN or YOUR name)
 <7> Email Address
-<8> Server IP address if present. Add more IP.X below if server have more IP addresses. Remove. Remove IP.1 if the server use FQDN.
-<9> Server FQDN if present. Add more DNS.X below if server have more domain name. Remove DNS.1 if the server use IP address.
+<8> Server IP address if present. Add more IP.X below if the server has more than one IP address.
+Remove IP.1 if the server uses FQDN.
+<9> Server FQDN if present. Add more DNS.X below if the server has more than one domain name.
+Remove DNS.1 if the server uses an IP address.
 
 . Generate a certificate signing request (CSR)
 +
@@ -438,8 +439,8 @@ openssl req -text -noout -verify -in server.csr
 
 . Sign the certificate
 +
-Send the certificate signing request (CSR) to the 3rd party for their signing.
-The following files should be received:
+Send the certificate signing request (CSR) to the 3rd party for signing.
+You should receive the following files in return:
 +
 .. Server certificate (public key)
 .. Intermediate CA and/or bundles that chain to the Trusted Root CA
@@ -447,7 +448,7 @@ The following files should be received:
 [[trusted_client_certificate]]
 ==== Client Certificate
 
-. Generate a private key by following the steps below from a terminal window
+. Generate a private key by following the steps below from a terminal window:
 +
 [source,bash]
 ----
@@ -457,7 +458,6 @@ openssl genrsa -aes256 -out client.key 2048
 Type the pass phrase to protect the key and press [Enter]
 +
 Re-enter the pass phrase.
-
 . Create a file _client.conf_ with the appropriate values
 +
 ----
@@ -505,8 +505,8 @@ openssl req -text -noout -verify -in client.csr
 
 . Sign the certificate
 +
-Send the certificate signing request (CSR) to the 3rd party for their signing.
-The following files should be received:
+Send the certificate signing request (CSR) to the 3rd party for signing.
+You should receive the following files in return:
 +
 .. Client certificate (public key)
 .. Intermediate CA and/or bundles that chain to the Trusted Root CA
@@ -514,12 +514,15 @@ The following files should be received:
 [[self_signed_certificate]]
 === Self-signed Server Certificate
 
-In some cases you want to create self-signed certificates for testing. If you are using proper trusted 3rd-party CA signed certificates, you must skip this entirely.
-
-[IMPORTANT]
+[WARNING]
+====
 Do not use self-signed certificates in production environments.
 There is severe risk of Man-in-the-middle attacks.
 Use proper trusted 3rd-party signed certificates.
+====
+
+In some cases you want to create self-signed certificates for testing.
+If you are using proper trusted 3rd-party CA signed certificates, skip the following steps and refer to <<trusted_server_certificate>>.
 
 [[self_signed_ca_certificate]]
 ==== CA Certificate
@@ -591,8 +594,10 @@ DNS.1 = <SERVER-FQDN> // <9>
 <5> Organizational Unit Name (eg, section).
 <6> Common Name (e.g. server FQDN or YOUR name)
 <7> Email Address
-<8> Server IP address if present. Add more IP.X below if server have more IP addresses. Remove. Remove IP.1 if the server use FQDN.
-<9> Server FQDN if present. Add more DNS.X below if server have more domain name. Remove DNS.1 if the server use IP address.
+<8> Server IP address if present. Add more IP.X below if the server has more than one IP address.
+Remove IP.1 if the server uses FQDN.
+<9> Server FQDN if present. Add more DNS.X below if the server has more than one domain name.
+Remove DNS.1 if the server uses an IP address.
 
 . Generate the certificate
 +

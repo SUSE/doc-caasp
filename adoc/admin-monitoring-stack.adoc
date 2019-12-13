@@ -107,10 +107,11 @@ Later configuration steps require secret names to be specified.
 
 ==== Trusted Certificates
 
-Please refererence to <<trusted_server_certificate>> on how to signed the trusted certificate.
-The server.conf for DNS.1 is `prometheus.example.com`, DNS.2 is `prometheus-alertmanager.example.com` and DNS.3 `grafana.example.com`.
+Please refer to <<trusted_server_certificate>> on how to sign the trusted certificate.
+The `server.conf` for DNS.1 is `prometheus.example.com`, DNS.2 is `prometheus-alertmanager.example.com` and DNS.3 `grafana.example.com`.
 
-Then, import trusted certificate to {kube} cluster. In this example, trusted certificate are `monitoring.key` and `monitoring.crt`.
+Then, import your trusted certificate into the {kube} cluster.
+In this example, trusted certificates are `monitoring.key` and `monitoring.crt`.
 
 Add TLS secret to {kube} cluster
 [source,bash]
@@ -122,10 +123,11 @@ kubectl create -n monitoring secret tls monitoring-tls  \
 
 ==== Self-signed Certificates (optional)
 
-Please refererence to <<self_signed_server_certificate>> on how to signed the self-sigend certificate.
-The server.conf for DNS.1 is `prometheus.example.com`, DNS.2 is `prometheus-alertmanager.example.com` and DNS.3 `grafana.example.com`.
+Please refer to <<self_signed_server_certificate>> on how to signed the self-sigend certificate.
+The `server.conf` for DNS.1 is `prometheus.example.com`, DNS.2 is `prometheus-alertmanager.example.com` and DNS.3 `grafana.example.com`.
 
-Then, import self-signed certificate to {kube} cluster. In this example, self-signed certificate are `monitoring.key` and `monitoring.crt`.
+Then, import your self-signed certificate into the {kube} cluster.
+In this example, self-signed certificates are `monitoring.key` and `monitoring.crt`.
 
 Add TLS secret to {kube} cluster
 [source,bash]
