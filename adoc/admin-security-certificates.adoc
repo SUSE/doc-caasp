@@ -154,60 +154,15 @@ can not be reconfigured once deployed and requires a full re-installation of the
 cluster to replace.
 ====
 
-Administrators can provide custom CA certificates (root CAs or intermediate CAs) 
-during cluster deployment and decide which CA components to replace (multiple CA certificates) or if to replace all with a single CA certificate.
+Administrators can provide custom CA certificates during cluster deployment and decide which CA components to replace
+(multiple CA certificates) or if to replace all certificates with a single CA certificate.
 
 After you have run `skuba cluster init`, go to the `my-cluster` folder that has been generated,
 Create a `pki` folder and put your custom CA certificate into the `pki` folder.
 
-* Replacing the {kube} apiserver CA certificate:
-+
-[source,bash]
-----
-mkdir -p my-cluster/pki
-cp <CUSTOM_APISERVER_ROOTCA_CERT_PATH> my-cluster/pki/ca.crt
-cp <CUSTOM_APISERVER_ROOTCA_KEY_PATH> my-cluster/pki/ca.key
-chmod 644 my-cluster/pki/ca.crt
-chmod 600 my-cluster/pki/ca.key
-----
-
-* Replacing the etcd CA certificate:
-+
-[source,bash]
-----
-mkdir -p my-cluster/pki/etcd
-cp <CUSTOM_ETCD_ROOTCA_CERT_PATH> my-cluster/pki/etcd/ca.crt
-cp <CUSTOM_ETCD_ROOTCA_KEY_PATH> my-cluster/pki/etcd/ca.key
-chmod 644 my-cluster/pki/etcd/ca.crt
-chmod 600 my-cluster/pki/etcd/ca.key
-----
-
-* Replacing the kubelet CA certificate:
-+
-[source,bash]
-----
-mkdir -p my-cluster/pki
-cp <CUSTOM_KUBELET_ROOTCA_CERT_PATH> my-cluster/pki/kubelet-ca.crt
-cp <CUSTOM_KUBELET_ROOTCA_KEY_PATH> my-cluster/pki/kubelet-ca.key
-chmod 644 my-cluster/pki/kubelet-ca.crt
-chmod 600 my-cluster/pki/kubelet-ca.key
-----
-
-* Replacing the front-end proxy CA certificate:
-+
-[source,bash]
-----
-mkdir -p my-cluster/pki
-cp <CUSTOM_FRONTPROXY_ROOTCA_CERT_PATH> my-cluster/pki/front-proxy-ca.crt
-cp <CUSTOM_FRONTPROXY_ROOTCA_KEY_PATH> my-cluster/pki/front-proxy-ca.key
-chmod 644 my-cluster/pki/front-proxy-ca.crt
-chmod 600 my-cluster/pki/front-proxy-ca.key
-----
-
-After this process bootstrap the cluster with `skuba node bootstrap`.
-
-=== Extracting Certificate And Key From Combined PEM File
-
+.Extracting Certificate And Key From Combined PEM File
+[NOTE]
+====
 Some PKIs will issue certificates and keys in a combined `.pem` file.
 In order to use the contained certificate, you must extract them into separate files using `openssl`.
 
@@ -223,12 +178,165 @@ openssl x509 -in /path/to/file.pem -out /path/to/file.crt
 ----
 openssl rsa -in /path/to/file.pem -out /path/to/file.key
 ----
+====
 
+* Replacing the {kube} `apiserver` CA certificate:
++
+[source,bash]
+----
+mkdir -p my-cluster/pki
+cp <CUSTOM_APISERVER_CA_CERT_PATH> my-cluster/pki/ca.crt
+cp <CUSTOM_APISERVER_CA_KEY_PATH> my-cluster/pki/ca.key
+chmod 644 my-cluster/pki/ca.crt
+chmod 600 my-cluster/pki/ca.key
+----
+
+* Replacing the `etcd` CA certificate:
++
+[source,bash]
+----
+mkdir -p my-cluster/pki/etcd
+cp <CUSTOM_ETCD_CA_CERT_PATH> my-cluster/pki/etcd/ca.crt
+cp <CUSTOM_ETCD_CA_KEY_PATH> my-cluster/pki/etcd/ca.key
+chmod 644 my-cluster/pki/etcd/ca.crt
+chmod 600 my-cluster/pki/etcd/ca.key
+----
+
+* Replacing the `kubelet` CA certificate:
++
+[source,bash]
+----
+mkdir -p my-cluster/pki
+cp <CUSTOM_KUBELET_CA_CERT_PATH> my-cluster/pki/kubelet-ca.crt
+cp <CUSTOM_KUBELET_CA_KEY_PATH> my-cluster/pki/kubelet-ca.key
+chmod 644 my-cluster/pki/kubelet-ca.crt
+chmod 600 my-cluster/pki/kubelet-ca.key
+----
+
+* Replacing the `front-end proxy` CA certificate:
++
+[source,bash]
+----
+mkdir -p my-cluster/pki
+cp <CUSTOM_FRONTPROXY_CA_CERT_PATH> my-cluster/pki/front-proxy-ca.crt
+cp <CUSTOM_FRONTPROXY_CA_KEY_PATH> my-cluster/pki/front-proxy-ca.key
+chmod 644 my-cluster/pki/front-proxy-ca.crt
+chmod 600 my-cluster/pki/front-proxy-ca.key
+----
+
+After this process, bootstrap the cluster with `skuba node bootstrap`.
+
+== Replace Server Certificate signed by a Trusted CA Certificate
+
+{productname} uses `oidc-dex` and `oidc-gangway` servers to do authentication and authorization.
+Administrators might choose to replace these server's certificates by issuing a trusted CA certificate after cluster deployment.
+This way, the user does not have to add specific certificates to their trusted keychain.
+
+[WARNING]
+====
+The custom trusted CA certificate key is not handled by skuba.
+Administrators must handle server certificate rotation manually before the certificate expires.
+====
+
+[WARNING]
+====
+The `oidc-dex` and `oidc-gangway` server certificate and key would be replaced when `skuba addon upgrade apply` contains dex or gangway addon upgrade.
+Make sure to reapply your changes after running `skuba addon upgrade apply`, had you modified the default settings of oidc-dex and oidc-gangway addons.
+====
+
+* Replace the `oidc-dex` server certificate:
+
+. Backup the original `oidc-dex` server certificate and key from secret resource.
++
+[source,bash]
+----
+mkdir -p pki.bak
+kubectl get secret oidc-dex-cert -n kube-system -o yaml | tee pki.bak/oidc-dex-cert.yaml > /dev/null
+
+cat pki.bak/oidc-dex-cert.yaml | grep tls.crt | awk '{print $2}' | base64 --decode | tee pki.bak/oidc-dex.crt > /dev/null
+cat pki.bak/oidc-dex-cert.yaml | grep tls.key | awk '{print $2}' | base64 --decode | tee pki.bak/oidc-dex.key > /dev/null
+----
+
+. Sign the `oidc-dex` server certificate with the trusted CA certificate, make sure that the signed server certificate SAN is the same as the origin.
+To get the original SAN IP address(es) and DNS(s), run:
++
+[source,bash]
+----
+openssl x509 -noout -text -in pki.bak/oidc-dex.crt | grep -oP '(?<=IP Address:)[^,]+'
+openssl x509 -noout -text -in pki.bak/oidc-dex.crt | grep -oP '(?<=DNS:)[^,]+'
+----
+
+. Create a secret manifest file [path]`oidc-dex-cert.yaml` and update the secret data `ca.crt`, `tls.crt`, and `tls.key` with base64 encoded with trusted CA certificate, signed oidc-dex server certificate and key respectively.
++
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: oidc-gangway-cert
+  namespace: kube-system
+type: kubernetes.io/tls
+data:
+  ca.crt: cat <TRUSTED_CA_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
+  tls.crt: cat <SIGNED_OIDC_DEX_SERVER_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
+  tls.key: cat <SIGNED_OIDC_DEX_SERVER_KEY_PATH> | base64 | awk '{print}' ORS='' && echo
+----
+
+. Apply the secret manifest file and restart `oidc-dex` pods.
++
+[source,bash]
+----
+kubectl replace -f oidc-dex-cert.yaml
+kubectl delete pod -lapp=oidc-dex -n kube-system
+----
+
+* Replace the `oidc-gangway` server certificate:
+
+. Backup the original `oidc-gangway` server certificate and key from secret resource.
++
+[source,bash]
+----
+mkdir -p pki.bak
+kubectl get secret oidc-gangway-cert -n kube-system -o yaml | tee pki.bak/oidc-gangway-cert.yaml > /dev/null
+
+cat pki.bak/oidc-gangway-cert.yaml | grep tls.crt | awk '{print $2}' | base64 --decode | tee pki.bak/oidc-gangway.crt > /dev/null
+cat pki.bak/oidc-gangway-cert.yaml | grep tls.key | awk '{print $2}' | base64 --decode | tee pki.bak/oidc-gangway.key > /dev/null
+----
+
+. Sign the `oidc-gangway` server certificate with the trusted CA certificate, make sure that the signed server certificate SAN is the same as the origin.
+To get the original SAN IP address(es) and DNS(s), run:
++
+[source,bash]
+----
+openssl x509 -noout -text -in pki.bak/oidc-gangway.crt | grep -oP '(?<=IP Address:)[^,]+'
+openssl x509 -noout -text -in pki.bak/oidc-gangway.crt | grep -oP '(?<=DNS:)[^,]+'
+----
+
+. Create a secret manifest file [path]`oidc-gangway-cert.yaml` and update the secret data `ca.crt`, `tls.crt`, and `tls.key` with base64; encoded with trusted CA certificate, signed `oidc-gangway` server certificate and key respectively.
++
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: oidc-gangway-cert
+  namespace: kube-system
+type: kubernetes.io/tls
+data:
+  ca.crt: cat <TRUSTED_CA_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
+  tls.crt: cat <SIGNED_OIDC_GANGWAY_SERVER_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
+  tls.key: cat <SIGNED_OIDC_GANGWAY_SERVER_KEY_PATH> | base64 | awk '{print}' ORS='' && echo
+----
+
+. Apply the secret manifest file and restart `oidc-gangway pods`.
++
+[source,bash]
+----
+kubectl replace -f oidc-gangway-cert.yaml
+kubectl delete pod -lapp=oidc-gangway -n kube-system
+----
 
 == Automatic Certificate Renewal
 
-{productname} renews all certificates automatically during the control plane
-update, see <<handling_updates>>.
+{productname} renews all certificates excluding `oidc-dex` and `oidc-gangway` automatically during the control plane update, see <<handling_updates>>.
 
 [NOTE]
 ====
@@ -266,11 +374,11 @@ sudo cat /etc/kubernetes/admin.conf
 
 === Renewing Certificates Created by `skuba`:
 
-. Log in to the master node and regenerate the certificates:
+Log in to the master node and regenerate the certificates:
+
+* Replace the `oidc-dex` server certificate:
 +
-* Replace the oidc-dex server certificate:
-+
-Backup the original oidc-dex server certificate and key from Secret resource.
+. Backup the original `oidc-dex` server certificate and key from secret resource.
 +
 [source,bash]
 ----
@@ -281,7 +389,8 @@ cat /etc/kubernetes/pki.bak/oidc-dex-cert.yaml | grep tls.crt | awk '{print $2}'
 cat /etc/kubernetes/pki.bak/oidc-dex-cert.yaml | grep tls.key | awk '{print $2}' | base64 --decode | sudo tee /etc/kubernetes/pki.bak/oidc-dex.key > /dev/null
 ----
 +
-Sign the oidc-dex server certificate with the CA certificate/key `/etc/kubernetes/pki/ca.crt` and `/etc/kubernetes/pki/ca.key`, make sure that the signed server certificate SAN is the same as the origin. To get the original SAN IP address(es) and DNS(s), run:
+. Sign the `oidc-dex` server certificate with the CA certificate/key `/etc/kubernetes/pki/ca.crt` and `/etc/kubernetes/pki/ca.key`, make sure that the signed server certificate SAN is the same as the origin.
+To get the original SAN IP address(es) and DNS(s), run:
 +
 [source,bash]
 ----
@@ -289,7 +398,7 @@ openssl x509 -noout -text -in /etc/kubernetes/pki.bak/oidc-dex.crt | grep -oP '(
 openssl x509 -noout -text -in /etc/kubernetes/pki.bak/oidc-dex.crt | grep -oP '(?<=DNS:)[^,]+'
 ----
 +
-Finally, update the {kube} cluster secret data `tls.crt`, and `tls.key` with base64 encoded from signed oidc-dex server certificate and key respectively, and restart oidc-dex pods.
+. Finally, update the {kube} cluster secret data `tls.crt`, and `tls.key` with base64; encoded from signed `oidc-dex` server certificate and key respectively, and restart `oidc-dex` pods.
 +
 [source,bash]
 ----
@@ -300,9 +409,9 @@ sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf edit secret oidc-dex-cert -
 sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf delete pod -lapp=oidc-dex -n kube-system
 ----
 
-* Replace the oidc-gangway server certificate:
+* Replace the `oidc-gangway` server certificate:
 +
-Backup the original oidc-gangway server certificate and key from Secret resource.
+. Backup the original `oidc-gangway` server certificate and key from secret resource.
 +
 [source,bash]
 ----
@@ -313,7 +422,8 @@ cat /etc/kubernetes/pki.bak/oidc-gangway-cert.yaml | grep tls.crt | awk '{print 
 cat /etc/kubernetes/pki.bak/oidc-gangway-cert.yaml | grep tls.key | awk '{print $2}' | base64 --decode | sudo tee /etc/kubernetes/pki.bak/oidc-gangway.key > /dev/null
 ----
 +
-Sign the oidc-gangway server certificate with the CA certificate/key `/etc/kubernetes/pki/ca.crt` and `/etc/kubernetes/pki/ca.key`, make sure that the signed server certificate SAN is the same as the origin. To get the original SAN IP address(es) and DNS(s), run:
+. Sign the `oidc-gangway` server certificate with the CA certificate/key `/etc/kubernetes/pki/ca.crt` and `/etc/kubernetes/pki/ca.key`, make sure that the signed server certificate SAN is the same as the origin.
+To get the original SAN IP address(es) and DNS(s), run:
 +
 [source,bash]
 ----
@@ -321,7 +431,7 @@ openssl x509 -noout -text -in /etc/kubernetes/pki.bak/oidc-gangway.crt | grep -o
 openssl x509 -noout -text -in /etc/kubernetes/pki.bak/oidc-gangway.crt | grep -oP '(?<=DNS:)[^,]+'
 ----
 +
-Finally, update the {kube} cluster secret data `tls.crt`, and `tls.key` with base64 encoded from signed oidc-gangway server certificate and key respectively, and restart oidc-gangway pods.
+. Finally, update the {kube} cluster secret data `tls.crt`, and `tls.key` with base64 encoded from signed `oidc-gangway` server certificate and key respectively, and restart `oidc-gangway` pods.
 +
 [source,bash]
 ----
@@ -332,20 +442,23 @@ sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf edit secret oidc-gangway-ce
 sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf delete pod -lapp=oidc-gangway -n kube-system
 ----
 
-* Replace the kubelet server certificate:
+* Replace the `kubelet` server certificate:
 +
 [IMPORTANT]
 ====
-You need to generate kubelet server certificate for all the nodes on one of control plane nodes, because the kubelet CA certificate key only exists on the control plane nodes. Therefore, after generating re-signed kubelet server certificate/key for worker nodes, you have to copy each kubelet server certificate/key from the control plane node to the corresponding worker node.
+You need to generate `kubelet` server certificate for all the nodes on one of control plane nodes.
+The `kubelet` CA certificate key only exists on the control plane nodes.
+Therefore, after generating re-signed `kubelet` server certificate/key for worker nodes, you have to copy each `kubelet` server certificate/key from the control plane node to the corresponding worker node.
 ====
-Backup the original kubelet certificates and keys.
+. Backup the original `kubelet` certificates and keys.
 +
 [source,bash]
 ----
 sudo cp -r /var/lib/kubelet/pki /var/lib/kubelet/pki.bak
 ----
 +
-Sign each node kubelet server certificate with the CA certificate/key `/var/lib/kubelet/pki/kubelet-ca.crt` and `/var/lib/kubelet/pki/kubelet-ca.key`, make sure that the signed server certificate SAN is the same as the origin. To get the original SAN IP address(es) and DNS(s), run:
+. Sign each node `kubelet` server certificate with the CA certificate/key `/var/lib/kubelet/pki/kubelet-ca.crt` and `/var/lib/kubelet/pki/kubelet-ca.key`, make sure that the signed server certificate SAN is the same as the origin.
+To get the original SAN IP address(es) and DNS(s), run:
 +
 [source,bash]
 ----
@@ -353,7 +466,7 @@ openssl x509 -noout -text -in /var/lib/kubelet/pki.bak/kubelet.crt | grep -oP '(
 openssl x509 -noout -text -in /var/lib/kubelet/pki.bak/kubelet.crt | grep -oP '(?<=DNS:)[^,]+'
 ----
 +
-Finally, update the kubelet server certificate and key file `/var/lib/kubelet/kubelet.crt` and `/var/lib/kubelet/kubelet.key` respectively, and restart kubelet service.
+. Finally, update the `kubelet` server certificate and key file `/var/lib/kubelet/kubelet.crt` and `/var/lib/kubelet/kubelet.key` respectively, and restart `kubelet` service.
 +
 [source,bash]
 ----
