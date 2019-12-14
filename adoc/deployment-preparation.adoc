@@ -19,15 +19,24 @@ after which the agent will self-terminate or terminate the agent yourself before
 `ssh-agent -k`.
 ====
 
-To log in to the created cluster nodes, you need to configure an SSH key pair and
-load it into your user's `ssh-agent` program. This is also mandatory in order to be able to use
-the installation tools `terraform` and `skuba`. In a later deployment step,
-skuba will ensure that the key is distributed across all the nodes and trusted by them.
-For now, you only need to make sure that an ssh-agent is running and that it has
-the SSH key added:
+To log in to the created cluster nodes from the Management machine, you need to configure an SSH key pair.
+This key pair needs to be trusted by the user you will log in as upon each cluster node; this user defaults to
+"sles".  In order to use the installation tools `terraform` and `skuba`, this trusted keypair also must be
+loaded into the SSH agent.
 
-. The `ssh-agent` is usually started automatically by graphical
-desktop environments. If that is not your case, run:
+. If you do not have an existing ssh keypair to use, run:
++
+---
+ssh-keygen -t ed25519
+---
+
+#In a later deployment step,
+#skuba will ensure that the key is distributed across all the nodes and trusted by them.
+#For now, you only need to make sure that an ssh-agent is running and that it has
+#the SSH key added:
+
+. The `ssh-agent` or a compatible program is sometimes started automatically by graphical desktop
+environments. If that is not your situation, run:
 +
 ----
 eval "$(ssh-agent)"
