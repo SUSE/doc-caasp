@@ -257,8 +257,7 @@ cat pki.bak/oidc-dex-cert.yaml | grep tls.crt | awk '{print $2}' | base64 --deco
 cat pki.bak/oidc-dex-cert.yaml | grep tls.key | awk '{print $2}' | base64 --decode | tee pki.bak/oidc-dex.key > /dev/null
 ----
 
-. Sign the `oidc-dex` server certificate with the trusted CA certificate, make sure that the signed server certificate SAN is the same as the origin.
-To get the original SAN IP address(es) and DNS(s), run:
+. Get the original SAN IP address(es) and DNS(s), run:
 +
 [source,bash]
 ----
@@ -266,13 +265,20 @@ openssl x509 -noout -text -in pki.bak/oidc-dex.crt | grep -oP '(?<=IP Address:)[
 openssl x509 -noout -text -in pki.bak/oidc-dex.crt | grep -oP '(?<=DNS:)[^,]+'
 ----
 
-. Create a secret manifest file [path]`oidc-dex-cert.yaml` and update the secret data `ca.crt`, `tls.crt`, and `tls.key` with base64 encoded with trusted CA certificate, signed oidc-dex server certificate and key respectively.
+. Sign the `oidc-dex` server certificate with the trusted CA certificate.
++
+Please refer to <<trusted_server_certificate>> on how to sign the trusted certificate. The `server.conf` for IP.1 is the original SAN IP address if present, DNS.1 is the original SAN DNS if present.
++
+Then, import your trusted certificate into the {kube} cluster.
+The trusted CA certificates is `<TRUSTED_CA_CERT_PATH>`, trusted server certificate and key are `<SIGNED_OIDC_DEX_SERVER_CERT_PATH>` and `<SIGNED_OIDC_DEX_SERVER_KEY_PATH>`.
+
+. Create a secret manifest file [path]`oidc-dex-cert.yaml` and update the secret data `ca.crt`, `tls.crt`, and `tls.key` with base64; encoded with trusted CA certificate, signed oidc-dex server certificate and key respectively.
 +
 ----
 apiVersion: v1
 kind: Secret
 metadata:
-  name: oidc-gangway-cert
+  name: oidc-dex-cert
   namespace: kube-system
 type: kubernetes.io/tls
 data:
@@ -302,14 +308,20 @@ cat pki.bak/oidc-gangway-cert.yaml | grep tls.crt | awk '{print $2}' | base64 --
 cat pki.bak/oidc-gangway-cert.yaml | grep tls.key | awk '{print $2}' | base64 --decode | tee pki.bak/oidc-gangway.key > /dev/null
 ----
 
-. Sign the `oidc-gangway` server certificate with the trusted CA certificate, make sure that the signed server certificate SAN is the same as the origin.
-To get the original SAN IP address(es) and DNS(s), run:
+. Get the original SAN IP address(es) and DNS(s), run:
 +
 [source,bash]
 ----
 openssl x509 -noout -text -in pki.bak/oidc-gangway.crt | grep -oP '(?<=IP Address:)[^,]+'
 openssl x509 -noout -text -in pki.bak/oidc-gangway.crt | grep -oP '(?<=DNS:)[^,]+'
 ----
+
+. Sign the `oidc-gangway` server certificate with the trusted CA certificate.
++
+Please refer to <<trusted_server_certificate>> on how to sign the trusted certificate. The `server.conf` for IP.1 is the original SAN IP address if present, DNS.1 is the original SAN DNS if present.
++
+Then, import your trusted certificate into the {kube} cluster.
+The trusted CA certificates is `<TRUSTED_CA_CERT_PATH>`, trusted server certificate and key are `<SIGNED_OIDC_GANGWAY_SERVER_CERT_PATH>` and `<SIGNED_OIDC_GANGWAY_SERVER_KEY_PATH>`.
 
 . Create a secret manifest file [path]`oidc-gangway-cert.yaml` and update the secret data `ca.crt`, `tls.crt`, and `tls.key` with base64; encoded with trusted CA certificate, signed `oidc-gangway` server certificate and key respectively.
 +
@@ -326,7 +338,7 @@ data:
   tls.key: cat <SIGNED_OIDC_GANGWAY_SERVER_KEY_PATH> | base64 | awk '{print}' ORS='' && echo
 ----
 
-. Apply the secret manifest file and restart `oidc-gangway pods`.
+. Apply the secret manifest file and restart `oidc-gangway` pods.
 +
 [source,bash]
 ----
@@ -383,30 +395,50 @@ Log in to the master node and regenerate the certificates:
 [source,bash]
 ----
 sudo mkdir -p /etc/kubernetes/pki.bak
-sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf get secret oidc-dex-cert -n kube-system -o yaml | sudo tee /etc/kubernetes/pki.bak/oidc-dex-cert.yaml > /dev/null
-
-cat /etc/kubernetes/pki.bak/oidc-dex-cert.yaml | grep tls.crt | awk '{print $2}' | base64 --decode | sudo tee /etc/kubernetes/pki.bak/oidc-dex.crt > /dev/null
-cat /etc/kubernetes/pki.bak/oidc-dex-cert.yaml | grep tls.key | awk '{print $2}' | base64 --decode | sudo tee /etc/kubernetes/pki.bak/oidc-dex.key > /dev/null
+sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf get secret oidc-dex-cert -n kube-system -o yaml | sudo tee /etc/kubernetes/pki.bak/oidc-dex-cert.yaml > /dev/nulltrustedcert.yaml | grep tls.key | awk '{print $2}' | base64 --decode | sudo tee /etc/kubernetes/pki.bak/oidc-dex.key > /dev/null
 ----
-+
-. Sign the `oidc-dex` server certificate with the CA certificate/key `/etc/kubernetes/pki/ca.crt` and `/etc/kubernetes/pki/ca.key`, make sure that the signed server certificate SAN is the same as the origin.
-To get the original SAN IP address(es) and DNS(s), run:
+
+. Get the original SAN IP address(es) and DNS(s), run:
 +
 [source,bash]
 ----
 openssl x509 -noout -text -in /etc/kubernetes/pki.bak/oidc-dex.crt | grep -oP '(?<=IP Address:)[^,]+'
 openssl x509 -noout -text -in /etc/kubernetes/pki.bak/oidc-dex.crt | grep -oP '(?<=DNS:)[^,]+'
 ----
+
+. Sign the `oidc-dex` server certificate with the default kubernetes CA certificate _or_ trusted CA certificate.
+.. Default kubernetes CA certificate
 +
-. Finally, update the {kube} cluster secret data `tls.crt`, and `tls.key` with base64; encoded from signed `oidc-dex` server certificate and key respectively, and restart `oidc-dex` pods.
+Please refer to <<self_signed_server_certificate>> on how to sign the self signed server certificate. The default kubernetes CA certificate and key are located at `/etc/kubernetes/pki/ca.crt` and `/etc/kubernetes/pki/ca.key`. The `server.conf` for IP.1 is the original SAN IP address if present, DNS.1 is the original SAN DNS if present.
++
+.. Trusted CA certificate
++
+Please refer to <<trusted_server_certificate>> on how to sign the trusted server certificate. The `server.conf` for IP.1 is the original SAN IP address if present, DNS.1 is the original SAN DNS if present.
+
+. Import your certificate into the {kube} cluster.
+The CA certificate is `<CA_CERT_PATH>`, server certificate and key are `<SIGNED_OIDC_DEX_SERVER_CERT_PATH>` and `<SIGNED_OIDC_DEX_SERVER_KEY_PATH>`. 
+
+. Create a secret manifest file [path]`oidc-dex-cert.yaml` and update the secret data `ca.crt`, `tls.crt`, and `tls.key` with base64; encoded with CA certificate, signed `oidc-dex` server certificate and key respectively.
++
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: oidc-dex-cert
+  namespace: kube-system
+type: kubernetes.io/tls
+data:
+  ca.crt: cat <CA_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
+  tls.crt: cat <SIGNED_OIDC_DEX_SERVER_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
+  tls.key: cat <SIGNED_OIDC_DEX_SERVER_KEY_PATH> | base64 | awk '{print}' ORS='' && echo
+----
+
+. Apply the secret manifest file and restart `oidc-dex` pods.
 +
 [source,bash]
 ----
-cat <SIGNED_OIDC_DEX_SERVER_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
-cat <SIGNED_OIDC_DEX_SERVER_KEY_PATH> | base64 | awk '{print}' ORS='' && echo
-
-sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf edit secret oidc-dex-cert -n kube-system
-sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf delete pod -lapp=oidc-dex -n kube-system
+kubectl replace -f oidc-dex-cert.yaml
+kubectl delete pod -lapp=oidc-dex -n kube-system
 ----
 
 * Replace the `oidc-gangway` server certificate:
@@ -421,25 +453,48 @@ sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf get secret oidc-gangway-cer
 cat /etc/kubernetes/pki.bak/oidc-gangway-cert.yaml | grep tls.crt | awk '{print $2}' | base64 --decode | sudo tee /etc/kubernetes/pki.bak/oidc-gangway.crt > /dev/null
 cat /etc/kubernetes/pki.bak/oidc-gangway-cert.yaml | grep tls.key | awk '{print $2}' | base64 --decode | sudo tee /etc/kubernetes/pki.bak/oidc-gangway.key > /dev/null
 ----
-+
-. Sign the `oidc-gangway` server certificate with the CA certificate/key `/etc/kubernetes/pki/ca.crt` and `/etc/kubernetes/pki/ca.key`, make sure that the signed server certificate SAN is the same as the origin.
-To get the original SAN IP address(es) and DNS(s), run:
+
+. Get the original SAN IP address(es) and DNS(s), run:
 +
 [source,bash]
 ----
 openssl x509 -noout -text -in /etc/kubernetes/pki.bak/oidc-gangway.crt | grep -oP '(?<=IP Address:)[^,]+'
 openssl x509 -noout -text -in /etc/kubernetes/pki.bak/oidc-gangway.crt | grep -oP '(?<=DNS:)[^,]+'
 ----
+
+. Sign the `oidc-gangway` server certificate with the default kubernetes CA certificate _or_ trusted CA certificate.
+.. Default kubernetes CA certificate
 +
-. Finally, update the {kube} cluster secret data `tls.crt`, and `tls.key` with base64 encoded from signed `oidc-gangway` server certificate and key respectively, and restart `oidc-gangway` pods.
+Please refer to <<self_signed_server_certificate>> on how to sign the self signed server certificate. The default kubernetes CA certificate and key are located at `/etc/kubernetes/pki/ca.crt` and `/etc/kubernetes/pki/ca.key`. The `server.conf` for IP.1 is the original SAN IP address if present, DNS.1 is the original SAN DNS if present.
++
+.. Trusted CA certificate
++
+Please refer to <<trusted_server_certificate>> on how to sign the trusted server certificate. The `server.conf` for IP.1 is the original SAN IP address if present, DNS.1 is the original SAN DNS if present.
+
+. Import your certificate into the {kube} cluster.
+The CA certificates is `<CA_CERT_PATH>`, server certificate and key are `<SIGNED_OIDC_GANGWAY_SERVER_CERT_PATH>` and `<SIGNED_OIDC_GANGWAY_SERVER_KEY_PATH>`. 
+
+. Create a secret manifest file [path]`oidc-gangway-cert.yaml` and update the secret data `ca.crt`, `tls.crt`, and `tls.key` with base64; encoded with CA certificate, signed `oidc-gangway` server certificate and key respectively.
++
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: oidc-gangway-cert
+  namespace: kube-system
+type: kubernetes.io/tls
+data:
+  ca.crt: cat <CA_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
+  tls.crt: cat <SIGNED_OIDC_GANGWAY_SERVER_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
+  tls.key: cat <SIGNED_OIDC_GANGWAY_SERVER_KEY_PATH> | base64 | awk '{print}' ORS='' && echo
+----
+
+. Apply the secret manifest file and restart `oidc-gangway` pods.
 +
 [source,bash]
 ----
-cat <SIGNED_OIDC_GANGWAY_SERVER_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
-cat <SIGNED_OIDC_GANGWAY_SERVER_KEY_PATH> | base64 | awk '{print}' ORS='' && echo
-
-sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf edit secret oidc-gangway-cert -n kube-system
-sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf delete pod -lapp=oidc-gangway -n kube-system
+kubectl replace -f oidc-gangway-cert.yaml
+kubectl delete pod -lapp=oidc-gangway -n kube-system
 ----
 
 * Replace the `kubelet` server certificate:
@@ -484,7 +539,7 @@ sudo systemctl restart kubelet
 === Trusted 3rd-Party Signed Certificate
 
 [[trusted_server_certificate]]
-==== Server Certificate
+==== Trusted Server Certificate
 
 . Generate a private key by following the steps below from a terminal window:
 +
@@ -559,7 +614,7 @@ You should receive the following files in return:
 .. Intermediate CA and/or bundles that chain to the Trusted Root CA
 
 [[trusted_client_certificate]]
-==== Client Certificate
+==== Trusted Client Certificate
 
 . Generate a private key by following the steps below from a terminal window:
 +
@@ -638,7 +693,7 @@ In some cases you want to create self-signed certificates for testing.
 If you are using proper trusted 3rd-party CA signed certificates, skip the following steps and refer to <<trusted_server_certificate>>.
 
 [[self_signed_ca_certificate]]
-==== CA Certificate
+==== Self-signed CA Certificate
 
 . Create a file _ca.conf_ with the appropriate values
 +
@@ -671,7 +726,7 @@ openssl req -key ca.key -new -x509 -days 3650 -sha256 -config ca.conf -out ca.cr
 ----
 
 [[self_signed_server_certificate]]
-==== Server Certificate
+==== Self-signed Server Certificate
 
 . Create a file _server.conf_ with the appropriate values
 +
@@ -729,7 +784,7 @@ openssl x509 -text -noout -in server.crt
 ----
 
 [[self_signed_client_certificate]]
-==== Client Certificate
+==== Self-signed Client Certificate
 
 . Create a file _client.conf_ with the appropriate values
 +
