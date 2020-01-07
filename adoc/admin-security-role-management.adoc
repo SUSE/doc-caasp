@@ -226,3 +226,20 @@ roleRef:
 
 
 ====
+
+[IMPORTANT]
+====
+When creating new Roles, ClusterRoles, RoleBindings, and ClusterRoleBindings, it is important to keep in mind the `Principle of Least Privilege`:
+
+[quote]
+____
+define rules such that the account bound to the Role or ClusterRole has the minimum
+amount of permissions needed to fulfill its purpose and no more.
+____
+
+For instance, granting the `admin` ClusterRole to most accounts is most likely unnecessary,
+when a reduced-scope role would be enough fulfill the account's purpose.
+This helps reduce the attack surface if an account is compromised.
+
+It is also recommended to periodically review your Roles and ClusterRoles to ensure they are still required and are not overly-permissive.
+====
