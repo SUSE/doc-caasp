@@ -1,5 +1,18 @@
 [[handling_updates]]
 
+== Update Requirements
+
+[IMPORTANT]
+====
+Attempting a cluster update without updating the installed packages pattern on the management node, can lead to an incomplete or failed update.
+====
+
+Before updating a {productname} cluster, it's required to update packages installed by the `SUSE-CaaSP-Management` pattern on the management workstation.
+
+The cluster update depends on updated skuba, but might also require new helm / {tf} or other dependencies which will be updated with the refreshed pattern.
+
+Run `sudo zypper update` on the management workstation before any attempt to update the cluster.
+
 == Updating Kubernetes Components
 
 Updating of {kube} components is handled via `skuba`.
