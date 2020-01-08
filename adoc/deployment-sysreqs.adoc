@@ -309,22 +309,29 @@ Apply best practices for access control to workstations configured to administer
 
 ==== Replicas
 
-Some addon services is desired to have enough cluster nodes available for replicas to achieve high availabilty.
+Some addon services are desired to be highly available. These services require enough cluster nodes available to run replicas of their services.
 
-When the cluster is deployed with enough nodes for replica sizes, those service distributions will be balanced across cluster.
+When the cluster is deployed with enough nodes for replica sizes, those service distributions will be balanced across the cluster.
 
-You can check the deployment replica size after node bootstrap. The number of cluster node should be equal or greater than the `DESIRED` replica size.
+You can check the deployment replica size after node bootstrap. The number of cluster nodes should be equal or greater than the `DESIRED` replica size.
 ----
 kubectl get rs -n kube-system
 ----
 
-After deployment, if number of healthy nodes fall under replica size, service replicas once on the unhealthy node will show in `Pending` state until either the unhealthy node recovers or new node joined to cluster.
+After deployment, if the number of healthy nodes falls below the number required for fulfilling the replica sizing, service replicas will show in `Pending` state until either the unhealthy node recovers or a new node is joined to cluster.
 
-For cluster deployed with node number less than the default replica sizes. Services will still try to find a suitable node to run on. However it is likely you will see services all running on same node. Following are two methods for replica management if you wish to work with cluster below the default replica size.
+For clusters deployed with a node number lower than the default replica sizes, services will still try to find a suitable node to run on.
+However it is likely you will see services all running on the same nodes, defeating the purpose of high availability.
 
-Reduce replicas number:
+The following describes two methods for replica management if you wish to work with a cluster below the default replica size requirement.
 
-. Reduce deployment replica size before node join. Adopt same method to increase the replica size before new node join if later have more available resource for new node. 
+===== Reduce replica number
+
+. Reduce deployment replica size before node joining.
+[NOTE]
+====
+You can use the same steps to increase the replica size again if more resources become available later on.
+====
 +
 ----
 kubectl -n kube-system edit deployment <NAME>
@@ -335,7 +342,7 @@ spec:
 ----
 . Join new nodes.
 
-Re-distribute:
+===== Re-distribute replicas
 
 . Find the pod for re-distribution.
 Check the `NAME` and `NODE` colume for duplicated pods.
