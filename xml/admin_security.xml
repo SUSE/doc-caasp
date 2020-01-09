@@ -22,6 +22,14 @@
    </para>
   </abstract>
  </info>
+ <sect1 xml:id="sec-admin-security-firewall">
+  <title>Network Access Considerations</title>
+  <para>
+   It is good security practice not to expose the kubernetes API
+   server on the public internet. Use network firewalls that only
+   allow access from trusted subnets.
+  </para>
+ </sect1>
  <sect1 xml:id="sec-admin-security-auth-kubeconfig">
   <title>Access Control Overview</title>
   <para>
@@ -878,6 +886,22 @@ roleRef:
      </callout>
     </calloutlist>
    </example>
+   <important>
+    <title>Security Considerations</title>
+    <para>
+     When creating new Roles, ClusterRoles, RoleBindings, and ClusterRoleBindings, it is important to keep in mind the `Principle of Least Privilege`:
+     <quote>
+     define rules such that the account bound to the Role or ClusterRole has the minimum
+     amount of permissions needed to fulfill its purpose and no more.
+     </quote>
+     For instance, granting the `admin` ClusterRole to most accounts is most likely unnecessary,
+     when a reduced-scope role would be enough fulfill the account's purpose.
+     This helps reduce the attack surface if an account is compromised.
+     </para>
+     <para>
+     It is also recommended to periodically review your Roles and ClusterRoles to ensure they are still required and are not overly-permissive.
+     </para>
+    </important>
   </sect2>
  </sect1>
 
