@@ -116,7 +116,7 @@ helm chart from the chart. To install the Tiller server, choose either way to de
 
 This will install Tiller without additional certificate security.
 
-[source,bash]
+[source,bash,subs='attributes']
 ----
 kubectl create serviceaccount --namespace kube-system tiller
 
@@ -149,7 +149,7 @@ Then, import trusted certificate to {kube} cluster. In this example, trusted cer
 
 . Deploy Tiller server with TLS certificate
 +
-[source,bash]
+[source,bash,subs="attributes"]
 ----
 kubectl create serviceaccount --namespace kube-system tiller
 kubectl create clusterrolebinding tiller \
