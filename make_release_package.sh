@@ -32,5 +32,5 @@ mv $PWD/build/caasp-deployment/caasp-deployment_color_en.pdf $PWD/build/pack/SUS
 mv $PWD/build/caasp-quickstart/caasp-quickstart_color_en.pdf $PWD/build/pack/SUSE-CaaSP-$MAJOR.$MINOR.$PATCH-Quickstart-Guide.pdf
 
 #Compress contents of package dir
-cd build/pack/
+cd $PWD/build/pack/
 tar czvf SUSE-CaaSP-$MAJOR.$MINOR.$PATCH-Docs.tar.gz *
