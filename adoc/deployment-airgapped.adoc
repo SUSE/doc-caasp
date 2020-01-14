@@ -517,8 +517,7 @@ Replace `USERNAME` and `PASSWORD` with proper credentials of your choosing.
 +
 ----
 sudo mkdir -p /etc/docker/registry/{auth,certs}
-sudo docker run --entrypoint htpasswd registry.suse.com/sles12/registry:2.6.2 -Bbn USERNAME PASSWORD \
-> /etc/docker/registry/auth/htpasswd
+sudo docker run --entrypoint htpasswd registry.suse.com/sles12/registry:2.6.2 -Bbn <USERNAME> <PASSWORD> | sudo tee /etc/docker/registry/auth/htpasswd
 ----
 . Create the ``/etc/docker/registry/config.yml`` configuration file.
 +
