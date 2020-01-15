@@ -1,8 +1,24 @@
+:toc:
 = Stratos Web Console
 
+[IMPORTANT]
+====
+Stratos web UI is provided as a "tech preview".
+====
+
+[NOTE]
+====
+If you plan to deploy {suse} {cap} on your {productname}
+cluster please skip this section of the documentation and refer
+to the official {suse} {cap} instructions. This will include Stratos.
+
+https://documentation.suse.com/suse-cap/1.5.1/single-html/cap-guides/#cha-cap-depl-caasp
+====
+
+== Introduction
+
 The Stratos user interface (UI) is a modern web-based management application for
-{kube} and for Cloud Foundry distributions based on {kube} like SUSE
-Cloud Application Platform.
+{kube} and for Cloud Foundry distributions based on {kube} like {suse} {cap}.
 
 Stratos provides a graphical management console for both developers and system
 administrators.
@@ -10,14 +26,8 @@ administrators.
 A single Stratos instance can be used to monitor multiple {kube} clusters
 as long as it is granted access to their {kube} API endpoint.
 
-If you plan to deploy SUSE Cloud Application Platform on your {productname}
-cluster please skip this section of the documentation and refer
-to the official SUSE Cloud Application Platform instructions.
-
-== Introduction
-
 This document aims to describe how to install Stratos in a {productname} cluster
-that doesn't plan to run any SUSE Cloud Application Platform components.
+that doesn't plan to run any {suse} {cap} components.
 
 The Stratos stack is deployed using a helm charts and consists of its web
 UI POD and a MariaDB one that is used to store configuration values.
@@ -29,7 +39,7 @@ UI POD and a MariaDB one that is used to store configuration values.
 The deployment of Stratos is performed using a helm chart. Your remote
 administration machine must have Helm installed.
 
-When using a Helm release minor of 3.0, Helm's Tiller component has to be
+When using a Helm release earlier than 3.0, Helm's Tiller component has to be
 installed and active on your {productname} cluster.
 
 === Persistent Storage
@@ -39,25 +49,9 @@ its data.
 
 The cluster must have a {kube} Storage Class defined.
 
-=== Exposing the Web UI
-
-The web interface of Stratos can be exposed either via a Ingress resource or
-by using a Service of type LoadBalancer or even both at the same time.
-
-An Ingress controller must be deployed on the cluster to be able to expose
-the service using an Ingress resource.
-
-The cluster must be deployed on a platform that can handle `LoadBalancer`
-objects and must have the Cloud Provider Integration (CPI) enabled. This
-can be achieved for example when deploying {productname} on top of OpenStack.
-
-=== Securing Stratos
-
-It's highly recommended to secure Stratos' web interface using TLS encryption.
-
-This can be done by creating a TLS certificate for Stratos.
-
 == Installation
+
+=== Adding helm chart repository and default values
 
 . Add SUSE helm charts repository
 +
@@ -73,41 +67,55 @@ helm repo add suse https://kubernetes-charts.suse.com
 helm inspect values suse/console > stratos-values.yaml
 ----
 
-. Define `admin` user password
-+
+=== Define `admin` user password
+
 Create a secure password for your admin user and write that into the
 `stratos-values.yaml` as value of the `console.localAdminPassword` key.
-+
-*Note well:* this step is required to allow the installation of Stratos without
-having any SUSE Cloud Application platform components deployed on the cluster.
 
-. Define the Storage Class to be used
-+
+[IMPORTANT]
+====
+This step is required to allow the installation of Stratos without
+having any {suse} {cap} components deployed on the cluster.
+====
+
+=== Define the Storage Class to be used
+
 If your cluster does not have a default storage class configured, or you want
 to use a different one, follow these instructions.
-+
+
 Open the `stratos-values.yaml` file and look for the `storageClass` entry
 defined at the global level, uncomment the line and provide the name of your
 Storage Class.
-+
+
 The values file will have something like that:
-+
+
 [source,yaml]
 ----
 # Specify which storage class should be used for PVCs
 storageClass: default
 ----
-+
-*Note well:* the file has other `storageClass` keys defined inside of some of
+
+[NOTE]
+====
+The file has other `storageClass` keys defined inside of some of
 its resources. These can be left empty to rely on the global Storage Class that
 has just been defined.
+====
 
-. Define how to expose Stratos
-+
-The web interface of Stratos can be exposed either by using a {kube} `Ingress`
-or a `LoadBalancer` or both of them at the same time. The behaviour is defined
-inside of the `console.service` stanza of the yaml file:
-+
+=== Exposing the Web UI
+
+The web interface of Stratos can be exposed either via a Ingress resource or
+by using a Service of type `LoadBalancer` or even both at the same time.
+
+An Ingress controller must be deployed on the cluster to be able to expose
+the service using an Ingress resource.
+
+The cluster must be deployed on a platform that can handle `LoadBalancer`
+objects and must have the Cloud Provider Integration (CPI) enabled. This
+can be achieved, for example, when deploying {productname} on top of OpenStack.
+
+The behavior is defined inside of the `console.service` stanza of the yaml file:
+
 [source,yaml]
 ----
 console:
@@ -143,48 +151,54 @@ console:
         key:
 ----
 
-. Expose the web UI using a LoadBalancer
-+
+==== Expose the web UI using a LoadBalancer
+
 The service can be exposes as a `LoadBalancer` one by setting the value of
 `console.service.type` to be `LoadBalancer`.
-+
+
 The `LoadBalancer` resource can be tuned by changing the values of the other
 `loadBalancer*` params specified inside of the `console.service` stanza.
 
-. Expose the web UI using an Ingress
-+
+==== Expose the web UI using an Ingress
+
 The Ingress resource can be created by setting
 `console.service.ingress.enabled` to be `true`.
-+
+
 Stratos is exposed by the Ingress using a dedicated host rule. Hence
 you must specify the FQDN of the host as a value of the
 `console.service.ingress.host` key.
-+
-The behaviour of the Ingress object can be fine tuned by using the
+
+The behavior of the Ingress object can be fine tuned by using the
 other keys inside of the `console.service.ingress` stanza.
 
-. Secure Stratos web UI
-+
+=== Securing Stratos
+
+It's highly recommended to secure Stratos' web interface using TLS encryption.
+
+This can be done by creating a TLS certificate for Stratos.
+
+==== Secure Stratos web UI
+
 It's highly recommended to secure the web interface of Stratos by using TLS
 encryption. This can be easily done when exposing the web interface using an
 Ingress resource.
-+
+
 Inside of the `console.service.ingress` stanza ensure the Ingress resource is
 enabled and then specify values for `console.service.ingress.tls.crt` and
 `console.service.ingress.tls.key`. These keys hold the base64 encoded TLS
 certificate and key.
-+
+
 The TLS certificate and key can be base64 encoded by using the following command:
-+
+
 [source,bash]
 ----
 base64 tls.crt
 base64 tls.key
 ----
-+
+
 The output produced by the two commands has to be copied into the
 `stratos-values.yaml` file, resulting in something like that:
-+
+
 [source,yaml]
 ----
 console:
@@ -197,21 +211,21 @@ console:
         <output of base64 tls.key>
 ----
 
-. Change MariaDB password
-+
+==== Change MariaDB password
+
 The helm chart provisions the MariaDB database with a default weak password.
 A stronger password can be specified by altering the value of `mariadb.mariadbPassword`.
 
-. Enable tech preview features
-+
+=== Enable tech preview features
+
 You can enable tech preview features of Stratos by changing the value of
 `console.techPreview` from `false` to `true`.
 
-. Deploying Stratos
-+
+=== Deploying Stratos
+
 Now Stratos can be deployed using helm and the values specified inside of the
 `stratos-values.yaml` file:
-+
+
 [source,bash]
 ----
 helm install suse/console \
@@ -219,30 +233,28 @@ helm install suse/console \
   --namespace stratos \
   --values stratos-values.yaml
 ----
-+
+
 You can monitor the status of your Stratos deployment with the watch command:
-+
+
 [source,bash]
 ----
 watch --color 'kubectl get pods --namespace stratos'
 ----
-+
+
 When Stratos is successfully deployed, the following is observed:
 
   * For the volume-migration pod, the STATUS is Completed and the READY column is at 0/1.
   * All other pods have a Running STATUS and a READY value of n/n.
 
-+
 Press `Ctrl–C` to exit the watch command.
 
 . At this stage Stratos web UI should be accessible. You can log into that using
 the `admin` user and the password you specified inside of your `stratos-values.yaml`
 file.
 
-=== Stratos configuration
+== Stratos configuration
 
 Now that Stratos is up and running you can log into it and configure it to
 connect to your {kube} cluster(s).
 
-Please refer to the Stratos section inside of the SUSE Cloud Application Platform
-for more details on that.
+Please refer to the link:https://documentation.suse.com/suse-cap/1.5.1/single-html/cap-guides/#book-cap-guides[{suse} {cap} documentation] for more information.
