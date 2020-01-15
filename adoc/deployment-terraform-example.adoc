@@ -107,20 +107,17 @@ private key.  At least one of the keys must match a key loaded into your
 # datastore to use in vSphere
 vsphere_datastore = "STORAGE-0" // <1>
 
-# if set, datastore_cluster to use in vSphere
-vsphere_datastore_cluster = "" // <2>
-
 # datacenter to use in vSphere
-vsphere_datacenter = "DATACENTER" // <3>
+vsphere_datacenter = "DATACENTER" // <2>
 
 # network to use in vSphere
-vsphere_network = "VM Network" // <4>
+vsphere_network = "VM Network" // <3>
 
 # resource pool the machines will be running in
-vsphere_resource_pool = "My_RP" // <5>
+vsphere_resource_pool = "My_RP" // <4>
 
 # template name the machines will be copied from
-template_name = "sles15-sp1-caasp" // <6>
+template_name = "sles15-sp1-caasp" // <5>
 
 # IMPORTANT: Replace by "efi" string in case your template was created by using EFI firmware
 firmware = "bios"
@@ -128,71 +125,68 @@ firmware = "bios"
 # prefix that all of the booted machines will use
 # IMPORTANT: please enter unique identifier below as value of
 # stack_name variable to not interfere with other deployments
-stack_name = "caasp-v4" // <7>
+stack_name = "caasp-v4" // <6>
 
 # Number of master nodes
-masters = 1 // <8>
+masters = 1 // <7>
 
 # Optional: Size of the root disk in GB on master node
-master_disk_size = 50 // <9>
+master_disk_size = 50 // <8>
 
 # Number of worker nodes
-workers = 2 // <10>
+workers = 2 // <9>
 
 # Optional: Size of the root disk in GB on worker node
-worker_disk_size = 40 // <11>
+worker_disk_size = 40 // <10>
 
 # Username for the cluster nodes. Must exist on base OS.
-username = "sles" // <12>
+username = "sles" // <11>
 
 # Optional: Define the repositories to use
 # repositories = {
 #   repository1 = "http://repo.example.com/repository1/"
 #   repository2 = "http://repo.example.com/repository2/"
 # }
-repositories = {} // <13>
+repositories = {} // <12>
 
 # Minimum required packages. Do not remove them.
 # Feel free to add more packages
-packages = [ // <14>
+packages = [ // <13>
 ]
 
 # ssh keys to inject into all the nodes
-authorized_keys = [ // <15>
+authorized_keys = [ // <14>
   "ssh-rsa <example_key> example@example.com"
 ]
 
 # IMPORTANT: Replace these ntp servers with ones from your infrastructure
-ntp_servers = [ // <16>
-  "0.novell.pool.ntp.org", "1.novell.pool.ntp.org", "2.novell.pool.ntp.org", "3.novell.pool.ntp.org"
-]
+ntp_servers = ["0.novell.pool.ntp.org", "1.novell.pool.ntp.org", "2.novell.pool.ntp.org", "3.novell.pool.ntp.org"] // <15>
 ----
 <1> `vsphere_datastore`: The datastore to use.
-<2> `vsphere_datastore_cluster`: The datastore_cluster to use.
-<3> `vsphere_datacenter`: The datacenter to use.
-<4> `vsphere_network`: The network to use.
-<5> `vsphere_resource_pool`: The resource pool to use.
-<6> `template_name`: The name of the template created according to instructions.
-<7> `stack_name`: Prefix for all machines of the cluster spawned by terraform.
+<2> `vsphere_datacenter`: The datacenter to use.
+<3> `vsphere_network`: The network to use.
+<4> `vsphere_resource_pool`: The resource pool to use.
+<5> `template_name`: The name of the template created according to instructions.
+<6> `stack_name`: Prefix for all machines of the cluster spawned by terraform.
 *Note*: This string will be used to generate the human readable IDs in {soc}.
 If you use a generic term, deployment very likely to fail because the term is already in use by someone else. It's a good idea to use your username or some other unique identifier.
-<8> `masters`: Number of master nodes to be deployed.
-<9> `master_disk_size`: Size of the root disk in GB.
+<7> `masters`: Number of master nodes to be deployed.
+<8> `master_disk_size`: Size of the root disk in GB.
 *Note*: The value must be at least the same size as the source template. It is only possible to increase the size of a disk.
-<10> `workers`: Number of worker nodes to be deployed.
-<11> `worker_disk_size`: Size of the root disk in GB.
+<9> `workers`: Number of worker nodes to be deployed.
+<10> `worker_disk_size`: Size of the root disk in GB.
 *Note*: The value must be at least the same size as the source template. It is only possible to increase the size of a disk.
-<12> `username`: Login username for the nodes.
+<11> `username`: Login username for the nodes.
 *Note*: Leave this as the default `sles`. The username must exist on the used base operating system. It will not be created.
-<13> `repositories`: A list of additional repositories to be added on each
+<12> `repositories`: A list of additional repositories to be added on each
 machines. Leave empty if no additional packages need to be installed.
-<14> `packages`: Additional packages to be installed on the node.
+<13> `packages`: Additional packages to be installed on the node.
 *Note*: Do not remove any of the pre-filled values in the `packages` section. This can render
 your cluster unusable. You can add more packages but do not remove any of the
 default packages listed.
-<15> `authorized_keys`: List of ssh-public-keys that will be able to log in to the
+<14> `authorized_keys`: List of ssh-public-keys that will be able to log in to the
 deployed machines.
-<16> `ntp_servers`: A list of `ntp` servers you would like to use with `chrony`.
+<15> `ntp_servers`: A list of `ntp` servers you would like to use with `chrony`.
 # end::tf_vmware[]
 
 
