@@ -156,6 +156,10 @@ The `LoadBalancer` resource can be tuned by changing the values of the other
 The Ingress resource can be created by setting
 `console.service.ingress.enabled` to be `true`.
 +
+Stratos is exposed by the Ingress using a dedicated host rule. Hence
+you must specify the FQDN of the host as a value of the
+`console.service.ingress.host` key.
++
 The behaviour of the Ingress object can be fine tuned by using the
 other keys inside of the `console.service.ingress` stanza.
 
