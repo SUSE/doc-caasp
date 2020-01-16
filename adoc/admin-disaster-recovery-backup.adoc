@@ -1,0 +1,181 @@
+= Backup
+This chapter describes the backup of {productname}.
+
+== Data To Backup
+1. Create backup directories on external storage.
++
+```bash
+BACKUP_DIR=CaaSP_Backup_`date +%Y%m%d%H%M%S`
+mkdir /${BACKUP_DIR}
+
+# Repeat to create folders for all master nodes
+mkdir /${BACKUP_DIR}/<MASTER_NAME>_<MASTER_IP>
+```
+
+2. Copy the following files/folders into the backup directory:
+* The `skuba`: command-line binary for the running cluster, use to replace nodes from cluster.
+* The skuba cluster folder: directory where used for running `skuba` commands. Contains cluster configurations and authentication files.
+* The kubernetes folder of every node in cluster: directory contains kubernetes configurations.
++
+You may need to access to each master node in cluster and copy the entire folder to external storage.
++
+```bash
+cp -a /etc/kubernetes /${BACKUP_DIR}/<MASTER_NAME>_<MASTER_IP>/
+```
+* The kubelet folder of every node in cluster: directory contains kubelet configurations.
++
+You may need to access to each master node in cluster and copy the entire folder to external storage.
++
+```bash
+cp -a /var/lib/kubelet /${BACKUP_DIR}/<MASTER_NAME>_<MASTER_IP>/
+```
+* The etcd cluster database: holds all cluster data. Can be used to recover master nodes. Please refer to the next section for steps to create etcd cluster database backup.
+3. (Optional) Make backup directory into a compressed file, and remove the original backup directory.
++
+```bash
+tar cfv ${BACKUP_DIR}.tgz /${BACKUP_DIR}
+rm -rf /${BACKUP_DIR}
+```
+
+== Create Etcd Cluster Database Backup
+=== Procedure
+1. Mount external storage device to all master nodes. This is only required if following step is using local hostpath as volume storage.
+2. Create backup.
++
+HINT: Backup size depends on the cluster. Ensure each of the backup has sufficient space. The available size should be more than the database snapshot file. You should also have a rotation method to clean up the unneeded snapshot overtime. When there is insufficient space available during backup, pod will fail to be in `Running` state and `no space left on device` error will show in pod logs.
++
+```bash
+ls -sh /var/lib/etcd/member/snap/db
+```
++
+Below is the sample manifest bind to local hostpath. Recommend to use other storage methods instead.
++Replace <STORAGE_MOUNT_POINT> with directory to store for backup. The directory must exist on every node in cluster.
++
+Replace <IN_CLUSTER_ETCD_IMAGE> with etcd image used in cluster. This can retrive by accessing any one of node in cluster and run `grep image: /etc/kubernetes/manifests/etcd.yaml | awk '{print $2}'`
++
+```
+ETCD_SNAPSHOT="<STORAGE_MOUNT_POINT>/etcd_snapshot"
+ETCD_IMAGE="<IN_CLUSTER_ETCD_IMAGE>"
+MANIFEST="etcd-backup.yaml"
+
+cat << *EOF* > ${MANIFEST} 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: etcd-backup
+  namespace: kube-system
+spec:
+  containers:
+  - name: etcd-backup
+    image: ${ETCD_IMAGE}
+    env:
+    - name: ETCDCTL_API
+      value: "3"
+    command: ["/bin/sh"]
+    args: ["-c", "etcdctl --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt --key=/etc/kubernetes/pki/etcd/healthcheck-client.key snapshot save /backup/etcd-snapshot-\$(date +%Y-%m-%d_%H:%M:%S_%Z).db"]
+    volumeMounts:
+    - mountPath: /etc/kubernetes/pki/etcd
+      name: etcd-certs
+      readOnly: true
+    - mountPath: /backup
+      name: etcd-backup
+  restartPolicy: OnFailure
+  nodeSelector:
+    node-role.kubernetes.io/master: ""
+  tolerations:
+  - effect: NoSchedule
+    operator: Exists
+  hostNetwork: true
+  volumes:
+  - name: etcd-certs
+    hostPath:
+      path: /etc/kubernetes/pki/etcd
+      type: DirectoryOrCreate
+  - name: etcd-backup
+    hostPath:
+      path: ${ETCD_SNAPSHOT}
+      type: Directory
+*EOF*
+
+kubectl create -f ${MANIFEST}
+```
+
+== Schedule ETCD Cluster Backup
+1. Mount external storage device to all master nodes. This is only required if following step is using local hostpath as volume storage.
+2. Create Cronjob.
++
+HINT: Backup size depends on the cluster. Ensure each of the backup has sufficient space. The available size should be more than the database snapshot file. You should also have a retention method to clean up the unneeded snapshot overtime.
++
+```bash
+ls -sh /var/lib/etcd/member/snap/db
+```
++
+Below is the sample manifest bind to local hostpath. Recommend to use other storage methods instead.
++
+Replace <STORAGE_MOUNT_POINT> with directory to store for backup. The directory must exist on every node in cluster.
++
+Replace <IN_CLUSTER_ETCD_IMAGE> with etcd image used in cluster. This can retrive by accessing any one of node in cluster and run `grep image: /etc/kubernetes/manifests/etcd.yaml | awk '{print $2}'`
++
+```
+ETCD_SNAPSHOT="<STORAGE_MOUNT_POINT>/etcd_snapshot"
+ETCD_IMAGE="<IN_CLUSTER_ETCD_IMAGE>"
+
+# SCHEDULE in Cron format. https://crontab.guru/
+SCHEDULE="*/3 * * * *"
+
+# *_HISTORY_LIMIT is the number of maximum history keep in the cluster.
+SUCCESS_HISTORY_LIMIT="3"
+FAILED_HISTORY_LIMIT="3"
+
+MANIFEST="etcd-backup.yaml"
+
+cat << *EOF* > ${MANIFEST}
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: etcd-backup
+  namespace: kube-system
+spec:
+  startingDeadlineSeconds: 100
+  schedule: "${SCHEDULE}"
+  successfulJobsHistoryLimit: ${SUCCESS_HISTORY_LIMIT}
+  failedJobsHistoryLimit: ${FAILED_HISTORY_LIMIT}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: etcd-backup
+            image: ${ETCD_IMAGE}
+            env:
+            - name: ETCDCTL_API
+              value: "3"
+            command: ["/bin/sh"]
+            args: ["-c", "etcdctl --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt --key=/etc/kubernetes/pki/etcd/healthcheck-client.key snapshot save /backup/etcd-snapshot-\$(date +%Y-%m-%d_%H:%M:%S_%Z).db"]
+            volumeMounts:
+            - mountPath: /etc/kubernetes/pki/etcd
+              name: etcd-certs
+              readOnly: true
+            - mountPath: /backup
+              name: etcd-backup
+          restartPolicy: OnFailure
+          nodeSelector:
+            node-role.kubernetes.io/master: ""
+          tolerations:
+          - effect: NoSchedule
+            operator: Exists
+          hostNetwork: true
+          volumes:
+          - name: etcd-certs
+            hostPath:
+              path: /etc/kubernetes/pki/etcd
+              type: DirectoryOrCreate
+          - name: etcd-backup
+            # hostPath is only one of the types of persistent volume. Suggest to setup external storage instead.
+            hostPath:
+              path: ${ETCD_SNAPSHOT}
+              type: Directory
+*EOF*
+ 
+kubectl create -f ${MANIFEST}
+```
