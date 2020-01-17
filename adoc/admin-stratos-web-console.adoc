@@ -4,9 +4,9 @@ include::common_tech_preview.adoc[]
 
 [NOTE]
 ====
-If you plan to deploy {suse} {cap} on your {productname}
+If you plan to deploy {cap} on your {productname}
 cluster please skip this section of the documentation and refer
-to the official {suse} {cap} instructions. This will include Stratos.
+to the official {cap} instructions. This will include Stratos.
 
 https://documentation.suse.com/suse-cap/1.5.1/single-html/cap-guides/#cha-cap-depl-caasp
 ====
@@ -14,7 +14,7 @@ https://documentation.suse.com/suse-cap/1.5.1/single-html/cap-guides/#cha-cap-de
 == Introduction
 
 The Stratos user interface (UI) is a modern web-based management application for
-{kube} and for Cloud Foundry distributions based on {kube} like {suse} {cap}.
+{kube} and for Cloud Foundry distributions based on {kube} like {cap}.
 
 Stratos provides a graphical management console for both developers and system
 administrators.
@@ -23,7 +23,7 @@ A single Stratos instance can be used to monitor multiple {kube} clusters
 as long as it is granted access to their {kube} API endpoint.
 
 This document aims to describe how to install Stratos in a {productname} cluster
-that doesn't plan to run any {suse} {cap} components.
+that doesn't plan to run any {cap} components.
 
 The Stratos stack is deployed using a helm charts and consists of its web
 UI POD and a MariaDB one that is used to store configuration values.
@@ -71,7 +71,7 @@ Create a secure password for your admin user and write that into the
 [IMPORTANT]
 ====
 This step is required to allow the installation of Stratos without
-having any {suse} {cap} components deployed on the cluster.
+having any {cap} components deployed on the cluster.
 ====
 
 === Define the Storage Class to be used
@@ -253,4 +253,4 @@ file.
 Now that Stratos is up and running you can log into it and configure it to
 connect to your {kube} cluster(s).
 
-Please refer to the link:https://documentation.suse.com/suse-cap/1.5.1/single-html/cap-guides/#book-cap-guides[{suse} {cap} documentation] for more information.
+Please refer to the link:https://documentation.suse.com/suse-cap/1.5.1/single-html/cap-guides/#book-cap-guides[{cap} documentation] for more information.
