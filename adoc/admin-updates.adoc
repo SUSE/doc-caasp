@@ -241,6 +241,23 @@ kubectl -n kube-system annotate ds kured weave.works/kured-node-lock='{"nodeID":
 
 This command modifies an annotation (`annotate`) on the daemonset (`ds`) named `kured`.
 
+After you have done this, you will have to manage reboots yourself. In order to do this, you will have to follow some steps whenever you want to issue a reboot for a node. First of all, you will have to `cordon` and `drain` the node:
+
+----
+kubectl cordon NODE
+kubectl drain --force=true --delete-local-data=false --ignore-daemonsets=false NODE
+----
+
+Only then you will be able to manually `reboot` the node safely. Whenever the node is back, remember to `uncordon` it so it is scheduleable again:
+
+----
+kubectl cordon NODE
+----
+
+Perform the above steps first on control plane nodes, and afterwards on worker nodes.
+
+Bear in mind that you do not have to do all this if the node to be rebooted does not contain any workload whatsoever.
+
 === Manual Unlock
 
 In exceptional circumstances, such as a node experiencing a permanent failure whilst rebooting, manual intervention may be required to remove the cluster lock:
