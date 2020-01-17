@@ -17,6 +17,23 @@ Run `sudo zypper update` on the management workstation before any attempt to upd
 
 Updating of {kube} components is handled via `skuba`.
 
+The general procedure should look like this:
+
+. Update the packages and reboot your management workstation to get all the latest changes to skuba and it's dependencies
+. Run `skuba addon upgrade apply` on the management workstation
+.
+. Check if there are addon upgrades available for the current cluster
+. Upgrade all master nodes
+. Upgrade all worker nodes
+. Check if new addons are available for the new version
+.. If necessary upgrade master nodes again
+.. If necessary upgrade worker nodes again
+
+=== Update Management Workstation
+
+Run `sudo zypper up` on your management workstation to get the latest version of `skuba` and its dependencies.
+Reboot the machine to make sure that all system changes are correctly applied.
+
 === Generating an Overview of Available Platform Updates
 
 In order to get an overview of the updates available, you can run:
@@ -119,6 +136,12 @@ The control plane consists of these components:
 
 === Generating an Overview of Available Addon Updates
 
+[NOTE]
+====
+Due to changes to the way `skuba` handles addons some existing components might be shown as `new addon` in the status output.
+This is expected and no cause for concern. For any upgrade afterwards the addon will be considered known and only show available upgrades.
+====
+
 In order to get an overview of the addon updates available, you can run:
 
 ----
@@ -150,6 +173,12 @@ Latest Kubernetes version: 1.16.2
 Congratulations! Addons are already at the latest version available
 ----
 
+Before updating the nodes you must apply the addon upgrades to your management workstation.
+Please run:
+
+----
+skuba addon upgrade apply
+----
 
 == Updating Nodes
 
@@ -203,6 +232,12 @@ The upgrade via `skuba node upgrade apply` will:
 * upgrade the rest of the {kube} system stack (`kubelet`, `cri-o`).
 * restart services.
 ====
+
+=== Check for Upgrades to New Version
+
+Once you have upgraded all nodes, please run `skuba cluster upgrade plan` again.
+This will show if any upgrades are available that required the versions you just installed.
+If there are upgrades available please repeat the procedure until no more new upgrades are shown.
 
 == Base OS Updates
 
