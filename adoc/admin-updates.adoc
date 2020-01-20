@@ -241,6 +241,47 @@ kubectl -n kube-system annotate ds kured weave.works/kured-node-lock='{"nodeID":
 
 This command modifies an annotation (`annotate`) on the daemonset (`ds`) named `kured`.
 
+When automatic reboots are disabled, you will have to manage reboots yourself.
+In order to do this, you will have to follow some steps whenever you want to issue a reboot marker for a node.
+First of all, you will have to `cordon` and link:{kubedoc}tasks/administer-cluster/safely-drain-node/[`drain`] the node:
+
+----
+kubectl cordon <NODE_ID>
+kubectl drain --force=true \
+  --ignore-daemonsets=true \ // <1>
+  --delete-local-data=false \ // <2>
+  --grace-period 600 \ // <3>
+  --timeout=900s \ // <4>
+  <NODE_ID>
+----
+<1> Core components like `kured` and `cilium` are running as `DaemonSet` and draining those pods will fail if this is not set to `true`.
+<2> Continues even if there are pods using `emptyDir` (local data that will be deleted when the node is drained; e.g: `metrics-server`).
+<3> Running applications will be notified of termination and given 10 minutes (`600` seconds) to safely store data.
+<4> Draining of the node will fail after 15 minutes (`900` seconds) have elapsed without success.
+
+[IMPORTANT]
+====
+Depending on your deployed applications, you must adjust the values for `--grace-period` and `--timeout` to grant the applications enough time to safely shut down without losing data.
+The values here are meant to represent a conservative default for an application like {cap}.
+
+If you do not set these values, applications might never finish and draining of the pod will hang indefinitely.
+====
+
+Only then you will be able to manually `reboot` the node safely.
+
+Once the node is back, remember to `uncordon` it so it is scheduleable again:
+
+----
+kubectl cordon <NODE_ID>
+----
+
+Perform the above steps first on control plane nodes, and afterwards on worker nodes.
+
+[TIP]
+====
+If the node that should be rebooted does not contain any workload you can skip the above steps and simply reboot the node.
+====
+
 === Manual Unlock
 
 In exceptional circumstances, such as a node experiencing a permanent failure whilst rebooting, manual intervention may be required to remove the cluster lock:
