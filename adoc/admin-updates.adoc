@@ -248,10 +248,10 @@ First of all, you will have to `cordon` and link:{kubedoc}tasks/administer-clust
 ----
 kubectl cordon <NODE_ID>
 kubectl drain --force=true \
-  --ignore-daemonsets=true \
-  --delete-local-data=false \ // <1>
-  --grace-period 600 \ // <2>
-  --timeout=900s \ // <3>
+  --ignore-daemonsets=true \ // <1>
+  --delete-local-data=false \ // <2>
+  --grace-period 600 \ // <3>
+  --timeout=900s \ // <4>
   <NODE_ID>
 ----
 <1> Core components like `kured` and `cilium` are running as `DaemonSet` and draining those pods will fail if this is not set to `true`.
