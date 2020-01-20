@@ -241,22 +241,29 @@ kubectl -n kube-system annotate ds kured weave.works/kured-node-lock='{"nodeID":
 
 This command modifies an annotation (`annotate`) on the daemonset (`ds`) named `kured`.
 
-After you have done this, you will have to manage reboots yourself. In order to do this, you will have to follow some steps whenever you want to issue a reboot for a node. First of all, you will have to `cordon` and `drain` the node:
+When automatic reboots are disabled, you will have to manage reboots yourself.
+In order to do this, you will have to follow some steps whenever you want to issue a reboot marker for a node.
+First of all, you will have to `cordon` and link:{kubedoc}tasks/administer-cluster/safely-drain-node/[`drain`] the node:
 
 ----
-kubectl cordon NODE
-kubectl drain --force=true --delete-local-data=false --ignore-daemonsets=false NODE
+kubectl cordon <NODE_ID>
+kubectl drain --force=true --delete-local-data=false --ignore-daemonsets=false <NODE_ID>
 ----
 
-Only then you will be able to manually `reboot` the node safely. Whenever the node is back, remember to `uncordon` it so it is scheduleable again:
+Only then you will be able to manually `reboot` the node safely.
+
+Once the node is back, remember to `uncordon` it so it is scheduleable again:
 
 ----
-kubectl cordon NODE
+kubectl cordon <NODE_ID>
 ----
 
 Perform the above steps first on control plane nodes, and afterwards on worker nodes.
 
-Bear in mind that you do not have to do all this if the node to be rebooted does not contain any workload whatsoever.
+[TIP]
+====
+If the node that should be rebooted does not contain any workload you can skip the above steps and simply reboot the node.
+====
 
 === Manual Unlock
 
