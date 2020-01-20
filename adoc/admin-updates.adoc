@@ -248,15 +248,16 @@ First of all, you will have to `cordon` and link:{kubedoc}tasks/administer-clust
 ----
 kubectl cordon <NODE_ID>
 kubectl drain --force=true \
-  --ignore-daemonsets=false \
+  --ignore-daemonsets=true \
   --delete-local-data=false \ // <1>
   --grace-period 600 \ // <2>
   --timeout=900s \ // <3>
   <NODE_ID>
 ----
-<1> Continues even if there are pods using `emptyDir` (local data that will be deleted when the node is drained).
-<2> Running applications will be notified of termination and given 10 minutes (`600` seconds) to safely store data.
-<3> Draining of the node will fail after 15 minutes (`900` seconds) have elapsed without success.
+<1> Core components like `kured` and `cilium` are running as `DaemonSet` and draining those pods will fail if this is not set to `true`.
+<2> Continues even if there are pods using `emptyDir` (local data that will be deleted when the node is drained; e.g: `metrics-server`).
+<3> Running applications will be notified of termination and given 10 minutes (`600` seconds) to safely store data.
+<4> Draining of the node will fail after 15 minutes (`900` seconds) have elapsed without success.
 
 [IMPORTANT]
 ====
