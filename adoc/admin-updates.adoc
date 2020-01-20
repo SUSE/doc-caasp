@@ -19,15 +19,19 @@ Updating of {kube} components is handled via `skuba`.
 
 The general procedure should look like this:
 
-. Update the packages and reboot your management workstation to get all the latest changes to skuba and it's dependencies
-. Run `skuba addon upgrade apply` on the management workstation
-.
-. Check if there are addon upgrades available for the current cluster
-. Upgrade all master nodes
-. Upgrade all worker nodes
-. Check if new addons are available for the new version
-.. If necessary upgrade master nodes again
-.. If necessary upgrade worker nodes again
+. Update the packages and reboot your management workstation to get all the latest changes to skuba, helm and their dependencies
+. Run `skuba addon upgrade plan` and then `skuba add upgrade apply` on the management workstation
+. Apply all the configuration files that you modified for addons, the upgrade will have reset the configurations to defaults
+. Check if there are addon upgrades available for the current cluster using `skuba addon upgrade plan`
+.. Check if all the deployments in the cluster are compatible with the {kube} release that will be installed (refer to your individual deployments' documentation)
+If the deployment is not compatible you must update it to ensure it working with the updated {kube}.
+. Upgrade all master nodes by individually running `skuba node upgrade plan` and `skuba node upgrade apply`
+. Upgrade all worker nodes by individually running `skuba node upgrade plan` and `skuba node upgrade apply`
+. Check if new addons are available for the new version using `skuba addon upgrade plan`
+.. If necessary upgrade master nodes and re-apply configuration changes again
+.. If necessary upgrade nodes and re-apply configuration changes again
+. Once all nodes are up to date, update helm and tiller and subsequently the helm deployments
+. If you have other deployments not installed via {kube} or helm, update them last
 
 === Update Management Workstation
 
@@ -111,8 +115,7 @@ Component versions in master0
 ----
 
 It may happen that the {kube} version on the control plane is too outdated
-for the update to progress.
-In this case, you would get output similar to the following:
+for the update to progress. In this case, you would get output similar to the following:
 
 ----
 Current Kubernetes cluster version: 1.15.0
