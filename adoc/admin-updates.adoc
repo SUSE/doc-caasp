@@ -247,14 +247,23 @@ First of all, you will have to `cordon` and link:{kubedoc}tasks/administer-clust
 
 ----
 kubectl cordon <NODE_ID>
-kubectl drain --force=true --delete-local-data=false --ignore-daemonsets=false --grace-period 600 --timeout=900s <NODE_ID>
+kubectl drain --force=true \
+  --ignore-daemonsets=false \
+  --delete-local-data=false \ // <1>
+  --grace-period 600 \ // <2>
+  --timeout=900s \ // <3>
+  <NODE_ID>
 ----
+<1> Continues even if there are pods using `emptyDir` (local data that will be deleted when the node is drained).
+<2> Running applications will be notified of termination and given 10 minutes (`600` seconds) to safely store data.
+<3> Draining of the node will fail after 15 minutes (`900` seconds) have elapsed without success.
 
 [IMPORTANT]
 ====
 Depending on your deployed applications, you must adjust the values for `--grace-period` and `--timeout` to grant the applications enough time to safely shut down without losing data.
 The values here are meant to represent a conservative default for an application like {cap}.
-If you do not set these values applications might never finish and draining of the pod will hang indefinitely.
+
+If you do not set these values, applications might never finish and draining of the pod will hang indefinitely.
 ====
 
 Only then you will be able to manually `reboot` the node safely.
