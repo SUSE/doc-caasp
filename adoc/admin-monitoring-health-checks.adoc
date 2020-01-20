@@ -11,7 +11,7 @@ This will display a basic statistics UI about the cluster resources.
 
 A complete set of instructions on how to monitor and maintain the health of
 you cluster is beyond the scope of this document. More information is available
-at https://kubernetes.io/docs/tasks/debug-application-cluster/resource-usage-monitoring/#cadvisor
+at {kubedoc}tasks/debug-application-cluster/resource-usage-monitoring/#cadvisor
 
 There are three levels of health checks.
 
@@ -31,7 +31,7 @@ configured to be highly available, it's useful to know if
 [NOTE]
 ====
 For further understanding cluster health information, consider reading
-https://kubernetes.io/docs/tasks/debug-application-cluster/debug-cluster/
+{kubedoc}tasks/debug-application-cluster/debug-cluster/
 ====
 
 === {kube} master
@@ -371,7 +371,7 @@ oidc-gangway      1/1     1            1           8d
 If `coredns` is running and you are able to create pods then you can be certain
 that CNI and your CNI plugin are working correctly.
 
-There's also the https://kubernetes.io/docs/tasks/debug-application-cluster/monitor-node-health/[Monitor Node Health] check.
+There's also the {kubedoc}tasks/debug-application-cluster/monitor-node-health/[Monitor Node Health] check.
 This is a `DaemonSet` that runs on every node, and reports to the `apiserver` back as
 `NodeCondition` and `Events`.
 
@@ -428,7 +428,7 @@ Any HTTP response between `200` and `400` indicates success.
 livenessProbes are used to detect running but misbehaving pods/a service that might be running
 (the process didn't die), but that is not responding as expected.
 You can find out more about livenessProbes here:
-https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
+{kubedoc}tasks/configure-pod-container/configure-liveness-readiness-probes/
 
 Probes are executed by each `kubelet` against the pods that define them and that
 are running in that specific node. When a `livenessProbe` fails, {kube} will automatically
@@ -438,7 +438,7 @@ executed every `periodSeconds` starting from `initialDelaySeconds`.
 === readinessProbe
 
 readinessProbes are used to wait for processes that take some time to start.
-Find out more about readinessProbes here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#define-readiness-probes
+Find out more about readinessProbes here: {kubedoc}tasks/configure-pod-container/configure-liveness-readiness-probes/#define-readiness-probes
 Despite the container running, it might be performing some time consuming initialization operations.
 During this time, you don't want {kube} to route traffic to that specific pod.
 You also don't want that container to be restarted because it will appear unresponsive.

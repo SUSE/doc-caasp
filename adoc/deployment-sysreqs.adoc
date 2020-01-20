@@ -326,7 +326,7 @@ it is not possible to reconfigure the IP ranges once the deployment is complete.
 
 ==== IP Forwarding
 
-The link:https://kubernetes.io/docs/concepts/cluster-administration/networking/[{kube} networking model] requires that your nodes have IP forwarding enabled in the kernel.
+The link:{kubedoc}concepts/cluster-administration/networking/[{kube} networking model] requires that your nodes have IP forwarding enabled in the kernel.
 `skuba` checks this value when installing your cluster and installs a rule in `/etc/sysctl.d/90-skuba-net-ipv4-ip-forward.conf` to make it persistent.
 
 Other software can potentially install rules with higher priority overriding this value and causing machines to not behave as expected after rebooting.
@@ -347,9 +347,9 @@ net.ipv4.ip_forward = 1
 Please make sure that all your Kubernetes components can communicate with each other.
 This might require the configuration of routing when using multiple network adapters per node.
 
-Refer to: https://kubernetes.io/docs/setup/independent/install-kubeadm/#check-network-adapters.
+Refer to: {kubedoc}setup/independent/install-kubeadm/#check-network-adapters.
 
-Configure firewall and other network security to allow communication on the default ports required by Kubernetes: https://kubernetes.io/docs/setup/independent/install-kubeadm/#check-required-ports
+Configure firewall and other network security to allow communication on the default ports required by Kubernetes: {kubedoc}setup/independent/install-kubeadm/#check-required-ports
 
 ==== Performance
 
