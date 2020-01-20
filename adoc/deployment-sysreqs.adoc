@@ -137,7 +137,7 @@ These values are provided as a guide to work in most cases. They may vary based 
 
 ==== Storage Performance
 
-For master and worker nodes you must ensure storage performance of at least 500 sequential IOPS with disk bandwidth depending on your cluster size.
+For master nodes you must ensure storage performance of at least 50 to 500 sequential IOPS with disk bandwidth depending on your cluster size. It is highly recommended to use SSD.
 
     "Typically 50 sequential IOPS (for example, a 7200 RPM disk) is required.
     For heavily loaded clusters, 500 sequential IOPS (for example, a typical local SSD
@@ -148,6 +148,63 @@ For master and worker nodes you must ensure storage performance of at least 500 
     within 15 seconds."
 
 link:https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware.md#disks[]
+
+This is extremely important to ensure a proper functioning of the critical component `etcd`.
+
+It is possible to preliminary validate these requirements by using `fio`. This tool allows us to simulate `etcd` I/O (input/output) and to find out from the output statistics wether or not the storage is suitable.
+
+. Install the tool:
++
+[source,bash]
+----
+zypper in -y fio
+----
+. Run the testing:
++
+[source,bash]
+----
+fio --rw=write --ioengine=sync --fdatasync=1 --directory=test-etcd-dir --size=22m --bs=2300 --name=test-etcd-io
+----
+* Replace `test-etcd-dir` with a directory located on the same disk as the incoming etcd data under `/var/lib/etcd`
+
+From the outputs, the interesting part is `fsync/fdatasync/sync_file_range` where the values are expressed in microseconds (usec). A disk is considered sufficient when the value of the `99.00th` percentile is below 10000usec (10ms).
+
+Becareful though, this benchmark is for etcd only and does not take into consideration external disk usage. This means that a value slightly under 10ms should be taken with precaution as other workloads will have an impact on the disks.
+
+[WARNING]
+====
+If the storage is very slow, the values can be expressed directly in milliseconds.
+====
+
+Let's see two different examples:
+
+----
+[...]
+  fsync/fdatasync/sync_file_range:
+    sync (usec): min=251, max=1894, avg=377.78, stdev=69.89
+    sync percentiles (usec):
+     |  1.00th=[  273],  5.00th=[  285], 10.00th=[  297], 20.00th=[  330],
+     | 30.00th=[  343], 40.00th=[  355], 50.00th=[  367], 60.00th=[  379],
+     | 70.00th=[  400], 80.00th=[  424], 90.00th=[  465], 95.00th=[  506],
+     | 99.00th=[  594], 99.50th=[  635], 99.90th=[  725], 99.95th=[  742], // <1>
+     | 99.99th=[ 1188]
+[...]
+----
+<1> Here we get a value of 594usec (0.5ms) so the storage meets the requirements.
+
+----
+[...]
+  fsync/fdatasync/sync_file_range:
+    sync (msec): min=10, max=124, avg=17.62, stdev= 3.38
+    sync percentiles (usec):
+     |  1.00th=[11731],  5.00th=[11994], 10.00th=[12911], 20.00th=[16712],
+     | 30.00th=[17695], 40.00th=[17695], 50.00th=[17695], 60.00th=[17957],
+     | 70.00th=[17957], 80.00th=[17957], 90.00th=[19530], 95.00th=[22676],
+     | 99.00th=[28705], 99.50th=[30016], 99.90th=[41681], 99.95th=[59507], // <1>
+     | 99.99th=[89654]
+[...]
+----
+<1> Here we get a value of 28705usec (28ms) so the storage clearly does not meet the requirements.
 
 === Networking
 
