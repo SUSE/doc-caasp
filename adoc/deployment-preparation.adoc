@@ -60,8 +60,8 @@ For example: `/home/sles/.ssh/id_rsa`
 You can load multiple keys into your agent using the `ssh-add <PATH_TO_KEY>` command.
 Keys should be password protected as a security measure. The
 ssh-add command will prompt for your password, then the agent caches the
-private key for a configurable lifetime. The `-t lifetime` option to
-ssh-add specifies a maximum time to cache the key. See `man ssh-add` for
+decrypted key material for a configurable lifetime. The `-t lifetime` option to
+ssh-add specifies a maximum time to cache the specific key. See `man ssh-add` for
 more information.
 
 .Usage of multiple identities with `ssh-agent`
@@ -70,20 +70,6 @@ more information.
 Skuba will try all the identities loaded into the `ssh-agent` until one of
 them grants access to the node, or until the SSH servers' maximum authentication attempts are exhausted.
 This could lead to undesired messages in SSH or other security/authentication logs on your local machine.
-
-If you wish to avoid authentication attempts with identities irrelevant to {productname}, please configure
-a specific `Host` and `IdentityFile` combination in your local `~/.ssh/config`.
-
-For example:
-
-----
-Host caasp.cluster
-  HostName cluster.fqdn.domain
-  ForwardAgent yes
-  User sles
-  IdentityFile /home/sles/.ssh/id_rsa
-----
-
 ====
 
 ==== Forwarding the Authentication Agent Connection
@@ -92,7 +78,6 @@ host to another, which can be useful if you intend to run skuba on
 a "jump host" and don't want to copy your private key to this node.
 This can be achieved using the `ssh -A` command. Please refer to the man page
 of `ssh` to learn about the security implications of using this feature.
-
 
 [[registration_code]]
 === Registration Code
