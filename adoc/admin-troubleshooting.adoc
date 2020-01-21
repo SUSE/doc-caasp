@@ -101,10 +101,10 @@ etcdpod=$(crictl ps | grep etcd | awk -F ' ' '{ print $9 }')
 crictl inspectp $etcdpod
 ----
 
-// [NOTE]
-// ====
-// For more information about `etcd`, refer to <<troubleshooting-etcd>>.
-// ====
+[NOTE]
+====
+For more information about `etcd`, refer to <<troubleshooting-etcd>>.
+====
 
 * kubernetes.txt (_all nodes_)
 +
@@ -435,8 +435,7 @@ while grep "rbd" /proc/mounts > /dev/null 2>&1; do
 done
 ----
 
-// This can be added back once the conflict with supportutils-plugins-caasp is resolved
-// include::admin-troubleshooting-etcd.adoc[etcd Debugging,leveloffset=+1]
+include::admin-troubleshooting-etcd.adoc[etcd Debugging,leveloffset=+1]
 
 == Kubernetes debugging tips
 
