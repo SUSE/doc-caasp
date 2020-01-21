@@ -1,13 +1,12 @@
 == Configuring HTTP/HTTPS Proxy for {crio}
 
 In some cases you must configure the container runtime to use a proxy to pull
-container images. To configure this for {crio} you must modify the file
-`/etc/sysconfig/crio`.
+container images. The {crio} runtime uses the system proxy configuration,
+defined at `/etc/sysconfig/proxy`.  This file can be edited by hand, or via
+YaST.  For detailed instructions, see <insert link to SLES 15.1 docs and maybe
+that knowledge base item here>.
 
-. First define the host names that should be used without a proxy (`NO_PROXY`).
-. Then define which proxies should be used by the HTTP and HTTPS connections
-(`HTTP_PROXY` and `HTTPS_PROXY`).
-. After you have saved the changes, restart the container runtime with
+After you have configured the system proxy, restart the container runtime with
 +
 [source,bash]
 ----
