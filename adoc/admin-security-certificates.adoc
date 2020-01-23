@@ -416,7 +416,7 @@ Please refer to <<self_signed_server_certificate>> on how to sign the self signe
 Please refer to <<trusted_server_certificate>> on how to sign the trusted server certificate. The `server.conf` for IP.1 is the original SAN IP address if present, DNS.1 is the original SAN DNS if present.
 
 . Import your certificate into the {kube} cluster.
-The CA certificate is `<CA_CERT_PATH>`, server certificate and key are `<SIGNED_OIDC_DEX_SERVER_CERT_PATH>` and `<SIGNED_OIDC_DEX_SERVER_KEY_PATH>`. 
+The CA certificate is `<CA_CERT_PATH>`, server certificate and key are `<SIGNED_OIDC_DEX_SERVER_CERT_PATH>` and `<SIGNED_OIDC_DEX_SERVER_KEY_PATH>`.
 
 . Create a secret manifest file [path]`oidc-dex-cert.yaml` and update the secret data `ca.crt`, `tls.crt`, and `tls.key` with base64; encoded with CA certificate, signed `oidc-dex` server certificate and key respectively.
 +
@@ -472,7 +472,7 @@ Please refer to <<self_signed_server_certificate>> on how to sign the self signe
 Please refer to <<trusted_server_certificate>> on how to sign the trusted server certificate. The `server.conf` for IP.1 is the original SAN IP address if present, DNS.1 is the original SAN DNS if present.
 
 . Import your certificate into the {kube} cluster.
-The CA certificates is `<CA_CERT_PATH>`, server certificate and key are `<SIGNED_OIDC_GANGWAY_SERVER_CERT_PATH>` and `<SIGNED_OIDC_GANGWAY_SERVER_KEY_PATH>`. 
+The CA certificates is `<CA_CERT_PATH>`, server certificate and key are `<SIGNED_OIDC_GANGWAY_SERVER_CERT_PATH>` and `<SIGNED_OIDC_GANGWAY_SERVER_KEY_PATH>`.
 
 . Create a secret manifest file [path]`oidc-gangway-cert.yaml` and update the secret data `ca.crt`, `tls.crt`, and `tls.key` with base64; encoded with CA certificate, signed `oidc-gangway` server certificate and key respectively.
 +
@@ -716,6 +716,13 @@ emailAddress = admin@example.com // <7>
 basicConstraints = critical,CA:TRUE
 keyUsage = critical,digitalSignature,keyEncipherment,keyCertSign
 ----
+<1> Country Name (2 letter code).
+<2> State or Province Name (full name).
+<3> Locality Name (eg, city).
+<4> Organization Name (eg, company).
+<5> Organizational Unit Name (eg, section).
+<6> Common Name (e.g. server FQDN or YOUR name)
+<7> Email Address
 
 . Sign the CA certificate
 +
@@ -808,6 +815,13 @@ basicConstraints = critical,CA:FALSE
 keyUsage = critical,digitalSignature,keyEncipherment
 extendedKeyUsage = clientAuth
 ----
+<1> Country Name (2 letter code).
+<2> State or Province Name (full name).
+<3> Locality Name (eg, city).
+<4> Organization Name (eg, company).
+<5> Organizational Unit Name (eg, section).
+<6> Common Name (e.g. server FQDN or YOUR name)
+<7> Email Address
 
 . Generate the certificate
 +
