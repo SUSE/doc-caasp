@@ -1,19 +1,23 @@
 include::entities.adoc[]
 
 [[deployment_bare_metal]]
-== Deployment on Bare Metal
+== Deployment on Bare Metal or KVM
 
 .Preparation Required
 [NOTE]
 You must have completed <<deployment.preparations>> to proceed.
 
+[NOTE]
+====
+If deploying on KVM virtual machines, you may use a tool such as `virt-manager`
+to configure the virtual machines and begin the {sle} 15 SP1 installation.
+====
+
 === Environment Description
 
-[IMPORTANT]
+[NOTE]
 ====
-These instructions currently do not describe how to set up a load balancer.
-This will be added in future versions. You must provide your own load balancing
-solution that directs access to the master nodes.
+You must have a load balancer configured as described in <<loadbalancer>>.
 ====
 
 [NOTE]
@@ -30,7 +34,7 @@ you must adjust the {ay} file to your needs according to the requirements.
 Refer to the official {ay} documentation for more information: link:https://documentation.suse.com/sles/15-SP1/single-html/SLES-autoyast/#book-autoyast[{ay} Guide].
 ====
 
-==== Hardware Prerequisites
+==== Machine Configuration Prerequisites
 
 Deployment with {ay} will require a minimum *disk size of 40 GB*.
 10 GB out of that total space will be reserved for container images without any workloads,
