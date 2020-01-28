@@ -1,31 +1,30 @@
 == Configuring HTTP/HTTPS Proxy for {crio}
 
 In some cases you must configure the container runtime to use a proxy to pull
-container images. The {crio} runtime uses the system proxy configuration,
-defined at `/etc/sysconfig/proxy`. This file can be edited by hand, or via
-YaST. For detailed instructions, see <insert link to SLES 15.1 docs and maybe
-that knowledge base item here>.
+container images. The {crio} runtime uses the system-wide proxy configuration,
+defined at `/etc/sysconfig/proxy`. This file can be edited a number of ways.
+It can be pre-configured at build time via AutoYaST, as described in the
+https://documentation.suse.com/sles/15-SP1/single-html/SLES-autoyast/#Configuration-Network-Proxy[AutoYaST documentation].
+On an existing system, the file can be edited via YaST by running `yast2
+proxy`. If preferred, it can alternatively be edited manually as described in
+the SUSE https://www.suse.com/support/kb/doc/?id=7006845[Knowledge Base]
+article
 
-After you have configured the system proxy, restart the container runtime with
+Note: cri-o and skuba both support four types of comma-separated entries in the
+NO_PROXY variable:
+* an exact IP address (1.2.3.4)
+* a CIDR IP range (1.2.3.4/16)
+* a DNS domain name (eg.com maches www.eg.com and eg.com)
+* a restricted DNS subdomain (.eg.com matches www.eg.com but not eg.com )
+
+Not all programs on all systems will respect CIDR ranges or restricted
+subdomains, but all standard programs should ignore unsupported values in that
+variable. So these should be generally safe to use as needed.
+
+After you have configured the system proxy for your environment, restart the
+container runtime with
 +
 [source,bash]
 ----
 systemctl restart crio
-----
-
-=== Configuration Example
-
-* Proxy server without authentication
-+
-----
-NO_PROXY="localhost,127.0.0.1,192.168.0.0/16,10.0.0.0/8,.example.com"
-HTTP_PROXY="http://PROXY_IP_FQDN:PROXY_PORT"
-HTTPS_PROXY="http://PROXY_IP_FQDN:PROXY_PORT"
-----
-* Proxy server with authentication
-+
-----
-NO_PROXY="localhost,127.0.0.1,192.168.0.0/16,10.0.0.0/8,.example.com"
-HTTP_PROXY="http://USER:PASSWORD@PROXY_IP_FQDN:PROXY_PORT"
-HTTPS_PROXY="http://USER:PASSWORD@PROXY_IP_FQDN:PROXY_PORT"
 ----
