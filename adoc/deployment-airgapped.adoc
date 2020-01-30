@@ -728,8 +728,8 @@ The final path will be something like ``/tmp/skopeodata/registry.suse.com/``
 For `--dest-creds` you must use the credentials you created during <<airgap-container_registry-mirror>>.
 +
 ----
-{prompt.user}``skopeo sync --dest-creds USERNAME:PASSWORD \
-dir:/tmp/skopeodata/registry.suse.com/ docker://mymirror.local:5000``
+skopeo sync --dest-creds USERNAME:PASSWORD \
+dir:/tmp/skopeodata/registry.suse.com/ docker://mymirror.local:5000
 ----
 . After the synchronization is done, you can remove the ``skopeodata`` directory.
 +
