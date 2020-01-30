@@ -142,9 +142,9 @@ You can copy this data to your trusted storage at any point and update the inter
 === Helm Chart and Container Image Mirroring
 
 {productname} uses https://www.helm.sh/[Helm] as one method to install additional software on the cluster.
-The logic behind this relies on ``Charts``, which are configuration files that tell {kube}
+The logic behind this relies on `Charts`, which are configuration files that tell {kube}
  how to deploy software and its dependencies.
-The actual software installed using this method is delivered as ``container images``.
+The actual software installed using this method is delivered as `container images`.
 The download location of the container image is stored inside the Helm chart.
 
 Container images are provided by {suse} and others on so called registries.
@@ -225,13 +225,13 @@ Add additional mirror servers (behind a load balancer) if you require additional
 .Additional Port Configuration
 [NOTE]
 ====
-If you choose to add more container image registries to your internal network, these must run on different ports than the standard registry running on ``5000``.
+If you choose to add more container image registries to your internal network, these must run on different ports than the standard registry running on `5000`.
 Configure your network to allow for this communication accordingly.
 ====
 
 ==== Ports
 
-The external mirror server must be able to exchange outgoing traffic with upstream sources on ports `80` and ``443``.
+The external mirror server must be able to exchange outgoing traffic with upstream sources on ports `80` and `443`.
 
 All members of the {productname}
 cluster must be able to communicate with the internal mirror server(s) within the air gapped network.
@@ -251,15 +251,15 @@ These hostnames are the basis for the required SSL certificates and are used by 
 
 You will need SSL/TLS certificates to secure services on each server.
 
-On the air gapped network, certificates need to cover the hostname of your server and the subdomains for the registry (``registry.``) and helm chart repository (``charts.``). You must add corresponding aliases to the certificate.
+On the air gapped network, certificates need to cover the hostname of your server and the subdomains for the registry (`registry.`) and helm chart repository (`charts.`). You must add corresponding aliases to the certificate.
 
 [TIP]
 You can use wildcard certificates to cover the entire hostname.
 
 The certificates can be replaced with the self-signed certificate, or you can re-use the certificates created by {rmt} during the setup of the mirror servers.
 
-Place the certificate, CA certificate and key file in ``/etc/rmt/ssl/``
-as ``rmt-server.crt``, ``rmt-ca.cert``, and ``rmt-server.key``.
+Place the certificate, CA certificate and key file in `/etc/rmt/ssl/`
+as `rmt-server.crt`, `rmt-ca.cert`, and `rmt-server.key`.
 
 These certificates can be re-used by all three mirror services.
 
@@ -285,14 +285,14 @@ The overall size of any given RPM repository is at least tens of Gigabytes.
 For example: At the time of writing, the package repository for {sls}
 contains approximately `36 GB` of data.
 
-The storage must be formatted to a file system type supporting files larger than ``4 GB``.
+The storage must be formatted to a file system type supporting files larger than `4 GB`.
 
-We recommend external storage with at least ``128 GB``.
+We recommend external storage with at least `128 GB`.
 
 .Mount Point For Storage In Examples
 [NOTE]
 ====
-In the following procedures, we will assume the storage (when connected) is mounted on ``/mnt/storage``
+In the following procedures, we will assume the storage (when connected) is mounted on `/mnt/storage`
 .
 Please make sure to adjust the mountpoint in the respective command to where the device is actually available.
 ====
@@ -407,7 +407,7 @@ This step is not necessary for the external host.
 
 .Procedure: Set Up Reverse Proxy and Virtual Host
 . SSH into the internal mirror server.
-. Create a virtual host configuration file ``/etc/nginx/vhosts.d/registry-server-https.conf`` .
+. Create a virtual host configuration file `/etc/nginx/vhosts.d/registry-server-https.conf` .
 +
 Replace `mymirror.local` with the hostname of your mirror server for which you created the SSL certificates.
 +
@@ -455,7 +455,7 @@ server {
     }
 }
 ----
-. Create a virtual host configuration file ``/etc/nginx/vhosts.d/charts-server-https.conf`` .
+. Create a virtual host configuration file `/etc/nginx/vhosts.d/charts-server-https.conf` .
 +
 Replace `mymirror.local` with the hostname of your mirror server for which you created the SSL certificates.
 +
@@ -485,7 +485,7 @@ sudo systemctl restart nginx
 
 .Procedure: Set Up The External Mirror
 . SSH into the external mirror server.
-. Install ``docker`` , ``helm-mirror`` and ``skopeo`` .
+. Install `docker` , `helm-mirror` and `skopeo` .
 +
 ----
 sudo zypper in docker helm-mirror skopeo
@@ -519,7 +519,7 @@ Replace `USERNAME` and `PASSWORD` with proper credentials of your choosing.
 sudo mkdir -p /etc/docker/registry/{auth,certs}
 sudo docker run --entrypoint htpasswd registry.suse.com/sles12/registry:2.6.2 -Bbn <USERNAME> <PASSWORD> | sudo tee /etc/docker/registry/auth/htpasswd
 ----
-. Create the ``/etc/docker/registry/config.yml`` configuration file.
+. Create the `/etc/docker/registry/config.yml` configuration file.
 +
 [NOTE]
 ====
@@ -540,9 +540,6 @@ http:
   addr: 0.0.0.0:5000
   headers:
     X-Content-Type-Options: [nosniff]
-  tls:
-    certificate: /etc/rmt/ssl/rmt-server.crt
-    key: /etc/rmt/ssl/rmt-server.key
 health:
   storagedriver:
     enabled: true
@@ -562,7 +559,7 @@ sudo docker run -d -p 5000:5000 -v /etc/rmt/ssl:/etc/rmt/ssl:ro --restart=always
 
 .Procedure: Set Up Internal Mirror
 . SSH into the internal mirror server.
-. Install ``docker`` .
+. Install `docker` .
 +
 ----
 sudo zypper in docker
@@ -577,7 +574,7 @@ sudo systemctl enable --now docker.service
 ----
 sudo docker load -i /mnt/storage/registry.tar
 ----
-. Create the ``/etc/docker/registry/config.yml`` configuration file.
+. Create the `/etc/docker/registry/config.yml` configuration file.
 +
 ----
 sudo mkdir -p /etc/docker/registry/
@@ -702,7 +699,7 @@ Helm charts and container images must be refreshed in the same procedure, otherw
 
 .Procedure: Pull Data From Upstream Sources
 . SSH into the mirror server on the external network.
-. Download all charts from the repository to the file system (e.g. ``/tmp/charts`` ).
+. Download all charts from the repository to the file system (e.g. `/tmp/charts` ).
 +
 This action will download all charts and overwrite the existing Helm chart repository URL.
 Replace `http://charts.mymirror.local` with the hostname of the webserver providing the Helm chart repository on the internal network.
@@ -740,7 +737,7 @@ skopeo sync --source-yaml sync.yaml dir:/tmp/skopeodata
 ----
 +
 `skopeo` will automatically create a directory named after the hostname of the registry from which you are downloading the images.
-The final path will be something like ``/tmp/skopeodata/registry.suse.com/``
+The final path will be something like `/tmp/skopeodata/registry.suse.com/`
 .
 . Populate the local registry with the downloaded data.
 +
@@ -750,7 +747,7 @@ For `--dest-creds` you must use the credentials you created during <<airgap-cont
 skopeo sync --dest-creds USERNAME:PASSWORD \
 dir:/tmp/skopeodata/registry.suse.com/ docker://mymirror.local:5000
 ----
-. After the synchronization is done, you can remove the ``skopeodata`` directory.
+. After the synchronization is done, you can remove the `skopeodata` directory.
 +
 ----
 rm -rf /tmp/skopeodata
@@ -772,7 +769,7 @@ rsync -aP /tmp/charts/ /mnt/storage/charts --delete
 . Connect the trusted storage to the internal mirror.
 . Transfer the container image data to the internal mirror. This will remove all files and directories that are no longer present on the trusted storage from the internal mirror.
 +
-The target directory is ``/var/lib/registry``.
+The target directory is `/var/lib/registry`.
 +
 ----
 rsync -aP /mnt/storage/registry/ /var/lib/registry/ --delete
@@ -782,7 +779,7 @@ rsync -aP /mnt/storage/registry/ /var/lib/registry/ --delete
 ----
 rsync -aP /mnt/storage/charts/ /srv/www/charts/ --delete
 ----
-. Set the file permissions and ownership to `555` and ``nginx:nginx``.
+. Set the file permissions and ownership to `555` and `nginx:nginx`.
 +
 ----
 sudo chown -R nginx:nginx /srv/www/charts sudo chmod -R 555 /srv/www/charts/
