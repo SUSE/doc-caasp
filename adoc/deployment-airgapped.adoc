@@ -166,7 +166,7 @@ manifests to use the mirrors.
 The requests are passed through the container engine which forwards them to the configured mirrors.
 For example: All images with a prefix `registry.suse.com/` will be automatically pulled from the configured (internal) mirror instead.
 
-For further information on registry mirror configuration, refer to link:https://documentation.suse.com/suse-caasp/4/single-html/caasp-admin/#_configuring_container_registries_for_cri_o[].
+For further information on registry mirror configuration, refer to link:{docurl}single-html/caasp-admin/#_configuring_container_registries_for_cri_o[].
 
 [[airgap-requirements]]
 == Requirements
@@ -624,20 +624,39 @@ Now, you should have the registries set up and listening on port `5000` on their
 
 [[airgap-container_registry-client]]
 === Client Configuration
+[IMPORTANT]
+====
+The example provided with the installation is in the old `v1` format of the {crio} registries syntax.
+You must replace/remove all content from the example file and build a new file based on the `v2` syntax.
+
+The example below is written in the correct `v2` syntax. `registries.conf` is written using link:https://github.com/toml-lang/toml[TOML].
+====
 
 Configure `/etc/containers/registries.conf` to setup the mirroring from `registry.suse.com` to the `internal mirror`.
-
-This needs to be done on all cluster nodes:
+This needs to be done on all cluster nodes. Make sure to adjust all the correct domain name for your local registry:
 
 ----
 [[registry]]
-location = "registry.suse.com"
-mirror = [{ location = "internal.mirror"}]
-# Optional: if the registry is not secure this can be set
-# insecure = true
+prefix = "registry.suse.com"
+location = "registry01.mydomain.local:5000/registry.suse.com"
+[[registry]]
+prefix = "docker.io"
+location = "registry01.mydomain.local:5000/docker.io"
+[[registry]]
+prefix = "docker.io/library"
+location = "registry01.mydomain.local:5000/docker.io"
+[[registry]]
+prefix = "quay.io"
+location = "registry01.mydomain.local:5000/quay.io"
+[[registry]]
+prefix = "k8s.gcr.io"
+location = "registry01.mydomain.local:5000/k8s.gcr.io"
+[[registry]]
+prefix = "gcr.io"
+location = "registry01.mydomain.local:5000/gcr.io"
 ----
 
-For detailed information about the configuration format see https://documentation.suse.com/suse-caasp/4/single-html/caasp-admin/#_configuring_container_registries_for_cri_o.
+For detailed information about the configuration format see link:{docurl}single-html/caasp-admin/#_configuring_container_registries_for_cri_o[].
 
 [[airgap-helm_charts]]
 == Helm Chart Repository Mirror
@@ -777,12 +796,12 @@ helm repo update
 ----
 +
 You can now deploy additional software on your {productname}
-Refer to: link:https://documentation.suse.com/suse-caasp/4/single-html/caasp-admin/#software-installation[].
+Refer to: link:{docurl}single-html/caasp-admin/#software-installation[].
 
 [[airgap-caasp_deployment]]
 == Deploying {productname}
 
-Use the {productname} link:https://documentation.suse.com/suse-caasp/4/single-html/caasp-deployment/[Deployment Guide] as usual.
+Use the {productname} link:{docurl}single-html/caasp-deployment/[Deployment Guide] as usual.
 Some of the considerations below apply; depending of the chosen installation medium.
 
 Make sure to add the CA certificate of your {rmt} server as a systemwide certificate in {dashboard}
