@@ -124,7 +124,7 @@ kubectl delete pod <POD_NAME>
 === Using RBD with Static Persistent Volumes
 
 
-The following procedure describes how to attach a pod to an RDB static persistent volume:
+The following procedure describes how to attach a pod to an RBD static persistent volume:
 
 . Retrieve the Ceph admin secret.
 You can get the key value using the following command:
@@ -176,7 +176,7 @@ spec:
     - '<MONITOR1_IP:MONITOR1_PORT>'
     - '<MONITOR2_IP:MONITOR2_PORT>'
     - '<MONITOR3_IP:MONITOR3_PORT>'
-    pool: <RDB_POOL>
+    pool: <RBD_POOL>
     image: <YOUR_VOLUME>
     user: admin
     secretRef:
@@ -272,7 +272,7 @@ The RBD is not deleted.
 === Using RBD with Dynamic Persistent Volumes
 
 
-The following procedure describes how to attach a pod to an RDB dynamic persistent volume.
+The following procedure describes how to attach a pod to an RBD dynamic persistent volume.
 
 . Retrieve the Ceph *admin* secret.
 You can get the key value using the following command:
