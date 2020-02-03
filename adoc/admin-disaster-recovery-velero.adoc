@@ -38,7 +38,7 @@ helm repo add suse https://kubernetes-charts.suse.com
 +
 Velero uses object storage to store backups and associated artifacts. It can optionally snapshot persistent volume and store in object storage by `restic` if there is no supported volume snapshot provider.
 
-.. Public Cloud Storage Providers
+.. Storage Providers
 +
 |=======
 | Provider | Object Storage | Plugin Provider Repo
@@ -85,35 +85,10 @@ chmod +x mc
 +
 For the rests of the S3-compatible storage providers, refer to https://velero.io/docs/v1.2.0/supported-providers/[Velero Supported Providers].
 
-. Volume Snapshotter
-+
-[NOTE]
-A Volume snapshotter is able to snapshot it's persistent volumes if it's volume driver supports do volume snapshot. If a volume provider does not support snapshot or does not have supported Velero storage plugin, Velero will leverage _restic_ to do persistent volume backup and restore.
-
-[IMPORTANT]
-Please be well-known what persistent volumes are supported for snapshot by storage providers. Then administrators have to determine whether to deploy the _restic daemonset_ or not.
-
-.. Public Cloud Storage Providers
-+
-|=======
-| Provider | Volume Snapshotter | Plugin Provider Repo
-| Amazon Web Services (AWS) | AWS EBS | https://github.com/vmware-tanzu/velero-plugin-for-aws[Velero plugin for AWS]
-|=======
-
-.. Community Supported Providers
-+
-|=======
-| Provider | Volume Snapshotter | Plugin Documentation
-| Portworx | Portworx Volume | https://docs.portworx.com/scheduler/kubernetes/ark.html[	Portworx]
-| DigitalOcean | DigitalOcean Volumes Block Storage | https://github.com/StackPointCloud/ark-plugin-digitalocean[StackPointCloud]
-| OpenEBS | OpenEBS CStor Volume | https://github.com/openebs/velero-plugin[OpenEBS]
-| AlibabaCloud | AlibabaCloud | https://github.com/AliyunContainerService/velero-plugin[AlibabaCloud]
-| Hewlett Packard | HPE Storage | https://github.com/hpe-storage/velero-plugin[Hewlett Packard	Slack]
-|=======
-
 . Object Storage Credential
 
 .. Public Cloud Providers
+
 ... AWS S3
 +
 Create the credential file `credentials-velero` in the local machine.
@@ -138,7 +113,7 @@ Create the credential file `credentials-velero` in the local machine.
 +
 Please refer to https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure/tree/v1.0.0[Velero Plugin For Azure].
 
-.. S3-compatible Storage Providers, like Minio
+.. S3-compatible Storage Providers, like radosgw
 +
 Create the credential file `credentials-velero` in the local machine.
 +
@@ -147,7 +122,20 @@ Create the credential file `credentials-velero` in the local machine.
 aws_access_key_id=<S3_COMPATIBLE_STORAGE_ACCESS_KEY_ID>
 aws_secret_access_key=<S3_COMPATIBLE_STORAGE_SECRET_ACCESS_KEY>
 ```
+
+. Volume Snapshotter
 +
+[NOTE]
+A Volume snapshotter is able to snapshot it's persistent volumes if it's volume driver supports do volume snapshot. If a volume provider does not support snapshot or does not have supported Velero storage plugin, Velero will leverage _restic_ to do persistent volume backup and restore.
++
+[IMPORTANT]
+Please be well-known what persistent volumes are supported for snapshot by storage providers. Then administrators have to determine whether to deploy the _restic_ daemonset or not.
++
+|=======
+| Provider | Volume Snapshotter | Plugin Provider Repo
+| Amazon Web Services (AWS) | AWS EBS | https://github.com/vmware-tanzu/velero-plugin-for-aws[Velero plugin for AWS]
+|=======
+For the rests snapshotter providers, refer to https://velero.io/docs/v1.2.0/supported-providers/[Velero Supported Providers]
 
 . Velero CLI
 +
@@ -163,6 +151,8 @@ sudo zypper install velero
 . It is not yet possible to send a single Velero backup to multiple backup storage locations simultaneously, or a single volume snapshot to multiple locations simultaneously. However, you can setup multiple backups manually or scheduled that differ only in the storage locations.
 . Cross-provider snapshots are not supported. If you have a cluster with more than one type of volume (e.g. NFS and Ceph), but you only have a volume snapshot location configured for NFS, then Velero will _only_ snapshot the NFS volumes.
 . Restic data is stored under a prefix/subdirectory of the main Velero bucket and will go into the bucket corresponding backup storage location selected by the user at backup creation time.
+
+Ref: https://velero.io/docs/v1.2.0/locations/
 
 == Deployment
 
