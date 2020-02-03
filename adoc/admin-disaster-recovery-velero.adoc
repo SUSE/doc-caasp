@@ -1,10 +1,10 @@
 = Disaster Recovery
 
-https://velero.io/[Velero] is a solution for supporting {kube} cluster disaster recovery, data migration and data protection by backing up {kube} cluster resources and persistent volumes to external supported storage backend on demand or by schedule. The major functions include:
+link:https://velero.io/[Velero] is a solution for supporting {kube} cluster disaster recovery, data migration and data protection by backing up {kube} cluster resources and persistent volumes to external supported storage backend on demand or by schedule. The major functions include:
 
 * Backup K8s resources and persistent volumes for supported storage providers
 * Restore K8s resources and persistent volumes for supported storage providers
-* When backing up persistent volumes w/o supported storage provider, Velero leverages https://github.com/restic/restic[restic] as an agnostic solution to backup this sort of persistent volumes under some known limitations.
+* When backing up persistent volumes w/o supported storage provider, Velero leverages link:https://github.com/restic/restic[restic] as an agnostic solution to backup this sort of persistent volumes under some known limitations.
 
 User can leverage these fundamental functions to achieve below user stories:
 
@@ -42,20 +42,20 @@ Velero uses object storage to store backups and associated artifacts. It can opt
 +
 |=======
 | Provider | Object Storage | Plugin Provider Repo
-| Amazon Web Services (AWS) | AWS S3 | https://github.com/vmware-tanzu/velero-plugin-for-aws[Velero plugin for AWS]
-| Google Cloud Platform (GCP) | Google Cloud Storage | https://github.com/vmware-tanzu/velero-plugin-for-gcp[Velero plugin for GCP]
-| Microsoft Azure | Azure Blob Storage | https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure[Velero plugin for Microsoft Azure]
+| Amazon Web Services (AWS) | AWS S3 | link:https://github.com/vmware-tanzu/velero-plugin-for-aws[Velero plugin for AWS]
+| Google Cloud Platform (GCP) | Google Cloud Storage | link:https://github.com/vmware-tanzu/velero-plugin-for-gcp[Velero plugin for GCP]
+| Microsoft Azure | Azure Blob Storage | link:https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure[Velero plugin for Microsoft Azure]
 |=======
 
 .. S3-compatible Storage Providers
 
 ... SES6 Ceph Object Gateway (radosgw)
 +
-SUSE supports the SES6 Ceph Object Gateway (radosgw) as a S3-compatible object storage provider. Refer to https://documentation.suse.com/ses/6/html/ses-all/cha-ceph-additional-software-installation.html[SES6 Object Gateway Manual Installation] on how to install it.
+SUSE supports the SES6 Ceph Object Gateway (radosgw) as a S3-compatible object storage provider. Refer to link:https://documentation.suse.com/ses/6/html/ses-all/cha-ceph-additional-software-installation.html[SES6 Object Gateway Manual Installation] on how to install it.
 +
 ... Minio
 +
-Besides SUSE enterprise storage, there is an alternative open source S3-compatible object storage provider https://min.io/[minio].  Prepare an external host and install Minio on the host.
+Besides SUSE enterprise storage, there is an alternative open source S3-compatible object storage provider link:https://min.io/[minio].  Prepare an external host and install Minio on the host.
 +
 [source,bash]
 ----
@@ -83,7 +83,7 @@ chmod +x mc
 ----
 
 +
-For the rests of the S3-compatible storage providers, refer to https://velero.io/docs/v1.2.0/supported-providers/[Velero Supported Providers].
+For the rests of the S3-compatible storage providers, refer to link:https://velero.io/docs/v1.2.0/supported-providers/[Velero Supported Providers].
 
 . Object Storage Credential
 
@@ -99,19 +99,19 @@ aws_access_key_id=<AWS_ACCESS_KEY_ID>
 aws_secret_access_key=<AWS_SECRET_ACCESS_KEY>
 ```
 +
-Please refer to https://github.com/vmware-tanzu/velero-plugin-for-aws/tree/v1.0.0[Velero Plugin For AWS].
+Please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-aws/tree/v1.0.0[Velero Plugin For AWS].
 
 ... Google Cloud Storage
 +
 Create the credential file `credentials-velero` in the local machine.
 +
-Please refer to https://github.com/vmware-tanzu/velero-plugin-for-gcp/tree/v1.0.0[Velero Plugin For GCP].
+Please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-gcp/tree/v1.0.0[Velero Plugin For GCP].
 
 ... Azure Blob Storage
 +
 Create the credential file `credentials-velero` in the local machine.
 +
-Please refer to https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure/tree/v1.0.0[Velero Plugin For Azure].
+Please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure/tree/v1.0.0[Velero Plugin For Azure].
 
 .. S3-compatible Storage Providers, like radosgw
 +
@@ -133,9 +133,9 @@ Please be well-known what persistent volumes are supported for snapshot by stora
 +
 |=======
 | Provider | Volume Snapshotter | Plugin Provider Repo
-| Amazon Web Services (AWS) | AWS EBS | https://github.com/vmware-tanzu/velero-plugin-for-aws[Velero plugin for AWS]
+| Amazon Web Services (AWS) | AWS EBS | link:https://github.com/vmware-tanzu/velero-plugin-for-aws[Velero plugin for AWS]
 |=======
-For the rests snapshotter providers, refer to https://velero.io/docs/v1.2.0/supported-providers/[Velero Supported Providers]
+For the rests snapshotter providers, refer to link:https://velero.io/docs/v1.2.0/supported-providers/[Velero Supported Providers]
 
 . Velero CLI
 +
