@@ -36,7 +36,7 @@ helm repo add suse https://kubernetes-charts.suse.com
 
 . Object Storage
 +
-Velero uses object storage to store backups and associated artifacts. It can optionally snapshot the persistent volume and stores in the object storage if the persistent volumes does not supports volume snapshot.
+Velero uses object storage to store backups and associated artifacts. It can optionally snapshot persistent volume and store in object storage by `restic` if there is no supported volume snapshot provider.
 
 .. Public Cloud Storage Providers
 +
@@ -51,11 +51,11 @@ Velero uses object storage to store backups and associated artifacts. It can opt
 
 ... SES6 Ceph Object Gateway (radosgw)
 +
-SUSE supports the SES6 Ceph Object Gateway (radosgw) as the S3-compatible storage provider. Refer to https://documentation.suse.com/ses/6/html/ses-all/cha-ceph-additional-software-installation.html[SES6 Object Gateway Manual Installation] on how to install it.
+SUSE supports the SES6 Ceph Object Gateway (radosgw) as a S3-compatible object storage provider. Refer to https://documentation.suse.com/ses/6/html/ses-all/cha-ceph-additional-software-installation.html[SES6 Object Gateway Manual Installation] on how to install it.
 +
 ... Minio
 +
-For the evaluation install, there are opensource S3-compatible storage provider https://min.io/[minio]. Prepare an external host and install Minio on the host.
+Besides SUSE enterprise storage, there is an alternative open source S3-compatible object storage provider https://min.io/[minio].  Prepare an external host and install Minio on the host.
 +
 [source,bash]
 ----
@@ -88,10 +88,10 @@ For the rests of the S3-compatible storage providers, refer to https://velero.io
 . Volume Snapshotter
 +
 [NOTE]
-The volume snapshotter snapshots the persistent volume if the volume supports the snapshot API to do volume snapshot. If the volume does not supports snapshot API or does not have supported providers, Velero leverages _restic_ to do persistent volume backup and restore.
+A Volume snapshotter is able to snapshot it's persistent volumes if it's volume driver supports do volume snapshot. If a volume provider does not support snapshot or does not have supported Velero storage plugin, Velero will leverage _restic_ to do persistent volume backup and restore.
 
 [IMPORTANT]
-Please be well-known the persistent volume in the supported volume snapshotter provides. Then adminstrators have to determine whether to deploy the _restic daemonset_ or not.
+Please be well-known what persistent volumes are supported for snapshot by storage providers. Then administrators have to determine whether to deploy the _restic daemonset_ or not.
 
 .. Public Cloud Storage Providers
 +
@@ -138,7 +138,7 @@ Create the credential file `credentials-velero` in the local machine.
 +
 Please refer to https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure/tree/v1.0.0[Velero Plugin For Azure].
 
-.. S3-compatible Storage Providers
+.. S3-compatible Storage Providers, like Minio
 +
 Create the credential file `credentials-velero` in the local machine.
 +
@@ -214,7 +214,7 @@ velero backup-location create slave \
 . The backup bucket name _BUCKET_NAME_. (The bucket name in S3 object storage)
 . The backup region name _REGION_NAME_. (The region name for the S3 object storage. For example, radosgw _or_ master/slave if you have HA S3 object storage backups)
 . The S3-compatible object storage simulates the S3 object storage.
-Therefore, the configuration for S3-compatible object storage have to setup additional configurations
+Therefore, the configuration for S3-compatible object storage have to setup additional configurations.
 +
 ```
 configuration.backupStorageLocation.config.s3ForcePathStyle=true
@@ -290,7 +290,7 @@ helm install \
 ----
 
 +
-Then, suggests to create at least one additional backup locations point to different object storage server to prevent object storage server single point of failure.
+Then, suggest to create at least one additional backup locations point to different object storage server to prevent object storage server single point of failure.
 
 +
 [source,bash]
@@ -342,7 +342,7 @@ helm install \
 ----
 
 +
-Then, suggests to create at least one additional backup locations point to different object storage server to prevent object storage server single point of failure.
+Then, suggest to create at least one additional backup locations point to different object storage server to prevent object storage server single point of failure.
 
 +
 [source,bash]
@@ -383,7 +383,7 @@ velero backup create <BACKUP_NAME>
 
 ** Schedule
 +
-The schedule templatein in cron notation, using UTC time:
+The schedule template in cron notation, using UTC time:
 +
 |=======
 | Character Position | Character Period | Acceptable Values
@@ -607,8 +607,8 @@ velero restore logs <RESTORE_NAME>
 == Use Cases
 
 === Disaster Recovery
-Use schedule backup when backing up and change to backup storage location to read-only mode when restoring.
-Run the backup periodically and when the {kube} cluster ran into unexpected state, recovered from the backup file.
+Use schedule backup for periodical backup. When restoring, need to change backup storage location to read-only mode to avoid incorrect data integrity.
+Run the backup periodically. When the {kube} cluster runs into unexpected state, recover from the backup file.
 
 . Setup a schedule backup
 +
