@@ -506,12 +506,6 @@ velero backup logs <BACKUP_NAME>
 
 * Restore
 
-** Persistent Volume (optional)
-+
-If the {kube} cluster originally had mounted persistent volume or storage class. Velero currently cannot restore the persistent volume or storage class back automatically.
-+
-Therefore, administrators have to manually restore the persistent volume or storage class back.
-
 ** Manual
 +
 [source,bash]
@@ -625,9 +619,7 @@ velero schedule create <SCHEDULE_NAME> --schedule="@daily"
 +
 This creates a backup file with the name `<SCHEDULE_NAME>-<TIMESTAMP>``.
 
-. When disaster happens
-.. make sure the velero server and restic daemonset exists (optional). If not, reinstall from the helm chart.
-.. make sure the persistent volume or storage class exists. If not, redeploy the persistent volume or storage class manually.
+. When disaster happens, make sure the velero server and restic daemonset exists (optional). If not, reinstall from the helm chart.
 
 . Update the backup storage location to read-only mode (it prevents the backup file from being created or deleted in the backup storage location during the restore process)
 +
