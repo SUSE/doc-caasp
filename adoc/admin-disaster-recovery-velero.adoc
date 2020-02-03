@@ -55,7 +55,7 @@ SUSE supports the SES6 Ceph Object Gateway (radosgw) as a S3-compatible object s
 +
 ... Minio
 +
-Besides SUSE enterprise storage, there is an alternative open source S3-compatible object storage provider link:https://min.io/[minio].  Prepare an external host and install Minio on the host.
+Besides SUSE enterprise storage, there is an alternative open source S3-compatible object storage provider link:https://min.io/[minio]. Prepare an external host and install Minio on the host.
 +
 [source,bash]
 ----
@@ -362,7 +362,7 @@ kubectl annotate pod/elasticsearch-master-1 backup.velero.io/backup-volumes=elas
 kubectl annotate pod/elasticsearch-master-2 backup.velero.io/backup-volumes=elasticsearch-master
 ----
 [NOTE]
-Velero currently does not provide a mechanism to detect persistent volume claims that are missing the restic backup annotation. To solve this, there is a community provided controller https://github.com/bitsbeats/velero-pvc-watcher[velero-pvc-watcher] which integrate Prometheus to generate alerts for volumes that are not in the backup or backup-exclusion annotation.
+Velero currently does not provide a mechanism to detect persistent volume claims that are missing the restic backup annotation. To solve this, there is a community provided controller link:https://github.com/bitsbeats/velero-pvc-watcher[velero-pvc-watcher] which integrate Prometheus to generate alerts for volumes that are not in the backup or backup-exclusion annotation.
 
 ** Manual
 +
