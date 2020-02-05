@@ -146,6 +146,7 @@ sudo zypper install velero
 
 == Limitations
 
+. Velero doesn't overwrite objects in-cluster if they already exist.
 . Velero supports a single set of credential _per provider_. It's not yet possible to use different credentials for different object storage locations for the same provider.
 . Volume snapshots are limited by where your provider allows you to create snapshots. Fro example, AWS and Azure do not allow you to create a volume snapshot in a different region than where the volume is. If you try to take a Velero backup using a volume snapshot location with a different region than where your cluster's volume are, the backup will fail.
 . It is not yet possible to send a single Velero backup to multiple backup storage locations simultaneously, or a single volume snapshot to multiple locations simultaneously. However, you can setup multiple backups manually or scheduled that differ only in the storage locations.
@@ -153,6 +154,33 @@ sudo zypper install velero
 . Restic data is stored under a prefix/subdirectory of the main Velero bucket and will go into the bucket corresponding backup storage location selected by the user at backup creation time.
 
 Ref: https://velero.io/docs/v1.2.0/locations/
+
+== Known Issues
+
+. Veleror reports errors when when restoring cilium CRDs. However, this does not effect cilium works.
++
+[NOTE]
+====
+You could add label to cilium CRDs to skip Velero backup
+[source,bash]
+----
+kubectl label -n kube-system customresourcedefinitions/ciliumendpoints.cilium.io velero.io/exclude-from-backup=true
+
+kubectl label -n kube-system customresourcedefinitions/ciliumnetworkpolicies.cilium.io velero.io/exclude-from-backup=true
+----
+====
+
+. When restoring dex and gangway, Velero reports NodePort cannot be restored since dex and gangway are deployed by addon already and the same NodePort have be registered. However, this does not break the dex and gangway service accessing from external.
++
+[NOTE]
+====
+You could add label to services oidc-dex and oidc-gangway to skip Velero backup
+[source,bash]
+----
+kubectl label -n kube-system services/oidc-dex velero.io/exclude-from-backup=true
+kubectl label -n kube-system services/oidc-gangway velero.io/exclude-from-backup=true
+----
+====
 
 == Deployment
 
@@ -597,6 +625,7 @@ velero restore logs <RESTORE_NAME>
 == Use Cases
 
 === Disaster Recovery
+
 Use schedule backup for periodical backup. When restoring, need to change backup storage location to read-only mode to avoid incorrect data integrity.
 Run the backup periodically. When the {kube} cluster runs into unexpected state, recover from the backup file.
 
@@ -651,7 +680,15 @@ Velero does not support the migration of persistent volumes across public cloud 
 velero backup create <BACKUP_NAME>
 ----
 
+. (At cluster 2) Prepare a {cluster} cluster deployed by skuba.
+
 . (At cluster 2) Helm install the Velero and make sure the backup-location and snapshot-location points to the same location as cluster 1.
++
+[source,bash]
+----
+velero backup-location get
+velero snapshot-location get
+----
 
 . (At cluster 2) Make sure the cluster 1 backup resources are sync to the external object storage server.
 +
@@ -678,6 +715,58 @@ velero restore create --from-backup <BACKUP_NAME>
 velero restore get
 velero restore describe <RESTORE_NAME>
 velero restore logs <RESTORE_NAME>
+----
+
+. (At cluster 2) Since Velero doesn't overwrite objects in-cluster if they already exist. Manual check all addons configuration is desired after cluster restored.
+.. Check dex configuration.
++
+[source,bash]
+----
+# Download dex.yaml
+kubectl get configmap oidc-dex-config -o yaml > oidc-dex-config.yaml
+
+# Edit oidc-dex-config.yaml to desired
+vim oidc-dex-config.yaml
+
+# Apply new oidc-dex-config.yaml
+kubectl apply -f oidc-dex-config.yaml
+
+# Restart oidc-dex deployment
+kubectl delete pod -l app=oidc-dex
+----
+.. Check gangway configuration.
++
+[source,bash]
+----
+# Download gangway.yaml
+kubectl get configmap oidc-gangway-config -o yaml > oidc-gangway-config.yaml
+
+# Edit oidc-gangway-config.yaml to desired
+vim oidc-gangway-config.yaml
+
+# Apply new oidc-gangway-config.yaml
+kubectl apply -f oidc-gangway-config.yaml
+
+# Restart oidc-gangway deployment
+kubectl delete pod -l app=oidc-dex
+----
+.. Check kured is disabled automatically reboots.
++
+[source,bash]
+----
+kubectl get daemonset kured -o yaml
+----
+.. Check psp is what you desired.
++
+[source,bash]
+----
+kubectl get psp suse.caasp.psp.privileged -o yaml
+kubectl get clusterrole suse:caasp:psp:privileged -o yaml
+kubectl get rolebinding suse:caasp:psp:privileged -o yaml
+
+kubectl get psp suse.caasp.psp.unprivileged -o yaml
+kubectl get clusterrole suse:caasp:psp:unprivileged -o yaml
+kubectl get clusterrolebinding suse:caasp:psp:default -o yaml
 ----
 
 == Uninstall
