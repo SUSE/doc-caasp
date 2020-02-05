@@ -18,7 +18,7 @@ User can leverage these fundamental functions to achieve below user stories:
 
 Velero consists of below components:
 
-* A velero server that runs on your {kube} cluster
+* A Velero server that runs on your {kube} cluster
 * A restic deployed on each worker nodes  that runs on your {kube} cluster (optional)
 * A command-line client that runs locally
 
@@ -89,7 +89,7 @@ wget https://dl.min.io/client/mc/release/linux-amd64/mc
 chmod +x mc
 
 # Setup Minio server
-./mc config host add velero http://localhost:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY
+./mc config host add Velero http://localhost:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY
 
 # Create bucket on Minio server
 ./mc mb -p velero/velero
@@ -654,7 +654,7 @@ velero schedule create <SCHEDULE_NAME> --schedule="@daily"
 +
 This creates a backup file with the name `<SCHEDULE_NAME>-<TIMESTAMP>``.
 
-. When disaster happens, make sure the velero server and restic daemonset exists (optional). If not, reinstall from the helm chart.
+. When disaster happens, make sure the Velero server and restic daemonset exists (optional). If not, reinstall from the helm chart.
 
 . Update the backup storage location to read-only mode (it prevents the backup file from being created or deleted in the backup storage location during the restore process)
 +
@@ -698,7 +698,7 @@ velero backup create <BACKUP_NAME>
 
 . (At cluster 2) Prepare a {cluster} cluster deployed by skuba.
 
-. (At cluster 2) Helm install the Velero and make sure the backup-location and snapshot-location points to the same location as cluster 1.
+. (At cluster 2) Helm install Velero and make sure the backup-location and snapshot-location points to the same location as cluster 1.
 +
 [source,bash]
 ----
@@ -715,7 +715,7 @@ velero backup describe <BACKUP_NAME>
 ----
 +
 [NOTE]
-The default sync interval is 1 minute. You could change the interval with flag `--backup-sync-period` to the velero server.
+The default sync interval is 1 minute. You could change the interval with flag `--backup-sync-period` to the Velero server.
 
 . (At cluster 2) Restore the cluster from the backup file.
 +
@@ -786,7 +786,8 @@ kubectl get clusterrolebinding suse:caasp:psp:default -o yaml
 ----
 
 == Uninstall
-Remove the velero server deployment and restic daemonset if exists. Then, delete Velero custom resource definitions (CRDs).
+Remove the Velero server deployment and `restic` daemonset if exists.
+Then, delete Velero custom resource definitions (CRDs).
 [source,bash]
 ----
 helm del --purge velero
