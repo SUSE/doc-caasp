@@ -194,6 +194,7 @@ You could add label to services oidc-dex and oidc-gangway to skip Velero backup
 [source,bash]
 ----
 kubectl label -n kube-system services/oidc-dex velero.io/exclude-from-backup=true
+
 kubectl label -n kube-system services/oidc-gangway velero.io/exclude-from-backup=true
 ----
 ====
