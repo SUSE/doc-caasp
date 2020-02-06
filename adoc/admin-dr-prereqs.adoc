@@ -1,0 +1,169 @@
+== Prerequisites
+
+=== Helm
+
+In order to successfully use Velero to backup and restore the {kube} cluster, you first need to install Helm and Tiller.
+Refer to <<helm_tiller_install>>.
+. SUSE Helm Chart
+
+Add SUSE helm chart repository URL
+
+[source,bash]
+----
+helm repo add suse https://kubernetes-charts.suse.com
+----
+
+=== Object Storage
+
+Velero uses object storage to store backups and associated artifacts.
+It can optionally snapshot persistent volume and store in object storage by `restic` if there is no supported volume snapshot provider.
+
+==== Storage Providers
+
+[options="header"]
+|===
+| Provider | Object Storage | Plugin Provider Repo
+
+|Amazon Web Services (AWS)
+|AWS S3
+|link:https://github.com/vmware-tanzu/velero-plugin-for-aws[Velero plugin for AWS]
+
+|Google Cloud Platform (GCP)
+|Google Cloud Storage
+|link:https://github.com/vmware-tanzu/velero-plugin-for-gcp[Velero plugin for GCP]
+
+|Microsoft Azure
+|Azure Blob Storage
+|link:https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure[Velero plugin for Microsoft Azure]
+|===
+
+==== S3-compatible Storage Providers
+===== SES6 Ceph Object Gateway (`radosgw`)
+
+SUSE supports the SES6 Ceph Object Gateway (`radosgw`) as a S3-compatible object storage provider.
+Refer to link:https://documentation.suse.com/ses/6/html/ses-all/cha-ceph-additional-software-installation.html[SES6 Object Gateway Manual Installation] on how to install it.
+
+===== Minio
+
+Besides {ses}, there is an alternative open source S3-compatible object storage provider: link:https://min.io/[minio].
+
+Prepare an external host and install Minio on the host.
+
+[source,bash]
+----
+# Download Minio server
+wget https://dl.min.io/server/minio/release/linux-amd64/minio
+chmod +x minio
+
+# Expose Minio access_key and secret_key
+export MINIO_ACCESS_KEY=<access_key>
+export MINIO_SECRET_KEY=<secret_key>
+
+# Start Minio server
+mkdir -p bucket
+./minio server bucket &
+
+# Download Minio client
+wget https://dl.min.io/client/mc/release/linux-amd64/mc
+chmod +x mc
+
+# Setup Minio server
+./mc config host add Velero http://localhost:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY
+
+# Create bucket on Minio server
+./mc mb -p velero/velero
+----
+
+For the rests of the S3-compatible storage providers, refer to link:https://velero.io/docs/v1.2.0/supported-providers/[Velero Supported Providers].
+
+==== Object Storage Credential
+===== Public Cloud Providers
+====== AWS S3
+
+Create the credential file `credentials-velero` in the local machine.
+
+----
+[default]
+aws_access_key_id=<AWS_ACCESS_KEY_ID>
+aws_secret_access_key=<AWS_SECRET_ACCESS_KEY>
+----
+
+Please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-aws/tree/v1.0.0[Velero Plugin For AWS].
+
+====== Google Cloud Storage
+
+Create the credential file `credentials-velero` in the local machine.
+
+Please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-gcp/tree/v1.0.0[Velero Plugin For GCP].
+
+====== Azure Blob Storage
+
+Create the credential file `credentials-velero` in the local machine.
+
+Please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure/tree/v1.0.0[Velero Plugin For Azure].
+
+===== S3-compatible Storage Providers, like `radosgw`
+
+Create the credential file `credentials-velero` in the local machine.
+
+----
+[default]
+aws_access_key_id=<S3_COMPATIBLE_STORAGE_ACCESS_KEY_ID>
+aws_secret_access_key=<S3_COMPATIBLE_STORAGE_SECRET_ACCESS_KEY>
+----
+
+==== Volume Snapshotter
+
+[NOTE]
+A Volume snapshotter is able to snapshot it's persistent volumes if it's volume driver supports do volume snapshot.
+If a volume provider does not support snapshot or does not have supported Velero storage plugin, Velero will leverage `restic` to do persistent volume backup and restore.
+
+[IMPORTANT]
+Please note what persistent volumes are supported for snapshot by storage providers.
+Then administrators have to determine whether to deploy the `restic` DaemonSet or not.
+
+[options="header"]
+|===
+|Provider | Volume Snapshotter | Plugin Provider Repo
+|Amazon Web Services (AWS) | AWS EBS | link:https://github.com/vmware-tanzu/velero-plugin-for-aws[Velero plugin for AWS]
+|===
+
+For the other `snapshotter` providers refer to link:https://velero.io/docs/v1.2.0/supported-providers/[Velero Supported Providers].
+
+. Finally, install Velero CLI
++
+[source,bash]
+----
+sudo zypper install velero
+----
+
+== Known Issues
+
+. Velero reports errors when when restoring Cilium CRDs. However, this does not effect Cilium functionality.
++
+[NOTE]
+====
+You can add a label to Cilium CRDs to skip Velero backup.
+
+[source,bash]
+----
+kubectl label -n kube-system customresourcedefinitions/ciliumendpoints.cilium.io velero.io/exclude-from-backup=true
+
+kubectl label -n kube-system customresourcedefinitions/ciliumnetworkpolicies.cilium.io velero.io/exclude-from-backup=true
+----
+====
+
+. When restoring `dex` and `gangway`, Velero reports `NodePort` cannot be restored since `dex` and `gangway` are deployed by an addon already and the same `NodePort` has be registered.
+However, this does not break the `dex` and `gangway` service access from outside.
++
+[NOTE]
+====
+You can add a label to services `oidc-dex` and `oidc-gangway` to skip Velero backup.
+
+[source,bash]
+----
+kubectl label -n kube-system services/oidc-dex velero.io/exclude-from-backup=true
+
+kubectl label -n kube-system services/oidc-gangway velero.io/exclude-from-backup=true
+----
+====

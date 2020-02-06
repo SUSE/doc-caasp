@@ -1,0 +1,148 @@
+== Use Cases
+
+=== Disaster Recovery
+
+Use schedule backup for periodical backup. When restoring, need to change backup storage location to read-only mode to avoid incorrect data integrity.
+Run the backup periodically. When the {kube} cluster runs into unexpected state, recover from the backup file.
+
+==== Setting up a scheduled backup
+
+[source,bash]
+----
+velero schedule create <SCHEDULE_NAME> --schedule="@daily"
+----
+
+This creates a backup file with the name `<SCHEDULE_NAME>-<TIMESTAMP>``.
+
+. When disaster happens, make sure the Velero server and `restic` DaemonSet exists (optional). If not, reinstall from the helm chart.
+. Update the backup storage location to read-only mode (it prevents the backup file from being created or deleted in the backup storage location during the restore process)
++
+[source,bash]
+----
+kubectl patch backupstoragelocation <STORAGE_LOCATION_NAME> \
+    --namespace <NAMESPACE> \
+    --type merge \
+    --patch '{"spec":{"accessMode":"ReadOnly"}}'
+----
+
+. Create a restore from the most recent backup file.
++
+[source,bash]
+----
+velero restore create --from-backup <SCHEDULE_NAME>-<TIMESTAMP>
+----
+
+. After restoring finished, change the backup storage location to read-write mode.
++
+[source,bash]
+----
+kubectl patch backupstoragelocation <STORAGE_LOCATION_NAME> \
+    --namespace <NAMESPACE> \
+    --type merge \
+    --patch '{"spec":{"accessMode":"ReadWrite"}}'
+----
+
+=== Cluster Migration
+
+Migrate the {kube} cluster from `cluster 1` to `cluster 2`, as long as you point different cluster's Velero instance to the same external object storage location.
+
+[NOTE]
+====
+Velero does not support the migration of persistent volumes across public cloud providers.
+====
+
+. (At cluster 1) Backup the entire {kube} cluster manually
++
+[source,bash]
+----
+velero backup create <BACKUP_NAME>
+----
+
+. (At cluster 2) Prepare a {cluster} cluster deployed by skuba.
+
+. (At cluster 2) Helm install Velero and make sure the backup-location and snapshot-location points to the same location as cluster 1.
++
+[source,bash]
+----
+velero backup-location get
+velero snapshot-location get
+----
++
+[NOTE]
+The default sync interval is 1 minute. You could change the interval with flag `--backup-sync-period` when create backup location.
+
+. (At cluster 2) Make sure the cluster 1 backup resources are sync to the external object storage server.
++
+[source,bash]
+----
+velero backup get <BACKUP_NAME>
+velero backup describe <BACKUP_NAME>
+----
+
+. (At cluster 2) Restore the cluster from the backup file.
++
+[source,bash]
+----
+velero restore create --from-backup <BACKUP_NAME>
+----
+
+. (At cluster 2) Verify the cluster is behaving correctly
++
+[source,bash]
+----
+velero restore get
+velero restore describe <RESTORE_NAME>
+velero restore logs <RESTORE_NAME>
+----
+
+. (At cluster 2) Since Velero doesn't overwrite objects in-cluster if they already exist. Manual check all addons configuration is desired after cluster restored.
+.. Check dex configuration.
++
+[source,bash]
+----
+# Download dex.yaml
+kubectl get configmap oidc-dex-config -o yaml > oidc-dex-config.yaml
+
+# Edit oidc-dex-config.yaml to desired
+vim oidc-dex-config.yaml
+
+# Apply new oidc-dex-config.yaml
+kubectl apply -f oidc-dex-config.yaml
+
+# Restart oidc-dex deployment
+kubectl delete pod -l app=oidc-dex
+----
+.. Check gangway configuration.
++
+[source,bash]
+----
+# Download gangway.yaml
+kubectl get configmap oidc-gangway-config -o yaml > oidc-gangway-config.yaml
+
+# Edit oidc-gangway-config.yaml to desired
+vim oidc-gangway-config.yaml
+
+# Apply new oidc-gangway-config.yaml
+kubectl apply -f oidc-gangway-config.yaml
+
+# Restart oidc-gangway deployment
+kubectl delete pod -l app=oidc-dex
+----
+.. Check kured is disabled automatically reboots.
++
+[source,bash]
+----
+kubectl get daemonset kured -o yaml
+----
+.. Check psp is what you desired.
++
+[source,bash]
+----
+kubectl get psp suse.caasp.psp.privileged -o yaml
+kubectl get clusterrole suse:caasp:psp:privileged -o yaml
+kubectl get rolebinding suse:caasp:psp:privileged -o yaml
+
+kubectl get psp suse.caasp.psp.unprivileged -o yaml
+kubectl get clusterrole suse:caasp:psp:unprivileged -o yaml
+kubectl get clusterrolebinding suse:caasp:psp:default -o yaml
+----
