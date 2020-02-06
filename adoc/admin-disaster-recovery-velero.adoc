@@ -713,6 +713,9 @@ velero backup create <BACKUP_NAME>
 velero backup-location get
 velero snapshot-location get
 ----
++
+[NOTE]
+The default sync interval is 1 minute. You could change the interval with flag `--backup-sync-period` when create backup location.
 
 . (At cluster 2) Make sure the cluster 1 backup resources are sync to the external object storage server.
 +
@@ -721,9 +724,6 @@ velero snapshot-location get
 velero backup get <BACKUP_NAME>
 velero backup describe <BACKUP_NAME>
 ----
-+
-[NOTE]
-The default sync interval is 1 minute. You could change the interval with flag `--backup-sync-period` to the Velero server.
 
 . (At cluster 2) Restore the cluster from the backup file.
 +
