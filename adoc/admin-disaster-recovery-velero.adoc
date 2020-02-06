@@ -166,6 +166,7 @@ sudo zypper install velero
 . It is not yet possible to send a single Velero backup to multiple backup storage locations simultaneously, or a single volume snapshot to multiple locations simultaneously. However, you can setup multiple backups manually or scheduled that differ only in the storage locations.
 . Cross-provider snapshots are not supported. If you have a cluster with more than one type of volume (e.g. NFS and Ceph), but you only have a volume snapshot location configured for NFS, then Velero will _only_ snapshot the NFS volumes.
 . Restic data is stored under a prefix/subdirectory of the main Velero bucket and will go into the bucket corresponding backup storage location selected by the user at backup creation time.
+. When recovering, the {kube} version, velero version (includes container version), and helm version have to be exact the same as the original cluster.
 . When cluster migration, the new cluster number of nodes should equals or greater than the origin cluster.
 
 Ref: https://velero.io/docs/v1.2.0/locations/
