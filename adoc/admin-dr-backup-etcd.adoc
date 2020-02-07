@@ -7,29 +7,13 @@ This chapter describes the backup of etcd cluster data running on master nodes o
 ```bash
 BACKUP_DIR=CaaSP_Backup_`date +%Y%m%d%H%M%S`
 mkdir /${BACKUP_DIR}
-
-# Repeat to create folders for all master nodes
-mkdir /${BACKUP_DIR}/<MASTER_NAME>_<MASTER_IP>
 ```
 
 2. Copy the following files/folders into the backup directory:
 * The `skuba`: command-line binary for the running cluster, use to replace nodes from cluster.
 * The skuba cluster folder: directory where used for running `skuba` commands. Contains cluster configurations and authentication files.
-* The kubernetes folder of every node in cluster: directory contains kubernetes configurations.
-+
-You may need to access to each master node in cluster and copy the entire folder to external storage.
-+
-```bash
-cp -a /etc/kubernetes /${BACKUP_DIR}/<MASTER_NAME>_<MASTER_IP>/
-```
-* The kubelet folder of every node in cluster: directory contains kubelet configurations.
-+
-You may need to access to each master node in cluster and copy the entire folder to external storage.
-+
-```bash
-cp -a /var/lib/kubelet /${BACKUP_DIR}/<MASTER_NAME>_<MASTER_IP>/
-```
 * The etcd cluster database: holds all cluster data. Can be used to recover master nodes. Please refer to the next section for steps to create etcd cluster database backup.
+
 3. (Optional) Make backup directory into a compressed file, and remove the original backup directory.
 +
 ```bash
