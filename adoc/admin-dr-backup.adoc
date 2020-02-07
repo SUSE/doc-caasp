@@ -1,5 +1,5 @@
-= Backup
-This chapter describes the backup of {productname}.
+= Backup etcd Cluster Data
+This chapter describes the backup of etcd cluster data running on master nodes of {productname}.
 
 == Data To Backup
 1. Create backup directories on external storage.
@@ -49,7 +49,8 @@ ls -sh /var/lib/etcd/member/snap/db
 ```
 +
 Below is the sample manifest bind to local hostpath. Recommend to use other storage methods instead.
-+Replace <STORAGE_MOUNT_POINT> with directory to store for backup. The directory must exist on every node in cluster.
++
+Replace <STORAGE_MOUNT_POINT> with directory to store for backup. The directory must exist on every node in cluster.
 +
 Replace <IN_CLUSTER_ETCD_IMAGE> with etcd image used in cluster. This can retrive by accessing any one of node in cluster and run `grep image: /etc/kubernetes/manifests/etcd.yaml | awk '{print $2}'`
 +
@@ -59,45 +60,59 @@ ETCD_IMAGE="<IN_CLUSTER_ETCD_IMAGE>"
 MANIFEST="etcd-backup.yaml"
 
 cat << *EOF* > ${MANIFEST} 
-apiVersion: v1
-kind: Pod
+apiVersion: batch/v1
+kind: Job
 metadata:
   name: etcd-backup
   namespace: kube-system
+  labels:
+    jobgroup: backup
 spec:
-  containers:
-  - name: etcd-backup
-    image: ${ETCD_IMAGE}
-    env:
-    - name: ETCDCTL_API
-      value: "3"
-    command: ["/bin/sh"]
-    args: ["-c", "etcdctl --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt --key=/etc/kubernetes/pki/etcd/healthcheck-client.key snapshot save /backup/etcd-snapshot-\$(date +%Y-%m-%d_%H:%M:%S_%Z).db"]
-    volumeMounts:
-    - mountPath: /etc/kubernetes/pki/etcd
-      name: etcd-certs
-      readOnly: true
-    - mountPath: /backup
+  template:
+    metadata:
       name: etcd-backup
-  restartPolicy: OnFailure
-  nodeSelector:
-    node-role.kubernetes.io/master: ""
-  tolerations:
-  - effect: NoSchedule
-    operator: Exists
-  hostNetwork: true
-  volumes:
-  - name: etcd-certs
-    hostPath:
-      path: /etc/kubernetes/pki/etcd
-      type: DirectoryOrCreate
-  - name: etcd-backup
-    hostPath:
-      path: ${ETCD_SNAPSHOT}
-      type: Directory
+      labels:
+        jobgroup: backup
+    spec:
+      containers:
+      - name: etcd-backup
+        image: ${ETCD_IMAGE}
+        env:
+        - name: ETCDCTL_API
+          value: "3"
+        command: ["/bin/sh"]
+        args: ["-c", "etcdctl --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt --key=/etc/kubernetes/pki/etcd/healthcheck-client.key snapshot save /backup/etcd-snapshot-\$(date +%Y-%m-%d_%H:%M:%S_%Z).db"]
+        volumeMounts:
+        - mountPath: /etc/kubernetes/pki/etcd
+          name: etcd-certs
+          readOnly: true
+        - mountPath: /backup
+          name: etcd-backup
+      restartPolicy: OnFailure
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
+      tolerations:
+      - effect: NoSchedule
+        operator: Exists
+      hostNetwork: true
+      volumes:
+      - name: etcd-certs
+        hostPath:
+          path: /etc/kubernetes/pki/etcd
+          type: DirectoryOrCreate
+      - name: etcd-backup
+        hostPath:
+          path: ${ETCD_SNAPSHOT}
+          type: Directory
 *EOF*
 
 kubectl create -f ${MANIFEST}
+```
++
+If you are using local hostPath and not using a shared storage device, etcd back will be created to any one of the master nodes. To find the node associated with each etcd backup:
++
+```bash
+kubectl get pods --namespace kube-system --selector=job-name=etcd-backup -o wide
 ```
 
 == Schedule ETCD Cluster Backup

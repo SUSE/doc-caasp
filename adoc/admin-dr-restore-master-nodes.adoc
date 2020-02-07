@@ -1,4 +1,4 @@
-= Recover Lost Master Node
+= Recover Master Nodes
 This chapter describes how to recover {productname} master nodes.
 
 == Replace Single Master Node
@@ -16,7 +16,7 @@ Replace <NODE_IP> with failed master node IP address.
 ```bash
 sed -i "/<NODE_IP>/d" known_hosts
 ```
-3. Prepare new instance.
+3. Prepare a new instance.
 4. Use `skuba` to join master node from step 3.
 +
 Replace <NODE_IP> with the new master node ip address.
@@ -29,7 +29,7 @@ Replace <USER_NAME> with user name.
 skuba node join --role=master --user=<USER_NAME> --sudo --target <NODE_IP> <NODE_NAME>
 ```
 
-== Recover Master Nodes - etcd cluster and data
+== Recover All Master Nodes
 Ensure cluster version for backup/restore should be the same. Cross-version restoration in any domain is likely to  encounter data/API compatibility issues.
 
 === Prerequisite
@@ -65,7 +65,7 @@ sudo zypper install podman
 
 ETCD_IMAGE=`grep image: /etc/kubernetes/manifests/etcd.yaml | awk '{print $2}'`
 
-sudo docker pull ${ETCD_IMAGE}
+sudo podman pull ${ETCD_IMAGE}
 ```
 
 2. Have access to etcd snapshot from backup device.
@@ -280,8 +280,7 @@ cp /tmp/etcd.yaml /etc/kubernetes/manifests/
 ```
 10. Repeat step 7, 8, 9 to recover all remain master nodes.
 
-//TODO: dont know how to write hint. Please help to fix this.
-HINT: A successful restore will show master nodes in etcd member list `started`, and all kubernetes nodes in `STATUS Ready`.
+After restoring, execute below command to confirm a successful restore will show master nodes in etcd member list `started`, and all kubernetes nodes in `STATUS Ready`.
 
 Etcdctl:
 ```bash
