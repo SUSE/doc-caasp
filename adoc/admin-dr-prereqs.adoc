@@ -80,8 +80,22 @@ For the rests of the S3-compatible storage providers, refer to link:https://vele
 ===== Public Cloud Providers
 ====== AWS S3
 
-Create the credential file `credentials-velero` in the local machine.
+. Prerequisites
++
+Download `aws` CLI from the internet.
 
+. Create AWS S3 bucket
++
+[source,bash]
+----
+aws s3api create-bucket \
+    --bucket <BUCKET_NAME> \
+    --region <REGION> \
+    --create-bucket-configuration LocationConstraint=<REGION>
+----
+
+. Prepare the credential file `credentials-velero` in the local machine
++
 ----
 [default]
 aws_access_key_id=<AWS_ACCESS_KEY_ID>
@@ -92,19 +106,84 @@ Please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-aws/tree/
 
 ====== Google Cloud Storage
 
-Create the credential file `credentials-velero` in the local machine.
+. Prerequisites
++
+Download `gcloud` and `gsutil` CLI from the internet.
+
+. Create GCS bucket
++
+[source,bash]
+----
+gsutil mb gs://<BUCKET_NAME>/
+----
+
+. Create the service account
++
+[source,bash]
+----
+# View current config settings
+gcloud config list
+
+# Store the project value to PROJECT_ID environment variable
+PROJECT_ID=$(gcloud config get-value project)
+
+# Create a service account
+gcloud iam service-accounts create velero \
+    --display-name "Velero service account"
+
+# List all accounts
+gcloud iam service-accounts list
+
+# Set the SERVICE_ACCOUNT_EMAIL environment variable
+SERVICE_ACCOUNT_EMAIL=$(gcloud iam service-accounts list \
+  --filter="displayName:Velero service account" \
+  --format 'value(email)')
+
+# Attach policies to give velero the necessary permissions
+ROLE_PERMISSIONS=(
+    compute.disks.get
+    compute.disks.create
+    compute.disks.createSnapshot
+    compute.snapshots.get
+    compute.snapshots.create
+    compute.snapshots.useReadOnly
+    compute.snapshots.delete
+    compute.zones.get
+)
+
+# Create iam roles
+gcloud iam roles create velero.server \
+    --project $PROJECT_ID \
+    --title "Velero Server" \
+    --permissions "$(IFS=","; echo "${ROLE_PERMISSIONS[*]}")"
+
+# Bind iam policy to project
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+    --member serviceAccount:$SERVICE_ACCOUNT_EMAIL \
+    --role projects/$PROJECT_ID/roles/velero.server
+
+gsutil iam ch serviceAccount:$SERVICE_ACCOUNT_EMAIL:objectAdmin gs://<BUCKET_NAME>
+----
+
+.  Create credential file `credentials-velero` in the local machine
++
+[source,bash]
+----
+gcloud iam service-accounts keys create credentials-velero \
+    --iam-account $SERVICE_ACCOUNT_EMAIL
+----
 
 Please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-gcp/tree/v1.0.0[Velero Plugin For GCP].
 
 ====== Azure Blob Storage
 
-Create the credential file `credentials-velero` in the local machine.
+Create the credential file `credentials-velero` in the local machine
 
 Please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure/tree/v1.0.0[Velero Plugin For Azure].
 
 ===== S3-compatible Storage Providers, like `radosgw`
 
-Create the credential file `credentials-velero` in the local machine.
+Create the credential file `credentials-velero` in the local machine
 
 ----
 [default]
