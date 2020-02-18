@@ -71,6 +71,8 @@ velero backup-location create slave \
 
 . Azure
 .. The backup bucket name _BUCKET_NAME_. (The bucket name in Azure Blob Storage	 object storage)
+.. The resource group name __AZURE_RESOURCE_GROUP__. (The Azure resource group name)
+.. The storage account ID __AZURE_STORAGE_ACCOUNT_ID__. (The Azure storage account ID)
 .. The Velero installed namespace _NAMESPACE_, the default namespace is `velero`. (optional)
 +
 [source,bash]
@@ -82,7 +84,8 @@ helm install \
     --set configuration.provider=azure \
     --set configuration.backupStorageLocation.name=default \
     --set configuration.backupStorageLocation.name=<BUCKET_NAME> \
-    --set configuration.backupStorageLocation.config.region= resourceGroup=<AZURE_BACKUP_RESOURCE_GROUP>,storageAccount=<AZURE_STORAGE_ACCOUNT_ID> \
+    --set configuration.backupStorageLocation.config.resourceGroup=<AZURE_RESOURCE_GROUP> \
+	--set configuration.backupStorageLocation.config.storageAccount=<AZURE_STORAGE_ACCOUNT_ID> \
     --set snapshotsEnabled=false \
     --set initContainers[0].name=velero-plugin-for-microsoft-azure \
     --set initContainers[0].image=registry.suse.com/caasp/v4/velero-plugin-for-microsoft-azure:1.0.0 \
@@ -97,7 +100,7 @@ helm install \
 velero backup-location create slave \
     --provider azure \
     --bucket <BUCKET_SLAVE_NAME> \
-    --region resourceGroup=<AZURE_BACKUP_RESOURCE_GROUP>,storageAccount=<AZURE_STORAGE_ACCOUNT_ID>
+    --region resourceGroup=<AZURE_RESOURCE_GROUP>,storageAccount=<AZURE_STORAGE_ACCOUNT_ID>
 ----
 
 ==== Backup location on S3-compatible storage providers
@@ -117,7 +120,7 @@ configuration.backupStorageLocation.config.s3Url=<S3_COMPATIBLE_STORAGE_SERVER__
 ----
 velero backup-location create slave \
     --provider aws \
-    --bucket <BUCKET_NAME> \
+    --bucket <BUCKET_SLAVE_NAME> \
     --config region=slave,s3ForcePathStyle=true,s3Url=<S3_COMPATIBLE_STORAGE_SERVER_URL>
 ----
 
@@ -158,7 +161,7 @@ helm install \
 ----
 velero backup-location create slave \
     --provider aws \
-    --bucket <BUCKET_NAME> \
+    --bucket <BUCKET_SLAVE_NAME> \
     --config region=<REGION_NAME>
 ----
 
@@ -195,6 +198,8 @@ velero backup-location create slave \
 
 . Azure
 .. The backup bucket name _BUCKET_NAME_. (The bucket name in Azure Blob Storage object storage)
+.. The resource group name __AZURE_RESOURCE_GROUP__. (The Azure resource group name)
+.. The storage account ID __AZURE_STORAGE_ACCOUNT_ID__. (The Azure storage account ID)
 .. The Velero installed namespace _NAMESPACE_, the default namespace is `velero`. (optional)
 +
 [source,bash]
@@ -206,11 +211,11 @@ helm install \
     --set configuration.provider=azure \
     --set configuration.backupStorageLocation.name=default \
     --set configuration.backupStorageLocation.name=<BUCKET_NAME> \
-    --set configuration.backupStorageLocation.config.region= resourceGroup=<AZURE_BACKUP_RESOURCE_GROUP>,storageAccount=<AZURE_STORAGE_ACCOUNT_ID> \
+    --set configuration.backupStorageLocation.config.resourceGroup=<AZURE_RESOURCE_GROUP> \
+	--set configuration.backupStorageLocation.config.storageAccount=<AZURE_STORAGE_ACCOUNT_ID> \
     --set snapshotsEnabled=true \
     --set deployRestic=true \
     --set configuration.volumeSnapshotLocation.name=default \
-    --set configuration.volumeSnapshotLocation.config.apitimeout=<API_TIMEOUT> \
     --set initContainers[0].name=velero-plugin-for-microsoft-azure \
     --set initContainers[0].image=registry.suse.com/caasp/v4/velero-plugin-for-microsoft-azure:1.0.0 \
     --set initContainers[0].volumeMounts[0].mountPath=/target \
@@ -224,7 +229,7 @@ helm install \
 velero backup-location create slave \
     --provider azure \
     --bucket <BUCKET_SLAVE_NAME> \
-    --region resourceGroup=<AZURE_BACKUP_RESOURCE_GROUP>,storageAccount=<AZURE_STORAGE_ACCOUNT_ID>
+    --region resourceGroup=<AZURE_RESOURCE_GROUP>,storageAccount=<AZURE_STORAGE_ACCOUNT_ID>
 ----
 
 ==== Backup location on S3-compatible storage providers
@@ -270,7 +275,7 @@ helm install \
 ----
 velero backup-location create slave \
     --provider aws \
-    --bucket <BUCKET_NAME> \
+    --bucket <BUCKET_SLAVE_NAME> \
     --config region=slave,s3ForcePathStyle=true,s3Url=<S3_COMPATIBLE_STORAGE_SERVER_URL>
 ----
 
