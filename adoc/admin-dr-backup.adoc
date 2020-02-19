@@ -56,6 +56,9 @@ velero schedule create <SCHEDULE_NAME> --schedule="@every 168h" --ttl 2160h0m0s
 |5 |Day of Week |`0-7,*`
 |===
 
+[NOTE]
+When create multiple backups to different backup locations closely, you might hit the object storage server API rate limit issues. Now, the velero does not have a mechanism on retry backups when rate limit occurred. Consider shift the time on create multiple backups.
+
 ==== Optional Flags
 
 ===== Granularity
