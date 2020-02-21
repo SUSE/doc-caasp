@@ -93,11 +93,7 @@ kubectl create rolebinding admin --clusterrole=admin --user=<USER_1> --user=<USE
 Administrators can update the authentication connector settings after {productname}
 deployment as follows:
 
-. Run the following `kubectl` command to access Dex ConfigMap:
-+
-----
-kubectl --namespace=kube-system edit configmap oidc-dex-config
-----
+. Edit and save Dex addon YAML in `~/clusters/<CLUSTER_NAME>/addons/dex/dex.yml`
 +
 . Adapt ConfigMap by adding LDAP configuration to the connector section.
 For detailed configuration of the LDAP connector, refer to Dex documentation:
@@ -140,14 +136,13 @@ Besides the LDAP connector you can also set up other connectors.
 For additional connectors, refer to the available connector configurations in the Dex repository:
 https://github.com/dexidp/dex/tree/v2.16.0/Documentation/connectors.
 +
-. Save and exit Dex ConfigMap by typing `:wq` in the terminal.
-+
-. Restart Dex and Gangway by running:
+. Apply changes:
 +
 ----
-kubectl --namespace=kube-system delete pod -l app=oidc-dex
-kubectl --namespace=kube-system delete pod -l app=oidc-gangway
+kubectl apply -f ~/clusters/<CLUSTER_NAME>/addons/dex/dex.yml
 ----
+
+NOTE: Before any add-on upgrade, please backup any runtime configuration changes, then restore the modification back after upgraded. It is known limitation.
 
 [[_sec.admin.security.rbac.apply]]
 === User Access
