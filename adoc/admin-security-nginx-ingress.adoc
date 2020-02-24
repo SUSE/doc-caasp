@@ -1,16 +1,17 @@
+:toc:
+
 [[nginx-ingress]]
 = NGINX Ingress Controller
 
 The basics of Kubernetes ingress exposes HTTP and HTTPS routes from the outside of a cluster to services created inside the cluster. An Ingress controller with an ingress controller service is responsible for supporting the Kubernetes ingress. In order to use Kubernetes ingress, you need to install the ingress controller with the ingress controller service to be exposed to the outside of the cluster. Traffic routing is controlled by rules defined on the Ingress resource from backend services.
 
-=== Configure and deploy NGINX ingress controller
+== Configure and deploy NGINX ingress controller
 
+=== Define networking configuration
 
-. Choose which networking configuration the ingress controller should have.
-Create a file [path] _nginx-ingress-config-values.yaml_ with one of the following examples as content.
+Choose which networking configuration the ingress controller should have.
+Create a file `nginx-ingress-config-values.yaml` with one of the following examples as content:
 
-* **NodePort**: The services will be publicly exposed on each node of the cluster, including master nodes, at port `32443` for `HTTPS`.
-+
 ----
 # Enable the creation of pod security policy
 podSecurityPolicy:
@@ -21,6 +22,13 @@ serviceAccount:
   create: true
   name: nginx-ingress
 
+[ADD CONTENT HERE] // <1>
+----
+<1> Add one of the following sections at this point to configure for a specific type of exposing the service.
+
+* **NodePort**: The services will be publicly exposed on each node of the cluster, including master nodes, at port `32443` for `HTTPS`.
++
+----
 # Publish services on port HTTPS/32443
 # These services are exposed on each node
 controller:
@@ -34,15 +42,6 @@ controller:
 * **External IPs**: The services will be exposed on specific nodes of the cluster, at port `443` for `HTTPS`.
 +
 ----
-# Enable the creation of pod security policy
-podSecurityPolicy:
-  enabled: false
-
-# Create a specific service account
-serviceAccount:
-  create: true
-  name: nginx-ingress
-
 # These services are exposed on the node with IP 10.86.4.158
 controller:
   service:
@@ -54,15 +53,6 @@ controller:
 * **LoadBalancer**: The services will be exposed on the loadbalancer that the cloud provider serves.
 +
 ----
-# Enable the creation of pod security policy
-podSecurityPolicy:
-  enabled: false
-
-# Create a specific service account
-serviceAccount:
-  create: true
-  name: nginx-ingress
-
 # These services are exposed on IP from a cluster cloud provider
 controller:
   service:
@@ -70,11 +60,18 @@ controller:
     type: LoadBalancer
 ----
 
-. Deploy the ingress controller from the helm chart link:https://kubernetes-charts.suse.com/[$suse charts repository]
-and pass along our configuration values file by running `helm repo add suse https://kubernetes-charts.suse.com`.
-+
+=== Deploy ingress controller from helm chart
+
 TIP: For complete instructions on how to install Helm and Tiller refer to <<helm_tiller_install>>.
-+
+
+Add the link:https://kubernetes-charts.suse.com/[SUSE helm charts repository] by running:
+
+----
+helm repo add suse https://kubernetes-charts.suse.com
+----
+
+Then you can deploy the ingress controller and use the previously created configuration file to configure the networking type.
+
 [source,bash]
 ----
 kubectl create namespace nginx-ingress
@@ -83,9 +80,9 @@ helm install --name nginx-ingress suse/nginx-ingress \
 --namespace nginx-ingress \
 --values nginx-ingress-config-values.yaml
 ----
-+
+
 The result should be two running pods:
-+
+
 [source,bash]
 ----
 kubectl -n nginx-ingress get pod
@@ -93,10 +90,10 @@ NAME                                             READY     STATUS    RESTARTS   
 nginx-ingress-controller-74cffccfc-p8xbb         1/1       Running   0          4s
 nginx-ingress-default-backend-6b9b546dc8-mfkjk   1/1       Running   0          4s
 ----
-+
-The result should be two services:
-+
-* NodePort
+
+Depending on the networking configuration you chose before, the result should be two services:
+
+* **NodePort**
 +
 [source,bash]
 ----
@@ -106,7 +103,7 @@ nginx-ingress-controller        NodePort    10.100.108.7     <none>        443:3
 nginx-ingress-default-backend   ClusterIP   10.109.118.128   <none>        80/TCP          2d1h
 ----
 +
-* External IPs
+* **External IPs**
 +
 [source,bash]
 ----
@@ -116,7 +113,7 @@ nginx-ingress-controller        LoadBalancer   10.103.103.27  10.86.4.158   443:
 nginx-ingress-default-backend   ClusterIP      10.100.48.17   <none>        80/TCP          12s
 ----
 +
-* LoadBalancer
+* **LoadBalancer**
 +
 [source,bash]
 ----
@@ -126,53 +123,56 @@ nginx-ingress-controller        LoadBalancer   10.106.160.255   10.86.5.176   44
 nginx-ingress-default-backend   ClusterIP      10.111.140.50    <none>        80/TCP          3h58m
 ----
 
-. Create DNS entries
-+
+=== Create DNS entries
+
 You should configure proper DNS names in any production environment. `k8s-dashboard.com` will be the domain name we will use in the ingress resource.
 These values are only for example purposes.
-+
-* NodePort
-+
+
+* **NodePort**
+
 The services will be publicly exposed on each node of the cluster at port 30443 for HTTPS. In this example, we will use a worker node with IP 10.86.14.58.
-+
+
 ----
 k8s-dashboard.com                      IN  A       10.86.14.58
 ----
-+
+
 Or add this entry to /etc/hosts
-+
+
 ----
 10.86.14.58 k8s-dashboard.com
 ----
-+
-* External IPs
-+
+
+* **External IPs**
+
 The services will be exposed on a specific node of the cluster, at the assigned port for HTTPS. In this example, we used the external IP 10.86.4.158.
-+
+
 ----
 k8s-dashboard.com                      IN  A       10.86.4.158
 ----
-+
+
 Or add this entry to /etc/hosts
-+
+
 ----
 10.86.4.158 k8s-dashboard.com
 ----
-* LoadBalancer
-+
+* **LoadBalancer**
+
 The services will be exposed on an assigned node of the cluster, at the assigned port for HTTPS. In this example, LoadBalancer provided the external IP 10.86.5.176.
-+
+
 ----
 k8s-dashboard.com                      IN  A       10.86.5.176
 ----
-+
+
 Or add this entry to /etc/hosts
-+
+
 ----
 10.86.5.176 k8s-dashboard.com
 ----
 
-=== Deploy Kubernetes Dashboard as an example
+== Deploy Kubernetes Dashboard as an example
+
+IMPORTANT: This example uses the upstream chart for the {kube} dashboard. There is currently no officially supported
+version of the {kube} dashboard available from {suse}.
 
 . Deploy Kubernetes dashboard
 +
@@ -188,7 +188,10 @@ This will show how to create simple admin user using Service Account, grant it t
 [source,bash]
 ----
 kubectl create serviceaccount dashboard-admin -n kube-system
-kubectl create clusterrolebinding dashboard-admin --clusterrole=cluster-admin --serviceaccount=kube-system:dashboard-admin
+
+kubectl create clusterrolebinding dashboard-admin \
+--clusterrole=cluster-admin \
+--serviceaccount=kube-system:dashboard-admin
 ----
 
 . Create the TLS secret
@@ -197,8 +200,13 @@ Please refer to <<trusted_server_certificate>> on how to sign the trusted certif
 +
 [source,bash]
 ----
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /tmp/dashboard-tls.key -out /tmp/dashboard-tls.crt -subj "/CN=k8s-dashboard.com/O=k8s-dashboard"
-kubectl create secret tls dashboard-tls --key /tmp/dashboard-tls.key --cert /tmp/dashboard-tls.crt -n kubernetes-dashboard
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+-keyout /tmp/dashboard-tls.key -out /tmp/dashboard-tls.crt \
+-subj "/CN=k8s-dashboard.com/O=k8s-dashboard" \
+
+kubectl create secret tls dashboard-tls \
+--key /tmp/dashboard-tls.key --cert /tmp/dashboard-tls.crt \
+-n kubernetes-dashboard
 ----
 
 . Create the ingress resource
@@ -258,11 +266,11 @@ Kubernetes dashboard will be accessible through ingress domain name with ingress
 Now we’re ready to get the token from dashboard-admin by following command.
 [source,bash]
 ----
-kubectl describe secrets -n kube-system $(kubectl -n kube-system get secret | awk '/dashboard-admin/{print $1}')
+kubectl describe secrets -n kube-system \
+$(kubectl -n kube-system get secret | awk '/dashboard-admin/{print $1}')
 ----
 ====
 +
-* NodePort: https://k8s-dashboard.com:32443
-* External IPs: https://k8s-dashboard.com
-* LoadBalancer: https://k8s-dashboard.com
-
+* **NodePort**: https://k8s-dashboard.com:32443
+* **External IPs**: https://k8s-dashboard.com
+* **LoadBalancer**: https://k8s-dashboard.com
