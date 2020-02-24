@@ -57,15 +57,15 @@ Please refer to <<nginx-ingress>> on how to congifure ingress in your cluster. D
 [IMPORTANT]
 ====
 There will be two different ways of using ingress for accessing the monitoring system.
-One will be using `subdomains` such as prometheus.example.com, prometheus-alertmanager.example.com, and grafana.example.com.
-Another deployment will be using `subpaths` for accessing monitoring system such as example.com/prometheus, example.com/alertmanager, and example.com/grafana.
+One will be using `subdomains` such as `+prometheus.example.com+`, `+prometheus-alertmanager.example.com+`, and `+grafana.example.com+`.
+Another deployment will be using `subpaths` for accessing monitoring system such as `example.com/prometheus`, `example.com/alertmanager`, and `example.com/grafana`.
 ====
 +
-In this example, we will use a master node with IP `10.86.4.158` in the case of NodePort service of Ingress Controller.
+In this example, we will use a master node with IP `10.86.4.158` in the case of NodePort service of the Ingress Controller.
 +
 .. Installation example of `subdomains`
 +
-You should configure proper DNS names in any production environment.
+NOTE: You should configure proper DNS names in any production environment.
 These values are only for example purposes.
 +
 ----
@@ -75,7 +75,7 @@ prometheus-alertmanager.example.com         IN  CNAME   monitoring.example.com
 grafana.example.com                         IN  CNAME   monitoring.example.com
 ----
 +
-Or add this entry to /etc/hosts
+Or add this entry to `/etc/hosts`
 +
 ----
 10.86.4.158 prometheus.example.com prometheus-alertmanager.example.com grafana.example.com
@@ -87,7 +87,7 @@ Or add this entry to /etc/hosts
 example.com                      IN  A       10.86.4.158
 ----
 +
-Or add this entry to /etc/hosts
+Or add this entry to `/etc/hosts`
 +
 ----
 10.86.4.158 example.com
@@ -104,7 +104,7 @@ Install `htpasswd` on your local workstation
 zypper in apache2-utils
 ----
 +
-Create the secret file [path]`auth`
+Create the secret file `auth`
 +
 [source,bash]
 ----
@@ -113,9 +113,13 @@ New password:
 Re-type new password:
 Adding password for user admin
 ----
-IMPORTANT: It is very important that the filename is [path]`auth`.
++
+[IMPORTANT]
+====
+It is very important that the filename is `auth`.
 During creation, a key in the configuration containing the secret is created that is named after the used filename.
 The ingress controller will expect a key named `auth`.
+====
 +
 Create secret in {kube} cluster
 +
@@ -126,7 +130,8 @@ kubectl create secret generic -n monitoring prometheus-basic-auth --from-file=au
 
 . TLS
 +
-You must configure your certificates for the components as secrets in {kube} cluster. Get certificates from your local certificate authority.
+You must configure your certificates for the components as secrets in the {kube} cluster.
+Get certificates from your local certificate authority.
 In this example we are using a single certificate shared by the components `prometheus.example.com`, `prometheus-alertmanager.example.com` and `grafana.example.com`.
 +
 .Create Individual Secrets For Components
@@ -183,24 +188,26 @@ kubectl create -n monitoring secret tls monitoring-tls  \
 [NOTE]
 ====
 There will be two different ways of using ingress for accessing the monitoring system.
-One will be using `subdomains` such as prometheus.example.com, prometheus-alertmanager.example.com, and grafana.example.com.
-Another deployment will be using `subpaths` for accessing monitoring system such as example.com/prometheus, example.com/alertmanager, and example.com/grafana.
+One will be using `subdomains` such as `+prometheus.example.com+`, `+prometheus-alertmanager.example.com+`, and `+grafana.example.com+`.
+Another deployment will be using `subpaths` for accessing monitoring system such as `example.com/prometheus`, `example.com/alertmanager`, and `example.com/grafana`.
 ====
+
 === Installation For Subdomains
 [NOTE]
 ====
-This installation example shows how to install and configure Prometheus and Grafana using subdomains such as prometheus.example.com, prometheus-alertmanager.example.com, and grafana.example.com.
+This installation example shows how to install and configure Prometheus and Grafana using subdomains such as `prometheus.example.com`, `prometheus-alertmanager.example.com`, and `grafana.example.com`.
 ====
+
 [IMPORTANT]
 ====
-In order to provide additional security level by using TLS certificates please make sure you have the <<nginx-ingress>> installed and configured.
+In order to provide additional security by using TLS certificates, please make sure you have the <<nginx-ingress>> installed and configured.
 
-If you don't need TLS you may use other methods for exposing these web services as native LBaaS in OpenStack, haproxy service or k8s native methods as port-forwarding or NodePort but this is out of scope of this document.
+If you don't need TLS, you may use other methods for exposing these web services as native `LBaaS` in OpenStack, haproxy service or k8s native methods as port-forwarding or NodePort but this is out of scope of this document.
 ====
 
 ==== Prometheus
 
-. Create a configuration file [path]`prometheus-config-values.yaml`
+. Create a configuration file `prometheus-config-values.yaml`
 +
 We need to configure the storage for our deployment.
 Choose among the options and uncomment the line in the config file.
@@ -339,9 +346,9 @@ prometheus-server         prometheus.example.com                          80, 44
 ----
 
 . At this stage, the Prometheus Expression browser/API should be accessible, depending on your network configuration
-* NodePort: https://prometheus.example.com:32443
-* External IPs: https://prometheus.example.com
-* LoadBalancer: https://prometheus.example.com
+* **NodePort**: `+https://prometheus.example.com:32443+`
+* **External IPs**: `+https://prometheus.example.com+`
+* **LoadBalancer**: `+https://prometheus.example.com+`
 
 [[alertmanager_configuration_example]]
 ==== Alertmanager Configuration Example
@@ -355,7 +362,7 @@ The configuration sets one "receiver" to get notified by email when a node meets
 
 The first two are critical because the node cannot accept new pods, the last two are just warnings.
 
-The Alertmanager configuration can be added to [path]`prometheus-config-values.yaml` by adding the `alertmanagerFiles` section.
+The Alertmanager configuration can be added to `prometheus-config-values.yaml` by adding the `alertmanagerFiles` section.
 
 For more information on how to configure Alertmanager, refer to https://prometheus.io/docs/alerting/configuration[Prometheus: Alerting - Configuration].
 
@@ -445,18 +452,18 @@ serverFiles:
 helm upgrade prometheus suse/prometheus --namespace monitoring --values prometheus-config-values.yaml
 ----
 . You should now be able to see your Alertmanager, depending on your network configuration
-* NodePort: https://prometheus-alertmanager.example.com:32443
-* External IPs: https://prometheus-alertmanager.example.com
-* LoadBalancer: https://prometheus-alertmanager.example.com
+* **NodePort**: `+https://prometheus-alertmanager.example.com:32443+`
+* **External IPs**: `+https://prometheus-alertmanager.example.com+`
+* **LoadBalancer**: `+https://prometheus-alertmanager.example.com+`
 
 ==== Grafana
 
 Starting from Grafana 5.0, it is possible to dynamically provision the data sources and dashboards via files.
-In {kube} cluster, these files are provided via the utilization of `ConfigMap`, editing a `ConfigMap` will result by the modification of the configuration without having to delete/recreate the pod.
+In a {kube} cluster, these files are provided via the utilization of `ConfigMap`, editing a `ConfigMap` will result by the modification of the configuration without having to delete/recreate the pod.
 
 . Configure Grafana provisioning
 +
-Create the default datasource configuration file _grafana-datasources.yaml_ which point to our Prometheus server
+Create the default datasource configuration file `grafana-datasources.yaml` which point to our Prometheus server
 +
 ----
 ---
@@ -482,7 +489,7 @@ data:
       isDefault: true
 ----
 
-. Create the ConfigMap in {kube} cluster
+. Create the `ConfigMap` in {kube} cluster
 +
 [source,bash]
 ----
@@ -494,10 +501,10 @@ kubectl create -f grafana-datasources.yaml
 Choose among the options and uncomment the line in the config file.
 In production environments you must configure persistent storage.
 
-** Use an existing PersistentVolumeClaim
-** Use a StorageClass (preferred)
+** Use an existing `PersistentVolumeClaim`
+** Use a `StorageClass` (preferred)
 +
-Create a file _grafana-config-values.yaml_ with the appropriate values
+Create a file `grafana-config-values.yaml` with the appropriate values
 +
 ----
 # Configure admin password
@@ -563,9 +570,9 @@ grafana-dbf7ddb7d-fxg6d                          3/3       Running   0          
 
 . At this stage, Grafana should be accessible, depending on your network configuration
 
-* NodePort: https://grafana.example.com:32443
-* External IPs: https://grafana.example.com
-* LoadBalancer: https://grafana.example.com
+* **NodePort**: `+https://grafana.example.com:32443+`
+* **External IPs**: `+https://grafana.example.com+`
+* **LoadBalancer**: `+https://grafana.example.com+`
 
 . Now you can add Grafana dashboards.
 
@@ -598,7 +605,7 @@ kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-monitoring/master/
 * Build your own dashboard
   Deploy your own dashboard by configuration file containing the dashboard definition.
 
-. Create your dashboard definition file as a `ConfigMap`, for example [path]`grafana-dashboards-caasp-cluster.yaml`.
+. Create your dashboard definition file as a `ConfigMap`, for example `grafana-dashboards-caasp-cluster.yaml`.
 +
 ----
 ---
@@ -638,10 +645,12 @@ kubectl apply -f grafana-dashboards-caasp-cluster.yaml
 ----
 
 === Installation For Subpaths
+
 [NOTE]
 ====
 This installation example shows how to install and configure Prometheus and Grafana using subpaths such as example.com/prometheus, example.com/alertmanager, and example.com/grafana.
 ====
+
 [IMPORTANT]
 ====
 Overlapped instructions from subdomains will be omitted. Refer to the instruction from subdomains.
@@ -649,7 +658,7 @@ Overlapped instructions from subdomains will be omitted. Refer to the instructio
 
 ==== Prometheus
 
-. Create a configuration file [path]`prometheus-config-values.yaml`
+. Create a configuration file `prometheus-config-values.yaml`
 +
 We need to configure the storage for our deployment.
 Choose among the options and uncomment the line in the config file.
@@ -768,7 +777,7 @@ In {kube} cluster, these files are provided via the utilization of `ConfigMap`, 
 
 . Configure Grafana provisioning
 +
-Create the default datasource configuration file _grafana-datasources.yaml_ which point to our Prometheus server
+Create the default datasource configuration file `grafana-datasources.yaml` which point to our Prometheus server
 +
 ----
 ---
@@ -794,7 +803,7 @@ data:
       isDefault: true
 ----
 
-. Create the ConfigMap in {kube} cluster
+. Create the `ConfigMap` in {kube} cluster
 +
 [source,bash]
 ----
@@ -806,12 +815,12 @@ kubectl create -f grafana-datasources.yaml
 Choose among the options and uncomment the line in the config file.
 In production environments you must configure persistent storage.
 
-** Use an existing PersistentVolumeClaim
-** Use a StorageClass (preferred)
+** Use an existing `PersistentVolumeClaim`
+** Use a `StorageClass` (preferred)
 ** Disable ingress
 ** Add the subpath to the end of this URL setting.
 +
-Create a file _grafana-config-values.yaml_ with the appropriate values
+Create a file `grafana-config-values.yaml` with the appropriate values
 +
 ----
 # Configure admin password
@@ -874,7 +883,7 @@ grafana-dbf7ddb7d-fxg6d                          3/3       Running   0          
 
 ==== Ingress
 . Configure Ingress for Prometheus
-Create a file _prometheus-ingress.yaml_
+Create a file `prometheus-ingress.yaml`
 +
 ----
 apiVersion: extensions/v1beta1
@@ -917,7 +926,7 @@ prometheus-ingress           example.com             80, 443   11s
 ----
 
 . Configure Ingress for Alertmanager and Grafana
-Create a file _alertmanager-grafana-ingress.yaml_
+Create a file `alertmanager-grafana-ingress.yaml`
 +
 ----
 apiVersion: extensions/v1beta1
@@ -970,19 +979,19 @@ alertmanager-grafana-ingress  example.com             80, 443   11s
 At this stage, the Prometheus Expression browser/API, Alertmanager, and Grafana should be accessible, depending on your network configuration
 +
 * Prometheus Expression browser/API
-** NodePort: https://example.com:32443/prometheus
-** External IPs: https://example.com/prometheus
-** LoadBalancer: https://example.com/prometheus
+** **NodePort**: `+https://example.com:32443/prometheus+`
+** **External IPs**: `+https://example.com/prometheus+`
+** **LoadBalancer**: `+https://example.com/prometheus+`
 +
 * Alertmanager
-** NodePort: https://example.com:32443/alertmanger
-** External IPs: https://example.com/alertmanger
-** LoadBalancer: https://example.com/alertmanger
+** **NodePort**: `+https://example.com:32443/alertmanger+`
+** **External IPs**: `+https://example.com/alertmanger+`
+** **LoadBalancer**: `+https://example.com/alertmanger+`
 +
 * Grafana
-** NodePort: https://example.com:32443/grafana
-** External IPs: https://example.com/grafana
-** LoadBalancer: https://example.com/grafana
+** **NodePort**: `+https://example.com:32443/grafana+`
+** **External IPs**: `+https://example.com/grafana+`
+** **LoadBalancer**: `+https://example.com/grafana+`
 
 . Now you can add Grafana dashboards.
 
@@ -1017,7 +1026,7 @@ cd /etc/kubernetes
 kubectl --kubeconfig=admin.conf -n monitoring create secret generic etcd-certs --from-file=/etc/kubernetes/pki/etcd/ca.crt --from-file=/etc/kubernetes/pki/etcd/healthcheck-client.crt --from-file=/etc/kubernetes/pki/etcd/healthcheck-client.key
 ----
 
-. Edit the configuration file [path]`prometheus-config-values.yaml`, add `extraSecretMounts` part
+. Edit the configuration file `prometheus-config-values.yaml`, add `extraSecretMounts` part
 +
 ----
 # Alertmanager configuration
