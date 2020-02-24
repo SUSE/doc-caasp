@@ -169,7 +169,7 @@ kubectl create -n monitoring secret tls monitoring-tls  \
 .. Self-signed Certificates (optional)
 +
 Please refer to <<self_signed_server_certificate>> on how to signed the self-sigend certificate.
-The `server.conf` for DNS.1 is `prometheus.example.com`, DNS.2 is `prometheus-alertmanager.example.com` and DNS.3 `grafana.example.com`.
+The `server.conf` for DNS.1 is `+prometheus.example.com+`, DNS.2 is `+prometheus-alertmanager.example.com+` and DNS.3 `+grafana.example.com+`.
 +
 Then, import your self-signed certificate into the {kube} cluster.
 In this example, self-signed certificates are `monitoring.key` and `monitoring.crt`.
@@ -410,8 +410,7 @@ alertmanagerFiles:
 ----
 . Replace the empty set of rules `rules: {}` in the `serverFiles` section of the configuration file.
 +
-For more information on how to configure alerts, refer to: https://prometheus.io/docs/alerting/notification_examples/[Prometheus:
-Alerting - Notification Template Examples]
+For more information on how to configure alerts, refer to: https://prometheus.io/docs/alerting/notification_examples/[Prometheus: Alerting - Notification Template Examples]
 +
 ----
 serverFiles:
