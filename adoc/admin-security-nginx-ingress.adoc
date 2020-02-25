@@ -75,8 +75,6 @@ Then you can deploy the ingress controller and use the previously created config
 
 [source,bash]
 ----
-kubectl create namespace nginx-ingress
-
 helm install --name nginx-ingress suse/nginx-ingress \
 --namespace nginx-ingress \
 --values nginx-ingress-config-values.yaml
@@ -206,7 +204,7 @@ Please refer to <<trusted_server_certificate>> on how to sign the trusted certif
 ----
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 -keyout /tmp/dashboard-tls.key -out /tmp/dashboard-tls.crt \
--subj "/CN=k8s-dashboard.com/O=k8s-dashboard" \
+-subj "/CN=k8s-dashboard.com/O=k8s-dashboard"
 
 kubectl create secret tls dashboard-tls \
 --key /tmp/dashboard-tls.key --cert /tmp/dashboard-tls.crt \
@@ -219,7 +217,7 @@ We will create an ingress to access the backend service using the ingress contro
 Create `dashboard-ingress.yaml` with the appropriate values
 +
 ----
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: dashboard-ingress
@@ -248,7 +246,7 @@ spec:
 +
 [source,bash]
 ----
-kubectl -f dashboard-ingress.yaml
+kubectl apply -f dashboard-ingress.yaml
 ----
 +
 The result will look like this:

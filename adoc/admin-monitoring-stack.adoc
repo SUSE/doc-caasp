@@ -37,15 +37,6 @@ Grafana is an open-source system for querying, analysing and visualizing metrics
 
 == Prerequisites
 
-. Monitoring namespace
-+
-We will deploy our monitoring stack in its own namespace and therefore create one.
-+
-[source,bash]
-----
-kubectl create namespace monitoring
-----
-
 . NGINX Ingress Controller
 +
 Please refer to <<nginx-ingress>> on how to congifure ingress in your cluster. Deploying NGINX Ingress Controller also allows us to provide TLS termination to our services and to provide basic authentication to the Prometheus Expression browser/API.
@@ -97,7 +88,7 @@ Or add this entry to `/etc/hosts`
 +
 We need to create a `basic-auth` secret so the NGINX Ingress Controller can perform authentication.
 +
-Install `htpasswd` on your local workstation
+Install apache2-utils, which contains htpasswd, on your local workstation.
 +
 [source,bash]
 ----
@@ -118,7 +109,7 @@ Adding password for user admin
 ====
 It is very important that the filename is `auth`.
 During creation, a key in the configuration containing the secret is created that is named after the used filename.
-The ingress controller will expect a key named `auth`.
+The ingress controller will expect a key named `auth`. And when you access the monitoring WebUI, you need to enter the username and password.
 ====
 +
 Create secret in {kube} cluster
@@ -126,6 +117,15 @@ Create secret in {kube} cluster
 [source,bash]
 ----
 kubectl create secret generic -n monitoring prometheus-basic-auth --from-file=auth
+----
+
+. Monitoring namespace
++
+We will deploy our monitoring stack in its own namespace and therefore create one.
++
+[source,bash]
+----
+kubectl create namespace monitoring
 ----
 
 . TLS
@@ -145,6 +145,9 @@ In this example the name is `monitoring-tls`.
 .Note Down Secret Names For Configuration
 [IMPORTANT]
 ====
+You need to make sure the TLS secret you created came from a certificate that contains a Common Name (CN),
+also known as a Fully Qualified Domain Name (FQDN) for example.com.
+
 Please note down the names of the secrets you have created.
 Later configuration steps require secret names to be specified.
 ====
@@ -157,15 +160,6 @@ The `server.conf` for DNS.1 is `prometheus.example.com`, DNS.2 is `prometheus-al
 Then, import your trusted certificate into the {kube} cluster.
 In this example, trusted certificates are `monitoring.key` and `monitoring.crt`.
 +
-Add TLS secret to {kube} cluster
-+
-[source,bash]
-----
-kubectl create -n monitoring secret tls monitoring-tls  \
---key  ./monitoring.key \
---cert ./monitoring.crt
-----
-+
 .. Self-signed Certificates (optional)
 +
 Please refer to <<self_signed_server_certificate>> on how to signed the self-sigend certificate.
@@ -174,7 +168,7 @@ The `server.conf` for DNS.1 is `+prometheus.example.com+`, DNS.2 is `+prometheus
 Then, import your self-signed certificate into the {kube} cluster.
 In this example, self-signed certificates are `monitoring.key` and `monitoring.crt`.
 +
-Add TLS secret to {kube} cluster
+.. Add TLS secret to {kube} cluster from trusted Certificates or self-signed Certificates
 +
 [source,bash]
 ----
@@ -254,6 +248,7 @@ serviceAccounts:
   nodeExporter:
     name: prometheus-node-exporter
 
+# Node tolerations for node-exporter scheduling to nodes with taints
 # Allow scheduling of node-exporter on master nodes
 nodeExporter:
   hostNetwork: false
@@ -694,6 +689,7 @@ serviceAccounts:
   nodeExporter:
     name: prometheus-node-exporter
 
+# Node tolerations for node-exporter scheduling to nodes with taints
 # Allow scheduling of node-exporter on master nodes
 nodeExporter:
   hostNetwork: false
@@ -885,7 +881,7 @@ grafana-dbf7ddb7d-fxg6d                          3/3       Running   0          
 Create a file `prometheus-ingress.yaml`
 +
 ----
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: prometheus-ingress
@@ -928,7 +924,7 @@ prometheus-ingress           example.com             80, 443   11s
 Create a file `alertmanager-grafana-ingress.yaml`
 +
 ----
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: alertmanager-grafana-ingress
@@ -968,7 +964,7 @@ Verify the alertmanager and grafana ingress
 +
 [source,bash]
 ----
-kubectl -n monitoring get ingress | grep prometheus
+kubectl -n monitoring get ingress | grep grafana
 NAME                          HOSTS         ADDRESS   PORTS     AGE
 alertmanager-grafana-ingress  example.com             80, 443   11s
 ----
@@ -1064,6 +1060,7 @@ serviceAccounts:
   nodeExporter:
     name: prometheus-node-exporter
 
+# Node tolerations for node-exporter scheduling to nodes with taints
 # Allow scheduling of node-exporter on master nodes
 nodeExporter:
   hostNetwork: false
