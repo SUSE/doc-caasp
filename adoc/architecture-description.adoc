@@ -254,9 +254,10 @@ value store:
 |9 | 4
 |===
 
-Given that etcd runs only on the control plane nodes, despite having 2
-control plane nodes is HA is not fault tolerant. If one of those two
-control planes goes down, the cluster storage will be unavailable, and
+Given that etcd runs only on the control plane nodes, having 2
+control plane nodes provides a HA solution that is fault tolerant for the
+{kube} components but **not** for the etcd cluster. If one of those two
+control planes nodes goes down, the cluster storage will be unavailable, and
 the cluster won't be able to accept new changes (already running
 workloads won't suffer any changes, but the cluster won't be able to
 react to new changes from that point on).
