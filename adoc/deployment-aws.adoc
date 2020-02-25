@@ -1,6 +1,6 @@
 == Deployment on Amazon AWS
 
-Deployment on Amazon Web Services (AWS) is currently tech preview.
+Deployment on Amazon Web Services (AWS) is currently a tech preview.
 
 .Preparation Required
 [NOTE]
@@ -10,7 +10,7 @@ You must have completed <<deployment.preparations>> to proceed.
 
 You will use {tf} to deploy the whole infrastructure described in
 <<architecture-aws>>. Then you will use the `skuba` tool to bootstrap the
-{kube} cluster on top of those.
+{kube} cluster on top of it.
 
 
 [[architecture-aws]]
@@ -21,25 +21,17 @@ creation of the infrastructure described in the next paragraphs.
 
 ==== Network
 
-All the infrastructure is created inside of a user specified AWS region.
-All the resources are currently located inside of the same availability
+All of the infrastructure is created inside of a user specified AWS region.
+The resources are currently all located inside of the same availability
 zone.
 
-A dedicated Amazon Virtual Private Cloud (link:https://aws.amazon.com/vpc/[VPC])
-with two subnets (_"public"_ and _"private"_) is created by the {tf} template
-files.
-
-Instances inside of the public subnet have
+The {tf} template files create a dedicated Amazon Virtual Private Cloud (link:https://aws.amazon.com/vpc/[VPC])
+with *two subnets*: "public" and "private". Instances inside of the *public subnet* have
 link:https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html[Elasic IP addresses]
-associated, hence they are reachable from the internet.
-
-Instances inside of the private subnet are not reachable from the internet.
+associated, hence they are reachable from the internet. Instances inside of the *private subnet* are not reachable from the internet.
 However they can still reach external resources; for example they can still
 perform operations like downloading updates and pulling container images from
-external container registries.
-
-Communication between the public and the private subnet is allowed.
-
+external container registries. Communication between the public and the private subnet is allowed.
 All the control plane instances are currently located inside of the public
 subnet. Worker instances are inside of the private subnet.
 
@@ -62,7 +54,7 @@ The load balancer exposes the following ports:
 * `32001`: Gangway (RBAC Authenticate)
 
 [[architecture-aws-vpc-peering]]
-==== Join already existing VPCs
+==== Join Already Existing VPCs
 
 The {tf} template files allow the user to have the
 {productname} VPC join one or more existing VPCs.
@@ -74,7 +66,7 @@ link:https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html[Rout
 
 This feature allows {productname} to access and be accessed by resources defined
 inside of other VPCs. For example, this capability can be used to register all
-the {productname} instances against a SUSE Manager server running inside of a
+the {productname} instances against a {susemgr} server running inside of a
 private VPC.
 
 Current limitations:
@@ -83,17 +75,14 @@ Current limitations:
 * The VPCs must be owned by the same user who is creating the {productname}
 infrastructure via {tf}.
 
-==== IAM profiles
+==== IAM Profiles
 
 The
 link:https://kubernetes.io/docs/concepts/cluster-administration/cloud-providers/#aws[AWS Cloud Provider]
-integration for Kubernetes requires special
+integration for {kube} requires special
 link:https://aws.amazon.com/iam/[IAM] profiles to be associated with the control
-plane and worker instances.
-
-{tf} can create these profiles or can leverage existing ones. It all depends on
-the rights of the user invoking {tf}.
-
+plane and worker instances. {tf} can create these profiles or can leverage existing ones.
+It all depends on the rights of the user invoking {tf}.
 
 The {tf} link:https://www.terraform.io/docs/providers/aws/index.html[AWS provider]
 requires your credentials. These can be obtained by following these steps:
@@ -104,7 +93,7 @@ requires your credentials. These can be obtained by following these steps:
 * Click Create Access Key on the Security Credentials tab.
 * Note down the newly created _Access_ and _Secret_ keys.
 
-=== Deploying the infrastructure
+=== Deploying the Infrastructure
 
 On the management machine, find the {tf} template files for AWS in
 `/usr/share/caasp/terraform/aws`. These files have been installed as part of
@@ -161,13 +150,13 @@ terraform apply
 ----
 
 Check the output for the actions to be taken. Type "yes" and confirm with
-`Enter` when ready.
-Terraform will now provision all the cluster infrastructure.
+kbd:[Enter] when ready.
+{tf} will now provision all the cluster infrastructure.
 
-.Public IPs for nodes
+.Public IPs for Nodes
 [IMPORTANT]
 ====
-`skuba` cannot currently access nodes through a bastion host, so all
+`skuba` currently cannot access nodes through a bastion host, so all
 the nodes in the cluster must be directly reachable from the machine where
 `skuba` is being run.
 `skuba` could be run from one of the master nodes or from a pre-existing bastion
@@ -175,23 +164,23 @@ host located inside of a joined VPC as described in
 <<architecture-aws-vpc-peering>>.
 ====
 
-.Note down IP/FQDN for nodes
+.Note Down IP/FQDN For the Nodes
 [IMPORTANT]
 ====
 The IP addresses and FQDN of the generated machines will be displayed in the
-terraform output during the cluster node deployment. You need these information
+{tf} output during the cluster node deployment. You need these information
 later to deploy {productname}.
 
 These information can be obtained at any time by executing the
 `terraform output` command within the directory from which you executed
-terraform.
+{tf}.
 ====
 
-=== Logging in to the Cluster Nodes
+=== Logging into the Cluster Nodes
 
 Connecting to the cluster nodes can be accomplished only via SSH key-based
 authentication thanks to the ssh-public key injection done earlier via
-cloud-init. You can use the predefined `ec2-user` user to log in.
+`cloud-init`. You can use the predefined `ec2-user` user to log in.
 
 If the ssh-agent is running in the background, run:
 
