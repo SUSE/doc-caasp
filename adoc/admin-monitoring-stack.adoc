@@ -13,7 +13,7 @@ Please apply best practices to develop your own monitoring approach using the de
 
 This document aims to describe monitoring in a {kube} cluster.
 
-The monitoring stack consists of a metrics server, a visualization platform, and an ingress controller for authentication.
+The monitoring stack consists of a metrics server and a visualization platform.
 
 * *Prometheus*
 +
@@ -35,26 +35,28 @@ Deploying Prometheus https://prometheus.io/docs/practices/pushing/[Pushgateway] 
 +
 Grafana is an open-source system for querying, analysing and visualizing metrics.
 
-* *NGINX Ingress Controller*
-+
-Deploying NGINX Ingress Controller allows us to provide TLS termination to our services and to provide basic authentication to the Prometheus Expression browser/API.
-
 == Prerequisites
 
-. Monitoring namespace
+. NGINX Ingress Controller
 +
-We will deploy our monitoring stack in its own namespace and therefore create one.
-+
+Please refer to <<nginx-ingress>> on how to congifure ingress in your cluster. Deploying NGINX Ingress Controller also allows us to provide TLS termination to our services and to provide basic authentication to the Prometheus Expression browser/API.
 
-[source,bash]
-----
-kubectl create namespace monitoring
-----
+
 . Create DNS entries
 +
-In this example, we will use a worker node with IP `10.86.4.158`.
+.Subdomains VS. Subpaths
+[IMPORTANT]
+====
+There will be two different ways of using ingress for accessing the monitoring system.
+One will be using `subdomains` such as `+prometheus.example.com+`, `+prometheus-alertmanager.example.com+`, and `+grafana.example.com+`.
+Another deployment will be using `subpaths` for accessing monitoring system such as `example.com/prometheus`, `example.com/alertmanager`, and `example.com/grafana`.
+====
 +
-You should configure proper DNS names in any production environment.
+In this example, we will use a master node with IP `10.86.4.158` in the case of NodePort service of the Ingress Controller.
++
+.. Installation example of `subdomains`
++
+NOTE: You should configure proper DNS names in any production environment.
 These values are only for example purposes.
 +
 ----
@@ -64,95 +66,36 @@ prometheus-alertmanager.example.com         IN  CNAME   monitoring.example.com
 grafana.example.com                         IN  CNAME   monitoring.example.com
 ----
 +
-Or add this entry to /etc/hosts
+Or add this entry to `/etc/hosts`
 +
 ----
 10.86.4.158 prometheus.example.com prometheus-alertmanager.example.com grafana.example.com
 ----
-
-. Create certificates
 +
-You will need TLS certificates for the shared resources.
-If you are deploying in a predefined network environment, please get proper certificates from your network administrator.
-In this example, the domains are named after the components they represent. `prometheus.example.com`, `prometheus-alertmanager.example.com` and `grafana.example.com`
-
-== Installation
-
-[IMPORTANT]
-====
-In order to provide additional security level by using TLS certificates please make sure you have the <<nginx-ingress>> installed and configured.
-
-If you don't need TLS you may use other methods for exposing these web services as native LBaaS in OpenStack, haproxy service or k8s native methods as port-forwarding or NodePort but this is out of scope of this document.
-====
-
-=== TLS
-
-You must configure your certificates for the components as secrets in {kube} cluster. Get certificates from your local certificate authority.
-In this example we are using a single certificate shared by the components `prometheus.example.com`, `prometheus-alertmanager.example.com` and `grafana.example.com`.
-
-.Create Individual Secrets For Components
-[NOTE]
-====
-Should you choose to secure each service with an individual certificate, you must repeat the step below for each component and adjust the name for the individual secret each time.
-
-In this example the name is `monitoring-tls`.
-====
-
-.Note Down Secret Names For Configuration
-[IMPORTANT]
-====
-Please note down the names of the secrets you have created.
-Later configuration steps require secret names to be specified.
-====
-
-==== Trusted Certificates
-
-Please refer to <<trusted_server_certificate>> on how to sign the trusted certificate.
-The `server.conf` for DNS.1 is `prometheus.example.com`, DNS.2 is `prometheus-alertmanager.example.com` and DNS.3 `grafana.example.com`.
-
-Then, import your trusted certificate into the {kube} cluster.
-In this example, trusted certificates are `monitoring.key` and `monitoring.crt`.
-
-Add TLS secret to {kube} cluster
-[source,bash]
+.. Installation example of `subpaths`
++
 ----
-kubectl create -n monitoring secret tls monitoring-tls  \
---key  ./monitoring.key \
---cert ./monitoring.crt
+example.com                      IN  A       10.86.4.158
 ----
-
-==== Self-signed Certificates (optional)
-
-Please refer to <<self_signed_server_certificate>> on how to signed the self-sigend certificate.
-The `server.conf` for DNS.1 is `prometheus.example.com`, DNS.2 is `prometheus-alertmanager.example.com` and DNS.3 `grafana.example.com`.
-
-Then, import your self-signed certificate into the {kube} cluster.
-In this example, self-signed certificates are `monitoring.key` and `monitoring.crt`.
-
-Add TLS secret to {kube} cluster
-[source,bash]
++
+Or add this entry to `/etc/hosts`
++
 ----
-kubectl create -n monitoring secret tls monitoring-tls  \
---key  ./monitoring.key \
---cert ./monitoring.crt
+10.86.4.158 example.com
 ----
-
-=== Prometheus
 
 . Configure Authentication
 +
 We need to create a `basic-auth` secret so the NGINX Ingress Controller can perform authentication.
 +
-
-Install `htpasswd` on your local workstation
+Install apache2-utils, which contains htpasswd, on your local workstation.
 +
 [source,bash]
 ----
 zypper in apache2-utils
 ----
 +
-
-Create the secret file [path]`auth`
+Create the secret file `auth`
 +
 [source,bash]
 ----
@@ -161,11 +104,14 @@ New password:
 Re-type new password:
 Adding password for user admin
 ----
-IMPORTANT: It is very important that the filename is [path]`auth`.
-During creation, a key in the configuration containing the secret is created that is named after the used filename.
-The ingress controller will expect a key named `auth`.
 +
-
+[IMPORTANT]
+====
+It is very important that the filename is `auth`.
+During creation, a key in the configuration containing the secret is created that is named after the used filename.
+The ingress controller will expect a key named `auth`. And when you access the monitoring WebUI, you need to enter the username and password.
+====
++
 Create secret in {kube} cluster
 +
 [source,bash]
@@ -173,7 +119,89 @@ Create secret in {kube} cluster
 kubectl create secret generic -n monitoring prometheus-basic-auth --from-file=auth
 ----
 
-. Create a configuration file [path]`prometheus-config-values.yaml`
+. Monitoring namespace
++
+We will deploy our monitoring stack in its own namespace and therefore create one.
++
+[source,bash]
+----
+kubectl create namespace monitoring
+----
+
+. TLS
++
+You must configure your certificates for the components as secrets in the {kube} cluster.
+Get certificates from your local certificate authority.
+In this example we are using a single certificate shared by the components `prometheus.example.com`, `prometheus-alertmanager.example.com` and `grafana.example.com`.
++
+.Create Individual Secrets For Components
+[NOTE]
+====
+Should you choose to secure each service with an individual certificate, you must repeat the step below for each component and adjust the name for the individual secret each time.
+
+In this example the name is `monitoring-tls`.
+====
++
+.Note Down Secret Names For Configuration
+[IMPORTANT]
+====
+You need to make sure the TLS secret you created came from a certificate that contains a Common Name (CN),
+also known as a Fully Qualified Domain Name (FQDN) for example.com.
+
+Please note down the names of the secrets you have created.
+Later configuration steps require secret names to be specified.
+====
++
+.. Trusted Certificates
++
+Please refer to <<trusted_server_certificate>> on how to sign the trusted certificate.
+The `server.conf` for DNS.1 is `prometheus.example.com`, DNS.2 is `prometheus-alertmanager.example.com` and DNS.3 `grafana.example.com`.
++
+Then, import your trusted certificate into the {kube} cluster.
+In this example, trusted certificates are `monitoring.key` and `monitoring.crt`.
++
+.. Self-signed Certificates (optional)
++
+Please refer to <<self_signed_server_certificate>> on how to signed the self-sigend certificate.
+The `server.conf` for DNS.1 is `+prometheus.example.com+`, DNS.2 is `+prometheus-alertmanager.example.com+` and DNS.3 `+grafana.example.com+`.
++
+Then, import your self-signed certificate into the {kube} cluster.
+In this example, self-signed certificates are `monitoring.key` and `monitoring.crt`.
++
+.. Add TLS secret to {kube} cluster from trusted Certificates or self-signed Certificates
++
+[source,bash]
+----
+kubectl create -n monitoring secret tls monitoring-tls  \
+--key  ./monitoring.key \
+--cert ./monitoring.crt
+----
+
+== Installation
+.Two different examples of using ingress
+[NOTE]
+====
+There will be two different ways of using ingress for accessing the monitoring system.
+One will be using `subdomains` such as `+prometheus.example.com+`, `+prometheus-alertmanager.example.com+`, and `+grafana.example.com+`.
+Another deployment will be using `subpaths` for accessing monitoring system such as `example.com/prometheus`, `example.com/alertmanager`, and `example.com/grafana`.
+====
+
+=== Installation For Subdomains
+[NOTE]
+====
+This installation example shows how to install and configure Prometheus and Grafana using subdomains such as `prometheus.example.com`, `prometheus-alertmanager.example.com`, and `grafana.example.com`.
+====
+
+[IMPORTANT]
+====
+In order to provide additional security by using TLS certificates, please make sure you have the <<nginx-ingress>> installed and configured.
+
+If you don't need TLS, you may use other methods for exposing these web services as native `LBaaS` in OpenStack, haproxy service or k8s native methods as port-forwarding or NodePort but this is out of scope of this document.
+====
+
+==== Prometheus
+
+. Create a configuration file `prometheus-config-values.yaml`
 +
 We need to configure the storage for our deployment.
 Choose among the options and uncomment the line in the config file.
@@ -220,6 +248,7 @@ serviceAccounts:
   nodeExporter:
     name: prometheus-node-exporter
 
+# Node tolerations for node-exporter scheduling to nodes with taints
 # Allow scheduling of node-exporter on master nodes
 nodeExporter:
   hostNetwork: false
@@ -277,7 +306,7 @@ server:
 ----
 helm repo add suse https://kubernetes-charts.suse.com
 ----
-+
+
 . Deploy SUSE prometheus helm chart and pass our configuration values file.
 +
 [source,bash]
@@ -300,12 +329,24 @@ prometheus-node-exporter-qfwp9                   1/1       Running   0          
 prometheus-node-exporter-sc4ls                   1/1       Running   0          2m
 prometheus-server-6488f6c4cd-5n9w8               2/2       Running   0          2m
 ----
++
+There need to be be 2 ingresses configured
++
+[source,bash]
+----
+kubectl get ingress -n monitoring
+NAME                      HOSTS                                 ADDRESS   PORTS     AGE
+prometheus-alertmanager   prometheus-alertmanager.example.com             80, 443   87s
+prometheus-server         prometheus.example.com                          80, 443   87s
+----
 
 . At this stage, the Prometheus Expression browser/API should be accessible, depending on your network configuration
-* NodePort: https://prometheus.example.com:30443
-* External IPs: https://prometheus.example.com
+* **NodePort**: `+https://prometheus.example.com:32443+`
+* **External IPs**: `+https://prometheus.example.com+`
+* **LoadBalancer**: `+https://prometheus.example.com+`
 
-=== Alertmanager Configuration Example
+[[alertmanager_configuration_example]]
+==== Alertmanager Configuration Example
 
 The configuration sets one "receiver" to get notified by email when a node meets one of these conditions:
 
@@ -316,9 +357,9 @@ The configuration sets one "receiver" to get notified by email when a node meets
 
 The first two are critical because the node cannot accept new pods, the last two are just warnings.
 
-The Alertmanager configuration can be added to [path]`prometheus-config-values.yaml` by adding the `alertmanagerFiles` section.
+The Alertmanager configuration can be added to `prometheus-config-values.yaml` by adding the `alertmanagerFiles` section.
 
-For more information on how to configure Alertmanager, refer to https://prometheus.io/docs/alerting/configuration[Prometheus: Alerting - Configuration].
+For more information on how to configure Alertmanager, refer to link:https://prometheus.io/docs/alerting/configuration[Prometheus: Alerting - Configuration].
 
 . Configuring Alertmanager
 +
@@ -364,8 +405,7 @@ alertmanagerFiles:
 ----
 . Replace the empty set of rules `rules: {}` in the `serverFiles` section of the configuration file.
 +
-For more information on how to configure alerts, refer to: https://prometheus.io/docs/alerting/notification_examples/[Prometheus:
-Alerting - Notification Template Examples]
+For more information on how to configure alerts, refer to: link:https://prometheus.io/docs/alerting/notification_examples/[Prometheus: Alerting - Notification Template Examples]
 +
 ----
 serverFiles:
@@ -406,20 +446,20 @@ serverFiles:
 helm upgrade prometheus suse/prometheus --namespace monitoring --values prometheus-config-values.yaml
 ----
 . You should now be able to see your Alertmanager, depending on your network configuration
-* NodePort: https://prometheus-alertmanager.example.com:30443
-* External IPs: https://prometheus-alertmanager.example.com
+* **NodePort**: `+https://prometheus-alertmanager.example.com:32443+`
+* **External IPs**: `+https://prometheus-alertmanager.example.com+`
+* **LoadBalancer**: `+https://prometheus-alertmanager.example.com+`
 
-=== Grafana
+==== Grafana
 
 Starting from Grafana 5.0, it is possible to dynamically provision the data sources and dashboards via files.
-In {kube} cluster, these files are provided via the utilization of `ConfigMap`, editing a `ConfigMap` will result by the modification of the configuration without having to delete/recreate the pod.
+In a {kube} cluster, these files are provided via the utilization of `ConfigMap`, editing a `ConfigMap` will result by the modification of the configuration without having to delete/recreate the pod.
 
 . Configure Grafana provisioning
 +
-Create the default datasource configuration file _grafana-datasources.yaml_ which point to our Prometheus server
+Create the default datasource configuration file `grafana-datasources.yaml` which point to our Prometheus server
 +
 ----
----
 kind: ConfigMap
 apiVersion: v1
 metadata:
@@ -442,7 +482,7 @@ data:
       isDefault: true
 ----
 
-. Create the ConfigMap in {kube} cluster
+. Create the `ConfigMap` in {kube} cluster
 +
 [source,bash]
 ----
@@ -454,10 +494,10 @@ kubectl create -f grafana-datasources.yaml
 Choose among the options and uncomment the line in the config file.
 In production environments you must configure persistent storage.
 
-** Use an existing PersistentVolumeClaim
-** Use a StorageClass (preferred)
+** Use an existing `PersistentVolumeClaim`
+** Use a `StorageClass` (preferred)
 +
-Create a file _grafana-config-values.yaml_ with the appropriate values
+Create a file `grafana-config-values.yaml` with the appropriate values
 +
 ----
 # Configure admin password
@@ -521,27 +561,29 @@ NAME                                             READY     STATUS    RESTARTS   
 grafana-dbf7ddb7d-fxg6d                          3/3       Running   0          2m
 ----
 
-+
-At this stage, Grafana should be accessible, depending on your network configuration
+. At this stage, Grafana should be accessible, depending on your network configuration
 
-* NodePort: https://grafana.example.com:30443
-* External IPs: https://grafana.example.com
+* **NodePort**: `+https://grafana.example.com:32443+`
+* **External IPs**: `+https://grafana.example.com+`
+* **LoadBalancer**: `+https://grafana.example.com+`
 
 . Now you can add Grafana dashboards.
 
+[[adding_grafana_dashboards]]
 ==== Adding Grafana Dashboards
 
 There are three ways to add dashboards to Grafana:
 
-* Deploy an existing dashboard from https://grafana.com/dashboards[Grafana dashboards]
+* Deploy an existing dashboard from link:https://grafana.com/dashboards[Grafana dashboards]
   . Open the deployed Grafana in your browser and log in.
   . On the home page of Grafana, hover your mousecursor over the + button on the left sidebar and click on the import menuitem.
   . Select an existing dashboard for your purpose from Grafana dashboards. Copy the URL to the clipboard.
-  . Paste the URL (for example) `https://grafana.com/dashboards/3131` into the first input field to import the "Kubernetes All Nodes" Grafana Dashboard. After pasting in the url, the view will change to another form.
+  . Paste the URL (for example) `+https://grafana.com/dashboards/3131+` into the first input field to import the "Kubernetes All Nodes" Grafana Dashboard.
+After pasting in the url, the view will change to another form.
   . Now select the "Prometheus" datasource in the `prometheus` field and click on the import button.
   . The browser will redirect you to your newly created dashboard.
 
-* Use our https://github.com/SUSE/caasp-monitoring[pre-built dashboards] to monitor the {productname} system
+* Use our link:https://github.com/SUSE/caasp-monitoring[pre-built dashboards] to monitor the {productname} system
 
 +
 [source,bash]
@@ -557,7 +599,7 @@ kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-monitoring/master/
 * Build your own dashboard
   Deploy your own dashboard by configuration file containing the dashboard definition.
 
-. Create your dashboard definition file as a `ConfigMap`, for example [path]`grafana-dashboards-caasp-cluster.yaml`.
+. Create your dashboard definition file as a `ConfigMap`, for example `grafana-dashboards-caasp-cluster.yaml`.
 +
 ----
 ---
@@ -596,6 +638,361 @@ continues with definition of dashboard JSON
 kubectl apply -f grafana-dashboards-caasp-cluster.yaml
 ----
 
+=== Installation For Subpaths
+
+[NOTE]
+====
+This installation example shows how to install and configure Prometheus and Grafana using subpaths such as example.com/prometheus, example.com/alertmanager, and example.com/grafana.
+====
+
+[IMPORTANT]
+====
+Overlapped instructions from subdomains will be omitted. Refer to the instruction from subdomains.
+====
+
+==== Prometheus
+
+. Create a configuration file `prometheus-config-values.yaml`
++
+We need to configure the storage for our deployment.
+Choose among the options and uncomment the line in the config file.
+In production environments you must configure persistent storage.
+
+** Use an existing `PersistentVolumeClaim`
+** Use a `StorageClass` (preferred)
+** Disable ingresses
+** Add the external url at which the server can be accessed
++
+----
+# Alertmanager configuration
+alertmanager:
+  enabled: true
+  ingress:
+    enabled: false
+  persistentVolume:
+    enabled: true
+    ## Use a StorageClass
+    storageClass: my-storage-class
+    ## Create a PersistentVolumeClaim of 2Gi
+    size: 2Gi
+    ## Use an existing PersistentVolumeClaim (my-pvc)
+    #existingClaim: my-pvc
+
+## Alertmanager is configured through alertmanager.yml. This file and any others
+## listed in alertmanagerFiles will be mounted into the alertmanager pod.
+## See configuration options https://prometheus.io/docs/alerting/configuration/
+#alertmanagerFiles:
+#  alertmanager.yml:
+
+# Create a specific service account
+serviceAccounts:
+  nodeExporter:
+    name: prometheus-node-exporter
+
+# Node tolerations for node-exporter scheduling to nodes with taints
+# Allow scheduling of node-exporter on master nodes
+nodeExporter:
+  hostNetwork: false
+  hostPID: false
+  podSecurityPolicy:
+    enabled: true
+    annotations:
+      apparmor.security.beta.kubernetes.io/allowedProfileNames: runtime/default
+      apparmor.security.beta.kubernetes.io/defaultProfileName: runtime/default
+      seccomp.security.alpha.kubernetes.io/allowedProfileNames: runtime/default
+      seccomp.security.alpha.kubernetes.io/defaultProfileName: runtime/default
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+      effect: NoSchedule
+
+# Disable Pushgateway
+pushgateway:
+  enabled: false
+
+# Prometheus configuration
+server:
+  baseURL: https://example.com:32443/prometheus
+  prefixURL: /prometheus
+  ingress:
+    enabled: false
+  persistentVolume:
+    enabled: true
+    ## Use a StorageClass
+    storageClass: my-storage-class
+    ## Create a PersistentVolumeClaim of 8Gi
+    size: 8Gi
+    ## Use an existing PersistentVolumeClaim (my-pvc)
+    #existingClaim: my-pvc
+
+## Prometheus is configured through prometheus.yml. This file and any others
+## listed in serverFiles will be mounted into the server pod.
+## See configuration options
+## https://prometheus.io/docs/prometheus/latest/configuration/configuration/
+#serverFiles:
+#  prometheus.yml:
+----
+. Add SUSE helm charts repository
++
+[source,bash]
+----
+helm repo add suse https://kubernetes-charts.suse.com
+----
++
+. Deploy SUSE prometheus helm chart and pass our configuration values file.
++
+[source,bash]
+----
+helm install --name prometheus suse/prometheus \
+--namespace monitoring \
+--values prometheus-config-values.yaml
+----
++
+There need to be 3 pods running (3 node-exporter pods because we have 3 nodes).
++
+[source,bash]
+----
+kubectl -n monitoring get pod | grep prometheus
+NAME                                             READY     STATUS    RESTARTS   AGE
+prometheus-alertmanager-5487596d54-kcdd6         2/2       Running   0          2m
+prometheus-kube-state-metrics-566669df8c-krblx   1/1       Running   0          2m
+prometheus-node-exporter-jnc5w                   1/1       Running   0          2m
+prometheus-node-exporter-qfwp9                   1/1       Running   0          2m
+prometheus-node-exporter-sc4ls                   1/1       Running   0          2m
+prometheus-server-6488f6c4cd-5n9w8               2/2       Running   0          2m
+----
+
+==== Alertmanager Configuration Example
+Refer to <<alertmanager_configuration_example>>
+
+==== Grafana
+
+Starting from Grafana 5.0, it is possible to dynamically provision the data sources and dashboards via files.
+In {kube} cluster, these files are provided via the utilization of `ConfigMap`, editing a `ConfigMap` will result by the modification of the configuration without having to delete/recreate the pod.
+
+. Configure Grafana provisioning
++
+Create the default datasource configuration file `grafana-datasources.yaml` which point to our Prometheus server
++
+----
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: grafana-datasources
+  namespace: monitoring
+  labels:
+     grafana_datasource: "1"
+data:
+  datasource.yaml: |-
+    apiVersion: 1
+    deleteDatasources:
+      - name: Prometheus
+        orgId: 1
+    datasources:
+    - name: Prometheus
+      type: prometheus
+      url: http://prometheus-server.monitoring.svc.cluster.local:80
+      access: proxy
+      orgId: 1
+      isDefault: true
+----
+
+. Create the `ConfigMap` in {kube} cluster
++
+[source,bash]
+----
+kubectl create -f grafana-datasources.yaml
+----
+
+. Configure storage for the deployment
++
+Choose among the options and uncomment the line in the config file.
+In production environments you must configure persistent storage.
+
+** Use an existing `PersistentVolumeClaim`
+** Use a `StorageClass` (preferred)
+** Disable ingress
+** Add the subpath to the end of this URL setting.
++
+Create a file `grafana-config-values.yaml` with the appropriate values
++
+----
+# Configure admin password
+adminPassword: <PASSWORD>
+
+# Ingress configuration
+ingress:
+  enabled: false
+
+# subpath for grafana
+grafana.ini:
+  server:
+    root_url: https://example.com:32443/grafana
+
+# Configure persistent storage
+persistence:
+  enabled: true
+  accessModes:
+    - ReadWriteOnce
+  ## Use a StorageClass
+  storageClassName: my-storage-class
+  ## Create a PersistentVolumeClaim of 10Gi
+  size: 10Gi
+  ## Use an existing PersistentVolumeClaim (my-pvc)
+  #existingClaim: my-pvc
+
+# Enable sidecar for provisioning
+sidecar:
+  datasources:
+    enabled: true
+    label: grafana_datasource
+  dashboards:
+    enabled: true
+    label: grafana_dashboard
+----
+
+. Add SUSE helm charts repository
++
+[source,bash]
+----
+helm repo add suse https://kubernetes-charts.suse.com
+----
+. Deploy SUSE grafana helm chart and pass our configuration values file
++
+[source,bash]
+----
+helm install --name grafana suse/grafana \
+--namespace monitoring \
+--values grafana-config-values.yaml
+----
+
+. The result should be a running Grafana pod
++
+[source,bash]
+----
+kubectl -n monitoring get pod | grep grafana
+NAME                                             READY     STATUS    RESTARTS   AGE
+grafana-dbf7ddb7d-fxg6d                          3/3       Running   0          2m
+----
+
+==== Ingress
+. Configure Ingress for Prometheus
+Create a file `prometheus-ingress.yaml`
++
+----
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: prometheus-ingress
+  namespace: monitoring
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/auth-type: basic
+    nginx.ingress.kubernetes.io/auth-secret: prometheus-basic-auth
+    nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
+spec:
+  tls:
+    - hosts:
+      - example.com
+      secretName: monitoring-tls
+  rules:
+  - host: example.com
+    http:
+      paths:
+      - path: /prometheus
+        backend:
+          serviceName: prometheus-server
+          servicePort: 80
+----
+Deploy the prometheus ingress file
++
+[source,bash]
+----
+kubectl apply -f prometheus-ingress.yaml
+----
+Verify the prometheus ingress
++
+[source,bash]
+----
+kubectl -n monitoring get ingress | grep prometheus
+NAME                         HOSTS         ADDRESS   PORTS     AGE
+prometheus-ingress           example.com             80, 443   11s
+----
+
+. Configure Ingress for Alertmanager and Grafana
+Create a file `alertmanager-grafana-ingress.yaml`
++
+----
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: alertmanager-grafana-ingress
+  namespace: monitoring
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/auth-type: basic
+    nginx.ingress.kubernetes.io/auth-secret: prometheus-basic-auth
+    nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  tls:
+    - hosts:
+      - example.com
+      secretName: monitoring-tls
+  rules:
+  - host: example.com
+    http:
+      paths:
+      - path: /alertmanager
+        backend:
+          serviceName: prometheus-alertmanager
+          servicePort: 80
+
+      - path: /grafana
+        backend:
+          serviceName: grafana
+          servicePort: 80
+----
+Deploy the alertmanager and grafana ingress file
++
+[source,bash]
+----
+kubectl apply -f alertmanager-grafana-ingress.yaml
+----
+Verify the alertmanager and grafana ingress
++
+[source,bash]
+----
+kubectl -n monitoring get ingress | grep grafana
+NAME                          HOSTS         ADDRESS   PORTS     AGE
+alertmanager-grafana-ingress  example.com             80, 443   11s
+----
+
+. Access Prometheus, Alertmanager, and Grafana
++
+At this stage, the Prometheus Expression browser/API, Alertmanager, and Grafana should be accessible, depending on your network configuration
++
+* Prometheus Expression browser/API
+** **NodePort**: `+https://example.com:32443/prometheus+`
+** **External IPs**: `+https://example.com/prometheus+`
+** **LoadBalancer**: `+https://example.com/prometheus+`
++
+* Alertmanager
+** **NodePort**: `+https://example.com:32443/alertmanger+`
+** **External IPs**: `+https://example.com/alertmanger+`
+** **LoadBalancer**: `+https://example.com/alertmanger+`
++
+* Grafana
+** **NodePort**: `+https://example.com:32443/grafana+`
+** **External IPs**: `+https://example.com/grafana+`
+** **LoadBalancer**: `+https://example.com/grafana+`
+
+. Now you can add Grafana dashboards.
+
+==== Adding Grafana Dashboards
+Refer to <<adding_grafana_dashboards>>
+
 == Monitoring
 
 === Prometheus Jobs
@@ -624,7 +1021,7 @@ cd /etc/kubernetes
 kubectl --kubeconfig=admin.conf -n monitoring create secret generic etcd-certs --from-file=/etc/kubernetes/pki/etcd/ca.crt --from-file=/etc/kubernetes/pki/etcd/healthcheck-client.crt --from-file=/etc/kubernetes/pki/etcd/healthcheck-client.key
 ----
 
-. Edit the configuration file [path]`prometheus-config-values.yaml`, add `extraSecretMounts` part
+. Edit the configuration file `prometheus-config-values.yaml`, add `extraSecretMounts` part
 +
 ----
 # Alertmanager configuration
@@ -663,6 +1060,7 @@ serviceAccounts:
   nodeExporter:
     name: prometheus-node-exporter
 
+# Node tolerations for node-exporter scheduling to nodes with taints
 # Allow scheduling of node-exporter on master nodes
 nodeExporter:
   hostNetwork: false
