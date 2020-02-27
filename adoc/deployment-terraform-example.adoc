@@ -190,72 +190,86 @@ deployed machines.
 # end::tf_vmware[]
 
 
-// [[tf.aws]]
-// === Terraform AWS Configuration
-// # tag::tf_aws[]
-// [source,json]
-// ----
-// # prefix that all of the booted machines will use
-// # IMPORTANT, please enter unique identifier below as value of
-// # stack_name variable to not interfere with other deployments
-// stack_name = "caasp-v4" // <1>
-//
-// # AWS region
-// aws_region = "eu-central-1"  // <2>
-//
-// # AWS availability zone
-// aws_az = "eu-central-1a" // <3>
-//
-// # access key for AWS services
-// aws_access_key = "AKIXU..."  // <4>
-//
-// # secret key used for AWS services
-// aws_secret_key = "ORd..." // <5>
-//
-// # Number of master nodes
-// masters = 1 // <6>
-//
-// # Number of worker nodes
-// workers = 2 // <7>
-//
-// # Username for the cluster nodes. Must exist on base OS.
-// # EXAMPLE:
-// # username = "opensuse"
-// username = "opensuse" // <8>
-//
-// # ssh keys to inject into all the nodes
-// # EXAMPLE:
-// # authorized_keys = [
-// #   "ssh-rsa <KEY_CONTENT>"
-// # ]
-// authorized_keys = [ // <9>
-//   "ssh-rsa <KEY_CONTENT> example@example.com"
-// ]
-//
-// # to register CaaSP product please use ONLY ONE of the following method
-// #
-// # SUSE CaaSP Product Product Key:
-// #caasp_registry_code = ""  // <10>
-// #
-// # SUSE Repository Mirroring Server Name (FQDN):
-// #rmt_server_name = "rmt.example.com"  // <11>
-//
-// ----
-// <1> `stack_name`: Prefix for all machines of the cluster spawned by terraform.
-// *Note*: This string will be used to generate the human readable IDs in {soc}.
-// <2> `aws_region`: The region in AWS.
-// <3> `aws_az`: The availability zone in AWS.
-// <4> `aws_access_key`: AWS access key.
-// <5> `aws_secrert_key`: AWS secret key.
-// <6> `masters`: Number of master nodes to be deployed.
-// <7> `workers`: Number of worker nodes to be deployed.
-// <8> `username`: Login username for the nodes.
-// *Note*: the username must exist on the used base operating system. It will not be created.
-// <9> `authorized_keys`: List of ssh-public-keys that will be able to log in to the
-// deployed machines.
-// <10> `caasp_registry_code`: SUSE CaaSP Product Product Key for registering
-// the product against SUSE Customer Service.
-// <11> `caasp_registry_code`: register against a local SUSE Repository
-// Mirroring Server.
-//
-// # end::tf_aws[]
+[[tf.aws]]
+=== Terraform AWS Configuration
+# tag::tf_aws[]
+[source,json]
+----
+# prefix that all of the booted machines will use
+# IMPORTANT, please enter unique identifier below as value of
+# stack_name variable to not interfere with other deployments
+stack_name = "caasp-v4" // <1>
+
+# AWS region
+aws_region = "eu-central-1"  // <2>
+
+# AWS availability zone
+aws_az = "eu-central-1a" // <3>
+
+# access key for AWS services
+aws_access_key = "AKIXU..."  // <4>
+
+# secret key used for AWS services
+aws_secret_key = "ORd..." // <5>
+
+# Number of master nodes
+masters = 1 // <6>
+
+# Number of worker nodes
+workers = 2 // <7>
+
+# ssh keys to inject into all the nodes
+# EXAMPLE:
+# authorized_keys = [
+#   "ssh-rsa <key-content>"
+# ]
+authorized_keys = [ // <8>
+  "ssh-rsa <example_key> example@example.com"
+]
+
+# To register CaaSP product please use ONLY ONE of the following method
+#
+# SUSE CaaSP Product Product Key:
+#caasp_registry_code = ""  // <9>
+#
+# SUSE Repository Mirroring Server Name (FQDN):
+#rmt_server_name = "rmt.example.com"  // <10>
+
+# List of VPC IDs to join via VPC peer link
+#peer_vpc_ids = ["vpc-id1", "vpc-id2"] // <11>
+
+# Name of the IAM profile to associate to control plane nodes
+# Leave empty to have terraform create one.
+# This is required to have AWS CPI support working properly.
+#
+# Note well: you must  have the right set of permissions.
+# iam_profile_master = "caasp-k8s-master-vm-profile" // <12>
+
+# Name of the IAM profile to associate to worker nodes.
+# Leave empty to have terraform create one.
+# This is required to have AWS CPI support working properly.
+#
+# Note well: you must  have the right set of permissions.
+#iam_profile_worker = "caasp-k8s-worker-vm-profile" // <13>
+----
+<1> `stack_name`: Prefix for all machines of the cluster spawned by terraform.
+<2> `aws_region`: The region in AWS.
+<3> `aws_az`: The availability zone in AWS.
+<4> `aws_access_key`: AWS access key.
+<5> `aws_secrert_key`: AWS secret key.
+<6> `masters`: Number of master nodes to be deployed.
+<7> `workers`: Number of worker nodes to be deployed.
+<8> `authorized_keys`: List of ssh-public-keys that will be able to log into
+the deployed machines.
+<9> `caasp_registry_code`: {productname} Product Key for registering
+the product against {scc}.
+<10> `caasp_registry_code`: register against a local SUSE Repository
+Mirroring Server.
+<11> `peer_vpc_ids`: List of already existing VPCs to join via dedicated VPC
+peering links.
+<12> `iam_profile_master`: Name of the IAM profile to associate with the control
+plane instance. Leave empty to have {tf} create it.
+<13> `iam_profile_worker`: Name of the IAM profile to associate with the worker
+instances. Leave empty to have {tf} create it.
+
+# end::tf_aws[]
