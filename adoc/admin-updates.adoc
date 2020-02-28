@@ -17,7 +17,7 @@ Run `sudo zypper update` on the management workstation before any attempt to upd
 
 Updating of {kube} and it's components from one minor version to the next (for example from 1.16 to 1.17) is handled by `skuba`.
 The reason for this is that *minor updates* require special plan and apply procedures.
-These procedures differ for *patch updates* (for example 1.16.1 to 1.16.2), which are handled by `skuba-update` as described in <<_base_os_updates>>.
+These procedures differ for *patch updates* (for example 1.16.1 to 1.16.2), which are handled by `skuba-update` as described in xref:_base_os_updates[].
 
 [IMPORTANT]
 ====
@@ -292,7 +292,7 @@ Do not use `zypper up/zypper patch` commands as these do not manage the {kube} a
 If you perform a manual update using these commands you might render your cluster unusable.
 ====
 
-After that, rebooting the node will depend on whether you have also disabled reboots or not. If you have disabled reboots for this node, then you will have to follow the instructions as given in <<Completely Disabling Reboots>>. Otherwise, you will have to wait until `kured` performs the reboot of the node
+After that, rebooting the node will depend on whether you have also disabled reboots or not. If you have disabled reboots for this node, then you will have to follow the instructions as given in xref:Completely Disabling Reboots[]. Otherwise, you will have to wait until `kured` performs the reboot of the node
 
 === Completely Disabling Reboots
 

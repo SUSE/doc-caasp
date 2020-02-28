@@ -5,11 +5,11 @@ Deployment on Amazon Web Services (AWS) is currently a tech preview.
 .Preparation Required
 [NOTE]
 ====
-You must have completed <<deployment.preparations>> to proceed.
+You must have completed xref:deployment.preparations[] to proceed.
 ====
 
 You will use {tf} to deploy the whole infrastructure described in
-<<architecture-aws>>. Then you will use the `skuba` tool to bootstrap the
+xref:architecture-aws[]. Then you will use the `skuba` tool to bootstrap the
 {kube} cluster on top of it.
 
 
@@ -38,7 +38,7 @@ subnet. Worker instances are inside of the private subnet.
 Both control plane and worker nodes have tailored
 link:https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html[Security Groups]
 assigned to them. These are based on the networking requirements described
-in <<sysreq-networking>>.
+in xref:sysreq-networking[].
 
 ==== Load Balancer
 
@@ -130,7 +130,7 @@ You can enter the registration code for your nodes in
 `~/caasp/deployment/aws/registration.auto.tfvars` instead of the
 `terraform.tfvars` file.
 
-Substitute `CAASP_REGISTRATION_CODE` for the code from <<registration_code>>.
+Substitute `CAASP_REGISTRATION_CODE` for the code from xref:registration_code[].
 
 [source,json]
 ----
@@ -161,7 +161,7 @@ the nodes in the cluster must be directly reachable from the machine where
 `skuba` is being run.
 `skuba` could be run from one of the master nodes or from a pre-existing bastion
 host located inside of a joined VPC as described in
-<<architecture-aws-vpc-peering>>.
+xref:architecture-aws-vpc-peering[].
 ====
 
 .Note Down IP/FQDN For the Nodes

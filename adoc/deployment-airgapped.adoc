@@ -35,34 +35,34 @@ The steps that must be performed for an air gapped installation are:
 
 . Read the concepts section.
 +
-<<airgap-concepts>>
+xref:airgap-concepts[]
 . Deploy mirror servers on external and internal networks.
 +
-<<airgap-requirements-machines>>
+xref:airgap-requirements-machines[]
 . Install {rmt} on servers.
 +
-<<airgap-rpm_repository>>
+xref:airgap-rpm_repository[]
 . Configure container image registry on servers.
 +
-<<airgap-container_registry>>
+xref:airgap-container_registry[]
 . Configure Helm Chart repository on internal mirror.
 +
-<<airgap-helm_charts>>
+xref:airgap-helm_charts[]
 . Perform the {rmt} update procedure to populate the RPM repository.
 +
-<<airgap-rpm_repository-update>>
+xref:airgap-rpm_repository-update[]
 . Perform the shared update procedure to populate the Helm chart repository and registry services.
 +
-<<airgap-rpm_repository-update>>
+xref:airgap-rpm_repository-update[]
 . Deploy {productname} and configure the nodes to use the respective services on the internal network.
 +
-<<airgap-caasp_deployment>>
+xref:airgap-caasp_deployment[]
 +
-RPM Packages: <<airgap-rpm_repository-client>>
+RPM Packages: xref:airgap-rpm_repository-client[]
 +
-Helm Charts: <<airgap-helm_charts-client>>
+Helm Charts: xref:airgap-helm_charts-client[]
 +
-Container Images: <<airgap-container_registry-client>>
+Container Images: xref:airgap-container_registry-client[]
 
 
 [[airgap-concepts]]
@@ -335,7 +335,7 @@ sudo systemctl disable rmt-server-sync.timer
 ----
 
 Now you need to perform the update procedure to do an initial sync of data between the upstream sources and the external mirror and the external and internal mirrors.
-Refer to: <<airgap-rpm_repository-update>>.
+Refer to: xref:airgap-rpm_repository-update[].
 
 [[airgap-rpm_repository-client]]
 === Client Configuration
@@ -660,7 +660,7 @@ For detailed information about the configuration format see link:{docurl}single-
 
 [IMPORTANT]
 ====
-To make use of the helm charts, you must complete <<airgap-container_registry>>.
+To make use of the helm charts, you must complete xref:airgap-container_registry[].
 ====
 
 The helm charts will require images available from a registry mirror.
@@ -668,7 +668,7 @@ The charts themselves are served on a simple webserver and do not require any pa
 
 === Mirror Configuration
 
-Update the Helm chart repository by following the shared update procedure <<airgap-update>>.
+Update the Helm chart repository by following the shared update procedure xref:airgap-update[].
 
 [[airgap-helm_charts-client]]
 === Client Configuration
@@ -741,7 +741,7 @@ The final path will be something like `/tmp/skopeodata/registry.suse.com/`
 .
 . Populate the local registry with the downloaded data.
 +
-For `--dest-creds` you must use the credentials you created during <<airgap-container_registry-mirror>>.
+For `--dest-creds` you must use the credentials you created during xref:airgap-container_registry-mirror[].
 +
 ----
 skopeo sync --dest-creds USERNAME:PASSWORD \
@@ -819,7 +819,7 @@ to have all the updates applied.
 //
 // The node has to be registered against {rmt}
 // .
-// Refer to: <<airgap-rpm_repository-client>>.
+// Refer to: xref:airgap-rpm_repository-client[].
 
 [[airgap-troubleshooting]]
 == Troubleshooting
@@ -830,7 +830,7 @@ If you are using a self-signed certificate for the registry you can use the `--d
 
 === Registering An Existing Node against {rmt}
 
-Refer to: <<airgap-rpm_repository-client>>.
+Refer to: xref:airgap-rpm_repository-client[].
 
 === Helm chart connection terminated by HTTPS TO HTTP
 

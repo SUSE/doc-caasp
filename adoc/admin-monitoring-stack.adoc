@@ -39,7 +39,7 @@ Grafana is an open-source system for querying, analysing and visualizing metrics
 
 . NGINX Ingress Controller
 +
-Please refer to <<nginx-ingress>> on how to congifure ingress in your cluster. Deploying NGINX Ingress Controller also allows us to provide TLS termination to our services and to provide basic authentication to the Prometheus Expression browser/API.
+Please refer to xref:nginx-ingress[] on how to congifure ingress in your cluster. Deploying NGINX Ingress Controller also allows us to provide TLS termination to our services and to provide basic authentication to the Prometheus Expression browser/API.
 
 
 . Create DNS entries
@@ -154,7 +154,7 @@ Later configuration steps require secret names to be specified.
 +
 .. Trusted Certificates
 +
-Please refer to <<trusted_server_certificate>> on how to sign the trusted certificate.
+Please refer to xref:trusted_server_certificate[] on how to sign the trusted certificate.
 The `server.conf` for DNS.1 is `prometheus.example.com`, DNS.2 is `prometheus-alertmanager.example.com` and DNS.3 `grafana.example.com`.
 +
 Then, import your trusted certificate into the {kube} cluster.
@@ -162,7 +162,7 @@ In this example, trusted certificates are `monitoring.key` and `monitoring.crt`.
 +
 .. Self-signed Certificates (optional)
 +
-Please refer to <<self_signed_server_certificate>> on how to signed the self-sigend certificate.
+Please refer to xref:self_signed_server_certificate[] on how to signed the self-sigend certificate.
 The `server.conf` for DNS.1 is `+prometheus.example.com+`, DNS.2 is `+prometheus-alertmanager.example.com+` and DNS.3 `+grafana.example.com+`.
 +
 Then, import your self-signed certificate into the {kube} cluster.
@@ -194,7 +194,7 @@ This installation example shows how to install and configure Prometheus and Graf
 
 [IMPORTANT]
 ====
-In order to provide additional security by using TLS certificates, please make sure you have the <<nginx-ingress>> installed and configured.
+In order to provide additional security by using TLS certificates, please make sure you have the xref:nginx-ingress[] installed and configured.
 
 If you don't need TLS, you may use other methods for exposing these web services as native `LBaaS` in OpenStack, haproxy service or k8s native methods as port-forwarding or NodePort but this is out of scope of this document.
 ====
@@ -763,7 +763,7 @@ prometheus-server-6488f6c4cd-5n9w8               2/2       Running   0          
 ----
 
 ==== Alertmanager Configuration Example
-Refer to <<alertmanager_configuration_example>>
+Refer to xref:alertmanager_configuration_example[]
 
 ==== Grafana
 
@@ -991,7 +991,7 @@ At this stage, the Prometheus Expression browser/API, Alertmanager, and Grafana 
 . Now you can add Grafana dashboards.
 
 ==== Adding Grafana Dashboards
-Refer to <<adding_grafana_dashboards>>
+Refer to xref:adding_grafana_dashboards[]
 
 == Monitoring
 

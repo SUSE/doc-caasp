@@ -267,7 +267,7 @@ openssl x509 -noout -text -in pki.bak/oidc-dex.crt | grep -oP '(?<=DNS:)[^,]+'
 
 . Sign the `oidc-dex` server certificate with the trusted CA certificate.
 +
-Please refer to <<trusted_server_certificate>> on how to sign the trusted certificate. The `server.conf` for IP.1 is the original SAN IP address if present, DNS.1 is the original SAN DNS if present.
+Please refer to xref:trusted_server_certificate[] on how to sign the trusted certificate. The `server.conf` for IP.1 is the original SAN IP address if present, DNS.1 is the original SAN DNS if present.
 +
 Then, import your trusted certificate into the {kube} cluster.
 The trusted CA certificates is `<TRUSTED_CA_CERT_PATH>`, trusted server certificate and key are `<SIGNED_OIDC_DEX_SERVER_CERT_PATH>` and `<SIGNED_OIDC_DEX_SERVER_KEY_PATH>`.
@@ -318,7 +318,7 @@ openssl x509 -noout -text -in pki.bak/oidc-gangway.crt | grep -oP '(?<=DNS:)[^,]
 
 . Sign the `oidc-gangway` server certificate with the trusted CA certificate.
 +
-Please refer to <<trusted_server_certificate>> on how to sign the trusted certificate. The `server.conf` for IP.1 is the original SAN IP address if present, DNS.1 is the original SAN DNS if present.
+Please refer to xref:trusted_server_certificate[] on how to sign the trusted certificate. The `server.conf` for IP.1 is the original SAN IP address if present, DNS.1 is the original SAN DNS if present.
 +
 Then, import your trusted certificate into the {kube} cluster.
 The trusted CA certificates is `<TRUSTED_CA_CERT_PATH>`, trusted server certificate and key are `<SIGNED_OIDC_GANGWAY_SERVER_CERT_PATH>` and `<SIGNED_OIDC_GANGWAY_SERVER_KEY_PATH>`.
@@ -348,7 +348,7 @@ kubectl delete pod -lapp=oidc-gangway -n kube-system
 
 == Automatic Certificate Renewal
 
-{productname} renews all certificates excluding `oidc-dex` and `oidc-gangway` automatically during the control plane update, see <<handling_updates>>.
+{productname} renews all certificates excluding `oidc-dex` and `oidc-gangway` automatically during the control plane update, see xref:handling_updates[].
 
 [NOTE]
 ====
@@ -409,11 +409,11 @@ openssl x509 -noout -text -in /etc/kubernetes/pki.bak/oidc-dex.crt | grep -oP '(
 . Sign the `oidc-dex` server certificate with the default kubernetes CA certificate _or_ trusted CA certificate.
 .. Default kubernetes CA certificate
 +
-Please refer to <<self_signed_server_certificate>> on how to sign the self signed server certificate. The default kubernetes CA certificate and key are located at `/etc/kubernetes/pki/ca.crt` and `/etc/kubernetes/pki/ca.key`. The `server.conf` for IP.1 is the original SAN IP address if present, DNS.1 is the original SAN DNS if present.
+Please refer to xref:self_signed_server_certificate[] on how to sign the self signed server certificate. The default kubernetes CA certificate and key are located at `/etc/kubernetes/pki/ca.crt` and `/etc/kubernetes/pki/ca.key`. The `server.conf` for IP.1 is the original SAN IP address if present, DNS.1 is the original SAN DNS if present.
 +
 .. Trusted CA certificate
 +
-Please refer to <<trusted_server_certificate>> on how to sign the trusted server certificate. The `server.conf` for IP.1 is the original SAN IP address if present, DNS.1 is the original SAN DNS if present.
+Please refer to xref:trusted_server_certificate[] on how to sign the trusted server certificate. The `server.conf` for IP.1 is the original SAN IP address if present, DNS.1 is the original SAN DNS if present.
 
 . Import your certificate into the {kube} cluster.
 The CA certificate is `<CA_CERT_PATH>`, server certificate and key are `<SIGNED_OIDC_DEX_SERVER_CERT_PATH>` and `<SIGNED_OIDC_DEX_SERVER_KEY_PATH>`.
@@ -465,11 +465,11 @@ openssl x509 -noout -text -in /etc/kubernetes/pki.bak/oidc-gangway.crt | grep -o
 . Sign the `oidc-gangway` server certificate with the default kubernetes CA certificate _or_ trusted CA certificate.
 .. Default kubernetes CA certificate
 +
-Please refer to <<self_signed_server_certificate>> on how to sign the self signed server certificate. The default kubernetes CA certificate and key are located at `/etc/kubernetes/pki/ca.crt` and `/etc/kubernetes/pki/ca.key`. The `server.conf` for IP.1 is the original SAN IP address if present, DNS.1 is the original SAN DNS if present.
+Please refer to xref:self_signed_server_certificate[] on how to sign the self signed server certificate. The default kubernetes CA certificate and key are located at `/etc/kubernetes/pki/ca.crt` and `/etc/kubernetes/pki/ca.key`. The `server.conf` for IP.1 is the original SAN IP address if present, DNS.1 is the original SAN DNS if present.
 +
 .. Trusted CA certificate
 +
-Please refer to <<trusted_server_certificate>> on how to sign the trusted server certificate. The `server.conf` for IP.1 is the original SAN IP address if present, DNS.1 is the original SAN DNS if present.
+Please refer to xref:trusted_server_certificate[] on how to sign the trusted server certificate. The `server.conf` for IP.1 is the original SAN IP address if present, DNS.1 is the original SAN DNS if present.
 
 . Import your certificate into the {kube} cluster.
 The CA certificates is `<CA_CERT_PATH>`, server certificate and key are `<SIGNED_OIDC_GANGWAY_SERVER_CERT_PATH>` and `<SIGNED_OIDC_GANGWAY_SERVER_KEY_PATH>`.
@@ -690,7 +690,7 @@ Use proper trusted 3rd-party signed certificates.
 ====
 
 In some cases you want to create self-signed certificates for testing.
-If you are using proper trusted 3rd-party CA signed certificates, skip the following steps and refer to <<trusted_server_certificate>>.
+If you are using proper trusted 3rd-party CA signed certificates, skip the following steps and refer to xref:trusted_server_certificate[].
 
 [[self_signed_ca_certificate]]
 ==== Self-signed CA Certificate
