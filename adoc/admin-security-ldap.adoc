@@ -43,6 +43,9 @@ To replace the automatically generated certificate with your own, follow these s
 docker stop 389-ds
 ----
 
+. Copy the external certificate `ca.cert` and `pwdfile.txt` to a mounted data directory `<DATA_DIR>/ssca/`.
+- `ca.cert`: CA Certificate.
+- `pwdfile.txt`: Password for the CA Certificate.
 . Copy the external certificate `Server-Cert-Key.pem`, `Server-Cert.crt`, and `pwdfile-import.txt` to a mounted data directory `<DATA_DIR>/config/`.
 - `Server-Cert-Key.pem`: PRIVATE KEY.
 - `Server-Cert.crt`: CERTIFICATE.
