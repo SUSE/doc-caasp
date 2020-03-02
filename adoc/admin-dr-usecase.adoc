@@ -107,7 +107,7 @@ kubectl get configmap oidc-dex-config -o yaml > oidc-dex-config.yaml
 vim oidc-dex-config.yaml
 
 # Apply new oidc-dex-config.yaml
-kubectl apply -f oidc-dex-config.yaml
+kubectl apply -f oidc-dex-config.yaml --force
 
 # Restart oidc-dex deployment
 kubectl delete pod -l app=oidc-dex
@@ -123,7 +123,7 @@ kubectl get configmap oidc-gangway-config -o yaml > oidc-gangway-config.yaml
 vim oidc-gangway-config.yaml
 
 # Apply new oidc-gangway-config.yaml
-kubectl apply -f oidc-gangway-config.yaml
+kubectl apply -f oidc-gangway-config.yaml --force
 
 # Restart oidc-gangway deployment
 kubectl delete pod -l app=oidc-dex
