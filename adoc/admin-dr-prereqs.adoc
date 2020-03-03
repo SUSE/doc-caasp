@@ -1,0 +1,309 @@
+== Prerequisites
+
+=== Helm
+
+In order to successfully use Velero to backup and restore the {kube} cluster, you first need to install Helm and Tiller.
+Refer to <<helm_tiller_install>>.
+. SUSE Helm Chart
+
+Add SUSE helm chart repository URL
+
+[source,bash]
+----
+helm repo add suse https://kubernetes-charts.suse.com
+----
+
+=== Object Storage
+
+Velero uses object storage to store backups and associated artifacts.
+It can optionally snapshot persistent volume and store in object storage by `restic` if there is no supported volume snapshot provider.
+
+==== Storage Providers
+
+[options="header"]
+|===
+| Provider | Object Storage | Plugin Provider Repo
+
+|Amazon Web Services (AWS)
+|AWS S3
+|link:https://github.com/vmware-tanzu/velero-plugin-for-aws[Velero plugin for AWS]
+
+|Google Cloud Platform (GCP)
+|Google Cloud Storage
+|link:https://github.com/vmware-tanzu/velero-plugin-for-gcp[Velero plugin for GCP]
+
+|Microsoft Azure
+|Azure Blob Storage
+|link:https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure[Velero plugin for Microsoft Azure]
+|===
+
+==== S3-compatible Storage Providers
+===== SES6 Ceph Object Gateway (`radosgw`)
+
+SUSE supports the SES6 Ceph Object Gateway (`radosgw`) as a S3-compatible object storage provider.
+Refer to link:https://documentation.suse.com/ses/6/html/ses-all/cha-ceph-additional-software-installation.html[SES6 Object Gateway Manual Installation] on how to install it.
+
+===== Minio
+
+Besides {ses}, there is an alternative open source S3-compatible object storage provider: link:https://min.io/[minio].
+
+Prepare an external host and install Minio on the host.
+
+[source,bash]
+----
+# Download Minio server
+wget https://dl.min.io/server/minio/release/linux-amd64/minio
+chmod +x minio
+
+# Expose Minio access_key and secret_key
+export MINIO_ACCESS_KEY=<access_key>
+export MINIO_SECRET_KEY=<secret_key>
+
+# Start Minio server
+mkdir -p bucket
+./minio server bucket &
+
+# Download Minio client
+wget https://dl.min.io/client/mc/release/linux-amd64/mc
+chmod +x mc
+
+# Setup Minio server
+./mc config host add Velero http://localhost:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY
+
+# Create bucket on Minio server
+./mc mb -p velero/velero
+----
+
+For the rests of the S3-compatible storage providers, refer to link:https://velero.io/docs/v1.2.0/supported-providers/[Velero Supported Providers].
+
+==== Object Storage Credential
+===== Public Cloud Providers
+====== AWS S3
+
+. Prerequisites
++
+Install `aws` CLI locally, follow the link:https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html[doc] to install.
+
+. Create AWS S3 bucket
++
+[source,bash]
+----
+aws s3api create-bucket \
+    --bucket <BUCKET_NAME> \
+    --region <REGION> \
+    --create-bucket-configuration LocationConstraint=<REGION>
+----
+
+. Prepare the credential file `credentials-velero` in the local machine
++
+----
+[default]
+aws_access_key_id=<AWS_ACCESS_KEY_ID>
+aws_secret_access_key=<AWS_SECRET_ACCESS_KEY>
+----
+
+Please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-aws/tree/v1.0.0[Velero Plugin For AWS].
+
+====== Google Cloud Storage
+
+. Prerequisites
++
+Install `gcloud` and `gsutil` CLIs locally, follow the link:https://cloud.google.com/sdk/docs/[doc] to install.
+
+. Create GCS bucket
++
+[source,bash]
+----
+gsutil mb gs://<BUCKET_NAME>/
+----
+
+. Create the service account
++
+[source,bash]
+----
+# View current config settings
+gcloud config list
+
+# Store the project value to PROJECT_ID environment variable
+PROJECT_ID=$(gcloud config get-value project)
+
+# Create a service account
+gcloud iam service-accounts create velero \
+    --display-name "Velero service account"
+
+# List all accounts
+gcloud iam service-accounts list
+
+# Set the SERVICE_ACCOUNT_EMAIL environment variable
+SERVICE_ACCOUNT_EMAIL=$(gcloud iam service-accounts list \
+  --filter="displayName:Velero service account" \
+  --format 'value(email)')
+
+# Attach policies to give velero the necessary permissions
+ROLE_PERMISSIONS=(
+    compute.disks.get
+    compute.disks.create
+    compute.disks.createSnapshot
+    compute.snapshots.get
+    compute.snapshots.create
+    compute.snapshots.useReadOnly
+    compute.snapshots.delete
+    compute.zones.get
+)
+
+# Create iam roles
+gcloud iam roles create velero.server \
+    --project $PROJECT_ID \
+    --title "Velero Server" \
+    --permissions "$(IFS=","; echo "${ROLE_PERMISSIONS[*]}")"
+
+# Bind iam policy to project
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+    --member serviceAccount:$SERVICE_ACCOUNT_EMAIL \
+    --role projects/$PROJECT_ID/roles/velero.server
+
+gsutil iam ch serviceAccount:$SERVICE_ACCOUNT_EMAIL:objectAdmin gs://<BUCKET_NAME>
+----
+
+.  Create credential file `credentials-velero` in the local machine
++
+[source,bash]
+----
+gcloud iam service-accounts keys create credentials-velero \
+    --iam-account $SERVICE_ACCOUNT_EMAIL
+----
+
+Please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-gcp/tree/v1.0.0[Velero Plugin For GCP].
+
+====== Azure Blob Storage
+
+. Prerequisites
++
+Install `az` CLI locally, follow the link:https://docs.microsoft.com/en-us/cli/azure/install-azure-cli[doc] to install.
+
+. Create resource group for backups storage account
++
+Create the resource group named Velero_Backups, change the resource group name and location as needed.
++
+[source,bash]
+----
+AZURE_RESOURCE_GROUP=Velero_Backups
+az group create -n $AZURE_RESOURCE_GROUP --location <location>
+----
+
+. Create the storage account
++
+[source,bash]
+----
+az storage account create \
+    --name $AZURE_STORAGE_ACCOUNT_ID \
+    --resource-group $AZURE_RESOURCE_GROUP \
+    --sku Standard_GRS \
+    --encryption-services blob \
+    --https-only true \
+    --kind BlobStorage \
+    --access-tier Hot
+----
+
+. Create blob container
++
+Create the blob container named velero. Change the name as needed.
++
+[source,bash]
+----
+BLOB_CONTAINER=velero
+az storage container create -n $BLOB_CONTAINER --public-access off --account-name $AZURE_STORAGE_ACCOUNT_ID
+----
+
+.  Create credential file `credentials-velero` in the local machine
++
+[source,bash]
+----
+# Obtain your Azure Account Subscription ID
+AZURE_SUBSCRIPTION_ID=`az account list --query '[?isDefault].id' -o tsv`
+
+# Obtain your Azure Account Tenant ID
+AZURE_TENANT_ID=`az account list --query '[?isDefault].tenantId' -o tsv`
+
+# Generate client secret
+AZURE_CLIENT_SECRET=`az ad sp create-for-rbac --name "velero" --role "Contributor" --query 'password' -o tsv`
+
+# Generate client ID
+AZURE_CLIENT_ID=`az ad sp list --display-name "velero" --query '[0].appId' -o tsv`
+
+cat << EOF  > ./credentials-velero
+AZURE_SUBSCRIPTION_ID=${AZURE_SUBSCRIPTION_ID}
+AZURE_TENANT_ID=${AZURE_TENANT_ID}
+AZURE_CLIENT_ID=${AZURE_CLIENT_ID}
+AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}
+AZURE_RESOURCE_GROUP=${AZURE_RESOURCE_GROUP}
+EOF
+----
+
+Please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure/tree/v1.0.0[Velero Plugin For Azure].
+
+===== S3-compatible Storage Providers, like `radosgw`
+
+Create the credential file `credentials-velero` in the local machine
+
+----
+[default]
+aws_access_key_id=<S3_COMPATIBLE_STORAGE_ACCESS_KEY_ID>
+aws_secret_access_key=<S3_COMPATIBLE_STORAGE_SECRET_ACCESS_KEY>
+----
+
+==== Volume Snapshotter
+
+[NOTE]
+A Volume snapshotter is able to snapshot it's persistent volumes if it's volume driver supports do volume snapshot.
+If a volume provider does not support snapshot or does not have supported Velero storage plugin, Velero will leverage `restic` to do persistent volume backup and restore.
+
+[IMPORTANT]
+Please note what persistent volumes are supported for snapshot by storage providers.
+Then administrators have to determine whether to deploy the `restic` DaemonSet or not.
+
+[options="header"]
+|===
+|Provider | Volume Snapshotter | Plugin Provider Repo
+|Amazon Web Services (AWS) | AWS EBS | link:https://github.com/vmware-tanzu/velero-plugin-for-aws[Velero plugin for AWS]
+|===
+
+For the other `snapshotter` providers refer to link:https://velero.io/docs/v1.2.0/supported-providers/[Velero Supported Providers].
+
+. Finally, install Velero CLI
++
+[source,bash]
+----
+sudo zypper install velero
+----
+
+== Known Issues
+
+. Velero reports errors when when restoring Cilium CRDs. However, this does not effect Cilium functionality.
++
+[NOTE]
+====
+You can add a label to Cilium CRDs to skip Velero backup.
+
+[source,bash]
+----
+kubectl label -n kube-system customresourcedefinitions/ciliumendpoints.cilium.io velero.io/exclude-from-backup=true
+
+kubectl label -n kube-system customresourcedefinitions/ciliumnetworkpolicies.cilium.io velero.io/exclude-from-backup=true
+----
+====
+
+. When restoring `dex` and `gangway`, Velero reports `NodePort` cannot be restored since `dex` and `gangway` are deployed by an addon already and the same `NodePort` has be registered.
+However, this does not break the `dex` and `gangway` service access from outside.
++
+[NOTE]
+====
+You can add a label to services `oidc-dex` and `oidc-gangway` to skip Velero backup.
+
+[source,bash]
+----
+kubectl label -n kube-system services/oidc-dex velero.io/exclude-from-backup=true
+
+kubectl label -n kube-system services/oidc-gangway velero.io/exclude-from-backup=true
+----
+====
