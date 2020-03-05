@@ -2,7 +2,7 @@
 
 === Helm
 
-In order to successfully use Velero to backup and restore the {kube} cluster, you first need to install Helm and Tiller.
+To successfully use Velero to backup and restore the {kube} cluster, you first need to install Helm and Tiller.
 Refer to <<helm_tiller_install>>.
 . SUSE Helm Chart
 
@@ -40,7 +40,7 @@ It can optionally snapshot persistent volume and store in object storage by `res
 ==== S3-compatible Storage Providers
 ===== SES6 Ceph Object Gateway (`radosgw`)
 
-SUSE supports the SES6 Ceph Object Gateway (`radosgw`) as a S3-compatible object storage provider.
+SUSE supports the SES6 Ceph Object Gateway (`radosgw`) as an S3-compatible object storage provider.
 Refer to link:https://documentation.suse.com/ses/6/html/ses-all/cha-ceph-additional-software-installation.html[SES6 Object Gateway Manual Installation] on how to install it.
 
 ===== Minio
@@ -74,7 +74,7 @@ chmod +x mc
 ./mc mb -p velero/velero
 ----
 
-For the rests of the S3-compatible storage providers, refer to link:https://velero.io/docs/v1.3.0/supported-providers/[Velero Supported Providers].
+For the rest of the S3-compatible storage providers, refer to link:https://velero.io/docs/v1.3.0/supported-providers/[Velero Supported Providers].
 
 ==== Object Storage Credential
 ===== Public Cloud Providers
@@ -165,7 +165,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 gsutil iam ch serviceAccount:$SERVICE_ACCOUNT_EMAIL:objectAdmin gs://<BUCKET_NAME>
 ----
 
-.  Create credential file `credentials-velero` in the local machine
+.  Create a credential file `credentials-velero` in the local machine
 +
 [source,bash]
 ----
@@ -181,7 +181,7 @@ Please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-gcp/tree/
 +
 Install `az` CLI locally, follow the link:https://docs.microsoft.com/en-us/cli/azure/install-azure-cli[doc] to install.
 
-. Create resource group for backups storage account
+. Create a resource group for the backups storage account
 +
 Create the resource group named Velero_Backups, change the resource group name and location as needed.
 +
@@ -205,9 +205,9 @@ az storage account create \
     --access-tier Hot
 ----
 
-. Create blob container
+. Create a blob container
 +
-Create the blob container named velero. Change the name as needed.
+Create a blob container named velero. Change the name as needed.
 +
 [source,bash]
 ----
@@ -215,7 +215,7 @@ BLOB_CONTAINER=velero
 az storage container create -n $BLOB_CONTAINER --public-access off --account-name $AZURE_STORAGE_ACCOUNT_ID
 ----
 
-.  Create credential file `credentials-velero` in the local machine
+.  Create a credential file `credentials-velero` in the local machine
 +
 [source,bash]
 ----
@@ -255,12 +255,8 @@ aws_secret_access_key=<S3_COMPATIBLE_STORAGE_SECRET_ACCESS_KEY>
 ==== Volume Snapshotter
 
 [NOTE]
-A Volume snapshotter is able to snapshot it's persistent volumes if it's volume driver supports do volume snapshot.
+A Volume snapshotter is able to snapshot it's persistent volumes if its volume driver supports do volume snapshot.
 If a volume provider does not support snapshot or does not have supported Velero storage plugin, Velero will leverage `restic` to do persistent volume backup and restore.
-
-[IMPORTANT]
-Please note what persistent volumes are supported for snapshot by storage providers.
-Then administrators have to determine whether to deploy the `restic` DaemonSet or not.
 
 [options="header"]
 |===
@@ -279,7 +275,7 @@ sudo zypper install velero
 
 == Known Issues
 
-. Velero reports errors when when restoring Cilium CRDs. However, this does not effect Cilium functionality.
+. Velero reports errors when restoring Cilium CRDs. However, this does not affect Cilium functionality.
 +
 [NOTE]
 ====
@@ -293,7 +289,7 @@ kubectl label -n kube-system customresourcedefinitions/ciliumnetworkpolicies.cil
 ----
 ====
 
-. When restoring `dex` and `gangway`, Velero reports `NodePort` cannot be restored since `dex` and `gangway` are deployed by an addon already and the same `NodePort` has be registered.
+. When restoring `dex` and `gangway`, Velero reports `NodePort` cannot be restored since `dex` and `gangway` are deployed by an addon already and the same `NodePort` has been registered.
 However, this does not break the `dex` and `gangway` service access from outside.
 +
 [NOTE]

@@ -2,8 +2,8 @@
 
 === Disaster Recovery
 
-Use schedule backup for periodical backup. When restoring, need to change backup storage location to read-only mode to avoid incorrect data integrity.
-Run the backup periodically. When the {kube} cluster runs into unexpected state, recover from the backup file.
+Use schedule backup for the periodical backup. When restoring, we need to change the backup storage location to read-only mode to avoid incorrect data integrity.
+Run the backup periodically. When the {kube} cluster runs into an unexpected state, recover from the backup file.
 
 ==== Setting up a scheduled backup
 
@@ -14,7 +14,7 @@ velero schedule create <SCHEDULE_NAME> --schedule="@daily"
 
 This creates a backup file with the name `<SCHEDULE_NAME>-<TIMESTAMP>``.
 
-. When disaster happens, make sure the Velero server and `restic` DaemonSet exists (optional). If not, reinstall from the helm chart.
+. When a disaster happens, make sure the Velero server and `restic` DaemonSet exists (optional). If not, reinstall from the helm chart.
 . Update the backup storage location to read-only mode (it prevents the backup file from being created or deleted in the backup storage location during the restore process)
 +
 [source,bash]
@@ -44,7 +44,7 @@ kubectl patch backupstoragelocation <STORAGE_LOCATION_NAME> \
 
 === Cluster Migration
 
-Migrate the {kube} cluster from `cluster 1` to `cluster 2`, as long as you point different cluster's Velero instance to the same external object storage location.
+Migrate the {kube} cluster from `cluster 1` to `cluster 2`, as long as you point different cluster's Velero instances to the same external object storage location.
 
 [NOTE]
 ====
@@ -60,7 +60,7 @@ velero backup create <BACKUP_NAME>
 
 . (At cluster 2) Prepare a {cluster} cluster deployed by skuba.
 
-. (At cluster 2) Helm install Velero and make sure the backup-location and snapshot-location points to the same location as cluster 1.
+. (At cluster 2) Helm install Velero and make sure the backup-location and snapshot-location point to the same location as cluster 1.
 +
 [source,bash]
 ----
@@ -69,7 +69,7 @@ velero snapshot-location get
 ----
 +
 [NOTE]
-The default sync interval is 1 minute. You could change the interval with flag `--backup-sync-period` when create backup location.
+The default sync interval is 1 minute. You could change the interval with the flag `--backup-sync-period` when creating a backup location.
 
 . (At cluster 2) Make sure the cluster 1 backup resources are sync to the external object storage server.
 +

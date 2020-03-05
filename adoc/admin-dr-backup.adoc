@@ -5,7 +5,7 @@ If the persistent volume in the supported volume `snapshotter` provider, skip th
 
 However, if we deploy the `restic` DaemonSet and want to backup the persistent volume by `restic`, we have to add annotation `backup.velero.io/backup-volumes=<VOLUME_NAME_1>,<VOLUME_NAME_2>,...` to the pods which have mounted the volume manually.
 
-For example, we deploy a Elasticsearch cluster and want to backup the Elasticsearch cluster's data. Add the annotation to the Elasticsearch cluster pods:
+For example, we deploy an Elasticsearch cluster and want to backup the Elasticsearch cluster's data. Add the annotation to the Elasticsearch cluster pods:
 
 [source,bash]
 ----
@@ -57,7 +57,7 @@ velero schedule create <SCHEDULE_NAME> --schedule="@every 168h" --ttl 2160h0m0s
 |===
 
 [NOTE]
-When create multiple backups to different backup locations closely, you might hit the object storage server API rate limit issues. Now, the velero does not have a mechanism on retry backups when rate limit occurred. Consider shift the time on create multiple backups.
+When creating multiple backups to different backup locations closely, you might hit the object storage server API rate limit issues. Now, the velero does not have a mechanism on retry backups when the rate limit occurred. Consider shifting the time to create multiple backups.
 
 ==== Optional Flags
 
@@ -109,10 +109,10 @@ Pass `--storage-location` to specify where the backup stores to. For example, if
 
 [source,bash]
 ----
-# Create a backup to master storage server
+# Create a backup to the master storage server
 velero backup create backup2master --storage-location master
 
-# Create a backup to slave storage server
+# Create a backup to the slave storage server
 velero backup create backup2slave --storage-location slave
 ----
 
