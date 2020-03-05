@@ -1,8 +1,8 @@
-== Deployment
+== Deployment On On-Premise
 
 Use Helm CLI to install Velero deployment and `restic` (_optional_).
 
-=== {kube} cluster on-premise and _without_ backup persistent volume.
+=== {kube} cluster on on-premise and _without_ backup persistent volume.
 
 For the following either cases:
 
@@ -127,7 +127,7 @@ velero backup-location create slave \
     --config region=slave,s3ForcePathStyle=true,s3Url=<S3_COMPATIBLE_STORAGE_SERVER_URL>
 ----
 
-=== {kube} cluster on-premise and _with_ backup persistent volume.
+=== {kube} cluster on on-premise and _with_ backup persistent volume.
 
 For the case that the {kube} cluster uses external storage _and_ the external stroage would not handle volume snapshot by itself (either external storage does not support volume snapshot _or_ adminstrator want use velero to take volume snapshot when velero do cluster backup).
 
