@@ -24,7 +24,7 @@ helm install \
     --set configuration.backupStorageLocation.config.region=<REGION_NAME> \
     --set snapshotsEnabled=false \
     --set initContainers[0].name=velero-plugin-for-aws \
-    --set initContainers[0].image=registry.suse.com/caasp/v4/velero-plugin-for-aws:1.0.0 \
+    --set initContainers[0].image=registry.suse.com/caasp/v4/velero-plugin-for-aws:1.0.1 \
     --set initContainers[0].volumeMounts[0].mountPath=/target \
     --set initContainers[0].volumeMounts[0].name=plugins \
     suse/velero
@@ -32,7 +32,7 @@ helm install \
 
 === {kube} cluster on AWS and _with_ backup persistent volume.
 
-For the case that the {kube} cluster use external storage (AWS EBS).
+For the case that the {kube} cluster uses external storage (AWS EBS).
 
 The backup location on AWS S3.
 
@@ -54,7 +54,7 @@ helm install \
     --set configuration.volumeSnapshotLocation.name=default \
     --set configuration.volumeSnapshotLocation.config.region=<REGION_NAME> \
     --set initContainers[0].name=velero-plugin-for-aws \
-    --set initContainers[0].image=registry.suse.com/caasp/v4/velero-plugin-for-aws:1.0.0 \
+    --set initContainers[0].image=registry.suse.com/caasp/v4/velero-plugin-for-aws:1.0.1 \
     --set initContainers[0].volumeMounts[0].mountPath=/target \
     --set initContainers[0].volumeMounts[0].name=plugins \
     suse/velero

@@ -25,7 +25,7 @@ helm install \
     --set configuration.backupStorageLocation.config.region=<REGION_NAME> \
     --set snapshotsEnabled=false \
     --set initContainers[0].name=velero-plugin-for-aws \
-    --set initContainers[0].image=registry.suse.com/caasp/v4/velero-plugin-for-aws:1.0.0 \
+    --set initContainers[0].image=registry.suse.com/caasp/v4/velero-plugin-for-aws:1.0.1 \
     --set initContainers[0].volumeMounts[0].mountPath=/target \
     --set initContainers[0].volumeMounts[0].name=plugins \
     suse/velero
@@ -55,7 +55,7 @@ helm install \
     --set configuration.backupStorageLocation.name=<BUCKET_NAME> \
     --set snapshotsEnabled=false \
     --set initContainers[0].name=velero-plugin-for-gcp \
-    --set initContainers[0].image=registry.suse.com/caasp/v4/velero-plugin-for-gcp:1.0.0 \
+    --set initContainers[0].image=registry.suse.com/caasp/v4/velero-plugin-for-gcp:1.0.1 \
     --set initContainers[0].volumeMounts[0].mountPath=/target \
     --set initContainers[0].volumeMounts[0].name=plugins \
     suse/velero
@@ -88,7 +88,7 @@ helm install \
 	--set configuration.backupStorageLocation.config.storageAccount=<AZURE_STORAGE_ACCOUNT_ID> \
     --set snapshotsEnabled=false \
     --set initContainers[0].name=velero-plugin-for-microsoft-azure \
-    --set initContainers[0].image=registry.suse.com/caasp/v4/velero-plugin-for-microsoft-azure:1.0.0 \
+    --set initContainers[0].image=registry.suse.com/caasp/v4/velero-plugin-for-microsoft-azure:1.0.1 \
     --set initContainers[0].volumeMounts[0].mountPath=/target \
     --set initContainers[0].volumeMounts[0].name=plugins \
     suse/velero
@@ -150,7 +150,7 @@ helm install \
     --set configuration.volumeSnapshotLocation.name=default \
     --set configuration.volumeSnapshotLocation.config.region=<REGION_NAME> \
     --set initContainers[0].name=velero-plugin-for-aws \
-    --set initContainers[0].image=registry.suse.com/caasp/v4/velero-plugin-for-aws:1.0.0 \
+    --set initContainers[0].image=registry.suse.com/caasp/v4/velero-plugin-for-aws:1.0.1 \
     --set initContainers[0].volumeMounts[0].mountPath=/target \
     --set initContainers[0].volumeMounts[0].name=plugins \
     suse/velero
@@ -182,7 +182,7 @@ helm install \
     --set deployRestic=true \
     --set configuration.volumeSnapshotLocation.name=default \
     --set initContainers[0].name=velero-plugin-for-gcp \
-    --set initContainers[0].image=registry.suse.com/caasp/v4/velero-plugin-for-gcp:1.0.0 \
+    --set initContainers[0].image=registry.suse.com/caasp/v4/velero-plugin-for-gcp:1.0.1 \
     --set initContainers[0].volumeMounts[0].mountPath=/target \
     --set initContainers[0].volumeMounts[0].name=plugins \
     suse/velero
@@ -217,7 +217,7 @@ helm install \
     --set deployRestic=true \
     --set configuration.volumeSnapshotLocation.name=default \
     --set initContainers[0].name=velero-plugin-for-microsoft-azure \
-    --set initContainers[0].image=registry.suse.com/caasp/v4/velero-plugin-for-microsoft-azure:1.0.0 \
+    --set initContainers[0].image=registry.suse.com/caasp/v4/velero-plugin-for-microsoft-azure:1.0.1 \
     --set initContainers[0].volumeMounts[0].mountPath=/target \
     --set initContainers[0].volumeMounts[0].name=plugins \
     suse/velero
@@ -264,7 +264,7 @@ helm install \
     --set configuration.volumeSnapshotLocation.name=default \
     --set configuration.volumeSnapshotLocation.config.region=minio \
     --set initContainers[0].name=velero-plugin-for-aws \
-    --set initContainers[0].image=registry.suse.com/caasp/v4/velero-plugin-for-aws:1.0.0 \
+    --set initContainers[0].image=registry.suse.com/caasp/v4/velero-plugin-for-aws:1.0.1 \
     --set initContainers[0].volumeMounts[0].mountPath=/target \
     --set initContainers[0].volumeMounts[0].name=plugins \
     suse/velero
