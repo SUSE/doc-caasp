@@ -165,7 +165,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 gsutil iam ch serviceAccount:$SERVICE_ACCOUNT_EMAIL:objectAdmin gs://<BUCKET_NAME>
 ----
 
-.  Create a credential file `credentials-velero` in the local machine
+. Create a credential file `credentials-velero` in the local machine
 +
 [source,bash]
 ----
@@ -215,7 +215,7 @@ BLOB_CONTAINER=velero
 az storage container create -n $BLOB_CONTAINER --public-access off --account-name $AZURE_STORAGE_ACCOUNT_ID
 ----
 
-.  Create a credential file `credentials-velero` in the local machine
+. Create a credential file `credentials-velero` in the local machine
 +
 [source,bash]
 ----
@@ -255,7 +255,7 @@ aws_secret_access_key=<S3_COMPATIBLE_STORAGE_SECRET_ACCESS_KEY>
 ==== Volume Snapshotter
 
 [NOTE]
-A Volume snapshotter is able to snapshot it's persistent volumes if its volume driver supports do volume snapshot.
+A volume snapshotter is able to snapshot it's persistent volumes if its volume driver supports do volume snapshot.
 If a volume provider does not support snapshot or does not have supported Velero storage plugin, Velero will leverage `restic` to do persistent volume backup and restore.
 
 [options="header"]
