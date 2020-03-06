@@ -415,7 +415,7 @@ serverFiles:
     - name: caasp.node.rules
       rules:
       - alert: NodeIsNotReady
-        expr: kube_node_status_condition{condition="Ready",status="false"} == 1
+        expr: kube_node_status_condition{condition="Ready",status="false"} == 1 or kube_node_status_condition{condition="Ready",status="unknown"} == 1
         for: 1m
         labels:
           severity: critical
