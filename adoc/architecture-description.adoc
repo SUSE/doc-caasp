@@ -464,29 +464,55 @@ structure like the following:
 ~/clusters > tree my-cluster/
 my-cluster/
 ├── addons
-│   ├── cni
-│   │   └── cilium.yaml
+│   ├── cilium
+│   │   ├── base
+│   │   │   └── cilium.yaml
+│   │   └── patches
 │   ├── cri
 │   │   └── default_flags
 │   ├── dex
-│   │   └── dex.yaml
+│   │   ├── base
+│   │   │   └── dex.yaml
+│   │   └── patches
 │   ├── gangway
-│   │   └── gangway.yaml
+│   │   ├── base
+│   │   │   └── gangway.yaml
+│   │   └── patches
 │   ├── kured
-│   │   └── kured.yaml
+│   │   ├── base
+│   │   │   └── kured.yaml
+│   │   └── patches
 │   └── psp
-│       ├── podsecuritypolicy-privileged.yaml
-│       └── podsecuritypolicy-unprivileged.yaml
+│       ├── base
+│       │   └── psp.yaml
+│       └── patches
 ├── kubeadm-init.conf
 └── kubeadm-join.conf.d
     ├── master.conf.template
     └── worker.conf.template
 
-8 directories, 10 files
+18 directories, 9 files
 ----
 
 At this point, you can inspect all generated files, and if desired you
-can experiment by changing the default settings.
+can experiment by providing your custom settings using with declarative 
+management of Kubernetes objects using Kustomize link:https://kustomize.io/
+
+To provide custom settings of the form of strategic merge patch or a JSON 6902 patch go to addons patches directory for example `addons/dex/pathes` and create custom settings file for example `addons/dex/pathes/custom.yaml`
+
+Read https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchstrategicmerge and https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchjson6902 to get more information.
+
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oidc-dex
+  namespace: kube-system
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+----
+
 
 ==== Bootstrapping the first node of the cluster
 
@@ -505,7 +531,7 @@ Prior to bootstrap it's possible for you to tweak the configuration
 that will be used to create the cluster. You can:
 
 * Tweak the default Pod Security Policies or create extra ones. If you
-  place extra Pod Security Policies in the `addons/psp` folder, those
+  place extra Pod Security Policies in the `addons/psp/base` folder, those
   will be created as well when the bootstrap is completed. You can
   also modify the default ones and/or remove them.
 
