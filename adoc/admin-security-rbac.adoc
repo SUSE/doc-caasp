@@ -163,23 +163,21 @@ NOTE: Before any add-on upgrade, please backup any runtime configuration changes
 login username and password.
 . The kubeconfig `kubeconf.txt` is generated locally.
 
+===== OIDC Tokens
+
+The kubeconfig file (`kubeconf.txt`) contains the OIDC tokens necessary to perform authentication and authorization in the cluster.
+OIDC tokens have an *expiration date* which means that they need to be refreshed after some time.
+If you use the *same user in multiples kubeconfig files* distributed among multiple machines,
+this can lead to issues, because only one of the machines will be able to refresh the token.
+The user will be able to download multiple kubeconfig files, but they will only work until one of them needs to refresh the session.
+After that, only one machine will work, namely the first machine which refreshed the token.
+
+
 ==== Access {kube} Resources
 
 The user can now access resources in the authorized `<NAMESPACE>`.
 
 If the user has the proper permissions to access the resources, the output should look like this:
-
-[IMPORTANT]
-====
-The kubeconfig file downloaded by the user contains the OIDC tokens necessary to 
-perform authentication and authorization in the cluster. These tokens have an 
-expiration date which means that token needs to be refresh after some time. 
-If the customer uses the same user in multiples kubeconfig files distributed
-among many machines, this can be source of issues. Because just one of the machines 
-will be able to refresh the token. This means that the user will be able to download
-multiple kubeconfig files. But they will work until one of them need to refresh the session.
-After that, only one machine will work. The first machine which refreshed the token.
-====
 
 ----
 # kubectl -n <NAMESPACE> get pod
