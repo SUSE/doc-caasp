@@ -1,0 +1,264 @@
+= Horizontal Pod Autoscaler
+
+Horizontal Pod Autoscaler (HPA) allows to increase/decrease the scale of a deployment or replication controller, based on the metrics collected from pods.
+
+In order to leverage HPA, {skuba} now supports an addon `metrics-server` installed link:https://github.com/kubernetes-sigs/metrics-server[metrics-server] into {kube} cluster.
+
+After that, HPA fetches metrics from the aggregated API `metrics.k8s.io` and according to the criteria user configuration to determine whether to increase/decrease the scale of a deployment or replication controller.
+
+The HPA `metrics.target.type` could be one of:
+
+- Utilization: the value returned from the metrics server API is calculated to average CPU utilization and compare to the `metrics.target.averageUtilization`.
+- AverageValue: the value returned from the metrics server API is divided by the number of pods and compared to the `metrics.target.averageValue`.
+- Value: the value returned from the metrics server API is directly compared to the `metrics.target.value`.
+
+[NOTE]
+====
+The metrics are CPU and memory of a pod and node.
+====
+[NOTE]
+====
+Pod auto scaling by memory criteria is available in apiVersion `autoscaling/v2beta2`.
+====
+
+== Usage
+
+* Display resource usage of (CPU/Memory) for nodes/pods
++
+[source,bash]
+----
+$ kubectl -n kube-system top node
+
+NAME        CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%   
+master000   207m         10%    1756Mi          45%       
+worker000   100m         10%    602Mi           31%
+
+$ kubectl -n kube-system top pod
+
+NAME                                CPU(cores)   MEMORY(bytes)   
+cilium-9fjw2                        32m          216Mi           
+cilium-cqnq5                        43m          227Mi           
+cilium-operator-7d6ddddbf5-2jwgr    1m           46Mi            
+coredns-69c4947958-2br4b            2m           11Mi            
+coredns-69c4947958-kb6dq            3m           11Mi            
+etcd-master000                      21m          584Mi           
+kube-apiserver-master000            20m          325Mi           
+kube-controller-manager-master000   6m           105Mi           
+kube-proxy-x2965                    0m           24Mi            
+kube-proxy-x9zlv                    0m           19Mi            
+kube-scheduler-master000            2m           46Mi            
+kured-45rc2                         1m           25Mi            
+kured-cptk4                         0m           25Mi            
+metrics-server-79b8658cd7-gjvhs     1m           21Mi            
+oidc-dex-55fc689dc-f6cfg            1m           20Mi            
+oidc-gangway-7b7fbbdbdf-85p6t       1m           18Mi
+----
++
+[NOTE]
+====
+The option flag `--sort-by=cpu`/`--sort-by=memory` has an sorting issue right now. It will be fixed in the future.
+====
+
+* Using Horizontal Pod Autoscaler (HPA)
+
+** HPA by CPU
+
+*** Create HPA by average CPU utilization
++
+```
+# deployment
+kubectl autoscale deployment <deployment-name> \
+    --min=<min_replicas_number> \
+    --max=<max_replicas_number> \
+    --cpu-percent=<percent>
+
+# replication controller
+kubectl autoscale replicationcontrollers <replicationcontrollers-name> \
+    --min=<min_replicas_number> \
+    --max=<max_replicas_number> \
+    --cpu-percent=<percent>
+```
+For example:
++
+```
+kubectl autoscale deployment example \
+    --name=avg-cpu-util \
+    --min=1 \
+    --max=10 \
+    --cpu-percent=50
+```
+The example shows autoscaling for the example deployment, the HPA increase  the minimum number of pod to 1 and will increase the pods up to 10 if the avergae CPU utilization of the pods reaches 50%. Ref to link:https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#algorithm-details[kubernetes: horizontal pod autoscale alrorithm details] for the algorithm details.
++
+Check the current status of the HPA:
++
+```
+kubectl get hpa
+
+NAME           REFERENCE            TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+avg-cpu-util   Deployment/example   0%/50%    1         10        1          2m4s
+```
++
+[NOTE]
+====
+HPA calculates pod cpu utilization as: total cpu usage of all containers / total cpu requests. For example:
+
+- Container1 requests 0.5 cpu and uses 0 cpu
+- Container2 requests 1 cpu and uses 2 cpu
+
+The cpu utilization is (0+2)/(0.5+1)*100 (%)=133 (%)
+
+If a deployment or replication controller does not specify the cpu request, the ouput of `kubectl get hpa` TARGETS is <unknown>.
+====
+
+*** Create HPA by average CPU value
+
++
+. Create a yaml manifest file `hpa-avg-cpu-value.yaml`
++
+```
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: avg-cpu-value // <1>
+  namespace: kube-system // <2>
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment // <3>
+    name: example // <4>
+  minReplicas: 1 // <5>
+  maxReplicas: 10 // <6>
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: AverageValue
+        averageValue: 500Mi <7>
+```
+<1> name of HPA.
+<2> namespace of HPA.
+<3> specify the kind of object to scale.
+<4> specify the name of the object to scale.
+<5> specify the minimum number of replicas.
+<6> specify the maximum number of replicas.
+<7> the average value of the requested cpu that each pod used.
+
+. Apply the yaml manifest
++
+```
+kubectl apply -f hpa-avg-cpu-value.yaml
+```
+
+. Check the current status of the HPA:
++
+```
+kubectl get hpa
+
+NAME            REFERENCE               TARGETS    MINPODS   MAXPODS   REPLICAS   AGE
+avg-cpu-value   Deployment/php-apache   1m/500Mi   1         10        1          39s
+```
+
+** HPA by memory
+
+*** Create HPA by average memory utilization
++
+. Create a yaml manifest file `hpa-avg-memory-util.yaml`
++
+```
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: avg-memory-util // <1>
+  namespace: kube-system // <2>
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment // <3>
+    name: example // <4>
+  minReplicas: 1 // <5>
+  maxReplicas: 10 // <6>
+  metrics:
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 50 <7>
+```
+<1> name of HPA.
+<2> namespace of HPA.
+<3> specify the kind of object to scale.
+<4> specify the name of the object to scale.
+<5> specify the minimum number of replicas.
+<6> specify the maximum number of replicas.
+<7> the average utilization of the requested memory that each pod used.
+
+. Apply the yaml manifest
++
+```
+kubectl apply -f hpa-avg-memory-util.yaml
+```
+
+. Check the current status of the HPA:
++
+```
+kubectl get hpa
+
+NAME              REFERENCE            TARGETS          MINPODS   MAXPODS   REPLICAS   AGE
+avg-memory-util   Deployment/example   5%/50%           1         10        1          4m54s
+```
++
+[NOTE]
+====
+HPA calculates pod memory utilization as: total memory usage of all containers / total memory requests.
+If a deployment or replication controller does not specify the memory request, the ouput of `kubectl get hpa` TARGETS is <unknown>.
+====
+
+*** Create HPA by average memory value
++
+. Create a yaml manifest file `hpa-avg-memory-value.yaml`
++
+```
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: avg-memory-value // <1>
+  namespace: kube-system // <2>
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment // <3>
+    name: example // <4>
+  minReplicas: 1 // <5>
+  maxReplicas: 10 // <6>
+  metrics:
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: AverageValue
+        averageValue: 500Mi <7>
+```
+<1> name of HPA.
+<2> namespace of HPA.
+<3> specify the kind of object to scale.
+<4> specify the name of the object to scale.
+<5> specify the minimum number of replicas.
+<6> specify the maximum number of replicas.
+<7> the average value of the requested memory that each pod used.
+
+. Apply the yaml manifest
++
+```
+kubectl apply -f hpa-avg-memory-value.yaml
+```
+
+. Check the current status of the HPA:
++
+```
+kubectl get hpa
+
+NAME                     REFERENCE            TARGETS          MINPODS   MAXPODS   REPLICAS   AGE
+avg-memory-value         Deployment/example   11603968/500Mi   1         10        1          6m24s
+```
