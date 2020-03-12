@@ -1,10 +1,10 @@
 = Horizontal Pod Autoscaler
 
-Horizontal Pod Autoscaler (HPA) allows to increase/decrease the scale of a deployment or replication controller, based on the metrics collected from pods.
+Horizontal Pod Autoscaler (HPA) allows to increase/decrease the number of pods in a replication controller, deployment, replica set or stateful set, based on the metrics collected from pods.
 
 In order to leverage HPA, {skuba} now supports an addon `metrics-server` installed link:https://github.com/kubernetes-sigs/metrics-server[metrics-server] into {kube} cluster.
 
-After that, HPA fetches metrics from the aggregated API `metrics.k8s.io` and according to the criteria user configuration to determine whether to increase/decrease the scale of a deployment or replication controller.
+After that, HPA fetches metrics from the aggregated API `metrics.k8s.io` and according to the criteria user configuration to determine whether to increase/decrease the scale of a replication controller, deployment, replica set or stateful set.
 
 The HPA `metrics.target.type` could be one of:
 
@@ -110,7 +110,7 @@ HPA calculates pod cpu utilization as: total cpu usage of all containers / total
 
 The cpu utilization is (0+2)/(0.5+1)*100 (%)=133 (%)
 
-If a deployment or replication controller does not specify the cpu request, the ouput of `kubectl get hpa` TARGETS is <unknown>.
+If a replication controller, deployment, replica set or stateful set does not specify the cpu request, the ouput of `kubectl get hpa` TARGETS is <unknown>.
 ====
 
 *** Create HPA by average CPU value
@@ -141,7 +141,7 @@ spec:
 ```
 <1> name of HPA.
 <2> namespace of HPA.
-<3> specify the kind of object to scale (deployment or replication controller).
+<3> specify the kind of object to scale (a replication controller, deployment, replica set or stateful set).
 <4> specify the name of the object to scale.
 <5> specify the minimum number of replicas.
 <6> specify the maximum number of replicas.
@@ -191,7 +191,7 @@ spec:
 ```
 <1> name of HPA.
 <2> namespace of HPA.
-<3> specify the kind of object to scale (deployment or replication controller).
+<3> specify the kind of object to scale (a replication controller, deployment, replica set or stateful set).
 <4> specify the name of the object to scale.
 <5> specify the minimum number of replicas.
 <6> specify the maximum number of replicas.
@@ -245,7 +245,7 @@ spec:
 ```
 <1> name of HPA.
 <2> namespace of HPA.
-<3> specify the kind of object to scale (deployment or replication controller).
+<3> specify the kind of object to scale (a replication controller, deployment, replica set or stateful set).
 <4> specify the name of the object to scale.
 <5> specify the minimum number of replicas.
 <6> specify the maximum number of replicas.
