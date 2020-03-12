@@ -8,13 +8,13 @@ After that, HPA fetches metrics from the aggregated API `metrics.k8s.io` and acc
 
 The HPA `metrics.target.type` could be one of:
 
-- Utilization: the value returned from the metrics server API is calculated to average CPU utilization and compare to the `metrics.target.averageUtilization`.
-- AverageValue: the value returned from the metrics server API is divided by the number of pods and compared to the `metrics.target.averageValue`.
+- Utilization: the value returned from the metrics server API is calculated to average resource utilization across all relevant pods, then compare to the `metrics.target.averageUtilization`.
+- AverageValue: the value returned from the metrics server API is divided by the number of all relevant pods, then compared to the `metrics.target.averageValue`.
 - Value: the value returned from the metrics server API is directly compared to the `metrics.target.value`.
 
 [NOTE]
 ====
-The metrics are CPU and memory of a pod and node.
+The metrics supported by `metrics-server` are CPU and memory of a pod and node.
 ====
 [NOTE]
 ====
@@ -103,14 +103,14 @@ avg-cpu-util   Deployment/example   0%/50%    1         10        1          2m4
 +
 [NOTE]
 ====
-HPA calculates pod cpu utilization as: total cpu usage of all containers / total cpu requests. For example:
+HPA calculates pod CPU utilization as: total CPU usage of all containers / total CPU requests. For example:
 
 - Container1 requests 0.5 cpu and uses 0 cpu
 - Container2 requests 1 cpu and uses 2 cpu
 
 The cpu utilization is (0+2)/(0.5+1)*100 (%)=133 (%)
 
-If a replication controller, deployment, replica set or stateful set does not specify the cpu request, the ouput of `kubectl get hpa` TARGETS is <unknown>.
+If a replication controller, deployment, replica set or stateful set does not specify the cpu request, the output of `kubectl get hpa` TARGETS is <unknown>.
 ====
 
 *** Create HPA by average CPU value
