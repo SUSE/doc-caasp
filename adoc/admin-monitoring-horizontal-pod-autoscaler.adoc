@@ -18,7 +18,10 @@ The metrics are CPU and memory of a pod and node.
 ====
 [NOTE]
 ====
-Pod auto scaling by memory criteria is available in apiVersion `autoscaling/v2beta2`.
+API version supports HPA
+
+- CPU metric: `autoscaling/v1`,`autoscaling/v2beta2`
+- Memory metric: `autoscaling/v2beta2`.
 ====
 
 == Usage
@@ -138,7 +141,7 @@ spec:
 ```
 <1> name of HPA.
 <2> namespace of HPA.
-<3> specify the kind of object to scale.
+<3> specify the kind of object to scale (deployment or replication controller).
 <4> specify the name of the object to scale.
 <5> specify the minimum number of replicas.
 <6> specify the maximum number of replicas.
@@ -188,7 +191,7 @@ spec:
 ```
 <1> name of HPA.
 <2> namespace of HPA.
-<3> specify the kind of object to scale.
+<3> specify the kind of object to scale (deployment or replication controller).
 <4> specify the name of the object to scale.
 <5> specify the minimum number of replicas.
 <6> specify the maximum number of replicas.
@@ -242,7 +245,7 @@ spec:
 ```
 <1> name of HPA.
 <2> namespace of HPA.
-<3> specify the kind of object to scale.
+<3> specify the kind of object to scale (deployment or replication controller).
 <4> specify the name of the object to scale.
 <5> specify the minimum number of replicas.
 <6> specify the maximum number of replicas.
