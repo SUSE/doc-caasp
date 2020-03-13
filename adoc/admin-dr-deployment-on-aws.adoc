@@ -29,6 +29,14 @@ helm install \
     --set initContainers[0].volumeMounts[0].name=plugins \
     suse/velero
 ----
++
+[NOTE]
+====
+If Velero installed other than default namespace `velero`, setup velero config config to the Velero installed namespace.
+```
+velero client config set namespace=<NAMESPACE>
+```
+====
 
 === {kube} cluster on AWS and _with_ backup persistent volume.
 
@@ -59,6 +67,14 @@ helm install \
     --set initContainers[0].volumeMounts[0].name=plugins \
     suse/velero
 ----
++
+[NOTE]
+====
+If Velero installed other than default namespace `velero`, setup velero config config to the Velero installed namespace.
+```
+velero client config set namespace=<NAMESPACE>
+```
+====
 
 [NOTE]
 For troubleshooting a velero deployment, refer to link:https://velero.io/docs/v1.3.1/debugging-install/[Velero: Debugging Installation Issues]
