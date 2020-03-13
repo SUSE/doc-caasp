@@ -94,7 +94,7 @@ aws s3api create-bucket \
     --create-bucket-configuration LocationConstraint=<REGION>
 ----
 
-. Prepare the credential file `credentials-velero` in the local machine
+. Create the credential file `credentials-velero` in the local machine
 +
 ----
 [default]
@@ -165,7 +165,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 gsutil iam ch serviceAccount:$SERVICE_ACCOUNT_EMAIL:objectAdmin gs://<BUCKET_NAME>
 ----
 
-. Create a credential file `credentials-velero` in the local machine
+. Create the credential file `credentials-velero` in the local machine
 +
 [source,bash]
 ----
@@ -215,7 +215,7 @@ BLOB_CONTAINER=velero
 az storage container create -n $BLOB_CONTAINER --public-access off --account-name $AZURE_STORAGE_ACCOUNT_ID
 ----
 
-. Create a credential file `credentials-velero` in the local machine
+. Create the credential file `credentials-velero` in the local machine
 +
 [source,bash]
 ----
