@@ -355,6 +355,25 @@ kubectl delete pod -lapp=oidc-gangway -n kube-system
 It is a best practice to update your {kube} cluster frequently to stay secure.
 ====
 
+=== Control plane nodes certificates rotation
+
+When doing a control plane update, `skuba node upgrade apply` will run
+`kubeadm upgrade` commands behind the scenes. `kubeadm upgrade apply` and
+`kubeadm upgrade node` will renew and use new `kubeadm`
+managed certificates on the node, including those stored in kubeconfig files,
+regardless of the remaining time for which the certificate was still valid.
+
+=== Worker nodes certificates rotation
+
+Running `skuba node upgrade apply` on a worker node applies the same kind
+of logic than the control plane nodes: it runs `kubeadm upgrade node`
+which only restarts the kubelet on worker nodes.
+
+Kubelet configuration by default uses a `kubelet-client-current.pem` file, in
+its `pki` folder. This file is a symlink to the latest generated certificate.
+Restarting the kubelet effectively rotates the certificate to read the latest
+generated file.
+
 == Manual Certificate Renewal
 
 [IMPORTANT]
