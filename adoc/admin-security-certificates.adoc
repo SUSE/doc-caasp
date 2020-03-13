@@ -370,7 +370,7 @@ of logic than the control plane nodes: it runs `kubeadm upgrade node`
 which only restarts the kubelet on worker nodes.
 
 Kubelet configuration by default uses a `kubelet-client-current.pem` file, in
-its pki folder. This file is a symlink to the latest generated certificate.
+its `pki` folder. This file is a symlink to the latest generated certificate.
 Restarting the kubelet effectively rotates the certificate to read the latest
 generated file.
 
