@@ -172,8 +172,24 @@ this can lead to issues, because only one of the machines will be able to refres
 The user will be able to download multiple kubeconfig files, but they will only work until one of them needs to refresh the session.
 After that, only one machine will work, namely the first machine which refreshed the token.
 
-One possible workaround for this issue is using multiple users for different kubeconfig
+*A workaround for this issue* is using multiple users for different kubeconfig
 files. See how to add more users in <<_sec.admin.security.users.add>>.
+You can also check information about the user and the respective OIDC tokens in the kubeconfig file under the `users` section:
+
+-----
+users:
+- name: myuser
+  user:
+    auth-provider:
+      config:
+        client-id: oidc
+        client-secret: <SECRET>
+        id-token:  <ID_TOKEN>
+        idp-issuer-url: https://<IP>:<PORT>
+        refresh-token: <REFRESH_TOKEN>
+      name: oidc
+-----
+
 
 ==== Access {kube} Resources
 
