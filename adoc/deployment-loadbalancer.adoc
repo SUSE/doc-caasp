@@ -155,20 +155,22 @@ that each request is correctly distributed in a round robin way.
 [[loadbalancer.haproxy]]
 == HAProxy TCP Load Balancer with Active Checks
 
-`HAProxy` is a very powerful load balancer which, unlike `nginx`, can be used in production.
-The version used at this date is the `1.8.7`.
-
-[IMPORTANT]
-====
-The configuration of an HA cluster is out of the scope of this document.
-====
-
 .Package Support
 [WARNING]
 ====
 `HAProxy` is available as a supported package with a link:https://documentation.suse.com/sle-ha/15-SP1/[{sle} {hasi} 15] subscription.
 
 Alternatively, you can install `HAProxy` from link:https://packagehub.suse.com/packages/haproxy/[{pkghub}] but you will not receive product support for this component.
+====
+
+`HAProxy` is a very powerful load balancer application which is suitable for production environments.
+Unlike the open source version of `nginx` mentioned in the example above, `HAProxy` supports active health checking which is a vital function for reliable cluster health monitoring.
+
+The version used at this date is the `{haproxy_version}`.
+
+[IMPORTANT]
+====
+The configuration of an HA cluster is out of the scope of this document.
 ====
 
 The default mechanism is *round-robin* so each request will be distributed to a different server.
