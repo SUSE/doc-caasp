@@ -140,7 +140,7 @@ https://github.com/dexidp/dex/tree/v2.16.0/Documentation/connectors.
 +
 ----
 kubectl apply -f ~/clusters/<CLUSTER_NAME>/addons/dex/dex.yml
-kubectl delete pod -lapp=oidc-dex -n kube-system
+kubectl rollout restart deployment/oidc-dex -n kube-system
 ----
 
 NOTE: Before any add-on upgrade, please backup any runtime configuration changes, then restore the modification back after upgraded. It is known limitation.
