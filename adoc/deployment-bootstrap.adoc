@@ -179,7 +179,6 @@ Define the cluster using the following command:
 skuba cluster init --control-plane <LB_IP/FQDN> --cloud-provider openstack my-cluster
 ----
 
-
 Running the above command will create a directory `my-cluster/cloud/openstack` with a
 `README.md` and an `openstack.conf.template` in it. Copy `openstack.conf.template`
 or create an `openstack.conf` file inside `my-cluster/cloud/openstack`,
@@ -195,7 +194,9 @@ Please remember to set proper file permissions for it, for example `600`.
 ====
 
 ===== Example OpenStack Cloud Provider Configuration
+
 You can find the required parameters in OpenStack RC File v3.
+
 ====
     [Global]
     auth-url=<OS_AUTH_URL> // <1>
