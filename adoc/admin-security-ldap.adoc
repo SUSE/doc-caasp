@@ -253,7 +253,7 @@ Example LDIF configuration to create group `k8s-admins` using an LDAP command:
   memberUid: user-admin
 ====
 
-==== Example 2: Dex LDAP TLS Connector Configuration (`addons/dex/dex.yaml`)
+==== Example 2: Dex LDAP TLS Connector Configuration (`addons/dex/patches/custom.yaml`)
 Dex connector template configured to use 389-DS:
 ----
 connectors:
@@ -341,7 +341,7 @@ connectors:
       nameAttr: cn
 ----
 
-Then, refer to <<_sec.admin.security.rbac.update>> to apply the dex.yaml and <<_sec.admin.security.rbac.apply>> to access through Web or CLI.
+Then, refer to <<_sec.admin.security.rbac.update>> to apply the Dex custom.yaml and <<_sec.admin.security.rbac.apply>> to access through Web or CLI.
 
 === Active Directory
 

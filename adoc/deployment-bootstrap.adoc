@@ -284,8 +284,11 @@ You can use the "private dns" values provided by the {tf} output.
 
 ===== Integrate External LDAP TLS
 
-. Open the `Dex` `ConfigMap` in `my-cluster/addons/dex/dex.yaml`
-. Adapt the `ConfigMap` by adding LDAP configuration to the connector section of the `config.yaml` file. For detailed configurations for the LDAP connector, refer to https://github.com/dexidp/dex/blob/v2.16.0/Documentation/connectors/ldap.md.
+. Base on the manifest in `~/clusters/<CLUSTER_NAME>/addons/dex/base/dex.yml` provide a kustomize patch to `~/clusters/<CLUSTER_NAME>/addons/dex/patches/custom.yml` of the form of strategic merge patch or a JSON 6902 patch.
+. Adapt the `ConfigMap` by adding LDAP configuration to the connector section of the `custom.yaml` file. For detailed configurations for the LDAP connector, refer to https://github.com/dexidp/dex/blob/v2.16.0/Documentation/connectors/ldap.md.
+
+Read https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchstrategicmerge and https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchjson6902 to get more information.
+
 ====
 # Example LDAP connector
 
@@ -333,7 +336,8 @@ it is possible to flag the pod with `--blocking-pod-selector=<POD_NAME>`.
 Any node running this workload will not be rebooted via `kured` and needs to
 be rebooted manually.
 
-. Open the `kured` deployment in `my-cluster/addons/kured/kured.yaml`
+. Base on the manifest in `~/clusters/<CLUSTER_NAME>/addons/kured/base/kured.yml` provide a kustomize patch to `~/clusters/<CLUSTER_NAME>/addons/kured/patches/custom.yml` of the form of strategic merge patch or a JSON 6902 patch.
+Read https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchstrategicmerge and https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchjson6902 to get more information.
 . Adapt the `DaemonSet` by adding one of the following flags to the `command`
 section of the `kured` container:
 +
@@ -359,10 +363,10 @@ You can add any key/value labels to this selector:
 --blocking-pod-selector=<LABEL_KEY_1>=<LABEL_VALUE_1>,<LABEL_KEY_2>=<LABEL_VALUE_2>
 ----
 
-Alternatively you can adapt the `kured` DaemonSet also later during runtime (after bootstrap) by editing `my-cluster/addons/kured/kured.yaml` and executing:
+Alternatively you can adapt the `kured` DaemonSet also later during runtime (after bootstrap) by editing `my-cluster/addons/kured/patches/custom.yaml` and executing:
 [source,bash]
 ----
-kubectl apply -f my-cluster/addons/kured/kured.yaml
+kubectl apply -k my-cluster/addons/kured/
 ----
 
 This will restart all `kured` pods with the additional configuration flags.
@@ -375,7 +379,8 @@ By default, **any** prometheus alert blocks a node from reboot.
 However you can filter specific alerts to be ignored via the `--alert-filter-regexp` flag.
 ====
 
-. Open the `kured` deployment in `my-cluster/addons/kured/kured.yaml`
+. Base on the manifest in `~/clusters/<CLUSTER_NAME>/addons/kured/base/kured.yml` provide a kustomize patch to `~/clusters/<CLUSTER_NAME>/addons/kured/patches/custom.yml` of the form of strategic merge patch or a JSON 6902 patch.
+Read https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchstrategicmerge and https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchjson6902 to get more information.
 . Adapt the `DaemonSet` by adding one of the following flags to the `command` section of the `kured` container:
 +
 ----
@@ -400,10 +405,10 @@ spec:
 The <PROMETHEUS_SERVER_URL> needs to contain the protocol (`http://` or `https://`)
 ====
 
-Alternatively you can adapt the `kured` DaemonSet also later during runtime (after bootstrap) by editing `my-cluster/addons/kured/kured.yaml` and executing:
+Alternatively you can adapt the `kured` DaemonSet also later during runtime (after bootstrap) by editing `my-cluster/addons/kured/patches/custom.yaml` and executing:
 [source,bash]
 ----
-kubectl apply -f my-cluster/addons/kured/kured.yaml
+kubectl apply -k my-cluster/addons/kured/
 ----
 
 This will restart all `kured` pods with the additional configuration flags.
