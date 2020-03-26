@@ -182,7 +182,7 @@ subjects:
   name: <LDAP_GROUP_NAME> <3>
   apiGroup: rbac.authorization.k8s.io
 roleRef:
-- kind: Role
+  kind: Role
   name: <ROLE_NAME> <4>
   apiGroup: rbac.authorization.k8s.io
 ----
@@ -208,7 +208,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: <CLUSTER_ROLE_BINDING_NAME> <1>
 subjects:
-  kind: Group
+- kind: Group
   name: <CLUSTER_GROUP_NAME> <2>
   apiGroup: rbac.authorization.k8s.io
 roleRef:
