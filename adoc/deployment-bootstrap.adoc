@@ -71,6 +71,14 @@ echo "<USERNAME> ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 ==== Initializing the Cluster
 
+.Secure configuration files access
+[WARNING]
+====
+The directory created during this step contains configuration files
+that allow full administrator access to your cluster.
+Apply best practices for access control to this folder.
+====
+
 Now you can initialize the cluster on the deployed machines.
 As `--control-plane` enter the IP/FQDN of your load balancer.
 If you do not use a load balancer use your first master node.
@@ -420,14 +428,6 @@ This will restart all `kured` pods with the additional configuration flags.
 . Now bootstrap a master node.
 For `--target` enter the FQDN of your first master node.
 Replace `<NODE_NAME>` with a unique identifier, for example, "master-one".
-+
-.Secure configuration files access
-[WARNING]
-====
-The directory created during this step contains configuration files
-that allow full administrator access to your cluster.
-Apply best practices for access control to this folder.
-====
 +
 .Custom root CA certificate
 [TIP]
