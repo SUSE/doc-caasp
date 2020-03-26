@@ -292,7 +292,7 @@ data:
 [source,bash]
 ----
 kubectl replace -f oidc-dex-cert.yaml
-kubectl delete pod -lapp=oidc-dex -n kube-system
+kubectl rollout restart deployment/oidc-dex -n kube-system
 ----
 
 * Replace the `oidc-gangway` server certificate:
@@ -343,7 +343,7 @@ data:
 [source,bash]
 ----
 kubectl replace -f oidc-gangway-cert.yaml
-kubectl delete pod -lapp=oidc-gangway -n kube-system
+kubectl rollout restart deployment/oidc-gangway -n kube-system
 ----
 
 == Automatic Certificate Renewal
@@ -457,7 +457,7 @@ data:
 [source,bash]
 ----
 kubectl replace -f oidc-dex-cert.yaml
-kubectl delete pod -lapp=oidc-dex -n kube-system
+kubectl rollout restart deployment/oidc-dex -n kube-system
 ----
 
 * Replace the `oidc-gangway` server certificate:
@@ -513,7 +513,7 @@ data:
 [source,bash]
 ----
 kubectl replace -f oidc-gangway-cert.yaml
-kubectl delete pod -lapp=oidc-gangway -n kube-system
+kubectl rollout restart deployment/oidc-gangway -n kube-system
 ----
 
 * Replace the `kubelet` server certificate:
