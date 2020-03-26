@@ -90,10 +90,16 @@ kubectl create rolebinding admin --clusterrole=admin --user=<USER_1> --user=<USE
 [[_sec.admin.security.rbac.update]]
 ==== Update the Authentication Connector
 
+[IMPORTANT]
+====
+Before any add-on upgrade, please backup any runtime configuration changes, then restore the modification back after upgraded.
+It is a known limitation of the addon customization process.
+====
+
 Administrators can update the authentication connector settings after {productname}
 deployment as follows:
 
-. Base on the manifest in `~/clusters/<CLUSTER_NAME>/addons/dex/base/dex.yml` provide a kustomize patch to `~/clusters/<CLUSTER_NAME>/addons/dex/patches/custom.yml` of the form of strategic merge patch or a JSON 6902 patch.
+. Based on the manifest in `~/clusters/<CLUSTER_NAME>/addons/dex/base/dex.yml`, provide a kustomize patch to `~/clusters/<CLUSTER_NAME>/addons/dex/patches/custom.yml` of the form of strategic merge patch or a JSON 6902 patch.
 
 Read https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchstrategicmerge and https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchjson6902 to get more information.
 +
@@ -134,12 +140,10 @@ The following is an *example LDAP connector:*
 ----
 cat <ROOT_CA_PEM_FILE> | base64 | awk '{print}' ORS='' && echo
 ----
++
 Besides the LDAP connector you can also set up other connectors.
 For additional connectors, refer to the available connector configurations in the Dex repository:
 https://github.com/dexidp/dex/tree/v2.16.0/Documentation/connectors.
-+
-
-NOTE: Before any add-on upgrade, please backup any runtime configuration changes, then restore the modification back after upgraded. It is known limitation.
 
 [[_sec.admin.security.rbac.apply]]
 === User Access
