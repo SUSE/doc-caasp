@@ -1,0 +1,102 @@
+== Restore
+
+=== Manual Restore
+
+[source,bash]
+----
+velero restore create <RESTORE_NAME> --from-backup <BACKUP_NAME>
+----
+
+For example:
+
+[source,bash]
+----
+# Create a restore named "restore-1" from backup "backup-1"
+velero restore create restore-1 --from-backup backup-1
+
+# Create a restore with a default name ("backup-1-<timestamp>") from backup "backup-1"
+velero restore create --from-backup backup-1
+----
+
+=== Setting Restore Schedule
+
+[source,bash]
+----
+velero restore create <RESTORE_NAME> --from-schedule <SCHEDULE_NAME>
+----
+
+For example:
+
+[source,bash]
+----
+# Create a restore from the latest successful backup triggered by schedule "schedule-1"
+velero restore create --from-schedule schedule-1
+
+# Create a restore from the latest successful OR partially-failed backup triggered by schedule "schedule-1"
+velero restore create --from-schedule schedule-1 --allow-partially-failed
+----
+
+=== Optional Flags
+
+==== Granularity
+
+Without pass extra flags to `velero restore create`, Velero will restore whole resources from the backup or from the schedule.
+
+===== Namespace
+
+Pass flag `--include-namespaces` or `--exclude-namespaces` to `velero restore create` to specifies which namespaces to include/exclude when restoring. For example:
+
+[source,bash]
+----
+# Create a restore including the nginx and default namespaces
+velero restore create --from-backup backup-1 --include-namespaces nginx,default
+
+# Create a restore excluding the kube-system and default namespaces
+velero restore create --from-backup backup-1 --exclude-namespaces kube-system,default
+----
+
+===== Resources
+
+Pass flag `--include-resources` or `--exclude-resources` to `velero restore create` to specifies which resources to include/exclude when restoring. For example:
+
+[source,bash]
+----
+# create a restore for only persistentvolumeclaims and persistentvolumes within a backup
+velero restore create --from-backup backup-1 --include-resources persistentvolumeclaims,persistentvolumes
+----
+
+[TIP]
+Use `kubectl api-resources` to lists all API resources on the server.
+
+===== Label Selector
+
+Pass `--selector` to only restore the resources matching the label selector. For example:
+
+[source,bash]
+----
+# create a restore for only the elasticsearch cluster within a backup
+velero restore create --from-backup backup-1 --selector app=elasticsearch-master
+----
+
+==== Troubleshooting
+===== Retrieve restores
+
+[source,bash]
+----
+velero restore get
+----
+===== Describe restores
+
+[source,bash]
+----
+velero restore describe <RESTORE_NAME_1> <RESTORE_NAME_2> <RESTORE_NAME_3>
+----
+===== Retrieve restore logs
+
+[source,bash]
+----
+velero restore logs <RESTORE_NAME>
+----
+
+[NOTE]
+For troubleshooting velero restore, refer to link:https://velero.io/docs/v1.3.1/debugging-restores/[Velero: Debugging Restores]
