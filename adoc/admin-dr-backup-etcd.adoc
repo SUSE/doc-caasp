@@ -2,48 +2,74 @@
 This chapter describes the backup of etcd cluster data running on master nodes of {productname}.
 
 == Data To Backup
-1. Create backup directories on external storage.
+. Create backup directories on external storage.
 +
-```bash
+[source,bash]
+----
 BACKUP_DIR=CaaSP_Backup_`date +%Y%m%d%H%M%S`
 mkdir /${BACKUP_DIR}
-```
-
-2. Copy the following files/folders into the backup directory:
-* The `skuba`: command-line binary for the running cluster, use to replace nodes from cluster.
-* The skuba cluster folder: directory where used for running `skuba` commands. Contains cluster configurations and authentication files.
-* The etcd cluster database: holds all cluster data. Can be used to recover master nodes. Please refer to the next section for steps to create etcd cluster database backup.
-
-3. (Optional) Make backup directory into a compressed file, and remove the original backup directory.
+----
+. Copy the following files/folders into the backup directory:
+* The `skuba` command-line binary: for the running cluster. Used to replace nodes from cluster.
+* The cluster definition folder: Directory created during bootstrap holding the cluster certificates and configuration.
+* The `etcd` cluster database: Holds all non-persistent cluster data.
+Can be used to recover master nodes. Please refer to the next section for steps to create an `etcd` cluster database backup.
+. (Optional) Make backup directory into a compressed file, and remove the original backup directory.
 +
-```bash
+[source,bash]
+----
 tar cfv ${BACKUP_DIR}.tgz /${BACKUP_DIR}
 rm -rf /${BACKUP_DIR}
-```
+----
 
 == Create Etcd Cluster Database Backup
+
 === Procedure
-1. Mount external storage device to all master nodes. This is only required if following step is using local hostpath as volume storage.
-2. Create backup.
+
+. Mount external storage device to all master nodes.
+This is only required if the following step is using local hostpath as volume storage.
+. Create backup.
+.. Find the size of the database to be backed up
 +
-HINT: Backup size depends on the cluster. Ensure each of the backup has sufficient space. The available size should be more than the database snapshot file. You should also have a rotation method to clean up the unneeded snapshot overtime. When there is insufficient space available during backup, pod will fail to be in `Running` state and `no space left on device` error will show in pod logs.
-+
-```bash
+[source,bash]
+----
 ls -sh /var/lib/etcd/member/snap/db
-```
+----
 +
-Below is the sample manifest bind to local hostpath. Recommend to use other storage methods instead.
+[IMPORTANT]
+====
+The backup size depends on the cluster. Ensure each of the backups has sufficient space.
+The available size should be more than the database snapshot file.
+
+You should also have a rotation method to clean up the unneeded snapshots over time.
+
+When there is insufficient space available during backup, pods will fail to be in `Running` state and `no space left on device` errors will show in pod logs.
+
+The below example manifest shows a binding to a local `hostPath`.
+We strongly recommend using other storage methods instead.
+====
+.. Modify the script example
 +
-Replace <STORAGE_MOUNT_POINT> with directory to store for backup. The directory must exist on every node in cluster.
+Replace `<STORAGE_MOUNT_POINT>` with the directory in which to store the backup.
+The directory must exist on every node in cluster.
 +
-Replace <IN_CLUSTER_ETCD_IMAGE> with etcd image used in cluster. This can retrive by accessing any one of node in cluster and run `grep image: /etc/kubernetes/manifests/etcd.yaml | awk '{print $2}'`
+Replace `<IN_CLUSTER_ETCD_IMAGE>` with the `etcd` image used in the cluster.
+This can be retrieved by accessing any one of the nodes in the cluster and running:
 +
-```
+----
+grep image: /etc/kubernetes/manifests/etcd.yaml | awk '{print $2}'
+----
+.. Create a backup deployment
++
+Run the following script:
++
+[source,bash]
+----
 ETCD_SNAPSHOT="<STORAGE_MOUNT_POINT>/etcd_snapshot"
 ETCD_IMAGE="<IN_CLUSTER_ETCD_IMAGE>"
 MANIFEST="etcd-backup.yaml"
 
-cat << *EOF* > ${MANIFEST} 
+cat << *EOF* > ${MANIFEST}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -91,31 +117,55 @@ spec:
 *EOF*
 
 kubectl create -f ${MANIFEST}
-```
+----
 +
-If you are using local hostPath and not using a shared storage device, etcd back will be created to any one of the master nodes. To find the node associated with each etcd backup:
+If you are using local `hostPath` and not using a shared storage device, the `etcd` backup will be created to any one of the master nodes.
+To find the node associated with each `etcd` backup run:
 +
-```bash
+[source,bash]
+----
 kubectl get pods --namespace kube-system --selector=job-name=etcd-backup -o wide
-```
+----
 
 == Schedule ETCD Cluster Backup
-1. Mount external storage device to all master nodes. This is only required if following step is using local hostpath as volume storage.
-2. Create Cronjob.
+. Mount external storage device to all master nodes.
+This is only required if the following step is using local `hostPath` as volume storage.
+. Create Cronjob.
+.. Find the size of the database to be backed up
 +
-HINT: Backup size depends on the cluster. Ensure each of the backup has sufficient space. The available size should be more than the database snapshot file. You should also have a retention method to clean up the unneeded snapshot overtime.
+[IMPORTANT]
+====
+The backup size depends on the cluster. Ensure each of the backups has sufficient space.
+The available size should be more than the database snapshot file.
+
+You should also have a rotation method to clean up the unneeded snapshots over time.
+
+When there is insufficient space available during backup, pods will fail to be in `Running` state and `no space left on device` errors will show in pod logs.
+
+The below example manifest shows a binding to a local `hostPath`.
+We strongly recommend using other storage methods instead.
+====
 +
-```bash
+[source,bash]
+----
 ls -sh /var/lib/etcd/member/snap/db
-```
+----
+.. Modify the script example
 +
-Below is the sample manifest bind to local hostpath. Recommend to use other storage methods instead.
+Replace `<STORAGE_MOUNT_POINT>` with directory to store for backup. The directory must exist on every node in cluster.
 +
-Replace <STORAGE_MOUNT_POINT> with directory to store for backup. The directory must exist on every node in cluster.
+Replace `<IN_CLUSTER_ETCD_IMAGE>` with etcd image used in cluster.
+This can be retrieved by accessing any one of the nodes in the cluster and running:
 +
-Replace <IN_CLUSTER_ETCD_IMAGE> with etcd image used in cluster. This can retrive by accessing any one of node in cluster and run `grep image: /etc/kubernetes/manifests/etcd.yaml | awk '{print $2}'`
+----
+grep image: /etc/kubernetes/manifests/etcd.yaml | awk '{print $2}'
+----
+.. Create a backup schedule deployment
 +
-```
+Run the following script:
++
+[source,bash]
+----
 ETCD_SNAPSHOT="<STORAGE_MOUNT_POINT>/etcd_snapshot"
 ETCD_IMAGE="<IN_CLUSTER_ETCD_IMAGE>"
 
@@ -175,6 +225,6 @@ spec:
               path: ${ETCD_SNAPSHOT}
               type: Directory
 *EOF*
- 
+
 kubectl create -f ${MANIFEST}
-```
+----
