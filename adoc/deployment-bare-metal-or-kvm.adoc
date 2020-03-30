@@ -1,19 +1,23 @@
 include::entities.adoc[]
 
 [[deployment_bare_metal]]
-== Deployment on Bare Metal
+== Deployment on Bare Metal or KVM
 
 .Preparation Required
 [NOTE]
 You must have completed <<deployment.preparations>> to proceed.
 
+[NOTE]
+====
+If deploying on KVM virtual machines, you may use a tool such as `virt-manager`
+to configure the virtual machines and begin the {sle} {base_os_version} installation.
+====
+
 === Environment Description
 
-[IMPORTANT]
+[NOTE]
 ====
-These instructions currently do not describe how to set up a load balancer.
-This will be added in future versions. You must provide your own load balancing
-solution that directs access to the master nodes.
+You must have a load balancer configured as described in <<loadbalancer>>.
 ====
 
 [NOTE]
@@ -30,7 +34,7 @@ you must adjust the {ay} file to your needs according to the requirements.
 Refer to the official {ay} documentation for more information: link:https://documentation.suse.com/sles/15-SP1/single-html/SLES-autoyast/#book-autoyast[{ay} Guide].
 ====
 
-==== Hardware Prerequisites
+==== Machine Configuration Prerequisites
 
 Deployment with {ay} will require a minimum *disk size of 40 GB*.
 10 GB out of that total space will be reserved for container images without any workloads,
@@ -66,7 +70,7 @@ The password for root can be enabled by using the `passwd` command.
 ====
 .. `<suse_register>`
 +
-Insert the email address and {productname} registration code in the placeholder fields. This activates {sle} 15 SP1.
+Insert the email address and {productname} registration code in the placeholder fields. This activates {sle} {base_os_version}.
 .. `<addon>`
 +
 Insert the {productname} registration code in the placeholder field. This enables the {productname} extension module.
@@ -74,7 +78,7 @@ Update the {ay} file with your registration keys and your company's best practic
 +
 [NOTE]
 ====
-Your {productname} registration key can be used to both activate {sle} 15 SP1 and enable the extension.
+Your {productname} registration key can be used to both activate {sle} {base_os_version} and enable the extension.
 ====
 
 +
@@ -132,9 +136,9 @@ The load balancer must point at the machines that are assigned to be used as `ma
 [TIP]
 If you do not wish to use infrastructure load balancers, please deploy additional machines and refer to <<loadbalancer>>.
 
-Install {sle} 15 SP1 from your preferred medium and follow the steps for link:https://documentation.suse.com/sles/15-SP1/single-html/SLES-autoyast/#invoking-autoinst[Invoking the Auto-Installation Process]
+Install {sle} {base_os_version} from your preferred medium and follow the steps for link:https://documentation.suse.com/sles/15-SP1/single-html/SLES-autoyast/#invoking-autoinst[Invoking the Auto-Installation Process]
 
-Provide `autoyast=https://[webserver/path/to/autoyast.xml]` during the {sle} 15 SP1 installation.
+Provide `autoyast=https://[webserver/path/to/autoyast.xml]` during the {sle} {base_os_version} installation.
 
 ==== {sls} Installation
 

@@ -5,6 +5,16 @@ its individual nodes: bootstrapping, joining and removing nodes.
 For maximum automation and ease {productname} uses the `skuba` tool,
 which simplifies {kube} cluster creation and reconfiguration.
 
+== Prerequisites
+
+You must have the proper SSH keys for accessing the nodes set up and allow passwordless `sudo`
+on the nodes in order to perform many of these steps. If you have followed the standard
+deployment procedures this should already be the case.
+
+Please note: If you are using a different management workstation than the one you have
+used during the initial deployment, you might have to transfer the SSH identities
+from the original management workstation.
+
 == Bootstrap and Initial Configuration
 
 Bootstrapping the cluster is the initial process of starting up a minimal

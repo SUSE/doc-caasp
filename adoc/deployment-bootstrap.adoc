@@ -71,6 +71,14 @@ echo "<USERNAME> ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 ==== Initializing the Cluster
 
+.Secure configuration files access
+[WARNING]
+====
+The directory created during this step contains configuration files
+that allow full administrator access to your cluster.
+Apply best practices for access control to this folder.
+====
+
 Now you can initialize the cluster on the deployed machines.
 As `--control-plane` enter the IP/FQDN of your load balancer.
 If you do not use a load balancer use your first master node.
@@ -151,14 +159,33 @@ and automatically manage resources like the Load Balancer, Nodes (Instances), Ne
 and Storage services.
 
 If you want to enable cloud provider integration with different cloud platforms,
-initialize the cluster with the flag `--cloud-provider <CLOUD_PROVIDER>`.
-The only currently available option is `openstack`, but more options are planned:
+initialize the cluster with the flag `--cloud-provider <CLOUD PROVIDER>`.
+The only currently available options are `openstack` and `aws`,
+but more options are planned.
+
+.Cleanup
+[IMPORTANT]
+====
+By enabling CPI providers your Kubernetes cluster will be able to
+provision cloud resources on its own (eg: Load Balancers, Persistent Volumes).
+You will have to manually clean these resources before you destroy the cluster
+with {tf}.
+
+Not removing resources like Load Balancers created by the CPI will result in
+{tf} timing out during `destroy` operations.
+
+Persistent volumes created with the `retain` policy will exist inside of
+the external cloud infrastructure even after the cluster is removed.
+====
+
+====== OpenStack CPI
+
+Define the cluster using the following command:
 
 [source,bash]
 ----
 skuba cluster init --control-plane <LB_IP/FQDN> --cloud-provider openstack my-cluster
 ----
-
 
 Running the above command will create a directory `my-cluster/cloud/openstack` with a
 `README.md` and an `openstack.conf.template` in it. Copy `openstack.conf.template`
@@ -175,7 +202,9 @@ Please remember to set proper file permissions for it, for example `600`.
 ====
 
 ===== Example OpenStack Cloud Provider Configuration
+
 You can find the required parameters in OpenStack RC File v3.
+
 ====
     [Global]
     auth-url=<OS_AUTH_URL> // <1>
@@ -237,10 +266,38 @@ When cloud provider integration is enabled, it's very important to bootstrap and
 these names will be used by the `Openstack` cloud controller manager to reconcile node metadata.
 ====
 
+====== Amazon Web Services (AWS) CPI
+
+Define the cluster using the following command:
+
+[source,bash]
+----
+skuba cluster init --control-plane <LB IP/FQDN> --cloud-provider aws my-cluster
+----
+
+Running the above command will create a directory `my-cluster/cloud/aws` with a
+`README.md` file in it. No further configuration files are needed.
+
+The supported format and content can be found in the
+link:https://kubernetes.io/docs/concepts/cluster-administration/cloud-providers/#aws[official Kubernetes documentation].
+
+
+[IMPORTANT]
+====
+When cloud provider integration is enabled, it's very important to bootstrap and join nodes with the same node names that they have inside `AWS`, as
+these names will be used by the `AWS` cloud controller manager to reconcile node metadata.
+
+You can use the "private dns" values provided by the {tf} output.
+====
+
+
 ===== Integrate External LDAP TLS
 
-. Open the `Dex` `ConfigMap` in `my-cluster/addons/dex/dex.yaml`
-. Adapt the `ConfigMap` by adding LDAP configuration to the connector section of the `config.yaml` file. For detailed configurations for the LDAP connector, refer to https://github.com/dexidp/dex/blob/v2.16.0/Documentation/connectors/ldap.md.
+. Based on the manifest in `~/clusters/<CLUSTER_NAME>/addons/dex/base/dex.yml`, provide a kustomize patch to `~/clusters/<CLUSTER_NAME>/addons/dex/patches/custom.yml` of the form of strategic merge patch or a JSON 6902 patch.
+. Adapt the `ConfigMap` by adding LDAP configuration to the connector section of the `custom.yaml` file. For detailed configurations for the LDAP connector, refer to https://github.com/dexidp/dex/blob/v2.16.0/Documentation/connectors/ldap.md.
+
+Read https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchstrategicmerge and https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchjson6902 to get more information.
+
 ====
 # Example LDAP connector
 
@@ -288,7 +345,8 @@ it is possible to flag the pod with `--blocking-pod-selector=<POD_NAME>`.
 Any node running this workload will not be rebooted via `kured` and needs to
 be rebooted manually.
 
-. Open the `kured` deployment in `my-cluster/addons/kured/kured.yaml`
+. Based on the manifest in `~/clusters/<CLUSTER_NAME>/addons/kured/base/kured.yml`, provide a kustomize patch to `~/clusters/<CLUSTER_NAME>/addons/kured/patches/custom.yml` of the form of strategic merge patch or a JSON 6902 patch.
+Read https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchstrategicmerge and https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchjson6902 to get more information.
 . Adapt the `DaemonSet` by adding one of the following flags to the `command`
 section of the `kured` container:
 +
@@ -314,10 +372,10 @@ You can add any key/value labels to this selector:
 --blocking-pod-selector=<LABEL_KEY_1>=<LABEL_VALUE_1>,<LABEL_KEY_2>=<LABEL_VALUE_2>
 ----
 
-Alternatively you can adapt the `kured` DaemonSet also later during runtime (after bootstrap) by editing `my-cluster/addons/kured/kured.yaml` and executing:
+Alternatively, you can adapt the `kured` DaemonSet also later during runtime (after bootstrap) by editing `my-cluster/addons/kured/patches/custom.yaml` and executing:
 [source,bash]
 ----
-kubectl apply -f my-cluster/addons/kured/kured.yaml
+kubectl apply -k my-cluster/addons/kured/
 ----
 
 This will restart all `kured` pods with the additional configuration flags.
@@ -330,7 +388,8 @@ By default, **any** prometheus alert blocks a node from reboot.
 However you can filter specific alerts to be ignored via the `--alert-filter-regexp` flag.
 ====
 
-. Open the `kured` deployment in `my-cluster/addons/kured/kured.yaml`
+. Based on the manifest in `~/clusters/<CLUSTER_NAME>/addons/kured/base/kured.yml`, provide a kustomize patch to `~/clusters/<CLUSTER_NAME>/addons/kured/patches/custom.yml` of the form of strategic merge patch or a JSON 6902 patch.
+Read https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchstrategicmerge and https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchjson6902 to get more information.
 . Adapt the `DaemonSet` by adding one of the following flags to the `command` section of the `kured` container:
 +
 ----
@@ -355,10 +414,10 @@ spec:
 The <PROMETHEUS_SERVER_URL> needs to contain the protocol (`http://` or `https://`)
 ====
 
-Alternatively you can adapt the `kured` DaemonSet also later during runtime (after bootstrap) by editing `my-cluster/addons/kured/kured.yaml` and executing:
+Alternatively you can adapt the `kured` DaemonSet also later during runtime (after bootstrap) by editing `my-cluster/addons/kured/patches/custom.yaml` and executing:
 [source,bash]
 ----
-kubectl apply -f my-cluster/addons/kured/kured.yaml
+kubectl apply -k my-cluster/addons/kured/
 ----
 
 This will restart all `kured` pods with the additional configuration flags.
@@ -370,21 +429,13 @@ This will restart all `kured` pods with the additional configuration flags.
 For `--target` enter the FQDN of your first master node.
 Replace `<NODE_NAME>` with a unique identifier, for example, "master-one".
 +
-.Secure configuration files access
-[WARNING]
-====
-The directory created during this step contains configuration files
-that allow full administrator access to your cluster.
-Apply best practices for access control to this folder.
-====
-+
 .Custom root CA certificate
 [TIP]
 ====
 During cluster bootstrap, {skuba} automatically generates a root CA certificate.
 You can however also deploy the {kube} cluster with your own custom root CA certificate.
 
-Please refer to the _{productname} Admin Guide_ for more information on custom certificates.
+Please refer to the link:{docurl}single-html/caasp-admin/#_certificates[{productname} Administration Guide] for more information on custom certificates.
 ====
 +
 [WARNING]
@@ -465,6 +516,7 @@ To talk to your cluster, you must be in the `my-cluster` directory when running 
 [TIP]
 ====
 To make usage of {kube} tools easier, you can store a copy of the `admin.conf` file as link:{kubedoc}concepts/configuration/organize-cluster-access-kubeconfig/[kubeconfig].
+====
 
 [source,bash]
 ----
@@ -473,6 +525,7 @@ cp admin.conf ~/.kube/config
 ----
 
 [WARNING]
+====
 The configuration file contains sensitive information and must be handled in a secure fashion. Copying it to a shared user directory might grant access to unwanted users.
 ====
 

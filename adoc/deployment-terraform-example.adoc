@@ -107,17 +107,20 @@ private key.  At least one of the keys must match a key loaded into your
 # datastore to use in vSphere
 vsphere_datastore = "STORAGE-0" // <1>
 
+# datastore_ cluster to use in vSphere
+vsphere_datastore_cluster = "STORAGE-CLUSTER-0" // <2>
+
 # datacenter to use in vSphere
-vsphere_datacenter = "DATACENTER" // <2>
+vsphere_datacenter = "DATACENTER" // <3>
 
 # network to use in vSphere
-vsphere_network = "VM Network" // <3>
+vsphere_network = "VM Network" // <4>
 
 # resource pool the machines will be running in
-vsphere_resource_pool = "My_RP" // <4>
+vsphere_resource_pool = "My_RP" // <5>
 
 # template name the machines will be copied from
-template_name = "sles15-sp1-caasp" // <5>
+template_name = "sles15-sp1-caasp" // <6>
 
 # IMPORTANT: Replace by "efi" string in case your template was created by using EFI firmware
 firmware = "bios"
@@ -125,137 +128,158 @@ firmware = "bios"
 # prefix that all of the booted machines will use
 # IMPORTANT: please enter unique identifier below as value of
 # stack_name variable to not interfere with other deployments
-stack_name = "caasp-v4" // <6>
+stack_name = "caasp-v4" // <7>
 
 # Number of master nodes
-masters = 1 // <7>
+masters = 1 // <8>
 
 # Optional: Size of the root disk in GB on master node
-master_disk_size = 50 // <8>
+master_disk_size = 50 // <9>
 
 # Number of worker nodes
-workers = 2 // <9>
+workers = 2 // <10>
 
 # Optional: Size of the root disk in GB on worker node
-worker_disk_size = 40 // <10>
+worker_disk_size = 40 // <11>
 
 # Username for the cluster nodes. Must exist on base OS.
-username = "sles" // <11>
+username = "sles" // <12>
 
 # Optional: Define the repositories to use
 # repositories = {
 #   repository1 = "http://repo.example.com/repository1/"
 #   repository2 = "http://repo.example.com/repository2/"
 # }
-repositories = {} // <12>
+repositories = {} // <13>
 
 # Minimum required packages. Do not remove them.
 # Feel free to add more packages
-packages = [ // <13>
+packages = [ // <14>
 ]
 
 # ssh keys to inject into all the nodes
-authorized_keys = [ // <14>
+authorized_keys = [ // <15>
   "ssh-rsa <example_key> example@example.com"
 ]
 
 # IMPORTANT: Replace these ntp servers with ones from your infrastructure
-ntp_servers = ["0.novell.pool.ntp.org", "1.novell.pool.ntp.org", "2.novell.pool.ntp.org", "3.novell.pool.ntp.org"] // <15>
+ntp_servers = ["0.novell.pool.ntp.org", "1.novell.pool.ntp.org", "2.novell.pool.ntp.org", "3.novell.pool.ntp.org"] // <16>
 ----
-<1> `vsphere_datastore`: The datastore to use.
-<2> `vsphere_datacenter`: The datacenter to use.
-<3> `vsphere_network`: The network to use.
-<4> `vsphere_resource_pool`: The resource pool to use.
-<5> `template_name`: The name of the template created according to instructions.
-<6> `stack_name`: Prefix for all machines of the cluster spawned by terraform.
+
+[IMPORTANT]
+====
+Only one of `vsphere_datastore` or `vsphere_datastore_cluster` can be set at the same time. Proceed to comment or delete the unused one from your `terraform.tfvars`
+====
+
+<1> `vsphere_datastore`: The datastore to use. This option is mutually exclusive with `vsphere_datastore_cluster`.
+<2> `vsphere_datastore_cluster`: The datastore cluster to use. This option is mutually exclusive with `vsphere_datastore`.
+<3> `vsphere_datacenter`: The datacenter to use.
+<4> `vsphere_network`: The network to use.
+<5> `vsphere_resource_pool`: The resource pool to use.
+<6> `template_name`: The name of the template created according to instructions.
+<7> `stack_name`: Prefix for all machines of the cluster spawned by terraform.
 *Note*: This string will be used to generate the human readable IDs in {soc}.
 If you use a generic term, deployment very likely to fail because the term is already in use by someone else. It's a good idea to use your username or some other unique identifier.
-<7> `masters`: Number of master nodes to be deployed.
-<8> `master_disk_size`: Size of the root disk in GB.
+<8> `masters`: Number of master nodes to be deployed.
+<9> `master_disk_size`: Size of the root disk in GB.
 *Note*: The value must be at least the same size as the source template. It is only possible to increase the size of a disk.
-<9> `workers`: Number of worker nodes to be deployed.
-<10> `worker_disk_size`: Size of the root disk in GB.
+<10> `workers`: Number of worker nodes to be deployed.
+<11> `worker_disk_size`: Size of the root disk in GB.
 *Note*: The value must be at least the same size as the source template. It is only possible to increase the size of a disk.
-<11> `username`: Login username for the nodes.
+<12> `username`: Login username for the nodes.
 *Note*: Leave this as the default `sles`. The username must exist on the used base operating system. It will not be created.
-<12> `repositories`: A list of additional repositories to be added on each
+<13> `repositories`: A list of additional repositories to be added on each
 machines. Leave empty if no additional packages need to be installed.
-<13> `packages`: Additional packages to be installed on the node.
+<14> `packages`: Additional packages to be installed on the node.
 *Note*: Do not remove any of the pre-filled values in the `packages` section. This can render
 your cluster unusable. You can add more packages but do not remove any of the
 default packages listed.
-<14> `authorized_keys`: List of ssh-public-keys that will be able to log in to the
+<15> `authorized_keys`: List of ssh-public-keys that will be able to log in to the
 deployed machines.
-<15> `ntp_servers`: A list of `ntp` servers you would like to use with `chrony`.
+<16> `ntp_servers`: A list of `ntp` servers you would like to use with `chrony`.
 # end::tf_vmware[]
 
 
-// [[tf.aws]]
-// === Terraform AWS Configuration
-// # tag::tf_aws[]
-// [source,json]
-// ----
-// # prefix that all of the booted machines will use
-// # IMPORTANT, please enter unique identifier below as value of
-// # stack_name variable to not interfere with other deployments
-// stack_name = "caasp-v4" // <1>
-//
-// # AWS region
-// aws_region = "eu-central-1"  // <2>
-//
-// # AWS availability zone
-// aws_az = "eu-central-1a" // <3>
-//
-// # access key for AWS services
-// aws_access_key = "AKIXU..."  // <4>
-//
-// # secret key used for AWS services
-// aws_secret_key = "ORd..." // <5>
-//
-// # Number of master nodes
-// masters = 1 // <6>
-//
-// # Number of worker nodes
-// workers = 2 // <7>
-//
-// # Username for the cluster nodes. Must exist on base OS.
-// # EXAMPLE:
-// # username = "opensuse"
-// username = "opensuse" // <8>
-//
-// # ssh keys to inject into all the nodes
-// # EXAMPLE:
-// # authorized_keys = [
-// #   "ssh-rsa <KEY_CONTENT>"
-// # ]
-// authorized_keys = [ // <9>
-//   "ssh-rsa <KEY_CONTENT> example@example.com"
-// ]
-//
-// # to register CaaSP product please use ONLY ONE of the following method
-// #
-// # SUSE CaaSP Product Product Key:
-// #caasp_registry_code = ""  // <10>
-// #
-// # SUSE Repository Mirroring Server Name (FQDN):
-// #rmt_server_name = "rmt.example.com"  // <11>
-//
-// ----
-// <1> `stack_name`: Prefix for all machines of the cluster spawned by terraform.
-// *Note*: This string will be used to generate the human readable IDs in {soc}.
-// <2> `aws_region`: The region in AWS.
-// <3> `aws_az`: The availability zone in AWS.
-// <4> `aws_access_key`: AWS access key.
-// <5> `aws_secrert_key`: AWS secret key.
-// <6> `masters`: Number of master nodes to be deployed.
-// <7> `workers`: Number of worker nodes to be deployed.
-// <8> `username`: Login username for the nodes.
-// *Note*: the username must exist on the used base operating system. It will not be created.
-// <9> `authorized_keys`: List of ssh-public-keys that will be able to log in to the
-// deployed machines.
-// <10> `caasp_registry_code`: SUSE CaaSP Product Product Key for registering
-// the product against SUSE Customer Service.
-// <11> `caasp_registry_code`: register against a local SUSE Repository
-// Mirroring Server.
-//
-// # end::tf_aws[]
+[[tf.aws]]
+=== Terraform AWS Configuration
+# tag::tf_aws[]
+[source,json]
+----
+# prefix that all of the booted machines will use
+# IMPORTANT, please enter unique identifier below as value of
+# stack_name variable to not interfere with other deployments
+stack_name = "caasp-v4" // <1>
+
+# AWS region
+aws_region = "eu-central-1"  // <2>
+
+# AWS availability zone
+aws_az = "eu-central-1a" // <3>
+
+# access key for AWS services
+aws_access_key = "AKIXU..."  // <4>
+
+# secret key used for AWS services
+aws_secret_key = "ORd..." // <5>
+
+# Number of master nodes
+masters = 1 // <6>
+
+# Number of worker nodes
+workers = 2 // <7>
+
+# ssh keys to inject into all the nodes
+# EXAMPLE:
+# authorized_keys = [
+#   "ssh-rsa <key-content>"
+# ]
+authorized_keys = [ // <8>
+  "ssh-rsa <example_key> example@example.com"
+]
+
+# To register CaaSP product please use ONLY ONE of the following method
+#
+# SUSE CaaSP Product Product Key:
+#caasp_registry_code = ""  // <9>
+#
+# SUSE Repository Mirroring Server Name (FQDN):
+#rmt_server_name = "rmt.example.com"  // <10>
+
+# List of VPC IDs to join via VPC peer link
+#peer_vpc_ids = ["vpc-id1", "vpc-id2"] // <11>
+
+# Name of the IAM profile to associate to control plane nodes
+# Leave empty to have terraform create one.
+# This is required to have AWS CPI support working properly.
+#
+# Note well: you must  have the right set of permissions.
+# iam_profile_master = "caasp-k8s-master-vm-profile" // <12>
+
+# Name of the IAM profile to associate to worker nodes.
+# Leave empty to have terraform create one.
+# This is required to have AWS CPI support working properly.
+#
+# Note well: you must  have the right set of permissions.
+#iam_profile_worker = "caasp-k8s-worker-vm-profile" // <13>
+----
+<1> `stack_name`: Prefix for all machines of the cluster spawned by terraform.
+<2> `aws_region`: The region in AWS.
+<3> `aws_az`: The availability zone in AWS.
+<4> `aws_access_key`: AWS access key.
+<5> `aws_secrert_key`: AWS secret key.
+<6> `masters`: Number of master nodes to be deployed.
+<7> `workers`: Number of worker nodes to be deployed.
+<8> `authorized_keys`: List of ssh-public-keys that will be able to log into
+the deployed machines.
+<9> `caasp_registry_code`: {productname} Product Key for registering
+the product against {scc}.
+<10> `caasp_registry_code`: register against a local SUSE Repository
+Mirroring Server.
+<11> `peer_vpc_ids`: List of already existing VPCs to join via dedicated VPC
+peering links.
+<12> `iam_profile_master`: Name of the IAM profile to associate with the control
+plane instance. Leave empty to have {tf} create it.
+<13> `iam_profile_worker`: Name of the IAM profile to associate with the worker
+instances. Leave empty to have {tf} create it.
+
+# end::tf_aws[]
