@@ -52,7 +52,7 @@ and security.
 The policy definitions are embedded in the link:https://github.com/SUSE/skuba/blob/master/pkg/skuba/actions/cluster/init/manifests.go[cluster bootstrap manifest (GitHub)].
 
 During the bootstrap with `skuba`, the policy files will be stored on your
-workstation in the cluster definition folder under `addons/psp`. These policy files
+workstation in the cluster definition folder under `addons/psp/base`. These policy files
 will be installed automatically for all cluster nodes.
 
 The file names of the files created are:
@@ -65,7 +65,8 @@ and
 === Policy File Examples
 
 This is the unprivileged policy as a configuration file. You can use this
-as a basis to develop your own {psp}.
+as a basis to develop your own {psp} which should be saved as `custom-psp.yaml`
+`addons/psp/patches` drectory.
 
 ----
 apiVersion: policy/v1beta1

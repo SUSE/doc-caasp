@@ -1,0 +1,67 @@
+:toc:
+:toclevels: 5
+include::entities.adoc[]
+
+= Disaster Recovery
+
+link:https://velero.io/[Velero] is a solution for supporting {kube} cluster disaster recovery,
+data migration and data protection by backing up {kube} cluster resources and persistent volumes to externally supported storage backend on-demand or by schedule.
+
+The major functions include:
+
+* Backup {kube} resources and persistent volumes for supported storage providers
+* Restore {kube} resources and persistent volumes for supported storage providers
+* When backing up persistent volumes w/o supported storage provider, Velero leverages link:https://github.com/restic/restic[restic] as an agnostic solution to back up this sort of persistent volumes under some known limitations.
+
+User can leverage these fundamental functions to achieve user stories:
+
+* Backup whole {kube} cluster resources then restore if any {kube} resources loss
+* Backup selected {kube} resources then restore if the selected {kube} resources loss
+* Backup selected {kube} resources and persistent volumes then restore if the {kube} selected {kube} resources loss or data loss
+* Migrate the backup to other clusters for any purpose like migrates production cluster to develop cluster for testing.
+
+Velero consists of below components:
+
+* A Velero server that runs on your {kube} cluster
+* A `restic` deployed on each worker nodes that run on your {kube} cluster (optional)
+* A command-line client that runs locally
+
+== Limitations
+
+. Velero doesn't overwrite objects in-cluster if they already exist.
+. Velero supports a single set of credentials _per provider_.
+It's not yet possible to use different credentials for different object storage locations for the same provider.
+. Volume snapshots are limited by where your provider allows you to create snapshots.
+For example, AWS and Azure do not allow you to create a volume snapshot in a different region than where the volume is located.
+If you try to take a Velero backup using a volume snapshot location with a different region than where your cluster's volume is, the backup will fail.
+. It is not yet possible to send a single Velero backup to multiple backup storage locations simultaneously, or a single volume snapshot to multiple locations simultaneously.
+However, you can set up multiple backups manually or scheduled that differ only in the storage locations.
+. Cross-provider snapshots are not supported. If you have a cluster with more than one type of volume (e.g. NFS and Ceph), but you only have a volume snapshot location configured for NFS, then Velero will _only_ snapshot the NFS volumes.
+. `Restic` data is stored under a prefix/subdirectory of the main Velero bucket and will go into the bucket corresponding backup storage location selected by the user at backup creation time.
+. When recovering, the {kube} version, Velero version (includes container version), and Helm version have to be _exactly_ the same as the original cluster.
+. When performing cluster migration, the new cluster number of nodes should be equal or greater than the original cluster.
+
+For more information about storage and snapshot locations, refer to link:https://velero.io/docs/v1.3.1/locations/[Velero: Backup Storage Locations and Volume Snapshot Locations]
+
+include::admin-dr-prereqs.adoc[leveloffset=+1]
+
+include::admin-dr-deployment-on-premise.adoc[]
+
+include::admin-dr-deployment-on-aws.adoc[]
+
+== Operations
+
+include::admin-dr-backup.adoc[]
+
+include::admin-dr-restore.adoc[]
+
+include::admin-dr-usecase.adoc[]
+
+== Uninstall
+Remove the Velero server deployment and `restic` DaemonSet if it exists.
+Then, delete Velero custom resource definitions (CRDs).
+[source,bash]
+----
+helm del --purge velero
+kubectl delete crds -l app.kubernetes.io/name=velero
+----

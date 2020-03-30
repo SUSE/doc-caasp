@@ -25,7 +25,7 @@ You can deploy {productname} onto physical servers or use it on virtual machines
 
 For more information, including a list of the various components which make up {productname} please refer to the Release Notes on https://www.suse.com/releasenotes/.
 
-image::architecture-caasp-components.jpg[SUSE CaaSP Components, width=100%,pdfwidth=80%]
+image::caasp_cluster_components.png[SUSE CaaSP Components, width=100%,pdfwidth=80%]
 
 === Product Release Cycle
 
@@ -44,12 +44,12 @@ Versioning scheme: `x.y.z`
 |Version |Base OS |{kube} version |Patchlevel
 
 |4.0.0
-|{sle} 15 SP1
+|{sle} {base_os_version}
 ^|1.15
 ^|0
 
 |4.0.1
-|{sle} 15 SP1
+|{sle} {base_os_version}
 ^|1.15
 ^|1
 
@@ -59,7 +59,7 @@ Versioning scheme: `x.y.z`
 |
 
 |4.1.0
-|{sle} 15 SP1
+|{sle} {base_os_version}
 ^|1.16
 ^|0
 
@@ -77,13 +77,18 @@ Versioning scheme: `x.y.z`
 
 == Supported Platforms
 
+[NOTE]
+====
+{productname} currently only runs on **x86_64** architectures.
+====
+
+The following platforms are currently supported:
+
 * SUSE OpenStack Cloud 8
 * VMware ESXi {vmware_version}
-* Bare Metal
-
-== Supported Architectures
-
-* x86_64
+* KVM
+* Bare Metal x86_64
+* Amazon Web Services (technological preview)
 
 == The {productname} stack
 
@@ -254,9 +259,10 @@ value store:
 |9 | 4
 |===
 
-Given that etcd runs only on the control plane nodes, despite having 2
-control plane nodes is HA is not fault tolerant. If one of those two
-control planes goes down, the cluster storage will be unavailable, and
+Given that etcd runs only on the control plane nodes, having 2
+control plane nodes provides a HA solution that is fault tolerant for the
+{kube} components but **not** for the etcd cluster. If one of those two
+control planes nodes goes down, the cluster storage will be unavailable, and
 the cluster won't be able to accept new changes (already running
 workloads won't suffer any changes, but the cluster won't be able to
 react to new changes from that point on).
@@ -328,9 +334,10 @@ it's needed to have a local RMT server mirroring the CaaSP
 repositories, a mirror of the SUSE container registry and a mirror of
 the SUSE helm chart repository.
 
+
 === Control plane nodes certificates
 
-Certificates are stored under /etc/kubernetes/pki on the control plane nodes.
+Certificates are stored under `/etc/kubernetes/pki` on the control plane nodes.
 
 ==== CA certificates
 
@@ -375,6 +382,8 @@ Certificates are stored under /etc/kubernetes/pki on the control plane nodes.
 |etcd/healthcheck-client.key  |RSA      |2048
 |etcd/peer.key                |RSA      |2048
 |===
+
+Please refer to the link:{docurl}single-html/caasp-admin/#_certificates[{productname} Administration Guide] for more information on the rotation of certificates.
 
 === Worker nodes certificates
 
@@ -430,6 +439,8 @@ Certificates are stored under `/var/lib/kubelet/pki` on the worker nodes.
 |kubelet.key |RSA      |2048
 |===
 
+Please refer to the link:{docurl}single-html/caasp-admin/#_certificates[{productname} Administration Guide] for more information on the rotation of certificates.
+
 === Cluster Management
 
 Cluster lifecycle is managed using `skuba`. It enables you to
@@ -460,29 +471,55 @@ structure like the following:
 ~/clusters > tree my-cluster/
 my-cluster/
 ├── addons
-│   ├── cni
-│   │   └── cilium.yaml
+│   ├── cilium
+│   │   ├── base
+│   │   │   └── cilium.yaml
+│   │   └── patches
 │   ├── cri
 │   │   └── default_flags
 │   ├── dex
-│   │   └── dex.yaml
+│   │   ├── base
+│   │   │   └── dex.yaml
+│   │   └── patches
 │   ├── gangway
-│   │   └── gangway.yaml
+│   │   ├── base
+│   │   │   └── gangway.yaml
+│   │   └── patches
 │   ├── kured
-│   │   └── kured.yaml
+│   │   ├── base
+│   │   │   └── kured.yaml
+│   │   └── patches
 │   └── psp
-│       ├── podsecuritypolicy-privileged.yaml
-│       └── podsecuritypolicy-unprivileged.yaml
+│       ├── base
+│       │   └── psp.yaml
+│       └── patches
 ├── kubeadm-init.conf
 └── kubeadm-join.conf.d
     ├── master.conf.template
     └── worker.conf.template
 
-8 directories, 10 files
+18 directories, 9 files
 ----
 
 At this point, you can inspect all generated files, and if desired you
-can experiment by changing the default settings.
+can experiment by providing your custom settings using with declarative
+management of Kubernetes objects using link:https://kustomize.io/[Kustomize].
+
+To provide custom settings of the form of strategic merge patch or a JSON 6902 patch go to addons patches directory for example `addons/dex/pathes` and create custom settings file for example `addons/dex/pathes/custom.yaml`
+
+Read https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchstrategicmerge and https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchjson6902 to get more information.
+
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oidc-dex
+  namespace: kube-system
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+----
+
 
 ==== Bootstrapping the first node of the cluster
 
@@ -501,7 +538,7 @@ Prior to bootstrap it's possible for you to tweak the configuration
 that will be used to create the cluster. You can:
 
 * Tweak the default Pod Security Policies or create extra ones. If you
-  place extra Pod Security Policies in the `addons/psp` folder, those
+  place extra Pod Security Policies in the `addons/psp/base` folder, those
   will be created as well when the bootstrap is completed. You can
   also modify the default ones and/or remove them.
 

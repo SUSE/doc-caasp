@@ -26,7 +26,23 @@ for the {kube} api-servers on the master nodes on a local load balancer using
 round-robin 1:1 port forwarding.
 ====
 
+=== Choose a Setup Type
+
+You can deploy {productname} onto existing VMWare instances using {ay} or
+create a VMWare template that will also create the instances.
+You must choose one method to deploy the entire cluster!
+
+Please follow the instructions for you chosen method below and ignore the instructions
+for the other method.
+
 === Setup with {ay}
+
+[NOTE]
+====
+If you choose the {ay} method, please ignore all the following steps for the
+VMWare template creation.
+====
+
 For each VM deployment, follow the {ay} installation method used for deployment on
 bare metal machines as described in <<deployment_bare_metal>>.
 
@@ -88,7 +104,12 @@ Power on the newly created VM and install the system over graphical remote conso
 . Make sure the following modules are selected on the "Extension and Module Selection" screen:
 +
 image::vmware_extension.png[width=80%,pdfwidth=80%]
-** SUSE CaaS Platform 4.0 x86_64 (BETA)
+** SUSE CaaS Platform 4.0 x86_64
++
+[NOTE]
+====
+Due to a naming convention conflict, all Versions of 4.x will be released in the 4.0 Module.
+====
 ** Basesystem Module
 ** Containers Module (this will automatically be checked when you select {productname})
 ** Public Cloud Module

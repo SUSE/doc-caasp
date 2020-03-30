@@ -1,98 +1,197 @@
-== Deployment on Amazon AWS
+== Deployment on Amazon Web Services (AWS)
+
+Deployment on Amazon Web Services (AWS) is currently a tech preview.
 
 .Preparation Required
 [NOTE]
+====
 You must have completed <<deployment.preparations>> to proceed.
+====
 
-You will use {tf} to deploy the required master and worker cluster nodes (plus a load
-balancer) and then use the `skuba` tool to bootstrap the {kube} cluster on
-top of those.
+You will use {tf} to deploy the whole infrastructure described in
+<<architecture-aws>>. Then you will use the `skuba` tool to bootstrap the
+{kube} cluster on top of it.
 
-. Download the AWS credentials
-.. Log in to the AWS console.
-.. Click on your username in the upper right hand corner to reveal the drop-down menu.
-.. Click on My Security Credentials.
-.. Click Create Access Key on the Security Credentials tab.
-.. Note down the newly created _Access_ and _Secret_ keys.
 
-=== Deploying the Cluster Nodes
+[[architecture-aws]]
+=== AWS Deployment
 
-. On the management machine, find the {tf} template files for AWS in
-`/usr/share/caasp/terraform/aws` (which was installed as part of the management
-pattern (`sudo zypper in -t pattern SUSE-CaaSP-Management`)).
+The AWS deployment created by our {tf} template files leads to the
+creation of the infrastructure described in the next paragraphs.
+
+==== Network
+
+All of the infrastructure is created inside of a user specified AWS region.
+The resources are currently all located inside of the same availability
+zone.
+
+The {tf} template files create a dedicated Amazon Virtual Private Cloud (link:https://aws.amazon.com/vpc/[VPC])
+with *two subnets*: "public" and "private". Instances inside of the *public subnet* have
+link:https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html[Elasic IP addresses]
+associated, hence they are reachable from the internet. Instances inside of the *private subnet* are not reachable from the internet.
+However they can still reach external resources; for example they can still
+perform operations like downloading updates and pulling container images from
+external container registries. Communication between the public and the private subnet is allowed.
+All the control plane instances are currently located inside of the public
+subnet. Worker instances are inside of the private subnet.
+
+Both control plane and worker nodes have tailored
+link:https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html[Security Groups]
+assigned to them. These are based on the networking requirements described
+in <<sysreq-networking>>.
+
+==== Load Balancer
+
+The {tf} template files take care of creating a
+link:https://aws.amazon.com/elasticloadbalancing/[Classic Load Balancer]
+which exposes the Kubernetes API service deployed on the control plane
+nodes.
+
+The load balancer exposes the following ports:
+
+* `6443`: Kubernetes API server
+* `32000`: Dex (OIDC Connect)
+* `32001`: Gangway (RBAC Authenticate)
+
+[[architecture-aws-vpc-peering]]
+==== Join Already Existing VPCs
+
+The {tf} template files allow the user to have the
+{productname} VPC join one or more existing VPCs.
+
+This is achieved by the creation of
+link:https://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html[VPC peering links]
+and dedicated
+link:https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html[Route tables].
+
+This feature allows {productname} to access and be accessed by resources defined
+inside of other VPCs. For example, this capability can be used to register all
+the {productname} instances against a {susemgr} server running inside of a
+private VPC.
+
+Current limitations:
+
+* The VPCs must belong to the same AWS region.
+* The VPCs must be owned by the same user who is creating the {productname}
+infrastructure via {tf}.
+
+==== IAM Profiles
+
+The
+link:https://kubernetes.io/docs/concepts/cluster-administration/cloud-providers/#aws[AWS Cloud Provider]
+integration for {kube} requires special
+link:https://aws.amazon.com/iam/[IAM] profiles to be associated with the control
+plane and worker instances. {tf} can create these profiles or can leverage existing ones.
+It all depends on the rights of the user invoking {tf}.
+
+The {tf} link:https://www.terraform.io/docs/providers/aws/index.html[AWS provider]
+requires your credentials. These can be obtained by following these steps:
+
+* Log in to the AWS console.
+* Click on your username in the upper right hand corner to reveal the drop-down menu.
+* Click on menu:My Security Credentials[].
+* Click menu:Create Access Key[] on the "Security Credentials" tab.
+* Note down the newly created _Access_ and _Secret_ keys.
+
+=== Deploying the Infrastructure
+
+On the management machine, find the {tf} template files for AWS in
+`/usr/share/caasp/terraform/aws`. These files have been installed as part of
+the management pattern (`sudo zypper in -t pattern SUSE-CaaSP-Management`).
+
 Copy this folder to a location of your choice as the files need adjustment.
-+
+
 ----
 mkdir -p ~/caasp/deployment/
 cp -r /usr/share/caasp/terraform/aws/ ~/caasp/deployment/
 cd ~/caasp/deployment/aws/
 ----
-. Once the files are copied, rename the `terraform.tfvars.example` file to
+
+Once the files are copied, rename the `terraform.tfvars.example` file to
 `terraform.tfvars`:
-+
+
 ----
-mv terraform.tfvars.example terraform.tfvars
+cp terraform.tfvars.example terraform.tfvars
 ----
-. Edit the `terraform.tfvars` file and add/modify the following variables:
-+
+
+Edit the `terraform.tfvars` file and add/modify the following variables:
+
 include::deployment-terraform-example.adoc[tags=tf_aws]
-+
+
 [TIP]
 ====
-You can set timezone in before deploying the nodes by modifying the files:
+You can set timezone and other parameters before deploying the nodes
+by modifying the cloud-init template:
 
 * `~/caasp/deployment/aws/cloud-init/cloud-init.yaml.tpl`
 ====
-. Enter the registration code for your nodes in `~/caasp/deployment/aws/registration.auto.tfvars`:
-+
-Substitute `<CAASP_REGISTRATION_CODE>` for the code from <<registration_code>>.
-+
+
+You can enter the registration code for your nodes in
+`~/caasp/deployment/aws/registration.auto.tfvars` instead of the
+`terraform.tfvars` file.
+
+Substitute `CAASP_REGISTRATION_CODE` for the code from <<registration_code>>.
+
 [source,json]
 ----
 # SUSE CaaSP Product Key
 caasp_registry_code = "<CAASP_REGISTRATION_CODE>"
 ----
-+
-This is required so all the deployed nodes can automatically register with {scc} and retrieve packages.
-. Now you can deploy the nodes by running:
-+
+
+This is required so all the deployed nodes can automatically register
+with {scc} and retrieve packages.
+
+Now you can deploy the nodes by running:
+
 ----
 terraform init
 terraform plan
 terraform apply
 ----
-+
-Check the output for the actions to be taken. Type "yes" and confirm with Enter when ready.
-Terraform will now provision all the machines and network infrastructure for the cluster.
 
-.Public IPs for nodes
+Check the output for the actions to be taken. Type "yes" and confirm with
+kbd:[Enter] when ready.
+{tf} will now provision all the cluster infrastructure.
+
+.Public IPs for Nodes
 [IMPORTANT]
 ====
-`skuba` cannot currently access nodes through a bastion host, so all
+`skuba` currently cannot access nodes through a bastion host, so all
 the nodes in the cluster must be directly reachable from the machine where
-`skuba` is being run. We must also consider that `skuba` must use
-the external IPs as `--target` when initializing or joining the cluster,
-while we must specify the internal DNS names for registering the nodes
-in the cluster.
+`skuba` is being run.
+`skuba` could be run from one of the master nodes or from a pre-existing bastion
+host located inside of a joined VPC as described in
+<<architecture-aws-vpc-peering>>.
 ====
 
-.Note down IP/FQDN for nodes
+.Note Down IP/FQDN For the Nodes
 [IMPORTANT]
 ====
-The IP addresses of the generated machines will be displayed in the terraform
-output during the cluster node deployment. You need these IP addresses to
-deploy {productname} to the cluster.
+The IP addresses and FQDN of the generated machines will be displayed in the
+{tf} output during the cluster node deployment. You need these information
+later to deploy {productname}.
 
-If you need to find an IP address later on, you can run `terraform output` within
-the directory you performed the deployment from the `~/caasp/deployment/aws` directory or
-perform the following steps:
-
-. Log in to the AWS Console and click on menu:Load Balancers[]. Find the one with the
-string you entered in the {tf} configuration above, for example `testing-lb`.
-. Note down the "DNS name".
-+
-. Now click on menu:Instances[].
-. Using the menu:Filter[] text box, enter the string you specified for `stack_name`
-in the `terraform.tfvars` file.
-. Find the `IPv4 Public IP` on each of the nodes of your cluster.
+These information can be obtained at any time by executing the
+`terraform output` command within the directory from which you executed
+{tf}.
 ====
+
+=== Logging into the Cluster Nodes
+
+Connecting to the cluster nodes can be accomplished only via SSH key-based
+authentication thanks to the ssh-public key injection done earlier via
+`cloud-init`. You can use the predefined `ec2-user` user to log in.
+
+If the ssh-agent is running in the background, run:
+
+----
+ssh ec2-user@<node-ip-address>
+----
+
+Without the ssh-agent running, run:
+
+----
+ssh ec2-user@<node-ip-address> -i <path-to-your-ssh-private-key>
+----
+
+Once connected, you can execute commands using password-less `sudo`.

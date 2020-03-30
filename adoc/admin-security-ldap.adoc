@@ -43,6 +43,9 @@ To replace the automatically generated certificate with your own, follow these s
 docker stop 389-ds
 ----
 
+. Copy the external certificate `ca.cert` and `pwdfile.txt` to a mounted data directory `<DATA_DIR>/ssca/`.
+- `ca.cert`: CA Certificate.
+- `pwdfile.txt`: Password for the CA Certificate.
 . Copy the external certificate `Server-Cert-Key.pem`, `Server-Cert.crt`, and `pwdfile-import.txt` to a mounted data directory `<DATA_DIR>/config/`.
 - `Server-Cert-Key.pem`: PRIVATE KEY.
 - `Server-Cert.crt`: CERTIFICATE.
@@ -250,7 +253,7 @@ Example LDIF configuration to create group `k8s-admins` using an LDAP command:
   memberUid: user-admin
 ====
 
-==== Example 2: Dex LDAP TLS Connector Configuration (`addons/dex/dex.yaml`)
+==== Example 2: Dex LDAP TLS Connector Configuration (`addons/dex/patches/custom.yaml`)
 Dex connector template configured to use 389-DS:
 ----
 connectors:
@@ -338,7 +341,7 @@ connectors:
       nameAttr: cn
 ----
 
-Then, refer to <<_sec.admin.security.rbac.update>> to apply the dex.yaml and <<_sec.admin.security.rbac.apply>> to access through Web or CLI.
+Then, refer to <<_sec.admin.security.rbac.update>> to apply the Dex `custom.yaml` and <<_sec.admin.security.rbac.apply>> to access through Web or CLI.
 
 === Active Directory
 
