@@ -65,13 +65,11 @@ dn: cn=GROUP,ou=OU_NAME,dc=example,dc=org
 changetype: add
 objectClass: top
 objectClass: groupOfNames
-gidNumber: GROUPID
 cn: GROUP
 ----
 +
 * GROUP: Group name
 * OU_NAME: Organizational unit name
-* GROUPID: Group ID (GID) of the new group. This value should be a unique number.
 . Run `ldapmodify` to add the new group to the organizational unit:
 +
 ----
