@@ -1,0 +1,355 @@
+= Recover Master Nodes
+
+This chapter describes how to recover {productname} master nodes.
+
+== Replace Single Master Node
+
+. Remove the failed master node with skuba.
++
+Replace `<NODE_NAME>` with failed cluster master node name.
++
+----
+skuba node remove <NODE_NAME>
+----
+. Delete failed master node from `known_hosts`.
++
+Replace` <NODE_IP>` with failed master node IP address.
++
+----
+sed -i "/<NODE_IP>/d" known_hosts
+----
+. Prepare a new instance.
+. Use `skuba` to join master node from step 3.
++
+Replace `<NODE_IP>` with the new master node ip address.
++
+Replace `<NODE_NAME>` with the new master node name.
++
+Replace `<USER_NAME>` with user name.
++
+----
+skuba node join --role=master --user=<USER_NAME> --sudo --target <NODE_IP> <NODE_NAME>
+----
+
+== Recover All Master Nodes
+
+Ensure cluster version for backup/restore should be the same. Cross-version restoration in any domain is likely to  encounter data/API compatibility issues.
+
+=== Prerequisites
+
+You will only need to restore database on one of the master node (`master-0`) to regain control-plane access.
+The remaining master nodes will sync to the restored database after joining the cluster.
+
+Do the following on `master-0`. Remote restore is not supported.
+
+. Install one of the required software packages (`etcdctl`, Docker or Podman).
++
+* Etcdctl:
++
+----
+sudo zypper install etcdctl
+----
+* Docker:
++
+----
+sudo zypper install docker
+sudo systemctl start docker
+
+ETCD_IMAGE=`grep image: /etc/kubernetes/manifests/etcd.yaml | awk '{print $2}'`
+
+sudo docker pull ${ETCD_IMAGE}
+----
+* Podman:
++
+----
+sudo zypper install podman
+
+ETCD_IMAGE=`grep image: /etc/kubernetes/manifests/etcd.yaml | awk '{print $2}'`
+
+sudo podman pull ${ETCD_IMAGE}
+----
+. Have access to `etcd` snapshot from backup device.
+
+=== Procedure
+
+. Stop `etcd` on all master nodes.
++
+----
+mv /etc/kubernetes/manifests/etcd.yaml /tmp/
+----
+You can check `etcd` container does not exist with `crictl ps | grep etcd`
+. Purge `etcd` data on all master nodes.
++
+----
+sudo rm -rf /var/lib/etcd
+----
+. Login to `master-0` via SSH.
+. Restore `etcd` data.
++
+Replace `<SNAPSHOT_DIR>` with directory to the etcd snapshot,
+for example: `/share/backup/etcd_snapshot`
++
+Replace `<SNAPSHOT>` with the name of the `etcd` snapshot,
+for example: `etcd-snapshot-2019-11-08_05:19:20_GMT.db`
++
+Replace `<NODE_NAME>` with `master-0` cluster node name,
+for example: `skuba-master-1`
++
+Replace `<NODE_IP>` with `master-0` cluster node IP address.
++
+[IMPORTANT]
+====
+The `<NODE_NAME>` and `<NODE_IP>` must exist after `--initial-cluster` in `/etc/kubernetes/manifest/etcd.yaml`
+====
++
+* Etcdctl:
++
+----
+SNAPSHOT="<SNAPSHOT_DIR>/<SNAPSHOT>"
+NODE_NAME="<NODE_NAME>"
+NODE_IP="<NODE_IP>"
+
+sudo ETCDCTL_API=3 etcdctl snapshot restore ${SNAPSHOT}\
+ --data-dir /var/lib/etcd\
+ --name ${NODE_NAME}\
+ --initial-cluster ${NODE_NAME}=https://${NODE_IP}:2380\
+ --initial-advertise-peer-urls https://${NODE_IP}:2380
+----
+* Docker:
++
+----
+SNAPSHOT="<SNAPSHOT>"
+SNAPSHOT_DIR="<SNAPSHOT_DIR>"
+NODE_NAME="<NODE_NAME>"
+NODE_IP="<NODE_IP>"
+
+sudo docker run\
+ -v ${SNAPSHOT_DIR}:/etcd_snapshot\
+ -v /var/lib:/var/lib\
+ --entrypoint "" ${ETCD_IMAGE} /bin/bash -c "\
+ETCDCTL_API=3 etcdctl snapshot restore /etcd_snapshot/${SNAPSHOT}\
+ --data-dir /var/lib/etcd\
+ --name ${NODE_NAME}\
+ --initial-cluster ${NODE_NAME}=https://${NODE_IP}:2380\
+ --initial-advertise-peer-urls https://${NODE_IP}:2380"
+----
+* Podman:
++
+----
+SNAPSHOT="<SNAPSHOT>"
+SNAPSHOT_DIR="<SNAPSHOT_DIR>"
+NODE_NAME="<NODE_NAME>"
+NODE_IP="<NODE_IP>"
+
+sudo podman run\
+ -v ${SNAPSHOT_DIR}:/etcd_snapshot\
+ -v /var/lib:/var/lib\
+ --network host\
+ --entrypoint "" ${ETCD_IMAGE} /bin/bash -c "\
+ETCDCTL_API=3 etcdctl snapshot restore /etcd_snapshot/${SNAPSHOT}\
+ --data-dir /var/lib/etcd\
+ --name ${NODE_NAME}\
+ --initial-cluster ${NODE_NAME}=https://${NODE_IP}:2380\
+ --initial-advertise-peer-urls https://${NODE_IP}:2380"
+----
+. Start `etcd` on `master-0`.
++
+----
+mv /tmp/etcd.yaml /etc/kubernetes/manifests/
+----
+. You should be able to see `master-0` joined to the `etcd` cluster member list.
++
+Replace `<ENDPOINT_IP>` with `master-0` cluster node IP address.
++
+* Etcdctl:
++
+----
+sudo ETCDCTL_API=3 etcdctl\
+ --endpoints=https://127.0.0.1:2379\
+ --cacert=/etc/kubernetes/pki/etcd/ca.crt\
+ --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt\
+ --key=/etc/kubernetes/pki/etcd/healthcheck-client.key member list
+----
+* Docker:
++
+----
+ETCD_IMAGE=`grep image: /etc/kubernetes/manifests/etcd.yaml | awk '{print $2}'`
+ENDPOINT=<ENDPOINT_IP>
+
+sudo docker run\
+ -v /etc/kubernetes/pki/etcd:/etc/kubernetes/pki/etcd\
+ --entrypoint "" ${ETCD_IMAGE} /bin/bash -c "\
+ETCDCTL_API=3 etcdctl\
+ --endpoints=https://${ENDPOINT}:2379\
+ --cacert=/etc/kubernetes/pki/etcd/ca.crt\
+ --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt\
+ --key=/etc/kubernetes/pki/etcd/healthcheck-client.key member list"
+----
+* Podman:
++
+----
+ETCD_IMAGE=`grep image: /etc/kubernetes/manifests/etcd.yaml | awk '{print $2}'`
+ENDPOINT=<ENDPOINT_IP>
+
+sudo podman run\
+ -v /etc/kubernetes/pki/etcd:/etc/kubernetes/pki/etcd\
+ --network host\
+ --entrypoint "" ${ETCD_IMAGE} /bin/bash -c "\
+ETCDCTL_API=3 etcdctl\
+ --endpoints=https://${ENDPOINT}:2379\
+ --cacert=/etc/kubernetes/pki/etcd/ca.crt\
+ --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt\
+ --key=/etc/kubernetes/pki/etcd/healthcheck-client.key member list"
+----
+. Add another master node to the etcd cluster member list.
++
+Replace `<NODE_NAME>` with cluster node name,
+for example: `skuba-master-1`
++
+Replace `<ENDPOINT_IP>` with `master-0` cluster node IP address.
++
+Replace `<NODE_IP>` with cluster node IP address.
++
+[IMPORTANT]
+====
+The `<NODE_NAME>` and `<NODE_IP>` must exist after `--initial-cluster` in `/etc/kubernetes/manifest/etcd.yaml` of the targeting node.
+====
++
+[IMPORTANT]
+====
+Nodes must be restored in sequence.
+====
++
+* Etcdctl:
++
+----
+NODE_NAME="<NODE_NAME>"
+NODE_IP="<NODE_IP>"
+
+sudo ETCDCTL_API=3 etcdctl\
+ --endpoints=https://127.0.0.1:2379\
+ --cacert=/etc/kubernetes/pki/etcd/ca.crt\
+ --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt\
+ --key=/etc/kubernetes/pki/etcd/healthcheck-client.key\
+ member add ${NODE_NAME} --peer-urls=https://${NODE_IP}:2380
+----
+* Docker:
++
+----
+ETCD_IMAGE=`grep image: /etc/kubernetes/manifests/etcd.yaml | awk '{print $2}'`
+ENDPOINT=<ENDPOINT_IP>
+NODE_NAME="<NODE_NAME>"
+NODE_IP="<NODE_IP>"
+
+sudo docker run\
+ -v /etc/kubernetes/pki/etcd:/etc/kubernetes/pki/etcd\
+ --entrypoint "" ${ETCD_IMAGE} /bin/bash -c "\
+ETCDCTL_API=3 etcdctl\
+ --endpoints=https://${ENDPOINT}:2379\
+ --cacert=/etc/kubernetes/pki/etcd/ca.crt\
+ --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt\
+ --key=/etc/kubernetes/pki/etcd/healthcheck-client.key\
+ member add ${NODE_NAME} --peer-urls=https://${NODE_IP}:2380"
+----
+* Podman:
++
+----
+ETCD_IMAGE=`grep image: /etc/kubernetes/manifests/etcd.yaml | awk '{print $2}'`
+ENDPOINT=<ENDPOINT_IP>
+NODE_NAME="<NODE_NAME>"
+NODE_IP="<NODE_IP>"
+
+sudo podman run\
+ -v /etc/kubernetes/pki/etcd:/etc/kubernetes/pki/etcd\
+ --network host\
+ --entrypoint "" ${ETCD_IMAGE} /bin/bash -c "\
+ETCDCTL_API=3 etcdctl\
+ --endpoints=https://${ENDPOINT}:2379\
+ --cacert=/etc/kubernetes/pki/etcd/ca.crt\
+ --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt\
+ --key=/etc/kubernetes/pki/etcd/healthcheck-client.key\
+ member add ${NODE_NAME} --peer-urls=https://${NODE_IP}:2380"
+----
+. Login to the node in step 7 via SSH.
+. Start `etcd`.
++
+----
+cp /tmp/etcd.yaml /etc/kubernetes/manifests/
+----
+. Repeat step 7, 8, 9 to recover all remaining master nodes.
+
+=== Confirm the restoration
+After restoring, execute the below command to confirm the procedure. A successful restoration will show master nodes in `etcd` member list `started`, and all {kube} nodes in `STATUS Ready`.
+
+* Etcdctl:
++
+----
+sudo ETCDCTL_API=3 etcdctl\
+ --endpoints=https://127.0.0.1:2379\
+ --cacert=/etc/kubernetes/pki/etcd/ca.crt\
+ --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt\
+ --key=/etc/kubernetes/pki/etcd/healthcheck-client.key member list
+
+# EXAMPLE
+116c1458aef748bc, started, caasp-master-cluster-2, https://172.28.0.20:2380, https://172.28.0.20:2379
+3d124d6ad11cf3dd, started, caasp-master-cluster-0, https://172.28.0.26:2380, https://172.28.0.26:2379
+43d2c8b1d5179c01, started, caasp-master-cluster-1, https://172.28.0.6:2380, https://172.28.0.6:2379
+----
+* Docker:
++
+----
+ETCD_IMAGE=`grep image: /etc/kubernetes/manifests/etcd.yaml | awk '{print $2}'`
+
+# Replace <ENDPOINT_IP> with `master-0` cluster node IP address.
+ENDPOINT=<ENDPOINT_IP>
+
+sudo docker run\
+ -v /etc/kubernetes/pki/etcd:/etc/kubernetes/pki/etcd\
+ --entrypoint "" ${ETCD_IMAGE} /bin/bash -c "\
+ETCDCTL_API=3 etcdctl\
+ --endpoints=https://${ENDPOINT}:2379\
+ --cacert=/etc/kubernetes/pki/etcd/ca.crt\
+ --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt\
+ --key=/etc/kubernetes/pki/etcd/healthcheck-client.key member list"
+
+# EXAMPLE
+116c1458aef748bc, started, caasp-master-cluster-2, https://172.28.0.20:2380, https://172.28.0.20:2379
+3d124d6ad11cf3dd, started, caasp-master-cluster-0, https://172.28.0.26:2380, https://172.28.0.26:2379
+43d2c8b1d5179c01, started, caasp-master-cluster-1, https://172.28.0.6:2380, https://172.28.0.6:2379
+----
+* Podman:
++
+----
+ETCD_IMAGE=`grep image: /etc/kubernetes/manifests/etcd.yaml | awk '{print $2}'`
+
+# Replace <ENDPOINT_IP> with `master-0` cluster node IP address.
+ENDPOINT=<ENDPOINT_IP>
+
+sudo podman run\
+ -v /etc/kubernetes/pki/etcd:/etc/kubernetes/pki/etcd\
+ --network host\
+ --entrypoint "" ${ETCD_IMAGE} /bin/bash -c "\
+ETCDCTL_API=3 etcdctl\
+ --endpoints=https://${ENDPOINT}:2379\
+ --cacert=/etc/kubernetes/pki/etcd/ca.crt\
+ --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt\
+ --key=/etc/kubernetes/pki/etcd/healthcheck-client.key member list"
+
+# EXAMPLE
+116c1458aef748bc, started, caasp-master-cluster-2, https://172.28.0.20:2380, https://172.28.0.20:2379
+3d124d6ad11cf3dd, started, caasp-master-cluster-0, https://172.28.0.26:2380, https://172.28.0.26:2379
+43d2c8b1d5179c01, started, caasp-master-cluster-1, https://172.28.0.6:2380, https://172.28.0.6:2379
+----
+
+* Kubectl:
++
+----
+kubectl get nodes
+
+# EXAMPLE
+NAME                          STATUS   ROLES    AGE      VERSION
+caasp-master-cluster-0        Ready    master   28m      v1.16.2
+caasp-master-cluster-1        Ready    master   20m      v1.16.2
+caasp-master-cluster-2        Ready    master   12m      v1.16.2
+caasp-worker-cluster-0        Ready    <none>   36m36s   v1.16.2
+----
