@@ -3,7 +3,7 @@
 
 === Platform
 
-Currently we support:
+Currently we support the following platforms to deploy on:
 
 * SUSE OpenStack Cloud 8
 * VMware ESXi {vmware_version}
@@ -11,7 +11,15 @@ Currently we support:
 * Bare Metal x86_64
 * Amazon Web Services (technological preview)
 
+{productname} itself is based on *{slea} {base_os_version}*.
+
+The steps for obtaining the correct installation image for each platform type
+are detailed in the respective platform deployment instructions.
+
+
 === Nodes
+
+{productname} consists of a number of (virtual) machines that run as a cluster.
 
 You will need at least two machines:
 
@@ -48,7 +56,7 @@ All cluster nodes must be dedicated (virtual) machines reserved for the purpose 
 
 In order to deploy and control a {productname} cluster you will need at least one
 machine capable of running `skuba`. This typically is a regular desktop workstation or laptop
-running SLE 15 SP1 or later.
+running {slea} {base_os_version} or later.
 
 The `skuba` CLI package is available from the {productname} module.
 You will need a valid {sle} and {productname} subscription to install this tool on the workstation.
