@@ -265,7 +265,13 @@ with the `kured` reboot daemon.
 === Disabling Automatic Updates
 
 Nodes added to a cluster have the service `skuba-update.timer`, which is responsible for running automatic updates, activated by default.
+
 This service calls the `skuba-update` utility and it can be configured with the `/etc/sysconfig/skuba-update` file.
+[NOTE]
+===
+`skuba-update` uses the flags `--non-interactive --non-interactive-include-reboot-patches` when running. `--non-interactive-include-reboot-patches` when used in conjunction with `--non-interactive` this will treat patches with the `rebootSuggested-flag` as non-interactive as the reboot will be managed by `kured`.
+===
+
 To disable the automatic updates on a node, simply `ssh` to it and then configure the skuba-update service by editing the `/etc/sysconfig/skuba-update` file with the following runtime options:
 
 ----
