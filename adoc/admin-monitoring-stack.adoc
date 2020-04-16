@@ -176,15 +176,16 @@ kubectl create -n monitoring secret tls monitoring-tls  \
 ----
 
 == Installation
-.Two different examples of using ingress
-[NOTE]
-====
-There will be two different ways of using ingress for accessing the monitoring system.
-One will be using `subdomains` such as `+prometheus.example.com+`, `+prometheus-alertmanager.example.com+`, and `+grafana.example.com+`.
-Another deployment will be using `subpaths` for accessing monitoring system such as `example.com/prometheus`, `example.com/alertmanager`, and `example.com/grafana`.
-====
 
+There will be two different ways of using ingress for accessing the monitoring system.
+
+- <<installation_for_subdomains>>: Using `subdomains` for accessing monitoring system such as `+prometheus.example.com+`, `+prometheus-alertmanager.example.com+`, and `+grafana.example.com+`.
+
+- <<installation_for_subpaths>>: Using `subpaths` for accessing monitoring system such as `example.com/prometheus`, `example.com/alertmanager`, and `example.com/grafana`.
+
+[[installation_for_subdomains]]
 === Installation For Subdomains
+
 [NOTE]
 ====
 This installation example shows how to install and configure Prometheus and Grafana using subdomains such as `prometheus.example.com`, `prometheus-alertmanager.example.com`, and `grafana.example.com`.
@@ -692,6 +693,7 @@ continues with definition of dashboard JSON
 kubectl apply -f grafana-dashboards-caasp-cluster.yaml
 ----
 
+[[installation_for_subpaths]]
 === Installation For Subpaths
 
 [NOTE]
