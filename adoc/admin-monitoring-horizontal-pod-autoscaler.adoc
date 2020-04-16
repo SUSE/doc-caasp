@@ -104,16 +104,17 @@ kubectl autoscale replicationcontrollers <replicationcontrollers-name> \
     --max=<max_replicas_number> \
     --cpu-percent=<percent>
 ```
+
 You could for example use the following values:
 
 ```
-kubectl autoscale deployment example \
+kubectl autoscale deployment oidc-dex \
     --name=avg-cpu-util \
     --min=1 \
     --max=10 \
     --cpu-percent=50
 ```
-The example output below shows autoscaling for the example deployment. The HPA increases the minimum number of pods to 1 and will increase the pods up to 10, if the average CPU utilization of the pods reaches 50%. For more details about the inner workings of the scaling, refer to link:https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#algorithm-details[The Kubernetes documentation on the horizontal pod autoscale algorithm].
+The example output below shows autoscaling for the oidc-dex deployment. The HPA increases the minimum number of pods to 1 and will increase the pods up to 10, if the average CPU utilization of the pods reaches 50%. For more details about the inner workings of the scaling, refer to link:https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#algorithm-details[The Kubernetes documentation on the horizontal pod autoscale algorithm].
 
 To check the current status of the HPA run:
 ```
@@ -122,8 +123,8 @@ kubectl get hpa
 
 Example output:
 ```
-NAME           REFERENCE            TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
-avg-cpu-util   Deployment/example   0%/50%    1         10        1          2m4s
+NAME       REFERENCE             TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+oidc-dex   Deployment/oidc-dex   0%/50%          1         10        3          115s
 ```
 
 [NOTE]
