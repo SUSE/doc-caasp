@@ -410,6 +410,62 @@ serverFiles:
   alerts: {}
   rules:
     groups:
+    - name: caasp.certs.rules
+      rules:
+      - alert: KubernetesCertificateExpiry3Months
+        expr: (cert_exporter_cert_expires_in_seconds / 86400) < 90
+        labels:
+          severity: info
+        annotations:
+          description: 'The cert for {{ $labels.filename }} on {{ $labels.nodename }} node is going to expire in 3 months'
+      - alert: KubernetesCertificateExpiry30Days
+        expr: (cert_exporter_cert_expires_in_seconds / 86400) < 30
+        labels:
+          severity: warning
+        annotations:
+          description: 'The cert for {{ $labels.filename }} on {{ $labels.nodename }} node is going to expire in 30 days'
+      - alert: KubernetesCertificateExpiry7Days
+        expr: (cert_exporter_cert_expires_in_seconds / 86400) < 7
+        labels:
+          severity: error
+        annotations:
+          description: 'The cert for {{ $labels.filename }} on {{ $labels.nodename }} node is going to expire in 7 days'
+      - alert: KubeconfigCertificateExpiry3Months
+        expr: (cert_exporter_kubeconfig_expires_in_seconds / 86400) < 90
+        labels:
+          severity: info
+        annotations:
+          description: 'The cert for {{ $labels.filename }} on {{ $labels.nodename }} node is going to expire in 3 months'
+      - alert: KubeconfigCertificateExpiry30Days
+        expr: (cert_exporter_kubeconfig_expires_in_seconds / 86400) < 30
+        labels:
+          severity: warning
+        annotations:
+          description: 'The cert for {{ $labels.filename }} on {{ $labels.nodename }} node is going to expire in 30 days'
+      - alert: KubeconfigCertificateExpiry7Days
+        expr: (cert_exporter_kubeconfig_expires_in_seconds / 86400) < 7
+        labels:
+          severity: error
+        annotations:
+          description: 'The cert for {{ $labels.filename }} on {{ $labels.nodename }} node is going to expire in 7 days'
+      - alert: AddonCertificateExpiry3Months
+        expr: (cert_exporter_secret_expires_in_seconds / 86400) < 90
+        labels:
+          severity: info
+        annotations:
+          description: 'The cert for {{ $labels.secret_name }} is going to expire in 3 months'
+      - alert: AddonCertificateExpiry30Days
+        expr: (cert_exporter_secret_expires_in_seconds / 86400) < 30
+        labels:
+          severity: warning
+        annotations:
+          description: 'The cert for {{ $labels.secret_name }} is going to expire in 30 days'
+      - alert: AddonCertificateExpiry7Days
+        expr: (cert_exporter_secret_expires_in_seconds / 86400) < 7
+        labels:
+          severity: error
+        annotations:
+          description: 'The cert for {{ $labels.secret_name }} is going to expire in 7 days'
     - name: caasp.node.rules
       rules:
       - alert: NodeIsNotReady
