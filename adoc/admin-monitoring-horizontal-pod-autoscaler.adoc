@@ -13,7 +13,7 @@ The HPA `metrics.target.type` can be one of the following:
 
 [NOTE]
 ====
-The metrics supported by `metrics-server` are the *CPU* and *memory of a pod or node*.
+The metrics supported by `metrics-server` are the *CPU* and *memory* of a pod or node.
 ====
 
 [IMPORTANT]
@@ -32,7 +32,7 @@ It is useful to first find out about the available resources of your cluster.
 +
 [source,bash]
 ----
-$ kubectl -n kube-system top node
+$ kubectl top node
 ----
 +
 the expected output should look like the following:
@@ -44,11 +44,11 @@ master000   207m         10%    1756Mi          45%
 worker000   100m         10%    602Mi           31%
 ----
 
-* To display resource (CPU/Memory) usage for nodes, run:
+* To display resource (CPU/Memory) usage for pods, run:
 +
 [source,bash]
 ----
-$ kubectl -n kube-system top pod
+$ kubectl top pod
 ----
 +
 the expected output should look like the following:
