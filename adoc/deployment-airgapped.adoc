@@ -387,6 +387,26 @@ This will print out a list of the images skuba is expecting to use on the cluste
 Mirror those and setup the crio-registries to point to the location they are mirrored at.
 ====
 
+[TIP]
+====
+These images need to be available in the external and internal mirrors at the time you try to deploy SUSE CaaS Platform.
+Image tags are varies depending on your version of kubernetes you install.
+:===
+CATEGORY:IMAGE:URL
+KUBEADM:hyperkube:registry.suse.com/caasp/v4/hyperkube
+KUBEADM:pause:registry.suse.com/caasp/v4/pause
+KUBEADM:coredns:registry.suse.com/caasp/v4/coredns
+KUBEADM:etcd:egistry.suse.com/caasp/v4/etcd
+ADDONS:cilium:registry.suse.com/caasp/v4/cilium-init
+ADDONS:cilium:registry.suse.com/caasp/v4/cilium-operator
+ADDONS:cilium:registry.suse.com/caasp/v4/cilium
+ADDONS:dex:registry.suse.com/caasp/v4/caasp-dex
+ADDONS:gangway:registry.suse.com/caasp/v4/gangway
+ADDONS:kured:registry.suse.com/caasp/v4/kured
+MISC:skuba-tooling:registry.suse.com/caasp/v4/skuba-tooling
+:===
+====
+
 .Internal Registry Mirror Is Read Only
 [NOTE]
 ====
@@ -686,7 +706,7 @@ helm repo add <SUSE_MIRROR> https://charts.<MYMIRROR.LOCAL>
 ----
 
 [[airgap-update]]
-== Updating Registry Mirror And Helm Charts
+== Updating Registry Mirror For Helm Charts
 
 .Live Update Of Registry
 [NOTE]
