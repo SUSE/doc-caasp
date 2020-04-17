@@ -147,7 +147,7 @@ The following certificates are created by `skuba`:
 
 == Monitoring Certificates
 
-We use cert-export to monitors the node's on-disk certificates and addon Secret certificates. The cert-exporter exposes these certificates expirations to the cert-exporter `/metrics` endpoint. Then, the Prometheus server fetches the `/metrics` endpoint periodically.
+We use cert-export to monitors the node's on-disk certificates and addon Secret certificates. The cert-exporter scrapes these certificates periodically (1 hours by default) and exposes certificates expirations to it's `/metrics` endpoint. Then, the Prometheus server fetches the `/metrics` endpoint periodically.
 
 [source,bash]
 ----
@@ -166,6 +166,63 @@ Use Prometheus alerts to reactive recives the certificates status, follow the <<
 === Grafana Dashboards
 
 Use Grafana to proactive monitors the certificates, follow the <<adding_grafana_dashboards>> to install the Grafana dashboard to monitors certificates.
+
+=== Monitor Custom Secret Certificates
+
+If you have custom secret certificates you wish to monitor like you create TLS secret certificate manually or use link:https://cert-manager.io/[cert-manager] to issue TLS secret certificates automatically.
+
+. Prepare a yaml manifest `cert-exporter-custom-secret.yaml` with the following content:
++
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cert-exporter-custom-secret
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: cert-exporter
+  template:
+    metadata:
+      annotations:
+        prometheus.io/port: "8080"
+        prometheus.io/scrape: "true"
+      labels:
+        app: cert-exporter
+    spec:
+      serviceAccountName: cert-exporter-secret <1>
+      containers:
+      - image: registry.suse.com/caasp/v4/cert-exporter:2.2.0
+        imagePullPolicy: IfNotPresent
+        name: cert-exporter
+        command:
+        - cert-exporter
+        args:
+        - --secrets-namespace=cert-manager-test // <2>
+        - --secrets-include-glob=*.crt // <3>
+        - --secrets-exclude-glob=tls.key // <4>
+        - --secrets-label-selector= // <5>
+        - --secrets-annotation-selector= // <6>
+        - --alsologtostderr
+----
+<1> Name of the service account. The service account must have privilege to get and list the Secret resource.
+<2> Namespace of the custom secret, remove this if you want to scrapes multiple namespaces.
+<3> Specifies the secret data keys to scrape. You could create multiple secret data keys to scrape by creating multiple flag `secrets-include-glob`.
+<4> Specifies the secret data keys to not scrape. You could create multiple secret data keys to not scrape by creating multiple flag `secrets-exclude-glob`.
+<5> Specifies the secret label selector. You could create multiple label selectors by creating multiple flag `--secrets-label-selector`.
+<6> Specifies the secret annotation selector. You could create multiple annotation selectors by creating multiple flag `--secrets-annotation-selector`.
+
+. Apply the yaml manifest by running:
++
+[source,bash]
+----
+kubectl apply -f cert-exporter-custom-secret.yaml
+----
+
+. Build your own Grafana dashboard
++
+You could build your own Grafana dashboard by edit/clone the SUSE provided monitoring certificates dashboard.
 
 == Deployment with a Custom CA Certificate
 
