@@ -645,10 +645,14 @@ After pasting in the url, the view will change to another form.
 ----
 # monitor SUSE CaaS Platform cluster
 kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-monitoring/master/grafana-dashboards-caasp-cluster.yaml
-# monitor etcd
+# monitor SUSE CaaS Platform etcd cluster
 kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-monitoring/master/grafana-dashboards-caasp-etcd-cluster.yaml
-# monitor namespaces
+# monitor SUSE CaaS Platform nodes
+kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-monitoring/master/grafana-dashboards-caasp-nodes.yaml
+# monitor SUSE CaaS Platform namespaces
 kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-monitoring/master/grafana-dashboards-caasp-namespaces.yaml
+# monitor SUSE CaaS Platform pods
+kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-monitoring/master/grafana-dashboards-caasp-pods.yaml
 ----
 
 * Build your own dashboard
