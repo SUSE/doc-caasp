@@ -269,7 +269,7 @@ Nodes added to a cluster have the service `skuba-update.timer`, which is respons
 This service calls the `skuba-update` utility and it can be configured with the `/etc/sysconfig/skuba-update` file.
 [NOTE]
 ===
-`skuba-update` uses the flags `--non-interactive --non-interactive-include-reboot-patches`. `--non-interactive-include-reboot-patches`, when used in conjunction with `--non-interactive`, will cause patches with the `rebootSuggested-flag` not to be skipped. The reboot will be managed by `kured`.
+`skuba-update` uses the flags `--non-interactive` and `--non-interactive-include-reboot-patches`. The `--non-interactive` flag causes zypper to use default answers to questions rather than prompting a user.  In non-interactive mode, the `--non-interactive-include-reboot-patches` flag causes patches with the `rebootSuggested-flag` to not be skipped. Zypper does not perform the reboot directly. Instead, `kured` will be used to safely schedule reboots as needed.
 ===
 
 To disable the automatic updates on a node, simply `ssh` to it and then configure the skuba-update service by editing the `/etc/sysconfig/skuba-update` file with the following runtime options:
