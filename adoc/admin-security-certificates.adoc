@@ -145,6 +145,28 @@ The following certificates are created by `skuba`:
 |Client
 |===
 
+== Monitoring Certificates
+
+We use cert-export to monitors the node's on-disk certificates and addon Secret certificates. The cert-exporter exposes these certificates expirations to the cert-exporter `/metrics` endpoint. Then, the Prometheus server fetches the `/metrics` endpoint periodically.
+
+[source,bash]
+----
+helm repo add suse https://kubernetes-charts.suse.com
+helm install suse/cert-export --name ${RELEASE_NAME}
+----
+
+=== Prerequisites
+
+To monitor the certificates, we need monitoring stack, follow the <<monitoring_stack>> on how to deploy it.
+
+=== Prometheus Alerts
+
+Use Prometheus alerts to reactive recives the certificates status, follow the <<alertmanager_configuration_example>> on how to configure the Prometheus Alertmanager and Prometheus Server.
+
+=== Grafana Dashboards
+
+Use Grafana to proactive monitors the certificates, follow the <<adding_grafana_dashboards>> to install the Grafana dashboard to monitors certificates.
+
 == Deployment with a Custom CA Certificate
 
 [WARNING]
