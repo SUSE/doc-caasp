@@ -268,6 +268,7 @@ Nodes added to a cluster have the service `skuba-update.timer`, which is respons
 
 This service calls the `skuba-update` utility and it can be configured with the `/etc/sysconfig/skuba-update` file.
 
+.How skuba-update non-interactive mode works
 [NOTE]
 ====
 `skuba-update` uses the flags `--non-interactive` and `--non-interactive-include-reboot-patches`. The `--non-interactive` flag causes zypper to use default answers to questions rather than prompting a user for answers.  In non-interactive mode, the `--non-interactive-include-reboot-patches` flag causes patches with the `rebootSuggested-flag` to not be skipped. Zypper does not perform the reboot directly. Instead, `kured` will be used to safely schedule reboots as needed.
