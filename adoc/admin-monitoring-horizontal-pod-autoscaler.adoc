@@ -86,20 +86,22 @@ These include *average CPU utilization*, *average CPU value*, *average memory ut
 
 ==== Creating an HPA Using Average CPU Utilization
 
-The following code is an example of what this type of HPA can look like:
+The following code is an example of what this type of HPA can look like.
+You will have to run the code on your admin node or user local machine.
+Note that you need a kubeconfig file with RBAC permission that allow setting up autoscale rules into your {kube} cluster.
 
 ```
 # deployment
-kubectl autoscale deployment <deployment-name> \
-    --min=<min_replicas_number> \
-    --max=<max_replicas_number> \
-    --cpu-percent=<percent>
+kubectl autoscale deployment <DEPLOYMENT_NAME> \
+    --min=<MIN_REPLICAS_NUMBER> \
+    --max=<MAX_REPLICAS_NUMBER> \
+    --cpu-percent=<PERCENT>
 
 # replication controller
-kubectl autoscale replicationcontrollers <replicationcontrollers-name> \
-    --min=<min_replicas_number> \
-    --max=<max_replicas_number> \
-    --cpu-percent=<percent>
+kubectl autoscale replicationcontrollers <REPLICATIONCONTROLLERS_NAME> \
+    --min=<MIN_REPLICAS_NUMBER> \
+    --max=<MAX_REPLICAS_NUMBER> \
+    --cpu-percent=<PERCENT>
 ```
 
 You could for example use the following values:
@@ -111,7 +113,8 @@ kubectl autoscale deployment oidc-dex \
     --max=10 \
     --cpu-percent=50
 ```
-The example output below shows autoscaling for the oidc-dex deployment. The HPA increases the minimum number of pods to 1 and will increase the pods up to 10, if the average CPU utilization of the pods reaches 50%. For more details about the inner workings of the scaling, refer to link:https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#algorithm-details[The Kubernetes documentation on the horizontal pod autoscale algorithm].
+The example output below shows autoscaling works in case of the oidc-dex deployment.
+The HPA increases the minimum number of pods to 1 and will increase the pods up to 10, if the average CPU utilization of the pods reaches 50%. For more details about the inner workings of the scaling, refer to link:https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#algorithm-details[The Kubernetes documentation on the horizontal pod autoscale algorithm].
 
 To check the current status of the HPA run:
 ```
