@@ -355,6 +355,43 @@ net.ipv4.ip_forward = 1
 
 `net.ipv4.ip_forward` must be set to `1`. Additionally, you can check in what order persisted rules are processed by running `sysctl --system -a`.
 
+==== Networking Whitelist
+
+Besides the {suse} provided packages and containers, {productname} uses a couple of elements that are provided by third parties and must be downloaded by {kube}.
+
+The following resources must be available:
+
+{suse} resources:
+
+|===
+|URL|Name|Purpose
+
+|scc.suse.com|{scc}|Allow registration and license activation
+|registry.suse.com|{suse} container registry|Provide container images
+|kubernetes-charts.suse.com|{suse} helm charts repository|Provide helm charts
+|updates.suse.com|{suse} package update channel|Provide package updates
+|===
+
+Upstream / Third-Party resources
+
+|===
+|URL|Name|Purpose
+
+|k8s.gcr.io|Google Container Registry|Provide container images
+|*.cloudfront.net|Cloudfront|CDN/distribution backend for `registry.suse.com`
+|kubernetes-charts.storage.googleapis.com|Google Helm charts repository|Provide helm charts
+|docker.io|Docker Container Registry|Provide container images
+|quay.io|RedHat Container Registry|Provide container images
+|===
+
+Please note that not all installation scenarios will need all of these resources.
+
+[NOTE]
+====
+If you are deploying into an air gap scenario, you must ensure that the resources required
+from these locations are present and available on your internal mirror server.
+====
+
 ==== Communication
 
 Please make sure that all your Kubernetes components can communicate with each other.
