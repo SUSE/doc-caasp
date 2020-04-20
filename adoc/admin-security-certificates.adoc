@@ -147,17 +147,17 @@ The following certificates are created by `skuba`:
 
 == Monitoring Certificates
 
-We use cert-export to monitors the node's on-disk certificates and addon Secret certificates. The cert-exporter scrapes these certificates periodically (1 hours by default) and exposes certificates expirations to it's `/metrics` endpoint. Then, the Prometheus server fetches the `/metrics` endpoint periodically.
+We use cert-exporter to monitor nodes' on-host certificates and addons' secret certificates. The cert-exporter collects the metrics of certificates expiration periodically (1 hour by default) and exposes them through the `/metrics` endpoint. Then, the Prometheus server can scrape these metrics from the endpoint periodically.
 
 [source,bash]
 ----
 helm repo add suse https://kubernetes-charts.suse.com
-helm install suse/cert-export --name ${RELEASE_NAME}
+helm install suse/cert-exporter --name ${RELEASE_NAME}
 ----
 
 === Prerequisites
 
-. To monitor the certificates, we need monitoring stack, follow the <<monitoring_stack>> on how to deploy it.
+. To monitor certificates, we need to set up monitoring stack by following the <<monitoring_stack>> on how to deploy it.
 . Label the skuba addon certificates
 +
 [source,bash]
@@ -169,11 +169,11 @@ kubectl label --overwrite secret metrics-server-cert -n kube-system caasp.suse.c
 
 === Prometheus Alerts
 
-Use Prometheus alerts to reactive recives the certificates status, follow the <<alertmanager_configuration_example>> on how to configure the Prometheus Alertmanager and Prometheus Server.
+Use Prometheus alerts to reactively receive the status of the certificates, follow the <<alertmanager_configuration_example>> on how to configure the Prometheus Alertmanager and Prometheus Server.
 
 === Grafana Dashboards
 
-Use Grafana to proactive monitors the certificates, follow the <<adding_grafana_dashboards>> to install the Grafana dashboard to monitors certificates.
+Use Grafana to proactively monitor the status of the certificates, follow the <<adding_grafana_dashboards>> to install the Grafana dashboard to monitors certificates.
 
 == Deployment with a Custom CA Certificate
 
