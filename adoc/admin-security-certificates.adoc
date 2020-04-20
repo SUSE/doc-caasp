@@ -209,17 +209,17 @@ spec:
         args:
         - --secrets-namespace=cert-manager-test // <2>
         - --secrets-include-glob=*.crt // <3>
-        - --secrets-exclude-glob=tls.key // <4>
+        - --secrets-exclude-glob= // <4>
         - --secrets-label-selector= // <5>
         - --secrets-annotation-selector= // <6>
         - --alsologtostderr
 ----
 <1> Name of the service account. The service account must have privilege to get and list the Secret resource.
-<2> Namespace of the custom secret, remove this if you want to scrapes multiple namespaces.
-<3> Specifies the secret data keys to scrape. You could create multiple secret data keys to scrape by creating multiple flag `secrets-include-glob`.
-<4> Specifies the secret data keys to not scrape. You could create multiple secret data keys to not scrape by creating multiple flag `secrets-exclude-glob`.
-<5> Specifies the secret label selector. You could create multiple label selectors by creating multiple flag `--secrets-label-selector`.
-<6> Specifies the secret annotation selector. You could create multiple annotation selectors by creating multiple flag `--secrets-annotation-selector`.
+<2> Namespace of the custom secret, remove this if you don't need it.
+<3> Specifies the secret data keys to scrape, remove this if you don't need it or you could create multiple secret data keys to scrape by creating multiple flag `secrets-include-glob`.
+<4> Specifies the secret data keys to not scrape, remove this if you don't need it or you could create multiple secret data keys to not scrape by creating multiple flag `secrets-exclude-glob`.
+<5> Specifies the secret label selector, remove this if you don't need it or you could create multiple label selectors by creating multiple flag `--secrets-label-selector`.
+<6> Specifies the secret annotation selector, remove this if you don't need it or you could create multiple annotation selectors by creating multiple flag `--secrets-annotation-selector`.
 
 . Apply the yaml manifest by running:
 +
