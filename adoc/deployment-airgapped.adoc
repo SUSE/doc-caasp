@@ -246,8 +246,8 @@ You must configure at least these ports in all firewalls between the cluster and
 You need to define fully qualified domain names (FQDN) for both of the mirror servers in their respective network.
 These hostnames are the basis for the required SSL certificates and are used by the components to access the respective mirror sources.
 
+[[airgap-ssl-certificates]]
 ==== SSL Certificates
-
 
 You will need SSL/TLS certificates to secure services on each server.
 
@@ -801,8 +801,8 @@ Refer to: link:{docurl}single-html/caasp-admin/#software-installation[].
 Use the {productname} link:{docurl}single-html/caasp-deployment/[Deployment Guide] as usual.
 Some of the considerations below apply; depending of the chosen installation medium.
 
-Make sure to add the CA certificate of your {rmt} server as a systemwide certificate in {dashboard}
-during the {productname} deployment.
+Make sure to add the CA certificate of your {rmt} server during deployment.
+Refer to: <<airgap-ssl-certificates>>.
 
 === Using the ISO
 
