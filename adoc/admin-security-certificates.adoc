@@ -157,7 +157,15 @@ helm install suse/cert-export --name ${RELEASE_NAME}
 
 === Prerequisites
 
-To monitor the certificates, we need monitoring stack, follow the <<monitoring_stack>> on how to deploy it.
+. To monitor the certificates, we need monitoring stack, follow the <<monitoring_stack>> on how to deploy it.
+. Label the skuba addon certificates
++
+[source,bash]
+----
+kubectl label --overwrite secret oidc-dex-cert -n kube-system caasp.suse.com/skuba-addon=true
+kubectl label --overwrite secret oidc-gangway-cert -n kube-system caasp.suse.com/skuba-addon=true
+kubectl label --overwrite secret metrics-server-cert -n kube-system caasp.suse.com/skuba-addon=true
+----
 
 === Prometheus Alerts
 
@@ -359,6 +367,8 @@ kind: Secret
 metadata:
   name: oidc-dex-cert
   namespace: kube-system
+  labels:
+    caasp.suse.com/skuba-addon: "true"
 type: kubernetes.io/tls
 data:
   ca.crt: cat <TRUSTED_CA_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
@@ -410,6 +420,8 @@ kind: Secret
 metadata:
   name: oidc-gangway-cert
   namespace: kube-system
+  labels:
+    caasp.suse.com/skuba-addon: "true"
 type: kubernetes.io/tls
 data:
   ca.crt: cat <TRUSTED_CA_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
@@ -524,6 +536,8 @@ kind: Secret
 metadata:
   name: oidc-dex-cert
   namespace: kube-system
+  labels:
+    caasp.suse.com/skuba-addon: "true"
 type: kubernetes.io/tls
 data:
   ca.crt: cat <CA_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
@@ -580,6 +594,8 @@ kind: Secret
 metadata:
   name: oidc-gangway-cert
   namespace: kube-system
+  labels:
+    caasp.suse.com/skuba-addon: "true"
 type: kubernetes.io/tls
 data:
   ca.crt: cat <CA_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
