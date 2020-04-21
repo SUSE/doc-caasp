@@ -175,6 +175,68 @@ Use Prometheus alerts to reactively receive the status of the certificates, foll
 
 Use Grafana to proactively monitor the status of the certificates, follow the <<adding_grafana_dashboards>> to install the Grafana dashboard to monitors certificates.
 
+=== Monitor Custom Secret Certificates
+
+If you have custom secret certificates you wish to monitor like you create TLS secret certificate manually or use link:https://cert-manager.io/[cert-manager] to issue TLS secret certificates automatically.
+
+For examples:
+
+. Monitor cert-manager issues certificates in cert-managert-test namespace.
++
+[source,bash]
+----
+helm install suse/cert-exporter \
+    --name ${RELEASE_NAME} \
+    --set customSecret.enabled=true \
+    --set customSecret.certs[0].name=cert-manager \
+    --set customSecret.certs[0].namespace=cert-manager-test \
+    --set customSecret.certs[0].includeKeys="{ca.crt,tls.crt}" \
+    --set customSecret.certs[0].annotationSelector="{cert-manager.io/certificate-name}"
+----
+. Monitor certificates in all namespaces filtered by label selector.
++
+[source,bash]
+----
+helm install suse/cert-exporter \
+    --name ${RELEASE_NAME} \
+    --set customSecret.enabled=true \
+    --set customSecret.certs[0].name=self-signed-cert \
+    --set customSecret.certs[0].includeKeys="{ca.crt,tls.crt}" \
+    --set customSecret.certs[0].labelSelector="{key=value}"
+----
+. Deploy both 1. and 2. together.
++
+[source,bash]
+----
+helm install suse/cert-exporter \
+    --name ${RELEASE_NAME} \
+    --set customSecret.enabled=true \
+    --set customSecret.certs[0].name=cert-manager \
+    --set customSecret.certs[0].namespace=cert-manager-test \
+    --set customSecret.certs[0].includeKeys="{ca.crt,tls.crt}" \
+    --set customSecret.certs[0].annotationSelector="{cert-manager.io/certificate-name}" \
+    --set customSecret.certs[1].name=self-signed-cert \
+    --set customSecret.certs[1].includeKeys="{ca.crt,tls.crt}" \
+    --set customSecret.certs[1].labelSelector="{key=value}"
+----
+. Monitor custom certificates only without monitor node and addon certificates.
++
+[source,bash]
+----
+helm install suse/cert-exporter \
+    --name ${RELEASE_NAME} \
+    --set node.enabled=false \
+    --set addon.enabled=false \
+    --set customSecret.enabled=true \
+    --set customSecret.certs[0].name=cert-manager \
+    --set customSecret.certs[0].namespace=cert-manager-test \
+    --set customSecret.certs[0].includeKeys="{ca.crt,tls.crt}" \
+    --set customSecret.certs[0].annotationSelector="{cert-manager.io/certificate-name}" \
+    --set customSecret.certs[1].name=self-signed-cert \
+    --set customSecret.certs[1].includeKeys="{ca.crt,tls.crt}" \
+    --set customSecret.certs[1].labelSelector="{key=value}"
+----
+
 == Deployment with a Custom CA Certificate
 
 [WARNING]
