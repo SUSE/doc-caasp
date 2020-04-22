@@ -333,6 +333,9 @@ Please remember to set proper file permissions for it, for example `600`.
     scsicontrollertype = pvscsi // <12>
     [Network]
     public-network = "VM Network" // <13>
+    [Labels] // <14>
+    region = "<VC_DATACENTER_TAG>" // <15>
+    zone = "<VC_CLUSTER_TAG>" // <16>
 ====
 <1> (required) Refers to the vCenter username for vSphere cloud provider to authenticate with.
 <2> (required) Refers to the vCenter password for vCenter user specified with `user`.
@@ -347,6 +350,12 @@ Please remember to set proper file permissions for it, for example `600`.
 <11> (required) The vCenter VM folder where Kubernetes nodes are in.
 <12> (required) Defines the SCSI controller in use on the VMs. Almost always set to `pvscsi`.
 <13> (optional) The network in vCenter where Kubernetes nodes should join. The default is "VM Network" if not specified.
+<14> (optional) The feature flag for zone and region support.
+[IMPORTANT]
+The zone and region tags must exist and assigned to datacenter and cluster before bootstrap. Instruction to tag zones and regions, reference to: https://vmware.github.io/vsphere-storage-for-kubernetes/documentation/zones.html#tag-zones-and-regions-in-vcenter.
+
+<15> (optional) The category name of the tag assigned to the vCenter datacenter.
+<16> (optional) The category name of the tag assigned to the vCenter cluster.
 
 After setting options in the `vsphere.conf` file, please proceed with <<cluster.bootstrap>>.
 
