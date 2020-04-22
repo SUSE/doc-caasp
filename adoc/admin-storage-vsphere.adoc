@@ -1,0 +1,248 @@
+= vSphere Storage
+The vSphere cloud provider can be enabled with {productname} to allow Kubernetes pods to use VMWare vSphere Virtual Machine Disk (VMDK) volumes as persistent storage.
+
+This chapter provides the two types of persistent volume usage and description.
+
+== Node Meta
+Extra node meta could be found when region and zone was added to `vsphere.conf` before bootstrap cluster node.
+
+====
+    [Labels]
+    region = "<VC_DATACENTER_TAG>"
+    zone = "<VC_CLUSTER_TAG>"
+====
+
+You can view the cloudprovider associated node meta with command.
+----
+kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}{"\tregion: "}{.metadata.labels.failure-domain\.beta\.kubernetes\.io/region}{"\tzone: "}{.metadata.labels.failure-domain\.beta\.kubernetes\.io/zone}{"\n"}{end}'
+...
+010084072206    region: vcp-provo       zone: vcp-cluster-jazz
+010084073045    region: vcp-provo       zone: vcp-cluster-jazz
+----
+
+== Static Persistent Volume
+. Create new VMDK volume in datastore. The VMDK volume used in persistent volume must exist before the resource is created.
++
+You can use `govc` to automate the task. 
++
+Install intruction refer to https://github.com/vmware/govmomi/tree/master/govc.
++
+----
+govc datastore.disk.create -dc <DATA_CENTER> -ds <DATA_STORE> -size <DISK_SIZE> <DISK_NAME>
+----
+<DATA_CENTER> The datacenter name in vCenter where Kubernetes nodes reside.
++
+<DATA_STORE> The datastore in vCenter where volume should be created.
++
+<DISK_SIZE> The volume size to create, for example 1G.
++
+<DISK_NAME> The VMDK volume name. for example my-disk.vmdk, or my-cluster-folder/my-disk.vmdk.
+
+. Create persistent volume - sample-static-pv.yaml.
++
+----
+kubectl create -f sample-static-pv.yaml
+----
++
+====
+    apiVersion: v1
+    kind: PersistentVolume
+    metadata:
+      name: sample-static-pv // <1>
+    spec:
+      capacity:
+        storage: 1Gi // <2>
+      accessModes:
+      - ReadWriteOnce
+      persistentVolumeReclaimPolicy: Delete // <3>
+      vsphereVolume:
+        volumePath: "[datastore] volume/path" // <4>
+        fsType: ext4 // <5>
+====
+<1> The name of persistent volume resource.
+<2> The disk size available.
+<3> The policy for how persistent volume should be handled when it is released.
+<4> The path to VMDK volume. This path must exist.
+<5> The file system type to mount.
+
+. Create persistent volume claim - sample-static-pvc.yaml. 
++
+----
+kubectl create -f sample-static-pvc.yaml
+----
++
+====
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: sample-static-pvc
+      labels:
+        app: sample
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi // <1>
+====
+<1> The require volume size.
+
+. Create deployement - sample-static-deployment.yaml.
++
+----
+kubectl create -f sample-static-deployment.yaml
+----
++
+====
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: sample-static-deployment
+      labels:
+        app: sample
+        tier: sample
+    spec:
+      selector:
+        matchLabels:
+          app: sample
+          tier: sample
+      strategy:
+        type: Recreate
+      template:
+        metadata:
+          labels:
+            app: sample
+            tier: sample
+        spec:
+          containers:
+          - image: busybox
+            name: sample
+            volumeMounts:
+            - name: sample-volume
+              mountPath: /data // <1>
+            command: [ "sleep", "infinity" ]
+          volumes:
+          - name: sample-volume
+            persistentVolumeClaim:
+              claimName: sample-static-pvc // <2>
+====
++
+<1> The volume mount path in deployed pod.
+<2> The requested persistent volume claim name.
+
+. Check persistent volume claim is bonded and pod is running.
++
+----
+kubectl get pvc
+...
+NAME                STATUS   VOLUME             CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+sample-static-pvc   Bound    sample-static-pv   1Gi        RWO                           55s
+
+kubectl get pod
+...
+NAME                                        READY   STATUS    RESTARTS   AGE
+sample-static-deployment-549dc77d76-pwdqw   1/1     Running   0          3m42s
+----
+
+== Dynamic Persistent Volume
+
+. Create storage class - sample-sc.yaml.
++
+----
+kubectl create -f sample-sc.yaml
+----
++
+====
+    kind: StorageClass
+    apiVersion: storage.k8s.io/v1
+    metadata:
+      name: sample-sc
+      annotations:
+        storageclass.kubernetes.io/is-default-class: "true" // <1>
+    provisioner: kubernetes.io/vsphere-volume
+    parameters:
+      datastore: "datastore" // <2>
+====
+<1> Set as the default storage class.
+<2> The datastore name in vCenter where volume should be created.
+
+. Create persistent volume claim - sample-dynamic-pvc.yaml.
++
+----
+kubectl create -f sample-dynamic-pvc.yaml
+----
++
+====
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: sample-dynamic-pvc
+      annotations:
+        volume.beta.kubernetes.io/storage-class: sample-sc // <1>
+      labels:
+        app: sample
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi // <2>
+====
+<1> Annotate with storage class name to use the storage class created. 
+<2> The require volume size.
+
+. Create deployment - sample-deployment.yaml
++
+----
+kubectl create -f sample-deployment.yaml
+----
++
+====
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: sample-dynamic-deployment
+    labels:
+      app: sample
+      tier: sample
+  spec:
+    selector:
+      matchLabels:
+        app: sample
+        tier: sample
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          app: sample
+          tier: sample
+      spec:
+        containers:
+        - image: busybox
+          name: sample
+          volumeMounts:
+          - name: sample-volume
+            mountPath: /data // <1>
+          command: [ "sleep", "infinity" ]
+        volumes:
+        - name: sample-volume
+          persistentVolumeClaim:
+            claimName: sample-dynamic-pvc // <2>
+====
+<1> The volume mount path in deployed pod
+<2> The requested persistent volume claim name
+
+. Check persistent volume claim is bonded and pod is running.
++
+----
+kubectl get pvc
+...
+NAME                 STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+sample-dynamic-pvc   Bound    pvc-0ca694b5-0084-4e36-bef1-5b2354158d79   1Gi        RWO            sample-sc      70s
+
+kubectl get pod
+...
+NAME                                         READY   STATUS    RESTARTS   AGE
+sample-dynamic-deployment-687765d5b5-67vnh   1/1     Running   0          20s
+----
