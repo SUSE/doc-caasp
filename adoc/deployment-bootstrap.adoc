@@ -300,8 +300,8 @@ skuba cluster init --control-plane <LB_IP/FQDN> --cloud-provider vsphere my-clus
 ----
 
 Running the above command will create a directory `my-cluster/cloud/vsphere` with a
-`README.md` and an `vsphere.conf.template` in it. Copy `vsphere.conf.template`
-or create an `vsphere.conf` file inside `my-cluster/cloud/vsphere`,
+`README.md` and a `vsphere.conf.template` in it. Copy `vsphere.conf.template`
+or create a `vsphere.conf` file inside `my-cluster/cloud/vsphere`,
 according to the supported format.
 The supported format and content can be found in the official Kubernetes documentation:
 
@@ -319,29 +319,34 @@ Please remember to set proper file permissions for it, for example `600`.
     [Global]
     user = "<VC_ADMIN_USERNAME>" // <1>
     password = "<VC_ADMIN_PASSWORD>" // <2>
-    insecure-flag = "1" // <3>
-    [VirtualCenter <VC_IP_OR_FQDN>] // <4>
-    datacenters = "<VC_DATACENTERS>" // <5>
+    port = "443" // <3>
+    insecure-flag = "1" // <4>
+    [VirtualCenter <VC_IP_OR_FQDN>] // <5>
+    datacenters = "<VC_DATACENTERS>" // <6>
     [Workspace]
-    server = "<VC_IP_OR_FQDN>" // <6>
-    datacenter = "<VC_DATACENTER>" // <7>
-    default-datastore = "<VC_DATASTORE>" // <8>
-    resourcepool-path = "<VC_RESOURCEPOOL_PATH>" // <9>
-    folder = "<VC_VM_FOLDER>" // <10>
+    server = "<VC_IP_OR_FQDN>" // <7>
+    datacenter = "<VC_DATACENTER>" // <8>
+    default-datastore = "<VC_DATASTORE>" // <9>
+    resourcepool-path = "<VC_RESOURCEPOOL_PATH>" // <10>
+    folder = "<VC_VM_FOLDER>" // <11>
     [Disk]
-    scsicontrollertype = pvscsi // <11>
+    scsicontrollertype = pvscsi // <12>
+    [Network]
+    public-network = "VM Network" // <13>
 ====
 <1> (required) Refers to the vCenter username for vSphere cloud provider to authenticate with.
-<2> (required) Refers to the vCenter password for vCenter user spcecified with `user`.
-<3> (optional) Set to 1 if vCenter used a self-signed certificate.
-<4> (required) The IP address of the vCenter server.
-<5> (required) The datacenter name in vCenter where Kubernetes nodes reside.
-<6> (required) The IP address of the vCenter server for storage provisioning. Usually the same as `VirtualCenter`
-<7> (required) The datacenter to provision temporary VMs for volume provisioning.
-<8> (required) The default datastore to provision temporary VMs for volume provisioning.
-<9> (required) The resource pool to provision temporary VMs for volume provisioning.
-<10> (required) The vCenter VM folder where Kubernetes nodes are in.
-<11> (required) Defines the SCSI controller in use on the VMs. Almost always set to `pvscsi`.
+<2> (required) Refers to the vCenter password for vCenter user specified with `user`.
+<3> (optional) The vCenter Server Port. The default is 443 if not specified.
+<4> (optional) Set to 1 if vCenter used a self-signed certificate.
+<5> (required) The IP address of the vCenter server.
+<6> (required) The datacenter name in vCenter where Kubernetes nodes reside.
+<7> (required) The IP address of the vCenter server for storage provisioning. Usually the same as `VirtualCenter`
+<8> (required) The datacenter to provision temporary VMs for volume provisioning.
+<9> (required) The default datastore to provision temporary VMs for volume provisioning.
+<10> (required) The resource pool to provision temporary VMs for volume provisioning.
+<11> (required) The vCenter VM folder where Kubernetes nodes are in.
+<12> (required) Defines the SCSI controller in use on the VMs. Almost always set to `pvscsi`.
+<13> (optional) The network in vCenter where Kubernetes nodes should join. The default is "VM Network" if not specified.
 
 After setting options in the `vsphere.conf` file, please proceed with <<cluster.bootstrap>>.
 
