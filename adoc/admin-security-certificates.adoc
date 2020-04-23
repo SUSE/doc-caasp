@@ -177,11 +177,11 @@ Use Grafana to proactively monitor the status of the certificates, follow the <<
 
 === Monitor Custom Secret Certificates
 
-If you have custom secret certificates you wish to monitor like you create TLS secret certificate manually or use link:https://cert-manager.io/[cert-manager] to issue TLS secret certificates automatically.
+You can monitor custom secret TLS certificates that you created manually or using link:https://cert-manager.io/[cert-manager].
 
-For examples:
+For example:
 
-. Monitor cert-manager issues certificates in cert-managert-test namespace.
+. Monitor cert-manager issued certificates in the `cert-managert-test` namespace.
 +
 [source,bash]
 ----
@@ -219,7 +219,7 @@ helm install suse/cert-exporter \
     --set customSecret.certs[1].includeKeys="{ca.crt,tls.crt}" \
     --set customSecret.certs[1].labelSelector="{key=value}"
 ----
-. Monitor custom certificates only without monitor node and addon certificates.
+. Monitor custom certificates only, disregarding node and addon certificates.
 +
 [source,bash]
 ----
