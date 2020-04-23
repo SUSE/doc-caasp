@@ -81,7 +81,7 @@ See <<Optional settings>> for the facultative parameters and their default value
 [source,bash]
 ----
 helm repo add suse https://kubernetes-charts.suse.com
-helm install suse/log-agent-rsyslog --name ${RELEASE_NAME} --namespace logging --set server.host=${SERVER_HOST} --set server.port=${SERVER_PORT}
+helm install suse/log-agent-rsyslog --name ${RELEASE_NAME} --namespace kube-system --set server.host=${SERVER_HOST} --set server.port=${SERVER_PORT}
 ----
 
 [NOTE]
