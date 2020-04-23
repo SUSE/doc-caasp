@@ -38,8 +38,7 @@ Grafana is an open-source system for querying, analysing and visualizing metrics
 
 . NGINX Ingress Controller
 +
-Please refer to <<nginx-ingress>> on how to congifure ingress in your cluster. Deploying NGINX Ingress Controller also allows us to provide TLS termination to our services and to provide basic authentication to the Prometheus Expression browser/API.
-
+Please refer to <<nginx-ingress>> on how to configure ingress in your cluster. Deploying NGINX Ingress Controller also allows us to provide TLS termination to our services and to provide basic authentication to the Prometheus Expression browser/API.
 
 . Create DNS entries
 +
@@ -87,7 +86,7 @@ Or add this entry to `/etc/hosts`
 +
 We need to create a `basic-auth` secret so the NGINX Ingress Controller can perform authentication.
 +
-Install apache2-utils, which contains htpasswd, on your local workstation.
+Install `apache2-utils`, which contains `htpasswd`, on your local workstation.
 +
 [source,bash]
 ----
@@ -350,15 +349,15 @@ prometheus-server         prometheus.example.com                          80, 44
 
 The configuration example sets one "receiver" to get notified by email when one of below conditions is met:
 
-* Node is unschedulable: severity is critical because the node cannot accept new pods
-* Node runs out of disk space: severity is critical because the node cannot accept new pods
-* Node has memory pressure: severity is warning
-* Node has disk pressure: severity is warning
-* Certificates is going to expire in 7 days: severity is critical
-* Certificates is going to expire in 30 days: severity is warning
-* Certificates is going to expire in 3 months: severity is info
+* Node is unschedulable: severity is `critical` because the node cannot accept new pods
+* Node runs out of disk space: severity is `critical` because the node cannot accept new pods
+* Node has memory pressure: severity is `warning`
+* Node has disk pressure: severity is `warning`
+* Certificates is going to expire in 7 days: severity is `critical`
+* Certificates is going to expire in 30 days: severity is `warning`
+* Certificates is going to expire in 3 months: severity is `info`
 
-. Configures alerting receiver in Alertmanager
+. Configure alerting receiver in Alertmanager
 +
 The Alertmanager handles alerts sent by Prometheus server, it takes care of deduplicating, grouping, and routing them to the correct receiver integration such as email. It also takes care of silencing and inhibition of alerts.
 +
