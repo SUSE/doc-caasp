@@ -324,9 +324,11 @@ systemctl enable --now haproxy
 === Verifying the Load Balancer
 
 [IMPORTANT]
+====
 The {productname} cluster must be up and running for this to produce any useful
 results. This step can only be performed after <<bootstrap>> is completed
 successfully.
+====
 
 To verify that the load balancer works, you can run a simple command to repeatedly
 retrieve cluster information from the master nodes. Each request should be forwarded
@@ -339,7 +341,7 @@ From your workstation, run:
 while true; do skuba cluster status; sleep 1; done;
 ----
 
-There should be no interruption in the  *skuba cluster status* running command.
+There should be no interruption in the *skuba cluster status* running command.
 
 On the load balancer virtual machine, check the logs to validate
 that each request is correctly distributed in a round robin way.

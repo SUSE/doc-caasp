@@ -406,6 +406,7 @@ Please consult the documentation of your respective service what the replica lim
 In case the replica number is too high for the cluster, you must increase the cluster size to provide more resources.
 
 . Reduce deployment replica size before node joining.
++
 [NOTE]
 ====
 You can use the same steps to increase the replica size again if more resources become available later on.
@@ -434,3 +435,4 @@ kubectl -n kube-system get pod -o wide
 +
 ----
 kubectl -n kube-system delete pod <POD_NAME>
+----
