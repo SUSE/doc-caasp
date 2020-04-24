@@ -380,3 +380,59 @@ In the current state, full administrative access is granted to the cluster.
 
 Authentication is done via the kubeconfig file generated during deployment. This file will grant full access to the cluster and all workloads.
 Apply best practices for access control to workstations configured to administer the {productname} cluster.
+
+==== Replicas
+
+Some addon services are desired to be highly available. These services require enough cluster nodes available to run replicas of their services.
+
+When the cluster is deployed with enough nodes for replica sizes, those service distributions will be balanced across the cluster.
+
+For clusters deployed with a node number lower than the default replica sizes, services will still try to find a suitable node to run on.
+However it is likely you will see services all running on the same nodes, defeating the purpose of high availability.
+
+You can check the deployment replica size after node bootstrap. The number of cluster nodes should be equal or greater than the `DESIRED` replica size.
+----
+kubectl get rs -n kube-system
+----
+
+After deployment, if the number of healthy nodes falls below the number required for fulfilling the replica sizing, service replicas will show in `Pending` state until either the unhealthy node recovers or a new node is joined to cluster.
+
+The following describes two methods for replica management if you wish to work with a cluster below the default replica size requirement.
+
+===== Reduce replica number
+
+One method is to reduce the number of overall replicas being created by a service.
+Please consult the documentation of your respective service what the replica limits for proper high availability are.
+In case the replica number is too high for the cluster, you must increase the cluster size to provide more resources.
+
+. Reduce deployment replica size before node joining.
++
+[NOTE]
+====
+You can use the same steps to increase the replica size again if more resources become available later on.
+====
++
+----
+kubectl -n kube-system edit deployment <NAME>
+
+# Example
+spec:
+  replicas: 2
+----
+. Join new nodes.
+
+===== Re-distribute replicas
+
+When multiple replicas are running on the same pod you will want to redistribute those manually to ensure proper high availability,
+
+. Find the pod for re-distribution.
+Check the `NAME` and `NODE` column for duplicated pods.
++
+----
+kubectl -n kube-system get pod -o wide
+----
+. Delete duplicated pod. This will trigger another pod creation.
++
+----
+kubectl -n kube-system delete pod <POD_NAME>
+----
