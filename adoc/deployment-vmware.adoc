@@ -290,6 +290,13 @@ caasp_registry_code = "CAASP_REGISTRATION_CODE"
 +
 This is required so all the deployed nodes can automatically register with {scc} and retrieve packages.
 
+. You can also enable Cloud Provider Integration with vSphere.
++
+----
+# Enable CPI integration with vSphere
+cpi_enable = true
+----
+
 Once the files are adjusted, `terraform` needs to know about the `vSphere` server
 and the login details for it; these can be exported as environment variables or
 entered every time `terraform` is invoked.
