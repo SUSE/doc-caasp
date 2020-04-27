@@ -41,7 +41,6 @@ OS Components::
 
 Centralized Logging is also restricted to the following protocols: UDP, TCP, TCP + TLS, TCP + mTLS.
 
-
 == Log Formats
 
 The two supported syslog message formats are *RFC 5424* and *RFC 3164*.
@@ -89,6 +88,16 @@ helm install suse/log-agent-rsyslog --name ${RELEASE_NAME} --namespace kube-syst
 If not specified otherwise, Helm will install log agents with TCP as the default value for `server.protocol`.
 ====
 
+[WARNING]
+====
+Running Rsyslog in the host machine as well as in the {kube} cluster with `imjournal` and `imfile` input modules enabled may causes issues. Rsyslog can crash.
+To avoid that, it is possible to disable the `imjournal` module in the helm chart installation adding the following command line argument:
+
+[source,bash]
+----
+--set logs.osSystem.enabled=false
+----
+====
 
 After this step, all of the log agents will initialize then start to forward logs from each node to the configured remote Rsyslog server.
 
