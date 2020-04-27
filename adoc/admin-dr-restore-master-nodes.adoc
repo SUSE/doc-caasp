@@ -38,7 +38,9 @@ Ensure cluster version for backup/restore should be the same. Cross-version rest
 === Prerequisites
 
 You will only need to restore database on one of the master node (`master-0`) to regain control-plane access.
-The remaining master nodes will sync to the restored database after joining the cluster.
+`etcd` will sync the database to all master nodes in the cluster once restored.
+This does not mean, however, that the nodes will automatically be added back to the cluster.
+You must join one master node to the cluster, restore the database and then continue adding your remaining master nodes (which then will sync automatically).
 
 Do the following on `master-0`. Remote restore is not supported.
 
