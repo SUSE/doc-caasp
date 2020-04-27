@@ -14,6 +14,8 @@ Extra node meta could be found when region and zone was added to `vsphere.conf` 
     zone = "<VC_CLUSTER_TAG>"
 ====
 
+Regions refers to the datacenter and zones refers to the cluster grouping of hosts within the datacenter. Adding region and zone makes Kubernetes persistent volume created with zone and region labels. With such environment, Kubernetes pod scheduler is set to be locational aware for the persistent volume. For more information refer to: https://vmware.github.io/vsphere-storage-for-kubernetes/documentation/zones.html.
+
 You can view the cloudprovider associated node meta with command.
 ----
 kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}{"\tregion: "}{.metadata.labels.failure-domain\.beta\.kubernetes\.io/region}{"\tzone: "}{.metadata.labels.failure-domain\.beta\.kubernetes\.io/zone}{"\n"}{end}'
