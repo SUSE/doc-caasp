@@ -357,28 +357,28 @@ net.ipv4.ip_forward = 1
 
 ==== Networking Whitelist
 
-Besides the {suse} provided packages and containers, {productname} uses a couple of elements that are provided by third parties and must be downloaded by {kube}.
+Besides the {suse} provided packages and containers, {productname} is typically used with third party provided containers and charts.
 
-The following resources must be available:
+The following {suse} provided resources must be available:
 
-{suse} resources:
-
+[options="header,autowidth"]
 |===
 |URL|Name|Purpose
 
 |scc.suse.com|{scc}|Allow registration and license activation
 |registry.suse.com|{suse} container registry|Provide container images
+|*.cloudfront.net|Cloudfront|CDN/distribution backend for `registry.suse.com`
 |kubernetes-charts.suse.com|{suse} helm charts repository|Provide helm charts
 |updates.suse.com|{suse} package update channel|Provide package updates
 |===
 
-Upstream / Third-Party resources
+For additional Upstream / Third-Party resources please also allow the following:
 
+[options="header,autowidth"]
 |===
 |URL|Name|Purpose
 
 |k8s.gcr.io|Google Container Registry|Provide container images
-|*.cloudfront.net|Cloudfront|CDN/distribution backend for `registry.suse.com`
 |kubernetes-charts.storage.googleapis.com|Google Helm charts repository|Provide helm charts
 |docker.io|Docker Container Registry|Provide container images
 |quay.io|RedHat Container Registry|Provide container images
