@@ -11,7 +11,7 @@ For more information on the audit log and its contents, see: https://kubernetes.
 The Kubernetes audit log only collects and stores actions performed on the level of the cluster. This does not include any resulting actions of application services.
 
 == Enable Auditing During Cluster Bootrap
-. Create audit policy file - audit.yaml. Here uses a simple policy for demonstration.
+. Create audit policy file - `audit.yaml`. Here uses a simple policy for demonstration.
 +
 ====
   apiVersion: audit.k8s.io/v1beta1
@@ -19,7 +19,7 @@ The Kubernetes audit log only collects and stores actions performed on the level
   rules:
     - level: Metadata // <1>
 ====
-<1> The audit level of the event. This sample log all requests at the Metadata level. For detailed information, refer to: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#audit-policy
+<1> The audit level of the event. This sample will log all requests at the Metadata level. For detailed information, refer to: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#audit-policy
 
 . Create audit policy file directory on all master nodes.
 +
@@ -76,8 +76,7 @@ apiServer:
 [NOTE]
 The following steps takes effect only on the updated master nodes. You need to repeat the following steps on every master node in cluster.
 
-
-. Create audit policy file - audit.yaml. Here uses a simple policy for demonstration.
+. Create audit policy file - `audit.yaml`. Here uses a simple policy for demonstration.
 +
 ====
   apiVersion: audit.k8s.io/v1beta1
@@ -85,7 +84,7 @@ The following steps takes effect only on the updated master nodes. You need to r
   rules:
     - level: Metadata // <1>
 ====
-<1> The audit level of the event. This sample log all requests at the Metadata level. For detailed information, refer to: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#audit-policy
+<1> The audit level of the event. This sample will log all requests at the Metadata level. For detailed information, refer to: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#audit-policy
 
 . Create audit policy file directory on master node.
 +
@@ -136,9 +135,9 @@ spec:
 <6> The audit policy configuration file path on the api-server pod.
 <7> The audit log file directory on the api-server pod.
 <8> The audit policy configuration file path from the host node's filesystem. 
-<9> The audit log file directory from the host node's filesystem
+<9> The audit log file directory from the host node's filesystem.
 
-. Restart kubelet on all master node. 
+. Restart kubelet.
 +
 ----
 sudo systemctl restart kubelet
@@ -183,7 +182,7 @@ ssh sles@<master_node>
     name: audit-logs
 ====
 
-. Restart kubelet on all master node. 
+. Restart kubelet.
 +
 ----
 sudo systemctl restart kubelet
