@@ -43,7 +43,7 @@ apiServer:
     audit-policy-file: /etc/kubernetes/policies/audit.yaml // <1>
     audit-log-maxage: "30" // <2>
     audit-log-maxsize: "100" // <3>
-    audit-log-maxbackup: "2" // <4>
+    audit-log-maxbackup: "5" // <4>
     audit-log-format: json // <5>
   extraVolumes:
   - name: audit-policy
@@ -106,7 +106,7 @@ spec:
     - --audit-policy-file=/etc/kubernetes/policies/audit.yaml // <1>
     - --audit-log-maxage=30 // <2>
     - --audit-log-maxsize=100 // <3>
-    - --audit-log-maxbackup=2 // <4>
+    - --audit-log-maxbackup=5 // <4>
     - --audit-log-format=json // <5>
  ...
     volumeMounts:
@@ -163,7 +163,7 @@ ssh sles@<master_node>
     - --audit-policy-file=/etc/kubernetes/policies/audit.yaml
     - --audit-log-maxage=30
     - --audit-log-maxsize=100
-    - --audit-log-maxbackup=2
+    - --audit-log-maxbackup=5
     - --audit-log-format=json
  ...
     - mountPath: /etc/kubernetes/policies/audit.yaml
