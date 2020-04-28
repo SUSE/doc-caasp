@@ -1,16 +1,17 @@
 = Audit Log
 
-To track actions that have been performed on the cluster, you can enable the Kubernetes audit log during cluster bootstrap or on a running cluster.
+To track actions that have been performed on the cluster, you can enable the {kube} audit log during cluster bootstrap or on a running cluster.
 
-This allows the audit logs to be written on the Kubernetes master nodes at /var/log/kube-apiserver/audit.log or the given path.
+This allows the audit logs to be written on the {kube} master nodes at `/var/log/kube-apiserver/audit.log` or the given path.
 
 For more information on the audit log and its contents, see: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/
 
-
 == Limitations
-The Kubernetes audit log only collects and stores actions performed on the level of the cluster. This does not include any resulting actions of application services.
 
-== Enable Auditing During Cluster Bootrap
+The {kube} audit log only collects and stores actions performed on the level of the cluster. This does not include any resulting actions of application services.
+
+== Enable Auditing During Cluster Bootstrap
+
 . Create audit policy file - `audit.yaml`. Here uses a simple policy for demonstration.
 +
 ====
@@ -19,8 +20,8 @@ The Kubernetes audit log only collects and stores actions performed on the level
   rules:
     - level: Metadata // <1>
 ====
-<1> The audit level of the event. This sample will log all requests at the Metadata level. For detailed information, refer to: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#audit-policy
-
+<1> The audit level of the event. This sample will log all requests at the Metadata level. 
+For detailed information, refer to: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#audit-policy
 . Create audit policy file directory on all master nodes.
 +
 ----
@@ -71,10 +72,12 @@ apiServer:
 
 . If everything is setup correctly, you should be able to see audit logs are written to `/var/log/kube-apiserver/audit.log`.
 
-
 == Enable Auditing On Running Cluster
+
 [NOTE]
-The following steps takes effect only on the updated master nodes. You need to repeat the following steps on every master node in cluster.
+====
+The following steps take effect only on the updated master nodes. You need to repeat the following steps on every master node in the cluster.
+====
 
 . Create audit policy file - `audit.yaml`. Here uses a simple policy for demonstration.
 +
@@ -143,12 +146,15 @@ spec:
 sudo systemctl restart kubelet
 ----
 
-. If everything is setup correctly, you should be able to see audit logs are written to `/var/log/kube-apiserver/audit.log`.
+. If everything is set up correctly, you should be able to see audit logs being written to `/var/log/kube-apiserver/audit.log`.
 
 
 == Disable Auditing
+
 [NOTE]
-The following steps takes effect only on the updated master nodes. You need to repeat the following steps on every master node in cluster.
+====
+The following steps take effect only on the updated master nodes. You need to repeat the following steps on every master node in the cluster.
+====
 
 . Remote access to the master node.
 ----
