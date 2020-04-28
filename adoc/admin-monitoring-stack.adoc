@@ -448,6 +448,64 @@ helm upgrade prometheus suse/prometheus --namespace monitoring --values promethe
 * **External IPs**: `+https://prometheus-alertmanager.example.com+`
 * **LoadBalancer**: `+https://prometheus-alertmanager.example.com+`
 
+[[recording_rules_configuration_example]]
+==== Recording Rules Configuration Example
+
+Recording rules allow you to precompute frequently needed or computationally
+expensive expressions and save their result as a new set of time series.
+Querying the precomputed result will then often be much faster than executing
+the original expression every time it is needed. This is especially useful for
+dashboards, which need to query the same expression repeatedly every time they
+refresh. Another common use case is federation where precomputed metrics are
+scraped from one Prometheus instance by another.
+
+For more information on how to configure recording rules, refer to
+link:https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/#recording-rules[Prometheus:Recording Rules - Configuration].
+
+. Configuring recording rules
++
+Add the following group of rules in the `serverFiles` section of the `prometheus-config-values.yaml` configuration file.
++
+----
+serverFiles:
+  alerts: {}
+  rules:
+    groups:
+    - name: node-exporter.rules
+      rules:
+      - expr: count by (instance) (count without (mode) (node_cpu_seconds_total{component="node-exporter"}))
+        record: instance:node_num_cpu:sum
+      - expr: 1 - avg by (instance) (rate(node_cpu_seconds_total{component="node-exporter",mode="idle"}[5m]))
+        record: instance:node_cpu_utilisation:rate5m
+      - expr: node_load1{component="node-exporter"} / on (instance) instance:node_num_cpu:sum
+        record: instance:node_load1_per_cpu:ratio
+      - expr: node_memory_MemAvailable_bytes / on (instance) node_memory_MemTotal_bytes
+        record: instance:node_memory_utilisation:ratio
+      - expr: rate(node_vmstat_pgmajfault{component="node-exporter"}[5m])
+        record: instance:node_vmstat_pgmajfault:rate5m
+      - expr: rate(node_disk_io_time_seconds_total{component="node-exporter", device=~"nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+"}[5m])
+        record: instance_device:node_disk_io_time_seconds:rate5m
+      - expr: rate(node_disk_io_time_weighted_seconds_total{component="node-exporter", device=~"nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+"}[5m])
+        record: instance_device:node_disk_io_time_weighted_seconds:rate5m
+      - expr: sum by (instance) (rate(node_network_receive_bytes_total{component="node-exporter", device!="lo"}[5m]))
+        record: instance:node_network_receive_bytes_excluding_lo:rate5m
+      - expr: sum by (instance) (rate(node_network_transmit_bytes_total{component="node-exporter", device!="lo"}[5m]))
+        record: instance:node_network_transmit_bytes_excluding_lo:rate5m
+      - expr: sum by (instance) (rate(node_network_receive_drop_total{component="node-exporter", device!="lo"}[5m]))
+        record: instance:node_network_receive_drop_excluding_lo:rate5m
+      - expr: sum by (instance) (rate(node_network_transmit_drop_total{component="node-exporter", device!="lo"}[5m]))
+        record: instance:node_network_transmit_drop_excluding_lo:rate5m
+----
+. To apply the changed configuration, run:
++
+----
+helm upgrade prometheus suse/prometheus --namespace monitoring --values prometheus-config-values.yaml
+----
+. You should now be able to see your configured rules, depending on your network configuration
+* **NodePort**: `+https://prometheus.example.com:32443/rules+`
+* **External IPs**: `+https://prometheus.example.com/rules+`
+* **LoadBalancer**: `+https://prometheus.example.com/rules+`
+
 ==== Grafana
 
 Starting from Grafana 5.0, it is possible to dynamically provision the data sources and dashboards via files.
@@ -762,6 +820,9 @@ prometheus-server-6488f6c4cd-5n9w8               2/2       Running   0          
 
 ==== Alertmanager Configuration Example
 Refer to <<alertmanager_configuration_example>>
+
+==== Recording Rules Configuration Example
+Refer to <<recording_rules_configuration_example>>
 
 ==== Grafana
 
