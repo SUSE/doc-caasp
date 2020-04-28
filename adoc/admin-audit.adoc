@@ -24,10 +24,10 @@ The Kubernetes audit log only collects and stores actions performed on the level
 . Create audit policy file directory on all master nodes.
 +
 ----
-mkdir -p /etc/kubernetes/policies
+sudo mkdir -p /etc/kubernetes/policies
 ----
 
-. Copy audit policy file - audit.yaml to /etc/kubernetes/policies/audit.yaml on all master nodes.
+. Copy audit policy file - `audit.yaml` to `/etc/kubernetes/policies/audit.yaml` on all master nodes.
 
 . Edit `kubeadm-init.conf` file in skuba init folder to add audit related configurations.
 +
@@ -89,10 +89,10 @@ The following steps takes effect only on the updated master nodes. You need to r
 . Create audit policy file directory on master node.
 +
 ----
-mkdir -p /etc/kubernetes/policies
+sudo mkdir -p /etc/kubernetes/policies
 ----
 
-. Copy audit policy file - audit.yaml to /etc/kubernetes/policies/audit.yaml on master node.
+. Copy audit policy file - `audit.yaml` to `/etc/kubernetes/policies/audit.yaml` on master node.
 
 . Edit `/etc/kubernetes/manifests/kube-apiserver.yaml`.
 +
