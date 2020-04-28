@@ -93,26 +93,26 @@ requires your credentials. These can be obtained by following these steps:
 * Click menu:Create Access Key[] on the "Security Credentials" tab.
 * Note down the newly created _Access_ and _Secret_ keys.
 
-=== Create IAM Role, Role Policy, and Instance Profile through AWS CLI ===
+=== Create IAM Role, Role Policy, and Instance Profile through AWS CLI
 
-For user who does not have permission to create IAM role, role policy, and instance profile using terraform, devops should create them for you using instruction below:
+Users who do not have permission to create IAM role, role policy, and instance profile using terraform, devops should create them for you, using the instructions below:
 
 * `STACK_NAME`: Cluster Stack Name
 
-Install AWS CLI:
-
+. Install AWS CLI:
++
 ----
 sudo zypper --gpg-auto-import-keys install -y aws-cli
 ----
 
-Setup AWS credentials:
-
+. Setup AWS credentials:
++
 ----
 aws configure
 ----
 
-Prepare role policy:
-
+. Prepare role policy:
++
 ----
 cat <<*EOF* >"./<STACK_NAME>-trust-policy.json"
 {
@@ -131,8 +131,8 @@ cat <<*EOF* >"./<STACK_NAME>-trust-policy.json"
 *EOF*
 ----
 
-Prepare master instance policy:
-
+. Prepare master instance policy:
++
 ----
 cat <<*EOF* >"./<STACK_NAME>-master-role-trust-policy.json"
 {
@@ -205,9 +205,8 @@ cat <<*EOF* >"./<STACK_NAME>-master-role-trust-policy.json"
 *EOF*
 ----
 
-
-Prepare worker instance policy:
-
+. Prepare worker instance policy:
++
 ----
 cat <<*EOF* >"./<STACK_NAME>-worker-role-trust-policy.json"
 {
@@ -233,29 +232,29 @@ cat <<*EOF* >"./<STACK_NAME>-worker-role-trust-policy.json"
 *EOF*
 ----
 
-Create roles:
-
+. Create roles:
++
 ----
 aws iam create-role --role-name <STACK_NAME>_cpi_master --assume-role-policy-document file://<FILE_DIRECTORY>/<STACK_NAME>-trust-policy.json
 aws iam create-role --role-name <STACK_NAME>_cpi_worker --assume-role-policy-document file://<FILE_DIRECTORY>/<STACK_NAME>-trust-policy.json
 ----
 
-Create instance role policies:
-
+. Create instance role policies:
++
 ----
 aws iam put-role-policy --role-name <STACK_NAME>_cpi_master --policy-name <STACK_NAME>_cpi_master --policy-document file://<FILE_DIRECTORY>/<STACK_NAME>-master-role-trust-policy.json
 aws iam put-role-policy --role-name <STACK_NAME>_cpi_worker --policy-name <STACK_NAME>_cpi_worker --policy-document file://<FILE_DIRECTORY>/<STACK_NAME>-worker-role-trust-policy.json
 ----
 
-Create instance profiles:
-
+. Create instance profiles:
++
 ----
 aws iam create-instance-profile --instance-profile-name <STACK_NAME>_cpi_master
 aws iam create-instance-profile --instance-profile-name <STACK_NAME>_cpi_worker
 ----
 
-Add role to instance profiles:
-
+. Add role to instance profiles:
++
 ----
 aws iam add-role-to-instance-profile --role-name <STACK_NAME>_cpi_master --instance-profile-name <STACK_NAME>_cpi_master
 aws iam add-role-to-instance-profile --role-name <STACK_NAME>_cpi_worker --instance-profile-name <STACK_NAME>_cpi_worker
