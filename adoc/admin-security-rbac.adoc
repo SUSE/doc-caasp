@@ -183,16 +183,29 @@ login username and password.
 
 The kubeconfig file (`kubeconf.txt`) contains the OIDC tokens necessary to perform authentication and authorization in the cluster.
 OIDC tokens have an *expiration date* which means that they need to be refreshed after some time.
-If you use the *same user in multiples kubeconfig files* distributed among multiple machines,
-this can lead to issues, because only one of the machines will be able to refresh the token.
-The user will be able to download multiple kubeconfig files, but they will only work until one of them needs to refresh the session.
+
+[IMPORTANT]
+====
+If you use the same user in multiple `kubeconfig` files distributed among multiple machines,
+this can lead to issues. Due to the nature off access and refresh tokens (https://tools.ietf.org/html/rfc6749#page-10) only one of the machines will be fully able to refresh the token set at any given time.
+
+The user will be able to download multiple `kubeconfig` files, but they will only work until one of them needs to refresh the session.
 After that, only one machine will work, namely the first machine which refreshed the token.
 
-*A workaround for this issue* is using multiple users for different kubeconfig
-files. See how to add more users in <<_sec.admin.security.users.add>>.
-You can also check information about the user and the respective OIDC tokens in the kubeconfig file under the `users` section:
+Dex regards one session per user and refreshes `id-token` and `refresh-token` together.
+If there is a second user trying to login to get a new `id-token`, Dex will invalidate the previous `id-token` and `refresh-token` for the first user.
+The first user will still be able to use the old `id-token` until expiration but after that the first user is not allowed to refresh the `id-token` with the now invalid `refresh-token`.
+Only the second user will have a valid `refresh-token`. You will encounter an error like: `"msg="failed to rotate keys: keys already rotated by another server instance"`.
 
------
+If sharing the same `id-token` in many places, all of them can be used until expiration.
+The first user refreshing the `id-token` & `refresh token` will be able to continue accessing the cluster until the tokens expire.
+All other users will encounter an error `Refresh token is invalid or has already been claimed by another client` because the `refresh-token` got updated by the first user.
+
+Please use separate users for each `kubeconfig` file to avoid this situation.
+Find out how to add more users in <<_sec.admin.security.users.add>>.
+You can also check information about the user and the respective OIDC tokens in the `kubeconfig` file under the `users` section:
+
+----
 users:
 - name: myuser
   user:
@@ -204,8 +217,8 @@ users:
         idp-issuer-url: https://<IP>:<PORT>
         refresh-token: <REFRESH_TOKEN>
       name: oidc
------
-
+----
+====
 
 ==== Access {kube} Resources
 
