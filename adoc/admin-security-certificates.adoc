@@ -145,98 +145,6 @@ The following certificates are created by `skuba`:
 |Client
 |===
 
-== Monitoring Certificates
-
-We use cert-exporter to monitor nodes' on-host certificates and addons' secret certificates. The cert-exporter collects the metrics of certificates expiration periodically (1 hour by default) and exposes them through the `/metrics` endpoint. Then, the Prometheus server can scrape these metrics from the endpoint periodically.
-
-[source,bash]
-----
-helm repo add suse https://kubernetes-charts.suse.com
-helm install suse/cert-exporter --name ${RELEASE_NAME}
-----
-
-=== Prerequisites
-
-. To monitor certificates, we need to set up monitoring stack by following the <<monitoring_stack>> on how to deploy it.
-. Label the skuba addon certificates
-+
-[source,bash]
-----
-kubectl label --overwrite secret oidc-dex-cert -n kube-system caasp.suse.com/skuba-addon=true
-kubectl label --overwrite secret oidc-gangway-cert -n kube-system caasp.suse.com/skuba-addon=true
-kubectl label --overwrite secret metrics-server-cert -n kube-system caasp.suse.com/skuba-addon=true
-----
-
-=== Prometheus Alerts
-
-Use Prometheus alerts to reactively receive the status of the certificates, follow the <<alertmanager_configuration_example>> on how to configure the Prometheus Alertmanager and Prometheus Server.
-
-=== Grafana Dashboards
-
-Use Grafana to proactively monitor the status of the certificates, follow the <<adding_grafana_dashboards>> to install the Grafana dashboard to monitors certificates.
-
-=== Monitor Custom Secret Certificates
-
-You can monitor custom secret TLS certificates that you created manually or using link:https://cert-manager.io/[cert-manager].
-
-For example:
-
-. Monitor cert-manager issued certificates in the `cert-managert-test` namespace.
-+
-[source,bash]
-----
-helm install suse/cert-exporter \
-    --name ${RELEASE_NAME} \
-    --set customSecret.enabled=true \
-    --set customSecret.certs[0].name=cert-manager \
-    --set customSecret.certs[0].namespace=cert-manager-test \
-    --set customSecret.certs[0].includeKeys="{ca.crt,tls.crt}" \
-    --set customSecret.certs[0].annotationSelector="{cert-manager.io/certificate-name}"
-----
-. Monitor certificates in all namespaces filtered by label selector.
-+
-[source,bash]
-----
-helm install suse/cert-exporter \
-    --name ${RELEASE_NAME} \
-    --set customSecret.enabled=true \
-    --set customSecret.certs[0].name=self-signed-cert \
-    --set customSecret.certs[0].includeKeys="{ca.crt,tls.crt}" \
-    --set customSecret.certs[0].labelSelector="{key=value}"
-----
-. Deploy both 1. and 2. together.
-+
-[source,bash]
-----
-helm install suse/cert-exporter \
-    --name ${RELEASE_NAME} \
-    --set customSecret.enabled=true \
-    --set customSecret.certs[0].name=cert-manager \
-    --set customSecret.certs[0].namespace=cert-manager-test \
-    --set customSecret.certs[0].includeKeys="{ca.crt,tls.crt}" \
-    --set customSecret.certs[0].annotationSelector="{cert-manager.io/certificate-name}" \
-    --set customSecret.certs[1].name=self-signed-cert \
-    --set customSecret.certs[1].includeKeys="{ca.crt,tls.crt}" \
-    --set customSecret.certs[1].labelSelector="{key=value}"
-----
-. Monitor custom certificates only, disregarding node and addon certificates.
-+
-[source,bash]
-----
-helm install suse/cert-exporter \
-    --name ${RELEASE_NAME} \
-    --set node.enabled=false \
-    --set addon.enabled=false \
-    --set customSecret.enabled=true \
-    --set customSecret.certs[0].name=cert-manager \
-    --set customSecret.certs[0].namespace=cert-manager-test \
-    --set customSecret.certs[0].includeKeys="{ca.crt,tls.crt}" \
-    --set customSecret.certs[0].annotationSelector="{cert-manager.io/certificate-name}" \
-    --set customSecret.certs[1].name=self-signed-cert \
-    --set customSecret.certs[1].includeKeys="{ca.crt,tls.crt}" \
-    --set customSecret.certs[1].labelSelector="{key=value}"
-----
-
 == Deployment with a Custom CA Certificate
 
 [WARNING]
@@ -372,8 +280,6 @@ kind: Secret
 metadata:
   name: oidc-dex-cert
   namespace: kube-system
-  labels:
-    caasp.suse.com/skuba-addon: "true"
 type: kubernetes.io/tls
 data:
   ca.crt: cat <TRUSTED_CA_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
@@ -425,8 +331,6 @@ kind: Secret
 metadata:
   name: oidc-gangway-cert
   namespace: kube-system
-  labels:
-    caasp.suse.com/skuba-addon: "true"
 type: kubernetes.io/tls
 data:
   ca.crt: cat <TRUSTED_CA_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
@@ -541,8 +445,6 @@ kind: Secret
 metadata:
   name: oidc-dex-cert
   namespace: kube-system
-  labels:
-    caasp.suse.com/skuba-addon: "true"
 type: kubernetes.io/tls
 data:
   ca.crt: cat <CA_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
@@ -599,8 +501,6 @@ kind: Secret
 metadata:
   name: oidc-gangway-cert
   namespace: kube-system
-  labels:
-    caasp.suse.com/skuba-addon: "true"
 type: kubernetes.io/tls
 data:
   ca.crt: cat <CA_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
