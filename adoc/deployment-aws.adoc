@@ -85,6 +85,8 @@ link:https://aws.amazon.com/iam/[IAM] profiles to be associated with the control
 plane and worker instances. {tf} can create these profiles or can leverage existing ones.
 It all depends on the rights of the user invoking {tf}.
 
+NOTE: Known issue: Current terrarform script does not properly create IAM resources, instead please follows the instruction in <<aws-iam-profile-cli>> to create IAM role, role policy, and instance profile. This limitation will be addressed in the following release. 
+
 The {tf} link:https://www.terraform.io/docs/providers/aws/index.html[AWS provider]
 requires your credentials. These can be obtained by following these steps:
 
