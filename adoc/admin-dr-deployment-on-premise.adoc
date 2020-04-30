@@ -24,7 +24,7 @@ helm install \
     --set-file credentials.secretContents.cloud=credentials-velero \
     --set configuration.provider=aws \
     --set configuration.backupStorageLocation.name=default \
-    --set configuration.backupStorageLocation.name=<BUCKET_NAME> \
+    --set configuration.backupStorageLocation.bucket=<BUCKET_NAME> \
     --set configuration.backupStorageLocation.config.region=<REGION_NAME> \
     --set snapshotsEnabled=false \
     --set initContainers[0].name=velero-plugin-for-aws \
@@ -64,7 +64,7 @@ helm install \
     --set-file credentials.secretContents.cloud=credentials-velero \
     --set configuration.provider=gcp \
     --set configuration.backupStorageLocation.name=default \
-    --set configuration.backupStorageLocation.name=<BUCKET_NAME> \
+    --set configuration.backupStorageLocation.bucket=<BUCKET_NAME> \
     --set snapshotsEnabled=false \
     --set initContainers[0].name=velero-plugin-for-gcp \
     --set initContainers[0].image=registry.suse.com/caasp/v4/velero-plugin-for-gcp:1.0.1 \
@@ -104,7 +104,7 @@ helm install \
     --set-file credentials.secretContents.cloud=credentials-velero \
     --set configuration.provider=azure \
     --set configuration.backupStorageLocation.name=default \
-    --set configuration.backupStorageLocation.name=<BUCKET_NAME> \
+    --set configuration.backupStorageLocation.bucket=<BUCKET_NAME> \
     --set configuration.backupStorageLocation.config.resourceGroup=<AZURE_RESOURCE_GROUP> \
 	--set configuration.backupStorageLocation.config.storageAccount=<AZURE_STORAGE_ACCOUNT_ID> \
     --set snapshotsEnabled=false \
@@ -173,7 +173,7 @@ helm install \
     --set-file credentials.secretContents.cloud=credentials-velero \
     --set configuration.provider=aws \
     --set configuration.backupStorageLocation.name=default \
-    --set configuration.backupStorageLocation.name=<BUCKET_NAME> \
+    --set configuration.backupStorageLocation.bucket=<BUCKET_NAME> \
     --set configuration.backupStorageLocation.config.region=<REGION_NAME> \
     --set snapshotsEnabled=true \
     --set deployRestic=true \
@@ -216,7 +216,7 @@ helm install \
     --set-file credentials.secretContents.cloud=credentials-velero \
     --set configuration.provider=gcp \
     --set configuration.backupStorageLocation.name=default \
-    --set configuration.backupStorageLocation.name=<BUCKET_NAME> \
+    --set configuration.backupStorageLocation.bucket=<BUCKET_NAME> \
     --set snapshotsEnabled=true \
     --set deployRestic=true \
     --set configuration.volumeSnapshotLocation.name=default \
@@ -258,7 +258,7 @@ helm install \
     --set-file credentials.secretContents.cloud=credentials-velero \
     --set configuration.provider=azure \
     --set configuration.backupStorageLocation.name=default \
-    --set configuration.backupStorageLocation.name=<BUCKET_NAME> \
+    --set configuration.backupStorageLocation.bucket=<BUCKET_NAME> \
     --set configuration.backupStorageLocation.config.resourceGroup=<AZURE_RESOURCE_GROUP> \
 	--set configuration.backupStorageLocation.config.storageAccount=<AZURE_STORAGE_ACCOUNT_ID> \
     --set snapshotsEnabled=true \
@@ -312,7 +312,7 @@ helm install \
     --set-file credentials.secretContents.cloud=credentials-velero \
     --set configuration.provider=aws \
     --set configuration.backupStorageLocation.name=default \
-    --set configuration.backupStorageLocation.name=<BUCKET_NAME> \
+    --set configuration.backupStorageLocation.bucket=<BUCKET_NAME> \
     --set configuration.backupStorageLocation.config.region=<REGION_NAME> \
     --set configuration.backupStorageLocation.config.s3ForcePathStyle=true \
     --set configuration.backupStorageLocation.config.s3Url=<S3_COMPATIBLE_STORAGE_SERVER_URL> \
