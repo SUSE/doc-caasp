@@ -1,0 +1,68 @@
+== From Kubernetes 1.17 to 1.18
+
+This documentation page lists all the behavioral changes and API deprecations that will happen from Kubernetes 1.17 to 1.18. This is going to be relevant when migrating to {productname} 4.3.x, since it will bring Kubernetes 1.18.
+
+=== API deprecations
+
+The following APIs have been deprecated:
+
+- All resources under *apps/v1beta1* and *apps/v1beta2*: please use *apps/v1* instead.
+- *daemonsets*, *deployments*, *replicasets* under *extensions/v1beta1*: please use *apps/v1* instead.
+- *networkpolicies* under *extensions/v1beta1*: please use *networking.k8s.io/v1* instead.
+- *podsecuritypolicies* resources under *extensions/v1beta1*: please use *policy/v1beta1* instead.
+
+=== Behavioral changes
+
+In this section we will highlight some relevant changes that might interest you for the new Kubernetes version.
+
+==== Core
+
+- link:https://github.com/kubernetes/enhancements/issues/853[#853] Configurable scale velocity for HPA.
+- link:https://github.com/kubernetes/enhancements/issues/1393[#1393] Provide OIDC discovery for service account token issuer.
+- link:https://github.com/kubernetes/enhancements/issues/1513[#1513] CertificateSigningRequest API.
+
+==== Scheduling
+
+- link:https://github.com/kubernetes/enhancements/issues/1451[#1451] Run multiple Scheduling Profiles [Alpha]
+- link:https://github.com/kubernetes/enhancements/issues/895[#895] Even pod spreading across failure domains [Beta]
+- link:https://github.com/kubernetes/enhancements/issues/1258[#1258] Add a configurable default Even Pod Spreading rule [Alpha]
+- link:https://github.com/kubernetes/enhancements/issues/166[#166] Taint Based Eviction [Stable]
+
+==== Nodes
+
+- link:https://github.com/kubernetes/enhancements/issues/1539[#1539] Extending Hugepage Feature [Stable]
+- link:https://github.com/kubernetes/enhancements/issues/688[#688] Pod Overhead: account resources tied to the pod sandbox, but not specific containers [Beta]
+- link:https://github.com/kubernetes/enhancements/issues/693[#693] Node Topology Manager [Beta]
+- link:https://github.com/kubernetes/enhancements/issues/950[#950] Add pod-startup liveness-probe holdoff for slow-starting pods [Beta]
+
+==== Networking
+
+- link:https://github.com/kubernetes/enhancements/issues/752[#752] EndpointSlice API [Beta]
+- link:https://github.com/kubernetes/enhancements/issues/508[#508] IPv6 support added [Beta]
+- link:https://github.com/kubernetes/enhancements/issues/1024[#1024] Graduate NodeLocal DNSCache to GA [Stable]
+- link:https://github.com/kubernetes/enhancements/issues/1453[#1453] Graduate Ingress to V1 [Beta]
+- link:https://github.com/kubernetes/enhancements/issues/1507[#1507] Adding AppProtocol to Services and Endpoints [Stable]
+
+==== API
+
+- link:https://github.com/kubernetes/enhancements/issues/1040[#1040] Priority and Fairness for API Server Requests [Alpha]
+- link:https://github.com/kubernetes/enhancements/issues/1601[#1601] client-go signature refactor to standardize options and context handling [Stable]
+- link:https://github.com/kubernetes/enhancements/issues/576[#576] APIServer DryRun [Stable]
+- link:https://github.com/kubernetes/enhancements/issues/1281[#1281] API Server Network Proxy KEP to Beta [Beta]
+
+==== Storage
+
+- link:https://github.com/kubernetes/enhancements/issues/695[#695] Skip Volume Ownership Change [Alpha]
+- link:https://github.com/kubernetes/enhancements/issues/1412[#1412] Immutable Secrets and ConfigMaps [Alpha]
+- link:https://github.com/kubernetes/enhancements/issues/1495[#1495] Generic data populators [Alpha]
+- link:https://github.com/kubernetes/enhancements/issues/770[#770] Skip attach for non-attachable CSI volumes [Stable]
+- link:https://github.com/kubernetes/enhancements/issues/351[#351] Raw block device using persistent volume source [Stable]
+- link:https://github.com/kubernetes/enhancements/issues/565[#565] CSI Block storage support [Stable]
+- link:https://github.com/kubernetes/enhancements/issues/603[#603] Pass Pod information in CSI calls [Stable]
+- link:https://github.com/kubernetes/enhancements/issues/989[#989] Extend allowed PVC DataSources [Stable]
+
+==== Features
+
+- link:https://github.com/kubernetes/enhancements/issues/1441[#1441] kubectl debug [Alpha]
+- link:https://github.com/kubernetes/enhancements/issues/491[#491] kubectl diff [Stable]
+- link:https://github.com/kubernetes/enhancements/issues/670[#670] Support Out-of-Tree vSphere Cloud Provider [Stable]
