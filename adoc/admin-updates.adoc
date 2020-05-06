@@ -158,6 +158,20 @@ Due to changes to the way `skuba` handles addons some existing components might 
 This is expected and no cause for concern. For any upgrade afterwards the addon will be considered known and only show available upgrades.
 ====
 
+[IMPORTANT]
+====
+{productname} 4.2.1 provides the update of Cilium from 1.5.3 to 1.6.6.
+The important change in Cilium 1.6 is usage of {kube} CRDs instead of etcd.
+`skuba` performs and automated migration of data from etcd to CRDs.
+If that migration is not successful, `skuba` shows the following warning:
+
+_"Could not migrate data from etcd to CRD. Addons upgrade will be continued without it,
+which will result in temporary connection loss for currently existing pods and services."_
+
+That warning means that Cilium is going to regenerate all internal data on the first run after upgrade.
+It can result in temporary connection loss for pods and services which might take few minutes.
+====
+
 In order to get an overview of the addon updates available, you can run:
 
 ----
@@ -168,23 +182,22 @@ This will show you a list of updates (if available) for different addons
 installed on the cluster:
 
 ----
-Current Kubernetes cluster version: 1.15.2
-Latest Kubernetes version: 1.16.2
+Current Kubernetes cluster version: 1.17.4
+Latest Kubernetes version: 1.17.4
 
-Addon upgrades:
-  - cilium: 1.5.3 -> 1.5.3 (manifest version from 0 to 4)
-  - kured: 1.2.0 -> 1.3.0
-  - dex: 2.16.0 -> 2.16.1
-  - gangway: 3.1.0 -> 3.1.0 (manifest version from 1 to 2)
-  - psp: 1.0.0 -> 1.1.0
+Addon upgrades for 1.17.4:
+  - cilium: 1.5.3 -> 1.6.6
+  - dex: 2.16.0 (manifest version from 5 to 6)
+  - gangway: 3.1.0-rev4 (manifest version from 4 to 5)
+  - metrics-server: 0.3.6 (new addon)
 ----
 
 If the cluster is already running the latest available
 versions, the output should look like this:
 
 ----
-Current Kubernetes cluster version: 1.16.2
-Latest Kubernetes version: 1.16.2
+Current Kubernetes cluster version: 1.17.4
+Latest Kubernetes version: 1.17.4
 
 Congratulations! Addons are already at the latest version available
 ----
