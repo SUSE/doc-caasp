@@ -297,6 +297,14 @@ This is required so all the deployed nodes can automatically register with {scc}
 cpi_enable = true
 ----
 
+. You can also disable node hostnames set from DHCP server. It is recommended when you enabled CPI integration
+with vSphere. This sets ~vSphere~ virtual machine's hostnames to match node names.
++
+----
+# Set node's hostname from DHCP server
+hostname_from_dhcp = false
+----
+
 Once the files are adjusted, `terraform` needs to know about the `vSphere` server
 and the login details for it; these can be exported as environment variables or
 entered every time `terraform` is invoked.
