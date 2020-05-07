@@ -1,8 +1,8 @@
-= Recover Master Nodes
+= Recovering Master Nodes
 
 This chapter describes how to recover {productname} master nodes.
 
-== Replace Single Master Node
+== Replacing a Single Master Node
 
 . Remove the failed master node with skuba.
 +
@@ -31,14 +31,14 @@ Replace `<USER_NAME>` with user name.
 skuba node join --role=master --user=<USER_NAME> --sudo --target <NODE_IP> <NODE_NAME>
 ----
 
-== Recover All Master Nodes
+== Recovering All Master Nodes
 
 Ensure cluster version for backup/restore should be the same. Cross-version restoration in any domain is likely to  encounter data/API compatibility issues.
 
 === Prerequisites
 
 You will only need to restore database on one of the master node (`master-0`) to regain control-plane access.
-`etcd` will sync the database to all master nodes in the cluster once restored.
+etcd will sync the database to all master nodes in the cluster once restored.
 This does not mean, however, that the nodes will automatically be added back to the cluster.
 You must join one master node to the cluster, restore the database and then continue adding your remaining master nodes (which then will sync automatically).
 
@@ -280,7 +280,7 @@ cp /tmp/etcd.yaml /etc/kubernetes/manifests/
 ----
 . Repeat step 7, 8, 9 to recover all remaining master nodes.
 
-=== Confirm the restoration
+=== Confirming the Restoration
 After restoring, execute the below command to confirm the procedure. A successful restoration will show master nodes in `etcd` member list `started`, and all {kube} nodes in `STATUS Ready`.
 
 * Etcdctl:
