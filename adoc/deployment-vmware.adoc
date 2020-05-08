@@ -48,6 +48,28 @@ bare metal machines as described in <<deployment_bare_metal>>.
 
 === Setup using VMWare Template
 
+==== Choose a disk format for the Template
+
+Before creating the template, it is important to choose the format of the root hard disk for the node. This format will be used by default when creating the instances with Terraform.
+
+For the majority of cases, we recommend using Thick *Thick Provision Lazy Zeroed* because it provides good performance, it is fast to create and avoid the risk of running out of disk space due to over-provisioning.
+
+The official VMware documentation describes these formats as the following:
+
+Thick Provision Lazy Zeroed::
+Creates a virtual disk in a default thick format. Space required for the virtual disk is allocated when the disk is created. Data remaining on the physical device is not erased during creation, but is zeroed out on demand later on first write from the virtual machine. Virtual machines do not read stale data from the physical device.
+
+Thick Provision Eager Zeroed::
+A type of thick virtual disk that supports clustering features such as Fault Tolerance. Space required for the virtual disk is allocated at creation time. In contrast to the thick provision lazy zeroed format, the data remaining on the physical device is zeroed out when the virtual disk is created. It might take longer to create virtual disks in this format than to create other types of disks. Increasing the size of an Eager Zeroed Thick virtual disk causes a significant stun time for the virtual machine.
+
+Thin Provision::
+Use this format to save storage space. For the thin disk, you provision as much datastore space as the disk would require based on the value that you enter for the virtual disk size. However, the thin disk starts small and at first, uses only as much datastore space as the disk needs for its initial operations. If the thin disk needs more space later, it can grow to its maximum capacity and occupy the entire datastore space provisioned to it.
+
+[IMPORTANT]
+====
+It is not possible to change the format in Terraform afterwards. In order to use a different format, a new template has to be created.
+====
+
 ==== VM Preparation for Creating a Template
 
 . Upload the ISO image {isofile} to the desired VMware datastore.
@@ -79,7 +101,7 @@ image::vmware_step5.png[width=80%,pdfwidth=80%]
 image::vmware_step6.png[width=80%,pdfwidth=80%]
 .. Select menu:CPU[2].
 .. Select menu:Memory[4096 MB].
-.. Select menu:New Hard disk[40 GB], menu:New Hard disk[Disk Provisioning > Thin Provision].
+.. Select menu:New Hard disk[40 GB], menu:New Hard disk[Disk Provisioning > See the previous section to select the appropriate disk format].
 .. Select menu:New SCSI Controller[LSI Logic Parallel SCSI controller (default)] and change it to "VMware Paravirtualized".
 .. Select menu:New Network[VM Network], menu:New Network[Adapter Type > VMXNET3].
 +
