@@ -82,6 +82,15 @@ Or add this entry to `/etc/hosts`
 10.86.4.158 example.com
 ----
 
+. Monitoring namespace
++
+We will deploy our monitoring stack in its own namespace and therefore create one.
++
+[source,bash]
+----
+kubectl create namespace monitoring
+----
+
 . Configure Authentication
 +
 We need to create a `basic-auth` secret so the NGINX Ingress Controller can perform authentication.
@@ -115,15 +124,6 @@ Create secret in {kube} cluster
 [source,bash]
 ----
 kubectl create secret generic -n monitoring prometheus-basic-auth --from-file=auth
-----
-
-. Monitoring namespace
-+
-We will deploy our monitoring stack in its own namespace and therefore create one.
-+
-[source,bash]
-----
-kubectl create namespace monitoring
 ----
 
 . TLS
