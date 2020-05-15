@@ -1,0 +1,195 @@
+= Audit Log
+
+To track actions that have been performed on the cluster, you can enable the {kube} audit log during cluster bootstrap or on a running cluster.
+
+This allows the audit logs to be written on the {kube} master nodes at `/var/log/kube-apiserver/audit.log` or the given path.
+
+For more information on the audit log and its contents, see: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/
+
+== Limitations
+
+The {kube} audit log only collects and stores actions performed on the level of the cluster. This does not include any resulting actions of application services.
+
+== Enable Auditing During Cluster Bootstrap
+
+. Create audit policy file - `audit.yaml`. Here uses a simple policy for demonstration.
++
+====
+  apiVersion: audit.k8s.io/v1beta1
+  kind: Policy
+  rules:
+    - level: Metadata // <1>
+====
+<1> The audit level of the event. This sample will log all requests at the Metadata level. 
+For detailed information, refer to: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#audit-policy
+. Create audit policy file directory on all master nodes.
++
+----
+sudo mkdir -p /etc/kubernetes/policies
+----
+
+. Copy audit policy file - `audit.yaml` to `/etc/kubernetes/policies/audit.yaml` on all master nodes.
+
+. Edit `kubeadm-init.conf` file in skuba init folder to add audit related configurations.
++
+----
+vi <my_cluster>/kubeadm-init.conf
+----
++
+====
+ ...
+apiServer:
+  extraArgs:
+    audit-log-path: /var/log/kube-apiserver/audit.log
+    audit-policy-file: /etc/kubernetes/policies/audit.yaml // <1>
+    audit-log-maxage: "30" // <2>
+    audit-log-maxsize: "100" // <3>
+    audit-log-maxbackup: "5" // <4>
+    audit-log-format: json // <5>
+  extraVolumes:
+  - name: audit-policy
+    hostPath: /etc/kubernetes/policies/audit.yaml // <6>
+    mountPath: /etc/kubernetes/policies/audit.yaml // <7>
+    readOnly: true
+    pathType: File
+  - name: audit-logs
+    hostPath: /var/log/kube-apiserver // <8>
+    mountPath: /var/log/kube-apiserver // <9>
+    pathType: DirectoryOrCreate
+ ...
+====
+<1> Path to the YAML file that defines the audit policy configuration.
+<2> The maximum number of days to retain old audit log files based on the timestamp encoded in their filename. (Default: 15)
+<3> The maximum size in megabytes of the audit log file before it gets rotated. (Default: 10)
+<4> The maximum number of old audit log files to retain. (Default: 20)
+<5> Format of saved audits. Known formats are "legacy", "json". "legacy" indicates 1-line text format for each event. "json" indicates structured json format.
+<6> The audit policy configuration file path from the host node's filesystem. 
+<7> The audit policy configuration file path on the api-server pod.
+<8> The audit log file directory from the host node's filesystem. 
+<9> The audit log file directory on the api-server pod.
+
+. Proceed with link:{docurl}/single-html/caasp-deployment/#bootstrap[Cluster Bootstrap].
+
+. If everything is setup correctly, you should be able to see audit logs are written to `/var/log/kube-apiserver/audit.log`.
+
+== Enable Auditing On Running Cluster
+
+[NOTE]
+====
+The following steps take effect only on the updated master nodes. You need to repeat the following steps on every master node in the cluster.
+====
+
+. Create audit policy file - `audit.yaml`. Here uses a simple policy for demonstration.
++
+====
+  apiVersion: audit.k8s.io/v1beta1
+  kind: Policy
+  rules:
+    - level: Metadata // <1>
+====
+<1> The audit level of the event. This sample will log all requests at the Metadata level. For detailed information, refer to: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#audit-policy
+
+. Create audit policy file directory on master node.
++
+----
+sudo mkdir -p /etc/kubernetes/policies
+----
+
+. Copy audit policy file - `audit.yaml` to `/etc/kubernetes/policies/audit.yaml` on master node.
+
+. Edit `/etc/kubernetes/manifests/kube-apiserver.yaml`.
++
+====
+ ...
+spec:
+  containers:
+  - command:
+    - kube-apiserver
+    - --audit-log-path=/var/log/kube-apiserver/audit.log
+    - --audit-policy-file=/etc/kubernetes/policies/audit.yaml // <1>
+    - --audit-log-maxage=30 // <2>
+    - --audit-log-maxsize=100 // <3>
+    - --audit-log-maxbackup=5 // <4>
+    - --audit-log-format=json // <5>
+ ...
+    volumeMounts:
+    - mountPath: /etc/kubernetes/policies/audit.yaml // <6>
+      name: audit-policy
+      readOnly: true
+    - mountPath: /var/log/kube-apiserver // <7>
+      name: audit-logs
+ ...
+  volumes:
+  - hostPath:
+      path: /etc/kubernetes/policies/audit.yaml // <8>
+      type: File
+    name: audit-policy
+  - hostPath:
+      path: /var/log/kube-apiserver // <9>
+      type: DirectoryOrCreate
+    name: audit-logs
+ ...
+====
+<1> Path to the YAML file that defines the audit policy configuration.
+<2> The maximum number of days to retain old audit log files based on the timestamp encoded in their filename. (Default: 15)
+<3> The maximum size in megabytes of the audit log file before it gets rotated. (Default: 10)
+<4> The maximum number of old audit log files to retain. (Default: 20)
+<5> Format of saved audits. Known formats are "legacy", "json". "legacy" indicates 1-line text format for each event. "json" indicates structured json format.
+<6> The audit policy configuration file path on the api-server pod.
+<7> The audit log file directory on the api-server pod.
+<8> The audit policy configuration file path from the host node's filesystem. 
+<9> The audit log file directory from the host node's filesystem.
+
+. Restart kubelet.
++
+----
+sudo systemctl restart kubelet
+----
+
+. If everything is set up correctly, you should be able to see audit logs being written to `/var/log/kube-apiserver/audit.log`.
+
+
+== Disable Auditing
+
+[NOTE]
+====
+The following steps take effect only on the updated master nodes. You need to repeat the following steps on every master node in the cluster.
+====
+
+. Remote access to the master node.
+----
+ssh sles@<master_node>
+----
+
+. Edit `/etc/kubernetes/manifests/kube-apiserver.yaml` and remove the following lines.
++
+====
+ ...
+    - --audit-log-path=/var/log/kube-apiserver/audit.log
+    - --audit-policy-file=/etc/kubernetes/policies/audit.yaml
+    - --audit-log-maxage=30
+    - --audit-log-maxsize=100
+    - --audit-log-maxbackup=5
+    - --audit-log-format=json
+ ...
+    - mountPath: /etc/kubernetes/policies/audit.yaml
+      name: audit-policy
+      readOnly: true
+    - mountPath: /var/log/kube-apiserver
+      name: audit-logs
+ ...
+  - hostPath:
+      path: /etc/kubernetes/policies/audit.yaml
+      type: File
+    name: audit-policy
+  - hostPath:
+      path: /var/log/kube-apiserver
+      type: DirectoryOrCreate
+    name: audit-logs
+====
+
+. Restart kubelet.
++
+----
+sudo systemctl restart kubelet
+----
