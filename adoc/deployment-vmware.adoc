@@ -70,6 +70,12 @@ Use this format to save storage space. For the thin disk, you provision as much 
 It is not possible to change the format in Terraform afterwards. In order to use a different format, a new template has to be created.
 ====
 
+[IMPORTANT]
+====
+It is not possible to resize a disk when using *Thick Provision Eager Zeroed*.
+For this reason, the terraform variables `master_disk_size` and `worker_disk_size` must be set to the exact same size of the original template.
+====
+
 ==== VM Preparation for Creating a Template
 
 . Upload the ISO image {isofile} to the desired VMware datastore.
@@ -101,7 +107,7 @@ image::vmware_step5.png[width=80%,pdfwidth=80%]
 image::vmware_step6.png[width=80%,pdfwidth=80%]
 .. Select menu:CPU[2].
 .. Select menu:Memory[4096 MB].
-.. Select menu:New Hard disk[40 GB], menu:New Hard disk[Disk Provisioning > See the previous section to select the appropriate disk format].
+.. Select menu:New Hard disk[40 GB], menu:New Hard disk[Disk Provisioning > See the previous section to select the appropriate disk format]. For *Thick Provision Eager Zeroed*, use this value for terraform variables `master_disk_size` and `worker_disk_size`
 .. Select menu:New SCSI Controller[LSI Logic Parallel SCSI controller (default)] and change it to "VMware Paravirtualized".
 .. Select menu:New Network[VM Network], menu:New Network[Adapter Type > VMXNET3].
 +
