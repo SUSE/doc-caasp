@@ -302,11 +302,9 @@ skuba cluster init --control-plane <LB_IP/FQDN> --cloud-provider vsphere my-clus
 
 Running the above command will create a directory `my-cluster/cloud/vsphere` with a
 `README.md` and a `vsphere.conf.template` in it. Copy `vsphere.conf.template`
-or create a `vsphere.conf` file inside `my-cluster/cloud/vsphere`,
-according to the supported format.
-The supported format and content can be found in the official Kubernetes documentation:
+or create a `vsphere.conf` file inside `my-cluster/cloud/vsphere`, according to the supported format.
 
-link:https://kubernetes.io/docs/concepts/cluster-administration/cloud-providers/#vsphere[official Kubernetes documentation].
+The supported format and content can be found in the link:https://kubernetes.io/docs/concepts/cluster-administration/cloud-providers/#vsphere[official Kubernetes documentation].
 
 [WARNING]
 ====
@@ -353,7 +351,8 @@ Please remember to set proper file permissions for it, for example `600`.
 <13> (optional) The network in vCenter where Kubernetes nodes should join. The default is "VM Network" if not specified.
 <14> (optional) The feature flag for zone and region support.
 [IMPORTANT]
-The zone and region tags must exist and assigned to datacenter and cluster before bootstrap. Instruction to tag zones and regions, reference to: https://vmware.github.io/vsphere-storage-for-kubernetes/documentation/zones.html#tag-zones-and-regions-in-vcenter.
+The zone and region tags must exist and assigned to datacenter and cluster before bootstrap.
+Instruction to tag zones and regions, refer to: https://vmware.github.io/vsphere-storage-for-kubernetes/documentation/zones.html#tag-zones-and-regions-in-vcenter.
 
 <15> (optional) The category name of the tag assigned to the vCenter datacenter.
 <16> (optional) The category name of the tag assigned to the vCenter cluster.
@@ -362,8 +361,8 @@ After setting options in the `vsphere.conf` file, please proceed with <<cluster.
 
 [IMPORTANT]
 ====
-When cloud provider integration is enabled, it's very important to bootstrap and join nodes with the node names same as ~vSphere~ virtual machine's hostnames, as these names will be used by the `vSphere` cloud controller manager to reconcile node metadata.
-
+When cloud provider integration is enabled, it's very important to bootstrap and join nodes with the node names same as ~vSphere~ virtual machine's hostnames.
+These names will be used by the `vSphere` cloud controller manager to reconcile node metadata.
 ====
 
 ===== Integrate External LDAP TLS

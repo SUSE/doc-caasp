@@ -3,9 +3,10 @@ The vSphere cloud provider can be enabled with {productname} to allow Kubernetes
 
 This chapter provides the two types of persistent volume usage and description.
 
-Please refer to <<cluster.bootstrap.vcp>> on how to setup vSphere cloud provider enabled cluster.
+Please refer to link:{docurl}single-html/caasp-deployment/#bootstrap[Cluster Bootstrap] on how to setup vSphere cloud provider enabled cluster.
 
 == Node Meta
+
 Extra node meta could be found when region and zone was added to `vsphere.conf` before bootstrap cluster node.
 
 ====
@@ -14,7 +15,10 @@ Extra node meta could be found when region and zone was added to `vsphere.conf` 
     zone = "<VC_CLUSTER_TAG>"
 ====
 
-Regions refers to the datacenter and zones refers to the cluster grouping of hosts within the datacenter. Adding region and zone makes Kubernetes persistent volume created with zone and region labels. With such environment, Kubernetes pod scheduler is set to be locational aware for the persistent volume. For more information refer to: https://vmware.github.io/vsphere-storage-for-kubernetes/documentation/zones.html.
+`Region` refers to the datacenter and zones refers to the cluster grouping of hosts within the datacenter.
+Adding region and zone makes {kube} persistent volume created with zone and region labels.
+With such an environment, {kube} pod scheduler is set to be locational aware for the persistent volume.
+For more information refer to: https://vmware.github.io/vsphere-storage-for-kubernetes/documentation/zones.html.
 
 You can view the cloudprovider associated node meta with command.
 ----
@@ -25,11 +29,12 @@ kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}{"\tregion: "}{.
 ----
 
 == Static Persistent Volume
+
 . Create new VMDK volume in datastore. The VMDK volume used in persistent volume must exist before the resource is created.
 +
-You can use `govc` to automate the task. 
+You can use `govc` to automate the task.
 +
-Install intruction refer to https://github.com/vmware/govmomi/tree/master/govc.
+For installation instructions, refer to: https://github.com/vmware/govmomi/tree/master/govc.
 +
 ----
 govc datastore.disk.create -dc <DATA_CENTER> -ds <DATA_STORE> -size <DISK_SIZE> <DISK_NAME>
@@ -69,7 +74,7 @@ kubectl create -f sample-static-pv.yaml
 <4> The path to VMDK volume. This path must exist.
 <5> The file system type to mount.
 
-. Create persistent volume claim - sample-static-pvc.yaml. 
+. Create persistent volume claim - sample-static-pvc.yaml.
 +
 ----
 kubectl create -f sample-static-pvc.yaml
@@ -89,7 +94,7 @@ kubectl create -f sample-static-pvc.yaml
         requests:
           storage: 1Gi // <1>
 ====
-<1> The require volume size.
+<1> The required volume size.
 
 . Create deployement - sample-static-deployment.yaml.
 +
@@ -192,8 +197,8 @@ kubectl create -f sample-dynamic-pvc.yaml
         requests:
           storage: 1Gi // <2>
 ====
-<1> Annotate with storage class name to use the storage class created. 
-<2> The require volume size.
+<1> Annotate with storage class name to use the storage class created.
+<2> The required volume size.
 
 . Create deployment - sample-deployment.yaml
 +
@@ -234,8 +239,8 @@ kubectl create -f sample-deployment.yaml
           persistentVolumeClaim:
             claimName: sample-dynamic-pvc // <2>
 ====
-<1> The volume mount path in deployed pod
-<2> The requested persistent volume claim name
+<1> The volume mount path in deployed pod.
+<2> The requested persistent volume claim name.
 
 . Check persistent volume claim is bonded and pod is running.
 +
