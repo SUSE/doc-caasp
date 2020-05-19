@@ -1,4 +1,4 @@
-name: "Issue Labeler"
+name: Issue Labeler
 on:
   issues:
     types: [opened]
@@ -8,44 +8,44 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Label Bugs
-        uses: Naturalclar/issue-action@v1.0.0
+      - uses: Naturalclar/issue-action@v1.0.0
         with:
           keywords: '["bsc#", "bug","Wrong","wrong"]'
           labels: '["Bug","Reported"]'
           github-token: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Label Admin Guide
-        uses: Naturalclar/issue-action@v1.0.0
-        with:
-          keywords: '["caasp-admin"]'
-          labels: '["AdminGuide"]'
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Label Deployment Guide
-        uses: Naturalclar/issue-action@v1.0.0
-        with:
-          keywords: '["caasp-deployment"]'
-          labels: '["DeploymentGuide"]'
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Label Reports From Docs Page
-        uses: Naturalclar/issue-action@v1.0.0
-        with:
-          keywords: '["[doc]"]'
-          labels: '["Reported"]'
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Label VMWare
-        uses: Naturalclar/issue-action@v1.0.0
-        with:
-          keywords: '["vmware"."VMWare","VMware"]'
-          labels: '["PO/PM","EngineeringInput","Blocked"]'
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Label v4
-        uses: Naturalclar/issue-action@v1.0.0
-        with:
-          keywords: '["v4","suse-caasp-4"]'
-          labels: '["Reported"]'
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Label v3 Legacy
-        uses: Naturalclar/issue-action@v1.0.0
-        with:
-          keywords: '["v3","suse-caasp-3"]'
-          labels: '["Reported"]'
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+      # - name: Label Admin Guide
+      #   uses: Naturalclar/issue-action@v1.0.0
+      #   with:
+      #     keywords: '["caasp-admin"]'
+      #     labels: '["AdminGuide"]'
+      #     github-token: "${{ secrets.GITHUB_TOKEN }}"
+      # - name: Label Deployment Guide
+      #   uses: Naturalclar/issue-action@v1.0.0
+      #   with:
+      #     keywords: '["caasp-deployment"]'
+      #     labels: '["DeploymentGuide"]'
+      #     github-token: "${{ secrets.GITHUB_TOKEN }}"
+      # - name: Label Reports From Docs Page
+      #   uses: Naturalclar/issue-action@v1.0.0
+      #   with:
+      #     keywords: '["[doc]"]'
+      #     labels: '["Reported"]'
+      #     github-token: "${{ secrets.GITHUB_TOKEN }}"
+      # - name: Label VMWare
+      #   uses: Naturalclar/issue-action@v1.0.0
+      #   with:
+      #     keywords: '["vmware"."VMWare","VMware"]'
+      #     labels: '["PO/PM","EngineeringInput","Blocked"]'
+      #     github-token: "${{ secrets.GITHUB_TOKEN }}"
+      # - name: Label v4
+      #   uses: Naturalclar/issue-action@v1.0.0
+      #   with:
+      #     keywords: '["v4","suse-caasp-4"]'
+      #     labels: '["Reported"]'
+      #     github-token: "${{ secrets.GITHUB_TOKEN }}"
+      # - name: Label v3 Legacy
+      #   uses: Naturalclar/issue-action@v1.0.0
+      #   with:
+      #     keywords: '["v3","suse-caasp-3"]'
+      #     labels: '["Reported"]'
+      #     github-token: "${{ secrets.GITHUB_TOKEN }}"
