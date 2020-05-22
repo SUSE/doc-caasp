@@ -162,7 +162,7 @@ link:https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware
 
 This is extremely important to ensure a proper functioning of the critical component `etcd`.
 
-It is possible to preliminary validate these requirements by using `fio`. This tool allows us to simulate `etcd` I/O (input/output) and to find out from the output statistics wether or not the storage is suitable.
+It is possible to preliminary validate these requirements by using `fio`. This tool allows us to simulate `etcd` I/O (input/output) and to find out from the output statistics whether or not the storage is suitable.
 
 . Install the tool:
 +
@@ -180,7 +180,7 @@ fio --rw=write --ioengine=sync --fdatasync=1 --directory=test-etcd-dir --size=22
 
 From the outputs, the interesting part is `fsync/fdatasync/sync_file_range` where the values are expressed in microseconds (usec). A disk is considered sufficient when the value of the `99.00th` percentile is below 10000usec (10ms).
 
-Becareful though, this benchmark is for etcd only and does not take into consideration external disk usage. This means that a value slightly under 10ms should be taken with precaution as other workloads will have an impact on the disks.
+Be careful though, this benchmark is for etcd only and does not take into consideration external disk usage. This means that a value slightly under 10ms should be taken with precaution as other workloads will have an impact on the disks.
 
 [WARNING]
 ====
@@ -381,7 +381,7 @@ If you wish to use Upstream / Third-Party resources, please also allow the follo
 |k8s.gcr.io|Google Container Registry|Provide container images
 |kubernetes-charts.storage.googleapis.com|Google Helm charts repository|Provide helm charts
 |docker.io|Docker Container Registry|Provide container images
-|quay.io|RedHat Container Registry|Provide container images
+|quay.io|Red Hat Container Registry|Provide container images
 |===
 
 Please note that not all installation scenarios will need all of these resources.
