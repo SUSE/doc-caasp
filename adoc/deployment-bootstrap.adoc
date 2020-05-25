@@ -160,7 +160,7 @@ and Storage services.
 
 If you want to enable cloud provider integration with different cloud platforms,
 initialize the cluster with the flag `--cloud-provider <CLOUD PROVIDER>`.
-The only currently available options are `openstack` and `aws`,
+The only currently available options are `openstack`, `aws` and `vsphere`,
 but more options are planned.
 
 .Cleanup
@@ -328,7 +328,7 @@ Please remember to set proper file permissions for it, for example `600`.
     default-datastore = "<VC_DATASTORE>" // <9>
     resourcepool-path = "<VC_RESOURCEPOOL_PATH>" // <10>
     folder = "<VC_VM_FOLDER>" // <11>
-    [Disk]
+    [Disk]``
     scsicontrollertype = pvscsi // <12>
     [Network]
     public-network = "VM Network" // <13>
