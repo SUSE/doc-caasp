@@ -117,7 +117,7 @@ vsphere_datacenter = "DATACENTER" // <3>
 vsphere_network = "VM Network" // <4>
 
 # resource pool the machines will be running in
-vsphere_resource_pool = "My_RP" // <5>
+vsphere_resource_pool = "esxi1/Resources" // <5>
 
 # template name the machines will be copied from
 template_name = "sles15-sp2-caasp" // <6>
@@ -175,7 +175,7 @@ Only one of `vsphere_datastore` or `vsphere_datastore_cluster` can be set at the
 <2> `vsphere_datastore_cluster`: The datastore cluster to use. This option is mutually exclusive with `vsphere_datastore`.
 <3> `vsphere_datacenter`: The datacenter to use.
 <4> `vsphere_network`: The network to use.
-<5> `vsphere_resource_pool`: The resource pool to use.
+<5> `vsphere_resource_pool`: The root resource pool or an user-created child resource pool. Refer to https://docs.vmware.com/en/VMware-vSphere/6.7/com.vmware.vsphere.resmgmt.doc/GUID-60077B40-66FF-4625-934A-641703ED7601.html for detailed information.
 <6> `template_name`: The name of the template created according to instructions.
 <7> `stack_name`: Prefix for all machines of the cluster spawned by terraform.
 *Note*: This string will be used to generate the human readable IDs in {soc}.
