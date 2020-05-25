@@ -160,7 +160,7 @@ and Storage services.
 
 If you want to enable cloud provider integration with different cloud platforms,
 initialize the cluster with the flag `--cloud-provider <CLOUD PROVIDER>`.
-The only currently available options are `openstack` and `aws`,
+The only currently available options are `openstack`, `aws` and `vsphere`,
 but more options are planned.
 
 .Cleanup
@@ -290,6 +290,80 @@ these names will be used by the `AWS` cloud controller manager to reconcile node
 You can use the "private dns" values provided by the {tf} output.
 ====
 
+[[cluster.bootstrap.vcp]]
+====== vSphere In-tree CPI (VCP)
+
+Define the cluster using the following command:
+
+[source,bash]
+----
+skuba cluster init --control-plane <LB_IP/FQDN> --cloud-provider vsphere my-cluster
+----
+
+Running the above command will create a directory `my-cluster/cloud/vsphere` with a
+`README.md` and a `vsphere.conf.template` in it. Copy `vsphere.conf.template`
+or create a `vsphere.conf` file inside `my-cluster/cloud/vsphere`, according to the supported format.
+
+The supported format and content can be found in the link:https://kubernetes.io/docs/concepts/cluster-administration/cloud-providers/#vsphere[official Kubernetes documentation].
+
+[WARNING]
+====
+The file `my-cluster/cloud/vsphere/vsphere.conf` must not be freely accessible.
+Please remember to set proper file permissions for it, for example `600`.
+====
+
+===== Example vSphere Cloud Provider Configuration
+
+====
+    [Global]
+    user = "<VC_ADMIN_USERNAME>" // <1>
+    password = "<VC_ADMIN_PASSWORD>" // <2>
+    port = "443" // <3>
+    insecure-flag = "1" // <4>
+    [VirtualCenter <VC_IP_OR_FQDN>] // <5>
+    datacenters = "<VC_DATACENTERS>" // <6>
+    [Workspace]
+    server = "<VC_IP_OR_FQDN>" // <7>
+    datacenter = "<VC_DATACENTER>" // <8>
+    default-datastore = "<VC_DATASTORE>" // <9>
+    resourcepool-path = "<VC_RESOURCEPOOL_PATH>" // <10>
+    folder = "<VC_VM_FOLDER>" // <11>
+    [Disk]
+    scsicontrollertype = pvscsi // <12>
+    [Network]
+    public-network = "VM Network" // <13>
+    [Labels] // <14>
+    region = "<VC_DATACENTER_TAG>" // <15>
+    zone = "<VC_CLUSTER_TAG>" // <16>
+====
+<1> (required) Refers to the vCenter username for vSphere cloud provider to authenticate with.
+<2> (required) Refers to the vCenter password for vCenter user specified with `user`.
+<3> (optional) The vCenter Server Port. The default is 443 if not specified.
+<4> (optional) Set to 1 if vCenter used a self-signed certificate.
+<5> (required) The IP address of the vCenter server.
+<6> (required) The datacenter name in vCenter where Kubernetes nodes reside.
+<7> (required) The IP address of the vCenter server for storage provisioning. Usually the same as `VirtualCenter`
+<8> (required) The datacenter to provision temporary VMs for volume provisioning.
+<9> (required) The default datastore to provision temporary VMs for volume provisioning.
+<10> (required) The resource pool to provision temporary VMs for volume provisioning.
+<11> (required) The vCenter VM folder where Kubernetes nodes are in.
+<12> (required) Defines the SCSI controller in use on the VMs. Almost always set to `pvscsi`.
+<13> (optional) The network in vCenter where Kubernetes nodes should join. The default is "VM Network" if not specified.
+<14> (optional) The feature flag for zone and region support.
+[IMPORTANT]
+The zone and region tags must exist and assigned to datacenter and cluster before bootstrap.
+Instruction to tag zones and regions, refer to: https://vmware.github.io/vsphere-storage-for-kubernetes/documentation/zones.html#tag-zones-and-regions-in-vcenter.
+
+<15> (optional) The category name of the tag assigned to the vCenter datacenter.
+<16> (optional) The category name of the tag assigned to the vCenter cluster.
+
+After setting options in the `vsphere.conf` file, please proceed with <<cluster.bootstrap>>.
+
+[IMPORTANT]
+====
+When cloud provider integration is enabled, it's very important to bootstrap and join nodes with the node names same as ~vSphere~ virtual machine's hostnames.
+These names will be used by the `vSphere` cloud controller manager to reconcile node metadata.
+====
 
 ===== Integrate External LDAP TLS
 
