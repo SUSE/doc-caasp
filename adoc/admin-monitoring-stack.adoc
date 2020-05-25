@@ -1,3 +1,4 @@
+[[monitoring_stack]]
 = Monitoring Stack
 
 [IMPORTANT]
@@ -37,8 +38,7 @@ Grafana is an open-source system for querying, analysing and visualizing metrics
 
 . NGINX Ingress Controller
 +
-Please refer to <<nginx-ingress>> on how to congifure ingress in your cluster. Deploying NGINX Ingress Controller also allows us to provide TLS termination to our services and to provide basic authentication to the Prometheus Expression browser/API.
-
+Please refer to <<nginx-ingress>> on how to configure ingress in your cluster. Deploying NGINX Ingress Controller also allows us to provide TLS termination to our services and to provide basic authentication to the Prometheus Expression browser/API.
 
 . Create DNS entries
 +
@@ -82,11 +82,20 @@ Or add this entry to `/etc/hosts`
 10.86.4.158 example.com
 ----
 
+. Monitoring namespace
++
+We will deploy our monitoring stack in its own namespace and therefore create one.
++
+[source,bash]
+----
+kubectl create namespace monitoring
+----
+
 . Configure Authentication
 +
 We need to create a `basic-auth` secret so the NGINX Ingress Controller can perform authentication.
 +
-Install apache2-utils, which contains htpasswd, on your local workstation.
+Install `apache2-utils`, which contains `htpasswd`, on your local workstation.
 +
 [source,bash]
 ----
@@ -115,15 +124,6 @@ Create secret in {kube} cluster
 [source,bash]
 ----
 kubectl create secret generic -n monitoring prometheus-basic-auth --from-file=auth
-----
-
-. Monitoring namespace
-+
-We will deploy our monitoring stack in its own namespace and therefore create one.
-+
-[source,bash]
-----
-kubectl create namespace monitoring
 ----
 
 . TLS
@@ -176,15 +176,16 @@ kubectl create -n monitoring secret tls monitoring-tls  \
 ----
 
 == Installation
-.Two different examples of using ingress
-[NOTE]
-====
-There will be two different ways of using ingress for accessing the monitoring system.
-One will be using `subdomains` such as `+prometheus.example.com+`, `+prometheus-alertmanager.example.com+`, and `+grafana.example.com+`.
-Another deployment will be using `subpaths` for accessing monitoring system such as `example.com/prometheus`, `example.com/alertmanager`, and `example.com/grafana`.
-====
 
+There will be two different ways of using ingress for accessing the monitoring system.
+
+- <<installation_for_subdomains>>: Using `subdomains` for accessing monitoring system such as `+prometheus.example.com+`, `+prometheus-alertmanager.example.com+`, and `+grafana.example.com+`.
+
+- <<installation_for_subpaths>>: Using `subpaths` for accessing monitoring system such as `example.com/prometheus`, `example.com/alertmanager`, and `example.com/grafana`.
+
+[[installation_for_subdomains]]
 === Installation For Subdomains
+
 [NOTE]
 ====
 This installation example shows how to install and configure Prometheus and Grafana using subdomains such as `prometheus.example.com`, `prometheus-alertmanager.example.com`, and `grafana.example.com`.
@@ -346,22 +347,23 @@ prometheus-server         prometheus.example.com                          80, 44
 [[alertmanager_configuration_example]]
 ==== Alertmanager Configuration Example
 
-The configuration sets one "receiver" to get notified by email when a node meets one of these conditions:
+The configuration example sets one "receiver" to get notified by email when one of below conditions is met:
 
-* Node is unschedulable
-* Node runs out of disk space
-* Node has memory pressure
-* Node has disk pressure
+* Node is unschedulable: severity is `critical` because the node cannot accept new pods
+* Node runs out of disk space: severity is `critical` because the node cannot accept new pods
+* Node has memory pressure: severity is `warning`
+* Node has disk pressure: severity is `warning`
+* Certificates is going to expire in 7 days: severity is `critical`
+* Certificates is going to expire in 30 days: severity is `warning`
+* Certificates is going to expire in 3 months: severity is `info`
 
-The first two are critical because the node cannot accept new pods, the last two are just warnings.
-
-The Alertmanager configuration can be added to `prometheus-config-values.yaml` by adding the `alertmanagerFiles` section.
-
-For more information on how to configure Alertmanager, refer to link:https://prometheus.io/docs/alerting/configuration[Prometheus: Alerting - Configuration].
-
-. Configuring Alertmanager
+. Configure alerting receiver in Alertmanager
 +
-Add the `alertmanagerFiles` section to your Prometheus configuration.
+The Alertmanager handles alerts sent by Prometheus server, it takes care of deduplicating, grouping, and routing them to the correct receiver integration such as email. It also takes care of silencing and inhibition of alerts.
++
+Add the `alertmanagerFiles` section to your Prometheus configuration file `prometheus-config-values.yaml`.
++
+For more information on how to configure Alertmanager, refer to link:https://prometheus.io/docs/alerting/configuration[Prometheus: Alerting - Configuration].
 +
 ----
 alertmanagerFiles:
@@ -401,7 +403,9 @@ alertmanagerFiles:
       email_configs:
       - to: 'admin@example.com'
 ----
-. Replace the empty set of rules `rules: {}` in the `serverFiles` section of the configuration file.
+. Configures alerting rules in Prometheus server
++
+Replace the `serverFiles` section of the Prometheus configuration file `prometheus-config-values.yaml`.
 +
 For more information on how to configure alerts, refer to: link:https://prometheus.io/docs/alerting/notification_examples/[Prometheus: Alerting - Notification Template Examples]
 +
@@ -437,6 +441,62 @@ serverFiles:
           severity: warning
         annotations:
           description: '{{ $labels.node }} has insufficient available memory'
+    - name: caasp.certs.rules
+      rules:
+      - alert: KubernetesCertificateExpiry3Months
+        expr: (cert_exporter_cert_expires_in_seconds / 86400) < 90
+        labels:
+          severity: info
+        annotations:
+          description: 'The cert for {{ $labels.filename }} on {{ $labels.nodename }} node is going to expire in 3 months'
+      - alert: KubernetesCertificateExpiry30Days
+        expr: (cert_exporter_cert_expires_in_seconds / 86400) < 30
+        labels:
+          severity: warning
+        annotations:
+          description: 'The cert for {{ $labels.filename }} on {{ $labels.nodename }} node is going to expire in 30 days'
+      - alert: KubernetesCertificateExpiry7Days
+        expr: (cert_exporter_cert_expires_in_seconds / 86400) < 7
+        labels:
+          severity: critical
+        annotations:
+          description: 'The cert for {{ $labels.filename }} on {{ $labels.nodename }} node is going to expire in 7 days'
+      - alert: KubeconfigCertificateExpiry3Months
+        expr: (cert_exporter_kubeconfig_expires_in_seconds / 86400) < 90
+        labels:
+          severity: info
+        annotations:
+          description: 'The cert for {{ $labels.filename }} on {{ $labels.nodename }} node is going to expire in 3 months'
+      - alert: KubeconfigCertificateExpiry30Days
+        expr: (cert_exporter_kubeconfig_expires_in_seconds / 86400) < 30
+        labels:
+          severity: warning
+        annotations:
+          description: 'The cert for {{ $labels.filename }} on {{ $labels.nodename }} node is going to expire in 30 days'
+      - alert: KubeconfigCertificateExpiry7Days
+        expr: (cert_exporter_kubeconfig_expires_in_seconds / 86400) < 7
+        labels:
+          severity: critical
+        annotations:
+          description: 'The cert for {{ $labels.filename }} on {{ $labels.nodename }} node is going to expire in 7 days'
+      - alert: AddonCertificateExpiry3Months
+        expr: (cert_exporter_secret_expires_in_seconds / 86400) < 90
+        labels:
+          severity: info
+        annotations:
+          description: 'The cert for {{ $labels.secret_name }} is going to expire in 3 months'
+      - alert: AddonCertificateExpiry30Days
+        expr: (cert_exporter_secret_expires_in_seconds / 86400) < 30
+        labels:
+          severity: warning
+        annotations:
+          description: 'The cert for {{ $labels.secret_name }} is going to expire in 30 days'
+      - alert: AddonCertificateExpiry7Days
+        expr: (cert_exporter_secret_expires_in_seconds / 86400) < 7
+        labels:
+          severity: critical
+        annotations:
+          description: 'The cert for {{ $labels.secret_name }} is going to expire in 7 days'
 ----
 . To apply the changed configuration, run:
 +
@@ -646,10 +706,16 @@ After pasting in the url, the view will change to another form.
 ----
 # monitor SUSE CaaS Platform cluster
 kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-monitoring/master/grafana-dashboards-caasp-cluster.yaml
-# monitor etcd
+# monitor SUSE CaaS Platform etcd cluster
 kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-monitoring/master/grafana-dashboards-caasp-etcd-cluster.yaml
-# monitor namespaces
+# monitor SUSE CaaS Platform nodes
+kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-monitoring/master/grafana-dashboards-caasp-nodes.yaml
+# monitor SUSE CaaS Platform namespaces
 kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-monitoring/master/grafana-dashboards-caasp-namespaces.yaml
+# monitor SUSE CaaS Platform pods
+kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-monitoring/master/grafana-dashboards-caasp-pods.yaml
+# monitor SUSE CaaS Platform certificates
+kubectl apply -f https://raw.githubusercontent.com/SUSE/caasp-monitoring/master/grafana-dashboards-caasp-certificates.yaml
 ----
 
 * Build your own dashboard
@@ -694,6 +760,7 @@ continues with definition of dashboard JSON
 kubectl apply -f grafana-dashboards-caasp-cluster.yaml
 ----
 
+[[installation_for_subpaths]]
 === Installation For Subpaths
 
 [NOTE]

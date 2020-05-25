@@ -7,14 +7,14 @@ They are executable files that are placed in a predefined directory in the clust
 Pods interact with FlexVolume drivers through the `flexvolume` in-tree plugin.
 
 The vendor driver first has to be installed on each worker and master node in a Kubernetes cluster.
-On {productname} {productmajor}, the path to install the drivers is `/usr/libexec/kubernetes/kubelet-plugins/volume/exec/`.
+On {productname} {productmajor}, the path to install the drivers is `/usr/lib/kubernetes/kubelet-plugins/volume/exec/`.
 
 If the drivers are deployed with `DaemonSet`, this will require changing
 the FlexVolume directory path, which is usually stored as an environment
 variable, for example for rook:
 
 [source,bash]
-FLEXVOLUME_DIR_PATH=/usr/libexec/kubernetes/kubelet-plugins/volume/exec/
+FLEXVOLUME_DIR_PATH=/usr/lib/kubernetes/kubelet-plugins/volume/exec/
 
 //For more information on DaemonSets, refer to cha.user.daemonset
 

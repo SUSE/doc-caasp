@@ -28,8 +28,8 @@ round-robin 1:1 port forwarding.
 
 === Choose a Setup Type
 
-You can deploy {productname} onto existing VMWare instances using {ay} or
-create a VMWare template that will also create the instances.
+You can deploy {productname} onto existing VMware instances using {ay} or
+create a VMware template that will also create the instances.
 You must choose one method to deploy the entire cluster!
 
 Please follow the instructions for you chosen method below and ignore the instructions
@@ -40,13 +40,43 @@ for the other method.
 [NOTE]
 ====
 If you choose the {ay} method, please ignore all the following steps for the
-VMWare template creation.
+VMware template creation.
 ====
 
 For each VM deployment, follow the {ay} installation method used for deployment on
 bare metal machines as described in <<deployment_bare_metal>>.
 
-=== Setup using VMWare Template
+=== Setup Using the VMware Template
+
+==== Choose a Disk Format for the Template
+
+Before creating the template, it is important to select the right format of the root hard disk for the node. This format is then used by default when creating new instances with Terraform.
+
+For the majority of cases, we recommend using *Thick Provision Lazy Zeroed*. This format is quick to create, provides good performance, and avoids the risk of running out of disk space due to over-provisioning.
+
+[NOTE]
+====
+It is not possible to resize a disk when using *Thick Provision Eager Zeroed*.
+For this reason, the Terraform variables `master_disk_size` and `worker_disk_size` must be set to the exact same size as in the original template.
+====
+
+link:https://pubs.vmware.com/vsphere-51/index.jsp?topic=%2Fcom.vmware.vsphere.storage.doc%2FGUID-4C0F4D73-82F2-4B81-8AA7-1DD752A8A5AC.html[Official VMware documentation] describes these formats as follows:
+
+Thick Provision Lazy Zeroed::
+Creates a virtual disk in a default thick format. Space required for the virtual disk is allocated when the disk is created. Data remaining on the physical device is not erased during creation, but is zeroed out on demand later on first write from the virtual machine. Virtual machines do not read stale data from the physical device.
+
+Thick Provision Eager Zeroed::
+A type of thick virtual disk that supports clustering features such as Fault Tolerance. Space required for the virtual disk is allocated at creation time. In contrast to the thick provision lazy zeroed format, the data remaining on the physical device is zeroed out when the virtual disk is created. It might take longer to create virtual disks in this format than to create other types of disks. Increasing the size of an Eager Zeroed Thick virtual disk causes a significant stun time for the virtual machine.
+
+Thin Provision::
+Use this format to save storage space. For the thin disk, you provision as much datastore space as the disk would require based on the value that you enter for the virtual disk size. However, the thin disk starts small and at first, uses only as much datastore space as the disk needs for its initial operations. If the thin disk needs more space later, it can grow to its maximum capacity and occupy the entire datastore space provisioned to it.
+
+[IMPORTANT]
+.Select the Disk Format Thoughtfully
+====
+It is not possible to change the format in Terraform later. Once you have selected one format, you can only create instances with that format and it is not possible to switch.
+====
+
 
 ==== VM Preparation for Creating a Template
 
@@ -79,7 +109,7 @@ image::vmware_step5.png[width=80%,pdfwidth=80%]
 image::vmware_step6.png[width=80%,pdfwidth=80%]
 .. Select menu:CPU[2].
 .. Select menu:Memory[4096 MB].
-.. Select menu:New Hard disk[40 GB], menu:New Hard disk[Disk Provisioning > Thin Provision].
+.. Select menu:New Hard disk[40 GB], menu:New Hard disk[Disk Provisioning] > See <<_choose_a_disk_format_for_the_template>> to select the appropriate disk format. For *Thick Provision Eager Zeroed*, use this value for Terraform variables `master_disk_size` and `worker_disk_size`
 .. Select menu:New SCSI Controller[LSI Logic Parallel SCSI controller (default)] and change it to "VMware Paravirtualized".
 .. Select menu:New Network[VM Network], menu:New Network[Adapter Type > VMXNET3].
 +
@@ -289,6 +319,25 @@ caasp_registry_code = "CAASP_REGISTRATION_CODE"
 ----
 +
 This is required so all the deployed nodes can automatically register with {scc} and retrieve packages.
+
+. You can also enable Cloud Provider Integration with vSphere.
++
+----
+# Enable CPI integration with vSphere
+cpi_enable = true
+----
+
+. You can also disable node hostnames set from DHCP server. It is recommended when you enabled CPI integration with vSphere. This sets ~vSphere~ virtual machine's hostname with a naming convention (`"<stack_name>-master-<index>"` or `"<stack_name>-worker-<index>"`). This can be used as node name when using `skuba` command to bootstrapping or joining nodes.
++
+[IMPORTANT]
+====
+It is mandatory that each virtual machine's hostname must match its cluster node name.
+====
++
+----
+# Set node's hostname from DHCP server
+hostname_from_dhcp = false
+----
 
 Once the files are adjusted, `terraform` needs to know about the `vSphere` server
 and the login details for it; these can be exported as environment variables or

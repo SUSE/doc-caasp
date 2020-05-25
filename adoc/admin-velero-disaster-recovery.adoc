@@ -2,7 +2,7 @@
 :toclevels: 5
 include::entities.adoc[]
 
-= Disaster Recovery
+= Backup and Restore with Velero
 
 link:https://velero.io/[Velero] is a solution for supporting {kube} cluster disaster recovery,
 data migration and data protection by backing up {kube} cluster resources and persistent volumes to externally supported storage backend on-demand or by schedule.
@@ -43,23 +43,19 @@ However, you can set up multiple backups manually or scheduled that differ only 
 
 For more information about storage and snapshot locations, refer to link:https://velero.io/docs/v1.3.1/locations/[Velero: Backup Storage Locations and Volume Snapshot Locations]
 
-include::admin-dr-prereqs.adoc[leveloffset=+1]
+include::admin-velero-prereqs.adoc[]
 
-include::admin-dr-deployment-on-premise.adoc[]
+include::admin-velero-deployment-on-premise.adoc[]
 
-include::admin-dr-deployment-on-aws.adoc[]
+include::admin-velero-deployment-on-aws.adoc[]
 
 == Operations
 
-include::admin-dr-backup-etcd.adoc[leveloffset=+1]
+include::admin-velero-backup.adoc[]
 
-include::admin-dr-restore-master-nodes.adoc[leveloffset=+1]
+include::admin-velero-restore.adoc[]
 
-include::admin-dr-backup.adoc[]
-
-include::admin-dr-restore.adoc[]
-
-include::admin-dr-usecase.adoc[]
+include::admin-velero-usecase.adoc[]
 
 == Uninstall
 Remove the Velero server deployment and `restic` DaemonSet if it exists.

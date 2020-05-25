@@ -1,4 +1,6 @@
-= Backup etcd Cluster Data
+
+= Backing Up etcd Cluster Data
+
 This chapter describes the backup of `etcd` cluster data running on master nodes of {productname}.
 
 == Data To Backup
@@ -22,7 +24,7 @@ tar cfv ${BACKUP_DIR}.tgz /${BACKUP_DIR}
 rm -rf /${BACKUP_DIR}
 ----
 
-== Create Etcd Cluster Database Backup
+== Creating an etcd Cluster Database Backup
 
 === Procedure
 
@@ -127,7 +129,7 @@ To find the node associated with each `etcd` backup run:
 kubectl get pods --namespace kube-system --selector=job-name=etcd-backup -o wide
 ----
 
-== Schedule ETCD Cluster Backup
+== Scheduling etcd Cluster Backup
 . Mount external storage device to all master nodes.
 This is only required if the following step is using local `hostPath` as volume storage.
 . Create Cronjob.
