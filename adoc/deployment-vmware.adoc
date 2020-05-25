@@ -308,6 +308,8 @@ mv terraform.tfvars.example terraform.tfvars
 . Edit the `terraform.tfvars` file and add/modify the following variables:
 +
 include::deployment-terraform-example.adoc[tag=tf_vmware]
+
+[start=4]
 . Enter the registration code for your nodes in `~/caasp/deployment/vmware/registration.auto.tfvars`:
 +
 Substitute `<CAASP_REGISTRATION_CODE>` for the code from <<registration_code>>.
@@ -338,14 +340,14 @@ It is mandatory that each virtual machine's hostname must match its cluster node
 # Set node's hostname from DHCP server
 hostname_from_dhcp = false
 ----
-
++
 Once the files are adjusted, `terraform` needs to know about the `vSphere` server
 and the login details for it; these can be exported as environment variables or
 entered every time `terraform` is invoked.
-
-Additionally, the `ssh-key` that is specified in the `tfvars` file must be added
++
+. Additionally, the `ssh-key` that is specified in the `tfvars` file must be added
 to the keyring, so the machine running `skuba` can `ssh` into the machines:
-
++
 ----
 export VSPHERE_SERVER="<server_address"
 export VSPHERE_USER="<username>"
@@ -354,9 +356,9 @@ export VSPHERE_ALLOW_UNVERIFIED_SSL=true # In case you are using custom certific
 
 ssh-add <path_to_private_ssh_key_from_tfvars>
 ----
-
-Run Terraform to create the required machines for use with `skuba`:
-
++
+. Run Terraform to create the required machines for use with `skuba`:
++
 ----
 terraform init
 terraform plan
