@@ -201,6 +201,53 @@ consumes this service, the kube proxy is the responsible for setting
 the rules on every machine so the service is reachable from within
 the pod using that service.
 
+* Envoy
++
+Envoy is a high performance service and edge proxy that provides
+L7 policy support. Envoy is an application language neutral service and
+hence can work along with services written in different languages, even
+though the core is written in C++ language. Envoy supports Go-extensions
+and WASM support that makes it more adoptable by other apps. Envoy supports
+mulitple protocols such as HTTP/1.1, HTTP/2, gRPC, MangoDB, DynamMoDB etc.
+Envoy supports L3/L4 filtering. Envoy provides Advanced load balancing
+comparable to NGINX. Envoy supports Health checking, observability and
+Service Discovery.
+
+Cilium 1.6 uses Envoy for the L7 Network Policies.
+
+* Cilium KVStore free operation
++
+Cilium can now operate entirely without a KVstore in the context of Kubernetes.
+
+* Cilium Socket-based load-balancing
++
+Cilium's Socket-based load-balancing combines the advantages of client-side
+loadbalancing and network based load-balancing to provide a transparent
+loadbalancing service through kubernetes to map the ServiceIP to the
+Endpoint IP are done only once during connection establishment.
+
+* Cilium Generic CNI chaining
++
+CNI chaining framework is introduced in cilium 1.6 release that allows
+to run Cilium along with other CNI's such as  Weave, Calico, Flannel,
+AWS VPC CNI or the Lyft CNI plugin. This allows to utilize the eBPF
+based security policy enforcements and its features while getting the
+basic networking support from the legacy CNI plugin in-use.
+
+* Cilium Native AWS ENI mode
++
+
+Cilium 1.6 has introduced a new IPAM mode, AWS ENI mode that works along with
+a new operator-based design. This helps when running services in the AWS and
+managing IPAM from the operator defined pools while getting the network policy
+enforcement from Cilium..
+
+* Cilium Policy scalability improvements
++
+Cilium 1.6 provides an improved and scalable policy system that decouples
+handling of policy and identity definitions while moving to an entirely
+incremental model.
+
 == Deployment Scenarios
 
 === Kubernetes components
