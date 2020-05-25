@@ -320,6 +320,25 @@ caasp_registry_code = "CAASP_REGISTRATION_CODE"
 +
 This is required so all the deployed nodes can automatically register with {scc} and retrieve packages.
 
+. You can also enable Cloud Provider Integration with vSphere.
++
+----
+# Enable CPI integration with vSphere
+cpi_enable = true
+----
+
+. You can also disable node hostnames set from DHCP server. It is recommended when you enabled CPI integration with vSphere. This sets ~vSphere~ virtual machine's hostname with a naming convention (`"<stack_name>-master-<index>"` or `"<stack_name>-worker-<index>"`). This can be used as node name when using `skuba` command to bootstrapping or joining nodes.
++
+[IMPORTANT]
+====
+It is mandatory that each virtual machine's hostname must match its cluster node name.
+====
++
+----
+# Set node's hostname from DHCP server
+hostname_from_dhcp = false
+----
+
 Once the files are adjusted, `terraform` needs to know about the `vSphere` server
 and the login details for it; these can be exported as environment variables or
 entered every time `terraform` is invoked.
