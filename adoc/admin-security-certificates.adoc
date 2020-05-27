@@ -392,7 +392,7 @@ run the following:
 ssh <USERNAME>@<MASTER_NODE_IP_ADDRESS/FQDN>
 sudo cp -r /etc/kubernetes/pki /etc/kubernetes/pki.bak
 sudo kubeadm alpha certs renew all
-sudo reboot
+sudo systemctl restart kubelet
 ----
 +
 . Copy the renewed `admin.conf` from one of the master nodes to your local environment:
@@ -405,7 +405,7 @@ sudo cat /etc/kubernetes/admin.conf
 
 === Renewing Certificates Created by `skuba`:
 
-Log in to the master node and regenerate the certificates:
+In the admin node, regenerates the certificates:
 
 * Replace the `oidc-dex` server certificate:
 +
@@ -413,8 +413,11 @@ Log in to the master node and regenerate the certificates:
 +
 [source,bash]
 ----
-sudo mkdir -p /etc/kubernetes/pki.bak
-sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf get secret oidc-dex-cert -n kube-system -o yaml | sudo tee /etc/kubernetes/pki.bak/oidc-dex-cert.yaml > /dev/nulltrustedcert.yaml | grep tls.key | awk '{print $2}' | base64 --decode | sudo tee /etc/kubernetes/pki.bak/oidc-dex.key > /dev/null
+mkdir -p my-cluster/pki.bak
+kubectl get secret oidc-dex-cert -n kube-system -o yaml | tee my-cluster/pki.bak/oidc-dex-cert.yaml > /dev/null
+
+cat my-cluster/pki.bak/oidc-dex-cert.yaml | grep tls.crt | awk '{print $2}' | base64 --decode | tee my-cluster/pki.bak/oidc-dex.crt > /dev/null
+cat my-cluster/pki.bak/oidc-dex-cert.yaml | grep tls.key | awk '{print $2}' | base64 --decode | tee my-cluster/pki.bak/oidc-dex.key > /dev/null
 ----
 
 . Get the original SAN IP address(es) and DNS(s), run:
@@ -466,11 +469,11 @@ kubectl rollout restart deployment/oidc-dex -n kube-system
 +
 [source,bash]
 ----
-sudo mkdir -p /etc/kubernetes/pki.bak
-sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf get secret oidc-gangway-cert -n kube-system -o yaml | sudo tee /etc/kubernetes/pki.bak/oidc-gangway-cert.yaml > /dev/null
+mkdir -p my-cluster/pki.bak
+kubectl get secret oidc-gangway-cert -n kube-system -o yaml | tee my-cluster/pki.bak/oidc-gangway-cert.yaml > /dev/null
 
-cat /etc/kubernetes/pki.bak/oidc-gangway-cert.yaml | grep tls.crt | awk '{print $2}' | base64 --decode | sudo tee /etc/kubernetes/pki.bak/oidc-gangway.crt > /dev/null
-cat /etc/kubernetes/pki.bak/oidc-gangway-cert.yaml | grep tls.key | awk '{print $2}' | base64 --decode | sudo tee /etc/kubernetes/pki.bak/oidc-gangway.key > /dev/null
+cat my-cluster/pki.bak/oidc-gangway-cert.yaml | grep tls.crt | awk '{print $2}' | base64 --decode | tee my-cluster/pki.bak/oidc-gangway.crt > /dev/null
+cat my-cluster/pki.bak/oidc-gangway-cert.yaml | grep tls.key | awk '{print $2}' | base64 --decode | tee my-cluster/pki.bak/oidc-dgangwayex.key > /dev/null
 ----
 
 . Get the original SAN IP address(es) and DNS(s), run:
