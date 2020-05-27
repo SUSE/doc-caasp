@@ -10,7 +10,7 @@
 Versions of {productname} after 4.1 are slated to include L7 policy management which will enable policies to be enforced on items like memcached verbs, gRPC methods, and Cassandra tables.
 ====
 
-The default behavior of {kube} is that all pods can see all other pods within a cluster, whether those pods are hosted by the same {kube} node or different ones.
+The default behavior of {kube} is that all pods can communicate with all other pods within a cluster, whether those pods are hosted by the same {kube} node or different ones.
 This behavior is intentional, and aids greatly in the development process as the complexity of networking is effectively removed from both the developer and the operator.
 
 However, when a workload is deployed in a {kube} cluster in production, any number of reasons may arise leading to the need to isolate some workloads from others.
