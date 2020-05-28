@@ -39,7 +39,7 @@ Grafana is an open-source system for querying, analysing and visualizing metrics
 . NGINX Ingress Controller
 +
 Please refer to <<nginx-ingress>> on how to configure ingress in your cluster. Deploying NGINX Ingress Controller also allows us to provide TLS termination to our services and to provide basic authentication to the Prometheus Expression browser/API.
-
++
 . Create DNS entries
 +
 .Subdomains VS. Subpaths
@@ -160,7 +160,7 @@ In this example, trusted certificates are `monitoring.key` and `monitoring.crt`.
 +
 .. Self-signed Certificates (optional)
 +
-Please refer to <<self_signed_server_certificate>> on how to signed the self-sigend certificate.
+Please refer to <<self_signed_server_certificate>> on how to sign the self-signed certificate.
 The `server.conf` for DNS.1 is `+prometheus.example.com+`, DNS.2 is `+prometheus-alertmanager.example.com+` and DNS.3 `+grafana.example.com+`.
 +
 Then, import your self-signed certificate into the {kube} cluster.
