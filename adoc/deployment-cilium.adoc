@@ -1,63 +1,23 @@
-== Network Policies
+== Cilium Network Policy Config Examples
 
-[NOTE]
-====
-{productname} versions 4.0 and 4.1 support L3 and L4 policy management; the hyperlinks below will refer you to Cilium documentation on creating these policies, as Cilium documentation is an excellent and definitive source.
-====
+The following example allows all pods in the namespace in which the policy is created to communicate with kube-dns on port 53/UDP in the kube-system namespace.
 
-[NOTE]
-====
-Versions of {productname} after 4.1 are slated to include L7 policy management which will enable policies to be enforced on items like memcached verbs, gRPC methods, and Cassandra tables.
-====
-
-The default behavior of {kube} is that all pods can see all other pods within a cluster, whether those pods are hosted by the same {kube} node or different ones.
-This behavior is intentional, and aids greatly in the development process as the complexity of networking is effectively removed from both the developer and the operator.
-
-However, when a workload is deployed in a {kube} cluster in production, any number of reasons may arise leading to the need to isolate some workloads from others.
-For example, if a Human Resources department is running workloads processing PII (Personally Identifiable Information), those workloads should not by default be accessible by any other workload in the cluster.
-
-Network policies are the mechanism provided by {kube} which allow a cloud operator to isolate workloads from each other in a variety of ways.
-For example, a policy could be defined which only allows a database server workload to be accessed only by the web servers whose pages use the data in the database.
-Another policy could be defined in the cluster which allows only web browsers outside the cluster to access the web server workloads in the cluster and so on.
-
-To implement network policies, a network plugin must be correctly integrated into the cluster. {productname} incorporates Cilium as its supported network policy management plugin.
-Cilium leverages link:https://www.kernel.org/doc/html/latest/bpf/index.html[BPF (Berkeley Packet Filter)] where every bit of communication transits through a packet processing engine in the kernel.
-Other policy management plugins in the {kube} ecosystem leverage `iptables`.
-
-{suse} has supported `iptables` since its inception in the Linux world, but believes BPF brings sufficiently compelling advantages (fine-grained control, performance) over `iptables`.
-Not only does Cilium have performance benefits brought on by BPF, it also has benefits far higher in the network stack.
-
-The most typically used policies in {kube} cover L3 and L4 events in the network stack, allowing workloads to be protected by specifying IP addresses and TCP ports.
-To implement the earlier example of a dedicated webserver accessing a critical secured database, an L3 policy would be define allowing a web server workload running at IP address `192.168.0.1` to access a MySQL database workload running at IP address `192.168.0.2` on TCP port `3306`.
-
-[source,yaml]
+[source,json]
 ----
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: "allow-hr-webui"
+  name: "allow-to-kubedns"
 spec:
   endpointSelector:
-    matchLabels:
-      id: hr-db1
-  ingress:
-  - toCIDR:
-    - 192.168.0.2/32
-  - toPorts:
+    {}
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: kube-system
+        k8s-app: kube-dns
+    toPorts:
     - ports:
-      - port: "3306"
-        protocol: TCP
-  - fromCIDR:
-    - 192.168.0.1/32
+      - port: '53'
+        protocol: UDP
 ----
-
-Find below hyperlinks to Cilium’s documentation including a high-level introduction to Cilium technology as well as L3 and L4 protection using IP addresses and TCP ports or DNS addresses:
-
-General introduction to Cilium::
-https://cilium.readthedocs.io/en/v1.5/intro/
-
-Securing traffic for HTTP servers and APIs::
-https://cilium.readthedocs.io/en/v1.5/gettingstarted/http/
-
-Restricting the network traffic to specific DNS queries or domains::
-https://cilium.readthedocs.io/en/v1.5/gettingstarted/dns/
