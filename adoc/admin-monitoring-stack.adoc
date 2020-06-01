@@ -1130,7 +1130,7 @@ The Prometheus SUSE helm chart includes the following predefined jobs that will 
 * kubernetes-nodes: Get metrics from {kube} nodes
 * kubernetes-nodes-cadvisor: Get {kubedoc}tasks/debug-application-cluster/resource-usage-monitoring/#cadvisor[cAdvisor] metrics reported from {kube} cluster
 * kubernetes-service-endpoints: Get metrics from Services which have annotation `prometheus.io/scrape=true` in the metadata
-* kubernetes-pods: Get metrics from Pods which have annotation `prometheus.io/port=true` in the metadata
+* kubernetes-pods: Get metrics from Pods which have annotation `prometheus.io/scrape=true` in the metadata
 
 If you wanna monitor new pods and services, you don't need to change `prometheus.yaml` but add annotation `prometheus.io/scrape=true`, `prometheus.io/port=<TARGET_PORT>` and `prometheus.io/path=<METRIC_ENDPOINT>` to your pods and services metadata. Prometheus will automatically scraped the target.
 
