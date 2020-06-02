@@ -753,7 +753,7 @@ You can still proceed with this step by using the `--ignore-errors` flag.
 . Download all the referenced images using `skopeo`.
 +
 ----
-skopeo sync --source-yaml sync.yaml dir:/tmp/skopeodata
+skopeo sync --src yaml --dest dir sync.yaml /tmp/skopeodata
 ----
 +
 `skopeo` will automatically create a directory named after the hostname of the registry from which you are downloading the images.
