@@ -653,6 +653,8 @@ Configure `/etc/containers/registries.conf` to setup the mirroring from `registr
 This needs to be done on all cluster nodes. Make sure to adjust all the correct domain name for your local registry:
 
 ----
+unqualified-search-registries = ["docker.io"]
+
 [[registry]]
 prefix = "registry.suse.com"
 location = "registry01.mydomain.local:5000/registry.suse.com"
