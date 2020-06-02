@@ -124,7 +124,7 @@ kubectl create clusterrolebinding tiller \
     --serviceaccount=kube-system:tiller
 
 helm init \
-    --tiller-image registry.suse.com/caasp/v4/helm-tiller:{helm_tiller_version} \
+    --tiller-image registry.suse.com/caasp/v5/helm-tiller:{helm_tiller_version} \
     --service-account tiller
 ----
 
@@ -161,7 +161,7 @@ helm init \
     --tiller-tls-cert tiller.crt \
     --tiller-tls-key tiller.key \
     --tls-ca-cert ca.crt \
-    --tiller-image registry.suse.com/caasp/v4/helm-tiller:{helm_tiller_version} \
+    --tiller-image registry.suse.com/caasp/v5/helm-tiller:{helm_tiller_version} \
     --service-account tiller
 ----
 

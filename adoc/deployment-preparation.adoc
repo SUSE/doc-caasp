@@ -1,7 +1,7 @@
 [[deployment.preparations]]
 == Deployment Preparations
 
-In order to deploy {productname} you need a workstation running {sle} {base_os_version} or similar {opensuse} equivalent.
+In order to deploy {productname} you need a workstation running {sls} {base_os_version} or similar {opensuse} equivalent.
 This workstation is called the "Management machine". Important files are generated
 and must be maintained on this machine, but it is not a member of the {productname} cluster.
 
@@ -82,7 +82,7 @@ of `ssh` to learn about the security implications of using this feature.
 ====
 The registration code for {productname}.{productmajor} also contains the activation
 permissions for the underlying {sle} operating system. You can use your {productname}
-registration code to activate the {sle} {base_os_version} subscription during installation.
+registration code to activate the {sls} {base_os_version} subscription during installation.
 ====
 
 You need a subscription registration code to use {productname}. You can retrieve your
@@ -226,6 +226,6 @@ that is being upgraded will have to be marked INACTIVE on the load balancer pool
 at least during the restart of the apiserver. We provide reasonable defaults
 for that on our default openstack load balancer {tf} configuration.
 
-The following contains examples for possible load balancer configurations based on {sle} {base_os_version} and `nginx` or `HAProxy`.
+The following contains examples for possible load balancer configurations based on {sls} {base_os_version} and `nginx` or `HAProxy`.
 
 include::deployment-loadbalancer.adoc[Load Balancer,leveloffset=+2]
