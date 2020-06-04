@@ -1130,7 +1130,7 @@ The Prometheus SUSE helm chart includes the following predefined jobs that will 
 * kubernetes-nodes: Get metrics from {kube} nodes
 * kubernetes-nodes-cadvisor: Get {kubedoc}tasks/debug-application-cluster/resource-usage-monitoring/#cadvisor[cAdvisor] metrics reported from {kube} cluster
 * kubernetes-service-endpoints: Get metrics from Services which have annotation `prometheus.io/scrape=true` in the metadata
-* kubernetes-pods: Get metrics from Pods which have annotation `prometheus.io/port=true` in the metadata
+* kubernetes-pods: Get metrics from Pods which have annotation `prometheus.io/scrape=true` in the metadata
 
 If you wanna monitor new pods and services, you don't need to change `prometheus.yaml` but add annotation `prometheus.io/scrape=true`, `prometheus.io/port=<TARGET_PORT>` and `prometheus.io/path=<METRIC_ENDPOINT>` to your pods and services metadata. Prometheus will automatically scraped the target.
 
@@ -1168,7 +1168,17 @@ openssl x509 -req -days 365 -CA my-cluster/pki/etcd/ca.crt -CAkey my-cluster/pki
 kubectl -n monitoring create secret generic etcd-certs --from-file=my-cluster/pki/etcd/ca.crt --from-file=my-cluster/pki/etcd/monitoring-client.crt --from-file=my-cluster/pki/etcd/monitoring-client.key
 ----
 
-. Edit the configuration file `prometheus-config-values.yaml`, add `extraSecretMounts` part
+. Get all etcd cluster private IP address
++
+[source,bash]
+----
+kubectl get pods -n kube-system -l component=etcd -o wide
+NAME           READY   STATUS    RESTARTS   AGE   IP             NODE      NOMINATED NODE   READINESS GATES
+etcd-master0   1/1     Running   2          21h   192.168.0.6    master0   <none>           <none>
+etcd-master1   1/1     Running   2          21h   192.168.0.20   master1   <none>           <none>
+----
+
+. Edit the configuration file `prometheus-config-values.yaml`, add `extraSecretMounts` and `extraScrapeConfigs` parts, change the extraScrapeConfigs targets IP address(es) as your environment and change the target numbers if you have different etcd cluster members
 +
 ----
 # Alertmanager configuration
@@ -1259,6 +1269,16 @@ server:
     secretName: etcd-certs
     readOnly: true
 
+extraScrapeConfigs: |
+  - job_name: etcd
+    static_configs:
+    - targets: ['192.168.0.32:2379','192.168.0.17:2379','192.168.0.5:2379'
+    scheme: https
+    tls_config:
+      ca_file: /etc/secrets/ca.crt
+      cert_file: /etc/secrets/monitoring-client.crt
+      key_file: /etc/secrets/monitoring-client.key
+
 ## Prometheus is configured through prometheus.yml. This file and any others
 ## listed in serverFiles will be mounted into the server pod.
 ## See configuration options
@@ -1266,6 +1286,7 @@ server:
 #serverFiles:
 #  prometheus.yml:
 ----
+
 . Upgrade prometheus helm deployment
 +
 [source,bash]
@@ -1274,31 +1295,3 @@ helm upgrade prometheus suse/prometheus \
 --namespace monitoring \
 --values prometheus-config-values.yaml
 ----
-. First get all etcd cluster private IP address.
-+
-[source,bash]
-----
-kubectl get pods -n kube-system -l component=etcd -o wide
-NAME           READY   STATUS    RESTARTS   AGE   IP             NODE      NOMINATED NODE   READINESS GATES
-etcd-master0   1/1     Running   2          21h   192.168.0.6    master0   <none>           <none>
-etcd-master1   1/1     Running   2          21h   192.168.0.20   master1   <none>           <none>
-----
-. Add new job for etcd, change the target ip address as your environment and change the target numbers if you have different etcd cluster members.
-[source,bash]
-+
-----
-kubectl edit -n monitoring configmap prometheus-server
-----
-+
-----
-scrape_configs:
-  - job_name: etcd
-    static_configs:
-    - targets: ['192.168.0.6:2379','192.168.0.20:2379']
-    scheme: https
-    tls_config:
-      ca_file: /etc/secrets/ca.crt
-      cert_file: /etc/secrets/monitoring-client.crt
-      key_file: /etc/secrets/monitoring-client.key
-----
-. Save the new configmap, the prometheus server will auto reload new configmap.
