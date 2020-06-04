@@ -801,11 +801,10 @@ You should receive the following files in return:
 [[self_signed_certificate]]
 === Self-signed Server Certificate
 
-[WARNING]
+[NOTE]
 ====
-Do not use self-signed certificates in production environments.
-There is severe risk of Man-in-the-middle attacks.
-Use proper trusted 3rd-party signed certificates.
+In the case that you decide to use self-signed certificates, make sure that the Certificate Authority
+used for signing is configured securely as a trusted Certificate Authority on the clients.
 ====
 
 In some cases you want to create self-signed certificates for testing.
