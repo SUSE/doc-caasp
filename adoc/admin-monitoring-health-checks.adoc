@@ -5,14 +5,6 @@ problems on its own, it is good practice to monitor the availability
 and health of your services and applications in order to react
 to problems should they go beyond the automated measures.
 
-A very basic (visual) health check can be achieved by accessing cAdvisor
-on the admin node at port `4194`.
-This will display a basic statistics UI about the cluster resources.
-
-A complete set of instructions on how to monitor and maintain the health of
-you cluster is beyond the scope of this document. More information is available
-at {kubedoc}tasks/debug-application-cluster/resource-usage-monitoring/#cadvisor
-
 There are three levels of health checks.
 
 * Cluster
@@ -312,13 +304,6 @@ in the environment and you can poll the endpoints.
 curl -k https://$NODE_IP_FQDN:10250/metrics --header "Authorization: Bearer $TOKEN"
 ----
 
-. Fetching cAdvisor
-+
-[source,bash]
-----
-curl -k https://$NODE_IP_FQDN:10250/metrics/cadvisor --header "Authorization: Bearer $TOKEN"
-----
-
 . Fetching healthz
 +
 [source,bash]
@@ -333,14 +318,6 @@ curl -k https://$NODE_IP_FQDN:10250/healthz --header "Authorization: Bearer $TOK
 [source,bash]
 ----
 curl -k $CONTROL_PLANE/api/v1/nodes/$NODE_NAME/proxy/metrics --header
-"Authorization: Bearer $TOKEN"
-----
-
-. Fetching cAdvisor
-+
-[source,bash]
-----
-curl -k $CONTROL_PLANE/api/v1/nodes/$NODE_NAME/proxy/metrics/cadvisor --header
 "Authorization: Bearer $TOKEN"
 ----
 
