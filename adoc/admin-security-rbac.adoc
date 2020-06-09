@@ -98,7 +98,7 @@ It is a known limitation of the addon customization process.
 Administrators can update the authentication connector settings after {productname}
 deployment as follows:
 
-. Based on the manifest in `my-cluster/addons/dex/base/dex.yaml`, provide a kustomize patch to `my-cluster/addons/dex/patches/dex-patch.yaml` of the form of strategic merge patch or a JSON 6902 patch.
+. Based on the manifest in `my-cluster/addons/dex/base/dex.yaml`, provide a kustomize patch to `my-cluster/addons/dex/patches/custom.yaml` of the form of strategic merge patch or a JSON 6902 patch.
 +
 Read https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchstrategicmerge and https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchjson6902 to get more information.
 +
@@ -152,7 +152,7 @@ kind: Kustomization
 resources:
   - base/dex.yaml
 patches:
-  - patches/dex-patch.yaml
+  - patches/custom.yaml
 ----
 . Apply the changes with:
 +
