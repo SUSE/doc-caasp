@@ -2,20 +2,22 @@
 
 === Disaster Recovery
 
-Use schedule backup for the periodical backup. When restoring, we need to change the backup storage location to read-only mode to avoid incorrect data integrity.
-Run the backup periodically. When the {kube} cluster runs into an unexpected state, recover from the backup file.
+Use schedule backup to perform the the periodical backup. When the {kube} cluster runs into an unexpected state, recover from the most recent schedule backup.
 
-==== Setting up a scheduled backup
-
+* Backup
++
+Run the schedule backup, this creates a backup file with the name `<SCHEDULE_NAME>-<TIMESTAMP>`.
++
 [source,bash]
 ----
 velero schedule create <SCHEDULE_NAME> --schedule="@daily"
 ----
 
-This creates a backup file with the name `<SCHEDULE_NAME>-<TIMESTAMP>``.
+* Restore
++
+When a disaster happens, make sure the Velero server and `restic` DaemonSet exists (_optional_). If not, reinstall from the helm chart.
 
-. When a disaster happens, make sure the Velero server and `restic` DaemonSet exists (optional). If not, reinstall from the helm chart.
-. Update the backup storage location to read-only mode (it prevents the backup file from being created or deleted in the backup storage location during the restore process)
+. Update the backup storage location to _read-only_ mode (it prevents the backup file from being created or deleted in the backup storage location during the restore process)
 +
 [source,bash]
 ----
@@ -25,14 +27,14 @@ kubectl patch backupstoragelocation <STORAGE_LOCATION_NAME> \
     --patch '{"spec":{"accessMode":"ReadOnly"}}'
 ----
 
-. Create a restore from the most recent backup file.
+. Create a restore from the most recent backup file
 +
 [source,bash]
 ----
 velero restore create --from-backup <SCHEDULE_NAME>-<TIMESTAMP>
 ----
 
-. After restoring finished, change the backup storage location to read-write mode.
+. After restoring finished, change the backup storage location back to read-write mode
 +
 [source,bash]
 ----
@@ -58,9 +60,9 @@ Velero does not support the migration of persistent volumes across public cloud 
 velero backup create <BACKUP_NAME>
 ----
 
-. (At cluster 2) Prepare a {cluster} cluster deployed by skuba.
+. (At cluster 2) Prepare a {cluster} cluster deployed by skuba
 
-. (At cluster 2) Helm install Velero and make sure the backup-location and snapshot-location point to the same location as cluster 1.
+. (At cluster 2) Helm install Velero and make sure the backup-location and snapshot-location point to the same location as cluster 1
 +
 [source,bash]
 ----
@@ -71,7 +73,7 @@ velero snapshot-location get
 [NOTE]
 The default sync interval is 1 minute. You could change the interval with the flag `--backup-sync-period` when creating a backup location.
 
-. (At cluster 2) Make sure the cluster 1 backup resources are sync to the external object storage server.
+. (At cluster 2) Make sure the cluster 1 backup resources are sync to the external object storage server
 +
 [source,bash]
 ----
@@ -79,7 +81,7 @@ velero backup get <BACKUP_NAME>
 velero backup describe <BACKUP_NAME>
 ----
 
-. (At cluster 2) Restore the cluster from the backup file.
+. (At cluster 2) Restore the cluster from the backup file
 +
 [source,bash]
 ----
@@ -95,8 +97,9 @@ velero restore describe <RESTORE_NAME>
 velero restore logs <RESTORE_NAME>
 ----
 
-. (At cluster 2) Since Velero doesn't overwrite objects in-cluster if they already exist. Manual check all addons configuration is desired after cluster restored.
-.. Check dex configuration.
+. (At cluster 2) Since Velero doesn't overwrite objects in-cluster if they already exist. Manual check all addons configuration is desired after cluster restored
+
+.. Check dex configuration
 +
 [source,bash]
 ----
@@ -112,7 +115,8 @@ kubectl apply -f oidc-dex-config.yaml --force
 # Restart oidc-dex deployment
 kubectl delete pod -l app=oidc-dex
 ----
-.. Check gangway configuration.
+
+.. Check gangway configuration
 +
 [source,bash]
 ----
@@ -128,13 +132,15 @@ kubectl apply -f oidc-gangway-config.yaml --force
 # Restart oidc-gangway deployment
 kubectl delete pod -l app=oidc-dex
 ----
-.. Check kured is disabled automatically reboots.
+
+.. Check kured is disabled automatically reboots
 +
 [source,bash]
 ----
 kubectl get daemonset kured -o yaml
 ----
-.. Check psp is what you desired.
+
+.. Check psp is what you desired
 +
 [source,bash]
 ----
