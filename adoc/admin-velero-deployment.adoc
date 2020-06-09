@@ -1,20 +1,30 @@
-== Deployment On On-Premise
+== Deployment
 
-Use Helm CLI to install Velero deployment and `restic` (_optional_).
+Use Helm CLI to install Velero deployment and `restic` (_optional_) if the storage does not provides volume snapshot API.
 
-=== {kube} cluster on on-premise and _without_ backup persistent volume.
+[NOTE]
+====
+If Velero installed other than default namespace `velero`, setup velero config config to the Velero installed namespace.
+----
+velero client config set namespace=<NAMESPACE>
+----
+====
 
-For the following either cases:
+[NOTE]
+====
+For troubleshooting a velero deployment, refer to link:https://velero.io/docs/v1.3.1/debugging-install/[Velero: Debugging Installation Issues]
+====
 
-1. the {kube} cluster does not use external storage.
-2. the external storage would handle take volume snapshot by itself, it does not need Velero to backup persistent volume.
+=== Backup {kube} Cluster Objects Only
 
-==== The backup location on public cloud providers.
+For the cases that the {kube} cluster does not use external storage _or_ the external storage would handle take volume snapshot by itself, it does not need Velero to backup persistent volume.
 
-. AWS
-.. The backup bucket name _BUCKET_NAME_. (The bucket name in AWS S3 object storage)
-.. The backup region name _REGION_NAME_. (The region name for the AWS S3 object storage. For example, `us-east-1` for AWS US East (N. Virginia))
-.. The Velero installed namespace _NAMESPACE_, the default namespace is `velero`. (optional)
+* Backup To A Public Cloud Provider
+
+** Amazon Web Services (AWS)
+. The backup bucket name _BUCKET_NAME_. (The bucket name in AWS S3 object storage)
+. The backup region name _REGION_NAME_. (The region name for the AWS S3 object storage. For example, `us-east-1` for AWS US East (N. Virginia))
+. The Velero installed namespace _NAMESPACE_, the default namespace is `velero`. (optional)
 +
 [source,bash]
 ----
@@ -33,16 +43,8 @@ helm install \
     --set initContainers[0].volumeMounts[0].name=plugins \
     suse/velero
 ----
-+
-[NOTE]
-====
-If Velero installed other than default namespace `velero`, setup velero config config to the Velero installed namespace.
-----
-velero client config set namespace=<NAMESPACE>
-----
-====
 
-.. Then, suggests creating at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
+. Then, suggests creating at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
 +
 [source,bash]
 ----
@@ -52,9 +54,9 @@ velero backup-location create slave \
     --region <REGION_NAME>
 ----
 
-. GCP
-.. The backup bucket name _BUCKET_NAME_. (The bucket name in Google Cloud Storage object storage)
-.. The Velero installed namespace _NAMESPACE_, the default namespace is `velero`. (optional)
+** Google Cloud Platform (GCP)
+. The backup bucket name _BUCKET_NAME_. (The bucket name in Google Cloud Storage object storage)
+. The Velero installed namespace _NAMESPACE_, the default namespace is `velero`. (optional)
 +
 [source,bash]
 ----
@@ -72,16 +74,8 @@ helm install \
     --set initContainers[0].volumeMounts[0].name=plugins \
     suse/velero
 ----
-+
-[NOTE]
-====
-If Velero installed other than default namespace `velero`, setup velero config config to the Velero installed namespace.
-----
-velero client config set namespace=<NAMESPACE>
-----
-====
 
-.. Then, suggests creating at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
+. Then, suggests creating at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
 +
 [source,bash]
 ----
@@ -90,11 +84,11 @@ velero backup-location create slave \
     --bucket <BUCKET_SLAVE_NAME>
 ----
 
-. Azure
-.. The backup bucket name _BUCKET_NAME_. (The bucket name in Azure Blob Storage	 object storage)
-.. The resource group name __AZURE_RESOURCE_GROUP__. (The Azure resource group name)
-.. The storage account ID __AZURE_STORAGE_ACCOUNT_ID__. (The Azure storage account ID)
-.. The Velero installed namespace _NAMESPACE_, the default namespace is `velero`. (optional)
+** Microsoft Azure
+. The backup bucket name _BUCKET_NAME_. (The bucket name in Azure Blob Storage	 object storage)
+. The resource group name __AZURE_RESOURCE_GROUP__. (The Azure resource group name)
+. The storage account ID __AZURE_STORAGE_ACCOUNT_ID__. (The Azure storage account ID)
+. The Velero installed namespace _NAMESPACE_, the default namespace is `velero`. (optional)
 +
 [source,bash]
 ----
@@ -114,16 +108,8 @@ helm install \
     --set initContainers[0].volumeMounts[0].name=plugins \
     suse/velero
 ----
-+
-[NOTE]
-====
-If Velero installed other than default namespace `velero`, setup velero config config to the Velero installed namespace.
-----
-velero client config set namespace=<NAMESPACE>
-----
-====
 
-.. Then, suggests creating at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
+. Then, suggests creating at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
 +
 [source,bash]
 ----
@@ -133,17 +119,38 @@ velero backup-location create slave \
     --region resourceGroup=<AZURE_RESOURCE_GROUP>,storageAccount=<AZURE_STORAGE_ACCOUNT_ID>
 ----
 
-==== The backup location on S3-compatible storage providers.
+* Backup To A S3-Compatible Provider
 
-. The backup bucket name _BUCKET_NAME_. (The bucket name in S3 object storage)
-. The backup region name _REGION_NAME_. (The region name for the S3 object storage. For example, radosgw _or_ master/slave if you have HA S3 object storage backups)
-. The S3-compatible object storage simulates the S3 object storage. Therefore, the configuration for S3-compatible object storage has to setup additional configurations.
+. The backup bucket name _BUCKET_NAME_. (The bucket name in S3-compatible object storage)
+. The backup region name _REGION_NAME_. (The region name for the S3-compatible object storage. For example, radosgw _or_ master/slave if you have HA -compatible object storage backups)
+. The S3-compatible object storage simulates the S3-compatible object storage. Therefore, the configuration for S3-compatible object storage has to setup additional configurations.
 +
 [source,bash]
 ----
 configuration.backupStorageLocation.config.s3ForcePathStyle=true
 configuration.backupStorageLocation.config.s3Url=<S3_COMPATIBLE_STORAGE_SERVER__URL>
 ----
++
+[source,bash]
+----
+helm install \
+    --name velero \
+    --namespace <NAMESPACE> \
+    --set-file credentials.secretContents.cloud=credentials-velero \
+    --set configuration.provider=aws \
+    --set configuration.backupStorageLocation.name=default \
+    --set configuration.backupStorageLocation.bucket=<BUCKET_NAME> \
+    --set configuration.backupStorageLocation.config.region=<REGION_NAME> \
+    --set configuration.backupStorageLocation.config.s3ForcePathStyle=true \
+    --set configuration.backupStorageLocation.config.s3Url=<S3_COMPATIBLE_STORAGE_SERVER_URL> \
+    --set snapshotsEnabled=false \
+    --set initContainers[0].name=velero-plugin-for-aws \
+    --set initContainers[0].image=registry.suse.com/caasp/v4/velero-plugin-for-aws:1.0.1 \
+    --set initContainers[0].volumeMounts[0].mountPath=/target \
+    --set initContainers[0].volumeMounts[0].name=plugins \
+    suse/velero
+----
+
 . Then, suggests creating at least one additional backup location point to the different object storage server to prevent object storage server single point of failure.
 +
 [source,bash]
@@ -154,16 +161,26 @@ velero backup-location create slave \
     --config region=slave,s3ForcePathStyle=true,s3Url=<S3_COMPATIBLE_STORAGE_SERVER_URL>
 ----
 
-=== {kube} cluster on on-premise and _with_ backup persistent volume.
+=== Backup {kube} Cluster
 
 For the case that the {kube} cluster uses external storage _and_ the external storage would not handle volume snapshot by itself (either external storage does not support volume snapshot _or_ administrator want use velero to take volume snapshot when velero do cluster backup).
 
-==== The backup location on public cloud providers.
+* Backup To A Public Cloud Provider
 
-. AWS
-.. The backup bucket name _BUCKET_NAME_. (The bucket name in AWS S3 object storage)
-.. The backup region name _REGION_NAME_. (The region name for the AWS S3 object storage. For example, `us-east-1` for AWS US East (N. Virginia))
-.. The Velero installed namespace _NAMESPACE_, the default namespace is `velero`. (optional)
+** Amazon Web Services (AWS)
+. The backup bucket name _BUCKET_NAME_. (The bucket name in AWS S3 object storage)
+. The backup region name _REGION_NAME_. (The region name for the AWS S3 object storage. For example, `us-east-1` for AWS US East (N. Virginia))
+. The Velero installed namespace _NAMESPACE_, the default namespace is `velero`. (optional)
++
+[IMPORTANT]
+====
+If the {kube} cluster in AWS and uses AWS EBS as storage, please remove the
+----
+--set deployRestic=true \
+----
+at below in order to use AWS EBS volume snapshot API to take volume snapshot.
+Otherwise, it would install restic and velero server will use restic to take volume snapshot and the volume data will stores to AWS S3 bucket.
+====
 +
 [source,bash]
 ----
@@ -185,16 +202,8 @@ helm install \
     --set initContainers[0].volumeMounts[0].name=plugins \
     suse/velero
 ----
-+
-[NOTE]
-====
-If Velero installed other than default namespace `velero`, setup velero config config to the Velero installed namespace.
-----
-velero client config set namespace=<NAMESPACE>
-----
-====
 
-..  Then, suggest to create at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
+. Then, suggest to create at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
 +
 [source,bash]
 ----
@@ -204,9 +213,20 @@ velero backup-location create slave \
     --config region=<REGION_NAME>
 ----
 
-. GCP
-.. The backup bucket name _BUCKET_NAME_. (The bucket name in Google Cloud Storage object storage)
-.. The Velero installed namespace _NAMESPACE_, the default namespace is `velero`. (optional)
+** Google Cloud Platform (GCP)
+. The backup bucket name _BUCKET_NAME_. (The bucket name in Google Cloud Storage object storage)
+. The Velero installed namespace _NAMESPACE_, the default namespace is `velero`. (optional)
+// TODO: enable this once skuba supports deploys on GCP
+// +
+// [IMPORTANT]
+// ====
+// If the {kube} cluster in GCP and uses Google Compute Engine Disks as storage, please remove the
+// ----
+// --set deployRestic=true \
+// ----
+// at below in order to use Google Compute Engine Disks snapshot API to take volume snapshot.
+// Otherwise, it would install restic and velero server will use restic to take volume snapshot and the volume data will stores to  Google Cloud Storage bucket.
+// ====
 +
 [source,bash]
 ----
@@ -226,16 +246,8 @@ helm install \
     --set initContainers[0].volumeMounts[0].name=plugins \
     suse/velero
 ----
-+
-[NOTE]
-====
-If Velero installed other than default namespace `velero`, setup velero config config to the Velero installed namespace.
-----
-velero client config set namespace=<NAMESPACE>
-----
-====
 
-.. Then, suggests creating at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
+. Then, suggests creating at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
 +
 [source,bash]
 ----
@@ -244,11 +256,22 @@ velero backup-location create slave \
     --bucket <BUCKET_SLAVE_NAME>
 ----
 
-. Azure
-.. The backup bucket name _BUCKET_NAME_. (The bucket name in Azure Blob Storage object storage)
-.. The resource group name __AZURE_RESOURCE_GROUP__. (The Azure resource group name)
-.. The storage account ID __AZURE_STORAGE_ACCOUNT_ID__. (The Azure storage account ID)
-.. The Velero installed namespace _NAMESPACE_, the default namespace is `velero`. (optional)
+** Microsoft Azure
+. The backup bucket name _BUCKET_NAME_. (The bucket name in Azure Blob Storage object storage)
+. The resource group name __AZURE_RESOURCE_GROUP__. (The Azure resource group name)
+. The storage account ID __AZURE_STORAGE_ACCOUNT_ID__. (The Azure storage account ID)
+. The Velero installed namespace _NAMESPACE_, the default namespace is `velero`. (optional)
+// TODO: enable this once skuba supports deploys on Azure
+// +
+// [IMPORTANT]
+// ====
+// If the {kube} cluster in Azure and uses Azure Managed Disks as storage, please remove the
+// ----
+// --set deployRestic=true \
+// ----
+// at below in order to use Azure Managed Disks snapshot API to take volume snapshot.
+// Otherwise, it would install restic and velero server will use restic to take volume snapshot and the volume data will stores to Azure Blob Storage bucket.
+// ====
 +
 [source,bash]
 ----
@@ -270,16 +293,8 @@ helm install \
     --set initContainers[0].volumeMounts[0].name=plugins \
     suse/velero
 ----
-+
-[NOTE]
-====
-If Velero installed other than default namespace `velero`, setup velero config config to the Velero installed namespace.
-----
-velero client config set namespace=<NAMESPACE>
-----
-====
 
-.. Then, suggests creating at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
+. Then, suggests creating at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
 +
 [source,bash]
 ----
@@ -289,11 +304,11 @@ velero backup-location create slave \
     --region resourceGroup=<AZURE_RESOURCE_GROUP>,storageAccount=<AZURE_STORAGE_ACCOUNT_ID>
 ----
 
-==== The backup location on S3-compatible storage providers.
+* Backup To A S3-Compatible Provider
 
-. The backup bucket name _BUCKET_NAME_. (The bucket name in S3 object storage)
-. The backup region name _REGION_NAME_. (The region name for the S3 object storage. For example, radosgw _or_ master/slave if you have HA S3 object storage backups)
-. The S3-compatible object storage simulates the S3 object storage. Therefore, the configuration for S3-compatible object storage have to setup additional configurations
+. The backup bucket name _BUCKET_NAME_. (The bucket name in S3-compatible object storage)
+. The backup region name _REGION_NAME_. (The region name for the S3-compatible object storage. For example, radosgw _or_ master/slave if you have HA S3-compatible object storage backups)
+. The S3-compatible object storage simulates the S3-compatible object storage. Therefore, the configuration for S3-compatible object storage have to setup additional configurations
 +
 [source,bash]
 ----
@@ -302,7 +317,9 @@ configuration.backupStorageLocation.config.s3Url=<S3_COMPATIBLE_STORAGE_SERVER__
 ----
 +
 [NOTE]
-Mostly the on-premise persistent volume does not support snapshot API or does not have community-supported snapshotter providers (for example, the NFS volume does not support the snapshot API). Therefore, we _have to_ deploy the `restic` DaemonSet.
+====
+Mostly the on-premise persistent volume does not support volume snapshot API or does not have community-supported snapshotter providers. Therefore, we _have to_ deploy the `restic` DaemonSet.
+====
 +
 [source,bash]
 ----
@@ -319,21 +336,13 @@ helm install \
     --set snapshotsEnabled=true \
     --set deployRestic=true \
     --set configuration.volumeSnapshotLocation.name=default \
-    --set configuration.volumeSnapshotLocation.config.region=minio \
+    --set configuration.volumeSnapshotLocation.config.region=<REGION_NAME> \
     --set initContainers[0].name=velero-plugin-for-aws \
     --set initContainers[0].image=registry.suse.com/caasp/v4/velero-plugin-for-aws:1.0.1 \
     --set initContainers[0].volumeMounts[0].mountPath=/target \
     --set initContainers[0].volumeMounts[0].name=plugins \
     suse/velero
 ----
-+
-[NOTE]
-====
-If Velero installed other than default namespace `velero`, setup velero config config to the Velero installed namespace.
-----
-velero client config set namespace=<NAMESPACE>
-----
-====
 
 . Then, suggest to create at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
 +
@@ -345,5 +354,3 @@ velero backup-location create slave \
     --config region=slave,s3ForcePathStyle=true,s3Url=<S3_COMPATIBLE_STORAGE_SERVER_URL>
 ----
 
-[NOTE]
-For troubleshooting a velero deployment, refer to link:https://velero.io/docs/v1.3.1/debugging-install/[Velero: Debugging Installation Issues]
