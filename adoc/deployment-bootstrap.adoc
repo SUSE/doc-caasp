@@ -367,7 +367,7 @@ These names will be used by the `vSphere` cloud controller manager to reconcile 
 
 ===== Integrate External LDAP TLS
 
-. Based on the manifest in `my-cluster/addons/dex/base/dex.yaml`, provide a kustomize patch to `my-cluster/addons/dex/patches/custom.yml` of the form of strategic merge patch or a JSON 6902 patch.
+. Based on the manifest in `my-cluster/addons/dex/base/dex.yaml`, provide a kustomize patch to `my-cluster/addons/dex/patches/custom.yaml` of the form of strategic merge patch or a JSON 6902 patch.
 . Adapt the `ConfigMap` by adding LDAP configuration to the connector section of the `custom.yaml` file. For detailed configurations for the LDAP connector, refer to https://github.com/dexidp/dex/blob/v2.16.0/Documentation/connectors/ldap.md.
 
 Read https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchstrategicmerge and https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchjson6902 to get more information.
@@ -419,7 +419,7 @@ it is possible to flag the pod with `--blocking-pod-selector=<POD_NAME>`.
 Any node running this workload will not be rebooted via `kured` and needs to
 be rebooted manually.
 
-. Based on the manifest in `my-cluster/addons/kured/base/kured.yaml`, provide a kustomize patch to `my-cluster/addons/kured/patches/custom.yml` of the form of strategic merge patch or a JSON 6902 patch.
+. Based on the manifest in `my-cluster/addons/kured/base/kured.yaml`, provide a kustomize patch to `my-cluster/addons/kured/patches/custom.yaml` of the form of strategic merge patch or a JSON 6902 patch.
 Read https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchstrategicmerge and https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchjson6902 to get more information.
 . Adapt the `DaemonSet` by adding one of the following flags to the `command`
 section of the `kured` container:
@@ -462,7 +462,7 @@ By default, **any** prometheus alert blocks a node from reboot.
 However you can filter specific alerts to be ignored via the `--alert-filter-regexp` flag.
 ====
 
-. Based on the manifest in `my-cluster/addons/kured/base/kured.yaml`, provide a kustomize patch to `my-cluster/addons/kured/patches/custom.yml` of the form of strategic merge patch or a JSON 6902 patch.
+. Based on the manifest in `my-cluster/addons/kured/base/kured.yaml`, provide a kustomize patch to `my-cluster/addons/kured/patches/custom.yaml` of the form of strategic merge patch or a JSON 6902 patch.
 Read https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchstrategicmerge and https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchjson6902 to get more information.
 . Adapt the `DaemonSet` by adding one of the following flags to the `command` section of the `kured` container:
 +
