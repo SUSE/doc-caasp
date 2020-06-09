@@ -369,9 +369,11 @@ These names will be used by the `vSphere` cloud controller manager to reconcile 
 ====
 Each virtual machine requires to have `disk.EnableUUID` enabled to successfully mount the virtual disks.
 
-Cluster provisioned following link:{docurl}single-html/caasp-deployment/#_using_terraform[Deploying VMs from the Template] with `cpi_enable = true` automatically enables `disk.EnableUUID`.
+Clusters provisioned following link:{docurl}single-html/caasp-deployment/#_using_terraform[Deploying VMs from the Template] with `cpi_enable = true` automatically enables `disk.EnableUUID`.
 
-For cluster provisioned by any other method, ensure virtual machines are `disk.EnableUUID` enabled. Refer to the link:https://docs.vmware.com/en/VMware-vSphere/6.7/Cloud-Native-Storage/GUID-3501C3F2-7D7C-45E9-B20A-F3F70D1E4679.html[Configure Kubernetes Cluster Virtual Machines] for more information.
+For clusters provisioned by any other method, ensure virtual machines are set to use `disk.EnableUUID`. 
+
+For more information, refer to: link:https://docs.vmware.com/en/VMware-vSphere/6.7/Cloud-Native-Storage/GUID-3501C3F2-7D7C-45E9-B20A-F3F70D1E4679.html[Configure Kubernetes Cluster Virtual Machines] .
 ====
 
 ===== Integrate External LDAP TLS
