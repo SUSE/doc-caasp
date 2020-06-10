@@ -13,14 +13,6 @@ These instructions are based on `VMware ESXi {vmware_version}`.
 
 [IMPORTANT]
 ====
-These instructions currently do not describe how to set up a load balancer in a {vmware} environment.
-
-This will be added in future versions. You must provide your own load balancing
-solution that directs access to the master nodes.
-====
-
-[IMPORTANT]
-====
 VMware vSPhere doesn't offer a load-balancer solution. Please expose port `6443`
 for the {kube} api-servers on the master nodes on a local load balancer using
 round-robin 1:1 port forwarding.
