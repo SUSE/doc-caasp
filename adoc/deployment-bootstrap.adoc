@@ -514,20 +514,13 @@ This will restart all `kured` pods with the additional configuration flags.
 For `--target` enter the FQDN of your first master node.
 Replace `<NODE_NAME>` with a unique identifier, for example, "master-one".
 +
-.Custom root CA certificate
+.Custom Trusted CA Certificate
 [TIP]
 ====
-During cluster bootstrap, `skuba` automatically generates a root CA certificate.
-You can however also deploy the {kube} cluster with your own custom root CA certificate.
+During cluster bootstrap, `skuba` automatically generates CA certificates.
+You can however also deploy the {kube} cluster with your custom trusted CA certificate.
 
-Please refer to the link:{docurl}single-html/caasp-admin/#_certificates[{productname} Administration Guide] for more information on custom certificates.
-====
-+
-[WARNING]
-====
-Please plan carefully when deploying with a custom root CA certificate. This certificate
-can not be reconfigured once deployed and requires a full re-installation of the
-cluster to replace.
+Please refer to the link:{docurl}single-html/caasp-admin/#_certificates[{productname} Administration Guide] for more information on how to deploy the {kube} cluster with custom trusted CA certificate.
 ====
 +
 [source,bash]
