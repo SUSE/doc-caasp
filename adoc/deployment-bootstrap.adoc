@@ -352,7 +352,7 @@ After setting options in the `azure.conf` file, please proceed with <<cluster.bo
 ====
 Clusters provisioned following link:{docurl}single-html/caasp-deployment/#_using_terraform[Deploying VMs from the Template] with `cpi_enable = true` automatically configurs Azure virtual machine to use a system-assigned managed identity.
 
-To use service principle authentication you need to provide `aadClientId`, `aadClientSecret` and configure `useManagedIdentityExtension` to `false`.
+To use service principle authentication you need to <<cluster.bootstrap.azure.create-service-principle>> and provide `aadClientId`, `aadClientSecret` and configure `useManagedIdentityExtension` to `false`.
 ====
 
 [IMPORTANT]
@@ -360,6 +360,44 @@ To use service principle authentication you need to provide `aadClientId`, `aadC
 When cloud provider integration is enabled, it's very important to bootstrap and join nodes with the node names same as ~Azure~ virtual machine's hostnames.
 These names will be used by the `Azure` cloud controller manager to reconcile node metadata.
 ====
+
+[[cluster.bootstrap.azure.create-service-principle]]
+===== Create Service Principle
+[IMPORTANT]
+====
+Ensure there is sufficient azure account permission. The account needs to be either a member of the `Owner` role, or have `Contributor` plus `User Access Administrator` roles.
+====
+
+. Install Azure CLI on local machine.
++
+For installation instructions, refer to link:https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest[Install the Azure CLI].
+. Create service principle.
++
+====
+    RESOURCE_GROUP="<RESOURCE_GROUP_NAME>" // <1>
+    SUBSCRIPTION="<SUBSCRIPTION_NAME>" // <2>
+    SUBSCRIPTION_ID=`az account list --output table | grep "${SUBSCRIPTION_NAME}" | rev | awk '{print $3}' | rev`
+
+    az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/${SUBSCRIPTION_ID}"
+====
+<1> The name of the resource group that the cluster is deployed in.
+<2> The ID of the Azure Subscription that the cluster is deployed in.
+
+. Record the `appId`, `password` and `tenant` to use in Azure cloud provider configuration.
++
+====
+    Creating a role assignment under the scope of "/subscriptions/00000000-0000-0000-0000-000000000000"
+    {
+      "appId": "00000000-0000-0000-0000-000000000000", // <1>
+      "displayName": "azure-cli-2020-06-12-00-51-10",
+      "name": "http://azure-cli-2020-06-12-00-51-10",
+      "password": "P`_g:V\\v[cJ6fAu~/2Ak7$F1w1C@[lRi", // <2>
+      "tenant": "000000000000000000-0000-000000000000" // <3>
+    }
+====
+<1> The appId applies to aadClientId.
+<2> The password applies to aadClientSecret.
+<3> Then tenant applies to tenantId.
 
 [#cluster.bootstrap.vcp]
 ====== vSphere CPI (VCP)
