@@ -470,6 +470,226 @@ its `pki` folder. This file is a symlink to the latest generated certificate.
 Restarting the kubelet effectively rotates the certificate to read the latest
 generated file.
 
+=== Addon certificates rotation
+
+The addon certificate could be automatically rotated by leverages the opensource solution `cert-manager` and `reloader`. The cert-manager is to auto rotates the addon certificates stored in Secret, and the reloader is to watch the addon certificate Secret and rolling upgrade the addon Deployments or DaemonSet.
+
+* Prerequisites
+
+. To let reloader auto rolling upgrade the addon Deployments or DaemonSet, we need to label the addons:
++
+[source,bash]
+----
+kubectl annotate --overwrite deployment/oidc-dex -n kube-system secret.reloader.stakater.com/reload=oidc-dex-cert 
+
+kubectl annotate --overwrite deployment/oidc-gangway -n kube-system secret.reloader.stakater.com/reload=oidc-gangway-cert
+
+kubectl annotate --overwrite deployment/metrics-server -n kube-system secret.reloader.stakater.com/reload=metrics-server-cert
+----
+
+. Upload the Kubernetes CA cert/key pair to Secret in namespace kube-system:
++
+[source,bash]
+----
+kubectl create secret tls kubernetes-ca --cert=pki/ca.crt --key=pki/ca.key -n kube-system
+----
+
+. Install reloader by helm chart:
++
+[source,bash]
+----
+helm install suse/reloader \
+    --name ${RELEASE_NAME} \
+    --namespace cert-manager
+----
+
+. Install cert-manager by helm chart:
++
+[source,bash]
+----
+helm install jetstack/cert-manager \
+    --name ${RELEASE_NAME} \
+    --namespace cert-manager \
+    --set global.leaderElection.namespace=cert-manager \
+    --set installCRDs=true
+----
+
+* Cert-manager CA Issuer Resource
++
+The cert-manager CA issuer is a Kubernetes resource that represent certificate authority (CA) that are able to generate signed certificates by honoring certificate signing requests (CSR). The cert-manager certificates require a referenced issuer that is in a ready condition to attempt to honor the request.
++
+Create a CA issuer called `kubernetes-ca` that will sign certificates based on a private key. The certificate stored in the secret `kubernetes-ca` can then be used to trust newly signed certificates by the kubernetes-ca issuer.
++
+[source,bash]
+----
+cat << EOF > issuer.yaml
+apiVersion: cert-manager.io/v1alpha3
+kind: Issuer
+metadata:
+  name: kubernetes-ca
+  namespace: kube-system
+spec:
+  ca:
+    secretName: kubernetes-ca
+EOF
+
+kubectl apply -f issuer.yaml
+----
+
+[NOTE]
+====
+An `Issuer` is a namespaced resource, and it is not possible to issue certificates from an Issuer in a different namespace. This means you will need to create an Issuer in each namespace you wish to obtain Certificates in.
+
+If you want to create a single Issuer that can be consumed in multiple namespaces, you should consider creating a `ClusterIssuer` resource. This is almost identical to the Issuer resource, however is non-namespaced so it can be used to issue Certificates across all namespaces.
+====
+
+* Cert-manager Certificate Resource
++
+The cert-manager has the concept of Certificates that define a desired x509 certificate which will be renewed and kept up to date.
++
+** oidc-dex certificate
++
+[source,bash]
+----
+cat << EOF > oidc-dex-certificate.yaml
+apiVersion: cert-manager.io/v1alpha3
+kind: Certificate
+metadata:
+  name: oidc-dex-cert
+  namespace: kube-system
+spec:
+  subject:
+    organizations:
+    - system:masters
+  commonName: oidc-dex
+  duration: 8760h # 1 year // <1>
+  renewBefore: 720h # 1 month <2>
+  # At least one of a DNS Name or IP address is required.
+  dnsNames:
+  - $(cat admin.conf | grep server | awk '{print $2}' | sed 's/https:\/\///g' | sed 's/:6443//g') <3>
+  ipAddresses:
+  - $(cat admin.conf | grep server | awk '{print $2}' | sed 's/https:\/\///g' | sed 's/:6443//g') <4>
+  secretName: oidc-dex-cert
+  issuerRef:
+    name: kubernetes-ca
+    kind: Issuer
+    group: cert-manager.io
+  isCA: false
+  usages:
+    - digital signature
+    - key encipherment
+    - server auth
+  keySize: 2048
+  keyAlgorithm: rsa
+  keyEncoding: pkcs1
+EOF
+
+kubectl apply -f oidc-dex-certificate.yaml
+----
+<1> Certificate default duration, format (XhYmZs).
+<2> Certificate renew before expiration duration, format (XhYmZs).
+<3> DNSNames is a list of subject alt names to be used on the Certificate.
+<4> IPAddresses is a list of IP addresses to be used on the Certificate.
++
+This certificate will tell cert-manager to attempt to use the Issuer named kubernetes-ca to obtain a certificate key pair for the domains lists in dnsNames and ipAddresses. If successful, the resulting key and certificate will be stored in a secret named oidc-dex-cert with keys of tls.key and tls.crt respectively. 
++
+The dnsNames and ipAddressed field specifies a list of Subject Alternative Names to be associated with the certificate.
++
+The referenced Issuer must exist in the same namespace as the Certificate. A Certificate can alternatively reference a ClusterIssuer which is non-namespaced and so can be referenced from any namespace.
++
+[NOTE]
+====
+A `Certificate` is a namespaced resource that references an Issuer or ClusterIssuer that determine what will be honoring the certificate request.
+====
+
+** oidc-gangway certificate
++
+[source,bash]
+----
+cat << EOF > oidc-gangway-certificate.yaml
+apiVersion: cert-manager.io/v1alpha3
+kind: Certificate
+metadata:
+  name: oidc-gangway-cert
+  namespace: kube-system
+spec:
+  subject:
+    organizations:
+    - system:masters
+  commonName: oidc-gangway
+  duration: 8760h # 1 year
+  renewBefore: 720h # 1 month
+  # At least one of a DNS Name or IP address is required.
+  dnsNames:
+  - $(cat admin.conf | grep server | awk '{print $2}' | sed 's/https:\/\///g' | sed 's/:6443//g')
+  ipAddresses:
+  - $(cat admin.conf | grep server | awk '{print $2}' | sed 's/https:\/\///g' | sed 's/:6443//g')
+  secretName: oidc-gangway-cert
+  issuerRef:
+    name: kubernetes-ca
+    kind: Issuer
+    group: cert-manager.io
+  isCA: false
+  usages:
+    - digital signature
+    - key encipherment
+    - server auth
+  keySize: 2048
+  keyAlgorithm: rsa
+  keyEncoding: pkcs1
+EOF
+
+kubectl apply -f oidc-gangway-certificate.yaml
+----
+<1> Certificate default duration, format (XhYmZs).
+<2> Certificate renew before expiration duration, format (XhYmZs).
+<3> DNSNames is a list of subject alt names to be used on the Certificate.
+<4> IPAddresses is a list of IP addresses to be used on the Certificate.
+
+** metrics-server certificate
++
+[source,bash]
+----
+cat << EOF > metrics-server-certificate.yaml
+apiVersion: cert-manager.io/v1alpha3
+kind: Certificate
+metadata:
+  name: metrics-server-cert
+  namespace: kube-system
+spec:
+  subject:
+    organizations:
+    - system:masters
+  commonName: metrics-server.kube-system.svc
+  duration: 8760h # 1 year
+  renewBefore: 720h # 1 month
+  # At least one of a DNS Name or IP address is required.
+  dnsNames:
+  - $(cat admin.conf | grep server | awk '{print $2}' | sed 's/https:\/\///g' | sed 's/:6443//g')
+  ipAddresses:
+  - $(cat admin.conf | grep server | awk '{print $2}' | sed 's/https:\/\///g' | sed 's/:6443//g')
+  secretName: metrics-server-cert
+  issuerRef:
+    name: kubernetes-ca
+    kind: Issuer
+    group: cert-manager.io
+  isCA: false
+  usages:
+    - digital signature
+    - key encipherment
+    - server auth
+  keySize: 2048
+  keyAlgorithm: rsa
+  keyEncoding: pkcs1
+EOF
+
+kubectl apply -f metrics-server-certificate.yaml
+----
+<1> Certificate default duration, format (XhYmZs).
+<2> Certificate renew before expiration duration, format (XhYmZs).
+<3> DNSNames is a list of subject alt names to be used on the Certificate.
+<4> IPAddresses is a list of IP addresses to be used on the Certificate.
+
 == Manual Certificate Renewal
 
 [IMPORTANT]
