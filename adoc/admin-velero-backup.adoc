@@ -26,7 +26,7 @@ To solve this, there is a community provided controller link:https://github.com/
 velero backup create <BACKUP_NAME>
 ----
 
-* Schedule Backup
+* Scheduled Backup
 +
 The schedule template in cron notation, using UTC time. The schedule can also be expressed using `@every <duration>` syntax.
 The duration can be specified using a combination of seconds (s), minutes (m), and hours (h), for example: `@every 2h30m`.
@@ -64,11 +64,11 @@ When creating multiple backups to different backup locations closely, you might 
 
 ** Granularity
 +
-Without pass extra flags to `velero backup create`, Velero will backup whole {kube} cluster.
+Without passing extra flags to `velero backup create`, Velero will backup whole {kube} cluster.
 
 *** Namespace
 +
-Pass flag `--include-namespaces` or `--exclude-namespaces` to specifies which namespaces to include/exclude when backing up.
+Pass flag `--include-namespaces` or `--exclude-namespaces` to specify which namespaces to include/exclude when backing up.
 +
 For example:
 +
@@ -119,13 +119,13 @@ velero backup create backup2master --storage-location master
 velero backup create backup2slave --storage-location slave
 ----
 
-** Garbage collection
+** Garbage Collection
 +
-Pass `--ttl` to determine how long keeps the backup, after that, the backup will be garbage collected. The default backup existed time is 720 hours (30 days).
-
+Pass `--ttl` to specify how long the backup should be kept, after that, the backup will be dumped into garbage (deleted). The default time for a backup to exist before it is deleted is 720 hours (30 days).
+l
 ** Exclude Specific Items from Backup
 +
-To exclude individual items from being backed up, even if they match the resource/namespace/label selectors defined in the backup spec. To do this, label the item as follows:
+You can exclude individual items from being backed up, even if they match the resource/namespace/label selectors defined in the backup spec. To do this, label the item as follows:
 +
 [source,bash]
 ----
@@ -134,21 +134,21 @@ kubectl label -n <ITEM_NAMESPACE> <RESOURCE>/<NAME> velero.io/exclude-from-backu
 
 === Backup Troubleshooting
 
-* List backups
+* List Backups
 +
 [source,bash]
 ----
 velero backup get
 ----
 
-* Describe backups
+* Describe Backups
 +
 [source,bash]
 ----
 velero backup describe <BACKUP_NAME_1> <BACKUP_NAME_2> <BACKUP_NAME_3>
 ----
 
-* Retrieve backup logs
+* Retrieve Backup Logs
 +
 [source,bash]
 ----

@@ -12,18 +12,18 @@ Add {suse} helm chart repository URL:
 helm repo add suse https://kubernetes-charts.suse.com
 ----
 
-=== Object Storage And It's Credential
+=== Object Storage And It's Credentials
 
 Velero uses object storage to store backups and associated artifacts.
-It can optionally snapshot persistent volume and store in object storage by `restic` if there is no supported volume snapshot provider.
+It can also optionally create snapshots of persistent volume and store them in object storage by `restic`, if there is no supported volume snapshot provider.
 
-Choose one of the object storage provider lists below that fits your environment for backup and restore {kube} cluster.
+Choose one of the object storage providers, which fits your environment, form the list below for backing up and restoring the {kube} cluster.
 
-Moreover, the object storage server controls the access permission by credential. Prepare the credential file `credentials-velero` to velero server for it has the permission to write the backup data to object storage or read the backup data from object storage.
+The object storage server checks access permission, so it is vital to have credentials ready. Provide the credentials file `credentials-velero` to the velero server, so that it has the permission to write or read the backup data from the object storage.
 
 [IMPORTANT]
 ====
-Make sure the object storage is created before install the velero. Otherwise, the velero server won't start successfully because the velero server would check the object storage exists and have the permission to access it during server bootup.
+Make sure the object storage is created before you install Velero. Otherwise, the Velero server won't be able to start successfully. This is because the Velero server checks that the object storage exists and needs to have the permission to access it during server boot.
 ====
 
 * Public Cloud Providers
@@ -71,7 +71,7 @@ aws_access_key_id=<AWS_ACCESS_KEY_ID>
 aws_secret_access_key=<AWS_SECRET_ACCESS_KEY>
 ----
 +
-For the details, please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-aws/tree/v1.0.1[Velero Plugin For AWS].
+For details, please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-aws/tree/v1.0.1[Velero Plugin For AWS].
 
 ** Google Cloud Storage
 
@@ -142,7 +142,7 @@ gcloud iam service-accounts keys create credentials-velero \
     --iam-account $SERVICE_ACCOUNT_EMAIL
 ----
 +
-For the details, please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-gcp/tree/v1.0.1[Velero Plugin For GCP].
+For details, please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-gcp/tree/v1.0.1[Velero Plugin For GCP].
 
 ** Azure Blob Storage
 
@@ -209,17 +209,17 @@ AZURE_RESOURCE_GROUP=${AZURE_RESOURCE_GROUP}
 EOF
 ----
 +
-For the details, please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure/tree/v1.0.1[Velero Plugin For Azure].
+For details, please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure/tree/v1.0.1[Velero Plugin For Azure].
 
 * S3-Compatible Providers
 
-** SES6 Ceph Object Gateway (`radosgw`)
+** {ses} 6 Ceph Object Gateway (`radosgw`)
 +
-{suse} supports the SES6 Ceph Object Gateway (`radosgw`) as an S3-compatible object storage provider.
+{suse} supports the {ses} 6 Ceph Object Gateway (`radosgw`) as an S3-compatible object storage provider.
 
-. Install
+. Installation
 +
-Refer to link:https://documentation.suse.com/ses/6/html/ses-all/cha-ceph-additional-software-installation.html[SES6 Object Gateway Manual Installation] on how to install it.
+Refer to the link:https://documentation.suse.com/ses/6/html/ses-all/cha-ceph-additional-software-installation.html[SES 6 Object Gateway Manual Installation] on how to install it.
 +
 . Create the credential file `credentials-velero` in the local machine
 +
