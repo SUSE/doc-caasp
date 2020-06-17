@@ -1,4 +1,4 @@
-[[handling_updates]]
+[#handling-updates]
 
 == Update Requirements
 
@@ -17,7 +17,7 @@ Run `sudo zypper update` on the management workstation before any attempt to upd
 
 Updating of {kube} and its components from one minor version to the next (for example from 1.16 to 1.17) is handled by `skuba`.
 The reason for this is that *minor updates* require special plan and apply procedures.
-These procedures differ for *patch updates* (for example 1.16.1 to 1.16.2), which are handled by `skuba-update` as described in <<_base_os_updates>>.
+These procedures differ for *patch updates* (for example 1.16.1 to 1.16.2), which are handled by `skuba-update` as described in <<base-os-updates>>.
 
 [IMPORTANT]
 ====
@@ -268,13 +268,13 @@ Once you have upgraded all nodes, please run `skuba cluster upgrade plan` again.
 This will show if any upgrades are available that required the versions you just installed.
 If there are upgrades available please repeat the procedure until no more new upgrades are shown.
 
-[[_base_os_updates]]
+[#base-os-updates]
 == Base OS Updates
 
 Base operating system updates are handled by `skuba-update`, which works together
 with the `kured` reboot daemon.
 
-[[disabling-automatic-updates]]
+[#disabling-automatic-updates]
 === Disabling Automatic Updates
 
 Nodes added to a cluster have the service `skuba-update.timer`, which is responsible for running automatic updates, activated by default.
