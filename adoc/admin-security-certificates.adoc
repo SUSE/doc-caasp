@@ -439,33 +439,41 @@ kubectl rollout restart deployment/oidc-gangway -n kube-system
 
 == Automatic Certificate Renewal
 
-{productname} renews the control plane certificates and kubeconfigs automatically by two ways:
+{productname} renews the control plane certificates and kubeconfigs automatically in two ways:
 
-. during the node upgrade: when node upgrade, all the kubeadm managed certificate and kubeconfigs, and kubelet client certificates will be rotates.
-. by kucero addon: if the administrators is not willing to upgrade the cluster, the kucero (KUbernetes control plane CErtificate ROtation) addon helps on auto rotates all the kubeadm managed certificate and kubeconfigs, and kubelet client and server certificates. Kucero includes two components:
-  .. A kubeadm checker/renewer as a DaemonSet deployed on master nodes which periodically checks and renews control plane kubeadm managed certificates/kubeconfigs.
-  .. A kubelet server CSR signer controller which signs the kubelet server CSR by kubelet CA cert/key pair, the signed server certificate stores to `/var/lib/kubelet/pki` and the `/var/lib/kubelet/pki/kubelet-server-current.pem` is a symlink to the latest generated server certificate.
+. *During node upgrade*:
+when the node is upgraded, all the kubeadm managed certificates and kubeconfigs, and kubelet client certificates get rotated.
+
+. *Via the `kucero` addon*:
+if the administrator is not willing to upgrade the cluster, the `kucero` (KUbernetes control plane CErtificate ROtation) addon rotates all the kubeadm managed certificates and kubeconfigs, and kubelet client and server certificates.
+`Kucero` consists of two components:
+  .. A kubeadm checker/renewer in the form of a DaemonSet, which is deployed on master nodes. It's job is to periodically check and renew control plane kubeadm managed certificates/kubeconfigs.
+  .. A kubelet server CSR signer controller, which signs the kubelet server CSR with a kubelet CA cert/key pair. The signed server certificates are stored in `/var/lib/kubelet/pki` and `/var/lib/kubelet/pki/kubelet-server-current.pem` is a symlink to the last generated server certificate.
 
 [NOTE]
 ====
-The kubelet client certificate signing flow is kubelet will send kubelet client CSR in {kube} cluster, then the kube-controller-manager signs the kubelet client CSR by Kubernetes CA cert/key pair.
+During the kubelet client certificate signing flow, kubelet sends the kubelet client CSR into the {kube} cluster, after which the `kube-controller-manager` signs the kubelet client CSR with the Kubernetes CA cert/key pair.
 
-Kubelet client configuration by default uses a `kubelet-client-current.pem` file in
+The kubelet client deafult configuration uses a `kubelet-client-current.pem` file in the
 `/var/lib/kubelet/pki` folder. This file is a symlink to the latest generated certificate.
 ====
 
-=== Control plane nodes certificates rotation
+=== Control Plane Nodes Certificate Rotation
 
-. during the node upgrade: when doing a control plane update, `skuba node upgrade apply` will run `kubeadm upgrade` commands behind the scenes. `kubeadm upgrade apply` and
-`kubeadm upgrade node` will renew and use new `kubeadm` managed certificates on the node, including those stored in kubeconfig files, regardless of the remaining time for which the certificate was still valid.
+Certificates are rotated in two ways:
 
-. by kucero addon:
-.. A kubeadm checker/renewer: kucero will periodically checks (default 1 hour) the kubeadm managed certificates/kubeconfigs, and rotates the certificates/kubeconfigs if the residual time is less than the time (default 720 hours). The administrators could change the default time to renew the certificates/kubeconfigs by adding `--renew-before=<duration>`` (duration format is XhYmZs) to kucero daemonset _or_ change the default polling period to check the certificates/kubeconfigs by adding `--polling-period=<duration>` (duration format is XhYmZs).
-.. A kubelet server CSR signer controller: kucero will signs the control plane nodes' kubelet server CSR by kubelet CA cert/key pair located in control plane node.
+. *During node upgrade*:
+when doing a control plane update, `skuba node upgrade apply` runs `kubeadm upgrade` commands behind the scenes. `kubeadm upgrade apply` and
+`kubeadm upgrade node` renews and uses new `kubeadm` managed certificates on the node, including those stored in kubeconfig files, regardless of the remaining time for which the certificate was still valid.
 
-=== Worker nodes certificates rotation
+. *Via the kucero addon:*
+.. A kubeadm checker/renewer: kucero periodically checks (default interval is 1 hour) the kubeadm managed certificates/kubeconfigs, and rotates the certificates/kubeconfigs if the residual time is less than the total time (default 720 hours). Administrators can change the default time to renew the certificates/kubeconfigs by adding `--renew-before=<duration>`` (duration format is XhYmZs) to the kucero daemonset _or_ change the default polling period for checking the certificates/kubeconfigs by adding `--polling-period=<duration>` (duration format is XhYmZs).
+.. A kubelet server CSR signer controller: kucero signs the kubelet server CSR using the kubelet CA cert/key pair located in control plane node.
 
-The kubelet client certificate signs by kube-controller-manager and kubelet server certificate signs by kucero addon.
+
+=== Worker Node Certificate Rotation
+
+The kubelet client certificate are signed by kube-controller-manager and the kubelet server certificates are signed by the kucero addon.
 
 == Manual Certificate Renewal
 
