@@ -486,11 +486,11 @@ generated file.
 [[addon_certificates_rotation]]
 === Addon certificates rotation
 
-The addon certificate could be automatically rotated by leverages the opensource solution `cert-manager` and `reloader`. The cert-manager is to auto rotates the addon certificates stored in Secret, and the reloader is to watch the addon certificate Secret and rolling upgrade the addon Deployments or DaemonSet.
+The addon certificates can be automatically rotated by leveraging the open-source solutions `cert-manager` and `reloader`. `cert-manager` is for automatically rotating the certificates stored in Secrets, and `reloader` is for watching and reconciling the updated Secrets to execute rolling upgrade the affecting addon Deployments or DaemonSet.
 
 * Prerequisites
 
-. To let reloader auto rolling upgrade the addon Deployments or DaemonSet, we need to label the addons:
+. To let reloader automatically rolling upgrade the addon Deployments or DaemonSet, we need to label the addons:
 +
 [source,bash]
 ----
@@ -538,15 +538,15 @@ helm install jetstack/cert-manager \
     --set installCRDs=true
 ----
 
-* Cert-Manager CA Issuer Resource
+* Create a Cert-Manager CA Issuer Resource
 +
-The cert-manager CA issuer is a Kubernetes resource that represent certificate authority (CA) that are able to generate signed certificates by honoring certificate signing requests (CSR). The cert-manager certificates require a referenced issuer that is in a ready condition to attempt to honor the request.
+The cert-manager CA issuer is a Kubernetes resource that represents a certificate authority (CA) that is able to generate signed certificates by honoring certificate signing requests (CSR). Each cert-manager certificate resource requires one referenced issuer in the ready state to attempt to honor CSR requests.
 +
 [NOTE]
 ====
-An `Issuer` is a namespaced resource, and it is not possible to issue certificates from an Issuer in a different namespace. This means you will need to create an Issuer in each namespace you wish to obtain Certificates in.
+An `Issuer` is a namespaced resource, and it can not issue certificates to the `Certificate` resources in different namespaces.
 
-If you want to create a single Issuer that can be consumed in multiple namespaces, you should consider creating a `ClusterIssuer` resource. This is almost identical to the Issuer resource, however is non-namespaced so it can be used to issue Certificates across all namespaces.
+If you want to create a single Issuer that can be consumed in multiple namespaces, you should consider creating a `ClusterIssuer` resource. This is almost identical to the Issuer resource, however, it is cluster-wide so it can be used to issue certificates in all namespaces.
 ====
 +
 Create a CA issuer called `kubernetes-ca` that will sign certificates based on a private key. The certificate stored in the secret `kubernetes-ca` can then be used to trust newly signed certificates by the kubernetes-ca issuer.
@@ -591,9 +591,9 @@ kubectl apply -f custom-trusted-ca-issuer.yaml
 <1> Issuer or ClusterIssuer.
 ====
 
-* Cert-Manager Certificate Resource
+* Create a Cert-Manager Certificate Resource
 +
-The cert-manager has the concept of Certificates that define a desired x509 certificate which will be renewed and kept up to date.
+The cert-manager has a custom resource, Certificate, which can be used to define a requested x509 certificate which will be renewed and kept up to date by an Issuer or ClusterIssuer resource.
 +
 ** oidc-dex certificate
 +
@@ -641,11 +641,11 @@ kubectl apply -f oidc-dex-certificate.yaml
 <5> The cert-manager issuer name.
 <6> Issuer or ClusterIssuer.
 +
-This certificate will tell cert-manager to attempt to use the Issuer named kubernetes-ca to obtain a certificate key pair for the domains lists in dnsNames and ipAddresses. If successful, the resulting key and certificate will be stored in a secret named oidc-dex-cert with keys of tls.key and tls.crt respectively. 
+This certificate will tell cert-manager to attempt to use the Issuer named kubernetes-ca to obtain a certificate key pair for the domain list in dnsNames and ipAddresses. If successful, the resulting key and certificate will be stored in a secret named oidc-dex-cert with keys of tls.key and tls.crt respectively. 
 +
-The dnsNames and ipAddressed field specifies a list of Subject Alternative Names to be associated with the certificate.
+The dnsNames and ipAddressed fields specify a list of Subject Alternative Names to be associated with the certificate.
 +
-The referenced Issuer must exist in the same namespace as the Certificate. A Certificate can alternatively reference a ClusterIssuer which is non-namespaced and so can be referenced from any namespace.
+The referenced Issuer must exist in the same namespace as the Certificate. A Certificate can alternatively reference a ClusterIssuer which is cluster-wide so it can be referenced from any namespace.
 +
 [NOTE]
 ====
