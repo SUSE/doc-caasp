@@ -5,7 +5,7 @@ Deployment on Amazon Web Services (AWS) is currently a tech preview.
 .Preparation Required
 [NOTE]
 ====
-You must have completed <<deployment.preparations>> to proceed.
+You must have completed <<deployment-preparations>> to proceed.
 ====
 
 You will use {tf} to deploy the whole infrastructure described in
@@ -13,7 +13,7 @@ You will use {tf} to deploy the whole infrastructure described in
 {kube} cluster on top of it.
 
 
-[[architecture-aws]]
+[#architecture-aws]
 === AWS Deployment
 
 The AWS deployment created by our {tf} template files leads to the
@@ -53,7 +53,7 @@ The load balancer exposes the following ports:
 * `32000`: Dex (OIDC Connect)
 * `32001`: Gangway (RBAC Authenticate)
 
-[[architecture-aws-vpc-peering]]
+[#architecture-aws-vpc-peering]
 ==== Join Already Existing VPCs
 
 The {tf} template files allow the user to have the
@@ -75,7 +75,7 @@ Current limitations:
 * The VPCs must be owned by the same user who is creating the {productname}
 infrastructure via {tf}.
 
-[[aws-iam-profile]]
+[#aws-iam-profile]
 ==== IAM Profiles
 
 The
@@ -131,7 +131,7 @@ You can enter the registration code for your nodes in
 `~/caasp/deployment/aws/registration.auto.tfvars` instead of the
 `terraform.tfvars` file.
 
-Substitute `CAASP_REGISTRATION_CODE` for the code from <<registration_code>>.
+Substitute `CAASP_REGISTRATION_CODE` for the code from <<registration-code>>.
 
 [source,json]
 ----

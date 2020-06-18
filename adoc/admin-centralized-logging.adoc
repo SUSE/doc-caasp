@@ -11,7 +11,7 @@ Collecting logs in a central location can be useful for audit or debug purposes 
 In order to successfully use Centralized Logging, you first need to install `Helm` and `Tiller`.
 Helm is used to install the log agents and provide custom logging settings.
 
-Refer to <<helm_tiller_install>>.
+Refer to <<helm-tiller-install>>.
 
 == Types of Logs
 
@@ -73,7 +73,7 @@ are:
 * `*server.port*`, default value = 514
 * `*server.protocol*`, default value = TCP
 
-See <<Optional settings>> for the optional parameters and their default values.
+See <<log-optional_settings>> for the optional parameters and their default values.
 
 - Running the following will create the minimal working setup:
 
@@ -142,7 +142,7 @@ This setting affects the Kubernetes cluster logs (`kubernetes-control-plane` and
 This option sets the maximum size allowed for disk storage (in bytes).
 The storage is divided so that 20 percent of it is for journal logs and 80 percent for the remaining logs.
 
-
+[#log-optional_settings]
 == Optional settings
 
 [NOTE]

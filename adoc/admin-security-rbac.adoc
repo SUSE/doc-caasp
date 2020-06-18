@@ -1,4 +1,4 @@
-[[rbac]]
+[#rbac]
 = Role Based Access Control (RBAC)
 
 == Introduction
@@ -86,7 +86,7 @@ using the `ClusterRole` `admin` you would run the following:
 kubectl create rolebinding admin --clusterrole=admin --user=<USER_1> --user=<USER_2> --group=<GROUP_1>
 ----
 
-[[_sec.admin.security.rbac.update]]
+[#sec-admin-security-rbac-update]
 ==== Update the Authentication Connector
 
 [IMPORTANT]
@@ -160,7 +160,7 @@ patches:
 kubectl apply -k ~/clusters/<CLUSTER_NAME>/addons/dex/
 ----
 
-[[_sec.admin.security.rbac.apply]]
+[#sec-admin-security-rbac-apply]
 === User Access
 
 ==== Setting up `kubectl`
@@ -202,7 +202,7 @@ The first user refreshing the `id-token` & `refresh token` will be able to conti
 All other users will encounter an error `Refresh token is invalid or has already been claimed by another client` because the `refresh-token` got updated by the first user.
 
 Please use separate users for each `kubeconfig` file to avoid this situation.
-Find out how to add more users in <<_sec.admin.security.users.add>>.
+Find out how to add more users in <<sec-admin-security-users-add>>.
 You can also check information about the user and the respective OIDC tokens in the `kubeconfig` file under the `users` section:
 
 ----

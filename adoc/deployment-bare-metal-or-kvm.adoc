@@ -1,11 +1,11 @@
 include::entities.adoc[]
 
-[[deployment_bare_metal]]
+[#deployment-bare-metal]
 == Deployment on Bare Metal or KVM
 
 .Preparation Required
 [NOTE]
-You must have completed <<deployment.preparations>> to proceed.
+You must have completed <<deployment-preparations>> to proceed.
 
 [NOTE]
 ====
@@ -123,13 +123,13 @@ the server configuration in your {ay} file. To do so add the following section:
 
 Once the {ay} file is available in the network that the machines will be configured in, you can start deploying machines.
 
-The default production scenario consists of 8 nodes:
+The default production scenario consists of 6 nodes:
 
-* 2 load balancers
+* 1 load balancer
 * 3 masters
-* 3 workers
+* 2 workers
 
-Depending on the type of load balancer you wish to use, you need to deploy at least 6 machines to serve as cluster nodes and provide 2 load balancers from the environment.
+Depending on the type of load balancer you wish to use, you need to deploy at least 5 machines to serve as cluster nodes and provide a load balancer from the environment.
 
 The load balancer must point at the machines that are assigned to be used as `master` nodes in the future cluster.
 

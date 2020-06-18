@@ -1,4 +1,4 @@
-[[_sec.admin.security.role]]
+[#sec-admin-security-role]
 = Role Management
 
 {productname}
@@ -7,7 +7,7 @@ Roles define, which _subjects_ (users or groups) can use which _verbs_ (operatio
 The following sections provide an overview of the resources, verbs and how to create roles.
 Roles can then be assigned to users and groups.
 
-[[_sec.admin.security.role.verb]]
+[#sec-admin-security-role-verb]
 == List of Verbs
 
 
@@ -42,7 +42,7 @@ watch::
 Watch resource.
 
 
-[[_sec.admin.security.role.resource]]
+[#sec-admin-security-role-resource]
 == List of Resources
 
 
@@ -91,7 +91,7 @@ ReplicaSets::
 {kubedoc}concepts/workloads/controllers/replicaset/
 
 
-[[_sec.admin.security.role.create]]
+[#sec-admin-security-role-create]
 == Creating Roles
 
 
@@ -116,7 +116,7 @@ rules:
 ----
 <1> Name of the role. This is required to associate the rule with
     a group or user. For details, refer to
-    <<_sec.admin.security.role.create_binding>>.
+    <<sec-admin-security-role-create_binding>>.
 
 <2> Namespace the new group should be allowed to access. Use `default`
 for {kube}' default namespace.
@@ -125,10 +125,10 @@ for {kube}' default namespace.
 `kubectl api-resources` to list all API groups.
 
 <4> {kube} resources. For a list of available resources, refer to
- <<_sec.admin.security.role.resource>>.
+ <<sec-admin-security-role-resource>>.
 
 <5> {kube} verbs. For a list of available verbs, refer to
-<<_sec.admin.security.role.verb>>.
+<<sec-admin-security-role-verb>>.
 
 ====
 
@@ -147,18 +147,18 @@ rules:
   resources: ["pods"] <3>
   verbs: ["create"] <4>
 ----
-<1>  a group or user. For details, refer to <<_sec.admin.security.role.create_binding>>.
+<1>  a group or user. For details, refer to <<sec-admin-security-role-create_binding>>.
 
 <2> {kube} API groups. Use `""` for the core group. Use
 `kubectl api-resources` to list all API groups.
 
-<3> {kube} resources. For a list of available resources, refer to <<_sec.admin.security.role.resource>>.
+<3> {kube} resources. For a list of available resources, refer to <<sec-admin-security-role-resource>>.
 
-<4> {kube} verbs. For a list of available verbs, refer to <<_sec.admin.security.role.verb>>.
+<4> {kube} verbs. For a list of available verbs, refer to <<sec-admin-security-role-verb>>.
 
 ====
 
-[[_sec.admin.security.role.create_binding]]
+[#sec-admin-security-role-create_binding]
 == Create Role Bindings
 
 
@@ -166,7 +166,7 @@ To bind a group or user to a role, create a YAML file that contains the role bin
 Then apply the binding with `kubectl apply -f YAML_FILE`.
 The following examples provide an overview about different use cases of role bindings.
 
-[[q]]
+[#q]
 .Binding a Group to a Role
 ====
 This example shows how to bind a group to a defined role.
@@ -193,11 +193,11 @@ roleRef:
 <3> Name of the LDAP group to which this binding applies.
 
 <4> Name of the role used. For defining rules, refer to
-<<_sec.admin.security.role.create>>.
+<<sec-admin-security-role-create>>.
 
 ====
 
-[[_ex.admin.security.groups.cluster.role]]
+[#ex-admin-security-groups-cluster-role]
 .Binding a Group to a Cluster Role
 ====
 This example shows how to bind a group to a defined cluster role.
@@ -221,7 +221,7 @@ roleRef:
 
 <2> Name of the LDAP group to which this binding applies.
 
-<3> Name of the role used. For defining rules, refer to <<_sec.admin.security.role.create>>.
+<3> Name of the role used. For defining rules, refer to <<sec-admin-security-role-create>>.
 
 
 ====

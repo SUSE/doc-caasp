@@ -1,4 +1,4 @@
-[[monitoring_stack]]
+[#monitoring-stack]
 = Monitoring Stack
 
 [IMPORTANT]
@@ -152,7 +152,7 @@ Later configuration steps require secret names to be specified.
 +
 .. Trusted Certificates
 +
-Please refer to <<trusted_server_certificate>> on how to sign the trusted certificate.
+Please refer to <<trusted-server-certificate>> on how to sign the trusted certificate.
 The `server.conf` for DNS.1 is `prometheus.example.com`, DNS.2 is `prometheus-alertmanager.example.com` and DNS.3 `grafana.example.com`.
 +
 Then, import your trusted certificate into the {kube} cluster.
@@ -160,7 +160,7 @@ In this example, trusted certificates are `monitoring.key` and `monitoring.crt`.
 +
 .. Self-signed Certificates (optional)
 +
-Please refer to <<self_signed_server_certificate>> on how to sign the self-signed certificate.
+Please refer to <<self-signed-server-certificate>> on how to sign the self-signed certificate.
 The `server.conf` for DNS.1 is `+prometheus.example.com+`, DNS.2 is `+prometheus-alertmanager.example.com+` and DNS.3 `+grafana.example.com+`.
 +
 Then, import your self-signed certificate into the {kube} cluster.
@@ -179,11 +179,11 @@ kubectl create -n monitoring secret tls monitoring-tls  \
 
 There will be two different ways of using ingress for accessing the monitoring system.
 
-- <<installation_for_subdomains>>: Using `subdomains` for accessing monitoring system such as `+prometheus.example.com+`, `+prometheus-alertmanager.example.com+`, and `+grafana.example.com+`.
+- <<installation-for-subdomains>>: Using `subdomains` for accessing monitoring system such as `+prometheus.example.com+`, `+prometheus-alertmanager.example.com+`, and `+grafana.example.com+`.
 
-- <<installation_for_subpaths>>: Using `subpaths` for accessing monitoring system such as `example.com/prometheus`, `example.com/alertmanager`, and `example.com/grafana`.
+- <<installation-for-subpaths>>: Using `subpaths` for accessing monitoring system such as `example.com/prometheus`, `example.com/alertmanager`, and `example.com/grafana`.
 
-[[installation_for_subdomains]]
+[#installation-for-subdomains]
 === Installation For Subdomains
 
 [NOTE]
@@ -344,7 +344,7 @@ prometheus-server         prometheus.example.com                          80, 44
 * **External IPs**: `+https://prometheus.example.com+`
 * **LoadBalancer**: `+https://prometheus.example.com+`
 
-[[alertmanager_configuration_example]]
+[#alertmanager-configuration-example]
 ==== Alertmanager Configuration Example
 
 The configuration example sets one "receiver" to get notified by email when one of below conditions is met:
@@ -508,7 +508,7 @@ helm upgrade prometheus suse/prometheus --namespace monitoring --values promethe
 * **External IPs**: `+https://prometheus-alertmanager.example.com+`
 * **LoadBalancer**: `+https://prometheus-alertmanager.example.com+`
 
-[[recording_rules_configuration_example]]
+[#recording-rules-configuration-example]
 ==== Recording Rules Configuration Example
 
 Recording rules allow you to precompute frequently needed or computationally
@@ -685,7 +685,7 @@ grafana-dbf7ddb7d-fxg6d                          3/3       Running   0          
 
 . Now you can add Grafana dashboards.
 
-[[adding_grafana_dashboards]]
+[#adding-grafana-dashboards]
 ==== Adding Grafana Dashboards
 
 There are three ways to add dashboards to Grafana:
@@ -760,7 +760,7 @@ continues with definition of dashboard JSON
 kubectl apply -f grafana-dashboards-caasp-cluster.yaml
 ----
 
-[[installation_for_subpaths]]
+[#installation-for-subpaths]
 === Installation For Subpaths
 
 [NOTE]
@@ -886,10 +886,10 @@ prometheus-server-6488f6c4cd-5n9w8               2/2       Running   0          
 ----
 
 ==== Alertmanager Configuration Example
-Refer to <<alertmanager_configuration_example>>
+Refer to <<alertmanager-configuration-example>>
 
 ==== Recording Rules Configuration Example
-Refer to <<recording_rules_configuration_example>>
+Refer to <<recording-rules-configuration-example>>
 
 ==== Grafana
 
@@ -1117,7 +1117,7 @@ At this stage, the Prometheus Expression browser/API, Alertmanager, and Grafana 
 . Now you can add the Grafana dashboards.
 
 ==== Adding Grafana Dashboards
-Refer to <<adding_grafana_dashboards>>
+Refer to <<adding-grafana-dashboards>>
 
 == Monitoring
 
@@ -1271,7 +1271,7 @@ server:
 extraScrapeConfigs: |
   - job_name: etcd
     static_configs:
-    - targets: ['192.168.0.32:2379','192.168.0.17:2379','192.168.0.5:2379'
+    - targets: ['192.168.0.32:2379','192.168.0.17:2379','192.168.0.5:2379']
     scheme: https
     tls_config:
       ca_file: /etc/secrets/ca.crt

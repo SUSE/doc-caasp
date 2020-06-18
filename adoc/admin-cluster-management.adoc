@@ -19,7 +19,7 @@ from the original management workstation.
 
 Bootstrapping the cluster is the initial process of starting up a minimal
 viable cluster and joining the first master node. Only the first master node needs to be bootstrapped,
-later nodes can simply be joined as described in <<adding_nodes>>.
+later nodes can simply be joined as described in <<adding-nodes>>.
 
 Before bootstrapping any nodes to the cluster,
 you need to create an initial cluster definition folder (initialize the cluster).
@@ -28,7 +28,7 @@ This is done using `skuba cluster init` and its `--control-plane` flag.
 For a step by step guide on how to initialize the cluster, configure updates using `kured`
 and subsequently bootstrap nodes to it, refer to the _{productname} Deployment Guide_.
 
-[[adding_nodes]]
+[#adding-nodes]
 == Adding Nodes
 
 Once you have added the first master node to the cluster using `skuba node bootstrap`,
@@ -60,7 +60,7 @@ To add a new *worker* node, you would run something like:
 [source,bash]
 skuba node join --role worker --user sles --sudo --target 10.86.2.164 worker1
 
-[[removing_nodes]]
+[#removing-nodes]
 == Removing Nodes
 
 === Temporary Removal
@@ -69,7 +69,7 @@ If you wish to remove a node temporarily, the recommended approach is to first d
 
 When you want to bring the node back, you only have to uncordon it.
 
-TIP: For instructions on how to perform these operations refer to <<node_operations>>.
+TIP: For instructions on how to perform these operations refer to <<node-operations>>.
 
 === Permanent Removal
 
@@ -119,7 +119,7 @@ you will need to use a combination of commands.
 . Reinstall the node from scratch.
 . Run `skuba node join --role <DESIRED_ROLE> --user <USER_NAME> --sudo --target <IP/FQDN> <NODE_NAME>`.
 
-[[node_operations]]
+[#node-operations]
 == Node Operations
 
 === Uncordon and Cordon

@@ -1,11 +1,11 @@
-[[deployment.preparations]]
+[#deployment-preparations]
 == Deployment Preparations
 
 In order to deploy {productname} you need a workstation running {sls} {base_os_version} or similar {opensuse} equivalent.
 This workstation is called the "Management machine". Important files are generated
 and must be maintained on this machine, but it is not a member of the {productname} cluster.
 
-[[ssh.configuration]]
+[#ssh-configuration]
 === Basic SSH Key Configuration
 
 *In order to successfully deploy {productname}, you need to have SSH keys loaded into an SSH agent.* This is important, because it is required in order to use the installation tools `skuba` and `terraform`.
@@ -75,7 +75,7 @@ a "jump host" and don't want to copy your private key to this node.
 This can be achieved using the `ssh -A` command. Please refer to the man page
 of `ssh` to learn about the security implications of using this feature.
 
-[[registration_code]]
+[#registration-code]
 === Registration Code
 
 [NOTE]
@@ -102,7 +102,7 @@ If you can not find {productname} in the list of subscriptions please contact
 your local administrator responsible for software subscriptions or {suse} support.
 ====
 
-[[machine-id]]
+[#machine-id]
 === Unique Machine IDs
 During deployment of the cluster nodes, each machine will be assigned a unique ID in the `/etc/machine-id` file by {tf} or {ay}.
 If you are using any (semi-)manual methods of deployments that involve cloning of machines and deploying from templates,
@@ -110,7 +110,7 @@ you must make sure to delete this file before creating the template.
 
 If two nodes are deployed with the same `machine-id`, they will not be correctly recognized by `skuba`.
 
-[[machine-id-regen]]
+[#machine-id-regen]
 .Regenerating Machine ID
 [IMPORTANT]
 ====
@@ -185,7 +185,7 @@ Replace `<USER>` and `<PASSWORD>` with the credentials of an allowed user for th
 
 ====
 
-[[loadbalancer]]
+[#loadbalancer]
 === Load Balancer
 
 [IMPORTANT]
