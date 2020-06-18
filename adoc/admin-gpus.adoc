@@ -181,3 +181,144 @@ Check the kubelet log on the worker node that has a GPU. This may indicate error
 ----
 # journalctl -u kubelet
 ----
+
+== Monitoring
+
+If you have configured link:{docurl}/single-html/caasp-admin/#_monitoring[Monitoring] for your cluster, you may want to use {nvidia}'s link:https://developer.nvidia.com/dcgm[Data Center GPU Manager (DCGM) to monitor your GPUs]. DCGM integrates with the Prometheus and Grafana services configured for your cluster. Follow the steps below to configure the Prometheus exporter and Grafana dashboard for your {nvidia} GPUs.
+
+=== Configure a Pod Security Policy
+
+The DCGM requires use of the hostPath volume type to access the kubelet socket on the host worker node. Create an appropriate Pod Security Policy and RBAC configuration to allow this:
+
+
+[source,bash]
+----
+$ kubectl apply -f - <<EOF
+---
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: nvidia.dcgm
+spec:
+  privileged: false
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  runAsUser:
+    rule: RunAsAny
+  fsGroup:
+    rule: RunAsAny
+  allowedHostPaths:
+    - pathPrefix: /var/lib/kubelet/pod-resources
+  volumes:
+  - hostPath
+  - configMap
+  - secret
+  - emptyDir
+  - downwardAPI
+  - projected
+  - persistentVolumeClaim
+  - nfs
+  - rbd
+  - cephFS
+  - glusterfs
+  - fc
+  - iscsi
+  - cinder
+  - gcePersistentDisk
+  - awsElasticBlockStore
+  - azureDisk
+  - azureFile
+  - vsphereVolume
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: nvidia:dcgm
+rules:
+- apiGroups:
+  - policy
+  resources:
+  - podsecuritypolicies
+  verbs:
+  - use
+  resourceNames:
+  - nvidia.dcgm
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: nvidia:dcgm
+roleRef:
+  kind: ClusterRole
+  name: nvidia:dcgm
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- kind: Group
+  name: system:serviceaccounts:dcgm
+EOF
+----
+
+=== Create the DCGM Exporter
+
+The DCGM exporter monitors GPUs on each worker node and exposes metrics that can be queried.
+
+[source,bash]
+----
+$ kubectl create namespace dcgm
+$ kubectl create --namespace dcgm -f https://raw.githubusercontent.com/NVIDIA/gpu-monitoring-tools/master/dcgm-exporter.yaml
+----
+
+Check that the metrics are being collected:
+
+[source,bash]
+----
+$ NAME=$(kubectl get pods --namespace dcgm -l "app.kubernetes.io/name=dcgm-exporter" -o "jsonpath={ .items[0].metadata.name}")
+$ kubectl port-forward $NAME 8080:9400
+$ # in another terminal
+$ curl http://127.0.0.1:8080/metrics
+----
+
+=== Configure Prometheus
+
+After deploying Prometheus as explained in link:{docurl}/single-html/caasp-admin/#_monitoring[Monitoring], configure Prometheus to monitor the DCGM pods. Gather the cluster IPs of the pods to monitor:
+
+[source,bash]
+----
+$ kubectl get pods --namespace dcgm -l "app.kubernetes.io/name=dcgm-exporter" -o "jsonpath={ .items[*].status.podIP}"
+10.244.1.10 10.244.2.68
+----
+
+Add the DCGM pods to Prometheus's scrape configuration. Edit the Prometheus configmap:
+
+[source,bash]
+----
+$ kubectl edit --namespace monitoring configmap prometheus-server
+----
+
+Under the ``scrape_configs`` section add a new job, using the pod IPs found above:
+
+[source,yaml]
+----
+scrape_configs:
+...
+- job_name: dcgm
+  static_configs:
+  - targets: ['10.244.1.10:9400', '10.244.2.68:9400']
+...
+----
+
+Prometheus will automatically reload the new configuration.
+
+=== Add the Grafana Dashboard
+
+Import the DCGM Exporter dashboard into Grafana.
+
+In the Grafana web interface, navigate to Manage Dashboards and click `Import`. In the field "Import via grafana.com", enter the dashboard ID `12219`, and click `Load`.
+
+Alternatively, download the link:https://raw.githubusercontent.com/NVIDIA/gpu-monitoring-tools/2.0.0-rc.11/grafana/dcgm-exporter-dashboard.json[dashboard JSON definition], and upload it with the "Upload .json file" button.
+
+On the next page, in the dropdown menu labeled "Prometheus", select "Prometheus" as the data source. Customize the dashboard name and UID to your preference. Then click "Import".
+
+The new dashboard will appear in the Grafana web interface.
