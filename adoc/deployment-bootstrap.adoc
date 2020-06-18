@@ -1,4 +1,4 @@
-[[bootstrap]]
+[#bootstrap]
 == Bootstrapping the Cluster
 
 Bootstrapping the cluster is the initial process of starting up the cluster
@@ -46,7 +46,7 @@ In this case, please refer to: {docurl}single-html/caasp-admin/#_configuring_htt
 
 Make sure you have added the SSH identity (corresponding to the public SSH key distributed above)
 to the ssh-agent on your workstation. For instructions on how to add the SSH identity,
-refer to <<ssh.configuration>>.
+refer to <<ssh-configuration>>.
 
 This is a requirement for `skuba` (https://github.com/SUSE/skuba#prerequisites).
 
@@ -258,7 +258,7 @@ will select the highest supported version exposed by the underlying OpenStack cl
 When Nova and Cinder have different availability zones, this should be set to `true`.
 
 
-After setting options in the `openstack.conf` file, please proceed with <<cluster.bootstrap>>.
+After setting options in the `openstack.conf` file, please proceed with <<cluster-bootstrap>>.
 
 [IMPORTANT]
 ====
@@ -290,7 +290,7 @@ these names will be used by the `AWS` cloud controller manager to reconcile node
 You can use the "private dns" values provided by the {tf} output.
 ====
 
-[[cluster.bootstrap.vcp]]
+[#cluster-bootstrap-vcp]
 ====== vSphere In-tree CPI (VCP)
 
 Define the cluster using the following command:
@@ -357,7 +357,7 @@ Instruction to tag zones and regions, refer to: https://vmware.github.io/vsphere
 <15> (optional) The category name of the tag assigned to the vCenter datacenter.
 <16> (optional) The category name of the tag assigned to the vCenter cluster.
 
-After setting options in the `vsphere.conf` file, please proceed with <<cluster.bootstrap>>.
+After setting options in the `vsphere.conf` file, please proceed with <<cluster-bootstrap>>.
 
 [IMPORTANT]
 ====
@@ -507,7 +507,7 @@ kubectl apply -k my-cluster/addons/kured/
 
 This will restart all `kured` pods with the additional configuration flags.
 
-[[cluster.bootstrap]]
+[#cluster-bootstrap]
 ==== Cluster Bootstrap
 . Switch to the new directory.
 . Now bootstrap a master node.

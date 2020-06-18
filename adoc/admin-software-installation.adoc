@@ -1,4 +1,4 @@
-[[software-installation]]
+[#software-installation]
 = Software Installation
 
 Software can be installed in three basic layers
@@ -95,7 +95,7 @@ sudo zypper in ceph-common xfsprogs
 
 == {kube} stack
 
-[[helm_tiller_install]]
+[#helm-tiller-install]
 === Installing Helm
 
 As of {productname} {productversion},, Helm is part of the {productname} package repository, so to use this,
@@ -134,14 +134,14 @@ This installs tiller with TLS certificate security.
 
 ===== Trusted Certificates
 
-Please reference to <<trusted_server_certificate>> and <<trusted_client_certificate>> on how to sign the trusted tiller and helm certificate.
+Please reference to <<trusted-server-certificate>> and <<trusted-client-certificate>> on how to sign the trusted tiller and helm certificate.
 The server.conf for IP.1 is `127.0.0.1`.
 
 Then, import trusted certificate to {kube} cluster. In this example, trusted certificate are `ca.crt`, `tiller.crt`, `tiller.key`, `helm.crt` and `helm.key`.
 
 ===== Self-signed Certificates (optional)
 
-Please reference to <<self_signed_server_certificate>> and <<self_signed_client_certificate>> on how to sign the self-signed tiller and helm certificate.
+Please reference to <<self-signed-server-certificate>> and <<self-signed-client-certificate>> on how to sign the self-signed tiller and helm certificate.
 The server.conf for IP.1 is `127.0.0.1`.
 
 Then, import trusted certificate to {kube} cluster. In this example, trusted certificate are `ca.crt`, `tiller.crt`, `tiller.key`, `helm.crt` and `helm.key`.
