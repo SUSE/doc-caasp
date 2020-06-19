@@ -1,15 +1,16 @@
 [[gpus]]
+
 = NVIDIA GPUs
 
 include::common_tech_preview.adoc[]
 
-SUSE's CaaS Platform supports scheduling GPU-dependent workloads on NVIDIA GPUs as a technical preview. This can be a powerful way to run compute-intensive workloads such as machine learning pipelines. This section illustrates how to prepare your host machine to expose GPU devices to your containers, and how to configure Kubernetes to schedule GPU-dependent workloads.
+Graphics Processing Units (GPUs) provide a powerful way to run compute-intensive workloads such as machine learning pipelines. SUSE's CaaS Platform supports scheduling GPU-dependent workloads on {nvidia} GPUs as a technical preview. This section illustrates how to prepare your host machine to expose GPU devices to your containers, and how to configure {kube} to schedule GPU-dependent workloads.
 
 == Prepare the host machine
 
 === Install the GPU drivers
 
-Not every worker node in the cluster need have a GPU device present. On the nodes that do have one or more NVIDIA GPUs, install the drivers from NVIDIA's repository.
+Not every worker node in the cluster need have a GPU device present. On the nodes that do have one or more {nvidia} GPUs, install the drivers from {nvidia}'s repository.
 
 [source,bash]
 ----
@@ -20,21 +21,21 @@ Not every worker node in the cluster need have a GPU device present. On the node
 
 [NOTE]
 ====
-For most modern NVIDIA GPUs, the G05 driver will support your device. Some older devices may require the x11-video-nvidiaG04 driver package instead. Check NVIDIA's documentation for your GPU device model.
+For most modern {nvidia} GPUs, the G05 driver will support your device. Some older devices may require the x11-video-nvidiaG04 driver package instead. Check {nvidia}'s documentation for your GPU device model.
 ====
 
 === Install the OCI hooks
 
-OCI hooks are a way for vendors or projects to inject executable actions into the lifecycle of a container managed by the container runtime (runc). SUSE provides an OCI hook for NVIDIA that enable the container runtime and therefor the kubelet and the Kubernetes scheduler to query the host system for the presence of a GPU device and access it directly. Install the hook on the worker nodes with GPUs:
+OCI hooks are a way for vendors or projects to inject executable actions into the lifecycle of a container managed by the container runtime (runc). SUSE provides an OCI hook for {nvidia} that enable the container runtime and therefor the kubelet and the Kubernetes scheduler to query the host system for the presence of a GPU device and access it directly. Install the hook on the worker nodes with GPUs:
 
 [source,bash]
 ----
 # zypper install nvidia-container-toolkit
 ----
 
-=== Test a GPU container image
+=== Test a GPU Container Image
 
-At this point, you should be able to run a container image that requires a GPU and directly access the device from the running container, for example using podman:
+At this point, you should be able to run a container image that requires a GPU and directly access the device from the running container, for example using Podman:
 
 [source,bash]
 ----
@@ -68,18 +69,18 @@ If they are not, try loading them explicitly and check dmesg for an error indica
 # dmesg | tail
 ----
 
-== Configure Kubernetes
+== Configure {kube}
 
-=== Install the device plugin
+=== Install the Device Plugin
 
-The Kubernetes device plugin framework allows the kubelet to advertise system hardware resources that the Kubernetes scheduler can then use as hints to schedule workloads that require such devices. The Kubernetes device plugin from NVIDIA allows the kubelet to advertise NVIDIA GPUs it finds present on the worker node. Install the device plugin using kubectl:
+The {kube} device plugin framework allows the kubelet to advertise system hardware resources that the {kube} scheduler can then use as hints to schedule workloads that require such devices. The {kube}device plugin from {nvidia} allows the kubelet to advertise {nvidia} GPUs it finds present on the worker node. Install the device plugin using kubectl:
 
 [source,bash]
 ----
-$ kubectl create -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/1.0.0-beta6/nvidia-device-plugin.yml
+$ kubectl create -f https://raw.githubusercontent.com/{nvidia}/k8s-device-plugin/1.0.0-beta6/nvidia-device-plugin.yml
 ----
 
-=== Taint GPU workers
+=== Taint GPU Workers
 
 In a heterogeneous cluster, it may be preferable to prevent scheduling pods that do not require a GPU on nodes with a GPU in order to ensure that GPU workloads are not competing for time on the hardware they need to run. To accomplish this, add a taint to the worker nodes that have GPUs:
 
@@ -121,7 +122,7 @@ In order to ensure this change persists across upgrades, add the admission plugi
 $ kubectl --namespace kube-system get configmap kubeadm-config -o yaml | sed -e '/enable-admission-plugins:/ s/$/,ExtendedResourceToleration/' | kubectl apply -f -
 ----
 
-=== Test a GPU workload
+=== Test a GPU Workload
 
 To test your installation you can create a pod that requests GPU devices:
 
