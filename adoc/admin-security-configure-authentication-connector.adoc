@@ -3,7 +3,7 @@
 Administrators can update the authentication connector settings before or after {productname}
 deployment as follows:
 
-. Based on the manifest in `my-cluster/addons/dex/base/dex.yaml`, provide a kustomize patch to `my-cluster/addons/dex/patches/custom.yaml` of the form of strategic merge patch or a JSON 6902 patch.
+. Based on the manifest in `<CLUSTER_NAME>/addons/dex/base/dex.yaml`, provide a kustomize patch to `<CLUSTER_NAME>/addons/dex/patches/custom.yaml` of the form of strategic merge patch or a JSON 6902 patch.
 +
 Read https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchstrategicmerge and https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchjson6902 to get more information.
 +
@@ -27,7 +27,7 @@ cat <ROOT_CA_PEM_FILE> | base64 | awk '{print}' ORS='' && echo
 ----
 ====
 +
-Examples of Usage (`my-cluster/addons/dex/patches/custom.yaml`):
+Examples of Usage (`<CLUSTER_NAME>/addons/dex/patches/custom.yaml`):
 +
 * LDAP 389-DS TLS Connector:
 +
@@ -317,7 +317,7 @@ data:
           nameAttr: sAMAccountName
 ----
 
-. Create a `kustomization.yaml` file in `my-cluster/addons/dex/kustomization.yaml`
+. Create a `kustomization.yaml` file in `<CLUSTER_NAME>/addons/dex/kustomization.yaml`
 +
 [source,yaml]
 ----
@@ -332,7 +332,7 @@ patches:
 +
 [source,yaml]
 ----
-kubectl apply -k my-cluster/addons/dex/
+kubectl apply -k <CLUSTER_NAME>/addons/dex/
 ----
 
 . Then, refer to <<sec-admin-security-rbac-apply>> to access through Web or CLI.
