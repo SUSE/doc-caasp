@@ -1,0 +1,183 @@
+[[gpus]]
+
+= NVIDIA GPUs
+
+include::common_tech_preview.adoc[]
+
+Graphics Processing Units (GPUs) provide a powerful way to run compute-intensive workloads such as machine learning pipelines. SUSE's CaaS Platform supports scheduling GPU-dependent workloads on {nvidia} GPUs as a technical preview. This section illustrates how to prepare your host machine to expose GPU devices to your containers, and how to configure {kube} to schedule GPU-dependent workloads.
+
+== Prepare the host machine
+
+=== Install the GPU drivers
+
+Not every worker node in the cluster need have a GPU device present. On the nodes that do have one or more {nvidia} GPUs, install the drivers from {nvidia}'s repository.
+
+[source,bash]
+----
+# zypper addrepo --refresh https://download.nvidia.com/suse/sle15sp2/ nvidia
+# zypper refresh
+# zypper install x11-video-nvidiaG05
+----
+
+[NOTE]
+====
+For most modern {nvidia} GPUs, the G05 driver will support your device. Some older devices may require the x11-video-nvidiaG04 driver package instead. Check {nvidia}'s documentation for your GPU device model.
+====
+
+=== Install the OCI hooks
+
+OCI hooks are a way for vendors or projects to inject executable actions into the lifecycle of a container managed by the container runtime (runc). SUSE provides an OCI hook for {nvidia} that enable the container runtime and therefor the kubelet and the Kubernetes scheduler to query the host system for the presence of a GPU device and access it directly. Install the hook on the worker nodes with GPUs:
+
+[source,bash]
+----
+# zypper install nvidia-container-toolkit
+----
+
+=== Test a GPU Container Image
+
+At this point, you should be able to run a container image that requires a GPU and directly access the device from the running container, for example using Podman:
+
+[source,bash]
+----
+# podman run docker.io/nvidia/cuda nvidia-smi
+----
+
+=== Troubleshooting
+
+At this point, you should be able to run a container image using a GPU. If that is not working, check the following:
+
+Ensure your GPU is visible from the host system:
+
+[source,bash]
+----
+# lspci | grep -i nvidia
+# nvidia-smi
+----
+
+Ensure the kernel modules are loaded:
+
+[source,bash]
+----
+# lsmod | grep nvidia
+----
+
+If they are not, try loading them explicitly and check dmesg for an error indicating why they are missing:
+
+[source,bash]
+----
+# nvidia-modprobe
+# dmesg | tail
+----
+
+== Configure {kube}
+
+=== Install the Device Plugin
+
+The {kube} device plugin framework allows the kubelet to advertise system hardware resources that the {kube} scheduler can then use as hints to schedule workloads that require such devices. The {kube}device plugin from {nvidia} allows the kubelet to advertise {nvidia} GPUs it finds present on the worker node. Install the device plugin using kubectl:
+
+[source,bash]
+----
+$ kubectl create -f https://raw.githubusercontent.com/{nvidia}/k8s-device-plugin/1.0.0-beta6/nvidia-device-plugin.yml
+----
+
+=== Taint GPU Workers
+
+In a heterogeneous cluster, it may be preferable to prevent scheduling pods that do not require a GPU on nodes with a GPU in order to ensure that GPU workloads are not competing for time on the hardware they need to run. To accomplish this, add a taint to the worker nodes that have GPUs:
+
+[source,bash]
+----
+$ kubectl taint nodes worker0 nvidia.com/gpu=:NoSchedule
+----
+
+or
+
+[source,bash]
+----
+$ kubectl taint nodes worker0 nvidia.com/gpu=:PreferNoSchedule
+----
+
+See the Kubernetes documentation on link:{kubedoc}concepts/scheduling-eviction/taint-and-toleration/[taints and tolerations] for a discussion on the considerations for using the NoSchedule or PreferNoSchedule effects.
+
+The link:{kubedoc}reference/access-authn-authz/admission-controllers/#extendedresourcetoleration[ExtendedResourceToleration admission controller] will automatically add the nvidia.com/gpu toleration to pods that request the nvidia.com/gpu resource, so you will not need to add this toleration explicitly for every GPU workload. When after initializing the cluster but before bootstrapping it, add the ExtendedResourceToleration to the list of enabled admission plugins in your cluster's kubeadm-init.conf file:
+
+```
+$ sed -i -e '/enable-admission-plugins:/ s/$/,ExtendedResourceToleration/' kubeadm-init.conf
+```
+
+Then begin the cluster bootstrapping process as described in link:{docurl}/single-html/caasp-admin/#_cluster_management[Cluster Management].
+
+If you are enabling GPU support in an existing cluster, you can add the admission controller to the API server configuration on every master node:
+
+[source,bash]
+----
+# sed -i -e '/--enable-admission-plugins=/ s/$/,ExtendedResourceToleration/' /etc/kubernetes/manifests/kube-apiserver.yaml
+----
+
+Wait for the kube-apiserver pod to be restarted.
+
+In order to ensure this change persists across upgrades, add the admission plugin to the kubeadm configmap:
+
+[source,bash]
+----
+$ kubectl --namespace kube-system get configmap kubeadm-config -o yaml | sed -e '/enable-admission-plugins:/ s/$/,ExtendedResourceToleration/' | kubectl apply -f -
+----
+
+=== Test a GPU Workload
+
+To test your installation you can create a pod that requests GPU devices:
+
+[source,bash]
+----
+$ cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gpu-pod
+spec:
+  containers:
+    - name: cuda-container
+      image: nvidia/cuda:9.0-devel
+      resources:
+        limits:
+          nvidia.com/gpu: 1 # requesting 1 GPU
+    - name: digits-container
+      image: nvidia/digits:6.0
+      resources:
+        limits:
+          nvidia.com/gpu: 1 # requesting 1 GPU
+EOF
+----
+
+This example requests a total of two GPUs for two containers. If two GPUs are available on a worker in your cluster, this pod will be scheduled to that worker.
+
+=== Troubleshooting
+
+At this point, after a few moments your pod should transition to state "running". If it is not, check the following:
+
+Examine the pod events for an indication of why it is not being scheduled:
+
+[source,bash]
+----
+$ kubectl describe pod gpu-pod
+----
+
+Examine the events for the device plugin daemonset for any issues:
+
+[source,bash]
+----
+$ kubectl describe daemonset nvidia-device-plugin-daemonset --namespace kube-system
+----
+
+Check the logs of each pod in the daemonset running on a worker that has a GPU:
+
+[source,bash]
+----
+$ kubectl logs -l name=nvidia-device-plugin-ds --namespace kube-system
+----
+
+Check the kubelet log on the worker node that has a GPU. This may indicate errors the container runtime had executing the OCI hook command:
+
+[source,bash]
+----
+# journalctl -u kubelet
+----
