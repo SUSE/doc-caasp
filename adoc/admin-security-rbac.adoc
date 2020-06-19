@@ -98,7 +98,11 @@ It is a known limitation of the addon customization process.
 Administrators can update the authentication connector settings after {productname}
 deployment as follows:
 
+<<<<<<< Updated upstream
 . Based on the manifest in `~/clusters/<CLUSTER_NAME>/addons/dex/base/dex.yaml`, provide a kustomize patch to `~/clusters/<CLUSTER_NAME>/addons/dex/patches/dex-patch.yaml` of the form of strategic merge patch or a JSON 6902 patch.
+=======
+. Based on the manifest in `<CLUSTER_NAME>/addons/dex/base/dex.yaml`, provide a kustomize patch to `<CLUSTER_NAME>/addons/dex/patches/custom.yaml` of the form of strategic merge patch or a JSON 6902 patch.
+>>>>>>> Stashed changes
 +
 Read https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchstrategicmerge and https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchjson6902 to get more information.
 +
@@ -143,7 +147,11 @@ cat <ROOT_CA_PEM_FILE> | base64 | awk '{print}' ORS='' && echo
 Besides the LDAP connector you can also set up other connectors.
 For additional connectors, refer to the available connector configurations in the Dex repository:
 https://github.com/dexidp/dex/tree/v2.16.0/Documentation/connectors.
+<<<<<<< Updated upstream
 . Create a `kustomization.yaml` file in `~/clusters/<CLUSTER_NAME>/addons/dex/kustomization.yaml`
+=======
+. Create a `kustomization.yaml` file in `<CLUSTER_NAME>/addons/dex/kustomization.yaml`
+>>>>>>> Stashed changes
 +
 [source,yaml]
 ----
@@ -157,7 +165,11 @@ patches:
 . Apply the changes with:
 +
 ----
+<<<<<<< Updated upstream
 kubectl apply -k ~/clusters/<CLUSTER_NAME>/addons/dex/
+=======
+kubectl apply -k <CLUSTER_NAME>/addons/dex/
+>>>>>>> Stashed changes
 ----
 
 [#sec-admin-security-rbac-apply]
@@ -240,7 +252,7 @@ kube-system   cilium-vjf6p                         1/1     Running   8          
 kube-system   coredns-559fbd6bb4-2r982             1/1     Running   9          46d
 kube-system   coredns-559fbd6bb4-89k2j             1/1     Running   9          46d
 kube-system   etcd-my-master                       1/1     Running   5          46d
-kube-system   kube-apiserver-my-cluster            1/1     Running   0          19d
+kube-system   kube-apiserver-<CLUSTER_NAME>            1/1     Running   0          19d
 kube-system   kube-controller-manager-my-master    1/1     Running   14         46d
 kube-system   kube-proxy-62hls                     1/1     Running   4          46d
 kube-system   kube-proxy-fhswj                     1/1     Running   0          46d

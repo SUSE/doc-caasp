@@ -1141,7 +1141,7 @@ ETCD server exposes metrics on the `/metrics` endpoint. Prometheus jobs do not s
 +
 [source,bash]
 ----
-cat << EOF > my-cluster/pki/etcd/openssl-monitoring-client.conf
+cat << EOF > <CLUSTER_NAME>/pki/etcd/openssl-monitoring-client.conf
 [req]
 distinguished_name = req_distinguished_name
 req_extensions = v3_req
@@ -1156,15 +1156,15 @@ O = system:masters
 CN = kube-etcd-monitoring-client
 EOF
 
-openssl req -nodes -new -newkey rsa:2048 -config my-cluster/pki/etcd/openssl-monitoring-client.conf -out my-cluster/pki/etcd/monitoring-client.csr -keyout my-cluster/pki/etcd/monitoring-client.key
-openssl x509 -req -days 365 -CA my-cluster/pki/etcd/ca.crt -CAkey my-cluster/pki/etcd/ca.key -CAcreateserial -in my-cluster/pki/etcd/monitoring-client.csr -out my-cluster/pki/etcd/monitoring-client.crt -sha256 -extfile my-cluster/pki/etcd/openssl-monitoring-client.conf -extensions v3_req
+openssl req -nodes -new -newkey rsa:2048 -config <CLUSTER_NAME>/pki/etcd/openssl-monitoring-client.conf -out <CLUSTER_NAME>/pki/etcd/monitoring-client.csr -keyout <CLUSTER_NAME>/pki/etcd/monitoring-client.key
+openssl x509 -req -days 365 -CA <CLUSTER_NAME>/pki/etcd/ca.crt -CAkey <CLUSTER_NAME>/pki/etcd/ca.key -CAcreateserial -in <CLUSTER_NAME>/pki/etcd/monitoring-client.csr -out <CLUSTER_NAME>/pki/etcd/monitoring-client.crt -sha256 -extfile <CLUSTER_NAME>/pki/etcd/openssl-monitoring-client.conf -extensions v3_req
 ----
 
 . Create the etcd client certificate to secret in monitoring namespace:
 +
 [source,bash]
 ----
-kubectl -n monitoring create secret generic etcd-certs --from-file=my-cluster/pki/etcd/ca.crt --from-file=my-cluster/pki/etcd/monitoring-client.crt --from-file=my-cluster/pki/etcd/monitoring-client.key
+kubectl -n monitoring create secret generic etcd-certs --from-file=<CLUSTER_NAME>/pki/etcd/ca.crt --from-file=<CLUSTER_NAME>/pki/etcd/monitoring-client.crt --from-file=<CLUSTER_NAME>/pki/etcd/monitoring-client.key
 ----
 
 . Get all etcd cluster private IP address:

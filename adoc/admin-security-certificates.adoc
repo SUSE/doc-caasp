@@ -256,7 +256,7 @@ cluster to replace.
 Administrators can provide custom CA certificates (root CAs or intermediate CAs)
 during cluster deployment and decide which CA components to replace (multiple CA certificates) or if to replace all with a single CA certificate.
 
-After you have run `skuba cluster init`, go to the `my-cluster` folder that has been generated,
+After you have run `skuba cluster init`, go to the `<CLUSTER_NAME>` folder that has been generated,
 Create a `pki` folder and put your custom CA certificate into the `pki` folder.
 
 .Extracting Certificate And Key From Combined PEM File
@@ -283,44 +283,44 @@ openssl rsa -in /path/to/file.pem -out /path/to/file.key
 +
 [source,bash]
 ----
-mkdir -p my-cluster/pki
-cp <CUSTOM_APISERVER_CA_CERT_PATH> my-cluster/pki/ca.crt
-cp <CUSTOM_APISERVER_CA_KEY_PATH> my-cluster/pki/ca.key
-chmod 644 my-cluster/pki/ca.crt
-chmod 600 my-cluster/pki/ca.key
+mkdir -p <CLUSTER_NAME>/pki
+cp <CUSTOM_APISERVER_CA_CERT_PATH> <CLUSTER_NAME>/pki/ca.crt
+cp <CUSTOM_APISERVER_CA_KEY_PATH> <CLUSTER_NAME>/pki/ca.key
+chmod 644 <CLUSTER_NAME>/pki/ca.crt
+chmod 600 <CLUSTER_NAME>/pki/ca.key
 ----
 
 * Replacing the `etcd` CA certificate:
 +
 [source,bash]
 ----
-mkdir -p my-cluster/pki/etcd
-cp <CUSTOM_ETCD_CA_CERT_PATH> my-cluster/pki/etcd/ca.crt
-cp <CUSTOM_ETCD_CA_KEY_PATH> my-cluster/pki/etcd/ca.key
-chmod 644 my-cluster/pki/etcd/ca.crt
-chmod 600 my-cluster/pki/etcd/ca.key
+mkdir -p <CLUSTER_NAME>/pki/etcd
+cp <CUSTOM_ETCD_CA_CERT_PATH> <CLUSTER_NAME>/pki/etcd/ca.crt
+cp <CUSTOM_ETCD_CA_KEY_PATH> <CLUSTER_NAME>/pki/etcd/ca.key
+chmod 644 <CLUSTER_NAME>/pki/etcd/ca.crt
+chmod 600 <CLUSTER_NAME>/pki/etcd/ca.key
 ----
 
 * Replacing the `kubelet` CA certificate:
 +
 [source,bash]
 ----
-mkdir -p my-cluster/pki
-cp <CUSTOM_KUBELET_CA_CERT_PATH> my-cluster/pki/kubelet-ca.crt
-cp <CUSTOM_KUBELET_CA_KEY_PATH> my-cluster/pki/kubelet-ca.key
-chmod 644 my-cluster/pki/kubelet-ca.crt
-chmod 600 my-cluster/pki/kubelet-ca.key
+mkdir -p <CLUSTER_NAME>/pki
+cp <CUSTOM_KUBELET_CA_CERT_PATH> <CLUSTER_NAME>/pki/kubelet-ca.crt
+cp <CUSTOM_KUBELET_CA_KEY_PATH> <CLUSTER_NAME>/pki/kubelet-ca.key
+chmod 644 <CLUSTER_NAME>/pki/kubelet-ca.crt
+chmod 600 <CLUSTER_NAME>/pki/kubelet-ca.key
 ----
 
 * Replacing the `front-end proxy` CA certificate:
 +
 [source,bash]
 ----
-mkdir -p my-cluster/pki
-cp <CUSTOM_FRONTPROXY_CA_CERT_PATH> my-cluster/pki/front-proxy-ca.crt
-cp <CUSTOM_FRONTPROXY_CA_KEY_PATH> my-cluster/pki/front-proxy-ca.key
-chmod 644 my-cluster/pki/front-proxy-ca.crt
-chmod 600 my-cluster/pki/front-proxy-ca.key
+mkdir -p <CLUSTER_NAME>/pki
+cp <CUSTOM_FRONTPROXY_CA_CERT_PATH> <CLUSTER_NAME>/pki/front-proxy-ca.crt
+cp <CUSTOM_FRONTPROXY_CA_KEY_PATH> <CLUSTER_NAME>/pki/front-proxy-ca.key
+chmod 644 <CLUSTER_NAME>/pki/front-proxy-ca.crt
+chmod 600 <CLUSTER_NAME>/pki/front-proxy-ca.key
 ----
 
 After this process, bootstrap the cluster with `skuba node bootstrap`.
@@ -526,11 +526,11 @@ In the admin node, regenerate the certificates:
 +
 [source,bash]
 ----
-mkdir -p my-cluster/pki.bak
-kubectl get secret oidc-dex-cert -n kube-system -o yaml | tee my-cluster/pki.bak/oidc-dex-cert.yaml > /dev/null
+mkdir -p <CLUSTER_NAME>/pki.bak
+kubectl get secret oidc-dex-cert -n kube-system -o yaml | tee <CLUSTER_NAME>/pki.bak/oidc-dex-cert.yaml > /dev/null
 
-cat my-cluster/pki.bak/oidc-dex-cert.yaml | grep tls.crt | awk '{print $2}' | base64 --decode | tee my-cluster/pki.bak/oidc-dex.crt > /dev/null
-cat my-cluster/pki.bak/oidc-dex-cert.yaml | grep tls.key | awk '{print $2}' | base64 --decode | tee my-cluster/pki.bak/oidc-dex.key > /dev/null
+cat <CLUSTER_NAME>/pki.bak/oidc-dex-cert.yaml | grep tls.crt | awk '{print $2}' | base64 --decode | tee <CLUSTER_NAME>/pki.bak/oidc-dex.crt > /dev/null
+cat <CLUSTER_NAME>/pki.bak/oidc-dex-cert.yaml | grep tls.key | awk '{print $2}' | base64 --decode | tee <CLUSTER_NAME>/pki.bak/oidc-dex.key > /dev/null
 ----
 
 . Get the original SAN IP address(es) and DNS(s), run:
@@ -584,11 +584,11 @@ kubectl rollout restart deployment/oidc-dex -n kube-system
 +
 [source,bash]
 ----
-mkdir -p my-cluster/pki.bak
-kubectl get secret oidc-gangway-cert -n kube-system -o yaml | tee my-cluster/pki.bak/oidc-gangway-cert.yaml > /dev/null
+mkdir -p <CLUSTER_NAME>/pki.bak
+kubectl get secret oidc-gangway-cert -n kube-system -o yaml | tee <CLUSTER_NAME>/pki.bak/oidc-gangway-cert.yaml > /dev/null
 
-cat my-cluster/pki.bak/oidc-gangway-cert.yaml | grep tls.crt | awk '{print $2}' | base64 --decode | tee my-cluster/pki.bak/oidc-gangway.crt > /dev/null
-cat my-cluster/pki.bak/oidc-gangway-cert.yaml | grep tls.key | awk '{print $2}' | base64 --decode | tee my-cluster/pki.bak/oidc-dgangwayex.key > /dev/null
+cat <CLUSTER_NAME>/pki.bak/oidc-gangway-cert.yaml | grep tls.crt | awk '{print $2}' | base64 --decode | tee <CLUSTER_NAME>/pki.bak/oidc-gangway.crt > /dev/null
+cat <CLUSTER_NAME>/pki.bak/oidc-gangway-cert.yaml | grep tls.key | awk '{print $2}' | base64 --decode | tee <CLUSTER_NAME>/pki.bak/oidc-dgangwayex.key > /dev/null
 ----
 
 . Get the original SAN IP address(es) and DNS(s), run:

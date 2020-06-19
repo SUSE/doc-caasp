@@ -507,16 +507,16 @@ Creating a cluster definition is the first step to initialize your
 cluster. You can execute this task as follows:
 
 ----
-~/clusters$ skuba cluster init --control-plane 10.86.3.149 my-cluster
-[init] configuration files written to /home/my-user/clusters/my-cluster
+~/clusters$ skuba cluster init --control-plane 10.86.3.149 <CLUSTER_NAME>
+[init] configuration files written to /home/my-user/clusters/<CLUSTER_NAME>
 ----
 
 This operation happens strictly offline and will generate a folder
 structure like the following:
 
 ----
-~/clusters > tree my-cluster/
-my-cluster/
+~/clusters > tree <CLUSTER_NAME>/
+<CLUSTER_NAME>/
 ├── addons
 │   ├── cilium
 │   │   ├── base
@@ -574,7 +574,7 @@ From within your cluster definition folder, you can bootstrap your
 first master machine:
 
 ----
-~/clusters/my-cluster$ skuba node bootstrap --user sles --sudo --target <IP_ADDRESS/FQDN> <NODENAME>
+~/clusters/<CLUSTER_NAME>$ skuba node bootstrap --user sles --sudo --target <IP_ADDRESS/FQDN> <NODENAME>
 ----
 
 This operation will read the `kubeadm-init.conf` file inside your
@@ -609,7 +609,7 @@ Adding new master nodes to the cluster can be achieved by executing
 the following `skuba` command:
 
 ----
-~/clusters/my-cluster$ skuba node join --role master --user sles --sudo --target <IP_ADDRESS/FQDN> <NODENAME>
+~/clusters/<CLUSTER_NAME>$ skuba node join --role master --user sles --sudo --target <IP_ADDRESS/FQDN> <NODENAME>
 ----
 
 This operation will try to read the `kubeadm-join.conf.d/<IP_ADDRESS/FQDN>.conf`
@@ -631,7 +631,7 @@ Adding new worker nodes to the cluster can be achieved by executing
 the following `skuba` command:
 
 ----
-~/clusters/my-cluster$ skuba node join --role worker --user sles --sudo --target <IP_ADDRESS/FQDN> <NODENAME>
+~/clusters/<CLUSTER_NAME>$ skuba node join --role worker --user sles --sudo --target <IP_ADDRESS/FQDN> <NODENAME>
 ----
 
 This operation will try to read the `kubeadm-join.conf.d/<IP_ADDRESS/FQDN>.conf`
@@ -652,7 +652,7 @@ being removed or other nodes for that matter is required.
 For removing a node, the following command has to be executed:
 
 ----
-~/clusters/my-cluster$ skuba node remove <NODENAME>
+~/clusters/<CLUSTER_NAME>$ skuba node remove <NODENAME>
 ----
 
 If the node to be removed is a master, specific actions will be
