@@ -98,7 +98,7 @@ It is a known limitation of the addon customization process.
 Administrators can update the authentication connector settings after {productname}
 deployment as follows:
 
-. Based on the manifest in `~/clusters/<CLUSTER_NAME>/addons/dex/base/dex.yaml`, provide a kustomize patch to `~/clusters/<CLUSTER_NAME>/addons/dex/patches/dex-patch.yaml` of the form of strategic merge patch or a JSON 6902 patch.
+. Based on the manifest in `my-cluster/addons/dex/base/dex.yaml`, provide a kustomize patch to `my-cluster/addons/dex/patches/custom.yaml` of the form of strategic merge patch or a JSON 6902 patch.
 +
 Read https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchstrategicmerge and https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchjson6902 to get more information.
 +
@@ -143,7 +143,7 @@ cat <ROOT_CA_PEM_FILE> | base64 | awk '{print}' ORS='' && echo
 Besides the LDAP connector you can also set up other connectors.
 For additional connectors, refer to the available connector configurations in the Dex repository:
 https://github.com/dexidp/dex/tree/v2.16.0/Documentation/connectors.
-. Create a `kustomization.yaml` file in `~/clusters/<CLUSTER_NAME>/addons/dex/kustomization.yaml`
+. Create a `kustomization.yaml` file in `my-cluster/addons/dex/kustomization.yaml`
 +
 [source,yaml]
 ----
@@ -152,12 +152,12 @@ kind: Kustomization
 resources:
   - base/dex.yaml
 patches:
-  - patches/dex-patch.yaml
+  - patches/custom.yaml
 ----
 . Apply the changes with:
 +
 ----
-kubectl apply -k ~/clusters/<CLUSTER_NAME>/addons/dex/
+kubectl apply -k my-cluster/addons/dex/
 ----
 
 [[_sec.admin.security.rbac.apply]]
