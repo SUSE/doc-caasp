@@ -549,7 +549,7 @@ An `Issuer` is a namespaced resource, and it can not issue certificates to the `
 If you want to create a single Issuer that can be consumed in multiple namespaces, you should consider creating a `ClusterIssuer` resource. This is almost identical to the Issuer resource, however, it is cluster-wide so it can be used to issue certificates in all namespaces.
 ====
 +
-Create a CA issuer called `kubernetes-ca` that will sign certificates based on a private key. The certificate stored in the secret `kubernetes-ca` can then be used to trust newly signed certificates by the kubernetes-ca issuer.
+Create a CA issuer called `kubernetes-ca` that will sign incoming certificate requests based on the CA certificate and private key stored in the secret `kubernetes-ca` used to trust newly signed certificates.
 +
 [source,bash]
 ----
