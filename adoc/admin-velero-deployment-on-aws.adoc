@@ -33,6 +33,7 @@ Or if you have selected the Helm 3 alternative <<helm-tiller-install>>:
 +
 [source,bash]
 ----
+kubectl create namespace <NAMESPACE>
 helm install velero \
     --namespace <NAMESPACE> \
     --set-file credentials.secretContents.cloud=credentials-velero \
@@ -89,6 +90,7 @@ Or if you have selected the Helm 3 alternative <<helm-tiller-install>>:
 +
 [source,bash]
 ----
+kubectl create namespace <NAMESPACE>
 helm install velero \
     --namespace <NAMESPACE> \
     --set-file credentials.secretContents.cloud=credentials-velero \

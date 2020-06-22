@@ -62,6 +62,12 @@ helm repo add suse https://kubernetes-charts.suse.com
 ----
 helm inspect values suse/console > stratos-values.yaml
 ----
+. Create the `stratos` namespace
++
+[source,bash]
+----
+kubectl create namespace stratos
+----
 
 === Define `admin` user password
 

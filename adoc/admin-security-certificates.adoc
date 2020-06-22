@@ -153,7 +153,7 @@ Or if you have selected the Helm 3 alternative <<helm-tiller-install>>:
 [source,bash]
 ----
 helm repo add suse https://kubernetes-charts.suse.com
-helm install suse/cert-exporter ${RELEASE_NAME}
+helm install ${RELEASE_NAME} suse/cert-exporter
 ----
 
 === Prerequisites
@@ -210,7 +210,7 @@ Or if you have selected the Helm 3 alternative <<helm-tiller-install>>:
 +
 [source,bash]
 ----
-helm install suse/cert-exporter ${RELEASE_NAME} \
+helm install ${RELEASE_NAME} suse/cert-exporter \
     --set customSecret.enabled=true \
     --set customSecret.certs[0].name=cert-manager \
     --set customSecret.certs[0].namespace=cert-manager-test \
@@ -233,7 +233,7 @@ Or if you have selected the Helm 3 alternative <<helm-tiller-install>>:
 +
 [source,bash]
 ----
-helm install suse/cert-exporter ${RELEASE_NAME} \
+helm install ${RELEASE_NAME} suse/cert-exporter \
     --set customSecret.enabled=true \
     --set customSecret.certs[0].name=self-signed-cert \
     --set customSecret.certs[0].includeKeys="{ca.crt,tls.crt}" \
@@ -259,7 +259,7 @@ Or if you have selected the Helm 3 alternative <<helm-tiller-install>>:
 +
 [source,bash]
 ----
-helm install suse/cert-exporter  ${RELEASE_NAME} \
+helm install ${RELEASE_NAME} suse/cert-exporter \
     --set customSecret.enabled=true \
     --set customSecret.certs[0].name=cert-manager \
     --set customSecret.certs[0].namespace=cert-manager-test \
@@ -291,7 +291,7 @@ Or if you have selected the Helm 3 alternative <<helm-tiller-install>>:
 +
 [source,bash]
 ----
-helm install suse/cert-exporter ${RELEASE_NAME} \
+helm install ${RELEASE_NAME} suse/cert-exporter \
     --set node.enabled=false \
     --set addon.enabled=false \
     --set customSecret.enabled=true \

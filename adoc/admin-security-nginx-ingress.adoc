@@ -82,6 +82,7 @@ helm install --name nginx-ingress suse/nginx-ingress \
 Or if you have selected the Helm 3 alternative <<helm-tiller-install>>:
 [source,bash]
 ----
+kubectl create namespace nginx-ingress
 helm install nginx-ingress suse/nginx-ingress \
 --namespace nginx-ingress \
 --values nginx-ingress-config-values.yaml
