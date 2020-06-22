@@ -331,8 +331,7 @@ Please remember to set proper file permissions for it, for example `600`.
         "resourceGroup": "<AZ_RESOURCE_GROUP>", // <5>
         "location": "<AZ_LOCATION>", // <6>
         "routeTableName": "<AZ_ROUTE_TABLE_NAME>", // <7>
-        "routeTableResourceGroup": "<AZ_ROUTE_TABLE_RESOURCE_GROUP>", // <8>
-        "useManagedIdentityExtension": true, // <9>
+        "useManagedIdentityExtension": true, // <8>
         "useInstanceMetadata": true
     }
 ====
@@ -343,8 +342,7 @@ Please remember to set proper file permissions for it, for example `600`.
 <5> (required) The name of the resource group that the cluster is deployed in.
 <6> (required) The location of the resource group that the cluster is deployed in.
 <7> (required) The name of the route table attached to the subnet that the cluster is deployed in.
-<8> (optional) The resource group name for routeTable. Default same as resourceGroup.
-<9> (optional) Use managed service identity for the virtual machine to access Azure ARM APIs. Set to false if not using managed identity authentication.
+<8> (optional) Use managed service identity for the virtual machine to access Azure ARM APIs. Set to false if not using managed identity authentication.
 
 After setting options in the `azure.conf` file, please proceed with <<cluster.bootstrap>>.
 
