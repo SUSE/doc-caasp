@@ -64,7 +64,7 @@ When creating multiple backups to different backup locations closely, you might 
 
 ** Granularity
 +
-Without passing extra flags to `velero backup create`, Velero will backup whole {kube} cluster.
+Without passing extra flags to `velero backup create`, Velero will backup the whole {kube} cluster.
 
 *** Namespace
 +
@@ -122,7 +122,7 @@ velero backup create backup2slave --storage-location slave
 ** Garbage Collection
 +
 Pass `--ttl` to specify how long the backup should be kept, after that, the backup will be dumped into garbage (deleted). The default time for a backup to exist before it is deleted is 720 hours (30 days).
-l
+
 ** Exclude Specific Items from Backup
 +
 You can exclude individual items from being backed up, even if they match the resource/namespace/label selectors defined in the backup spec. To do this, label the item as follows:
