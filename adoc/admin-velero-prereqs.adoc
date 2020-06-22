@@ -4,22 +4,30 @@
 
 To successfully use Velero to backup and restore the {kube} cluster, you first need to install Helm and Tiller.
 Refer to <<helm_tiller_install>>.
-. SUSE Helm Chart
 
-Add SUSE helm chart repository URL
+Add {suse} helm chart repository URL:
 
 [source,bash]
 ----
 helm repo add suse https://kubernetes-charts.suse.com
 ----
 
-=== Object Storage
+=== Object Storage And It's Credentials
 
 Velero uses object storage to store backups and associated artifacts.
-It can optionally snapshot persistent volume and store in object storage by `restic` if there is no supported volume snapshot provider.
+It can also optionally create snapshots of persistent volume and store them in object storage by `restic`, if there is no supported volume snapshot provider.
 
-==== Storage Providers
+Choose one of the object storage providers, which fits your environment, form the list below for backing up and restoring the {kube} cluster.
 
+The object storage server checks access permission, so it is vital to have credentials ready. Provide the credentials file `credentials-velero` to the velero server, so that it has the permission to write or read the backup data from the object storage.
+
+[IMPORTANT]
+====
+Make sure the object storage is created before you install Velero. Otherwise, the Velero server won't be able to start successfully. This is because the Velero server checks that the object storage exists and needs to have the permission to access it during server boot.
+====
+
+* Public Cloud Providers
++
 [options="header"]
 |===
 | Provider | Object Storage | Plugin Provider Repo
@@ -37,54 +45,15 @@ It can optionally snapshot persistent volume and store in object storage by `res
 |link:https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure[Velero plugin for Microsoft Azure]
 |===
 
-==== S3-compatible Storage Providers
-===== SES6 Ceph Object Gateway (`radosgw`)
+** AWS S3
 
-SUSE supports the SES6 Ceph Object Gateway (`radosgw`) as an S3-compatible object storage provider.
-Refer to link:https://documentation.suse.com/ses/6/html/ses-all/cha-ceph-additional-software-installation.html[SES6 Object Gateway Manual Installation] on how to install it.
-
-===== Minio
-
-Besides {ses}, there is an alternative open source S3-compatible object storage provider: link:https://min.io/[minio].
-
-Prepare an external host and install Minio on the host.
-
-[source,bash]
-----
-# Download Minio server
-wget https://dl.min.io/server/minio/release/linux-amd64/minio
-chmod +x minio
-
-# Expose Minio access_key and secret_key
-export MINIO_ACCESS_KEY=<access_key>
-export MINIO_SECRET_KEY=<secret_key>
-
-# Start Minio server
-mkdir -p bucket
-./minio server bucket &
-
-# Download Minio client
-wget https://dl.min.io/client/mc/release/linux-amd64/mc
-chmod +x mc
-
-# Setup Minio server
-./mc config host add Velero http://localhost:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY
-
-# Create bucket on Minio server
-./mc mb -p velero/velero
-----
-
-For the rest of the S3-compatible storage providers, refer to link:https://velero.io/docs/v1.3.1/supported-providers/[Velero Supported Providers].
-
-==== Object Storage Credential
-===== Public Cloud Providers
-====== AWS S3
-
-. Prerequisites
+. AWS CLI
 +
 Install `aws` CLI locally, follow the link:https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html[doc] to install.
 
-. Create AWS S3 bucket
+. AWS S3 bucket
++
+Create a AWS S3 bucket to store backup data and restore data from the S3 bucket.
 +
 [source,bash]
 ----
@@ -101,12 +70,12 @@ aws s3api create-bucket \
 aws_access_key_id=<AWS_ACCESS_KEY_ID>
 aws_secret_access_key=<AWS_SECRET_ACCESS_KEY>
 ----
++
+For details, please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-aws/tree/v1.0.1[Velero Plugin For AWS].
 
-Please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-aws/tree/v1.0.1[Velero Plugin For AWS].
+** Google Cloud Storage
 
-====== Google Cloud Storage
-
-. Prerequisites
+. GCP CLIs
 +
 Install `gcloud` and `gsutil` CLIs locally, follow the link:https://cloud.google.com/sdk/docs/[doc] to install.
 
@@ -172,12 +141,12 @@ gsutil iam ch serviceAccount:$SERVICE_ACCOUNT_EMAIL:objectAdmin gs://<BUCKET_NAM
 gcloud iam service-accounts keys create credentials-velero \
     --iam-account $SERVICE_ACCOUNT_EMAIL
 ----
++
+For details, please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-gcp/tree/v1.0.1[Velero Plugin For GCP].
 
-Please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-gcp/tree/v1.0.1[Velero Plugin For GCP].
+** Azure Blob Storage
 
-====== Azure Blob Storage
-
-. Prerequisites
+. Azure CLI
 +
 Install `az` CLI locally, follow the link:https://docs.microsoft.com/en-us/cli/azure/install-azure-cli[doc] to install.
 
@@ -239,24 +208,72 @@ AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}
 AZURE_RESOURCE_GROUP=${AZURE_RESOURCE_GROUP}
 EOF
 ----
++
+For details, please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure/tree/v1.0.1[Velero Plugin For Azure].
 
-Please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure/tree/v1.0.1[Velero Plugin For Azure].
+* S3-Compatible Providers
 
-===== S3-compatible Storage Providers, like `radosgw`
+** {ses} 6 Ceph Object Gateway (`radosgw`)
++
+{suse} supports the {ses} 6 Ceph Object Gateway (`radosgw`) as an S3-compatible object storage provider.
 
-Create the credential file `credentials-velero` in the local machine
-
+. Installation
++
+Refer to the link:https://documentation.suse.com/ses/6/html/ses-all/cha-ceph-additional-software-installation.html[SES 6 Object Gateway Manual Installation] on how to install it.
++
+. Create the credential file `credentials-velero` in the local machine
++
 ----
 [default]
-aws_access_key_id=<S3_COMPATIBLE_STORAGE_ACCESS_KEY_ID>
-aws_secret_access_key=<S3_COMPATIBLE_STORAGE_SECRET_ACCESS_KEY>
+aws_access_key_id=<SES_STORAGE_ACCESS_KEY_ID>
+aws_secret_access_key=<SES_STORAGE_SECRET_ACCESS_KEY>
 ----
 
-==== Volume Snapshotter
+** Minio
++
+Besides {ses}, there is an alternative open source S3-compatible object storage provider link:https://min.io/[minio].
++
+. Prepare an external host and install Minio on the host
++
+[source,bash]
+----
+# Download Minio server
+wget https://dl.min.io/server/minio/release/linux-amd64/minio
+chmod +x minio
 
-[NOTE]
-A volume snapshotter is able to snapshot its persistent volumes if its volume driver supports do volume snapshot.
-If a volume provider does not support snapshot or does not have supported Velero storage plugin, Velero will leverage `restic` to do persistent volume backup and restore.
+# Expose Minio access_key and secret_key
+export MINIO_ACCESS_KEY=<access_key>
+export MINIO_SECRET_KEY=<secret_key>
+
+# Start Minio server
+mkdir -p bucket
+./minio server bucket &
+
+# Download Minio client
+wget https://dl.min.io/client/mc/release/linux-amd64/mc
+chmod +x mc
+
+# Setup Minio server
+./mc config host add Velero http://localhost:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY
+
+# Create bucket on Minio server
+./mc mb -p velero/velero
+----
+. Create the credential file `credentials-velero` in the local machine
++
+----
+[default]
+aws_access_key_id=<MINIO_STORAGE_ACCESS_KEY_ID>
+aws_secret_access_key=<MINIO_STORAGE_SECRET_ACCESS_KEY>
+----
++
+For the rest of the S3-compatible storage providers, refer to link:https://velero.io/docs/v1.3.1/supported-providers/[Velero Supported Providers].
+
+=== Volume Snapshotter
+
+A volume snapshotter is able to snapshot its persistent volumes if its volume driver supports volume snapshot and corresponding API.
+
+If a volume provider does not support volume snapshot or volume snapshot API, or does not have Velero supported storage plugin, Velero leverages `restic` as an agnostic solution to backup and restore this sort of persistent volumes.
 
 [options="header"]
 |===
@@ -266,8 +283,10 @@ If a volume provider does not support snapshot or does not have supported Velero
 
 For the other `snapshotter` providers refer to link:https://velero.io/docs/v1.3.1/supported-providers/[Velero Supported Providers].
 
-. Finally, install Velero CLI
-+
+=== Velero CLI
+
+Install Velero CLI to interact with Velero server.
+
 [source,bash]
 ----
 sudo zypper install velero
