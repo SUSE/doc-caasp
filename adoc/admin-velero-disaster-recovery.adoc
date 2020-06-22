@@ -10,22 +10,22 @@ data migration and data protection by backing up {kube} cluster resources and pe
 
 The major functions include:
 
-* Backup {kube} resources and persistent volumes for supported storage providers
-* Restore {kube} resources and persistent volumes for supported storage providers
+* Backup {kube} resources and persistent volumes for supported storage providers.
+* Restore {kube} resources and persistent volumes for supported storage providers.
 * When backing up persistent volumes w/o supported storage provider, Velero leverages link:https://github.com/restic/restic[restic] as an agnostic solution to back up this sort of persistent volumes under some known limitations.
 
 User can leverage these fundamental functions to achieve user stories:
 
-* Backup whole {kube} cluster resources then restore if any {kube} resources loss
-* Backup selected {kube} resources then restore if the selected {kube} resources loss
-* Backup selected {kube} resources and persistent volumes then restore if the {kube} selected {kube} resources loss or data loss
+* Backup whole {kube} cluster resources then restore if any {kube} resources loss.
+* Backup selected {kube} resources then restore if the selected {kube} resources loss.
+* Backup selected {kube} resources and persistent volumes then restore if the {kube} selected {kube} resources loss or data loss.
 * Migrate the backup to other clusters for any purpose like migrates production cluster to develop cluster for testing.
 
 Velero consists of below components:
 
-* A Velero server that runs on your {kube} cluster
-* A `restic` deployed on each worker nodes that run on your {kube} cluster (optional)
-* A command-line client that runs locally
+* A Velero server that runs on your {kube} cluster.
+* A `restic` deployed on each worker nodes that run on your {kube} cluster (optional).
+* A command-line client that runs locally.
 
 == Limitations
 
@@ -46,9 +46,7 @@ For more information about storage and snapshot locations, refer to link:https:/
 
 include::admin-velero-prereqs.adoc[]
 
-include::admin-velero-deployment-on-premise.adoc[]
-
-include::admin-velero-deployment-on-aws.adoc[]
+include::admin-velero-deployment.adoc[]
 
 == Operations
 
