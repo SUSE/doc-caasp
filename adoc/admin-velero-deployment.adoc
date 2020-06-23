@@ -43,6 +43,24 @@ helm install \
     --set initContainers[0].volumeMounts[0].name=plugins \
     suse/velero
 ----
+Or if you have selected the Helm 3 alternative <<helm-tiller-install>>:
++
+[source,bash]
+----
+helm install velero \
+    --namespace <NAMESPACE> \
+    --set-file credentials.secretContents.cloud=credentials-velero \
+    --set configuration.provider=aws \
+    --set configuration.backupStorageLocation.name=default \
+    --set configuration.backupStorageLocation.bucket=<BUCKET_NAME> \
+    --set configuration.backupStorageLocation.config.region=<REGION_NAME> \
+    --set snapshotsEnabled=false \
+    --set initContainers[0].name=velero-plugin-for-aws \
+    --set initContainers[0].image=registry.suse.com/caasp/v5/velero-plugin-for-aws:1.0.1 \
+    --set initContainers[0].volumeMounts[0].mountPath=/target \
+    --set initContainers[0].volumeMounts[0].name=plugins \
+    suse/velero
+----
 
 . Then, suggests creating at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
 +
@@ -62,6 +80,23 @@ velero backup-location create slave \
 ----
 helm install \
     --name velero \
+    --namespace <NAMESPACE> \
+    --set-file credentials.secretContents.cloud=credentials-velero \
+    --set configuration.provider=gcp \
+    --set configuration.backupStorageLocation.name=default \
+    --set configuration.backupStorageLocation.bucket=<BUCKET_NAME> \
+    --set snapshotsEnabled=false \
+    --set initContainers[0].name=velero-plugin-for-gcp \
+    --set initContainers[0].image=registry.suse.com/caasp/v5/velero-plugin-for-gcp:1.0.1 \
+    --set initContainers[0].volumeMounts[0].mountPath=/target \
+    --set initContainers[0].volumeMounts[0].name=plugins \
+    suse/velero
+----
+Or if you have selected the Helm 3 alternative <<helm-tiller-install>>:
++
+[source,bash]
+----
+helm install velero \
     --namespace <NAMESPACE> \
     --set-file credentials.secretContents.cloud=credentials-velero \
     --set configuration.provider=gcp \
@@ -101,6 +136,25 @@ helm install \
     --set configuration.backupStorageLocation.bucket=<BUCKET_NAME> \
     --set configuration.backupStorageLocation.config.resourceGroup=<AZURE_RESOURCE_GROUP> \
 	--set configuration.backupStorageLocation.config.storageAccount=<AZURE_STORAGE_ACCOUNT_ID> \
+    --set snapshotsEnabled=false \
+    --set initContainers[0].name=velero-plugin-for-microsoft-azure \
+    --set initContainers[0].image=registry.suse.com/caasp/v5/velero-plugin-for-microsoft-azure:1.0.1 \
+    --set initContainers[0].volumeMounts[0].mountPath=/target \
+    --set initContainers[0].volumeMounts[0].name=plugins \
+    suse/velero
+----
+Or if you have selected the Helm 3 alternative <<helm-tiller-install>>:
++
+[source,bash]
+----
+helm install velero \
+    --namespace <NAMESPACE> \
+    --set-file credentials.secretContents.cloud=credentials-velero \
+    --set configuration.provider=azure \
+    --set configuration.backupStorageLocation.name=default \
+    --set configuration.backupStorageLocation.bucket=<BUCKET_NAME> \
+    --set configuration.backupStorageLocation.config.resourceGroup=<AZURE_RESOURCE_GROUP> \
+        --set configuration.backupStorageLocation.config.storageAccount=<AZURE_STORAGE_ACCOUNT_ID> \
     --set snapshotsEnabled=false \
     --set initContainers[0].name=velero-plugin-for-microsoft-azure \
     --set initContainers[0].image=registry.suse.com/caasp/v5/velero-plugin-for-microsoft-azure:1.0.1 \
@@ -202,6 +256,27 @@ helm install \
     --set initContainers[0].volumeMounts[0].name=plugins \
     suse/velero
 ----
+Or if you have selected the Helm 3 alternative <<helm-tiller-install>>:
++
+[source,bash]
+----
+helm install velero \
+    --namespace <NAMESPACE> \
+    --set-file credentials.secretContents.cloud=credentials-velero \
+    --set configuration.provider=aws \
+    --set configuration.backupStorageLocation.name=default \
+    --set configuration.backupStorageLocation.bucket=<BUCKET_NAME> \
+    --set configuration.backupStorageLocation.config.region=<REGION_NAME> \
+    --set snapshotsEnabled=true \
+    --set deployRestic=true \
+    --set configuration.volumeSnapshotLocation.name=default \
+    --set configuration.volumeSnapshotLocation.config.region=<REGION_NAME> \
+    --set initContainers[0].name=velero-plugin-for-aws \
+    --set initContainers[0].image=registry.suse.com/caasp/v5/velero-plugin-for-aws:1.0.1 \
+    --set initContainers[0].volumeMounts[0].mountPath=/target \
+    --set initContainers[0].volumeMounts[0].name=plugins \
+    suse/velero
+----
 
 . Then, suggest to create at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
 +
@@ -232,6 +307,25 @@ velero backup-location create slave \
 ----
 helm install \
     --name velero \
+    --namespace <NAMESPACE> \
+    --set-file credentials.secretContents.cloud=credentials-velero \
+    --set configuration.provider=gcp \
+    --set configuration.backupStorageLocation.name=default \
+    --set configuration.backupStorageLocation.bucket=<BUCKET_NAME> \
+    --set snapshotsEnabled=true \
+    --set deployRestic=true \
+    --set configuration.volumeSnapshotLocation.name=default \
+    --set initContainers[0].name=velero-plugin-for-gcp \
+    --set initContainers[0].image=registry.suse.com/caasp/v5/velero-plugin-for-gcp:1.0.1 \
+    --set initContainers[0].volumeMounts[0].mountPath=/target \
+    --set initContainers[0].volumeMounts[0].name=plugins \
+    suse/velero
+----
+Or if you have selected the Helm 3 alternative <<helm-tiller-install>>:
++
+[source,bash]
+----
+helm install velero \
     --namespace <NAMESPACE> \
     --set-file credentials.secretContents.cloud=credentials-velero \
     --set configuration.provider=gcp \
@@ -293,6 +387,27 @@ helm install \
     --set initContainers[0].volumeMounts[0].name=plugins \
     suse/velero
 ----
+Or if you have selected the Helm 3 alternative <<helm-tiller-install>>:
++
+[source,bash]
+----
+helm install velero \
+    --namespace <NAMESPACE> \
+    --set-file credentials.secretContents.cloud=credentials-velero \
+    --set configuration.provider=azure \
+    --set configuration.backupStorageLocation.name=default \
+    --set configuration.backupStorageLocation.bucket=<BUCKET_NAME> \
+    --set configuration.backupStorageLocation.config.resourceGroup=<AZURE_RESOURCE_GROUP> \
+        --set configuration.backupStorageLocation.config.storageAccount=<AZURE_STORAGE_ACCOUNT_ID> \
+    --set snapshotsEnabled=true \
+    --set deployRestic=true \
+    --set configuration.volumeSnapshotLocation.name=default \
+    --set initContainers[0].name=velero-plugin-for-microsoft-azure \
+    --set initContainers[0].image=registry.suse.com/caasp/v5/velero-plugin-for-microsoft-azure:1.0.1 \
+    --set initContainers[0].volumeMounts[0].mountPath=/target \
+    --set initContainers[0].volumeMounts[0].name=plugins \
+    suse/velero
+----
 
 . Then, suggests creating at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
 +
@@ -337,6 +452,29 @@ helm install \
     --set deployRestic=true \
     --set configuration.volumeSnapshotLocation.name=default \
     --set configuration.volumeSnapshotLocation.config.region=<REGION_NAME> \
+    --set initContainers[0].name=velero-plugin-for-aws \
+    --set initContainers[0].image=registry.suse.com/caasp/v5/velero-plugin-for-aws:1.0.1 \
+    --set initContainers[0].volumeMounts[0].mountPath=/target \
+    --set initContainers[0].volumeMounts[0].name=plugins \
+    suse/velero
+----
+Or if you have selected the Helm 3 alternative <<helm-tiller-install>>:
++
+[source,bash]
+----
+helm install velero \
+    --namespace <NAMESPACE> \
+    --set-file credentials.secretContents.cloud=credentials-velero \
+    --set configuration.provider=aws \
+    --set configuration.backupStorageLocation.name=default \
+    --set configuration.backupStorageLocation.bucket=<BUCKET_NAME> \
+    --set configuration.backupStorageLocation.config.region=<REGION_NAME> \
+    --set configuration.backupStorageLocation.config.s3ForcePathStyle=true \
+    --set configuration.backupStorageLocation.config.s3Url=<S3_COMPATIBLE_STORAGE_SERVER_URL> \
+    --set snapshotsEnabled=true \
+    --set deployRestic=true \
+    --set configuration.volumeSnapshotLocation.name=default \
+    --set configuration.volumeSnapshotLocation.config.region=minio \
     --set initContainers[0].name=velero-plugin-for-aws \
     --set initContainers[0].image=registry.suse.com/caasp/v5/velero-plugin-for-aws:1.0.1 \
     --set initContainers[0].volumeMounts[0].mountPath=/target \

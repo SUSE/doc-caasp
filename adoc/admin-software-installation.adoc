@@ -98,7 +98,7 @@ sudo zypper in ceph-common xfsprogs
 [[helm-tiller-install]]
 === Installing Helm
 
-As of {productname} {productversion},, Helm is part of the {productname} package repository, so to use this,
+As of {productname} {productversion}, Helm is part of the {productname} package repository, so to use this,
 you only need to run the following command from the location where you normally run `skuba` commands:
 
 [source,bash]
@@ -106,10 +106,24 @@ you only need to run the following command from the location where you normally 
 sudo zypper install helm
 ----
 
+Helm 2 is the default for {productname} 5.0.0. Helm 3 is offered as an alternate tool and may be installed in parallel to aid migration. Helm 3 may be selected by installing from zypper then selecting the alternative.
+
+[source,bash]
+----
+sudo zypper install helm3
+sudo update-alternatives --set helm /usr/bin/helm3
+----
+
+[WARNING]
+Helm 2 is planned to end support in November 2020. Helm 3 is offered as an alternative in {productname} 5.0 and will become the default tool in the following release. For any upgraded installations, please follow the Migration Guide as soon as feasible.
+
 === Installing Tiller
 
-As of {productname} {productversion},, Tiller is not part of the {productname} package repository but it is available as a
-helm chart from the chart. To install the Tiller server, choose either way to deploy the Tiller server:
+[NOTE]
+Tiller is only a requirement for Helm 2 and has been removed from Helm 3.  If using Helm 3, please skip this section.
+
+As of {productname} {productversion}, Tiller is not part of the {productname} package repository but it is available as a
+helm chart from the chart repository. To install the Tiller server, choose either way to deploy the Tiller server:
 
 ==== Unsecured Tiller Deployment
 
@@ -188,7 +202,72 @@ helm upgrade --tls <RELEASE_NAME> <CHART> [flags]
 helm del --tls <RELEASE_NAME> [flags]
 ----
 
+[#helm-2to3-migration]
+=== Helm 2 to 3 Migration
+[NOTE]
+====
+The process for migrating an installation from Helm 2 to Helm 3 has been documented and tested by the Helm community. Please reference the following links before proceeding.
+
+- https://v3.helm.sh/docs/topics/v2_v3_migration/
+- https://helm.sh/blog/migrate-from-helm-v2-to-helm-v3/
+- https://github.com/helm/helm-2to3
+
+====
+Preconditions:
+
+* A healthy CaaSP 5.0 installation with applications deployed using Helm 2 and Tiller.
+* A system where `skuba` and `helm` version 2 have run from previously.
+** The procedure below requires an available internet connection to install the 2to3 plugin.  If the installation is in an air gapped environment, the system may need to be moved back out of the air gapped environment.
+* These instructions are written for a single cluster managed from a single Helm 2 installation. If more than one cluster is being managed by this installation of Helm 2, please reference https://github.com/helm/helm-2to3 for further details and do not do the clean-up step until all clusters are migrated.
+
+The following procedure is for migrating a CaaSP 5.0 deployment that has used Helm 2 to deploy applications.
+
+. Install `helm3` package on the same location you normally run skuba commands (alongside the helm2 package)
++
+----
+sudo zypper in helm3
+----
+. Install the 2to3 plugin
++
+----
+helm3 plugin install https://github.com/helm/helm-2to3.git
+----
+. Backup Helm 2 data found in the following:
+.. Helm v2 home folder.
+..Release data from the cluster. Refer to How Helm Uses ConfigMaps to Store Data for details on how Helm v2 store release data in the cluster. This should apply similarly if Helm v2 is configured for secrets.
+. Move configuration from 2 to 3
++
+----
+helm3 2to3 move config
+----
+.. After move, if you have installed any custom plugins then check they work fine with Helm 3. If needed, remove and re-add them as described in https://github.com/helm/helm-2to3
+.. If you have configured any local helm chart repositories, you will need to remove and re-add them.  For example:
++
+----
+helm3 repo remove <my-custom-repo>
+helm3 repo add <my-custom-repo> <url-to-custom-repo>
+helm3 repo update
+----
+. Migrate Helm releases (deployed charts) in place
++
+----
+helm3 2to3 convert RELEASE
+----
+. Clean up Helm 2 data.
++
+WARNING: Tiller will be cleaned up, and Helm 2 will not be usable on this cluster after cleanup.
++
+----
+helm3 2to3 cleanup
+----
+. You may now uninstall the helm2 package and use `helm` command line from the helm3 package from now on.
++
+----
+sudo zypper remove helm2
+----
+
 ////
 Note: When Helm is included in v4, Tiller server will be automatically installed after CaaS Platform setup.
 So we probably just need to mention that we use it and that it's installed automatically.
+Note: 5.0 will still use Helm 2, but Helm 3 will become the default in 5.1 and Helm 2 and Tiller will be dropped in 5.2.
 ////
