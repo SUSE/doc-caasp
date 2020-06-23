@@ -392,6 +392,31 @@ This message indicates that your current system does not know the Certificate Au
 sudo update-ca-certificates
 ----
 
+== Error `Invalid client credentials`
+
+When use dex & gangway to do authenticated and authorizated, you might see an error message in the output of Web browser.
+
+----
+oauth2: cannot fetch token: 401 Unauthorized
+Response: {"error":"invalid_client","error_description":"Invalid client credentials."}
+----
+
+This message indicates that your {kube} cluster dex & gangway client secret is out of sync. Please update the dex & gangway ConfigMap use the same client secret.
+
+[source,bash]
+----
+kubectl get configmap oidc-dex-config > oidc-dex-config.yaml
+kubectl get configmap oidc-gangway-config > oidc-gangway-config.yaml
+----
+
+Make sure the oidc's `secret` in `oidc-dex-config.yaml` equals to the `clientSecret` in `oidc-gangway-config.yaml`. Then, applying the updated ConfigMap.
+
+[source,bash]
+----
+kubectl replace -f oidc-dex-config.yaml
+kubectl replace -f oidc-gangway-config.yaml
+----
+
 == Replacing a Lost Node
 
 If your cluster loses a node, for example due to failed hardware, remove the node as explained in <<removing_nodes>>.
