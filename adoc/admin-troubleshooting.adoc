@@ -394,14 +394,14 @@ sudo update-ca-certificates
 
 == Error `Invalid client credentials`
 
-When use dex & gangway to do authentication, you might see an error message in the output of the Web browser.
+When using Dex & Gangway for authentication, you might see the following error message in the Web browser output:
 
 ----
 oauth2: cannot fetch token: 401 Unauthorized
 Response: {"error":"invalid_client","error_description":"Invalid client credentials."}
 ----
 
-This message indicates that your {kube} cluster dex & gangway client secret is out of sync. Please update the dex & gangway ConfigMap use the same client secret.
+This message indicates that your {kube} cluster Dex & Gangway client secret is out of sync. Please update the Dex & Gangway ConfigMap to use the same client secret.
 
 [source,bash]
 ----
@@ -409,7 +409,7 @@ kubectl get configmap oidc-dex-config > oidc-dex-config.yaml
 kubectl get configmap oidc-gangway-config > oidc-gangway-config.yaml
 ----
 
-Make sure the oidc's `secret` in `oidc-dex-config.yaml` equals to the `clientSecret` in `oidc-gangway-config.yaml`. Then, applying the updated ConfigMap.
+Make sure the oidc's `secret` in `oidc-dex-config.yaml` is the same as the `clientSecret` in `oidc-gangway-config.yaml`. Then, apply the updated ConfigMap.
 
 [source,bash]
 ----
