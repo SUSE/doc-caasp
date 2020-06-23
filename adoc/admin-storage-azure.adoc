@@ -322,7 +322,7 @@ sudo zypper in cifs-utils
 [[create_azure_fileshare]]
 . link:https://docs.microsoft.com/en-us/azure/storage/files/storage-how-to-create-file-share?tabs=azure-portal[Create an Azure file share].
 
-. Create Kuberentes file share secret.
+. Create Kubernetes file share secret.
 +
 ----
 RESOURCE_GROUP="<RESOURCE_GROUP_NAME>"
@@ -341,7 +341,7 @@ kubectl create secret generic ${SECRET} --from-literal=azurestorageaccountname=$
 +
 <STORAGE_ACCOUNT_NAME> The Azure storage account name. Must be same value as in <<create_azure_fileshare>>.
 +
-<SECRET_NAME> The Kuberentes file share secret name, for example azure-file-secret.
+<SECRET_NAME> The Kubernetes file share secret name, for example azure-file-secret.
 
 === In-line Volume
 . Create new Azure file share and secret as described in <<create_azure_fileshare_and_secret>>. The file share and secret used in pod must exist before the resource is created.
