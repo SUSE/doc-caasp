@@ -320,38 +320,18 @@ sudo zypper in cifs-utils
 [[create_azure_fileshare_and_secret]]
 === Create File Share and Secret
 [[create_azure_fileshare]]
-. Create Azure file share.
-+
-----
-STORAGE_ACCOUNT="<STORAGE_ACCOUNT_NAME>"
-RESOURCE_GROUP="<RESOURCE_GROUP_NAME>"
-LOCATION="<LOCATION>"
-VOLUME_TYPE="<VOLUME_TYPE>"
-STORAGE_FILE_SHARE="<STORAGE_FILE_SHARE_NAME>"
-
-# create storage account
-az storage account create -n ${STORAGE_ACCOUNT} -g ${RESOURCE_GROUP} -l ${LOCATION} --sku ${VOLUME_TYPE}
- 
-# create file share
-STORAGE_CONNECTION_STRING=`az storage account show-connection-string -n ${STORAGE_ACCOUNT} -g ${RESOURCE_GROUP_NAME} -o tsv`
-az storage share create -n ${STORAGE_FILE_SHARE} --connection-string ${STORAGE_CONNECTION_STRING}
-----
-<STORAGE_ACCOUNT_NAME> The Azure storage account name. This must to between 3 and 24 characters and use numbers and lower-case letters only.
-+
-<RESOURCE_GROUP_NAME> The Azure resource group name, for example my-cluster-resource-group.
-+
-<LOCATION> The Azure storage location.
-+
-<STORAGE_FILE_SHARE_NAME> The azure storage file share name, for example my-cluster-file-share.
+. link:https://docs.microsoft.com/en-us/azure/storage/files/storage-how-to-create-file-share?tabs=azure-portal[Create an Azure file share].
 
 . Create Kuberentes file share secret.
 +
 ----
+RESOURCE_GROUP="<RESOURCE_GROUP_NAME>"
+STORAGE_ACCOUNT="<STORAGE_ACCOUNT_NAME>"
 SECRET="<SECRET_NAME>"
 
 # get storage key
 STORAGE_KEY=`az storage account keys list --resource-group ${RESOURCE_GROUP} --account-name ${STORAGE_ACCOUNT} --query "[0].value" -o tsv`
-echo "Storage account name: "${STORAGE_ACCOUNT_NAME}
+echo "Storage account name: "${STORAGE_ACCOUNT}
 echo "Storage account key: "${STORAGE_KEY}
 
 # create secret
