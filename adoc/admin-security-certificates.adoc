@@ -242,9 +242,9 @@ helm install suse/cert-exporter \
     --set customSecret.certs[1].labelSelector="{key=value}"
 ----
 
-== Use Custom Trusted CA Certificate
+== Using Custom Trusted CA Certificates
 
-=== Use Custom Trusted CA Certificate During Cluster Deployment
+=== During Cluster Deployment
 
 [WARNING]
 ====
@@ -325,26 +325,26 @@ chmod 600 my-cluster/pki/front-proxy-ca.key
 
 After this process, bootstrap the cluster with `skuba node bootstrap`.
 
-=== Replace Server Certificate signed by a Trusted CA Certificate
+=== Replacing Server Certificates With Trusted CA Certificates
 
 {productname} uses `oidc-dex` and `oidc-gangway` servers to do authentication and authorization.
 Administrators might choose to replace these server's certificates by issuing a trusted CA certificate after cluster deployment.
 This way, the user does not have to add specific certificates to their trusted keychain.
 
-* With The Trusted CA Key
+* With a Trusted CA Key
 +
-Please refer to <<addon_certificates_rotation>> on how to use cert-manager and reloader to issue `oidc-dex` and `oidc-gangway` certificate signed by trusted CA certificate/key.
+Please refer to <<addon-certificate-rotation>> on how to use cert-manager and reloader to issue `oidc-dex` and `oidc-gangway` certificates signed by trusted CA certificate/key.
 
-* Without The Trusted CA Key
+* Without a Trusted CA Key
 +
 [WARNING]
 ====
-Because the custom trusted CA certificate is not in {kube} cluster, administrators must handle server certificate rotation manually before the certificate expires.
+Because the custom trusted CA certificate is not in the {kube} cluster, administrators must handle server certificate rotation manually before the certificate expires.
 ====
 +
 [WARNING]
 ====
-The `oidc-dex` and `oidc-gangway` server certificate and key would be replaced when `skuba addon upgrade apply` contains dex or gangway addon upgrade.
+The `oidc-dex` and `oidc-gangway` server certificate and key is replaced when `skuba addon upgrade apply` contains a dex or gangway addon upgrade.
 Make sure to reapply your changes after running `skuba addon upgrade apply`, had you modified the default settings of oidc-dex and oidc-gangway addons.
 ====
 
@@ -482,14 +482,14 @@ its `pki` folder. This file is a symlink to the latest generated certificate.
 Restarting the kubelet effectively rotates the certificate to read the latest
 generated file.
 
-[[addon_certificates_rotation]]
-=== Addon certificates rotation
+[[addon-certificate-rotation]]
+=== Addon Certificate Rotation
 
-The addon certificates can be automatically rotated by leveraging the open-source solutions `cert-manager` and `reloader`. `cert-manager` is for automatically rotating the certificates stored in Secrets, and `reloader` is for watching and reconciling the updated Secrets to execute rolling upgrade the affecting addon Deployments or DaemonSet.
+The addon certificates can be automatically rotated by leveraging the functions of the open-source solutions `cert-manager` and `reloader`. `cert-manager` is for automatically rotating certificates stored in Secrets, and `reloader` is for watching and reconciling the updated Secrets to execute a rolling upgrade of the affected Deployments or DaemonSet.
 
 * Prerequisites
 
-. To let reloader automatically rolling upgrade the addon Deployments or DaemonSet, we need to label the addons:
+. To let `reloader` do an automatic rolling upgrade of the addon Deployments or DaemonSet, we need to label the addons:
 +
 [source,bash]
 ----
@@ -500,7 +500,7 @@ kubectl annotate --overwrite deployment/oidc-gangway -n kube-system secret.reloa
 kubectl annotate --overwrite deployment/metrics-server -n kube-system secret.reloader.stakater.com/reload=metrics-server-cert
 ----
 
-. Upload the Kubernetes CA cert/key pair to Secret in namespace kube-system:
+. Upload the Kubernetes CA cert/key pair to Secret in the `kube-system` namespace:
 +
 [source,bash]
 ----
@@ -509,7 +509,7 @@ kubectl create secret tls kubernetes-ca --cert=pki/ca.crt --key=pki/ca.key -n ku
 +
 [NOTE]
 ====
-If you want to use custom trusted CA certificate/key to sign the certificate, upload to the secret resource.
+If you want to use a custom trusted CA certificate/key to sign the certificate, upload to the secret resource.
 
 [source,bash]
 ----
@@ -517,7 +517,7 @@ kubectl create secret tls custom-trusted-ca --cert=<CUSTOM_TRUSTED_CA_CERT> --ke
 ----
 ====
 
-. Install reloader by helm chart:
+. Install reloader via helm chart:
 +
 [source,bash]
 ----
@@ -526,7 +526,7 @@ helm install suse/reloader \
     --namespace cert-manager
 ----
 
-. Install cert-manager by helm chart:
+. Install cert-manager via helm chart:
 +
 [source,bash]
 ----
@@ -539,11 +539,11 @@ helm install jetstack/cert-manager \
 
 * Create a Cert-Manager CA Issuer Resource
 +
-The cert-manager CA issuer is a Kubernetes resource that represents a certificate authority (CA) that is able to generate signed certificates by honoring certificate signing requests (CSR). Each cert-manager certificate resource requires one referenced issuer in the ready state to attempt to honor CSR requests.
+The cert-manager CA issuer is a {kube} resource that represents a certificate authority (CA), which is able to generate signed certificates by honoring certificate signing requests (CSR). Each cert-manager certificate resource requires one referenced issuer in the ready state to be able to honor CSR requests.
 +
 [NOTE]
 ====
-An `Issuer` is a namespaced resource, and it can not issue certificates to the `Certificate` resources in different namespaces.
+An `Issuer` is a namespaced resource, and it can not issue certificates to the certificate resources in other namespaces.
 
 If you want to create a single Issuer that can be consumed in multiple namespaces, you should consider creating a `ClusterIssuer` resource. This is almost identical to the Issuer resource, however, it is cluster-wide so it can be used to issue certificates in all namespaces.
 ====
@@ -570,7 +570,7 @@ kubectl apply -f issuer.yaml
 +
 [NOTE]
 ====
-If you want to use custom trusted CA certificate/key to sign the certificate, create a custom trust CA issuer.
+If you want to use custom trusted CA certificate/key to sign the certificate, create a custom trusted CA issuer.
 
 [source,bash]
 ----
@@ -633,22 +633,22 @@ EOF
 
 kubectl apply -f oidc-dex-certificate.yaml
 ----
-<1> Certificate default duration, format (XhYmZs).
-<2> Certificate renew before expiration duration, format (XhYmZs).
+<1> Default length of certificate validity, in the format (XhYmZs).
+<2> Certificate renewal time before validity expires, in the format (XhYmZs).
 <3> DNSNames is a list of subject alt names to be used on the Certificate.
 <4> IPAddresses is a list of IP addresses to be used on the Certificate.
 <5> The cert-manager issuer name.
 <6> Issuer or ClusterIssuer.
 +
-This certificate will tell cert-manager to attempt to use the Issuer named kubernetes-ca to obtain a certificate key pair for the domain list in dnsNames and ipAddresses. If successful, the resulting key and certificate will be stored in a secret named oidc-dex-cert with keys of tls.key and tls.crt respectively. 
+This certificate will tell cert-manager to attempt to use the Issuer named kubernetes-ca to obtain a certificate key pair for the domain list in dnsNames and ipAddresses. If successful, the resulting key and certificate will be stored in a secret named oidc-dex-cert with keys of tls.key and tls.crt respectively.
 +
-The dnsNames and ipAddressed fields specify a list of Subject Alternative Names to be associated with the certificate.
+The dnsNames and ipAddresses fields specify a list of Subject Alternative Names to be associated with the certificate.
 +
 The referenced Issuer must exist in the same namespace as the Certificate. A Certificate can alternatively reference a ClusterIssuer which is cluster-wide so it can be referenced from any namespace.
 +
 [NOTE]
 ====
-If you want to use custom trusted CA Issuer/ClusterIssuer, change <5> to custom-trusted-ca and <6> to Issuer/ClusterIssuer.
+If you want to use a custom trusted CA Issuer/ClusterIssuer, change the value of `name` under `issuerRef` to `custom-trusted-ca` and the value of  `kind` under `issuerRef` to `Issuer/ClusterIssuer`.
 ====
 
 ** oidc-gangway certificate
@@ -690,8 +690,8 @@ EOF
 
 kubectl apply -f oidc-gangway-certificate.yaml
 ----
-<1> Certificate default duration, format (XhYmZs).
-<2> Certificate renew before expiration duration, format (XhYmZs).
+<1> Default length of certificate validity, in the format (XhYmZs).
+<2> Certificate renewal time before validity expires, in the format (XhYmZs).
 <3> DNSNames is a list of subject alt names to be used on the Certificate.
 <4> IPAddresses is a list of IP addresses to be used on the Certificate.
 <5> The cert-manager issuer name.
@@ -699,7 +699,7 @@ kubectl apply -f oidc-gangway-certificate.yaml
 +
 [NOTE]
 ====
-If you want to use custom trusted CA Issuer/ClusterIssuer, change <5> to custom-trusted-ca and <6> to Issuer/ClusterIssuer.
+If you want to use a custom trusted CA Issuer/ClusterIssuer, change the value of `name` under `issuerRef` to `custom-trusted-ca` and the value of  `kind` under `issuerRef` to `Issuer/ClusterIssuer`.
 ====
 
 ** metrics-server certificate
@@ -741,8 +741,8 @@ EOF
 
 kubectl apply -f metrics-server-certificate.yaml
 ----
-<1> Certificate default duration, format (XhYmZs).
-<2> Certificate renew before expiration duration, format (XhYmZs).
+<1> Default length of certificate validity, in the format (XhYmZs).
+<2> Certificate renewal time before validity expires, in the format (XhYmZs).
 <3> DNSNames is a list of subject alt names to be used on the Certificate.
 <4> IPAddresses is a list of IP addresses to be used on the Certificate.
 <5> The cert-manager issuer name.
