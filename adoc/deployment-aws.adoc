@@ -142,6 +142,42 @@ caasp_registry_code = "<CAASP_REGISTRATION_CODE>"
 This is required so all the deployed nodes can automatically register
 with {scc} and retrieve packages.
 
+The last step before deploying is to provide the credentials
+as environment variables that terraform will automatically retrieve:
+
+* AWS_ACCESS_KEY_ID: This is the AWS access key.
+* AWS_SECRET_ACCESS_KEY This is the AWS secret key.
+* AWS_DEFAULT_REGION This is the AWS region. A list of region names
+can be found [here](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-available-regions)
+
+To do so, source the following variables,
+for security reasons turn off bash history:
+
+[source,bash]
+----
+set +o history
+export AWS_ACCESS_KEY_ID="AKIAIOSFODNN7EXAMPLE"
+export AWS_SECRET_ACCESS_KEY="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+export AWS_DEFAULT_REGION="eu-central-1"
+set -o history
+----
+
+It can also be stored in a file, for example `aws-credentials`:
+
+[source,bash]
+----
+AWS_ACCESS_KEY_ID="AKIAIOSFODNN7EXAMPLE"
+AWS_SECRET_ACCESS_KEY="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+AWS_DEFAULT_REGION="eu-central-1"
+----
+
+And sourced:
+
+[source,bash]
+----
+set -a; source aws-credentials; set +a
+----
+
 Now you can deploy the nodes by running:
 
 ----
