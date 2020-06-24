@@ -59,6 +59,22 @@ ssh-add command will prompt for your password, then the agent caches the
 decrypted key material for a configurable lifetime. The `-t lifetime` option to
 ssh-add specifies a maximum time to cache the specific key. See `man ssh-add` for
 more information.
+[WARNING]
+====
+The ssh key is decrypted when loaded into the key agent.  Though the key itself is not
+accesible from the agent, anyone with access to the agent's control socket file can use
+the private key contents to impersonate the key owner.  By default, socket access is
+limited to the user who launched the agent.  None the less, it is good security practice
+to specify an expiration time for the decrypted key using the `-t` option.
+For example: `ssh-add -t 1h30m $HOME/.ssh/id.ecdsa` would expire the decrypted key in
+1.5 hours.
+.
+Alternatively, `ssh-agent` can also be launched with `-t` to specify a default timeout.
+For example: `eval $( ssh-agent -t 120s )` would default to a two minute (120 second)
+timeout for keys added.  If timeouts are specified for both programs, the timeout from
+`ssh-add` is used.
+See `man ssh-agent` and `man ssh-add` for more information.
+====
 
 .Usage of multiple identities with `ssh-agent`
 [NOTE]
