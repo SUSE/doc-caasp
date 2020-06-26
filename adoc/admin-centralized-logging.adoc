@@ -82,7 +82,7 @@ See <<log-optional_settings>> for the optional parameters and their default valu
 helm repo add suse https://kubernetes-charts.suse.com
 helm install suse/log-agent-rsyslog --name ${RELEASE_NAME} --namespace kube-system --set server.host=${SERVER_HOST} --set server.port=${SERVER_PORT}
 ----
-Or if you have selected the Helm 3 alternative <<helm-tiller-install>>:
+Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
 [source,bash]
 ----
 helm repo add suse https://kubernetes-charts.suse.com
@@ -116,7 +116,7 @@ helm status ${RELEASE_NAME}
 ----
 helm delete --purge ${RELEASE_NAME}
 ----
-Or if you have selected the Helm 3 alternative <<helm-tiller-install>>:
+Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
 ----
 helm uninstall ${RELEASE_NAME}
 ----

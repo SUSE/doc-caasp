@@ -149,7 +149,7 @@ We use cert-exporter to monitor nodes' on-host certificates and addons' secret c
 helm repo add suse https://kubernetes-charts.suse.com
 helm install suse/cert-exporter --name ${RELEASE_NAME}
 ----
-Or if you have selected the Helm 3 alternative <<helm-tiller-install>>:
+Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
 [source,bash]
 ----
 helm repo add suse https://kubernetes-charts.suse.com
@@ -206,7 +206,7 @@ helm install suse/cert-exporter \
     --set customSecret.certs[0].includeKeys="{ca.crt,tls.crt}" \
     --set customSecret.certs[0].annotationSelector="{cert-manager.io/certificate-name}"
 ----
-Or if you have selected the Helm 3 alternative <<helm-tiller-install>>:
+Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
 +
 [source,bash]
 ----
@@ -229,7 +229,7 @@ helm install suse/cert-exporter \
     --set customSecret.certs[0].includeKeys="{ca.crt,tls.crt}" \
     --set customSecret.certs[0].labelSelector="{key=value}"
 ----
-Or if you have selected the Helm 3 alternative <<helm-tiller-install>>:
+Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
 +
 [source,bash]
 ----
@@ -255,7 +255,7 @@ helm install suse/cert-exporter \
     --set customSecret.certs[1].includeKeys="{ca.crt,tls.crt}" \
     --set customSecret.certs[1].labelSelector="{key=value}"
 ----
-Or if you have selected the Helm 3 alternative <<helm-tiller-install>>:
+Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
 +
 [source,bash]
 ----
@@ -287,7 +287,7 @@ helm install suse/cert-exporter \
     --set customSecret.certs[1].includeKeys="{ca.crt,tls.crt}" \
     --set customSecret.certs[1].labelSelector="{key=value}"
 ----
-Or if you have selected the Helm 3 alternative <<helm-tiller-install>>:
+Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
 +
 [source,bash]
 ----
