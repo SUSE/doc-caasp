@@ -298,8 +298,10 @@ cd ~/caasp/deployment/vmware/
 mv terraform.tfvars.example terraform.tfvars
 ----
 . Edit the `terraform.tfvars` file and add/modify the following variables:
-+
+
 include::deployment-terraform-example.adoc[tag=tf_vmware]
+
+[start=5]
 . Enter the registration code for your nodes in `~/caasp/deployment/vmware/registration.auto.tfvars`:
 +
 Substitute `<CAASP_REGISTRATION_CODE>` for the code from <<registration-code>>.
@@ -330,7 +332,7 @@ It is mandatory that each virtual machine's hostname must match its cluster node
 # Set node's hostname from DHCP server
 hostname_from_dhcp = false
 ----
-
++
 Once the files are adjusted, `terraform` needs to know about the `vSphere` server
 and the login details for it; these can be exported as environment variables or
 entered every time `terraform` is invoked.
@@ -346,6 +348,8 @@ export VSPHERE_ALLOW_UNVERIFIED_SSL=true # In case you are using custom certific
 
 ssh-add <path_to_private_ssh_key_from_tfvars>
 ----
++
+.Specify a key expiration time
 [WARNING]
 ====
 The ssh key is decrypted when loaded into the key agent.  Though the key itself is not
