@@ -306,7 +306,7 @@ cd ~/caasp/deployment/vmware/
 mv terraform.tfvars.example terraform.tfvars
 ----
 . Edit the `terraform.tfvars` file and add/modify the following variables:
-+
+
 include::deployment-terraform-example.adoc[tag=tf_vmware]
 
 [start=4]
@@ -346,7 +346,7 @@ and the login details for it; these can be exported as environment variables or
 entered every time `terraform` is invoked.
 +
 . Additionally, the `ssh-key` that is specified in the `tfvars` file must be added
-to the keyring, so the machine running `skuba` can `ssh` into the machines:
+to the key agent so the machine running `skuba` can `ssh` into the machines:
 +
 ----
 export VSPHERE_SERVER="<server_address"
@@ -356,6 +356,19 @@ export VSPHERE_ALLOW_UNVERIFIED_SSL=true # In case you are using custom certific
 
 ssh-add <path_to_private_ssh_key_from_tfvars>
 ----
++
+.Specify a key expiration time
+[WARNING]
+====
+The ssh key is decrypted when loaded into the key agent.  Though the key itself is not
+accesible, anyone with access to the agent's control socket file can use the private key
+contents to impersonate the key owner.  By default, socket access is limited to the user
+who launched the agent.  None the less, it is still good security practice to specify an
+expiration time for the decrypted key using the `-t` option.
+For example: `ssh-add -t 1h30m $HOME/.ssh/id.ecdsa` would expire the decrypted key in 1.5
+hours.
+See `man ssh-agent` and `man ssh-add` for more information.
+====
 +
 . Run Terraform to create the required machines for use with `skuba`:
 +
