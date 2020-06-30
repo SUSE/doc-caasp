@@ -64,7 +64,7 @@ more information.
 [NOTE]
 ====
 Skuba will try all the identities loaded into the `ssh-agent` until one of
-them grants access to the node, or until the SSH servers' maximum authentication attempts are exhausted.
+them grants access to the node, or until the SSH server's maximum authentication attempts are exhausted.
 This could lead to undesired messages in SSH or other security/authentication logs on your local machine.
 ====
 
@@ -162,7 +162,7 @@ as various default configurations and examples.
 .Using a Proxy Server
 ====
 
-Sometimes, you need a proxy server to be able to connect to the {scc}.
+Sometimes you need a proxy server to be able to connect to the {scc}.
 If you have not already configured a system-wide proxy, you can temporarily do
 so for the duration of the current shell session like this:
 
@@ -174,14 +174,14 @@ export http_proxy=http://PROXY_IP_FQDN:PROXY_PORT
 +
 . Replace `<PROXY_IP_FQDN>` by the IP address or a fully qualified domain name (FQDN) of the
 proxy server and `<PROXY_PORT>` by its port.
-. If you need a proxy server with basic authentication, create the file `/root/.curlrc`
+. If you use a proxy server with basic authentication, create the file `$HOME/.curlrc`
 with the following content:
 +
 ----
 --proxy-user "<USER>:<PASSWORD>"
 ----
 +
-Replace `<USER>` and `<PASSWORD>` with the credentials of an allowed user for the proxy server.
+Replace `<USER>` and `<PASSWORD>` with the credentials of an allowed user for the proxy server, and consider limiting access to the file (`chmod 0600`).
 
 ====
 
