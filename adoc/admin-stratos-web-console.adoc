@@ -25,7 +25,7 @@ as long as it is granted access to their {kube} API endpoint.
 This document aims to describe how to install Stratos in a {productname} cluster
 that doesn't plan to run any {cap} components.
 
-The Stratos stack is deployed using a helm charts and consists of its web
+The Stratos stack is deployed using helm charts and consists of its web
 UI POD and a MariaDB one that is used to store configuration values.
 
 == Prerequisites
@@ -61,6 +61,12 @@ helm repo add suse https://kubernetes-charts.suse.com
 [source,bash]
 ----
 helm inspect values suse/console > stratos-values.yaml
+----
+. Create the `stratos` namespace
++
+[source,bash]
+----
+kubectl create namespace stratos
 ----
 
 === Define `admin` user password
@@ -226,6 +232,13 @@ Now Stratos can be deployed using helm and the values specified inside of the
 ----
 helm install suse/console \
   --name stratos-console \
+  --namespace stratos \
+  --values stratos-values.yaml
+----
+Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
+[source,bash]
+----
+helm install stratos-console suse/console \
   --namespace stratos \
   --values stratos-values.yaml
 ----

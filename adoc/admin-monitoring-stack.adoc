@@ -306,11 +306,20 @@ server:
 helm repo add suse https://kubernetes-charts.suse.com
 ----
 
-. Deploy SUSE prometheus helm chart and pass our configuration values file.
+. Deploy SUSE `prometheus` helm chart and pass our configuration values file.
 +
 [source,bash]
 ----
 helm install --name prometheus suse/prometheus \
+--namespace monitoring \
+--values prometheus-config-values.yaml
+----
++
+Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
++
+[source,bash]
+----
+helm install prometheus suse/prometheus \
 --namespace monitoring \
 --values prometheus-config-values.yaml
 ----
@@ -667,6 +676,14 @@ helm install --name grafana suse/grafana \
 --namespace monitoring \
 --values grafana-config-values.yaml
 ----
+Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
++
+[source,bash]
+----
+helm install grafana suse/grafana \
+--namespace monitoring \
+--values grafana-config-values.yaml
+----
 
 . The result should be a running Grafana pod
 +
@@ -871,6 +888,15 @@ helm install --name prometheus suse/prometheus \
 --values prometheus-config-values.yaml
 ----
 +
+Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
++
+[source,bash]
+----
+helm install prometheus suse/prometheus \
+--namespace monitoring \
+--values prometheus-config-values.yaml
+----
++
 There need to be 3 pods running (3 node-exporter pods because we have 3 nodes).
 +
 [source,bash]
@@ -989,6 +1015,15 @@ helm repo add suse https://kubernetes-charts.suse.com
 [source,bash]
 ----
 helm install --name grafana suse/grafana \
+--namespace monitoring \
+--values grafana-config-values.yaml
+----
++
+Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
++
+[source,bash]
+----
+helm install grafana suse/grafana \
 --namespace monitoring \
 --values grafana-config-values.yaml
 ----
