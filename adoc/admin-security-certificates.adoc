@@ -38,85 +38,83 @@ Required CAs for {productname} are stored on all master nodes:
 |Front-proxy components
 |===
 
-The following certificates are managed by `kubeadm`:
+The control plane certificates stored in the {kube} cluster on master nodes:
 
 [%header,cols=4*]
 |===
 |Common Name
 |Parent CA
-|Path (`/etc/kubernetes/pki`)
+|Path
 |Kind
 
 |kubernetes
 |
-|ca.crt,key
+|/etc/kubernetes/pki/ca.crt,key
 |CA
 
 |kube-apiserver
 |kubernetes
-|apiserver.crt,key
+|/etc/kubernetes/pki/apiserver.crt,key
 |Server
 
 |kube-apiserver-etcd-client
 |etcd-ca
-|apiserver-etcd-client.crt,key
+|/etc/kubernetes/pki/apiserver-etcd-client.crt,key
 |Client
 
 |kube-apiserver-kubelet-client
 |kubernetes
-|apiserver-kubelet-client.crt,key
+|/etc/kubernetes/pki/apiserver-kubelet-client.crt,key
 |Client
 
 |etcd-ca
 |
-|etcd/ca.crt,key
+|/etc/kubernetes/pki/etcd/ca.crt,key
 |CA
 
 |kube-etcd-healthcheck-client
 |etcd-ca
-|etcd/healthcheck-client.crt,key
+|/etc/kubernetes/pki/etcd/healthcheck-client.crt,key
 |Client
 
 |kube-etcd-peer
 |etcd-ca
-|etcd/peer.crt,key
+|/etc/kubernetes/pki/etcd/peer.crt,key
 |Server,Client
 
 |kube-etcd-server
 |etcd-ca
-|etcd/server.crt,key
+|/etc/kubernetes/pki/etcd/server.crt,key
 |Server,Client
+
+|kubelet-ca
+|
+|/var/lib/kubeket/pki/kubelet-ca.crt,key
+|CA
+
+|system:node:<nodeName>
+|kubernetes
+|/var/lib/kubeket/pki/kubelet-client-current.pem
+|Client
+
+|system:node:<nodeName>
+|kubelet-ca
+|/var/lib/kubeket/pki/kubelet-server-current.pem
+|Server
 
 |front-proxy-ca
 |
-|front-proxy-ca.crt,key
+|/etc/kubernetes/pki/front-proxy-ca.crt,key
 |CA
 
 |front-proxy-client
 |front-proxy-ca
-|front-proxy-client.crt,key
+|/etc/kubernetes/pki/front-proxy-client.crt,key
 |Client
 |===
 
-The following certificates are created by `skuba`:
+The addon certificates stored in the {kube} cluster Secret resource:
 
-* stored in the {kube} cluster as file format:
-+
-[%header,cols=4*]
-|===
-|Common Name
-|Parent CA
-|Path (`/var/lib/kubelet/pki`)
-|Kind
-
-|kubelet-ca
-|
-|kubelet-ca.crt,key
-|CA
-|===
-
-* stored in the {kube} cluster as `Secret` resource:
-+
 [%header,cols=4*]
 |===
 |Common Name
@@ -346,13 +344,13 @@ openssl rsa -in /path/to/file.pem -out /path/to/file.key
 ----
 ====
 
-* Replacing the {kube} `apiserver` CA certificate:
+* Replacing the {kube} CA certificate:
 +
 [source,bash]
 ----
 mkdir -p my-cluster/pki
-cp <CUSTOM_APISERVER_CA_CERT_PATH> my-cluster/pki/ca.crt
-cp <CUSTOM_APISERVER_CA_KEY_PATH> my-cluster/pki/ca.key
+cp <CUSTOM_KUBERNETES_CA_CERT_PATH> my-cluster/pki/ca.crt
+cp <CUSTOM_KUBERNETES_CA_KEY_PATH> my-cluster/pki/ca.key
 chmod 644 my-cluster/pki/ca.crt
 chmod 600 my-cluster/pki/ca.key
 ----
@@ -534,12 +532,16 @@ if the administrator is not willing to upgrade the cluster, the `kucero` (KUbern
   .. A kubeadm checker/renewer in the form of a DaemonSet, which is deployed on master nodes. It's job is to periodically check and renew control plane kubeadm managed certificates/kubeconfigs.
   .. A kubelet server CSR signer controller, which signs the kubelet server CSR with a kubelet CA cert/key pair. The signed server certificates are stored in `/var/lib/kubelet/pki` and `/var/lib/kubelet/pki/kubelet-server-current.pem` is a symlink to the last generated server certificate.
 
+.kubelet client/server certificate
 [NOTE]
 ====
-During the kubelet client certificate signing flow, kubelet sends the kubelet client CSR into the {kube} cluster, after which the `kube-controller-manager` signs the kubelet client CSR with the Kubernetes CA cert/key pair.
+During the kubelet client/server certificate signing flow, kubelet sends the kubelet client/server CSR into the {kube} cluster. The `kube-controller-manager` signs the kubelet client CSR with the Kubernetes CA cert/key pair. The `kucero` signs the kubelet server CSR with the kubelet CA cert/key pair.
 
-The kubelet client deafult configuration uses a `kubelet-client-current.pem` file in the
-`/var/lib/kubelet/pki` folder. This file is a symlink to the latest generated certificate.
+The kubelet client/server certificate renews automatically at approximately 70%-90% of the total lifetime of the certificate, the kubelet would use new client/server certificates without downtime.
+
+The kubelet client certificate uses the `/var/lib/kubelet/pki/kubelet-client-current.pem`, this file is a symlink to the latest signed client certificate.
+
+The kubelet server certificate uses the `/var/lib/kubelet/pki/kubelet-server-current.pem`, this file is a symlink to the latest signed server certificate.
 ====
 
 === Control Plane Nodes Certificate Rotation
@@ -833,8 +835,9 @@ If you are running multiple master nodes, you need to run the followings
 commands sequentially on all master nodes.
 ====
 
-=== Renewing Certificates Managed by `kubeadm`
+=== Renewing Control Plane Certificates
 
+* Replace kubeadm-managed certificates:
 . To SSH into the master node, renew all `kubeadm` certificates and reboot,
 run the following:
 +
@@ -854,7 +857,43 @@ ssh <USERNAME>@<MASTER_NODE_IP_ADDRESS/FQDN>
 sudo cat /etc/kubernetes/admin.conf
 ----
 
-=== Renewing Certificates Created by `skuba`:
+* Replace the `kubelet` server certificate:
++
+[IMPORTANT]
+====
+You need to generate `kubelet` server certificate for all the nodes on one of control plane nodes.
+The `kubelet` CA certificate key only exists on the control plane nodes.
+Therefore, after generating re-signed `kubelet` server certificate/key for worker nodes, you have to copy each `kubelet` server certificate/key from the control plane node to the corresponding worker node.
+====
+. Backup the original `kubelet` certificates and keys.
++
+[source,bash]
+----
+sudo cp -r /var/lib/kubelet/pki /var/lib/kubelet/pki.bak
+----
++
+. Sign each node `kubelet` server certificate with the CA certificate/key `/var/lib/kubelet/pki/kubelet-ca.crt` and `/var/lib/kubelet/pki/kubelet-ca.key`, make sure that the signed server certificate SAN is the same as the origin.
+To get the original SAN IP address(es) and DNS(s), run:
++
+[source,bash]
+----
+openssl x509 -noout -text -in /var/lib/kubelet/pki.bak/kubelet.crt | grep -oP '(?<=IP Address:)[^,]+'
+openssl x509 -noout -text -in /var/lib/kubelet/pki.bak/kubelet.crt | grep -oP '(?<=DNS:)[^,]+'
+----
++
+. Finally, update the `kubelet` server certificate and key file `/var/lib/kubelet/kubelet.crt` and `/var/lib/kubelet/kubelet.key` respectively, and restart `kubelet` service.
++
+[source,bash]
+----
+sudo cp <CUSTOM_KUBELET_SERVER_CERT_PATH> /var/lib/kubelet/pki/kubelet.crt
+sudo cp <CUSTOM_KUBELET_SERVER_KEY_PATH> /var/lib/kubelet/pki/kubelet.key
+chmod 644 /var/lib/kubelet/pki/kubelet.crt
+chmod 600 /var/lib/kubelet/pki/kubelet.key
+
+sudo systemctl restart kubelet
+----
+
+=== Renewing Addon Certificates:
 
 In the admin node, regenerate the certificates:
 
@@ -972,42 +1011,6 @@ data:
 ----
 kubectl replace -f oidc-gangway-cert.yaml
 kubectl rollout restart deployment/oidc-gangway -n kube-system
-----
-
-* Replace the `kubelet` server certificate:
-+
-[IMPORTANT]
-====
-You need to generate `kubelet` server certificate for all the nodes on one of control plane nodes.
-The `kubelet` CA certificate key only exists on the control plane nodes.
-Therefore, after generating re-signed `kubelet` server certificate/key for worker nodes, you have to copy each `kubelet` server certificate/key from the control plane node to the corresponding worker node.
-====
-. Backup the original `kubelet` certificates and keys.
-+
-[source,bash]
-----
-sudo cp -r /var/lib/kubelet/pki /var/lib/kubelet/pki.bak
-----
-+
-. Sign each node `kubelet` server certificate with the CA certificate/key `/var/lib/kubelet/pki/kubelet-ca.crt` and `/var/lib/kubelet/pki/kubelet-ca.key`, make sure that the signed server certificate SAN is the same as the origin.
-To get the original SAN IP address(es) and DNS(s), run:
-+
-[source,bash]
-----
-openssl x509 -noout -text -in /var/lib/kubelet/pki.bak/kubelet.crt | grep -oP '(?<=IP Address:)[^,]+'
-openssl x509 -noout -text -in /var/lib/kubelet/pki.bak/kubelet.crt | grep -oP '(?<=DNS:)[^,]+'
-----
-+
-. Finally, update the `kubelet` server certificate and key file `/var/lib/kubelet/kubelet.crt` and `/var/lib/kubelet/kubelet.key` respectively, and restart `kubelet` service.
-+
-[source,bash]
-----
-sudo cp <CUSTOM_KUBELET_SERVER_CERT_PATH> /var/lib/kubelet/pki/kubelet.crt
-sudo cp <CUSTOM_KUBELET_SERVER_KEY_PATH> /var/lib/kubelet/pki/kubelet.key
-chmod 644 /var/lib/kubelet/pki/kubelet.crt
-chmod 600 /var/lib/kubelet/pki/kubelet.key
-
-sudo systemctl restart kubelet
 ----
 
 == How To Generate Certificates
