@@ -872,13 +872,13 @@ When registry mirror is using virtual repository URL. You may need to manually m
 
 === Check for Deprecated APIs before an Upgrade to New Version in an air gapped deployment
 
-When you want to make sure all the deployments you have are compatible with the new version, in an air gapped environment you have to follow the next steps.
+When you want to make sure all the types kubernetes objects defined in your cluster are compatible with the new version, in an air gapped environment you have to follow the next steps.
 
 . In a secure and trusted machine download the `swagger` file, that has included all APIs definitions for kubernetes, from the URL:
 
-  `https://raw.githubusercontent.com/kubernetes/kubernetes/vX.XX.XXX/api/openapi-spec/swagger.json`
+  `https://raw.githubusercontent.com/kubernetes/kubernetes/v<MAJOR.MINOR.PATCH>/api/openapi-spec/swagger.json`
 
-  Replace `vX.XX.XXX` with the desired version of kubernetes, e.g.: `v1.18.5`  
+  Replace `v<MAJOR.MINOR.PATCH>` with the desired version of {kube}, e.g.: `v1.18.5`  
 
 . Copy the `swagger` file to a secure storage device.
 
@@ -888,7 +888,7 @@ When you want to make sure all the deployments you have are compatible with the 
 
 . Run the following {productname} command to test against that file:
 
-  `skuba cluster upgrade check --kubernetes-version=X.XX.XX --swagger-dir=/path/to/containing/folder`
+  `skuba cluster upgrade check --kubernetes-version=<MAJOR.MINOR.PATCH> --swagger-dir=/path/to/containing/folder`
 
   
 This will show a list, if any, for deprecated APIs that are being used in your current cluster setup. Allowing you to be able to update accordingly also.

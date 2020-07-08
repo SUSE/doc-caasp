@@ -270,8 +270,7 @@ If there are upgrades available please repeat the procedure until no more new up
 
 === Check for Deprecated APIs before an Upgrade to New Version
 
-When you want to make sure all the deployments you have are compatible with the new version, please run `skuba cluster upgrade check`.
-This will show a list, if any, for deprecated APIs that are being used in your current cluster setup. Allowing you to be able to update accordingly also.
+We recommend to run the `skuba cluster upgrade check` before upgrading to a new version of kubernetes. This command will inspect all the kubernetes objects defined on your cluster and identify the ones using deprecated or dropped APIs.
 
 [#base-os-updates]
 == Base OS Updates
