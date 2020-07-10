@@ -41,12 +41,13 @@ The general procedure should look like this:
 . Apply all the configuration files that you modified for addons, the upgrade will have reset the configurations to defaults.
 . Check if there are addon upgrades available for the current cluster using `skuba addon upgrade plan`.
 * Check if all the deployments in the cluster are compatible with the {kube} release that will be installed (refer to your individual deployments' documentation).
+* Check if the kustomize patches manifest is compatible for the current cluster, it will do {kube} server-side dry-run validation and displays the error message if present.
 If the deployment is not compatible you must update it to ensure it working with the updated {kube}.
 . Upgrade all master nodes by sequentially running `skuba node upgrade plan` and `skuba node upgrade apply`.
 * Make sure to wait until all PODs/deployments/DaemonSets are up and running as expected before moving to the next node.
 . Upgrade all worker nodes by sequentially running `skuba node upgrade plan` and `skuba node upgrade apply`.
 * Make sure to wait until all PODs/deployments/DaemonSets are up and running as expected before moving to the next node.
-. Check if new addons are available for the new version using `skuba addon upgrade plan`.
+. Check if new addons are available for the new version using `skuba addon upgrade plan` and do {kube} server-side dry-run validation to validates the addon base and patches manifest.
 . Once all nodes are up to date, update helm and tiller (as needed) and subsequently the helm deployments.
 
 === Update Management Workstation
@@ -56,7 +57,7 @@ Reboot the machine to make sure that all system changes are correctly applied.
 
 === Generating an Overview of Available Platform Updates
 
-In order to get an overview of the updates available, you can run:
+To get an overview of the addon updates available with validating the addon base and patches manifest before applied to the current cluster, you can run:
 
 ----
 skuba cluster upgrade plan
@@ -183,7 +184,7 @@ current {kube} cluster version, please run:
 skuba addon refresh localconfig
 ----
 
-In order to get an overview of the addon updates available, you can run:
+To get an overview of the addon updates available with validating the addon base and patches manifest before applied to the current cluster, you can run:
 
 ----
 skuba addon upgrade plan
