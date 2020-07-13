@@ -13,7 +13,7 @@ The CA certificate is valid for 3650 days (10 years) by default.
 Client and server certificates are valid for 365 days (1 year) by default.
 
 == Certificate Location
-Required CAs for {productname} are stored on all master nodes:
+Required CAs for {productname} are stored on all control plane nodes:
 
 [%header,cols=3*]
 |===
@@ -38,7 +38,7 @@ Required CAs for {productname} are stored on all master nodes:
 |Front-proxy components
 |===
 
-The control plane certificates stored in the {kube} cluster on master nodes:
+The control plane certificates stored in the {kube} cluster on control plane nodes:
 
 [%header,cols=4*]
 |===
@@ -527,7 +527,7 @@ kubectl rollout restart deployment/oidc-gangway -n kube-system
 when the node is upgraded, all the kubeadm managed certificates and kubeconfigs, and kubelet client certificates get rotated.
 
 . *Via the `kucero` addon*:
-if the administrator is not willing to upgrade the cluster, the `kucero` (KUbernetes control plane CErtificate ROtation) addon rotates all the kubeadm managed certificates and kubeconfigs. The kucero is a kubeadm checker/renewer in the form of a DaemonSet, which is deployed on master nodes. It's job is to periodically check and renew control plane kubeadm managed certificates/kubeconfigs.
+if the administrator is not willing to upgrade the cluster, the `kucero` (KUbernetes control plane CErtificate ROtation) addon rotates all the kubeadm managed certificates and kubeconfigs. The kucero is a kubeadm checker/renewer in the form of a DaemonSet, which is deployed on control plane nodes. It's job is to periodically check and renew control plane kubeadm managed certificates/kubeconfigs.
 
 .kubelet client certificate
 [NOTE]
@@ -824,14 +824,14 @@ kubectl apply -f metrics-server-certificate.yaml
 
 [IMPORTANT]
 ====
-If you are running multiple master nodes, you need to run the followings
-commands sequentially on all master nodes.
+If you are running multiple control plane nodes, you need to run the followings
+commands sequentially on all control plane nodes.
 ====
 
 === Renewing Control Plane Certificates
 
 * Replace kubeadm-managed certificates:
-. To SSH into the master node, renew all `kubeadm` certificates and reboot,
+. To SSH into the control plane node, renew all `kubeadm` certificates and reboot,
 run the following:
 +
 [source,bash]
@@ -842,7 +842,7 @@ sudo kubeadm alpha certs renew all
 sudo systemctl restart kubelet
 ----
 +
-. Copy the renewed `admin.conf` from one of the master nodes to your local environment:
+. Copy the renewed `admin.conf` from one of the control plane nodes to your local environment:
 +
 [source,bash]
 ----
