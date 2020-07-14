@@ -166,6 +166,10 @@ authorized_keys = [ // <15>
 ntp_servers = ["0.example.ntp.org", "1.example.ntp.org", "2.example.ntp.org", "3.example.ntp.org"] // <16>
 ----
 
+# Controls whether or not the guest network waiter waits for a routable address.
+# Default is True and should not be changed unless you hit the upstream bug: https://github.com/hashicorp/terraform-provider-vsphere/issues/1127
+wait_for_guest_net_routable = true // <17>
+
 [IMPORTANT]
 ====
 Only one of `vsphere_datastore` or `vsphere_datastore_cluster` can be set at the same time. Proceed to comment or delete the unused one from your `terraform.tfvars`
@@ -198,6 +202,8 @@ default packages listed.
 deployed machines.
 <16> `ntp_servers`: A list of `ntp` servers you would like to use with `chrony`.
 # end::tf_vmware[]
+<17> `wait_for_guest_net_routable`: true or false to disable the routable check. Default is true.
+*Note*: This should only be changed if terraform times out while creating VMs as mentioned on the upstream bug: https://github.com/hashicorp/terraform-provider-vsphere/issues/1127
 
 
 [#tf-aws]
