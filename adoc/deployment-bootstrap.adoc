@@ -359,30 +359,34 @@ Instruction to tag zones and regions, refer to: https://vmware.github.io/vsphere
 
 After setting options in the `vsphere.conf` file, please proceed with <<cluster-bootstrap>>.
 
+
+.Set `vSphere` virtual machine hostnames
 [IMPORTANT]
 ====
-When cloud provider integration is enabled, it's very important to bootstrap and join nodes with the node names same as ~vSphere~ virtual machine's hostnames.
+When cloud provider integration is enabled, it's very important to bootstrap and join nodes with the node names same as `vSphere` virtual machine's hostnames.
 These names will be used by the `vSphere` cloud controller manager to reconcile node metadata.
 ====
 
+.Enable `disk.EnableUUID`.
 [IMPORTANT]
 ====
 Each virtual machine requires to have `disk.EnableUUID` enabled to successfully mount the virtual disks.
 
 Clusters provisioned following link:{docurl}single-html/caasp-deployment/#_using_terraform[Deploying VMs from the Template] with `cpi_enable = true` automatically enables `disk.EnableUUID`.
 
-For clusters provisioned by any other method, ensure virtual machines are set to use `disk.EnableUUID`. 
+For clusters provisioned by any other method, ensure virtual machines are set to use `disk.EnableUUID`.
 
 For more information, refer to: link:https://docs.vmware.com/en/VMware-vSphere/6.7/Cloud-Native-Storage/GUID-3501C3F2-7D7C-45E9-B20A-F3F70D1E4679.html[Configure Kubernetes Cluster Virtual Machines] .
 ====
 
+.Create a Folder For Your Virtual Machines.
 [IMPORTANT]
 ====
-All virtual machines must exist in a folder and provide as the `folder` variable in the `vsphere.conf` before bootstrap.
+All virtual machines must exist in a folder and provide the name of that folder as the `folder` variable in the `vsphere.conf` before bootstrap.
 
 Clusters provisioned following link:{docurl}single-html/caasp-deployment/#_using_terraform[Deploying VMs from the Template] with `cpi_enable = true` automatically create and place all cluster node virtual machines inside a `*-cluster` folder.
 
-For clusters provisioned by any other method, ensure to create and move all cluster node virtual machines to a folder.
+For clusters provisioned by any other method, make sure to create and move all cluster node virtual machines to a folder.
 ====
 
 ===== Integrate External LDAP TLS
