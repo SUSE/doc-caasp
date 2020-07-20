@@ -98,7 +98,7 @@ sudo zypper in ceph-common xfsprogs
 [[helm-tiller-install]]
 === Installing Helm
 
-As of {productname} {productversion}, Helm is part of the {productname} package repository, so to use this,
+As of {productname} {productversion}, Helm 2 is part of the {productname} package repository, so to use this,
 you only need to run the following command from the location where you normally run `skuba` commands:
 
 [source,bash]
@@ -106,7 +106,7 @@ you only need to run the following command from the location where you normally 
 sudo zypper install helm
 ----
 
-Helm 2 is the default for {productname} 5. Helm 3 is offered as an alternate tool and may be installed in parallel to aid migration. Helm 3 may be selected by installing from zypper then selecting the alternative.
+Helm 2 is the default for {productname} 5. Helm 3 is offered as an alternate tool and may be installed in parallel to aid migration.
 
 [source,bash]
 ----
@@ -115,7 +115,10 @@ sudo update-alternatives --set helm /usr/bin/helm3
 ----
 
 [WARNING]
-Helm 2 is planned to end support in November 2020. Helm 3 is offered as an alternative in {productname} 5.0 and will become the default tool in the following release. Please see <<helm-2to3-migration>> for upgrade instructions and upgrade as soon as feasible.
+  Unless you are migrating from {productname} 4 with Helm charts already deployed or have legacy Helm charts that only work with Helm 2, please use Helm 3.
+  +
+  +
+  Helm 2 is planned to end support in November 2020. Helm 3 is offered as an alternative in {productname} 5.0 and will become the default tool in the following release. Please see <<helm-2to3-migration>> for upgrade instructions and upgrade as soon as feasible.
 
 === Installing Tiller
 
@@ -204,7 +207,7 @@ helm del --tls <RELEASE_NAME> [flags]
 
 [[helm-2to3-migration]]
 === Helm 2 to 3 Migration
-[NOTE]S
+[NOTE]
 ====
 The process for migrating an installation from Helm 2 to Helm 3 has been documented and tested by the Helm community. Please reference the following links before proceeding.
 
