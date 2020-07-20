@@ -521,6 +521,32 @@ kubectl replace -f oidc-gangway-cert.yaml
 kubectl rollout restart deployment/oidc-gangway -n kube-system
 ----
 
+** Replace the OIDC CA for `kube-apiserver`:
+
+. Copy custom OIDC CA which was used for `oidc-dex` and `oidc-gangway` to [path]`/etc/kubernetes/pki/oidc-ca.crt` on all CaaSP master nodes
++
+[source,bash]
+----
+ssh <USERNAME>@<MASTER_NODE_IP_ADDRESS/FQDN>
+sudo mv oidc-ca.crt /etc/kubernetes/pki/oidc-ca.crt
+----
+
+. Update `oidc-ca-file` option in kubeadm configmap
++
+[source,bash]
+----
+kubectl get configmap -n kube-system kubeadm-config -o yaml > kubeadm-config.yaml
+sed -i "s|oidc-ca-file: .*|oidc-ca-file: /etc/kubernetes/pki/oidc-ca.crt|" kubeadm-config.yaml
+kubectl apply -f kubeadm-config.yaml
+----
+
+. Update `oidc-ca-file` in static pod manifest for kube-apiserver in [path]`/etc/kubernetes/manifests/kube-apiserver.yaml` on all CaaSP master nodes
++
+[source,bash]
+----
+sed -i "s|oidc-ca-file=.*|oidc-ca-file=/etc/kubernetes/pki/oidc-ca.crt|" /etc/kubernetes/manifests/kube-apiserver.yaml
+----
+
 == Automatic Certificate Renewal
 
 {productname} renews the control plane certificates and kubeconfigs automatically in two ways:
