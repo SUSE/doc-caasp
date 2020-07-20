@@ -65,7 +65,7 @@ Helm Charts: <<airgap-helm_charts-client>>
 Container Images: <<airgap-container_registry-client>>
 
 
-[#airgap-concepts]
+[[airgap-concepts]]
 == Concepts
 
 === Network Separation
@@ -168,10 +168,10 @@ For example: All images with a prefix `registry.suse.com/` will be automatically
 
 For further information on registry mirror configuration, refer to link:{docurl}single-html/caasp-admin/#_configuring_container_registries_for_cri_o[].
 
-[#airgap-requirements]
+[[airgap-requirements]]
 == Requirements
 
-[#airgap-requirements-machines]
+[[airgap-requirements-machines]]
 === Mirror Servers
 
 .Shared Mirror Server
@@ -219,7 +219,7 @@ Add additional mirror servers (behind a load balancer) if you require additional
 . Make sure you have https://documentation.suse.com/sles/15-SP1/single-html/SLES-dockerquick/#Preparation[enabled the Containers module] on both servers.
 . Make sure you have https://documentation.suse.com/sles/15-SP1/single-html/SLES-rmt/#cha-rmt-installation[Repository Mirroring Tool installed] on both server.
 
-[#airgap-requirements-network]
+[[airgap-requirements-network]]
 === Networking
 
 .Additional Port Configuration
@@ -246,7 +246,7 @@ You must configure at least these ports in all firewalls between the cluster and
 You need to define fully qualified domain names (FQDN) for both of the mirror servers in their respective network.
 These hostnames are the basis for the required SSL certificates and are used by the components to access the respective mirror sources.
 
-[#airgap-ssl-certificates]
+[[airgap-ssl-certificates]]
 ==== SSL Certificates
 
 You will need SSL/TLS certificates to secure services on each server.
@@ -272,7 +272,7 @@ sudo cp /etc/rmt/ssl/rmt-ca.crt /etc/pki/trust/anchors/
 sudo update-ca-certificates
 ----
 
-[#airgap-requirements-storage]
+[[airgap-requirements-storage]]
 === Trusted Storage
 
 Transferring data from the external network mirror to the internal mirror can be performed in many ways.
@@ -303,10 +303,10 @@ Please make sure to adjust the mountpoint in the respective command to where the
 Data integrity checks, duplication, backup, and secure handling procedures of trusted storage are beyond the scope of this document.
 ====
 
-[#airgap-rpm_repository]
+[[airgap-rpm_repository]]
 == RPM Repository Mirror
 
-[#airgap-rpm_repository-mirror]
+[[airgap-rpm_repository-mirror]]
 === Mirror Configuration
 
 .Deploy The Mirror Before {productname}Cluster Deployment
@@ -337,18 +337,18 @@ sudo systemctl disable rmt-server-sync.timer
 Now you need to perform the update procedure to do an initial sync of data between the upstream sources and the external mirror and the external and internal mirrors.
 Refer to: <<airgap-rpm_repository-update>>.
 
-[#airgap-rpm_repository-client]
+[[airgap-rpm_repository-client]]
 === Client Configuration
 
 https://documentation.suse.com/sles/15-SP1/single-html/SLES-rmt/#cha-rmt-client[Follow these instructions] to configure all {productname}
  nodes to use the package repository mirror server in the air gapped network.
 
-[#airgap-rpm_repository-update]
+[[airgap-rpm_repository-update]]
 == Updating RPM Repository Mirror
 
 https://documentation.suse.com/sles/15-SP1/single-html/SLES-rmt/#sec-rmt-mirroring-export-import[Follow these instructions] to update the external server, transfer the data to a storage device, and use that device to update the air gapped server.
 
-[#airgap-container_registry]
+[[airgap-container_registry]]
 == Container Registry Mirror
 
 .Mirroring Multiple Image Registries / Chart Repositories
@@ -362,7 +362,7 @@ We highly recommend running separate helm chart and container registry mirrors f
 Additional mirror registries must be run on separate mirror servers for technical reasons.
 ====
 
-[#airgap-container_registry-mirror]
+[[airgap-container_registry-mirror]]
 === Mirror Configuration
 
 The container image registry is provided as a container image itself.
@@ -390,29 +390,21 @@ Mirror those and setup the crio-registries to point to the location they are mir
 [IMPORTANT]
 ====
 These images need to be available in the external and internal mirrors at the time you try to deploy {productname}.
-Image tags are varies depending on your version of kubernetes you install.
-
-[cols=3, options="header"]
-|===
-|CATEGORY|IMAGE|URL
-|KUBEADM|hyperkube|registry.suse.com/caasp/v5/hyperkube
-|KUBEADM|pause|registry.suse.com/caasp/v5/pause
-|KUBEADM|coredns|registry.suse.com/caasp/v5/coredns
-|KUBEADM|etcd|registry.suse.com/caasp/v5/etcd
-|KUBEADM|etcd|registry.suse.com/caasp/v5/etcd
-|KUBEADM|api-server|registry.suse.com/caasp/v5/api-server
-|KUBEADM|controller-manager|registry.suse.com/caasp/v5/controller-manager
-|KUBEADM|scheduler|registry.suse.com/caasp/v5/scheduler
-|KUBEADM|proxy|registry.suse.com/caasp/v5/proxy
-|ADDONS|cilium|registry.suse.com/caasp/v5/cilium-init
-|ADDONS|cilium|registry.suse.com/caasp/v5/cilium-operator
-|ADDONS|cilium|registry.suse.com/caasp/v5/cilium
-|ADDONS|dex|registry.suse.com/caasp/v5/caasp-dex
-|ADDONS|gangway|registry.suse.com/caasp/v5/gangway
-|ADDONS|kured|registry.suse.com/caasp/v5/kured
-|MISC|skuba-tooling|registry.suse.com/caasp/v5/skuba-tooling
-|===
-
+Image tags are vary depending on your version of kubernetes you install.
+:===
+CATEGORY:IMAGE:URL
+KUBEADM:hyperkube:registry.suse.com/caasp/v4/hyperkube
+KUBEADM:pause:registry.suse.com/caasp/v4/pause
+KUBEADM:coredns:registry.suse.com/caasp/v4/coredns
+KUBEADM:etcd:egistry.suse.com/caasp/v4/etcd
+ADDONS:cilium:registry.suse.com/caasp/v4/cilium-init
+ADDONS:cilium:registry.suse.com/caasp/v4/cilium-operator
+ADDONS:cilium:registry.suse.com/caasp/v4/cilium
+ADDONS:dex:registry.suse.com/caasp/v4/caasp-dex
+ADDONS:gangway:registry.suse.com/caasp/v4/gangway
+ADDONS:kured:registry.suse.com/caasp/v4/kured
+MISC:skuba-tooling:registry.suse.com/caasp/v4/skuba-tooling
+:===
 ====
 
 .Internal Registry Mirror Is Read Only
@@ -518,7 +510,6 @@ sudo systemctl restart nginx
 ----
 sudo zypper in docker helm-mirror skopeo
 ----
-NOTE: The helm-mirror documentation gives instruction for installing as a plugin, but in an air-gapped environment that plugin installation will not be available. Please use the `zypper` installation as described here.
 . Start the docker service and enable it at boot time:
 +
 ----
@@ -648,7 +639,7 @@ sudo docker run -d -p 5000:5000 -v /etc/rmt/ssl:/etc/rmt/ssl:ro --restart=always
 
 Now, you should have the registries set up and listening on port `5000` on their respective servers.
 
-[#airgap-container_registry-client]
+[[airgap-container_registry-client]]
 === Client Configuration
 [IMPORTANT]
 ====
@@ -662,8 +653,6 @@ Configure `/etc/containers/registries.conf` to setup the mirroring from `registr
 This needs to be done on all cluster nodes. Make sure to adjust all the correct domain name for your local registry:
 
 ----
-unqualified-search-registries = ["docker.io"]
-
 [[registry]]
 prefix = "registry.suse.com"
 location = "registry01.mydomain.local:5000/registry.suse.com"
@@ -686,7 +675,7 @@ location = "registry01.mydomain.local:5000/gcr.io"
 
 For detailed information about the configuration format see link:{docurl}single-html/caasp-admin/#_configuring_container_registries_for_cri_o[].
 
-[#airgap-helm_charts]
+[[airgap-helm_charts]]
 == Helm Chart Repository Mirror
 
 [IMPORTANT]
@@ -701,7 +690,7 @@ The charts themselves are served on a simple webserver and do not require any pa
 
 Update the Helm chart repository by following the shared update procedure <<airgap-update>>.
 
-[#airgap-helm_charts-client]
+[[airgap-helm_charts-client]]
 === Client Configuration
 
 Add the webserver as a repo to `helm`.
@@ -716,7 +705,7 @@ The name of the repository must adhere to https://docs.helm.sh/chart_best_practi
 helm repo add <SUSE_MIRROR> https://charts.<MYMIRROR.LOCAL>
 ----
 
-[#airgap-update]
+[[airgap-update]]
 == Updating Registry Mirror For Helm Charts
 
 .Live Update Of Registry
@@ -764,7 +753,7 @@ You can still proceed with this step by using the `--ignore-errors` flag.
 . Download all the referenced images using `skopeo`.
 +
 ----
-skopeo sync --src yaml --dest dir sync.yaml /tmp/skopeodata
+skopeo sync --source-yaml sync.yaml dir:/tmp/skopeodata
 ----
 +
 `skopeo` will automatically create a directory named after the hostname of the registry from which you are downloading the images.
@@ -826,7 +815,7 @@ helm repo update
 You can now deploy additional software on your {productname}
 Refer to: link:{docurl}single-html/caasp-admin/#software-installation[].
 
-[#airgap-caasp_deployment]
+[[airgap-caasp_deployment]]
 == Deploying {productname}
 
 Use the {productname} link:{docurl}single-html/caasp-deployment/[Deployment Guide] as usual.
@@ -852,7 +841,7 @@ to have all the updates applied.
 // .
 // Refer to: <<airgap-rpm_repository-client>>.
 
-[#airgap-troubleshooting]
+[[airgap-troubleshooting]]
 == Troubleshooting
 
 === Skopeo Fails Because Of Self Signed Certificate
