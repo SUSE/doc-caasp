@@ -846,6 +846,14 @@ kubectl apply -f metrics-server-certificate.yaml
 <5> The cert-manager issuer name.
 <6> Issuer or ClusterIssuer.
 
+.Cert-Manager Known Issue
+[WARNING]
+====
+Once the cert-manager has issued a certificate to the secret, if you change the certificate inside the secret manually, or you manually change the current certificate `duration` to a value lower than the value `renewBefore`, the certificate won't be renewed immediately but will be scheduled to renew near the certificate expiry date.
+
+This is because the cert-manager is not designed to pick up changes you make to the certificate in the secret.
+====
+
 == Manual Certificate Renewal
 
 [IMPORTANT]
