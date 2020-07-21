@@ -101,7 +101,15 @@ Replace `<NODE_IP>` with `master-0` cluster node IP address.
 +
 [IMPORTANT]
 ====
-The `<NODE_NAME>` and `<NODE_IP>` must exist after `--initial-cluster` in `/etc/kubernetes/manifest/etcd.yaml`
+The `<NODE_IP>` must be visible from inside the node.
+```bash
+ip addr | grep <NODE_IP>
+```
+====
++
+[IMPORTANT]
+====
+The `<NODE_NAME>` and `<NODE_IP>` must exist after `--initial-cluster` in `/etc/kubernetes/manifests/etcd.yaml`
 ====
 +
 * Etcdctl:
@@ -214,7 +222,15 @@ Replace `<NODE_IP>` with cluster node IP address.
 +
 [IMPORTANT]
 ====
-The `<NODE_NAME>` and `<NODE_IP>` must exist after `--initial-cluster` in `/etc/kubernetes/manifest/etcd.yaml` of the targeting node.
+The `<NODE_IP>` must be visible from inside the node.
+```bash
+ip addr | grep <NODE_IP>
+```
+====
++
+[IMPORTANT]
+====
+The `<NODE_NAME>` and `<NODE_IP>` must exist after `--initial-cluster` in `/etc/kubernetes/manifests/etcd.yaml`
 ====
 +
 [IMPORTANT]
