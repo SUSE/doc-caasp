@@ -321,7 +321,7 @@ This is required so all the deployed nodes can automatically register with {scc}
 cpi_enable = true
 ----
 
-. You can also disable node hostnames set from DHCP server. It is recommended when you enabled CPI integration with vSphere. This sets ~vSphere~ virtual machine's hostname with a naming convention (`"<stack_name>-master-<index>"` or `"<stack_name>-worker-<index>"`). This can be used as node name when using `skuba` command to bootstrapping or joining nodes.
+. You can also enable/disable node hostnames set from DHCP server. However as the DHCP server can't guarantee the client will get the same IP after reboot, it is recommended to set `hostname_from_dhcp` to `false` when you enabled CPI integration with vSphere. This sets ~vSphere~ virtual machine's hostname with a naming convention (`"<stack_name>-master-<index>"` or `"<stack_name>-worker-<index>"`). This can be used as node name when using `skuba` command to bootstrapping or joining nodes.
 +
 [IMPORTANT]
 ====
