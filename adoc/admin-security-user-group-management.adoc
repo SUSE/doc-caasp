@@ -127,7 +127,7 @@ mail: E-MAIL_ADDRESS
 +
 * USERID: User ID (UID) of the new user. This value must be a unique number.
 * OU_NAME: organizational unit name
-* PASSWORD_HASH: The user's hashed password.SSHA_PASSWORD: The user's new hashed password. 
+* PASSWORD_HASH: The user's hashed password.SSHA_PASSWORD: The user's new hashed password.
 +
 Use `/usr/sbin/slappasswd` to generate the SSHA hash.
 +
@@ -138,7 +138,7 @@ Use `/usr/sbin/slappasswd` to generate the SSHA hash.
 Use `/usr/bin/pwdhash` to generate the SSHA hash.
 +
 ----
-/usr/bin/pwdhash -s SSHA $ <USER_PASSWORD>
+/usr/bin/pwdhash -s SSHA <USER_PASSWORD>
 ----
 * FIRST_NAME: The user's first name
 * SURNAME: The user's last name
@@ -204,7 +204,7 @@ Use `/usr/sbin/slappasswd` to generate the SSHA hash.
 Use `/usr/bin/pwdhash` to generate the SSHA hash.
 +
 ----
-/usr/bin/pwdhash -s SSHA $ <USER_PASSWORD>
+/usr/bin/pwdhash -s SSHA <USER_PASSWORD>
 ----
 . Create an LDIF file (`modify_user.ldif`), which contains the change to the LDAP server:
 +
@@ -228,7 +228,7 @@ Use `/usr/sbin/slappasswd` to generate the SSHA hash.
 Use `/usr/bin/pwdhash` to generate the SSHA hash.
 +
 ----
-/usr/bin/pwdhash -s SSHA $ <USER_PASSWORD>
+/usr/bin/pwdhash -s SSHA <USER_PASSWORD>
 ----
 . Add the user to the `Administrators` group:
 +
