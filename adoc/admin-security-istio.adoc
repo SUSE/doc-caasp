@@ -1,0 +1,678 @@
+= Istio/Envoy Ingress Controller
+
+Istio is a powerful open source tool that helps to reduce the complexity of deployments by offering useful capabilities that can be consumed by microservices. These capabilities allow developers to monitor, steer, secure and authorize traffic within the Kubernetes traffic without having to touch their code. Istio also provides an advanced ingress controller which allows to control and route external connections towards our internal Kubernetes services. Istio supports two modes of operation: as an ingress controller or as a service mesh + ingress controller.
+
+This guide will describe the mode of ingress controller, which provides features that include but are not limited to the following:
+
+    Ingress traffic steering based on TCP, HTTP, HTTP2, GRPC and TLS parameters
+    TLS termination
+    TLS passthrough
+
+Istio architecture contains basically two components:
+
+    istio-pilot: This component is the brain of Istio. It is the component that fetches the istio configuration and pushes it to the envoy proxy
+    envoy proxy: It is the component doing the real work.
+
+  [SUSE CaaS Platform > Official documentation for Istio (on-going) > image2020-7-17_16-19-28.png]
+
+== Deply Istio/Envoy ingress controller 
+
+
+. Deploy CaaSP
+
+
+In this example, CaaSP was deployed with one master node and two worker nodes and after this step, this is the output to the command `kubectl get pods -A`:
+
+[source,bash]
+----
+kube-system    cilium-4hnts                                     1/1     Running   0          17d     10.17.0.189    caasp-cluster-worker-0   <none>           <none>
+kube-system    cilium-operator-5d95c8df58-4bp2x                 1/1     Running   0          17d     10.17.3.43     caasp-cluster-worker-1   <none>           <none>
+kube-system    cilium-rs84n                                     1/1     Running   0          17d     10.17.3.250    caasp-cluster-master-0   <none>           <none>
+kube-system    cilium-tt727                                     1/1     Running   0          17d     10.17.3.43     caasp-cluster-worker-1   <none>           <none>
+kube-system    coredns-988b5fb75-ckdsq                          1/1     Running   0          17d     10.244.2.207   caasp-cluster-worker-1   <none>           <none>
+kube-system    coredns-988b5fb75-qqg7v                          1/1     Running   0          17d     10.244.0.149   caasp-cluster-master-0   <none>           <none>
+kube-system    etcd-caasp-cluster-master-0                      1/1     Running   0          17d     10.17.3.250    caasp-cluster-master-0   <none>           <none>
+kube-system    kube-apiserver-caasp-cluster-master-0            1/1     Running   9          17d     10.17.3.250    caasp-cluster-master-0   <none>           <none>
+kube-system    kube-controller-manager-caasp-cluster-master-0   1/1     Running   0          17d     10.17.3.250    caasp-cluster-master-0   <none>           <none>
+kube-system    kube-proxy-77bng                                 1/1     Running   0          17d     10.17.3.250    caasp-cluster-master-0   <none>           <none>
+kube-system    kube-proxy-tqncs                                 1/1     Running   0          17d     10.17.0.189    caasp-cluster-worker-0   <none>           <none>
+kube-system    kube-proxy-z9xvz                                 1/1     Running   0          17d     10.17.3.43     caasp-cluster-worker-1   <none>           <none>
+kube-system    kube-scheduler-caasp-cluster-master-0            1/1     Running   0          17d     10.17.3.250    caasp-cluster-master-0   <none>           <none>
+kube-system    kured-l9kj4                                      1/1     Running   0          17d     10.244.1.45    caasp-cluster-worker-0   <none>           <none>
+kube-system    kured-rgxzd                                      1/1     Running   0          17d     10.244.0.55    caasp-cluster-master-0   <none>           <none>
+kube-system    kured-zdl8j                                      1/1     Running   0          17d     10.244.2.193   caasp-cluster-worker-1   <none>           <none>
+kube-system    metrics-server-7cf746dd99-hv9j9                  1/1     Running   0          17d     10.244.2.156   caasp-cluster-worker-1   <none>           <none>
+kube-system    metrics-server-7cf746dd99-wp8t6                  1/1     Running   0          17d     10.244.0.111   caasp-cluster-master-0   <none>           <none>
+kube-system    oidc-dex-5f74795d7-cb5j6                         1/1     Running   0          17d     10.244.0.14    caasp-cluster-master-0   <none>           <none>
+kube-system    oidc-dex-5f74795d7-ptps6                         1/1     Running   0          17d     10.244.1.226   caasp-cluster-worker-0   <none>           <none>
+kube-system    oidc-dex-5f74795d7-v9dwn                         1/1     Running   0          17d     10.244.2.9     caasp-cluster-worker-1   <none>           <none>
+kube-system    oidc-gangway-7b7b8d58bc-h95wg                    1/1     Running   0          17d     10.244.0.148   caasp-cluster-master-0   <none>           <none>
+kube-system    oidc-gangway-7b7b8d58bc-zbrw4                    1/1     Running   0          18d     10.244.2.126   caasp-cluster-worker-1   <none>           <none>
+kube-system    oidc-gangway-7b7b8d58bc-zr7n5                    1/1     Running   0          17d     10.244.1.71    caasp-cluster-worker-0   <none>           <none>
+----
+
+
+. Install istio-istioctl package
+
+
+Istio 1.5 should be installed by the istioctl tool in the same host where you installed kubectl. To install this tool just execute `sudo zypper install istio-istioctl`
+
+[source,bash]
+----
+Loading repository data...
+Reading installed packages...
+Resolving package dependencies...
+
+The following NEW package is going to be installed:
+  istio-istioctl
+
+1 new package to install.
+Overall download size: 29.3 MiB. Already cached: 0 B. After the operation, additional 108.9 MiB will be used.
+Continue? [y/n/v/...? shows all options] (y): y
+Retrieving package istio-istioctl-1.5.4-10.1.x86_64                                                                                                                                                                                        (1/1),  29.3 MiB (108.9 MiB unpacked)
+Retrieving: istio-istioctl-1.5.4-10.1.x86_64.rpm .............................................................................................................................................................................................................[done (2.4 MiB/s)]
+
+Checking for file conflicts: .............................................................................................................................................................................................................................................[done]
+(1/1) Installing: istio-istioctl-1.5.4-10.1.x86_64 .......................................................................................................................................................................................................................[done]
+----
+
+istioctl connects to the kubernetes environment using the same mechanisms that kubectl uses to connect to it. The main way is by looking at the config in $HOME/.kube/config but there are other ways, for example using appropriate env. variables. As long as kubectl was installed successfully in your host and it works, istioctl must also work
+
+
+. Verify that istio can be installed correctly
+
+Istioctl provides a tool that should be run before installing istio to verify that everything is correct (e.g. Kubernetes version is compatible, kube-api is accessible, etc). To run the command: `istioctl verify-install`
+
+[source,bash]
+----
+Checking the cluster to make sure it is ready for Istio installation...
+
+#1. Kubernetes-api
+-----------------------
+Can initialize the Kubernetes client.
+Can query the Kubernetes API Server.
+
+#2. Kubernetes-version
+-----------------------
+Istio is compatible with Kubernetes: v1.18.2.
+
+#3. Istio-existence
+-----------------------
+Istio will be installed in the istio-system namespace
+
+#4. Kubernetes-setup
+-----------------------
+Can create necessary Kubernetes configurations: Namespace,ClusterRole,ClusterRoleBinding,CustomResourceDefinition,Role,ServiceAccount,Service,Deployments,ConfigMap. 
+
+#5. SideCar-Injector
+-----------------------
+This Kubernetes cluster supports automatic sidecar injection. To enable automatic sidecar injection see https://istio.io/docs/setup/kubernetes/additional-setup/sidecar-injection/#deploying-an-app
+----
+
+
+. Deploy Istio using istioctl
+
+Istioctl can be used for installing istio, querying its status and debugging. When installing istio, we must specify what profile to use and what changes we want to do to the profile. Profiles are built-in deployment configurations and the current istioctl contains 6 of them. Run `istioctl profile list` to list them
+
+[source,bash]
+----
+Istio configuration profiles:
+    remote
+    separate
+    default
+    demo
+    empty
+    minimal
+----
+
+We are going to use the default profile changing a couple of parameters from it:
+
+[source,bash]
+----
+istioctl manifest apply --set profile=default --set addonComponents.prometheus.enabled=false --set hub=registry.suse.de/devel/caasp/5/containers/containers/caasp/v5 --set values.global.proxy.accessLogFile='/dev/stdout' --set tag=1.5.4 --set values.pilot.image=istio-pilot --set values.global.proxy.image=istio-proxyv2 --set values.global.proxy_init.image=istio-proxyv2
+----
+
+[%header,cols=2*]
+|===
+|Parameter
+|Description
+
+|istioctl manifest apply
+|Generates and applies an Istio install manifest
+
+|--set profile=default
+|The installation is based on the default profile
+
+|--set addonComponents.prometheus.enabled=false
+|Prometheus will not be enabled
+
+|--set hub=registry.suse.de/devel/caasp/5/containers/containers/caasp/v5
+|The default registry is changed and points to the suse official CaaSP registry for the images
+
+|--set tag=1.5.4
+|The default tag is changed and points to our images tag
+
+|--set values.global.proxy.accessLogFile='/dev/stdout'
+|Enable access logs so that we can see the HTTP requests in the logs of Envoy
+
+|--set xxx.yyy.zzz.image=istio-proxyv2
+|The default image name is not the name we gave to our images, that's why we specify a different one
+|===
+
+By executing the above command we will end up with a new namespace (istio-system) and three components: istiod, egress and ingress.
+
+This is the expected output when executing the command:
+
+[source,bash]
+----
+Detected that your cluster does not support third party JWT authentication. Falling back to less secure first party JWT. See https://istio.io/docs/ops/best-practices/security/#configure-third-party-service-account-tokens for details.
+- Applying manifest for component Base...
+✔ Finished applying manifest for component Base.
+- Applying manifest for component Pilot...
+✔ Finished applying manifest for component Pilot.
+  Waiting for resources to become ready...
+  Waiting for resources to become ready...
+- Applying manifest for component IngressGateways...
+✔ Finished applying manifest for component IngressGateways.
+
+
+✔ Installation complete
+----
+
+As a result you should see something similar to this in the istio-system namespace when running: `kubectl get pods - n istio-system -o wide`:
+
+[source,bash]
+----
+istio-ingressgateway-7df959db-49h6t    1/1     Running   0          47h   10.244.2.79    worker-2   <none>           <none>
+istiod-59c8fcf99c-phtbt                1/1     Running   0          47h   10.244.2.227   worker-1   <none>           <none>
+----
+
+If your environment does not have direct internet connection, you'd need to fetch the images by an internal mirror. Please look into the Container Registry Mirror in the documentation for more information about this.
+
+. Specify what namespace to be part of the service mesh
+
+As you should know already, not the whole deployment needs to be part of the service mesh. The widely recommended way to separate the K8s cluster between using service mesh or not is through namespaces. To configure a namespace to be part of the service mesh the k8s label istio-injection=enabled must be applied to the namespace
+
+
+As a result, when deploying a pod in that namespace, a proxy sidecar container will be deployed in the pod. For example, when deploying a simple sleep pod, we can see that 2/2 containers are created:
+
+[source,bash]
+----
+NAMESPACE      NAME                                             READY   STATUS    RESTARTS   AGE
+default        httpbin-66cdbdb6c5-pjw72                         2/2     Running   0          153m
+----
+
+If more detailed information is fetched from that pod, it will be seen that there is an extra istio-proxy container. That one is the sidecar proxy. There is also a init container "istio-init", which takes care of configuring the iptables so that the traffic to/from the pod is intercepted by the proxy.
+
+
+For more information about how the sidecar injection works: https://istio.io/docs/ops/configuration/mesh/webhook/
+
+
+. Uninstall the Istio Components Installed
+
+
+In order to cleanup the Istion components installed just run the command as show below.
+
+[source,bash]
+----
+istioctl manifest generate --set profile=default --set addonComponents.prometheus.enabled=false | kubectl delete -f -
+----
+
+3. Usage/Debug
+
+This describes how to use istio in ingress mode and without service mesh.
+
+Why would you use this?
+
+The user wants to offer the services running in his/her kubernetes cluster to the outside world. This outside world either has direct connectivity to the worker nodes or the user can modify the network configuration of its infrastructure so that it is possible to reach the ingress controller.
+
+How do you configure and enable this scenario? 
+
+Assuming there is no load-balancer to provide the external-IP, we will end up with:
+
+[source,bash]
+----
+NAME                   TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)																																	  AGE
+istio-ingressgateway   LoadBalancer   10.108.30.136    <pending>     15020:31040/TCP,80:31213/TCP,443:32151/TCP,15029:32157/TCP,15030:30210/TCP,15031:30804/TCP,15032:31256/TCP,15443:31375/TCP,31400:31843/TCP   24h
+----
+
+The ingress controller purpose is to receive request from the outside and be able to route them to the appropriate service which is running inside the K8s cluster. To achieve this with Istio we can use istio's own objects or use the common Ingress, although the latter is not recommended (note that istio does not allow to activate advanced features through ingress annotations). When using istio's own objects, two must be created and a third one should be created if we want to add some extras, like load balancing but this is out of the scope. The two objects are: Gateway and VirtualService. The Gateway object specifies what services are allowed and if the ingress controller is the TLS endpoint, the Gateway object is where the TLS certificate must be included. Here an example:
+
+[source,bash]
+----
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: httpbin-gateway
+  namespace: default
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - hosts:
+    - '*'
+    port:
+      name: http
+      number: 80
+      protocol: HTTP
+  - hosts:
+    - my.example.com
+    port:
+      name: http
+      number: 443
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      credentialName: httpbin-credential
+----
+
+First of all, the selector specifies what ingress controller this Gateway object is configuring. Then it has two different configurations: on the first one, it allows the traffic to any host on port 80 and using protocol HTTP. The second config, allows traffic to port 443 using the protocol HTTPs directed to only the url: my.example.com. In this case, the ingress controller will be the TLS termination and therefore, it contains the certificate that is loaded into the K8s cluster as a secret with the name httpbin-credential. Note that the port needs to be the one in the mapping between the port and the nodePort in the ingress service, not the port of the HTTP server. For more information https://archive.istio.io/v1.5/docs/concepts/traffic-management/#gateways
+
+The VirtualService specifies how to route the traffic from the ingress service to the server. For example:
+
+[source,bash]
+----
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: httpbin
+spec:
+  hosts:
+  - '*'
+  gateways:
+  - httpbin-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /status
+    - uri:
+        prefix: /delay
+    route:
+    - destination:
+        port:
+          number: 8000
+        host: httpbin.default.svc.cluster.local
+  - match:
+    - uri:
+        prefix: /ip
+    route:
+    - destination:
+        port:
+          number: 8002
+        host: httpbin2.default.svc.cluster.local
+  - match:
+    - uri:
+        prefix: /headers
+    route:
+    - destination:
+        port:
+          number: 8003
+        host: httpbin3.default.svc.cluster.local
+----
+
+In this case there are three routes and the envoy proxy will decide which one to pick based on the url. Once the decision has been taken, the proxy will route the traffic to the kubernetes service that serves an HTTP server using the defined port. The port needs to be the port defined in the service and the host must be the FQDN of the service. If the HTTP server and its service are inside the mesh, then it is enough with the simple name of the service. For more information https://archive.istio.io/v1.5/docs/concepts/traffic-management/#virtual-services
+
+How do you validate this configuration?
+
+Let's assume there is a pod that implements a service. For this exercise, I will deploy the bookinfo example that istio constantly uses in its documentation https://archive.istio.io/v1.5/docs/examples/bookinfo/. The result of running `kubectl get pods`  is:
+
+[source,bash]
+----
+NAME                              READY   STATUS    RESTARTS   AGE
+details-v1-6fc55d65c9-vfrsc       1/1     Running   0          60s
+productpage-v1-7f44c4d57c-2s825   1/1     Running   0          53s
+ratings-v1-6f855c5fff-2smgb       1/1     Running   0          58s
+reviews-v1-54b8794ddf-kl2tz       1/1     Running   0          56s
+reviews-v2-c4d6568f9-tvm6z        1/1     Running   0          56s
+reviews-v3-7f66977689-6xdgq       1/1     Running   0          55s
+----
+
+And the services with `kubectl get services`:
+
+[source,bash]
+----
+NAME          TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+details       ClusterIP   10.108.189.236   <none>        9080/TCP   85s
+kubernetes    ClusterIP   10.96.0.1        <none>        443/TCP    13m
+productpage   ClusterIP   10.102.14.156    <none>        9080/TCP   79s
+ratings       ClusterIP   10.109.55.216    <none>        9080/TCP   84s
+reviews       ClusterIP   10.103.26.242    <none>        9080/TCP   82s
+----
+
+The first thing to check is that from inside the cluster (e.g. in a worker node), it is possible to reach the service through its ClusterIP. and port. In this case, the main service is the productpage which is a HTTP service running on clusterIP 10.102.14.156 and port 9080:
+
+[source,bash]
+----
+curl -s 10.102.14.156:9080/productpage | grep -o "<title>.*</title>"
+<title>Simple Bookstore App</title>
+----
+
+It works.
+
+Next step is to verify that the Ingress controller and service, VirtualService and the Gateway are in place. We can use list commands to do that `kubectl get services - n istio-system`:
+
+[source,bash]
+----
+NAME                   TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                                                                                                                                      
+istio-ingressgateway   LoadBalancer   10.111.137.134   <pending>     15020:31542/TCP,80:31972/TCP,443:30871/TCP,15029:30123/TCP,15030:32380/TCP,15031:31735/TCP,15032:31813/TCP,15443:30410/TCP,31400:31215/TCP   
+istio-pilot            ClusterIP      10.103.225.120   <none>        15010/TCP,15011/TCP,15012/TCP,8080/TCP,15014/TCP,443/TCP                                                                                     
+istiod                 ClusterIP      10.97.59.0       <none>        15012/TCP,443/TCP                                                                                                                            
+----
+
+istiod, istio-ingress and istio-ingress-gateway services are running. Also check that the VirtualService and the Gateway is in place with `kubectl get virtualservice`
+
+[source,bash]
+---- 
+NAME       GATEWAYS             HOSTS   AGE
+bookinfo   [bookinfo-gateway]   [*]     2m45s
+----
+
+And `kubectl get gateway`:
+
+[source,bash]
+----
+NAME               AGE
+bookinfo-gateway   3m19s
+----
+
+For the next validation, it will depend if we access the ingress service through the ClusterIP or through NodePort.
+
+If we chose the ClusterIP, from within the cluster (e.g. in a worker node) we try to access the service but now using the ingress controller service clusterIP.
+
+[source,bash]
+----
+curl -s 10.111.137.134:80/productpage | grep -o "<title>.*</title>"
+<title>Simple Bookstore App</title>
+----
+
+If we chose the Nodeport, from somewhere where we can reach the worker nodes, we should contact the ingress service through the IP of any node and the nodePort, which in my example is 31972:
+
+[source,bash]
+----
+curl -s 10.84.45.16:31972/productpage | grep -o "<title>.*</title>"
+<title>Simple Bookstore App</title>
+----
+
+TLS USE CASE
+
+If we want to deploy with TLS, first we should create a certificate and sign it with a private key and provide that as a secret to kubernetes. This is how to do it copied from upstream kubernetes documentation:
+
+[source,bash]
+----
+openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -subj '/O=example Inc./CN=example.com' -keyout example.com.key -out example.com.crt
+openssl req -out httpbin.example.com.csr -newkey rsa:2048 -nodes -keyout httpbin.example.com.key -subj "/CN=httpbin.example.com/O=httpbin organization"
+openssl x509 -req -days 365 -CA example.com.crt -CAkey example.com.key -set_serial 0 -in httpbin.example.com.csr -out httpbin.example.com.crt
+
+kubectl create -n istio-system secret tls httpbin-credential --key=httpbin.example.com.key --cert=httpbin.example.com.crt
+----
+
+That means, we have a certificate called httpbin.example.com.crt under the secret httpbin-credential for the host example.com. If we deploy httpbin service as done in the Kubernetes documentation link, we should see the service:
+
+[source,bash]
+----
+NAME          TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+httpbin       ClusterIP   10.111.223.136   <none>        8000/TCP   16m
+----
+
+Now, we configure the Gateway which will allow HTTPs traffic into the httpbin service. As the ingress gateway is our termination point for TLS, we must provide the secret that we named httpbin-credential:
+
+[source,yaml]
+----
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: mygateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default ingress gateway
+  servers:
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      credentialName: httpbin-credential # must be the same as secret
+    hosts:
+    - httpbin.example.com
+----
+
+mode is SIMPLE because we don't require the client to provide its credential and we want TLS to terminate here. If we wanted the TLS connection to terminate at the service (httpbin), we would change the mode to `mode: PASSTHROUGH` and we would not need to add a credentialName
+
+Then, we configure the VirtualService that will route the traffic from the ingress controller to the httpbin service on port 8000. We limit that traffic to two urls, /status and /delay:
+
+[source,yaml]
+----
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: httpbin
+spec:
+  hosts:
+  - "httpbin.example.com"
+  gateways:
+  - mygateway
+  http:
+  - match:
+    - uri:
+        prefix: /status
+    - uri:
+        prefix: /delay
+    route:
+    - destination:
+        port:
+          number: 8000
+        host: httpbin
+----
+
+From the previous example, remember you can send a request either by using the ClusterIP or the nodePort. In this case, I'll use the ClusterIP:
+
+[source,bash]
+----
+curl -v -HHost:httpbin.example.com --resolve "httpbin.example.com:443:10.111.137.134" --cacert example.com.crt "https://httpbin.example.com:443/status/418"
+* Added httpbin.example.com:443:10.111.137.134 to DNS cache
+* Hostname httpbin.example.com was found in DNS cache
+*   Trying 10.111.137.134:443...
+* TCP_NODELAY set
+* Connected to httpbin.example.com (10.111.137.134) port 443 (#0)
+* ALPN, offering h2
+* ALPN, offering http/1.1
+* successfully set certificate verify locations:
+*   CAfile: example.com.crt
+  CApath: none
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+* TLSv1.3 (IN), TLS handshake, Encrypted Extensions (8):
+* TLSv1.3 (IN), TLS handshake, Certificate (11):
+* TLSv1.3 (IN), TLS handshake, CERT verify (15):
+* TLSv1.3 (IN), TLS handshake, Finished (20):
+* TLSv1.3 (OUT), TLS change cipher, Change cipher spec (1):
+* TLSv1.3 (OUT), TLS handshake, Finished (20):
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384
+* ALPN, server accepted to use h2
+* Server certificate:
+*  subject: CN=httpbin.example.com; O=httpbin organization
+*  start date: Jul 17 15:45:47 2020 GMT
+*  expire date: Jul 17 15:45:47 2021 GMT
+*  common name: httpbin.example.com (matched)
+*  issuer: O=example Inc.; CN=example.com
+*  SSL certificate verify ok.
+* Using HTTP2, server supports multi-use
+* Connection state changed (HTTP/2 confirmed)
+* Copying HTTP/2 data in stream buffer to connection buffer after upgrade: len=0
+* Using Stream ID: 1 (easy handle 0x556ca7c81330)
+> GET /status/418 HTTP/2
+> Host:httpbin.example.com
+> User-Agent: curl/7.66.0
+> Accept: */*
+> 
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+* old SSL session ID is stale, removing
+* Connection state changed (MAX_CONCURRENT_STREAMS == 4294967295)!
+< HTTP/2 418 
+< server: istio-envoy
+< date: Fri, 17 Jul 2020 15:48:14 GMT
+< x-more-info: http://tools.ietf.org/html/rfc2324
+< access-control-allow-origin: *
+< access-control-allow-credentials: true
+< content-length: 135
+< x-envoy-upstream-service-time: 2
+< 
+
+    -=[ teapot ]=-
+
+       _...._
+     .'  _ _ `.
+    | ."` ^ `". _,
+    \_;`"---"`|//
+      |       ;/
+      \_     _/
+        `"""`
+* Connection #0 to host httpbin.example.com left intact
+----
+
+If I try any other url, for example /image, as it is not part of the VirtualService:
+
+[source,bash]
+----
+* Added httpbin.example.com:443:10.111.137.134 to DNS cache
+* Hostname httpbin.example.com was found in DNS cache
+*   Trying 10.111.137.134:443...
+* TCP_NODELAY set
+* Connected to httpbin.example.com (10.111.137.134) port 443 (#0)
+* ALPN, offering h2
+* ALPN, offering http/1.1
+* successfully set certificate verify locations:
+*   CAfile: example.com.crt
+  CApath: none
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+* TLSv1.3 (IN), TLS handshake, Encrypted Extensions (8):
+* TLSv1.3 (IN), TLS handshake, Certificate (11):
+* TLSv1.3 (IN), TLS handshake, CERT verify (15):
+* TLSv1.3 (IN), TLS handshake, Finished (20):
+* TLSv1.3 (OUT), TLS change cipher, Change cipher spec (1):
+* TLSv1.3 (OUT), TLS handshake, Finished (20):
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384
+* ALPN, server accepted to use h2
+* Server certificate:
+*  subject: CN=httpbin.example.com; O=httpbin organization
+*  start date: Jul 17 15:45:47 2020 GMT
+*  expire date: Jul 17 15:45:47 2021 GMT
+*  common name: httpbin.example.com (matched)
+*  issuer: O=example Inc.; CN=example.com
+*  SSL certificate verify ok.
+* Using HTTP2, server supports multi-use
+* Connection state changed (HTTP/2 confirmed)
+* Copying HTTP/2 data in stream buffer to connection buffer after upgrade: len=0
+* Using Stream ID: 1 (easy handle 0x55dc45366300)
+> GET /image HTTP/2
+> Host:httpbin.example.com
+> User-Agent: curl/7.66.0
+> Accept: */*
+> 
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+* old SSL session ID is stale, removing
+* Connection state changed (MAX_CONCURRENT_STREAMS == 4294967295)!
+< HTTP/2 404 
+< date: Fri, 17 Jul 2020 15:58:48 GMT
+< server: istio-envoy
+< 
+* Connection #0 to host httpbin.example.com left intact
+----
+
+The TLS works processing works, but it can't find that url.
+
+
+HOW TO MIGRATE NGINX CONFIG INTO ISTIO/ENVOY CONFIG
+
+To configure the ingress controller, Kubernetes includes an Ingress object which supports very basic use cases. NGINX extends the functionality by adding annotations that only NGINX ingress controllers will understand. Unlike NGINX and as explained above, Istio extends the functionality by using different objects to operate the ingress controller: VirtualService, Gateway and DestinationRule.
+
+Here a list of how the most important NGINX annotations map into the istio objects:
+
+[%header,cols=3*]
+|===
+|nginx annotation
+|istio/envoy feature
+|description
+
+|nginx.ingress.kubernetes.io/affinity
+|https://archive.istio.io/v1.5/docs/reference/config/networking/destination-rule/#LoadBalancerSettings-ConsistentHashLB
+|A request will always be directed to the same upstream server.
+
+|nginx.ingress.kubernetes.io/auth-tls-secret
+|https://archive.istio.io/v1.5/docs/reference/config/networking/gateway/#Server-TLSOptions with tls.mode: SIMPLE
+|Normal TLS verifying the server's certificate
+
+|nginx.ingress.kubernetes.io/auth-tls-verify-client
+|https://archive.istio.io/v1.5/docs/reference/config/networking/gateway/#Server-TLSOptions with tls.mode: MUTUAL
+|mutual TLS in ingress
+
+|nginx.ingress.kubernetes.io/canary
+|https://archive.istio.io/v1.5/docs/reference/config/networking/virtual-service/#HTTPRouteDestination
+|Enable the canary algorithm to test new services
+
+|nginx.ingress.kubernetes.io/canary-by-cookie
+|https://archive.istio.io/v1.5/docs/reference/config/networking/virtual-service/#HTTPRouteDestination
+|Identify canary traffic
+
+|nginx.ingress.kubernetes.io/canary-by-header
+|https://archive.istio.io/v1.5/docs/reference/config/networking/virtual-service/#HTTPRouteDestination
+|Identify canary traffic
+
+|nginx.ingress.kubernetes.io/limit-connections
+|https://archive.istio.io/v1.5/docs/reference/config/networking/destination-rule/#ConnectionPoolSettings
+|Control the maximum amount of connections
+
+|nginx.ingress.kubernetes.io/load-balance
+|https://archive.istio.io/v1.5/docs/reference/config/networking/destination-rule/#LoadBalancerSettings
+|Configures load balancing algorithm per ingress.
+
+|nginx.ingress.kubernetes.io/mirror-target
+|https://archive.istio.io/v1.5/docs/tasks/traffic-management/mirroring/
+|Applies a mirror
+
+|nginx.ingress.kubernetes.io/permanent-redirect
+|https://archive.istio.io/v1.5/docs/reference/config/networking/virtual-service/#HTTPRedirect
+|Return a permanent redirect instead of sending data to the upstream
+
+|nginx.ingress.kubernetes.io/permanent-redirect-code
+|https://archive.istio.io/v1.5/docs/reference/config/networking/virtual-service/#HTTPRedirect
+|Modify the status code used for permanent redirects
+
+|nginx.ingress.kubernetes.io/proxy-ssl-secret
+|https://archive.istio.io/v1.5/docs/reference/config/networking/gateway/#Server-TLSOptions with tls.mode: SIMPLE
+|Normal TLS verifying the server's certificate
+
+|nginx.ingress.kubernetes.io/proxy-ssl-name
+|https://archive.istio.io/v1.5/docs/reference/config/networking/virtual-service/#TLSMatchAttributes
+|Allows overriding the server name used to verify the certificate of the proxied HTTPS server and to be passed through SNI when establishing a connection with the proxied HTTPS server
+
+|nginx.ingress.kubernetes.io/rewrite-target
+|https://archive.istio.io/v1.5/docs/reference/config/networking/virtual-service/#HTTPRewrite
+|When target url is not the same as the public url
+
+|nginx.ingress.kubernetes.io/secure-backends
+|https://archive.istio.io/v1.5/docs/reference/config/networking/destination-rule/#TLSSettings
+|Set TLS for the communication ingress - service
+
+|nginx.ingress.kubernetes.io/session-cookie-name
+|https://archive.istio.io/v1.5/docs/reference/config/networking/virtual-service/#HTTPRouteDestination headers to match
+|Use cookies to route request
+
+|nginx.ingress.kubernetes.io/ssl-passthrough
+|https://archive.istio.io/v1.5/docs/reference/config/networking/gateway/#Server-TLSOptions with tls.mode: PASSTHROUGH
+|Indicates if the received certificates should be passed or not to the upstream server
+
+|nginx.ingress.kubernetes.io/ssl-redirect
+|https://archive.istio.io/v1.5/docs/reference/config/networking/gateway/#Server-TLSOptions
+|By default the controller redirects (308) to HTTPS if TLS is enabled for that ingress
+
+|nginx.ingress.kubernetes.io/whitelist-source-range
+|https://archive.istio.io/v1.5/docs/reference/config/security/authorization-policy/#Source
+|Specify allowed client IP source ranges
+|===
+
+If your NGINX configuration includes different annotations, please contact our support that will provide you more information about how to configure that use case
