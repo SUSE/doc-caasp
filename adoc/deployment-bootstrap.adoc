@@ -412,10 +412,12 @@ For installation instructions, refer to: https://github.com/vmware/govmomi/tree/
 You can use `govc` to automate the task.
 +
 [WARNING]
+====
 Setup `disk.enabledUUID` requires virtual machine to be powered off. The following script
 will setup all virtul machine in parallel, hense resulting some cluster downtimes while
 all machines are powered off. Modify the script or simply DO NOT use the script if minimal
 downtime is in consideration.
+====
 +
 ====
   DATACENTER="PROVO" // <1>
