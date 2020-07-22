@@ -291,7 +291,7 @@ You can use the "private dns" values provided by the {tf} output.
 ====
 
 [#cluster-bootstrap-vcp]
-====== vSphere In-tree CPI (VCP)
+====== vSphere CPI (VCP)
 
 Define the cluster using the following command:
 
@@ -312,6 +312,7 @@ The file `my-cluster/cloud/vsphere/vsphere.conf` must not be freely accessible.
 Please remember to set proper file permissions for it, for example `600`.
 ====
 
+[[vsphere-cloud-provider-configuration]]
 ===== Example vSphere Cloud Provider Configuration
 
 ====
@@ -388,6 +389,146 @@ Clusters provisioned following link:{docurl}single-html/caasp-deployment/#_using
 
 For clusters provisioned by any other method, make sure to create and move all cluster node virtual machines to a folder.
 ====
+
+===== Enable vSphere Cloud Provider
+For an existing cluster without cloud provider enabled at bootstrap, you can enable it later.
+
+. In vCenter, create a folder and move all cluster virtual machines into the folder.
+You can use `govc` to automate the task.
++
+For installation instructions, refer to: https://github.com/vmware/govmomi/tree/master/govc.
++
+====
+  DATACENTER="<VC_DATACENTER>" // <1>
+  CLUSTER_PREFIX="<VC_CLUSTER_PREFIX>" // <2>
+  govc folder.create /$DATACENTER/vm/$CLUSTER_PREFIX-cluster
+  govc object.mv /$DATACENTER/vm/$CLUSTER_PREFIX-\* /$DATACENTER/vm/$CLUSTER_PREFIX-cluster
+====
++
+<1> The datacenter where cluster virtual machines are in.
+<2> Prefix for all machines of the cluster.
+
+. In vCenter, enable `disk.UUID` for all cluster virtual machines.
+You can use `govc` to automate the task.
++
+[WARNING]
+====
+Setup `disk.enabledUUID` requires virtual machine to be powered off. The following script
+will setup all virtul machine in parallel, hense resulting some cluster downtimes while
+all machines are powered off. Modify the script or simply DO NOT use the script if minimal
+downtime is in consideration.
+====
++
+====
+  DATACENTER="PROVO" // <1>
+  VMS=("caasp-master-0" "caasp-master-1" "caasp-master-2" "caasp-worker-0" "caasp-worker-1") // <2>
+
+  function setup {
+    NAME=$1
+    echo "[$NAME]"
+    govc vm.power -dc=$DATACENTER -off $NAME
+    govc vm.change -dc=$DATACENTER -vm=$NAME -e="disk.enableUUID=1" &&\
+      echo "Configured disk.enabledUUID: 1"
+    govc vm.power -dc=$DATACENTER -on $NAME
+  }
+
+  for vm in ${VMS[@]}
+  do
+    setup $vm &
+  done
+  wait
+====
++
+<1> The datacenter where cluster virtual machines are in.
+<2> The cluster virtual machine names.
+
+. Update the provider ID for all Kuberentes nodes.
++
+====
+  DATACENTER="<VC_DATACENTER>" // <1>
+  CLUSTER_PREFIX="<VC_CLUSTER_PREFIX>" // <2>
+  for vm in $(govc ls "/$DATACENTER/vm/$CLUSTER_PREFIX-cluster")
+  do
+    VM_INFO=$(govc vm.info -json -dc=$DATACENTER -vm.ipath="/$vm" -e=true)
+    VM_NAME=$(jq -r ' .VirtualMachines[] | .Name' <<< $VM_INFO)
+    [[ $VM_NAME == *"-lb-"* ]] && continue
+    VM_UUID=$( jq -r ' .VirtualMachines[] | .Config.Uuid' <<< $VM_INFO )
+    echo "Patching $VM_NAME with UUID:$VM_UUID"
+    kubectl patch node $VM_NAME -p "{\"spec\":{\"providerID\":\"vsphere://$VM_UUID\"}}"
+  done
+====
++
+<1> The datacenter where cluster virtual machines are in.
+<2> Prefix for all machines of the cluster.
+
+. Create /etc/kubernetes/vsphere.config in every master and worker nodes. Refer to <<vsphere-cloud-provider-configuration>> for details.
+
+. On local machine, save kubeadm-config as `kubeadm-config.conf`.
++
+====
+kubectl -n kube-system get cm/kubeadm-config -o yaml > kubeadm-config.conf
+====
+
+. Edit the `kubeadm-config.conf` to add cloud-provider and relate configurations.
++
+====
+  data:
+    ClusterConfiguration: |
+      apiServer:
+        extraArgs:
+          cloud-config: /etc/kubernetes/vsphere.conf
+          cloud-provider: vsphere
+        extraVolumes:
+        - hostPath: /etc/kubernetes/vsphere.conf
+          mountPath: /etc/kubernetes/vsphere.conf
+          name: cloud-config
+          pathType: FileOrCreate
+          readOnly: true
+      controllerManager:
+        extraArgs:
+          cloud-config: /etc/kubernetes/vsphere.conf
+          cloud-provider: vsphere
+        extraVolumes:
+        - hostPath: /etc/kubernetes/vsphere.conf
+          mountPath: /etc/kubernetes/vsphere.conf
+          name: cloud-config
+          pathType: FileOrCreate
+          readOnly: true
+====
+
+. Apply the kubeadm-config to the cluster.
++
+====
+kubectl apply -f kubeadm-config.conf
+====
+
+. On every master node, update kubelet.
++
+====
+  sudo systemctl stop kubelet
+  source /var/lib/kubelet/kubeadm-flags.env
+  echo KUBELET_KUBEADM_ARGS='"'--cloud-config=/etc/kubernetes/vsphere.conf --cloud-provider=vsphere $KUBELET_KUBEADM_ARGS'"' > /tmp/kubeadm-flags.env
+  sudo mv /tmp/kubeadm-flags.env /var/lib/kubelet/kubeadm-flags.env
+  sudo systemctl start kubelet
+====
+
+. On every master node, update control-plane components.
++
+====
+sudo kubeadm upgrade node phase control-plane --etcd-upgrade=false
+====
+
+. On every worker node, update kubelet.
++
+====
+  sudo systemctl stop kubelet
+  source /var/lib/kubelet/kubeadm-flags.env
+  echo KUBELET_KUBEADM_ARGS='"'--cloud-config=/etc/kubernetes/vsphere.conf --cloud-provider=vsphere $KUBELET_KUBEADM_ARGS'"' > /tmp/kubeadm-flags.env
+  sudo mv /tmp/kubeadm-flags.env /var/lib/kubelet/kubeadm-flags.env
+  sudo systemctl start kubelet
+====
+
+After the setup you can proceed to use link:{docurl}/single-html/caasp-admin/#_vsphere_storage[vSphere Storage] in cluster.
 
 ===== Integrate External LDAP TLS
 
