@@ -116,7 +116,7 @@ image::vmware_step6b.png[width=80%,pdfwidth=80%]
 .. Select menu:Firmware[BIOS].
 .. Confirm the process with menu:Next[].
 
-==== {sls} Installation
+===== {sls} Installation
 
 Power on the newly created VM and install the system over graphical remote console:
 
@@ -278,9 +278,9 @@ Now you can convert the VM into a template in VMware (or repeat this action bloc
 . In the vSphere WebUI, right-click on the VM and select menu:Template[Convert to Template].
 Name it reasonably so you can later identify the template. The template will be created.
 
-=== Deploying VMs from the Template
+==== Deploying VMs from the Template
 
-==== Using Terraform
+===== Using Terraform
 
 . Find the {tf} template files for {vmware} in `/usr/share/caasp/terraform/vmware` which was installed as part of the management
 pattern (`sudo zypper in patterns-caasp-Management`).
@@ -299,7 +299,7 @@ mv terraform.tfvars.example terraform.tfvars
 ----
 . Edit the `terraform.tfvars` file and add/modify the following variables:
 
-include::deployment-terraform-example.adoc[tag=tf_vmware]
+include::deployment-terraform-example.adoc[tag=tf_vmware,leveloffset=+3]
 
 [start=4]
 . Enter the registration code for your nodes in `~/caasp/deployment/vmware/registration.auto.tfvars`:
@@ -357,12 +357,13 @@ accesible, anyone with access to the agent's control socket file can use the pri
 contents to impersonate the key owner.  By default, socket access is limited to the user
 who launched the agent.  None the less, it is still good security practice to specify an
 expiration time for the decrypted key using the `-t` option.
+
 For example: `ssh-add -t 1h30m $HOME/.ssh/id.ecdsa` would expire the decrypted key in 1.5
 hours.
 See `man ssh-agent` and `man ssh-add` for more information.
 ====
 +
-. Run Terraform to create the required machines for use with `skuba`:
+. Run {tf} to create the required machines for use with `skuba`:
 +
 ----
 terraform init
@@ -370,7 +371,7 @@ terraform plan
 terraform apply
 ----
 
-==== Setup by Hand
+===== Setup by Hand
 
 [NOTE]
 ====
