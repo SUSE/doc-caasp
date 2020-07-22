@@ -33,6 +33,9 @@ Kubernetes Control Plane Components::
 Kubernetes Namespaces Pods::
 * All namespaces in cluster except kube-system
 
+Kubernetes Audit Log::
+* link:{docurl}/single-html/caasp-admin/#_audit_log[Audit Log]
+
 OS Components::
 * Kernel
 * Audit
@@ -166,6 +169,9 @@ Options with empty default values are set as not specified.
 |image.tag|specifies image tag to pull|8.39.0
 |kubernetesPodAnnotationsEnabled|enables kubernetes meta annotations in pod logs|false
 |kubernetesPodLabelsEnabled|enables kubernetes meta labels in pod logs| false
+|logs.kubernetesAudit.enabled|enables Kubernetes audit logs|true
+|logs.kubernetesAudit.logDir|Kubernetes audit log directory|/var/log/kube-apiserver
+|logs.kubernetesAudit.logFile|Kubernetes audit log filename|audit.log
 |logs.kubernetesControlPlane.enabled|enables Kubernetes control plane logs|true
 |logs.kubernetesSystem.enabled|enables Kubernetes system logs (kubelet, crio)|true
 |logs.kubernetesUserNamespaces.enabled|enables Kubernetes user namespaces logs|false
