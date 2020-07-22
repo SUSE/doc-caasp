@@ -164,6 +164,10 @@ authorized_keys = [ // <15>
 
 # IMPORTANT: Replace these ntp servers with ones from your infrastructure
 ntp_servers = ["0.example.ntp.org", "1.example.ntp.org", "2.example.ntp.org", "3.example.ntp.org"] // <16>
+
+# Controls whether or not the guest network waiter waits for a routable address.
+# Default is True and should not be changed unless you hit the upstream bug: https://github.com/hashicorp/terraform-provider-vsphere/issues/1127
+wait_for_guest_net_routable = true // <17>
 ----
 
 [IMPORTANT]
@@ -197,8 +201,9 @@ default packages listed.
 <15> `authorized_keys`: List of ssh-public-keys that will be able to log in to the
 deployed machines.
 <16> `ntp_servers`: A list of `ntp` servers you would like to use with `chrony`.
+<17> `wait_for_guest_net_routable`: true or false to disable the routable check. Default is true.
+*Note*: This should only be changed if terraform times out while creating VMs as mentioned on the upstream bug: https://github.com/hashicorp/terraform-provider-vsphere/issues/1127
 # end::tf_vmware[]
-
 
 [[tf.aws]]
 === Terraform AWS Configuration
@@ -281,5 +286,4 @@ peering links.
 plane instance. Leave empty to have {tf} create it.
 <13> `iam_profile_worker`: Name of the IAM profile to associate with the worker
 instances. Leave empty to have {tf} create it.
-
 # end::tf_aws[]
