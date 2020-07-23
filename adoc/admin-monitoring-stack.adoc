@@ -148,9 +148,9 @@ In this example, the secret name is `monitoring-tls`.
 
 . Wildcard certificate
 +
-Wildcard TLS allows you to secure multiple sub-domains with one certificate and it means multiple sub-domains share the same private key. So, you could add more sub-domains without having to redeploy the certificate and more, saves the certificate costs.
+Wildcard TLS allows you to secure multiple sub-domains with one certificate and it means multiple sub-domains share the same private key. You can then add more sub-domains without having to redeploy the certificate and moreover, save the additional certificate costs.
 
-Refer to <<trusted-server-certificate>> on how to sign the trusted certificate or refer to <<self-signed-server-certificate>> on how to sign the self-signed certificate. The `server.conf` for DNS.1 is `+prometheus.example.com+` and `+prometheus-alertmanager.example.com+` `+grafana.example.com+` for individual certificate separately. The `server.conf` for DNS.1 is `+*.example.com+` for wildcard certificate.
+Refer to <<trusted-server-certificate>> on how to sign the trusted certificate or refer to <<self-signed-server-certificate>> on how to sign the self-signed certificate. The `server.conf` for DNS.1 is `+prometheus.example.com+` and `+prometheus-alertmanager.example.com+` `+grafana.example.com+` for individual certificates separately. The `server.conf` for DNS.1 is `+*.example.com+` for a wildcard certificate.
 
 Then, import your certificate and key pair into the {kube} cluster secret name `monitoring-tls`. In this example, the certificate and key are `monitoring.crt` and `monitoring.key`.
 
