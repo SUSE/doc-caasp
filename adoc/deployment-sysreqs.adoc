@@ -223,7 +223,7 @@ Let's see two different examples:
 
 The management workstation needs at least the following networking permissions:
 
-* SSH access to all machines in the cluster
+* SSH access to all machines in the cluster (direct or through a bastion)
 * Access to the `apiserver` (the load balancer should expose it, port `6443`), that will in turn talk to any master in the cluster
 * Access to Dex on the configured `NodePort` (the load balancer should expose it, port `32000`) so when the OIDC token has expired, `kubectl` can request a new token using the refresh token
 
