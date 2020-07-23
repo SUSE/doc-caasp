@@ -89,6 +89,7 @@ This could lead to undesired messages in SSH or other security/authentication lo
 ====
 
 ==== Forwarding the Authentication Agent Connection
+
 It is also possible to *forward the authentication agent connection* from a
 host to another, which can be useful if you intend to run skuba on
 a "jump host" and don't want to copy your private key to this node.
@@ -97,9 +98,10 @@ This can be achieved using the `ssh -A` command. Please refer to the man page
 of `ssh` to learn about the security implications of using this feature.
 
 ==== Bastion configuration
-An other possibility is to connect to the nodes through a bastion using skuba
+
+Another possibility is to connect to the nodes through a bastion using skuba
 directly. This means skuba does not have to be installed on the bastion which
-will just be used to forward ssh connection. Like with the cluster nodes, the
+will just be used to forward the SSH connection. Like with the cluster nodes, the
 authentication is done using *SSH keys loaded into an SSH agent* (see above).
 
 [NOTE]
