@@ -855,29 +855,3 @@ Refer to: <<airgap-rpm_repository-client>>.
 === Helm chart connection terminated by HTTPS TO HTTP
 
 When registry mirror is using virtual repository URL. You may need to manually modify the Helm chart index.yaml and point the correct HTTPS base URL.
-
-[#airgap-extras]
-== Extras
-
-=== Check for Deprecated APIs before an Upgrade to New Version in an air gapped deployment
-
-When you want to make sure all the types kubernetes objects defined in your cluster are compatible with the new version, in an air gapped environment you have to follow the next steps.
-
-. In a secure and trusted machine download the `swagger` file, that has included all APIs definitions for kubernetes, from the URL:
-
-  `https://raw.githubusercontent.com/kubernetes/kubernetes/v<MAJOR.MINOR.PATCH>/api/openapi-spec/swagger.json`
-
-  Replace `v<MAJOR.MINOR.PATCH>` with the desired version of {kube}, e.g.: `v1.18.5`  
-
-. Copy the `swagger` file to a secure storage device.
-
-. Connect the device in the air gapped environment.
-
-. Copy the `swagger` file to a path in your system.
-
-. Run the following {productname} command to test against that file:
-
-  `skuba cluster upgrade check --kubernetes-version=v<MAJOR.MINOR.PATCH> --swagger-dir=/path/to/containing/folder`
-
-  
-This will show a list, if any, for deprecated APIs that are being used in your current cluster setup. Allowing you to be able to update accordingly also.
