@@ -6,9 +6,7 @@ This workstation is called the "Management machine". Important files are generat
 and must be maintained on this machine, but it is not a member of the {productname} cluster.
 
 [#ssh-configuration]
-=== SSH Configuration
-
-==== Basic SSH Key Configuration
+=== Basic SSH Key Configuration
 
 *In order to successfully deploy {productname}, you need to have SSH keys loaded into an SSH agent.* This is important, because it is required in order to use the installation tools `skuba` and `terraform`.
 
@@ -89,27 +87,11 @@ This could lead to undesired messages in SSH or other security/authentication lo
 ====
 
 ==== Forwarding the Authentication Agent Connection
-
 It is also possible to *forward the authentication agent connection* from a
 host to another, which can be useful if you intend to run skuba on
 a "jump host" and don't want to copy your private key to this node.
-This means skuba has to be installed on this host.
 This can be achieved using the `ssh -A` command. Please refer to the man page
 of `ssh` to learn about the security implications of using this feature.
-
-==== Bastion configuration
-
-Another possibility is to connect to the nodes through a bastion using skuba
-directly. This means skuba does not have to be installed on the bastion which
-will just be used to forward the SSH connection. Like with the cluster nodes, the
-authentication is done using *SSH keys loaded into an SSH agent* (see above).
-
-[NOTE]
-====
-Make sure to have the parameter `AllowTcpForwarding` set to `yes` in `/etc/ssh/sshd_config`.
-This is enabled by default so this is enabled when the option it commented.
-====
-
 
 [#registration-code]
 === Registration Code
