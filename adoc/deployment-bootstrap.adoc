@@ -50,11 +50,13 @@ refer to <<ssh-configuration>>.
 
 This is a requirement for `skuba` (https://github.com/SUSE/skuba#prerequisites).
 
-By default, there is no default user when `skuba` connects to the nodes.
-However, when a bastion host is used to connect to the nodes and if no user
-is provided with the flag `--bastion-user`, then it will default to the user
-provided with `--user`.
+By default `skuba` connects to the nodes as `root` user. A different user can
+be specified by the following flags:
 
+[source,bash]
+----
+--sudo --user <USERNAME>
+----
 
 [IMPORTANT]
 ====
@@ -662,14 +664,6 @@ This will restart all `kured` pods with the additional configuration flags.
 [#cluster-bootstrap]
 ==== Cluster Bootstrap
 . Switch to the new directory.
-. Before deploying, it is important to know that all the SSH connections made
-with the `skuba node (bootstrap, join, upgrade apply)` commands can be done through a bastion.
-+
-To do so, it is possible to specify the following flags::
-* `--bastion`: IP or FQDN of the bastion to connect to the other nodes using SSH
-* `--bastion-user`: User identity used to connect to the bastion using SSH (default to target user)
-* `--bastion-port`: Port to connect to the bastion using SSH (default 22)
-+
 . Now bootstrap a master node.
 For `--target` enter the FQDN of your first master node.
 Replace `<NODE_NAME>` with a unique identifier, for example, "master-one".
