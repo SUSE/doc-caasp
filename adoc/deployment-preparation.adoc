@@ -140,6 +140,7 @@ This ID is required for proper functionality in the cluster and must be (re-)gen
 Log in to each virtual machine created from the template and run:
 
 ----
+rm /etc/machine-id
 dbus-uuidgen --ensure
 systemd-machine-id-setup
 systemctl restart systemd-journald
