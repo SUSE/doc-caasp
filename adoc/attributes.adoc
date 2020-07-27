@@ -41,7 +41,15 @@
 :kubeadm_api_version: v1beta1
 
 // Media Locations
+
+ifeval::['{release_type}' != 'public']
+:docurl: https://susedoc.github.io/doc-caasp/master/
+endif::[]
+
+ifeval::['{release_type}' == 'public']
 :docurl: https://documentation.suse.com/suse-caasp/{productmajor}.{productminor}/
+endif::[]
+
 :caasp_repo_url: http://download.suse.de/ibs/SUSE:/SLE-15-SP1:/Update:/Products:/CASP40/standard/
 :isofile: SLE-15-SP2-Full-x86_64-GM-Media1.iso
 :jeos_product_page_url: https://www.suse.com/download/sles/
