@@ -411,12 +411,12 @@ chmod 600 <CLUSTER_NAME>/pki/kubelet-ca.key
 ----
 +
 After this process, bootstrap the cluster with `skuba node bootstrap`.
-skuba uploads the local OIDC CA certificate to remote path specified in the local file `kubeadm-init.conf` key `oidc-ca-file`. At the time installing the add-on, skuba generates the OIDC server certificates and keys which are signed by the provided OIDC CA certificate and key pair and stored to its Secret resource.
+skuba uploads the local OIDC CA certificate to the remote path specified in the local file `kubeadm-init.conf` key `oidc-ca-file`. When installing the add-on, skuba generates the OIDC server certificates and keys which are signed by the provided OIDC CA certificate and key pair and then stored to its Secret resource.
 
 ** Without a Trusted CA Key:
 +
-Use command `skuba cert generate-csr` to generates the OIDC server CSRs and keys in `<my-cluster>/pki` folder.
-After the CA signed the CSRs and issued the server certificates, puts the OIDC CA certificate and the OIDC server certificates in `<my-cluster>/pki` folder.
+Use command `skuba cert generate-csr` to generate the OIDC server CSRs and keys in `<my-cluster>/pki` folder.
+After the CA signs the CSRs and issued the server certificates, put the OIDC CA certificate and the OIDC server certificates in `<my-cluster>/pki` folder.
 +
 [source,bash]
 ----
@@ -428,7 +428,7 @@ chmod 600 <CLUSTER_NAME>/pki/front-proxy-ca.key
 ----
 +
 After this process, bootstrap the cluster with `skuba node bootstrap`.
-skuba uploads the local OIDC CA certificate to remote path specified in the local file `kubeadm-init.conf` key `oidc-ca-file`. At the time installing the add-on, skuba uploads the OIDC CA certificate and OIDC server certificate and key pair to its Secret resource.
+skuba uploads the local OIDC CA certificate to the remote path specified in the local file `kubeadm-init.conf` key `oidc-ca-file`. At the time installing the add-on, skuba uploads the OIDC CA certificate and OIDC server certificate and key pair to its Secret resource.
 
 * After Cluster Deployment:
 
