@@ -111,10 +111,8 @@ which will create the vanilla CRI-O configuration:
 skuba cluster init --strict-capability-defaults
 ----
 
-Please be aware that this might result in
-incompatibility with your previously running workloads,
-unless you explicitly define the additional Linux capabilities required
-on top of CRI-O defaults.
+Please be aware that this might result in incompatibility with your previously running workloads,
+unless you explicitly define the additional Linux capabilities required on top of CRI-O defaults.
 
 [IMPORTANT]
 ====
@@ -122,6 +120,13 @@ After the bootstrap of the {kube} cluster there will be no easy
 way to revert this modification. Please choose wisely.
 ====
 
+==== Configuring Cluster Addons
+
+If you wish to customize addons to the {kube} cluster you can do so by placing configuration files into the
+`my-cluster/addons/crio.conf.d/` directory. The files will be deployed to `/etc/crio/crio.conf.d/` on each resulting cluster node.
+
+You can also customize the {crio} registries configuration by creating `my-cluster/addons/containers/registries.conf` this will
+replace the `etc/containers/registries.conf` on each node after bootstrapping.
 
 ==== Configuring {kube} Services
 
