@@ -798,15 +798,31 @@ In production environments you must configure persistent storage.
 
 ** Use an existing `PersistentVolumeClaim`
 ** Use a `StorageClass` (preferred)
-** Disable ingresses
-** Add the external url at which the server can be accessed
+** Add the external URL to `baseURL` at which the server can be accessed. The `baseURL` depends on your network configuration.
+*** NodePort: https://example.com:32443/prometheus and https://example.com:32443/alertmanager
+*** External IPs: https://example.com/prometheus and https://example.com/alertmanager
+*** LoadBalancer: https://example.com/prometheus and https://example.com/alertmanager
+
 +
 ----
 # Alertmanager configuration
 alertmanager:
   enabled: true
+  baseURL: https://example.com:32443/alertmanager
+  prefixURL: /alertmanager  
   ingress:
-    enabled: false
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/auth-type: basic
+      nginx.ingress.kubernetes.io/auth-secret: prometheus-basic-auth
+      nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
+    hosts:
+      - example.com/alertmanager
+    tls:
+      - secretName: monitoring-tls
+        hosts:
+        - example.com
   persistentVolume:
     enabled: true
     ## Use a StorageClass
@@ -853,7 +869,18 @@ server:
   baseURL: https://example.com:32443/prometheus
   prefixURL: /prometheus
   ingress:
-    enabled: false
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/auth-type: basic
+      nginx.ingress.kubernetes.io/auth-secret: prometheus-basic-auth
+      nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
+    hosts:
+      - example.com/prometheus
+    tls:
+      - secretName: monitoring-tls
+        hosts:
+        - example.com
   persistentVolume:
     enabled: true
     ## Use a StorageClass
@@ -962,8 +989,11 @@ In production environments you must configure persistent storage.
 
 ** Use an existing `PersistentVolumeClaim`
 ** Use a `StorageClass` (preferred)
-** Disable ingress
-** Add the subpath to the end of this URL setting.
+** Add the external URL to `root_url` at which the server can be accessed. The `root_url` depends on your network configuration.
+*** NodePort: https://example.com:32443/grafana
+*** External IPs: https://example.com/grafana
+*** LoadBalancer: https://example.com/grafana
+
 +
 Create a file `grafana-config-values.yaml` with the appropriate values
 +
@@ -973,7 +1003,17 @@ adminPassword: <PASSWORD>
 
 # Ingress configuration
 ingress:
-  enabled: false
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  hosts:
+    - example.com
+  path: /grafana
+  tls:
+    - secretName: monitoring-tls
+      hosts:
+      - example.com
 
 # subpath for grafana
 grafana.ini:
@@ -1035,99 +1075,6 @@ NAME                                             READY     STATUS    RESTARTS   
 grafana-dbf7ddb7d-fxg6d                          3/3       Running   0          2m
 ----
 
-==== Ingress
-. Configure Ingress for Prometheus
-Create a file `prometheus-ingress.yaml`
-+
-----
-apiVersion: networking.k8s.io/v1beta1
-kind: Ingress
-metadata:
-  name: prometheus-ingress
-  namespace: monitoring
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/auth-type: basic
-    nginx.ingress.kubernetes.io/auth-secret: prometheus-basic-auth
-    nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
-spec:
-  tls:
-    - hosts:
-      - example.com
-      secretName: monitoring-tls
-  rules:
-  - host: example.com
-    http:
-      paths:
-      - path: /prometheus
-        backend:
-          serviceName: prometheus-server
-          servicePort: 80
-----
-Deploy the prometheus ingress file
-+
-[source,bash]
-----
-kubectl apply -f prometheus-ingress.yaml
-----
-Verify the prometheus ingress
-+
-[source,bash]
-----
-kubectl -n monitoring get ingress | grep prometheus
-NAME                         HOSTS         ADDRESS   PORTS     AGE
-prometheus-ingress           example.com             80, 443   11s
-----
-
-. Configure Ingress for Alertmanager and Grafana
-Create a file `alertmanager-grafana-ingress.yaml`
-+
-----
-apiVersion: networking.k8s.io/v1beta1
-kind: Ingress
-metadata:
-  name: alertmanager-grafana-ingress
-  namespace: monitoring
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/auth-type: basic
-    nginx.ingress.kubernetes.io/auth-secret: prometheus-basic-auth
-    nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
-    nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  tls:
-    - hosts:
-      - example.com
-      secretName: monitoring-tls
-  rules:
-  - host: example.com
-    http:
-      paths:
-      - path: /alertmanager
-        backend:
-          serviceName: prometheus-alertmanager
-          servicePort: 80
-
-      - path: /grafana
-        backend:
-          serviceName: grafana
-          servicePort: 80
-----
-Deploy the alertmanager and grafana ingress file
-+
-[source,bash]
-----
-kubectl apply -f alertmanager-grafana-ingress.yaml
-----
-Verify the alertmanager and grafana ingress
-+
-[source,bash]
-----
-kubectl -n monitoring get ingress | grep grafana
-NAME                          HOSTS         ADDRESS   PORTS     AGE
-alertmanager-grafana-ingress  example.com             80, 443   11s
-----
-
 . Access Prometheus, Alertmanager, and Grafana
 +
 At this stage, the Prometheus Expression browser/API, Alertmanager, and Grafana should be accessible, depending on your network configuration
@@ -1138,9 +1085,9 @@ At this stage, the Prometheus Expression browser/API, Alertmanager, and Grafana 
 ** **LoadBalancer**: `+https://example.com/prometheus+`
 +
 * Alertmanager
-** **NodePort**: `+https://example.com:32443/alertmanger+`
-** **External IPs**: `+https://example.com/alertmanger+`
-** **LoadBalancer**: `+https://example.com/alertmanger+`
+** **NodePort**: `+https://example.com:32443/alertmanager+`
+** **External IPs**: `+https://example.com/alertmanager+`
+** **LoadBalancer**: `+https://example.com/alertmanager+`
 +
 * Grafana
 ** **NodePort**: `+https://example.com:32443/grafana+`
@@ -1213,88 +1160,9 @@ etcd-master1   1/1     Running   2          21h   192.168.0.20   master1   <none
 . Edit the configuration file `prometheus-config-values.yaml`, add `extraSecretMounts` and `extraScrapeConfigs` parts, change the extraScrapeConfigs targets IP address(es) as your environment and change the target numbers if you have different etcd cluster members:
 +
 ----
-# Alertmanager configuration
-alertmanager:
-  enabled: true
-  ingress:
-    enabled: true
-    hosts:
-    -  prometheus-alertmanager.example.com
-    annotations:
-      kubernetes.io/ingress.class: nginx
-      nginx.ingress.kubernetes.io/auth-type: basic
-      nginx.ingress.kubernetes.io/auth-secret: prometheus-basic-auth
-      nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
-    tls:
-      - hosts:
-        - prometheus-alertmanager.example.com
-        secretName: monitoring-tls
-  persistentVolume:
-    enabled: true
-    ## Use a StorageClass
-    storageClass: my-storage-class
-    ## Create a PersistentVolumeClaim of 2Gi
-    size: 2Gi
-    ## Use an existing PersistentVolumeClaim (my-pvc)
-    #existingClaim: my-pvc
-
-## Alertmanager is configured through alertmanager.yml. This file and any others
-## listed in alertmanagerFiles will be mounted into the alertmanager pod.
-## See configuration options https://prometheus.io/docs/alerting/configuration/
-#alertmanagerFiles:
-#  alertmanager.yml:
-
-# Create a specific service account
-serviceAccounts:
-  nodeExporter:
-    name: prometheus-node-exporter
-
-# Node tolerations for node-exporter scheduling to nodes with taints
-# Allow scheduling of node-exporter on master nodes
-nodeExporter:
-  hostNetwork: false
-  hostPID: false
-  podSecurityPolicy:
-    enabled: true
-    annotations:
-      apparmor.security.beta.kubernetes.io/allowedProfileNames: runtime/default
-      apparmor.security.beta.kubernetes.io/defaultProfileName: runtime/default
-      seccomp.security.alpha.kubernetes.io/allowedProfileNames: runtime/default
-      seccomp.security.alpha.kubernetes.io/defaultProfileName: runtime/default
-  tolerations:
-    - key: node-role.kubernetes.io/master
-      operator: Exists
-      effect: NoSchedule
-
-# Disable Pushgateway
-pushgateway:
-  enabled: false
-
 # Prometheus configuration
 server:
-  ingress:
-    enabled: true
-    hosts:
-    - prometheus.example.com
-    annotations:
-      kubernetes.io/ingress.class: nginx
-      nginx.ingress.kubernetes.io/auth-type: basic
-      nginx.ingress.kubernetes.io/auth-secret: prometheus-basic-auth
-      nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
-    tls:
-      - hosts:
-        - prometheus.example.com
-        secretName: monitoring-tls
-  persistentVolume:
-    enabled: true
-    ## Use a StorageClass
-    storageClass: my-storage-class
-    ## Create a PersistentVolumeClaim of 8Gi
-    size: 8Gi
-    ## Use an existing PersistentVolumeClaim (my-pvc)
-    #existingClaim: my-pvc
-  ## Additional Prometheus server Secret mounts
-  # Defines additional mounts with secrets. Secrets must be manually created in the namespace.
+  ...
   extraSecretMounts:
   - name: etcd-certs
     mountPath: /etc/secrets
@@ -1310,13 +1178,6 @@ extraScrapeConfigs: |
       ca_file: /etc/secrets/ca.crt
       cert_file: /etc/secrets/monitoring-client.crt
       key_file: /etc/secrets/monitoring-client.key
-
-## Prometheus is configured through prometheus.yml. This file and any others
-## listed in serverFiles will be mounted into the server pod.
-## See configuration options
-## https://prometheus.io/docs/prometheus/latest/configuration/configuration/
-#serverFiles:
-#  prometheus.yml:
 ----
 
 . Upgrade prometheus helm deployment:
