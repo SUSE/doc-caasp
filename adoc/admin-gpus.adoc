@@ -86,41 +86,22 @@ In a heterogeneous cluster, it may be preferable to prevent scheduling pods that
 
 [source,bash]
 ----
-$ kubectl taint nodes worker0 nvidia.com/gpu=:NoSchedule
+$ kubectl taint nodes worker0 nvidia.com/gpu=:PreferNoSchedule
 ----
 
 or
 
 [source,bash]
 ----
-$ kubectl taint nodes worker0 nvidia.com/gpu=:PreferNoSchedule
+$ kubectl taint nodes worker0 nvidia.com/gpu=:NoSchedule
 ----
 
-See the Kubernetes documentation on link:{kubedoc}concepts/scheduling-eviction/taint-and-toleration/[taints and tolerations] for a discussion on the considerations for using the NoSchedule or PreferNoSchedule effects.
+See the Kubernetes documentation on link:{kubedoc}concepts/scheduling-eviction/taint-and-toleration/[taints and tolerations] for a discussion on the considerations for using the NoSchedule or PreferNoSchedule effects. If you use the NoSchedule effect, you must also add the appropriate toleration to infrastructure-critical Daemonsets that must run on all nodes, such as the kured, kube-proxy, and cilium Daemonsets.
 
-The link:{kubedoc}reference/access-authn-authz/admission-controllers/#extendedresourcetoleration[ExtendedResourceToleration admission controller] will automatically add the nvidia.com/gpu toleration to pods that request the nvidia.com/gpu resource, so you will not need to add this toleration explicitly for every GPU workload. When after initializing the cluster but before bootstrapping it, add the ExtendedResourceToleration to the list of enabled admission plugins in your cluster's kubeadm-init.conf file:
-
-```
-$ sed -i -e '/enable-admission-plugins:/ s/$/,ExtendedResourceToleration/' kubeadm-init.conf
-```
-
-Then begin the cluster bootstrapping process as described in link:{docurl}/single-html/caasp-admin/#_cluster_management[Cluster Management].
-
-If you are enabling GPU support in an existing cluster, you can add the admission controller to the API server configuration on every master node:
-
-[source,bash]
-----
-# sed -i -e '/--enable-admission-plugins=/ s/$/,ExtendedResourceToleration/' /etc/kubernetes/manifests/kube-apiserver.yaml
-----
-
-Wait for the kube-apiserver pod to be restarted.
-
-In order to ensure this change persists across upgrades, add the admission plugin to the kubeadm configmap:
-
-[source,bash]
-----
-$ kubectl --namespace kube-system get configmap kubeadm-config -o yaml | sed -e '/enable-admission-plugins:/ s/$/,ExtendedResourceToleration/' | kubectl apply -f -
-----
+[NOTE]
+====
+The link:{kubedoc}reference/access-authn-authz/admission-controllers/#extendedresourcetoleration[ExtendedResourceToleration admission controller] is enabled on {productname} v5 by default. This is a mutating admission controller that reviews all pod requests and adds tolerations to any pod that requests an extended resource advertised by a device plugin. For the NVIDIA GPU device plugin, it will automatically add the nvidia.com/gpu toleration to pods that request the nvidia.com/gpu resource, so you will not need to add this toleration explicitly for every GPU workload.
+====
 
 === Test a GPU Workload
 
