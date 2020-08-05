@@ -385,12 +385,14 @@ skuba cluster images
 This will print out a list of the images skuba is expecting to use on the cluster to be bootstrapped.
 
 Mirror those and setup the crio-registries to point to the location they are mirrored at.
+
+In addition to the base images used by skuba, Helm 2 also requires the `helm-tiller` image.  When using Helm 3 in an air-gapped deployment the `helm-tiller` image is not required.
 ====
 
 [IMPORTANT]
 ====
 These images need to be available in the external and internal mirrors at the time you try to deploy {productname}.
-Image tags are vary depending on your version of kubernetes you install.
+Image tags will vary depending on the version of kubernetes you install.
 :===
 CATEGORY:IMAGE:URL
 KUBEADM:hyperkube:registry.suse.com/caasp/v4.5/hyperkube
@@ -404,6 +406,7 @@ ADDONS:dex:registry.suse.com/caasp/v4.5/caasp-dex
 ADDONS:gangway:registry.suse.com/caasp/v4.5/gangway
 ADDONS:kured:registry.suse.com/caasp/v4.5/kured
 MISC:skuba-tooling:registry.suse.com/caasp/v4.5/skuba-tooling
+HELM:helm-tiller:registry.suse.com/caasp/v4.5/helm-tiller
 :===
 ====
 
@@ -696,7 +699,13 @@ Update the Helm chart repository by following the shared update procedure <<airg
 Add the webserver as a repo to `helm`.
 
 This step needs to be performed on a machine where Helm is installed and configured to talk to the Tiller server in the {productname}
-cluster.
+cluster.  For steps to install Helm 2 and Tiller, reference link:{docurl}single-html/caasp-admin/#_installing_tiller[] and be sure
+that the helm-tiller image has been mirrored as described in <<airgap-update>>.
+
+To initialize Helm 2 before the helm-tiller image is ready, use the command:
+----
+helm init --client-only --skip-refresh
+----
 
 `<SUSE_MIRROR>` will be the user-defined name for this repository listed by Helm.
 The name of the repository must adhere to https://docs.helm.sh/chart_best_practices/#chart-names[Helm Chart naming conventions].
@@ -726,9 +735,6 @@ Replace `http://charts.mymirror.local` with the hostname of the webserver provid
 +
 ----
 mkdir /tmp/charts
-----
-+
-----
 cd /tmp/charts
 ----
 +
@@ -738,11 +744,7 @@ helm-mirror --new-root-url http://charts.mymirror.local https://kubernetes-chart
 . Translate the chart information into the `skopeo` format.
 +
 ----
-mkdir /tmp/skopeodata
-----
-+
-----
-helm-mirror inspect-images /tmp/charts -o skopeo=sync.yaml
+helm-mirror inspect-images /tmp/charts -o skopeo=sync.yaml --ignore-errors
 ----
 +
 .Ignoring Chart Errors
@@ -750,10 +752,24 @@ NOTE: The `helm-mirror` tool will attempt to render and inspect all downloaded c
 Some charts will have values that are filled from environment data on their source repository and produce errors.
 You can still proceed with this step by using the `--ignore-errors` flag.
 +
+. Add helm-tiller to the image list.
++
+Edit the `sync.yaml` file and add an entry for the helm-tiller image after any other entries.
+Verify the version of the image matches the version used in `helm init` as documented in
+link:{docurl}single-html/caasp-admin/#_installing_tiller[] and adjust the entry if needed.
++
+----
+registry.suse.com:
+    images:
+        caasp/v4.5/helm-tiller:
+          - 2.16.9
+----
++
 . Download all the referenced images using `skopeo`.
 +
 ----
-skopeo sync --source-yaml sync.yaml dir:/tmp/skopeodata
+mkdir /tmp/skopeodata
+skopeo sync --src yaml --dest dir sync.yaml /tmp/skopeodata
 ----
 +
 `skopeo` will automatically create a directory named after the hostname of the registry from which you are downloading the images.
@@ -765,7 +781,8 @@ For `--dest-creds` you must use the credentials you created during <<airgap-cont
 +
 ----
 skopeo sync --dest-creds USERNAME:PASSWORD \
-dir:/tmp/skopeodata/registry.suse.com/ docker://mymirror.local:5000
+--src dir --dest docker \
+/tmp/skopeodata/registry.suse.com/ mymirror.local:5000
 ----
 . After the synchronization is done, you can remove the `skopeodata` directory.
 +
@@ -855,3 +872,12 @@ Refer to: <<airgap-rpm_repository-client>>.
 === Helm chart connection terminated by HTTPS TO HTTP
 
 When registry mirror is using virtual repository URL. You may need to manually modify the Helm chart index.yaml and point the correct HTTPS base URL.
+
+=== Helm Tiller container fails to start
+
+If the URL for the helm-tiller image is not available when `helm init` is invoked, the pod for Tiller may be stuck in the "ImagePullBackOff" state.
+To clear out the broken pod and prepare to attempt `helm init` again, use the following command.
+
+----
+helm reset --force
+----
