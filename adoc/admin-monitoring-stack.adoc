@@ -12,13 +12,15 @@ Please apply best practices to develop your own monitoring approach using the de
 
 This document aims to describe monitoring in a {kube} cluster.
 
-The monitoring stack consists of a metrics server and a visualization platform.
+The monitoring stack consists of a monitoring/trending system and a visualization platform.
+Additionally you can use the in-memory metrics-server to perform automatic scaling (Refer to: <<horizontal-pod-autoscaler>>).
 
 * *Prometheus*
 +
-Prometheus is an open-source metrics server with a dimensional data model, flexible query language, efficient time series database and modern alerting approach. The time series collection happens via a pull mode over HTTP.
+Prometheus is an open-source monitoring and trending system with a dimensional data model, flexible query language, efficient time series database and modern alerting approach.
+The time series collection happens via a pull mode over HTTP.
 +
-The Prometheus consists of multiple components:
+Prometheus consists of multiple components:
 +
  ** Prometheus server: scrapes and stores data to time series database
  ** https://prometheus.io/docs/alerting/alertmanager/[Alertmanager] handles client alerts, sanitizes duplicates and noise and routes them to configurable receivers.
@@ -38,7 +40,8 @@ Grafana is an open-source system for querying, analysing and visualizing metrics
 
 . NGINX Ingress Controller
 +
-Please refer to <<nginx-ingress>> on how to configure ingress in your cluster. Deploying NGINX Ingress Controller also allows us to provide TLS termination to our services and to provide basic authentication to the Prometheus Expression browser/API.
+Please refer to <<nginx-ingress>> on how to configure ingress in your cluster.
+Deploying NGINX Ingress Controller also allows us to provide TLS termination to our services and to provide basic authentication to the Prometheus Expression browser/API.
 
 . Monitoring namespace
 +
@@ -809,7 +812,7 @@ In production environments you must configure persistent storage.
 alertmanager:
   enabled: true
   baseURL: https://example.com:32443/alertmanager
-  prefixURL: /alertmanager  
+  prefixURL: /alertmanager
   ingress:
     enabled: true
     annotations:
