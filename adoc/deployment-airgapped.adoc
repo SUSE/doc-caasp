@@ -122,7 +122,7 @@ Once the replacement sources are in place, the key components are reconfigured t
 
 === RPM Package Repository Mirroring
 
-Mirroring of the RPM repositories is handled by the https://documentation.suse.com/sles/15-SP1/single-html/SLES-rmt/#book-rmt[Repository Mirroring Tool] for {sls}
+Mirroring of the RPM repositories is handled by the https://documentation.suse.com/sles/15-SP2/single-html/SLES-rmt/#book-rmt[Repository Mirroring Tool] for {sls}
  15.
 The tool provides functionality that mirrors the upstream {suse}
  package repositories on the local network.
@@ -189,7 +189,7 @@ cluster.
 These mirror servers will reside on the external part of your network and the internal (air gapped) network respectively.
 
 For more information on the requirements of a {sle}
-15 server, refer to: https://documentation.suse.com/sles/15-SP1/single-html/SLES-deployment/#part-prep[Installation Preparation].
+15 server, refer to: https://documentation.suse.com/sles/15-SP2/single-html/SLES-deployment/#part-prep[Installation Preparation].
 
 External::
 This machine will host the `{rmt}` for RPM packages and the `container image registry` for container images.
@@ -215,9 +215,9 @@ Add additional mirror servers (behind a load balancer) if you require additional
 ====
 
 .Procedure: Provision Mirror Servers
-. https://documentation.suse.com/sles/15-SP1/single-html/SLES-installquick/#art-sle-installquick[Set up two SUSE Linux Enterprise Server 15 machines] one on the internal network and one on the air gapped network.
-. Make sure you have https://documentation.suse.com/sles/15-SP1/single-html/SLES-dockerquick/#Preparation[enabled the Containers module] on both servers.
-. Make sure you have https://documentation.suse.com/sles/15-SP1/single-html/SLES-rmt/#cha-rmt-installation[Repository Mirroring Tool installed] on both server.
+. https://documentation.suse.com/sles/15-SP2/single-html/SLES-installquick/#art-sle-installquick[Set up two SUSE Linux Enterprise Server 15 machines] one on the internal network and one on the air gapped network.
+. Make sure you have https://documentation.suse.com/sles/15-SP2/single-html/SLES-dockerquick/#Preparation[enabled the Containers module] on both servers.
+. Make sure you have https://documentation.suse.com/sles/15-SP2/single-html/SLES-rmt/#cha-rmt-installation[Repository Mirroring Tool installed] on both server.
 
 [[airgap-requirements-network]]
 === Networking
@@ -316,7 +316,7 @@ The mirror on the air gapped network must be running and populated before
 ====
 
 .Procedure: Configure The External Mirror
-. Connect the external mirror to {scc} as described in https://documentation.suse.com/sles/15-SP1/single-html/SLES-rmt/#sec-rmt-mirroring-credentials[these instructions].
+. Connect the external mirror to {scc} as described in https://documentation.suse.com/sles/15-SP2/single-html/SLES-rmt/#sec-rmt-mirroring-credentials[these instructions].
 +
 .Mirror Registration
 IMPORTANT: During the installation of {rmt}
@@ -340,13 +340,13 @@ Refer to: <<airgap-rpm_repository-update>>.
 [[airgap-rpm_repository-client]]
 === Client Configuration
 
-https://documentation.suse.com/sles/15-SP1/single-html/SLES-rmt/#cha-rmt-client[Follow these instructions] to configure all {productname}
+https://documentation.suse.com/sles/15-SP2/single-html/SLES-rmt/#cha-rmt-client[Follow these instructions] to configure all {productname}
  nodes to use the package repository mirror server in the air gapped network.
 
 [[airgap-rpm_repository-update]]
 == Updating RPM Repository Mirror
 
-https://documentation.suse.com/sles/15-SP1/single-html/SLES-rmt/#sec-rmt-mirroring-export-import[Follow these instructions] to update the external server, transfer the data to a storage device, and use that device to update the air gapped server.
+https://documentation.suse.com/sles/15-SP2/single-html/SLES-rmt/#sec-rmt-mirroring-export-import[Follow these instructions] to update the external server, transfer the data to a storage device, and use that device to update the air gapped server.
 
 [[airgap-container_registry]]
 == Container Registry Mirror
@@ -421,7 +421,7 @@ You can modify and store your own container images on the external registry and 
 If you need to be able to modify and store container images on the internal network, we recommend creating a new registry that will hold these images.
 The steps needed to run your own full container image registry are not part of this document.
 
-For more information you can refer to: https://documentation.suse.com/sles/15-SP1/single-html/SLES-dockerquick/#sec-docker-registry-definition[SLES15 - Docker Open Source Engine Guide: What is Docker Registry?].
+For more information you can refer to: https://documentation.suse.com/sles/15-SP2/single-html/SLES-dockerquick/#sec-docker-registry-definition[SLES15 - Docker Open Source Engine Guide: What is Docker Registry?].
 ====
 
 We will re-use the nginx webserver that is running as part of {rmt}
