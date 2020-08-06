@@ -48,6 +48,7 @@ bare metal machines as described in <<deployment_bare_metal>>.
 
 === Setup Using the VMware Template
 
+[#choose-disk-format-template]
 ==== Choose a Disk Format for the Template
 
 Before creating the template, it is important to select the right format of the root hard disk for the node. This format is then used by default when creating new instances with Terraform.
@@ -109,7 +110,7 @@ image::vmware_step5.png[width=80%,pdfwidth=80%]
 image::vmware_step6.png[width=80%,pdfwidth=80%]
 .. Select menu:CPU[2].
 .. Select menu:Memory[4096 MB].
-.. Select menu:New Hard disk[40 GB], menu:New Hard disk[Disk Provisioning] > See <<_choose_a_disk_format_for_the_template>> to select the appropriate disk format. For *Thick Provision Eager Zeroed*, use this value for Terraform variables `master_disk_size` and `worker_disk_size`
+.. Select menu:New Hard disk[40 GB], menu:New Hard disk[Disk Provisioning] > See <<choose-disk-format-template>> to select the appropriate disk format. For *Thick Provision Eager Zeroed*, use this value for Terraform variables `master_disk_size` and `worker_disk_size`
 .. Select menu:New SCSI Controller[LSI Logic Parallel SCSI controller (default)] and change it to "VMware Paravirtualized".
 .. Select menu:New Network[VM Network], menu:New Network[Adapter Type > VMXNET3].
 +
