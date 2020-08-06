@@ -1,0 +1,39 @@
+[#tee-logging]
+= Logging in skuba
+
+One important part of deploying and maintaining a product is to have reliable
+logs. Tools like `skuba` take the approach of printing the output to the
+standard output directly. This is not just common practice, but it also has the
+advantage that then the user has more flexibility on how to manage said output.
+
+Thus, whenever throughout this guide we write a `skuba` command, take into
+account that the output will be printed into the standard output. If you would
+also like to have the logs stored somewhere else for later inspection, you can
+use tools like `tee`. For example:
+
+[source,bash]
+----
+skuba node bootstrap --user sles --sudo --target <IP/FQDN> <NODE_NAME> | tee <NODE_NAME>-skuba-node-bootstrap.log
+----
+
+Otherwise, you might want to use other tools to manage the logs for later
+inspection. The point being that this guide will never consider how to manage
+these logs because `skuba` itself does not. It's up to you to manage these logs
+in any way you find desirable.
+
+Moreover, `skuba` has also various levels of log verbosity. This is managed by
+the `-v, --verbosity` flag. This flag accepts an integer argument, ranging from
+0 to 5, where a higher number means a higher level of verbosity. If you don't
+pass any arguments, then 0 is assumed. We recommend using the default argument,
+since it will already log warnings and errors, among other relevant output,
+whereas 5 can be a bit overwhelming. Thus, for the above example, we would
+recommend something like:
+
+[source,bash]
+----
+skuba node bootstrap -v --user sles --sudo --target <IP/FQDN> <NODE_NAME> | tee <NODE_NAME>-skuba-node-bootstrap.log
+----
+
+Now the `<NODE_NAME>-skuba-node-bootstrap.log` will have more useful information
+than without the `-v` flag. We *strongly* recommend using this flag in order to
+get as much useful information as possible from a single run.
