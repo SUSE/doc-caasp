@@ -15,6 +15,8 @@ daps -d DC-caasp-admin html --single
 daps -d DC-caasp-admin pdf
 daps -d DC-caasp-deployment html --single
 daps -d DC-caasp-deployment pdf
+daps -d DC-caasp-airgap html --single
+daps -d DC-caasp-airgap pdf
 # daps -d DC-caasp-quickstart html --single
 # daps -d DC-caasp-quickstart pdf
 
@@ -24,11 +26,13 @@ mkdir $PWD/build/pack/
 #Move HTML content to package dir
 mv $PWD/build/caasp-admin/single-html/caasp-admin $PWD/build/pack/
 mv $PWD/build/caasp-deployment/single-html/caasp-deployment $PWD/build/pack/
+mv $PWD/build/caasp-airgap/single-html/caasp-airgap $PWD/build/pack/
 # mv $PWD/build/caasp-quickstart/single-html/caasp-quickstart $PWD/build/pack/
 
 #Move and rename PDFs to package dir
 mv $PWD/build/caasp-admin/caasp-admin_color_en.pdf $PWD/build/pack/SUSE-CaaSP-$MAJOR.$MINOR.$PATCH-Admin-Guide.pdf
 mv $PWD/build/caasp-deployment/caasp-deployment_color_en.pdf $PWD/build/pack/SUSE-CaaSP-$MAJOR.$MINOR.$PATCH-Deployment-Guide.pdf
+mv $PWD/build/caasp-airgap/caasp-airgap_color_en.pdf $PWD/build/pack/SUSE-CaaSP-$MAJOR.$MINOR.$PATCH-Airgap-Deployment-Guide.pdf
 # mv $PWD/build/caasp-quickstart/caasp-quickstart_color_en.pdf $PWD/build/pack/SUSE-CaaSP-$MAJOR.$MINOR.$PATCH-Quickstart-Guide.pdf
 
 #Compress contents of package dir
