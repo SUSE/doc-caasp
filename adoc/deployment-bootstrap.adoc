@@ -668,6 +668,15 @@ This will restart all `kured` pods with the additional configuration flags.
 For `--target` enter the FQDN of your first master node.
 Replace `<NODE_NAME>` with a unique identifier, for example, "master-one".
 +
+.Log retention
+[NOTE]
+====
+By default skuba will only display the events of the bootstrap process in the terminal during execution.
+The examples in the following sections will use the `tee` tool to store a copy of the outputs in a file of your choosing.
+
+For more information on the different logging approaches utilized by {productname} components please refer to: link:{docurl}single-html/caasp-admin/#_logging[SUSE CaaS Platform - Admin Guide: Logging].
+====
++
 .Custom Trusted CA Certificate
 [TIP]
 ====
@@ -680,7 +689,7 @@ Please refer to the link:{docurl}single-html/caasp-admin/#_certificates[{product
 [source,bash]
 ----
 cd my-cluster
-skuba node bootstrap --user sles --sudo --target <IP/FQDN> <NODE_NAME>
+skuba node bootstrap --user sles --sudo --target <IP/FQDN> <NODE_NAME> | tee <NODE_NAME>-skuba-node-bootstrap.log
 ----
 This will bootstrap the specified node as the first master in the cluster.
 The process will generate authentication certificates and the `admin.conf`
@@ -693,7 +702,7 @@ Replace `<NODE_NAME>` with a unique identifier, for example, "master-two".
 +
 [source,bash]
 ----
-skuba node join --role master --user sles --sudo --target <IP/FQDN> <NODE_NAME>
+skuba node join --role master --user sles --sudo --target <IP/FQDN> <NODE_NAME>| tee <NODE_NAME>-skuba-node-join.log
 ----
 . Add a worker to the cluster:
 +
@@ -702,7 +711,7 @@ Replace `<NODE_NAME>` with a unique identifier, for example, "worker-one".
 +
 [source,bash]
 ----
-skuba node join --role worker --user sles --sudo --target <IP/FQDN> <NODE_NAME>
+skuba node join --role worker --user sles --sudo --target <IP/FQDN> <NODE_NAME>| tee <NODE_NAME>-skuba-node-join.log
 ----
 . Verify that the nodes have been added:
 +
