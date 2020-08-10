@@ -11,12 +11,13 @@ and defining which of the nodes are masters and which are workers. For maximum a
 
 First you need to install `skuba` on a management machine, like your local workstation:
 
-. Add the SLE15 SP1 extension containing `skuba`. This also requires the "containers" module.
+. Add the SLE15 SP2 extension containing `skuba`. This also requires the "containers" and the "public cloud" module.
 +
 [source,bash]
 ----
-SUSEConnect -p sle-module-containers/15.1/x86_64
-SUSEConnect -p caasp/4.0/x86_64 -r <PRODUCT_KEY>
+SUSEConnect -p sle-module-containers/15.2/x86_64
+SUSEConnect -p sle-module-public-cloud/15.2/x86_64
+SUSEConnect -p caasp/4.5/x86_64 -r <PRODUCT_KEY>
 ----
 . Install the management pattern with:
 +

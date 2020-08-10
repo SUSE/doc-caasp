@@ -24,7 +24,7 @@ For production environments, we recommend the use of link:https://documentation.
 [source,bash]
 ----
 SUSEConnect -r CAASP_REGISTRATION_CODE
-SUSEConnect --product sle-module-server-applications/15.1/x86_64
+SUSEConnect --product sle-module-server-applications/15.2/x86_64
 ----
 . Install Nginx:
 +
@@ -185,18 +185,18 @@ If no connection succeeds within this interval (2x5s), the node will be marked a
 [source,bash]
 ----
 SUSEConnect -r CAASP_REGISTRATION_CODE
-SUSEConnect --product sle-module-server-applications/15.1/x86_64
+SUSEConnect --product sle-module-server-applications/15.2/x86_64
 ----
 . Enable the source for the `haproxy` package:
 * If you are using the {sle} {hasi}
 +
 ----
-SUSEConnect --product sle-ha/15.1/x86_64 -r ADDITIONAL_REGCODE
+SUSEConnect --product sle-ha/15.2/x86_64 -r ADDITIONAL_REGCODE
 ----
 * If you want the free (unsupported) package:
 +
 ----
-SUSEConnect --product PackageHub/15.1/x86_64
+SUSEConnect --product PackageHub/15.2/x86_64
 ----
 . Configure `/dev/log` for HAProxy chroot (optional)
 +
