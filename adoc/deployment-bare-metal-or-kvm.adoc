@@ -31,7 +31,7 @@ This {ay} file should act as a guide and should be updated with your company's s
 To account for hardware/platform-specific setup criteria (legacy BIOS vs. (U)EFI, drive partitioning, networking, etc.),
 you must adjust the {ay} file to your needs according to the requirements.
 
-Refer to the official {ay} documentation for more information: link:https://documentation.suse.com/sles/15-SP1/single-html/SLES-autoyast/#book-autoyast[{ay} Guide].
+Refer to the official {ay} documentation for more information: link:https://documentation.suse.com/sles/15-SP2/single-html/SLES-autoyast/#book-autoyast[{ay} Guide].
 ====
 
 ==== Machine Configuration Prerequisites
@@ -51,7 +51,7 @@ for the root partition (30 GB) and the EFI system partition (200 MB).
 Change the pre-filled value to your organization's NTP server. Provide multiple servers if possible by adding new `<ntp_server>` subentries.
 .. `<timezone>`
 +
-Adjust the timezone your nodes will be set to. Refer to: link:https://documentation.suse.com/sles/15-SP1/single-html/SLES-autoyast/#id-1.7.5.13.6[{sls} {ay} Guide: Country Settings]
+Adjust the timezone your nodes will be set to. Refer to: link:https://documentation.suse.com/sles/15-SP2/single-html/SLES-autoyast/#id-1.7.5.13.6[{sls} {ay} Guide: Country Settings]
 .. `<username>sles</username>`
 +
 Insert your authorized key in the placeholder field.
@@ -82,7 +82,7 @@ Your {productname} registration key can be used to both activate {sls} {base_os_
 ====
 
 +
-Refer to the official {ay} documentation for more information: link:https://documentation.suse.com/sles/15-SP1/single-html/SLES-autoyast/#book-autoyast[{ay} Guide].
+Refer to the official {ay} documentation for more information: link:https://documentation.suse.com/sles/15-SP2/single-html/SLES-autoyast/#book-autoyast[{ay} Guide].
 . Host the {ay} files on a Web server reachable inside the network you are installing the cluster in.
 
 ==== Deploying with local {RMT} server
@@ -141,7 +141,7 @@ The load balancer must point at the machines that are assigned to be used as `ma
 [TIP]
 If you do not wish to use infrastructure load balancers, please deploy additional machines and refer to <<loadbalancer>>.
 
-Install {sls} {base_os_version} from your preferred medium and follow the steps for link:https://documentation.suse.com/sles/15-SP1/single-html/SLES-autoyast/#invoking-autoinst[Invoking the Auto-Installation Process]
+Install {sls} {base_os_version} from your preferred medium and follow the steps for link:https://documentation.suse.com/sles/15-SP2/single-html/SLES-autoyast/#invoking-autoinst[Invoking the Auto-Installation Process]
 
 Provide `autoyast=https://[webserver/path/to/autoyast.xml]` during the {sls} {base_os_version} installation.
 
@@ -150,7 +150,7 @@ Provide `autoyast=https://[webserver/path/to/autoyast.xml]` during the {sls} {ba
 [NOTE]
 ====
 Use AutoYaST and make sure to use a staged frozen patchlevel via RMT/SUSE Manager to ensure a 100% reproducible setup.
-link:https://documentation.suse.com/sles/15-SP1/single-html/SLES-rmt/#cha-rmt-client[RMT Guide]
+link:https://documentation.suse.com/sles/15-SP2/single-html/SLES-rmt/#cha-rmt-client[RMT Guide]
 ====
 
 Once the machines have been installed using the {ay} file, you are now ready proceed with <<bootstrap>>.
