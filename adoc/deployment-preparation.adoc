@@ -155,18 +155,20 @@ For any deployment type you will need `skuba` and `{tf}`. These packages are
 available from the {productname} package sources. They are provided as an installation
 "pattern" that will install dependencies and other required packages in one simple step.
 
-Access to the packages requires the `{productname}` and `Containers` extension modules.
+Access to the packages requires the `{productname}`, `Containers` and `Public Cloud` extension modules.
 Enable the modules during the operating system installation or activate them using {suse} Connect.
 
 [source,bash]
 ----
 sudo SUSEConnect -r  <CAASP_REGISTRATION_CODE> # <1>
-sudo SUSEConnect -p sle-module-containers/15.1/x86_64 # <2>
-sudo SUSEConnect -p caasp/4.0/x86_64 -r <CAASP_REGISTRATION_CODE> # <3>
+sudo SUSEConnect -p sle-module-containers/15.2/x86_64 # <2>
+sudo SUSEConnect -p sle-module-public-cloud/15.2/x86_64 # <3>
+sudo SUSEConnect -p caasp/4.5/x86_64 -r <CAASP_REGISTRATION_CODE> # <4>
 ----
 <1> Activate {sle}
 <2> Add the free `Containers` module
-<3> Add the {productname} extension with your registration code
+<3> Add the free `Public Cloud` module
+<4> Add the {productname} extension with your registration code
 
 Install the required tools:
 ----

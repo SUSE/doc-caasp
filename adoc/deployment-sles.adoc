@@ -1,8 +1,8 @@
 == Deployment on Existing SLES Installation
 
 If you already have a running {sls} {base_os_version} installation, you can add {productname}
-to this installation using SUSE Connect. You also need to enable the "Containers"
-module because it contains some dependencies required by {productname}.
+to this installation using SUSE Connect. You also need to enable the "Containers" and "Public Cloud"
+modules because it contains some dependencies required by {productname}.
 
 === Requirements
 
@@ -51,9 +51,10 @@ Substitute `<CAASP_REGISTRATION_CODE>` for the code from <<registration-code>>.
 
 [source,bash]
 ----
-SUSEConnect -p sle-module-containers/15.1/x86_64
+SUSEConnect -p sle-module-containers/15.2/x86_64
+SUSEConnect -p sle-module-public-cloud/15.2/x86_64
 
-SUSEConnect -p caasp/4.0/x86_64 -r <CAASP_REGISTRATION_CODE>
+SUSEConnect -p caasp/4.5/x86_64 -r <CAASP_REGISTRATION_CODE>
 ----
 
 Repeat all preparation steps for any cluster nodes you wish to join.
