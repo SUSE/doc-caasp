@@ -259,6 +259,7 @@ The upgrade via `skuba node upgrade apply` will:
 
 * upgrade the containerized control plane.
 * upgrade the rest of the {kube} system stack (`kubelet`, `cri-o`).
+* temporarily drain/cordon the node before starting the whole process, and then undrain/uncordon the node after the upgrade has been successfully applied.
 * restart services.
 ====
 
