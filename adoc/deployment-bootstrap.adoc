@@ -798,3 +798,39 @@ kube-system   kured-zv696                             1/1       Running   0     
 kube-system   oidc-dex-55fc689dc-b9bxw                1/1       Running   0          2m
 kube-system   oidc-gangway-7b7fbbdbdf-ll6l8           1/1       Running   0          2m
 ----
+
+==== Co-installing multiple versions of kubectl
+
+It's possible to install multiple versions of `kubectl` on the same machine. In
+a {productname} management machine, you will be able to co-install multiple
+versions of `kubectl`, and later mark which is the version to be used with
+`update-alternatives` (by default with the highest version number will be selected).
+
+This can be useful, for example, when managing multiple Kubernetes clusters from
+the same {productname} management machine. That is, following {productname} 4.5,
+{productname} will be able to manage other (supported) Kubernetes versions than
+only 1.18.
+
+For example, in a system like this:
+
+[source,bash]
+----
+# kubectl version
+Client Version: version.Info{Major:"1", Minor:"18", GitVersion:"v1.18.6", GitCommit:"dff82dc0de47299ab66c83c626e08b245ab19037", GitTreeState:"clean", BuildDate:"2020-08-04T12:00:00Z", GoVersion:"go1.13.15", Compiler:"gc", Platform:"linux/amd64"}
+Server Version: version.Info{Major:"1", Minor:"18", GitVersion:"v1.18.6", GitCommit:"dff82dc0de47299ab66c83c626e08b245ab19037", GitTreeState:"clean", BuildDate:"2020-08-04T12:00:00Z", GoVersion:"go1.13.15", Compiler:"gc", Platform:"linux/amd64"}
+----
+
+You can install another version and use other version previously installed with `update-alternatives`:
+
+[source,bash]
+----
+# zypper install kubernetes-1.19-client
+# update-alternatives --set kubectl /usr/bin/kubectl-1.18
+----
+
+At any time you can use newer version with `update-alternatives`:
+
+[source,bash]
+----
+# update-alternatives --set kubectl /usr/bin/kubectl-1.19
+----
