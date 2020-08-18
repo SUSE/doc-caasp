@@ -418,6 +418,9 @@ In the current state, full administrative access is granted to the cluster.
 Authentication is done via the kubeconfig file generated during deployment. This file will grant full access to the cluster and all workloads.
 Apply best practices for access control to workstations configured to administer the {productname} cluster.
 
+The {productname} needs an external authentication server like LDAP to validates the user's entity and grants different user roles or cluster role
+permission by leveraging {kube} role-based access control (RBAC).
+
 ==== Replicas
 
 Some addon services are desired to be highly available. These services require enough cluster nodes available to run replicas of their services.
