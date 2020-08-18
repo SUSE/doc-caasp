@@ -4,8 +4,66 @@ Users access the API using `kubectl`, client libraries, or by making REST reques
 Both human users and {kube} service accounts can be authorized for API access.
 When a request reaches the API, it goes through several stages, that can be explained with the following three questions:
 
-. Authentication: *who are you?* This is accomplished via client certificates, bearer tokens, an authenticating proxy, or HTTP basic auth to authenticate API requests through authentication plugins.
+. Authentication: *who are you?* This is accomplished via <<authentication>> to validate the user's entity and respond to the corresponding user group after successful login.
 . Authorization: *what kind of access do you have?* This is accomplished via <<rbac>> API, that is a set of permissions for the previously authenticated user. Permissions are purely additive (there are no "deny" rules). A role can be defined within a namespace with a Role, or cluster-wide with a ClusterRole.
 . Admission Control: *what are you trying to do?* This is accomplished via <<admission>>. They can modify (mutate) or validate (accept or reject) requests.
 
 Unlike authentication and authorization, if any admission controller rejects, then the request is immediately rejected.
+
+Users can access with a Web browser or command line to do the authentication or self-configure `kubectl` to access authorized resources.
+
+== Authentication and Authorization Flow
+
+Authentication is composed of:
+
+* *Dex* (https://github.com/dexidp/dex) is an identity provider service
+(idP) that uses OIDC (Open ID Connect: https://openid.net/connect/)
+to drive authentication for client applications.
+It acts as a portal to defer authentication to the provider through connected
+identity providers (connectors).
+* *Client*:
+  . Web browser: *Gangway* (https://github.com/heptiolabs/gangway):
+  a Web application that enables authentication flow for your {productname}.
+  The user can log in, authorize access, download `kubeconfig`, or self-configure `kubectl`.
+  . Command-line: `skuba auth login`, a CLI application that enables authentication flow for your {productname}. The user can log in, authorize access, and get `kubeconfig`.
+
+For authorization (Role-Based Access Control, RBAC), administrators can use `kubectl` to create corresponding
+`RoleBinding` or `ClusterRoleBinding` for a user or group to limit resource access.
+
+=== Web Flow
+image::oidc_flow_web.png[]
+// Source: suse-rbac-oidc-flow-web.xml (open with http://draw.io/app)
+
+. The user requests access through Gangway.
+. Gangway redirects to Dex.
+. Dex redirects to a connected identity provider (connector).
+User login and a request to approve access are generated.
+. Dex continues with OIDC authentication flow on behalf of the user
+and creates/updates data to {kube} CRDs.
+. Dex redirects the user to Gangway.
+This redirect includes (ID/refresh) tokens.
+. Gangway returns a link to download `kubeconfig` or self-configures `kubectl`
+instructions to the user.
++
+image::rbac-configure-kubectl.png[]
+
+. User downloads `kubeconf` or self-configures `kubectl`.
+. User uses `kubectl` to connect to the {kube} API server.
+. {kube} CRDs validate the {kube} API server request and return a response.
+. The `kubectl` connects to the authorized {kube} resources through the {kube} API server.
+
+=== CLI Flow
+image::oidc_flow_cli.png[]
+// Source: suse-rbac-oidc-flow-cli.xml (open with http://draw.io/app)
+
+. User requests access through `skuba auth login` with the Dex server URL,
+username and password.
+. Dex uses received username and password to log in and approve the access
+request to the connected identity providers (connectors).
+. Dex continues with the OIDC authentication flow on behalf of the user and
+creates/updates data to the {kube} CRDs.
+. Dex returns the ID token and refreshes token to `skuba auth login`.
+. `skuba auth login` generates the kubeconfig file `kubeconf.txt`.
+. User uses `kubectl` to connect the {kube} API server.
+. {kube} CRDs validate the {kube} API server request and return a response.
+. The `kubectl` connects to the authorized {kube} resources through {kube} API server.

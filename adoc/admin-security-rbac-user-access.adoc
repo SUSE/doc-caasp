@@ -1,0 +1,91 @@
+[#sec-admin-security-rbac-apply]
+== User Access
+
+* Using the Web:
+. Go to the login page at `+https://<CONTROL_PLANE_IP/FQDN>:32001+` in your browser.
+. Click "Sign In".
+. Choose the login method.
+. Enter login credentials.
+. Download `kubeconfig` or self-configure `kubectl` with the provided setup instructions.
+
+* Using the CLI:
+. Use `skuba auth login` with Dex server URL `+https://<CONTROL_PLANE_IP/FQDN>:32000+`,
+login username and password.
+. The kubeconfig `kubeconf.txt` is generated locally.
+
+== Access {kube} Resources
+
+The user can now access resources in the authorized `<NAMESPACE>`.
+
+If the user has the proper permissions to access the resources, the output should look like this:
+
+----
+# kubectl -n <NAMESPACE> get pod
+
+NAMESPACE     NAME                                 READY   STATUS    RESTARTS   AGE
+kube-system   dex-844dc9b8bb-w2zkm                 1/1     Running   0          19d
+kube-system   gangway-944dc9b8cb-w2zkm             1/1     Running   0          19d
+kube-system   cilium-76glw                         1/1     Running   0          27d
+kube-system   cilium-fvgcv                         1/1     Running   0          27d
+kube-system   cilium-j5lpx                         1/1     Running   0          27d
+kube-system   cilium-operator-5d9cc4fbb7-g5plc     1/1     Running   0          34d
+kube-system   cilium-vjf6p                         1/1     Running   8          27d
+kube-system   coredns-559fbd6bb4-2r982             1/1     Running   9          46d
+kube-system   coredns-559fbd6bb4-89k2j             1/1     Running   9          46d
+kube-system   etcd-my-master                       1/1     Running   5          46d
+kube-system   kube-apiserver-my-cluster            1/1     Running   0          19d
+kube-system   kube-controller-manager-my-master    1/1     Running   14         46d
+kube-system   kube-proxy-62hls                     1/1     Running   4          46d
+kube-system   kube-proxy-fhswj                     1/1     Running   0          46d
+kube-system   kube-proxy-r4h42                     1/1     Running   1          39d
+kube-system   kube-proxy-xsdf4                     1/1     Running   0          39d
+kube-system   kube-scheduler-my-master             1/1     Running   13         46d
+----
+
+If the user does not have the right permissions to access a resource,
+they will receive a `Forbidden` message.
+
+----
+Error from server (Forbidden): pods is forbidden
+----
+
+== OIDC Tokens
+
+The kubeconfig file (`kubeconf.txt`) contains the OIDC tokens necessary to perform authentication and authorization in the cluster.
+OIDC tokens have an *expiration date* which means that they need to be refreshed after some time.
+
+[IMPORTANT]
+====
+If you use the same user in multiple `kubeconfig` files distributed among multiple machines,
+this can lead to issues. Due to the nature of access and refresh tokens (https://tools.ietf.org/html/rfc6749#page-10) only one of the machines will be fully able to refresh the token set at any given time.
+
+The user will be able to download multiple `kubeconfig` files, but they will only work until one of them needs to refresh the session.
+After that, only one machine will work, namely the first machine which refreshed the token.
+
+Dex regards one session per user and refreshes `id-token` and `refresh-token` together.
+If a second user is trying to login to get a new `id-token`, Dex will invalidate the previous `id-token` and `refresh-token` for the first user.
+The first user will still be able to use the old `id-token` until expiration but after that, the first user is not allowed to refresh the `id-token` with the now invalid `refresh-token`.
+Only the second user will have a valid `refresh-token`. You will encounter an error like: `"msg="failed to rotate keys: keys already rotated by another server instance"`.
+
+If sharing the same `id-token` in many places, all of them can be used until expiration.
+The first user refreshing the `id-token` & `refresh token` will be able to continue accessing the cluster until the tokens expire.
+All other users will encounter an error `Refresh token is invalid or has already been claimed by another client` because the `refresh-token` got updated by the first user.
+
+Please use separate users for each `kubeconfig` file to avoid this situation.
+Find out how to add more users in <<sec-admin-security-users-add>>.
+You can also check information about the user and the respective OIDC tokens in the `kubeconfig` file under the `users` section:
+
+----
+users:
+- name: myuser
+  user:
+    auth-provider:
+      config:
+        client-id: oidc
+        client-secret: <SECRET>
+        id-token:  <ID_TOKEN>
+        idp-issuer-url: https://<IP>:<PORT>
+        refresh-token: <REFRESH_TOKEN>
+      name: oidc
+----
+====

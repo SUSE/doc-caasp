@@ -1,0 +1,380 @@
+[#authentication]
+= Authentication
+
+{productname} supports user authentication via an external LDAP server like "389 Directory Server" (389-ds)
+and "Active Directory" by updating the built-in Dex LDAP connector configuration, the administrators can update
+LDAP identity providers before or after platform deployment.
+
+== Deploying an External LDAP Server
+
+If you already have an existed LDAP server, you could skip this part.
+
+* Deploying an External 389 Directory Server
++
+The 389 Directory Server image `registry.suse.com/caasp/v4.5/389-ds:1.4.3`
+will *automatically generate a self-signed certificate* and key.
+The following instructions show how to deploy the "389 Directory Server"
+with a customized configuration using container commands.
+
+. Prepare the customized 389 Directory configuration and enter it
+into the terminal in the following format:
++
+----
+DS_DM_PASSWORD=                                 # Admin Password
+DS_SUFFIX="dc=example,dc=org"                   # Domain Suffix
+DATA_DIR=<PWD>/389_ds_data                      # Directory Server Data on Host Machine to Mount
+----
+
+. Execute the following `docker` command to deploy 389-ds in the same terminal.
+This will start a non-TLS port (`389`) and a TLS port (`636`) together with an
+automatically self-signed certificate and key.
++
+----
+docker run -d \
+-p 389:3389 \
+-p 636:3636 \
+-e DS_DM_PASSWORD=<DS_DM_PASSWORD> \
+-e DS_SUFFIX=<DS_SUFFIX> \
+-v <DATA_DIR>:/data \
+--name 389-ds registry.suse.com/caasp/v4.5/389-ds:1.4.3
+----
+
+* Deploying an External 389 Directory Server with an External Certificate
++
+To replace the automatically generated certificate with your own, follow these steps:
+
+. Stop the running container:
++
+----
+docker stop 389-ds
+----
+
+. Copy the external certificate `ca.cert` and `pwdfile.txt` to a mounted data directory `<DATA_DIR>/ssca/`.
+- `ca.cert`: CA Certificate.
+- `pwdfile.txt`: Password for the CA Certificate.
+. Copy the external certificate `Server-Cert-Key.pem`, `Server-Cert.crt`, and `pwdfile-import.txt` to a mounted data directory `<DATA_DIR>/config/`.
+- `Server-Cert-Key.pem`: PRIVATE KEY.
+- `Server-Cert.crt`: CERTIFICATE.
+- `pwdfile-import.txt`: Password for the PRIVATE KEY.
+. Execute the `docker` command to run the 389 Directory Server with a mounted data
+the directory from the previous step:
++
+----
+docker start 389-ds
+----
+
+.Known Issues
+[NOTE]
+====
+The error message is a warning for 389-ds version `1.4.3` when replacing external certificates.
+----
+ERR - attrcrypt_cipher_init - No symmetric key found for cipher AES in backend exampleDB, attempting to create one...
+INFO - attrcrypt_cipher_init - Key for cipher AES successfully generated and stored
+ERR - attrcrypt_cipher_init - No symmetric key found for cipher 3DES in backend exampleDB, attempting to create one...
+INFO - attrcrypt_cipher_init - Key for cipher 3DES successfully generated and stored
+----
+It is due to the encrypted key being stored in the `dse.ldif`.
+When replacing the key and certificate in `/data/config`, 389ds will search in `dse.ldif` for a symmetric key and create one if it does not exist.
+389-ds developers are planning a fix that switches 389-ds to use the `nssdb` exclusively.
+====
+
+== Examples of Usage
+
+In both directories, `user-regular1` and `user-regular2` are members of the `k8s-users` group,
+and `user-admin` is a member of the `k8s-admins` group.
+
+In Active Directory, `user-bind` is a simple user that is a member of the default Domain Users group.
+Hence, we can use it to authenticate, because it has read-only access to Active Directory.
+The mail attribute is used to create the RBAC rules.
+
+=== 389 Directory Server:
+
+* Example LDIF configuration to initialize LDAP using an LDAP command:
++
+====
+
+  dn: dc=example,dc=org
+  objectClass: top
+  objectClass: domain
+  dc: example
+
+  dn: cn=Directory Administrators,dc=example,dc=org
+  objectClass: top
+  objectClass: groupofuniquenames
+  cn: Directory Administrators
+  uniqueMember: cn=Directory Manager
+
+  dn: ou=Groups,dc=example,dc=org
+  objectClass: top
+  objectClass: organizationalunit
+  ou: Groups
+
+  dn: ou=People,dc=example,dc=org
+  objectClass: top
+  objectClass: organizationalunit
+  ou: People
+
+  dn: ou=Users,dc=example,dc=org
+  objectclass: top
+  objectclass: organizationalUnit
+  ou: Users
+====
+
+* Example LDIF configuration to configure ACL using an LDAP command:
++
+====
+  dn: dc=example,dc=org
+  changetype: modify
+  add: aci
+  aci: (targetattr!="userPassword || aci")(version 3.0; acl "Enable anonymous access"; allow (read, search, compare) userdn="ldap:///anyone";)
+  aci: (targetattr="carLicense || description || displayName || facsimileTelephoneNumber || homePhone || homePostalAddress || initials || jpegPhoto || labeledURI || mail || mobile || pager || photo || postOfficeBox || postalAddress || postalCode || preferredDeliveryMethod || preferredLanguage || registeredAddress || roomNumber || secretary || seeAlso || st || street || telephoneNumber || telexNumber || title || userCertificate || userPassword || userSMIMECertificate || x500UniqueIdentifier")(version 3.0; acl "Enable self write for common attributes"; allow (write) userdn="ldap:///self";)
+  aci: (targetattr ="*")(version 3.0;acl "Directory Administrators Group";allow (all) (groupdn = "ldap:///cn=Directory Administrators, dc=example,dc=org");)
+====
+
+* Example LDIF configuration to create user `user-regular1` using an LDAP command:
++
+====
+
+  dn: uid=user-regular1,ou=Users,dc=example,dc=org
+  changetype: add
+  uid: user-regular1
+  userPassword: SSHA_PASSWORD
+  objectClass: posixaccount
+  objectClass: inetOrgPerson
+  objectClass: person
+  objectClass: inetUser
+  objectClass: organizationalPerson
+  uidNumber: 1200
+  gidNumber: 500
+  givenName: User
+  mail: user-regular1@example.org
+  sn: Regular1
+  homeDirectory: /home/regular1
+  cn: User Regular1
+====
+SSHA_PASSWORD: The user's new hashed password.
+Use `/usr/sbin/slappasswd` to generate the SSHA hash.
++
+----
+/usr/sbin/slappasswd -h {SSHA} -s <USER_PASSWORD>
+----
+Use `/usr/bin/pwdhash` to generate the SSHA hash.
++
+----
+/usr/bin/pwdhash -s SSHA <USER_PASSWORD>
+----
+
+* Example LDIF configuration to create user `user-regular2` using an LDAP command:
++
+====
+
+  dn: uid=user-regular2,ou=Users,dc=example,dc=org
+  changetype: add
+  uid: user-regular2
+  userPassword: SSHA_PASSWORD
+  objectClass: posixaccount
+  objectClass: inetOrgPerson
+  objectClass: person
+  objectClass: inetUser
+  objectClass: organizationalPerson
+  uidNumber: 1300
+  gidNumber: 500
+  givenName: User
+  mail: user-regular2@example.org
+  sn: Regular1
+  homeDirectory: /home/regular2
+  cn: User Regular2
+====
+SSHA_PASSWORD: The user's new hashed password.
+Use `/usr/sbin/slappasswd` to generate the SSHA hash.
++
+----
+/usr/sbin/slappasswd -h {SSHA} -s <USER_PASSWORD>
+----
+Use `/usr/bin/pwdhash` to generate the SSHA hash.
++
+----
+/usr/bin/pwdhash -s SSHA <USER_PASSWORD>
+----
+
+* Example LDIF configuration to create user `user-admin` using an LDAP command:
++
+====
+
+  dn: uid=user-admin,ou=Users,dc=example,dc=org
+  changetype: add
+  uid: user-admin
+  userPassword: SSHA_PASSWORD
+  objectClass: posixaccount
+  objectClass: inetOrgPerson
+  objectClass: person
+  objectClass: inetUser
+  objectClass: organizationalPerson
+  uidNumber: 1000
+  gidNumber: 100
+  givenName: User
+  mail: user-admin@example.org
+  sn: Admin
+  homeDirectory: /home/admin
+  cn: User Admin
+====
+SSHA_PASSWORD: The user's new hashed password.
+Use `/usr/sbin/slappasswd` to generate the SSHA hash.
++
+----
+/usr/sbin/slappasswd -h {SSHA} -s <USER_PASSWORD>
+----
+Use `/usr/bin/pwdhash` to generate the SSHA hash.
++
+----
+/usr/bin/pwdhash -s SSHA <USER_PASSWORD>
+----
+
+* Example LDIF configuration to create group `k8s-users` using an LDAP command:
++
+====
+
+  dn: cn=k8s-users,ou=Groups,dc=example,dc=org
+  changetype: add
+  gidNumber: 500
+  objectClass: groupOfNames
+  objectClass: posixGroup
+  cn: k8s-users
+  ou: Groups
+  memberUid: user-regular1
+  memberUid: user-regular2
+====
+
+* Example LDIF configuration to create group `k8s-admins` using an LDAP command:
++
+====
+
+  dn: cn=k8s-admins,ou=Groups,dc=example,dc=org
+  changetype: add
+  gidNumber: 100
+  objectClass: groupOfNames
+  objectClass: posixGroup
+  cn: k8s-admins
+  ou: Groups
+  memberUid: user-admin
+====
+
+=== Active Directory
+
+* Example LDIF configuration to create user `user-regular1` using an LDAP command:
++
+====
+
+  dn: cn=user-regular1,ou=Users,dc=example,dc=org
+  objectClass: top
+  objectClass: person
+  objectClass: organizationalPerson
+  objectClass: user
+  cn: user-regular1
+  sn: Regular1
+  givenName: User
+  distinguishedName: cn=user-regular1,ou=Users,dc=example,dc=org
+  displayName: User Regular1
+  memberOf: cn=Domain Users,ou=Users,dc=example,dc=org
+  memberOf: cn=k8s-users,ou=Groups,dc=example,dc=org
+  name: user-regular1
+  sAMAccountName: user-regular1
+  objectCategory: cn=Person,cn=Schema,cn=Configuration,dc=example,dc=org
+  mail: user-regular1@example.org
+====
+
+* Example LDIF configuration to create user `user-regular2` using an LDAP command:
++
+====
+
+  dn: cn=user-regular2,ou=Users,dc=example,dc=org
+  objectClass: top
+  objectClass: person
+  objectClass: organizationalPerson
+  objectClass: user
+  cn: user-regular2
+  sn: Regular2
+  givenName: User
+  distinguishedName: cn=user-regular2,ou=Users,dc=example,dc=org
+  displayName: User Regular2
+  memberOf: cn=Domain Users,ou=Users,dc=example,dc=org
+  memberOf: cn=k8s-users,ou=Groups,dc=example,dc=org
+  name: user-regular2
+  sAMAccountName: user-regular2
+  objectCategory: cn=Person,cn=Schema,cn=Configuration,dc=example,dc=org
+  mail: user-regular2@example.org
+====
+
+* Example LDIF configuration to create user `user-bind` using an LDAP command:
++
+====
+
+  dn: cn=user-bind,ou=Users,dc=example,dc=org
+  objectClass: top
+  objectClass: person
+  objectClass: organizationalPerson
+  objectClass: user
+  cn: user-bind
+  sn: Bind
+  givenName: User
+  distinguishedName: cn=user-bind,ou=Users,dc=example,dc=org
+  displayName: User Bind
+  memberOf: cn=Domain Users,ou=Users,dc=example,dc=org
+  name: user-bind
+  sAMAccountName: user-bind
+  objectCategory: cn=Person,cn=Schema,cn=Configuration,dc=example,dc=org
+  mail: user-bind@example.org
+====
+
+* Example LDIF configuration to create user `user-admin` using an LDAP command:
++
+====
+
+  dn: cn=user-admin,ou=Users,dc=example,dc=org
+  objectClass: top
+  objectClass: person
+  objectClass: organizationalPerson
+  objectClass: user
+  cn: user-admin
+  sn: Admin
+  givenName: User
+  distinguishedName: cn=user-admin,ou=Users,dc=example,dc=org
+  displayName: User Admin
+  memberOf: cn=Domain Users,ou=Users,dc=example,dc=org
+  memberOf: cn=k8s-admins,ou=Groups,dc=example,dc=org
+  name: user-admin
+  sAMAccountName: user-admin
+  objectCategory: cn=Person,cn=Schema,cn=Configuration,dc=example,dc=org
+  mail: user-admin@example.org
+====
+
+* Example LDIF configuration to create group `k8s-users` using an LDAP command:
++
+====
+
+  dn: cn=k8s-users,ou=Groups,dc=example,dc=org
+  objectClass: top
+  objectClass: group
+  cn: k8s-users
+  member: cn=user-regular1,ou=Users,dc=example,dc=org
+  member: cn=user-regular2,ou=Users,dc=example,dc=org
+  distinguishedName: cn=k8s-users,ou=Groups,dc=example,dc=org
+  name: k8s-users
+  sAMAccountName: k8s-users
+  objectCategory: cn=Group,cn=Schema,cn=Configuration,dc=example,dc=org
+====
+
+* Example LDIF configuration to create group `k8s-admins` using an LDAP command:
++
+====
+
+  dn: cn=k8s-admins,ou=Groups,dc=example,dc=org
+  objectClass: top
+  objectClass: group
+  cn: k8s-admins
+  member: cn=user-admin,ou=Users,dc=example,dc=org
+  distinguishedName: cn=k8s-admins,ou=Groups,dc=example,dc=org
+  name: k8s-admins
+  sAMAccountName: k8s-admins
+  objectCategory: cn=Group,cn=Schema,cn=Configuration,dc=example,dc=org
+====
