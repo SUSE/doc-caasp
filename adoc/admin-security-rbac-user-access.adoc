@@ -1,17 +1,17 @@
 [#sec-admin-security-rbac-apply]
 == User Access
 
-* Using the Web:
-. Go to the login page at `+https://<CONTROL_PLANE_IP/FQDN>:32001+` in your browser.
+* Using the web browser:
+. Go to the login page at `+https://<CONTROL_PLANE_IP/FQDN>:32001+`.
 . Click "Sign In".
-. Choose the login method.
+. Choose a login method.
 . Enter login credentials.
 . Download `kubeconfig` or self-configure `kubectl` with the provided setup instructions.
 
 * Using the CLI:
-. Use `skuba auth login` with Dex server URL `+https://<CONTROL_PLANE_IP/FQDN>:32000+`,
+. Run `skuba auth login` with Dex server URL `+https://<CONTROL_PLANE_IP/FQDN>:32000+`,
 login username and password.
-. The kubeconfig `kubeconf.txt` is generated locally.
+. The kubeconfig `kubeconf.txt` is generated at your current directory.
 
 == Access {kube} Resources
 
@@ -59,16 +59,15 @@ OIDC tokens have an *expiration date* which means that they need to be refreshed
 If you use the same user in multiple `kubeconfig` files distributed among multiple machines,
 this can lead to issues. Due to the nature of access and refresh tokens (https://tools.ietf.org/html/rfc6749#page-10) only one of the machines will be fully able to refresh the token set at any given time.
 
-The user will be able to download multiple `kubeconfig` files, but they will only work until one of them needs to refresh the session.
-After that, only one machine will work, namely the first machine which refreshed the token.
+The user will be able to download multiple 'kubeconfig' files. However, the file with the same user is likely to be valid only for single access until expiration.
 
-Dex regards one session per user and refreshes `id-token` and `refresh-token` together.
+Dex regards one session per user. The `id-token` and `refresh-token` are refreshed together.
 If a second user is trying to login to get a new `id-token`, Dex will invalidate the previous `id-token` and `refresh-token` for the first user.
-The first user will still be able to use the old `id-token` until expiration but after that, the first user is not allowed to refresh the `id-token` with the now invalid `refresh-token`.
-Only the second user will have a valid `refresh-token`. You will encounter an error like: `"msg="failed to rotate keys: keys already rotated by another server instance"`.
+The first user is still able to continue using the old `id-token` until expiration. After expiration, the first user is not allowed to refresh the `id-token` due to the invalid `refresh-token`.
+Only the second user will have a valid `refresh-token` now. The first user will encounter an error like: `"msg="failed to rotate keys: keys already rotated by another server instance"`.
 
 If sharing the same `id-token` in many places, all of them can be used until expiration.
-The first user refreshing the `id-token` & `refresh token` will be able to continue accessing the cluster until the tokens expire.
+The first user to refresh the `id-token` and `refresh token` will be able to continue accessing the cluster.
 All other users will encounter an error `Refresh token is invalid or has already been claimed by another client` because the `refresh-token` got updated by the first user.
 
 Please use separate users for each `kubeconfig` file to avoid this situation.

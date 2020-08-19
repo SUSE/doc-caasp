@@ -74,7 +74,7 @@ ERR - attrcrypt_cipher_init - No symmetric key found for cipher 3DES in backend 
 INFO - attrcrypt_cipher_init - Key for cipher 3DES successfully generated and stored
 ----
 It is due to the encrypted key being stored in the `dse.ldif`.
-When replacing the key and certificate in `/data/config`, 389ds will search in `dse.ldif` for a symmetric key and create one if it does not exist.
+When replacing the key and certificate in `/data/config`, 389ds searches `dse.ldif` for symmetric key and create one if it does not exist.
 389-ds developers are planning a fix that switches 389-ds to use the `nssdb` exclusively.
 ====
 
