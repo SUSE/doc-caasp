@@ -145,7 +145,7 @@ helm install \
     --set configuration.backupStorageLocation.config.s3Url=<S3_COMPATIBLE_STORAGE_SERVER_URL> \
     --set snapshotsEnabled=false \
     --set initContainers[0].name=velero-plugin-for-aws \
-    --set initContainers[0].image=registry.suse.com/caasp/v4.5/velero-plugin-for-aws:1.0.1 \
+    --set initContainers[0].image=registry.suse.com/caasp/v4/velero-plugin-for-aws:1.0.1 \
     --set initContainers[0].volumeMounts[0].mountPath=/target \
     --set initContainers[0].volumeMounts[0].name=plugins \
     suse/velero
