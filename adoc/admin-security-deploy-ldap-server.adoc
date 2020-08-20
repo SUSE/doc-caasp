@@ -25,7 +25,7 @@ DS_SUFFIX="dc=example,dc=org"                   # Domain Suffix
 DATA_DIR=<PWD>/389_ds_data                      # Directory Server Data on Host Machine to Mount
 ----
 
-. Execute the following `docker` command to deploy 389-ds in the same terminal.
+. Execute the following command to deploy 389-ds in the same terminal.
 This will start a non-TLS port (`389`) and a TLS port (`636`) together with an
 automatically self-signed certificate and key.
 +
@@ -56,7 +56,7 @@ docker stop 389-ds
 - `Server-Cert-Key.pem`: PRIVATE KEY.
 - `Server-Cert.crt`: CERTIFICATE.
 - `pwdfile-import.txt`: Password for the PRIVATE KEY.
-. Execute the `docker` command to run the 389 Directory Server with a mounted data
+. Execute the following command to run the 389 Directory Server with a mounted data
 the directory from the previous step:
 +
 ----
@@ -136,7 +136,7 @@ The mail attribute is used to create the RBAC rules.
   dn: uid=user-regular1,ou=Users,dc=example,dc=org
   changetype: add
   uid: user-regular1
-  userPassword: SSHA_PASSWORD
+  userPassword: SSHA_PASSWORD // <1>
   objectClass: posixaccount
   objectClass: inetOrgPerson
   objectClass: person
@@ -150,7 +150,8 @@ The mail attribute is used to create the RBAC rules.
   homeDirectory: /home/regular1
   cn: User Regular1
 ====
-SSHA_PASSWORD: The user's new hashed password.
+<1> SSHA_PASSWORD: The user's new hashed password.
++
 Use `/usr/sbin/slappasswd` to generate the SSHA hash.
 +
 ----
@@ -168,7 +169,7 @@ Use `/usr/bin/pwdhash` to generate the SSHA hash.
   dn: uid=user-regular2,ou=Users,dc=example,dc=org
   changetype: add
   uid: user-regular2
-  userPassword: SSHA_PASSWORD
+  userPassword: SSHA_PASSWORD // <1>
   objectClass: posixaccount
   objectClass: inetOrgPerson
   objectClass: person
@@ -182,7 +183,8 @@ Use `/usr/bin/pwdhash` to generate the SSHA hash.
   homeDirectory: /home/regular2
   cn: User Regular2
 ====
-SSHA_PASSWORD: The user's new hashed password.
+<1> SSHA_PASSWORD: The user's new hashed password.
++
 Use `/usr/sbin/slappasswd` to generate the SSHA hash.
 +
 ----
@@ -200,7 +202,7 @@ Use `/usr/bin/pwdhash` to generate the SSHA hash.
   dn: uid=user-admin,ou=Users,dc=example,dc=org
   changetype: add
   uid: user-admin
-  userPassword: SSHA_PASSWORD
+  userPassword: SSHA_PASSWORD // <1>
   objectClass: posixaccount
   objectClass: inetOrgPerson
   objectClass: person
@@ -214,7 +216,8 @@ Use `/usr/bin/pwdhash` to generate the SSHA hash.
   homeDirectory: /home/admin
   cn: User Admin
 ====
-SSHA_PASSWORD: The user's new hashed password.
+<1> SSHA_PASSWORD: The user's new hashed password.
++
 Use `/usr/sbin/slappasswd` to generate the SSHA hash.
 +
 ----
