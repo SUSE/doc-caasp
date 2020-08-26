@@ -1,6 +1,5 @@
 [#sec-admin-security-users]
-
-= Managing Users and Groups
+= Managing LDAP Users and Groups
 
 You can use standard LDAP administration tools for managing organizations, groups and users remotely.
 To do so, install the `openldap2-client` package on a computer in your network
@@ -193,7 +192,7 @@ replace: nsslapd-rootpw
 nsslapd-rootpw: NEW_PASSWORD
 ----
 +
-* NEW_PASSWORD: The user's new hashed password. Use `/usr/sbin/slappasswd` to generate the SSHA hash.
+* NEW_PASSWORD: The user's new hashed password.
 +
 Use `/usr/sbin/slappasswd` to generate the SSHA hash.
 +
@@ -217,7 +216,7 @@ userPassword: NEW_PASSWORD
 +
 * USERID: The desired user's ID
 * OU_NAME: organizational unit name
-* NEW_PASSWORD: The user's new hashed password. Use `/usr/sbin/slappasswd` to generate the SSHA hash.
+* NEW_PASSWORD: The user's new hashed password.
 +
 Use `/usr/sbin/slappasswd` to generate the SSHA hash.
 +
