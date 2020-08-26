@@ -7,34 +7,34 @@ In order to reconnect your OS to SCC, you run:
 
 2) You need the new `zypper migration` plugin. This plugin is used to perform the needed tasks in order to migrate the node itself to the latest version of {platform}. 
 This plugin is provided by the `zypper-migration-plugin` package. Therefore, install zypper-migration-plugin:
-zypper -n in zyppper-migration-plugin
+#### zypper -n in zyppper-migration-plugin
 
 3) Perform zypper-migration (on management node first, then on the rest of the nodes; this command will execute the zypper-migration-plugin script, where all the repositories will be changed, then "zypper dup" command will be ran): 
-zypper migration --non-interactive --auto-agree-with-licenses 
+#### zypper migration --non-interactive --auto-agree-with-licenses 
 
 4) Check if skuba was indeed upgraded to 4.5:
-skuba version
+#### skuba version
 (version must be >= skuba-2.1; skuba 2 corresponds to CaaSP 4.5, while skuba 1.0-1.4 corresponds to CaaSP 4)
 
 5) Run skuba cluster upgrade commands. 
 - First, check if there are any addons or components to upgrade before you upgrade the nodes:
-skuba cluster upgrade plan 
-skuba addon upgrade plan 
-skuba addon upgrade apply
+#### skuba cluster upgrade plan 
+#### skuba addon upgrade plan 
+#### skuba addon upgrade apply
 
 - Then, check with “-status” if all nodes have the same kubernetes version:
-skuba cluster status 
+#### skuba cluster status 
 
 - Finally, if all nodes have the same kubernetes version, you first upgrade the cri-o config:
-skuba cluster upgrade localconfig 
+#### skuba cluster upgrade localconfig 
 
 - Run skuba node upgrade:
-skuba node upgrade apply —-user sles —-sudo —-target <IP of the node you’ve migrated>
+#### skuba node upgrade apply —-user sles —-sudo —-target <IP of the node you’ve migrated>
 
 - Done! Before repeating the same cycle with the rest of the nodes, PLEASE make sure with 
-kubectl get all -n kube-system
+#### kubectl get all -n kube-system
 that all the components of kubernetes stack ARE RUNNING on the freshly upgraded node.
 
 6) Last but not least: after upgrading all the nodes - make sure you run another addon upgrade across the cluster: 
-skuba addon upgrade plan 
-skuba addon upgrade apply
+#### skuba addon upgrade plan 
+#### skuba addon upgrade apply
