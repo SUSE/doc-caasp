@@ -16,8 +16,13 @@ zypper -n in zyppper-migration-plugin
 3) Then, run the newly installed `zypper-migration` plugin (on the management node first, then on the rest of the nodes):
 
 ----
-zypper migration --non-interactive --auto-agree-with-licenses
+zypper migration
 ----
+
+[NOTE]
+====
+If you want migration to progress non-interactive, you can add flags: `--non-interactive --auto-agree-with-licenses`
+====
 
 4) Check if `skuba` was indeed upgraded for 4.5:
 
@@ -39,7 +44,7 @@ skuba addon upgrade plan
 skuba addon upgrade apply
 ----
 
-- Then, check with `cluster status` if all nodes have the same kubernetes version:
+- Then, check with `cluster status` if all nodes have the same kubernetes version (which must be 1.17.x):
 ----
 skuba cluster status
 ----
