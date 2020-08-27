@@ -1,11 +1,12 @@
 == Migration to {productname} 4.5
 
-1) The OS must be connected to SCC. Otherwise the migration will not work.
-In order to reconnect your OS to SCC, you run:
+1) The OS must be connected to servers like SCC or RMT. Otherwise the migration will not work.
 
-----
-SUSEConnect -r <your SCC key> SUSEConnect -p sle-module-containers/15.1/x86_64 -r <your SCC key>
-----
+[NOTE]
+====
+In order to reconnect your OS to SCC, you run:
+`SUSEConnect -r <your SCC key> SUSEConnect -p sle-module-containers/15.1/x86_64 -r <your SCC key>`
+====
 
 2) You also need the new `zypper migration` plugin. This plugin is used to perform the needed tasks in order to migrate the node itself to the latest version of {platform}, such as updating the repositories to the new ones, and calling `zypper dup`. This plugin is provided by the `zypper-migration-plugin` package. Therefore, install the `zypper-migration-plugin` package:
 
