@@ -108,15 +108,15 @@ velero backup create backup-1 --selector app=elasticsearch-master
 
 ** Location
 +
-Pass `--storage-location` to specify where the backup to store. For example, if we have an HA object storage server called master and slave respectively.
+Pass `--storage-location` to specify where the backup to store. For example, if we have an HA object storage server called default and secondary respectively.
 +
 [source,bash]
 ----
-# Create a backup to the master storage server
-velero backup create backup2master --storage-location master
+# Create a backup to the default storage server
+velero backup create backup2default --storage-location default
 
-# Create a backup to the slave storage server
-velero backup create backup2slave --storage-location slave
+# Create a backup to the secondary storage server
+velero backup create backup2secondary --storage-location secondary
 ----
 
 ** Garbage Collection
