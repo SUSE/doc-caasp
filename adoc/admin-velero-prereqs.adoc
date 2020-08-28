@@ -12,10 +12,10 @@ Add {suse} helm chart repository URL:
 helm repo add suse https://kubernetes-charts.suse.com
 ----
 
-=== Object Storage And It's Credentials
+=== Object Storage And Its Credentials
 
 Velero uses object storage to store backups and associated artifacts.
-It can also optionally create snapshots of persistent volume and store them in object storage by `restic`, if there is no supported volume snapshot provider.
+It can also optionally create snapshots of persistent volume and store them in object storage by `restic` if there is no supported volume snapshot provider.
 
 Choose one of the object storage providers, which fits your environment, from the list below for backing up and restoring the {kube} cluster.
 
@@ -53,7 +53,7 @@ Install `aws` CLI locally, follow the link:https://docs.aws.amazon.com/cli/lates
 
 . AWS S3 bucket
 +
-Create a AWS S3 bucket to store backup data and restore data from the S3 bucket.
+Create an AWS S3 bucket to store backup data and restore data from the S3 bucket.
 +
 [source,bash]
 ----
@@ -228,8 +228,7 @@ aws_secret_access_key=<SES_STORAGE_SECRET_ACCESS_KEY>
 ----
 
 ===== Minio
-
-Besides {ses}, there is an alternative open source S3-compatible object storage provider link:https://min.io/[minio].
+Besides {ses}, there is an alternative open-source S3-compatible object storage provider link:https://min.io/[minio].
 
 . Prepare an external host and install Minio on the host
 +
@@ -265,13 +264,13 @@ aws_access_key_id=<MINIO_STORAGE_ACCESS_KEY_ID>
 aws_secret_access_key=<MINIO_STORAGE_SECRET_ACCESS_KEY>
 ----
 +
-For the rest of the S3-compatible storage providers, refer to link:https://velero.io/docs/v1.4/supported-providers/[Velero Supported Providers].
+For the rest of the S3-compatible storage providers, refer to link:https://velero.io/docs/v1.4/supported-providers/[Velero: Supported Providers].
 
 === Volume Snapshotter
 
-A volume snapshotter is able to snapshot its persistent volumes if its volume driver supports volume snapshot and corresponding API.
+A volume snapshotter can snapshot its persistent volumes if its volume driver supports volume snapshot and corresponding API.
 
-If a volume provider does not support volume snapshot or volume snapshot API, or does not have Velero supported storage plugin, Velero leverages `restic` as an agnostic solution to backup and restore this sort of persistent volumes.
+If a volume provider does not support volume snapshot or volume snapshot API or does not have Velero supported storage plugin, Velero leverages `restic` as an agnostic solution to backup and restore this sort of persistent volumes.
 
 [options="header"]
 |===
@@ -279,7 +278,7 @@ If a volume provider does not support volume snapshot or volume snapshot API, or
 |Amazon Web Services (AWS) | AWS EBS | link:https://github.com/vmware-tanzu/velero-plugin-for-aws[Velero plugin for AWS]
 |===
 
-For the other `snapshotter` providers refer to link:https://velero.io/docs/v1.4/supported-providers/[Velero Supported Providers].
+For the other `snapshotter` providers refer to link:https://velero.io/docs/v1.4/supported-providers/[Velero: Supported Providers].
 
 === Velero CLI
 

@@ -1,10 +1,10 @@
 == Deployment
 
-Use Helm CLI to install Velero deployment and `restic` (_optional_) if the storage does not provides volume snapshot API.
+Use Helm CLI to install Velero deployment and `restic` (_optional_) if the storage does not provide volume snapshot API.
 
 [NOTE]
 ====
-If Velero installed other than default namespace `velero`, setup velero config config to the Velero installed namespace.
+If Velero installed other than default namespace `velero`, setup velero config to the Velero installed namespace.
 ----
 velero client config set namespace=<NAMESPACE>
 ----
@@ -17,7 +17,7 @@ For troubleshooting a velero deployment, refer to link:https://velero.io/docs/v1
 
 === Backup {kube} Cluster Objects Only
 
-For the cases that the {kube} cluster does not use external storage _or_ the external storage would handle take volume snapshot by itself, it does not need Velero to backup persistent volume.
+For the cases that the {kube} cluster do not use external storage _or_ the external storage would handle take volume snapshot by itself, it does not need Velero to backup persistent volume.
 
 * Backup To A Public Cloud Provider
 
@@ -63,7 +63,7 @@ helm install velero \
     suse/velero
 ----
 
-. Then, suggests creating at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
+. Then, suggest creating at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
 +
 [source,bash]
 ----
@@ -112,7 +112,7 @@ helm install velero \
     suse/velero
 ----
 
-. Then, suggests creating at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
+. Then, suggest creating at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
 +
 [source,bash]
 ----
@@ -166,7 +166,7 @@ helm install velero \
     suse/velero
 ----
 
-. Then, suggests creating at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
+. Then, suggest creating at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
 +
 [source,bash]
 ----
@@ -208,7 +208,7 @@ helm install \
     suse/velero
 ----
 
-. Then, suggests creating at least one additional backup location point to the different object storage server to prevent object storage server single point of failure.
+. Then, suggest creating at least one additional backup location point to the different object storage server to prevent object storage server single point of failure.
 +
 [source,bash]
 ----
@@ -235,8 +235,8 @@ If the {kube} cluster in AWS and uses AWS EBS as storage, please remove the
 ----
 --set deployRestic=true \
 ----
-at below in order to use AWS EBS volume snapshot API to take volume snapshot.
-Otherwise, it would install restic and velero server will use restic to take volume snapshot and the volume data will stores to AWS S3 bucket.
+at below to use AWS EBS volume snapshot API to take volume snapshot.
+Otherwise, it would install restic and velero server will use restic to take a volume snapshot and the volume data will store to AWS S3 bucket.
 ====
 +
 [source,bash]
@@ -282,7 +282,7 @@ helm install velero \
     suse/velero
 ----
 
-. Then, suggest to create at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
+. Then, suggest creating at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
 +
 [source,bash]
 ----
@@ -346,7 +346,7 @@ helm install velero \
     suse/velero
 ----
 
-. Then, suggests creating at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
+. Then, suggest creating at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
 +
 [source,bash]
 ----
@@ -415,7 +415,7 @@ helm install velero \
     suse/velero
 ----
 
-. Then, suggests creating at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
+. Then, suggest creating at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
 +
 [source,bash]
 ----
@@ -489,7 +489,7 @@ helm install velero \
     suse/velero
 ----
 
-. Then, suggest to create at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
+. Then, suggest creating at least one additional backup locations point to the different object storage server to prevent object storage server single point of failure.
 +
 [source,bash]
 ----
