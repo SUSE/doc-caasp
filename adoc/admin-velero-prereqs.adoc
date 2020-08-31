@@ -291,20 +291,6 @@ sudo zypper install velero
 
 == Known Issues
 
-. Velero reports errors when restoring Cilium CRDs. However, this does not affect Cilium functionality.
-+
-[NOTE]
-====
-You can add a label to Cilium CRDs to skip Velero backup.
-
-[source,bash]
-----
-kubectl label -n kube-system customresourcedefinitions/ciliumendpoints.cilium.io velero.io/exclude-from-backup=true
-
-kubectl label -n kube-system customresourcedefinitions/ciliumnetworkpolicies.cilium.io velero.io/exclude-from-backup=true
-----
-====
-
 . When restoring `dex` and `gangway`, Velero reports `NodePort` cannot be restored since `dex` and `gangway` are deployed by an addon already and the same `NodePort` has been registered.
 However, this does not break the `dex` and `gangway` service access from outside.
 +
