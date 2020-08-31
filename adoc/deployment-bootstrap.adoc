@@ -83,6 +83,12 @@ Now you can initialize the cluster on the deployed machines.
 As `--control-plane` enter the IP/FQDN of your load balancer.
 If you do not use a load balancer use your first master node.
 
+[IMPORTANT]
+====
+If you are deploying on a cloud provider you must enable vendor specific integrations (CPI).
+Please refer further below to <<enabling-cpi>>.
+====
+
 [source,bash]
 ----
 skuba cluster init --control-plane <LB_IP/FQDN> my-cluster
@@ -152,6 +158,7 @@ This also holds for `serviceSubnet` - the IP range must not conflict with extern
 
 Before bootstrapping the cluster, it is advisable to perform some additional configuration.
 
+[#enabling-cpi]
 ===== Enabling Cloud Provider Integration
 
 Enable cloud provider integration to take advantage of the underlying cloud platforms
