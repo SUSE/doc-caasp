@@ -1,17 +1,24 @@
-[#caasp-migrate-4.5]
+[#caasp-migration]
 == Migration to {productname} 4.5
 
-. The server should be connected to servers like SCC or RMT. Other migration scenarios are covered in the SLES upgrade guide.
+=== Updating the operating system
+. The node should be able to communicate with the servers for {scc} or {rmt}.
+Other migration scenarios are covered in the SLES upgrade guide.
 +
 [NOTE]
 ====
 In order to reconnect your system to the registration server, run:
-`SUSEConnect -r <your SCC key> SUSEConnect -p sle-module-containers/15.1/x86_64 -r <your SCC key>`
+----
+SUSEConnect -r <your SCC key> SUSEConnect -p sle-module-containers/15.1/x86_64 -r <your SCC key>
+----
 ====
-. You also need the new `zypper migration` plugin. This plugin is used to perform the needed tasks in order to migrate the node itself to the latest version of {platform}, such as updating the repositories to the new ones, and calling `zypper dup`. This plugin is provided by the `zypper-migration-plugin` package. Therefore, install the `zypper-migration-plugin` package:
+. You also need the new `zypper migration` plugin.
+This plugin is used to perform the needed tasks in order to migrate the node itself to the latest version of {platform}, such as updating the repositories to the new ones, and calling `zypper dup`.
+This plugin is provided by the `zypper-migration-plugin` package.
+Therefore, you need to install the `zypper-migration-plugin` package:
 +
 ----
-zypper -n in zyppper-migration-plugin
+zypper -n in zypper-migration-plugin
 ----
 . Then, run the newly installed `zypper-migration` plugin (on the management node first, then on the rest of the nodes):
 +
@@ -36,7 +43,7 @@ Verify that all repositories on the following list are present and enabled:
 The actual Aliases might be different from the ones shown here if they were configured differently during the initial installation of {sle}.
 
 The URIs will have long UUID strings (`update?<UUID>`,`product?<UUID>`) attached to them. The UUIDs identify your personal licensed product or update repositories.
-These have been omitted from this output exapmle.
+These have been omitted from this output example.
 ====
 +
 [options="header",cols="2"]
@@ -66,6 +73,9 @@ skuba version
 The version must be >= `skuba-2.1`.
 `skuba 2` corresponds to {productname} 4.5, while `skuba 1.0-1.4` corresponds to {productname} 4.
 ====
+
+=== Upgrade the cluster
+
 . And now run the skuba cluster upgrade commands as it's done below.
 +
 - First, check if there are any addons or components to upgrade before you upgrade the nodes:
@@ -75,7 +85,7 @@ skuba cluster upgrade plan
 skuba addon upgrade plan
 skuba addon upgrade apply
 ----
-- Then, check with `cluster status` if all nodes have the same kubernetes version (which must be 1.17.x):
+- Then, check with `cluster status` if all nodes have the same {kube} version (which must be 1.17.x):
 +
 ----
 skuba cluster status
@@ -83,10 +93,11 @@ skuba cluster status
 +
 [NOTE]
 ====
-If not all nodes are properly upgraded to the same Kubernetes version, then the ones with an older Kubernetes version must be upgraded before migrating according to the previous documentation.
+If not all nodes are properly upgraded to the same Kubernetes version, then the ones with an older {kube} version must be upgraded before attempting a migration.
+Refer to the update documentation of the previous version to bring all nodes to the latest update state.
 ====
 +
-- Finally, if all nodes have the same kubernetes version, you first upgrade the cri-o config:
+- Once all nodes have the same {kube} version, you must upgrade the {crio} config:
 +
 ----
 skuba cluster upgrade localconfig
@@ -96,11 +107,13 @@ skuba cluster upgrade localconfig
 ----
 skuba node upgrade apply —-user sles —-sudo —-target <IP of the node you’ve migrated>
 ----
-- Done! Before repeating the same cycle with the rest of the nodes, **please make sure** that all the components of the kubernetes stack **are running** on the freshly upgraded node. You can do this with the following command:
+- Before repeating the same cycle with the rest of the nodes, **please make sure** that all the components of the kubernetes stack **are running** on the freshly upgraded node.
+You can do this with the following command:
 +
 ----
 kubectl get all -n kube-system
 ----
+. Now repeat the above steps for all nodes to bring them to the upgraded state.
 . After upgrading all the nodes, make sure you run another addon upgrade across the cluster:
 +
 ----
@@ -108,4 +121,6 @@ skuba addon upgrade plan
 skuba addon upgrade apply
 ----
 
-After following all these instructions you should be running {productname} 4.5. Take a look at the release notes of this release to further inspect the new features that this release brings. Enjoy!
+After following all these instructions you should be running {productname} 4.5.
+Refer to the link:https://www.suse.com/releasenotes/x86_64/SUSE-CAASP/4.5/[release notes] for further information on the new features that this release brings.
+Enjoy!
