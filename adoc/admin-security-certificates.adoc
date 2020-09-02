@@ -521,7 +521,7 @@ kubectl rollout restart deployment/oidc-gangway -n kube-system
 
 ** Replace the OIDC CA for `kube-apiserver`:
 
-. Copy custom OIDC CA which was used for `oidc-dex` and `oidc-gangway` to [path]`/etc/kubernetes/pki/oidc-ca.crt` on all CaaSP master nodes
+. Copy custom OIDC CA which was used for `oidc-dex` and `oidc-gangway` to [path]`/etc/kubernetes/pki/oidc-ca.crt` on all {productname} master nodes
 +
 [source,bash]
 ----
@@ -538,7 +538,7 @@ sed -i "s|oidc-ca-file: .*|oidc-ca-file: /etc/kubernetes/pki/oidc-ca.crt|" kubea
 kubectl apply -f kubeadm-config.yaml
 ----
 
-. Update `oidc-ca-file` in static pod manifest for kube-apiserver in [path]`/etc/kubernetes/manifests/kube-apiserver.yaml` on all CaaSP master nodes
+. Update `oidc-ca-file` in static pod manifest for kube-apiserver in [path]`/etc/kubernetes/manifests/kube-apiserver.yaml` on all {productname} master nodes
 +
 [source,bash]
 ----
