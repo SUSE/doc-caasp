@@ -1,113 +1,108 @@
 [#caasp-migrate-4.5]
 == Migration to {productname} 4.5
 
-1) The server should be connected to servers like SCC or RMT. Other migration scenarios are covered in the SLES upgrade guide.
-
+. The server should be connected to servers like SCC or RMT. Other migration scenarios are covered in the SLES upgrade guide.
++
 [NOTE]
 ====
 In order to reconnect your system to the registration server, run:
 `SUSEConnect -r <your SCC key> SUSEConnect -p sle-module-containers/15.1/x86_64 -r <your SCC key>`
 ====
-
-2) You also need the new `zypper migration` plugin. This plugin is used to perform the needed tasks in order to migrate the node itself to the latest version of {platform}, such as updating the repositories to the new ones, and calling `zypper dup`. This plugin is provided by the `zypper-migration-plugin` package. Therefore, install the `zypper-migration-plugin` package:
-
+. You also need the new `zypper migration` plugin. This plugin is used to perform the needed tasks in order to migrate the node itself to the latest version of {platform}, such as updating the repositories to the new ones, and calling `zypper dup`. This plugin is provided by the `zypper-migration-plugin` package. Therefore, install the `zypper-migration-plugin` package:
++
 ----
 zypper -n in zyppper-migration-plugin
 ----
-
-3) Then, run the newly installed `zypper-migration` plugin (on the management node first, then on the rest of the nodes):
-
+. Then, run the newly installed `zypper-migration` plugin (on the management node first, then on the rest of the nodes):
++
 ----
 zypper migration
 ----
-
++
 [NOTE]
 ====
-If you want migration to progress non-interactive, you can add flags: `--non-interactive --auto-agree-with-licenses`
+If you want migration to progress non-interactive, you can add the flags: `--non-interactive --auto-agree-with-licenses`
 ====
+. Check that all required repositories are enabled again and have the correct version. Run:
++
+====
+zypper lr -uE
+====
++
+Verify that all repositories on the following list are present and enabled:
++
 [NOTE]
 ====
-That's how your `zypper lr` should look like after the migration:
+The actual Aliases might be different from the ones shown here if they were configured differently during the initial installation of {sle}.
 
- 1 | Basesystem_Module_15_SP2_x86_64:SLE-Module-Basesystem15-SP2-Debuginfo-Pool                      | SLE-Module-Basesystem15-SP2-Debuginfo-Pool
- 2 | Basesystem_Module_15_SP2_x86_64:SLE-Module-Basesystem15-SP2-Debuginfo-Updates                   | SLE-Module-Basesystem15-SP2-Debuginfo-Updates   
- 3 | Basesystem_Module_15_SP2_x86_64:SLE-Module-Basesystem15-SP2-Pool                                | SLE-Module-Basesystem15-SP2-Pool                
- 4 | Basesystem_Module_15_SP2_x86_64:SLE-Module-Basesystem15-SP2-Source-Pool                         | SLE-Module-Basesystem15-SP2-Source-Pool         
- 5 | Basesystem_Module_15_SP2_x86_64:SLE-Module-Basesystem15-SP2-Updates                             | SLE-Module-Basesystem15-SP2-Updates             
- 6 | Containers_Module_15_SP2_x86_64:SLE-Module-Containers15-SP2-Debuginfo-Pool                      | SLE-Module-Containers15-SP2-Debuginfo-Pool      
- 7 | Containers_Module_15_SP2_x86_64:SLE-Module-Containers15-SP2-Debuginfo-Updates                   | SLE-Module-Containers15-SP2-Debuginfo-Updates   
- 8 | Containers_Module_15_SP2_x86_64:SLE-Module-Containers15-SP2-Pool                                | SLE-Module-Containers15-SP2-Pool                
- 9 | Containers_Module_15_SP2_x86_64:SLE-Module-Containers15-SP2-Source-Pool                         | SLE-Module-Containers15-SP2-Source-Pool         
-10 | Containers_Module_15_SP2_x86_64:SLE-Module-Containers15-SP2-Updates                             | SLE-Module-Containers15-SP2-Updates             
-11 | Python_2_Module_15_SP2_x86_64:SLE-Module-Python2-15-SP2-Debuginfo-Pool                          | SLE-Module-Python2-15-SP2-Debuginfo-Pool        
-12 | Python_2_Module_15_SP2_x86_64:SLE-Module-Python2-15-SP2-Debuginfo-Updates                       | SLE-Module-Python2-15-SP2-Debuginfo-Updates     
-13 | Python_2_Module_15_SP2_x86_64:SLE-Module-Python2-15-SP2-Pool                                    | SLE-Module-Python2-15-SP2-Pool                  
-14 | Python_2_Module_15_SP2_x86_64:SLE-Module-Python2-15-SP2-Source-Pool                             | SLE-Module-Python2-15-SP2-Source-Pool           
-15 | Python_2_Module_15_SP2_x86_64:SLE-Module-Python2-15-SP2-Updates                                 | SLE-Module-Python2-15-SP2-Updates               
-16 | SUSE_CaaS_Platform_4.5_x86_64:SUSE-CAASP-4.5-Debuginfo-Pool                                     | SUSE-CAASP-4.5-Debuginfo-Pool                   
-17 | SUSE_CaaS_Platform_4.5_x86_64:SUSE-CAASP-4.5-Debuginfo-Updates                                  | SUSE-CAASP-4.5-Debuginfo-Updates                
-18 | SUSE_CaaS_Platform_4.5_x86_64:SUSE-CAASP-4.5-Pool                                               | SUSE-CAASP-4.5-Pool                             
-19 | SUSE_CaaS_Platform_4.5_x86_64:SUSE-CAASP-4.5-Source-Pool                                        | SUSE-CAASP-4.5-Source-Pool                      
-20 | SUSE_CaaS_Platform_4.5_x86_64:SUSE-CAASP-4.5-Updates                                            | SUSE-CAASP-4.5-Updates                          
-21 | SUSE_Linux_Enterprise_Server_15_SP2_x86_64:SLE-Product-SLES15-SP2-Debuginfo-Pool                | SLE-Product-SLES15-SP2-Debuginfo-Pool           
-22 | SUSE_Linux_Enterprise_Server_15_SP2_x86_64:SLE-Product-SLES15-SP2-Debuginfo-Updates             | SLE-Product-SLES15-SP2-Debuginfo-Updates        
-23 | SUSE_Linux_Enterprise_Server_15_SP2_x86_64:SLE-Product-SLES15-SP2-Pool                          | SLE-Product-SLES15-SP2-Pool                     
-24 | SUSE_Linux_Enterprise_Server_15_SP2_x86_64:SLE-Product-SLES15-SP2-Source-Pool                   | SLE-Product-SLES15-SP2-Source-Pool              
-25 | SUSE_Linux_Enterprise_Server_15_SP2_x86_64:SLE-Product-SLES15-SP2-Updates                       | SLE-Product-SLES15-SP2-Updates                  
-26 | Server_Applications_Module_15_SP2_x86_64:SLE-Module-Server-Applications15-SP2-Debuginfo-Pool    | SLE-Module-Server-Applications15-SP2-Debuginfo-P
-27 | Server_Applications_Module_15_SP2_x86_64:SLE-Module-Server-Applications15-SP2-Debuginfo-Updates | SLE-Module-Server-Applications15-SP2-Debuginfo-U
-28 | Server_Applications_Module_15_SP2_x86_64:SLE-Module-Server-Applications15-SP2-Pool              | SLE-Module-Server-Applications15-SP2-Pool       
-29 | Server_Applications_Module_15_SP2_x86_64:SLE-Module-Server-Applications15-SP2-Source-Pool       | SLE-Module-Server-Applications15-SP2-Source-Pool
-30 | Server_Applications_Module_15_SP2_x86_64:SLE-Module-Server-Applications15-SP2-Updates           | SLE-Module-Server-Applications15-SP2-Updates
+The URIs will have long UUID strings (`update?<UUID>`,`product?<UUID>`) attached to them which identify your personal licensed product or update repositories.
+These have been omitted from this output exapmle.
 ====
-
-4) Check if `skuba` was indeed upgraded for 4.5:
-
++
+[options="header",cols="2"]
+|===
+|Alias |URI
+|Basesystem_Module_15_SP2_x86_64:SLE-Module-Basesystem15-SP2-Pool                      | https://updates.suse.com/SUSE/Products/SLE-Module-Basesystem/15-SP2/x86_64/
+|Basesystem_Module_15_SP2_x86_64:SLE-Module-Basesystem15-SP2-Updates                   | https://updates.suse.com/SUSE/Updates/SLE-Module-Basesystem/15-SP2/x86_64/
+|Containers_Module_15_SP2_x86_64:SLE-Module-Containers15-SP2-Pool                      | https://updates.suse.com/SUSE/Products/SLE-Module-Containers/15-SP2/x86_64/
+|Containers_Module_15_SP2_x86_64:SLE-Module-Containers15-SP2-Updates                   | https://updates.suse.com/SUSE/Updates/SLE-Module-Containers/15-SP2/x86_64/
+|Python_2_Module_15_SP2_x86_64:SLE-Module-Python2-15-SP2-Pool                          | https://updates.suse.com/SUSE/Products/SLE-Module-Python2/15-SP2/x86_64/
+|Python_2_Module_15_SP2_x86_64:SLE-Module-Python2-15-SP2-Updates                       | https://updates.suse.com/SUSE/Updates/SLE-Module-Python2/15-SP2/x86_64/
+|SUSE_CaaS_Platform_4.5_x86_64:SUSE-CAASP-4.5-Pool                                     | https://updates.suse.com/SUSE/Products/SUSE-CAASP/4.5/x86_64/
+|SUSE_CaaS_Platform_4.5_x86_64:SUSE-CAASP-4.5-Updates                                  | https://updates.suse.com/SUSE/Updates/SUSE-CAASP/4.5/x86_64/
+|SUSE_Linux_Enterprise_Server_15_SP2_x86_64:SLE-Product-SLES15-SP2-Pool                | https://updates.suse.com/SUSE/Products/SLE-Product-SLES/15-SP2/x86_64/
+|SUSE_Linux_Enterprise_Server_15_SP2_x86_64:SLE-Product-SLES15-SP2-Updates             | https://updates.suse.com/SUSE/Updates/SLE-Product-SLES/15-SP2/x86_64/
+|Server_Applications_Module_15_SP2_x86_64:SLE-Module-Server-Applications15-SP2-Pool    | https://updates.suse.com/SUSE/Products/SLE-Module-Server-Applications/15-SP2/x86_64/
+|Server_Applications_Module_15_SP2_x86_64:SLE-Module-Server-Applications15-SP2-Updates | https://updates.suse.com/SUSE/Updates/SLE-Module-Server-Applications/15-SP2/x86_64/
+|===
+. Check if `skuba` was indeed upgraded for 4.5:
++
 ----
 skuba version
 ----
-
++
 [IMPORTANT]
 ====
-The version must be >= `skuba-2.1`. `skuba 2` corresponds to {productname} 4.5, while `skuba 1.0-1.4` corresponds to {productname} 4.
+The version must be >= `skuba-2.1`.
+`skuba 2` corresponds to {productname} 4.5, while `skuba 1.0-1.4` corresponds to {productname} 4.
 ====
-
-5) And now run the skuba cluster upgrade commands as it's done below.
-
+. And now run the skuba cluster upgrade commands as it's done below.
++
 - First, check if there are any addons or components to upgrade before you upgrade the nodes:
++
 ----
 skuba cluster upgrade plan
 skuba addon upgrade plan
 skuba addon upgrade apply
 ----
-
 - Then, check with `cluster status` if all nodes have the same kubernetes version (which must be 1.17.x):
++
 ----
 skuba cluster status
 ----
-
++
 [NOTE]
 ====
 If not all nodes are properly upgraded to the same Kubernetes version, then the ones with an older Kubernetes version must be upgraded before migrating according to the previous documentation.
 ====
-
++
 - Finally, if all nodes have the same kubernetes version, you first upgrade the cri-o config:
++
 ----
 skuba cluster upgrade localconfig
 ----
-
 - Run `skuba node upgrade`:
++
 ----
 skuba node upgrade apply —-user sles —-sudo —-target <IP of the node you’ve migrated>
 ----
-
 - Done! Before repeating the same cycle with the rest of the nodes, **please make sure** that all the components of the kubernetes stack **are running** on the freshly upgraded node. You can do this with the following command:
++
 ----
 kubectl get all -n kube-system
 ----
-
-6) After upgrading all the nodes, make sure you run another addon upgrade across the cluster:
-
+. After upgrading all the nodes, make sure you run another addon upgrade across the cluster:
++
 ----
 skuba addon upgrade plan
 skuba addon upgrade apply
