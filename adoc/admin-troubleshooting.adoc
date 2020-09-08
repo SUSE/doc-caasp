@@ -56,7 +56,7 @@ Apart from the logs provided by running the `supportconfig` tool, an additional 
 ====
 If the problem you are facing is related to your production environment, do **not** upload the `admin.conf` as this would expose access to your cluster to anyone in possession of the collected information! The same precautions apply for the `pki` directory, since this also contains sensitive information (CA cert and key).
 
-In this case add `--exclude='./my-cluster/admin.conf' --exclude='./my-cluster/pki/'` to the command in the following example. Make sure to replace `./my-cluster` with the actual path of your cluster definition folder.
+In this case add `--exclude='./<CLUSTER_NAME>/admin.conf' --exclude='./<CLUSTER_NAME>/pki/'` to the command in the following example. Make sure to replace `./<CLUSTER_NAME>` with the actual path of your cluster definition folder.
 
 If you need to debug issues with your private certificates, a separate call with {suse} support must be scheduled to help you.
 ====
@@ -66,7 +66,7 @@ Create a `TAR` archive by compressing the cluster definition directory.
 ----
 # Read the TIP above
 # Move the admin.conf and pki directory to another safe location or exclude from packaging
-tar -czvf cluster.tar.gz /home/user/my-cluster/
+tar -czvf cluster.tar.gz /home/user/<CLUSTER_NAME>/
 # If the error is related to Terraform, please copy the terraform configuration files as well
 tar -czvf cluster.tar.gz /home/user/my-terraform-configuration/
 ----
