@@ -92,9 +92,9 @@ Please refer further below to <<enabling-cpi>>.
 
 [source,bash]
 ----
-skuba cluster init --control-plane <LB_IP/FQDN> my-cluster
+skuba cluster init --control-plane <LB_IP/FQDN> <CLUSTER_NAME>
 ----
-`cluster init` generates the folder named `my-cluster` and initializes the directory that will hold the configuration (`kubeconfig`) for the cluster.
+`cluster init` generates the folder named `<CLUSTER_NAME>` and initializes the directory that will hold the configuration (`kubeconfig`) for the cluster.
 
 [IMPORTANT]
 ====
@@ -192,12 +192,12 @@ Define the cluster using the following command:
 
 [source,bash]
 ----
-skuba cluster init --control-plane <LB_IP/FQDN> --cloud-provider openstack my-cluster
+skuba cluster init --control-plane <LB_IP/FQDN> --cloud-provider openstack <CLUSTER_NAME>
 ----
 
-Running the above command will create a directory `my-cluster/cloud/openstack` with a
+Running the above command will create a directory `<CLUSTER_NAME>/cloud/openstack` with a
 `README.md` and an `openstack.conf.template` in it. Copy `openstack.conf.template`
-or create an `openstack.conf` file inside `my-cluster/cloud/openstack`,
+or create an `openstack.conf` file inside `<CLUSTER_NAME>/cloud/openstack`,
 according to the supported format.
 The supported format and content can be found in the official Kubernetes documentation:
 
@@ -205,7 +205,7 @@ The supported format and content can be found in the official Kubernetes documen
 
 [WARNING]
 ====
-The file `my-cluster/cloud/openstack/openstack.conf` must not be freely accessible.
+The file `<CLUSTER_NAME>/cloud/openstack/openstack.conf` must not be freely accessible.
 Please remember to set proper file permissions for it, for example `600`.
 ====
 
@@ -280,10 +280,10 @@ Define the cluster using the following command:
 
 [source,bash]
 ----
-skuba cluster init --control-plane <LB IP/FQDN> --cloud-provider aws my-cluster
+skuba cluster init --control-plane <LB IP/FQDN> --cloud-provider aws <CLUSTER_NAME>
 ----
 
-Running the above command will create a directory `my-cluster/cloud/aws` with a
+Running the above command will create a directory `<CLUSTER_NAME>/cloud/aws` with a
 `README.md` file in it. No further configuration files are needed.
 
 The supported format and content can be found in the
@@ -305,18 +305,18 @@ Define the cluster using the following command:
 
 [source,bash]
 ----
-skuba cluster init --control-plane <LB_IP/FQDN> --cloud-provider vsphere my-cluster
+skuba cluster init --control-plane <LB_IP/FQDN> --cloud-provider vsphere <CLUSTER_NAME>
 ----
 
-Running the above command will create a directory `my-cluster/cloud/vsphere` with a
+Running the above command will create a directory `<CLUSTER_NAME>/cloud/vsphere` with a
 `README.md` and a `vsphere.conf.template` in it. Copy `vsphere.conf.template`
-or create a `vsphere.conf` file inside `my-cluster/cloud/vsphere`, according to the supported format.
+or create a `vsphere.conf` file inside `<CLUSTER_NAME>/cloud/vsphere`, according to the supported format.
 
 The supported format and content can be found in the link:https://kubernetes.io/docs/concepts/cluster-administration/cloud-providers/#vsphere[official Kubernetes documentation].
 
 [WARNING]
 ====
-The file `my-cluster/cloud/vsphere/vsphere.conf` must not be freely accessible.
+The file `<CLUSTER_NAME>/cloud/vsphere/vsphere.conf` must not be freely accessible.
 Please remember to set proper file permissions for it, for example `600`.
 ====
 
@@ -540,7 +540,7 @@ After the setup you can proceed to use link:{docurl}/single-html/caasp-admin/#_v
 
 ===== Integrate External LDAP TLS
 
-. Based on the manifest in `my-cluster/addons/dex/base/dex.yaml`, provide a kustomize patch to `my-cluster/addons/dex/patches/custom.yaml` of the form of strategic merge patch or a JSON 6902 patch.
+. Based on the manifest in `<CLUSTER_NAME>/addons/dex/base/dex.yaml`, provide a kustomize patch to `<CLUSTER_NAME>/addons/dex/patches/custom.yaml` of the form of strategic merge patch or a JSON 6902 patch.
 . Adapt the `ConfigMap` by adding LDAP configuration to the connector section of the `custom.yaml` file. For detailed configurations for the LDAP connector, refer to https://github.com/dexidp/dex/blob/v2.23.0/Documentation/connectors/ldap.md.
 
 Read https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchstrategicmerge and https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchjson6902 to get more information.
@@ -592,7 +592,7 @@ it is possible to flag the pod with `--blocking-pod-selector=<POD_NAME>`.
 Any node running this workload will not be rebooted via `kured` and needs to
 be rebooted manually.
 
-. Based on the manifest in `my-cluster/addons/kured/base/kured.yaml`, provide a kustomize patch to `my-cluster/addons/kured/patches/custom.yaml` of the form of strategic merge patch or a JSON 6902 patch.
+. Based on the manifest in `<CLUSTER_NAME>/addons/kured/base/kured.yaml`, provide a kustomize patch to `<CLUSTER_NAME>/addons/kured/patches/custom.yaml` of the form of strategic merge patch or a JSON 6902 patch.
 Read https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchstrategicmerge and https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchjson6902 to get more information.
 . Adapt the `DaemonSet` by adding one of the following flags to the `command`
 section of the `kured` container:
@@ -619,10 +619,10 @@ You can add any key/value labels to this selector:
 --blocking-pod-selector=<LABEL_KEY_1>=<LABEL_VALUE_1>,<LABEL_KEY_2>=<LABEL_VALUE_2>
 ----
 
-Alternatively, you can adapt the `kured` DaemonSet also later during runtime (after bootstrap) by editing `my-cluster/addons/kured/patches/custom.yaml` and executing:
+Alternatively, you can adapt the `kured` DaemonSet also later during runtime (after bootstrap) by editing `<CLUSTER_NAME>/addons/kured/patches/custom.yaml` and executing:
 [source,bash]
 ----
-kubectl apply -k my-cluster/addons/kured/
+kubectl apply -k <CLUSTER_NAME>/addons/kured/
 ----
 
 This will restart all `kured` pods with the additional configuration flags.
@@ -635,7 +635,7 @@ By default, **any** prometheus alert blocks a node from reboot.
 However you can filter specific alerts to be ignored via the `--alert-filter-regexp` flag.
 ====
 
-. Based on the manifest in `my-cluster/addons/kured/base/kured.yaml`, provide a kustomize patch to `my-cluster/addons/kured/patches/custom.yaml` of the form of strategic merge patch or a JSON 6902 patch.
+. Based on the manifest in `<CLUSTER_NAME>/addons/kured/base/kured.yaml`, provide a kustomize patch to `<CLUSTER_NAME>/addons/kured/patches/custom.yaml` of the form of strategic merge patch or a JSON 6902 patch.
 Read https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchstrategicmerge and https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#patchjson6902 to get more information.
 . Adapt the `DaemonSet` by adding one of the following flags to the `command` section of the `kured` container:
 +
@@ -661,10 +661,10 @@ spec:
 The <PROMETHEUS_SERVER_URL> needs to contain the protocol (`http://` or `https://`)
 ====
 
-Alternatively you can adapt the `kured` DaemonSet also later during runtime (after bootstrap) by editing `my-cluster/addons/kured/patches/custom.yaml` and executing:
+Alternatively you can adapt the `kured` DaemonSet also later during runtime (after bootstrap) by editing `<CLUSTER_NAME>/addons/kured/patches/custom.yaml` and executing:
 [source,bash]
 ----
-kubectl apply -k my-cluster/addons/kured/
+kubectl apply -k <CLUSTER_NAME>/addons/kured/
 ----
 
 This will restart all `kured` pods with the additional configuration flags.
@@ -696,13 +696,13 @@ Please refer to the link:{docurl}single-html/caasp-admin/#_certificates[{product
 +
 [source,bash]
 ----
-cd my-cluster
-skuba node bootstrap --user sles --sudo --target <IP/FQDN> <NODE_NAME> | tee <NODE_NAME>-skuba-node-bootstrap.log
+cd <CLUSTER_NAME>
+skuba node bootstrap --user sles --sudo --target <IP/FQDN> <NODE_NAME>
 ----
 This will bootstrap the specified node as the first master in the cluster.
 The process will generate authentication certificates and the `admin.conf`
 file that is used for authentication against the cluster.
-The files will be stored in the `my-cluster` directory specified in step one.
+The files will be stored in the `<CLUSTER_NAME>` directory specified in step one.
 . Add additional master nodes to the cluster.
 +
 Replace the `<IP/FQDN>` with the IP for the machine.
@@ -759,7 +759,7 @@ sudo zypper in kubernetes-client
 Alternatively you can install from upstream: {kubedoc}tasks/tools/install-kubectl/.
 ====
 
-To talk to your cluster, you must be in the `my-cluster` directory when running commands so it can find the `admin.conf` file.
+To talk to your cluster, you must be in the `<CLUSTER_NAME>` directory when running commands so it can find the `admin.conf` file.
 
 .Setting up `kubeconfig`
 [TIP]
