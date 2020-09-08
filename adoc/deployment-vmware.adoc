@@ -11,6 +11,17 @@ You must have completed <<deployment-preparations>> to proceed.
 These instructions are based on `VMware ESXi {vmware_version}`.
 ====
 
+.Enable Jumbo Frames
+[IMPORTANT]
+====
+The {productname} cluster components use long request headers (in excess of 1300 Bytes) that might not fit into a default configuration.
+You must enable "Jumbo Frames" on the switch ports connecting to your ESXi hosts. Any MTU value above 1500 is considered a "Jumbo Frame" but minor increases can still be too small to hold all headers. Please set the maximum transmission unit (MTU) to 9000. This is the maximum value for vSphere and should cover all payloads.
+
+To enable "Jumbo Frames" refer to: https://docs.vmware.com/en/VMware-vSphere/7.0/com.vmware.vsphere.networking.doc/GUID-53F968D9-2F91-41DA-B7B2-48394D997F2A.html
+
+Please check with your hardware vendor that the network adapters used by your cluster support "Jumbo Frames".
+====
+
 [IMPORTANT]
 ====
 VMware vSphere doesn't offer a load-balancer solution. Please expose port `6443`
