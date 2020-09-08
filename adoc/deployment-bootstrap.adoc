@@ -344,13 +344,13 @@ Please remember to set proper file permissions for it, for example `600`.
 <7> (required) The name of the route table attached to the subnet that the cluster is deployed in.
 <8> (optional) Use managed service identity for the virtual machine to access Azure ARM APIs. Set to false if not using managed identity authentication.
 
-After setting options in the `azure.conf` file, please proceed with <<cluster.bootstrap>>.
+After setting options in the `azure.conf` file, please proceed with <<cluster-bootstrap>>.
 
 [NOTE]
 ====
 Clusters provisioned following link:{docurl}single-html/caasp-deployment/#_using_terraform[Deploying VMs from the Template] with `cpi_enable = true` automatically configurs Azure virtual machine to use a system-assigned managed identity.
 
-To use service principle authentication you need to <<cluster.bootstrap.azure.create-service-principle>> and provide `aadClientId`, `aadClientSecret` and configure `useManagedIdentityExtension` to `false`.
+To use service principle authentication you need to <<cluster-bootstrap-azure-create-service-principle>> and provide `aadClientId`, `aadClientSecret` and configure `useManagedIdentityExtension` to `false`.
 ====
 
 [IMPORTANT]
@@ -359,7 +359,7 @@ When cloud provider integration is enabled, it's very important to bootstrap and
 These names will be used by the `Azure` cloud controller manager to reconcile node metadata.
 ====
 
-[[cluster.bootstrap.azure.create-service-principle]]
+[[cluster-bootstrap-azure-create-service-principle]]
 ===== Create Service Principle
 [IMPORTANT]
 ====
@@ -397,7 +397,6 @@ For installation instructions, refer to link:https://docs.microsoft.com/en-us/cl
 <2> The password applies to aadClientSecret.
 <3> Then tenant applies to tenantId.
 
-[#cluster.bootstrap.vcp]
 ====== vSphere CPI (VCP)
 
 Define the cluster using the following command:
