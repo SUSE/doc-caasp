@@ -13,6 +13,11 @@ These instructions are based on `VMware ESXi {vmware_version}`.
 
 [IMPORTANT]
 ====
+Jumbo frames must be enabled on the switch ports that the ESXi hosts are connected to, it will let ESXi hosts send larger packets over the physical network. Maximum transmission unit (MTU) can be set as value greater than 1500 bytes, where 9000 bytes is the maximum frame size that can be configured.
+====
+
+[IMPORTANT]
+====
 VMware vSphere doesn't offer a load-balancer solution. Please expose port `6443`
 for the {kube} api-servers on the master nodes on a local load balancer using
 round-robin 1:1 port forwarding.
