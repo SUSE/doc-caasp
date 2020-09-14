@@ -1,0 +1,94 @@
+[#addon-kustomize]
+= Custom Component Configuration
+
+[NOTE]
+====
+If you use multiple management workstations to manage the {productname} cluster, make sure
+that your customizations to the config files are synced to all management workstations.
+
+Otherwise, if the set of customizations is outdated, the next run of `skuba addon upgrade` will
+undo changes and possibly leave the cluster or some workloads in non-functional condition.
+====
+
+== Using Kustomize
+
+{productname} uses link:https://github.com/kubernetes-sigs/kustomize[Kustomize]
+to allow customization of included addons.
+
+Kustomize allows you to create YAML or JSON files without a template that will override
+the default configurations, leaving the default files intact. For information about
+the file format and allowed fields, refer to: https://kubernetes-sigs.github.io/kustomize/api-reference/glossary/#kustomization
+
+The configuration options specified in the `kustomize` files will be "appended" to the
+default configuration. This, in effect, means that the default options will be effectively overwritten.
+In reality, the options will be parsed from both the default and custom configuration and only the latter applies.
+This can lead to some outputs for commands showing option/parameter flags that are overruled by the custom configuration.
+
+[TIP]
+====
+Using YAML files has the advantage that these files can be directly applied to the cluster
+without converting them first. Using JSON format requires converting the files to YAML with `kustomize build`.
+====
+
+The configuration files are managed in a central location on the management workstation
+together with your cluster definition files that were created during the deployment of the cluster.
+
+====
+.
+├── addons
+│   ├── cilium
+│   │   ├── base
+│   │   │   └── cilium.yaml
+│   │   └── patches
+│   ├── containers
+│   │   └── registries.conf
+│   ├── cri-o
+│   │   ├── crio.conf.d
+│   │   │   └── *.conf
+│   │   └── default_flags
+│   ├── dex
+│   │   ├── base
+│   │   │   └── dex.yaml
+│   │   └── patches
+│   ├── gangway
+│   │   ├── base
+│   │   │   └── gangway.yaml
+│   │   └── patches
+│   ├── kured
+│   │   ├── base
+│   │   │   └── kured.yaml
+│   │   └── patches
+│   └── psp
+│       ├── base
+│       │   └── psp.yaml
+│       └── patches
+├── kubeadm-init.conf
+└── kubeadm-join.conf.d
+    ├── master.conf.template
+    └── worker.conf.template
+====
+
+To apply the changes to the cluster run `skuba addon upgrade plan` to see
+which changes will be distributed. To actually apply the configurations run:
+
+----
+skuba addon refresh localconfig
+----
+
+This will apply all configurations from the cluster definition folder.
+
+For more examples on how to use the configuration customization, refer to:
+
+* <<configure-auth-connector>>
+* <<configure-psp>>
+
+== Manual Customisation
+
+There are some configurations that
+
+Example: Configure `registries.conf` file
+
+Some configurations do not conform to the `Kustomize` method but can also be customized.
+
+Create the file `<CLUSTER_NAME>/addons/containers/registries.conf` and define the
+configuration. You can find an example in <<config-crio-container-registry>>.
