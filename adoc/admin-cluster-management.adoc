@@ -54,11 +54,21 @@ New master nodes that you didn't initially include in your Terraform's configura
 to be manually added to your load balancer's configuration.
 ====
 
-
 To add a new *worker* node, you would run something like:
 
 [source,bash]
 skuba node join --role worker --user sles --sudo --target 10.86.2.164 worker1
+
+=== Adding Nodes from Template
+
+If you are using a virtual machine template for creating new cluster nodes,
+you must make sure that *before* joining the cloned machine to the cluster it is updated to the same software versions
+than the other nodes in the cluster.
+
+Refer to <<handling-updates>>.
+
+Nodes with mismatching package or container software
+versions might not be fully functional.
 
 [#removing-nodes]
 == Removing Nodes
