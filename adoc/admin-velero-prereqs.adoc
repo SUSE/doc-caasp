@@ -26,8 +26,8 @@ The object storage server checks access permission, so it is vital to have crede
 Make sure the object storage is created before you install Velero. Otherwise, the Velero server won't be able to start successfully. This is because the Velero server checks that the object storage exists and needs to have the permission to access it during server boot.
 ====
 
-* Public Cloud Providers
-+
+==== Public Cloud Providers
+
 [options="header"]
 |===
 | Provider | Object Storage | Plugin Provider Repo
@@ -45,7 +45,7 @@ Make sure the object storage is created before you install Velero. Otherwise, th
 |link:https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure[Velero plugin for Microsoft Azure]
 |===
 
-** AWS S3
+===== AWS S3
 
 . AWS CLI
 +
@@ -73,7 +73,7 @@ aws_secret_access_key=<AWS_SECRET_ACCESS_KEY>
 +
 For details, please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-aws/tree/v1.0.1[Velero Plugin For AWS].
 
-** Google Cloud Storage
+===== Google Cloud Storage
 
 . GCP CLIs
 +
@@ -144,7 +144,7 @@ gcloud iam service-accounts keys create credentials-velero \
 +
 For details, please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-gcp/tree/v1.0.1[Velero Plugin For GCP].
 
-** Azure Blob Storage
+===== Azure Blob Storage
 
 . Azure CLI
 +
@@ -211,16 +211,14 @@ EOF
 +
 For details, please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure/tree/v1.0.1[Velero Plugin For Azure].
 
-* S3-Compatible Providers
+==== On-Premise (S3-Compatible Providers)
 
-** {ses} 6 Ceph Object Gateway (`radosgw`)
-+
+===== {ses} 6 Ceph Object Gateway (`radosgw`)
+
 {suse} supports the {ses} 6 Ceph Object Gateway (`radosgw`) as an S3-compatible object storage provider.
 
 . Installation
-+
 Refer to the link:https://documentation.suse.com/ses/6/html/ses-all/cha-ceph-additional-software-installation.html[SES 6 Object Gateway Manual Installation] on how to install it.
-+
 . Create the credential file `credentials-velero` in the local machine
 +
 ----
@@ -229,10 +227,10 @@ aws_access_key_id=<SES_STORAGE_ACCESS_KEY_ID>
 aws_secret_access_key=<SES_STORAGE_SECRET_ACCESS_KEY>
 ----
 
-** Minio
-+
+===== Minio
+
 Besides {ses}, there is an alternative open source S3-compatible object storage provider link:https://min.io/[minio].
-+
+
 . Prepare an external host and install Minio on the host
 +
 [source,bash]
@@ -266,8 +264,8 @@ chmod +x mc
 aws_access_key_id=<MINIO_STORAGE_ACCESS_KEY_ID>
 aws_secret_access_key=<MINIO_STORAGE_SECRET_ACCESS_KEY>
 ----
-+
-For the rest of the S3-compatible storage providers, refer to link:https://velero.io/docs/v1.3.1/supported-providers/[Velero Supported Providers].
+
+For the rest of the S3-compatible storage providers supported by Velero, refer to link:https://velero.io/docs/v1.3.1/supported-providers/[Velero Supported Providers].
 
 === Volume Snapshotter
 
