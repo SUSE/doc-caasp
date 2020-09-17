@@ -84,13 +84,13 @@ See <<log-optional_settings>> for the optional parameters and their default valu
 [source,bash]
 ----
 helm repo add suse https://kubernetes-charts.suse.com
-helm install suse/log-agent-rsyslog --name ${RELEASE_NAME} --namespace kube-system --set server.host=${SERVER_HOST} --set server.port=${SERVER_PORT}
+helm install suse/log-agent-rsyslog --name <RELEASE_NAME> --namespace kube-system --set server.host=${SERVER_HOST} --set server.port=${SERVER_PORT}
 ----
 Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
 [source,bash]
 ----
 helm repo add suse https://kubernetes-charts.suse.com
-helm install ${RELEASE_NAME} suse/log-agent-rsyslog --namespace kube-system --set server.host=${SERVER_HOST} --set server.port=${SERVER_PORT}
+helm install <RELEASE_NAME> suse/log-agent-rsyslog --namespace kube-system --set server.host=${SERVER_HOST} --set server.port=${SERVER_PORT}
 ----
 
 [NOTE]
@@ -113,16 +113,16 @@ After this step, all of the log agents will initialize then start to forward log
 
 - To check the installation progress, use the `helm status` command:
 ----
-helm status ${RELEASE_NAME}
+helm status <RELEASE_NAME>
 ----
 
 - To uninstall log agents, use the `helm delete` command:
 ----
-helm delete --purge ${RELEASE_NAME}
+helm delete --purge <RELEASE_NAME>
 ----
 Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
 ----
-helm uninstall ${RELEASE_NAME}
+helm uninstall <RELEASE_NAME>
 ----
 
 == Queuing
