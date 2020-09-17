@@ -150,13 +150,13 @@ We use cert-exporter to monitor nodes' on-host certificates and addons' secret c
 [source,bash]
 ----
 helm repo add suse https://kubernetes-charts.suse.com
-helm install suse/cert-exporter --name ${RELEASE_NAME}
+helm install suse/cert-exporter --name <RELEASE_NAME>
 ----
 Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
 [source,bash]
 ----
 helm repo add suse https://kubernetes-charts.suse.com
-helm install ${RELEASE_NAME} suse/cert-exporter
+helm install <RELEASE_NAME> suse/cert-exporter
 ----
 
 === Prerequisites
@@ -202,7 +202,7 @@ For example:
 [source,bash]
 ----
 helm install suse/cert-exporter \
-    --name ${RELEASE_NAME} \
+    --name <RELEASE_NAME> \
     --set customSecret.enabled=true \
     --set customSecret.certs[0].name=cert-manager \
     --set customSecret.certs[0].namespace=cert-manager-test \
@@ -213,7 +213,7 @@ Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
 +
 [source,bash]
 ----
-helm install ${RELEASE_NAME} suse/cert-exporter \
+helm install <RELEASE_NAME> suse/cert-exporter \
     --set customSecret.enabled=true \
     --set customSecret.certs[0].name=cert-manager \
     --set customSecret.certs[0].namespace=cert-manager-test \
@@ -226,7 +226,7 @@ helm install ${RELEASE_NAME} suse/cert-exporter \
 [source,bash]
 ----
 helm install suse/cert-exporter \
-    --name ${RELEASE_NAME} \
+    --name <RELEASE_NAME> \
     --set customSecret.enabled=true \
     --set customSecret.certs[0].name=self-signed-cert \
     --set customSecret.certs[0].includeKeys="{ca.crt,tls.crt}" \
@@ -236,7 +236,7 @@ Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
 +
 [source,bash]
 ----
-helm install ${RELEASE_NAME} suse/cert-exporter \
+helm install <RELEASE_NAME> suse/cert-exporter \
     --set customSecret.enabled=true \
     --set customSecret.certs[0].name=self-signed-cert \
     --set customSecret.certs[0].includeKeys="{ca.crt,tls.crt}" \
@@ -248,7 +248,7 @@ helm install ${RELEASE_NAME} suse/cert-exporter \
 [source,bash]
 ----
 helm install suse/cert-exporter \
-    --name ${RELEASE_NAME} \
+    --name <RELEASE_NAME> \
     --set customSecret.enabled=true \
     --set customSecret.certs[0].name=cert-manager \
     --set customSecret.certs[0].namespace=cert-manager-test \
@@ -262,7 +262,7 @@ Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
 +
 [source,bash]
 ----
-helm install ${RELEASE_NAME} suse/cert-exporter \
+helm install <RELEASE_NAME> suse/cert-exporter \
     --set customSecret.enabled=true \
     --set customSecret.certs[0].name=cert-manager \
     --set customSecret.certs[0].namespace=cert-manager-test \
@@ -278,7 +278,7 @@ helm install ${RELEASE_NAME} suse/cert-exporter \
 [source,bash]
 ----
 helm install suse/cert-exporter \
-    --name ${RELEASE_NAME} \
+    --name <RELEASE_NAME> \
     --set node.enabled=false \
     --set addon.enabled=false \
     --set customSecret.enabled=true \
@@ -294,7 +294,7 @@ Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
 +
 [source,bash]
 ----
-helm install ${RELEASE_NAME} suse/cert-exporter \
+helm install <RELEASE_NAME> suse/cert-exporter \
     --set node.enabled=false \
     --set addon.enabled=false \
     --set customSecret.enabled=true \
@@ -620,7 +620,7 @@ kubectl create secret tls custom-trusted-ca --cert=<CUSTOM_TRUSTED_CA_CERT> --ke
 [source,bash]
 ----
 helm install suse/reloader \
-    --name ${RELEASE_NAME} \
+    --name <RELEASE_NAME> \
     --namespace cert-manager
 ----
 
@@ -629,7 +629,7 @@ helm install suse/reloader \
 [source,bash]
 ----
 helm install suse/cert-manager \
-    --name ${RELEASE_NAME} \
+    --name <RELEASE_NAME> \
     --namespace cert-manager \
     --set global.leaderElection.namespace=cert-manager \
     --set installCRDs=true
