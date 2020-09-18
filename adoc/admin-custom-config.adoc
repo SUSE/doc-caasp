@@ -1,0 +1,119 @@
+[#configuration-management]
+= Configuration Management
+
+[NOTE]
+====
+If you use multiple management workstations to manage the {productname} cluster, make sure
+that your customizations to the config files are synced across all management workstations.
+
+Otherwise, if the set of customizations is outdated, the next run of `skuba addon upgrade` will potentially
+undo desired changes and possibly leave the cluster or some workloads in non-functional condition.
+====
+
+[#addon-kustomize]
+== Using Kustomize
+
+{productname} uses link:https://github.com/kubernetes-sigs/kustomize[Kustomize]
+to allow customization of included addons.
+
+Kustomize allows you to create YAML or JSON files without a template that will override
+the default configurations, leaving the default files intact. For information about
+the file format and allowed fields, refer to: https://kubernetes-sigs.github.io/kustomize/api-reference/glossary/#kustomization
+
+[NOTE]
+====
+The configuration options specified in the `kustomize` files will be "appended" to the
+default configuration. This, in effect, means that the default options will be effectively overwritten.
+In reality, the options will be parsed from both the default and custom configuration and only the latter applies.
+This can lead to some outputs for commands showing option/parameter flags that are overruled by the custom configuration.
+====
+
+[TIP]
+====
+Using YAML files has the advantage that these files can be directly applied to the cluster
+without converting them first. Using JSON format requires converting the files to YAML with `kustomize build`.
+====
+
+The configuration files should managed in a central location on the management workstation
+together with your cluster definition files that were created during the deployment of the cluster.
+
+== {crio} Customization
+
+=== Upgrading {crio} Configuration for 4.5
+
+For {productname} 4.5, CRI-O needs a configuration format upgrade.
+For more information, refer to <<caasp-migration>>.
+
+If you have custom changes in your {crio} configuration from a release prior to 4.5,
+you should back up any files from the old configuration directory `<CLUSTER_NAME>/addons/cri`
+before executing the above command, since it will disrupt any previous changes.
+
+After backing up your changes, on the management workstation, run:
+
+----
+skuba cluster upgrade localconfig
+----
+
+During this process `skuba` replaces the existing configuration and moves it
+to some new files and subfolders in `<CLUSTER_NAME>/addons/cri`.
+
+[IMPORTANT]
+====
+Your changes made to the previous configuration file will be discarded.
+====
+
+The new configuration files will still use the same formats and the same keys.
+You must manually restore any custom values from your backup files to the new
+configuration.
+
+[NOTE]
+====
+Some new configuration options/values have been introduced with the {crio} version shipped with {productname} 4.5.
+
+For more information, refer to link:https://github.com/cri-o/cri-o#configuration[].
+====
+
+=== Configuring {crio} Registry
+
+Instead of modifying the `registries.conf` file on each individual node,
+you can place your modified version in `<CLUSTER_NAME>/addons/containers/registries.conf`.
+
+Upon node bootstrapping or upgrading this file will be distributed to all nodes automatically by `skuba`.
+
+This file does not conform to the `Kustomize` format or method. It is written in
+link:https://github.com/toml-lang/toml[TOML] format.
+
+For comprehensive information on how to create a custom {crio} registry configuration,
+refer to: <<config-crio-container-registry>>.
+
+== Applying Configuration
+
+=== During Cluster Bootstrap
+
+When you bootstrap a new cluster or join a new node with skuba, it will automatically
+deploy the contents of the `<CLUSTER_NAME>/addons/` folder to the respective
+configuration locations across the nodes.
+
+Configurations are also automatically distributed when you upgrade nodes or the cluster
+to a new version.
+
+=== Existing Cluster
+
+If you have an existing cluster and wish to update and roll out new configuration
+customizations, please use `kubeadm apply` to apply any changed manifests have {kube} take care of the
+required steps to safely install new configurations across your cluster.
+
+[NOTE]
+====
+There currently is no automated way to re-apply customizations to the {crio}
+registries configuration. If you wish to update the configuration, you should
+add your desired changes to the cluster definition folder (`<CLUSTER_NAME>/addons/containers/`)
+and then manually distribute a copy of this file to all nodes.
+
+Afterwards, you must restart {crio} for the new configuration to take effect by (on each cluster node) running:
+
+----
+sudo systemctl daemon-reload
+sudo systemctl restart crio
+----
+====
