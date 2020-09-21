@@ -97,6 +97,11 @@ The control plane certificates stored in the {kube} cluster on control plane nod
 |/var/lib/kubeket/pki/kubelet-client-current.pem
 |Client
 
+|system:node:<nodeName>
+|kubelet-ca
+|/var/lib/kubelet/pki/kubelet-server-current.pem
+|Server
+
 |<nodeName>
 |kubelet-ca
 |/var/lib/kubeket/pki/kubelet.ca
@@ -485,16 +490,23 @@ kubectl rollout restart deployment/oidc-gangway -n kube-system
 
 == Automatic Certificate Renewal
 
-{productname} renews all certificates excluding `oidc-dex` and `oidc-gangway` automatically during the control plane update, see <<handling_updates>>.
+{productname} renews the control plane certificates and kubeconfigs automatically in two ways:
 
-.kubelet client certificate
+. *During node upgrade*:
+when the node is upgraded, all the kubeadm managed certificates and kubeconfigs, and kubelet client certificates get rotated.
+
+. *Via the `kucero` addon*:
+if the administrator is not willing to upgrade the cluster, the `kucero` (KUbernetes control plane CErtificate ROtation) addon rotates all the kubeadm managed certificates and kubeconfigs and signs kubelet server CSR. The kucero is a kubeadm checker/renewer in the form of a DaemonSet, which is deployed on control plane nodes. It's job is to periodically check and renew control plane kubeadm managed certificates/kubeconfigs, and also a signer to sign kubelet server CSR.
+
+.kubelet client or server certificate
 [NOTE]
 ====
-During the kubelet client certificate signing flow, kubelet sends the kubelet client CSR into the {kube} cluster. The `kube-controller-manager` signs the kubelet client CSR with the Kubernetes CA cert/key pair. The `kucero` signs the kubelet server CSR with the kubelet CA cert/key pair.
+During the kubelet client or server certificate signing flow, kubelet sends the kubelet client or server CSR into the {kube} cluster. The `kube-controller-manager` signs the kubelet client CSR with the Kubernetes CA cert/key pair, the `kucero` signs the kubelet server CSR with the kubelet CA cert/key pair.
 
-The kubelet client certificate renews automatically at approximately 70%-90% of the total lifetime of the certificate, the kubelet would use new client certificates without downtime.
+The kubelet client or server certificate renews automatically at approximately 70%-90% of the total lifetime of the certificate, the kubelet would use new client or server certificates without downtime.
 
 The kubelet client certificate uses the `/var/lib/kubelet/pki/kubelet-client-current.pem`, this file is a symlink to the latest signed client certificate.
+The kubelet server certificate uses the `/var/lib/kubelet/pki/kubelet-server-current.pem`, this file is a symlink to the latest signed server certificate.
 ====
 
 === Control Plane Nodes Certificates Rotation
