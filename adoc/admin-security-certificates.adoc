@@ -111,7 +111,37 @@ The control plane certificates stored in the {kube} cluster on control plane nod
 |front-proxy-ca
 |/etc/kubernetes/pki/front-proxy-client.crt,key
 |Client
+
+|kubernetes-admin
+|kubernetes
+|/etc/kubernetes/admin.conf
+|Client
+
+|system:kube-controller-manager
+|kubernetes
+|/etc/kubernetes/controller-manager.conf
+|Client
+
+|system:kube-scheduler
+|kubernetes
+|/etc/kubernetes/scheduler.conf
+|Client
+
+|system:node:<nodeName>
+|kubernetes
+|/etc/kubernetes/kubelet.conf
+|Client
 |===
+
+[WARNING]
+====
+If the node is bootstrapped/joined prior to Kubernetes version 1.17, you have to manually modify the contents of `kubelet.conf` to point to the automatically rotated kubelet client certificates by replacing `client-certificate-data` and `client-key-data` with:
+[source,bash]
+----
+client-certificate: /var/lib/kubelet/pki/kubelet-client-current.pem
+client-key: /var/lib/kubelet/pki/kubelet-client-current.pem
+----
+====
 
 The addon certificates stored in the {kube} cluster Secret resource:
 
