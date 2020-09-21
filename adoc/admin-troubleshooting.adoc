@@ -402,20 +402,50 @@ oauth2: cannot fetch token: 401 Unauthorized
 Response: {"error":"invalid_client","error_description":"Invalid client credentials."}
 ----
 
-This message indicates that your {kube} cluster Dex & Gangway client secret is out of sync. Please update the Dex & Gangway ConfigMap to use the same client secret.
+This message indicates that your {kube} cluster Dex & Gangway client secret is out of sync.
 
+* Prior to skuba 4.2.2:
++
+Please update the Dex & Gangway ConfigMap to use the same client secret.
++
 [source,bash]
 ----
 kubectl get configmap oidc-dex-config > oidc-dex-config.yaml
 kubectl get configmap oidc-gangway-config > oidc-gangway-config.yaml
 ----
-
++
 Make sure the oidc's `secret` in `oidc-dex-config.yaml` is the same as the `clientSecret` in `oidc-gangway-config.yaml`. Then, apply the updated ConfigMap.
-
++
 [source,bash]
 ----
 kubectl replace -f oidc-dex-config.yaml
 kubectl replace -f oidc-gangway-config.yaml
+----
+
+* After skuba 4.2.2:
++
+If you have configured kustomize dex patch, please update your kustomize dex patch to use `secretEnv: OIDC_GANGWAY_CLIENT_SECRET`, then Dex & Gangway will use the same client secret stored in gangway Secret, which is
++
+from
++
+----
+- id: oidc
+  ...
+  name: 'OIDC'
+  secret: <client-secret>
+  trustedPeers:
+  - oidc-cli
+----
++
+to
++
+----
+- id: oidc
+  ...
+  name: 'OIDC'
+  secretEnv: OIDC_GANGWAY_CLIENT_SECRET
+  trustedPeers:
+  - oidc-cli
 ----
 
 == Replacing a Lost Node
