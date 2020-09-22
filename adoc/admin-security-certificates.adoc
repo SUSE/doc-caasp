@@ -135,7 +135,7 @@ The control plane certificates stored in the {kube} cluster on control plane nod
 
 [WARNING]
 ====
-If the node is bootstrapped/joined prior to Kubernetes version 1.17, you have to manually modify the contents of `kubelet.conf` to point to the automatically rotated kubelet client certificates by replacing `client-certificate-data` and `client-key-data` with:
+If the node is bootstrapped/joined before Kubernetes version 1.17, you have to manually modify the contents of `kubelet.conf` to point to the automatically rotated kubelet client certificates by replacing `client-certificate-data` and `client-key-data` with:
 [source,bash]
 ----
 client-certificate: /var/lib/kubelet/pki/kubelet-client-current.pem
