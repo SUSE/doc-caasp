@@ -99,7 +99,7 @@ The control plane certificates stored in the {kube} cluster on control plane nod
 
 |system:node:<nodeName>
 |kubelet-ca
-|/var/lib/kubeket/pki/kubelet-server-current.pem
+|/var/lib/kubelet/pki/kubelet-server-current.pem
 |Server
 
 |<nodeName>
@@ -565,7 +565,7 @@ if the administrator is not willing to upgrade the cluster, the `kucero` (KUbern
 ====
 During the kubelet client or server certificate signing flow, kubelet sends the kubelet client or server CSR into the {kube} cluster. The `kube-controller-manager` signs the kubelet client CSR with the Kubernetes CA cert/key pair, the `kucero` signs the kubelet server CSR with the kubelet CA cert/key pair.
 
-The kubelet client or server certificate renews automatically at approximately 70%-90% of the total lifetime of the certificate, the kubelet would use new client orserver certificates without downtime.
+The kubelet client or server certificate renews automatically at approximately 70%-90% of the total lifetime of the certificate, the kubelet would use new client or server certificates without downtime.
 
 The kubelet client certificate uses the `/var/lib/kubelet/pki/kubelet-client-current.pem`, this file is a symlink to the latest signed client certificate.
 The kubelet server certificate uses the `/var/lib/kubelet/pki/kubelet-server-current.pem`, this file is a symlink to the latest signed server certificate.
