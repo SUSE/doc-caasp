@@ -17,11 +17,18 @@ See: https://help.github.com/en/articles/allowing-changes-to-a-pull-request-bran
 
 If you would like to contribute, please fork this repository and send pull requests.
 
-Fork the `master` branch for requesting changes to the SUSE CaaS Platform 4.0 and higher documentation.
-
 For help on style and structure, refer to the https://doc.opensuse.org/products/opensuse/Styleguide/opensuse_documentation_styleguide_sd/[Documentation Styleguide]
 
+== Branches
+
+[IMPORTANT]
 Changes to already released versions of the documentation must be merged to a `maintenance/CaaSX` branch from the maintainer.
+
+We maintain three versions of the product at this point:
+
+* master (ongoing 4.5.x work)
+* maintenance/CaaS4.5 (4.5.x released version and incremental updates)
+* maintenance/CaaS4 (4.2.x released version and incremental updates)
 
 == Files and Directory Structure
 
@@ -56,9 +63,9 @@ To contribute to the documentation you will use AsciiDoc syntax.
 `sudo /sbin/OneClickInstallUI https://gitlab.nue.suse.com/susedoc/doc-ymp/raw/master/Documentation.ymp`
 * If you don't want to download the entire documentation toolchain, you can also build documentation using DAPS inside a Docker container with https://github.com/openSUSE/daps2docker[daps2docker]:
 ** Clone the daps2docker repository.
-** Change directory to the folder which contains your documentation source files (`doc-caasp`). 
+** Change directory to the folder which contains your documentation source files (`doc-caasp`).
 ** Execute the `daps2docker.sh` file, for example by running `../daps2docker/daps2docker.sh .`.
-** Follow the commandline instructions for further building options.  
+** Follow the commandline instructions for further building options.
 * Basic daps usage:
 ** `$ daps -d DC-<YOUR_BOOK> validate`: Make sure what you have written is
     well-formed XML and valid DocBook 5
