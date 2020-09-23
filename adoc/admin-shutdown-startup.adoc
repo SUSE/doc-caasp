@@ -1,0 +1,18 @@
+[#shutdown-startup]
+= Shutdown & Startup
+
+Instructions to safely shutdown and startup a cluster.
+
+Shutting down::
+- Take a link:{docurl}/single-html/caasp-admin/#_backup[backup]
+- Scale all applications down to zero.
+- Drain/cordon all nodes except for control plane.
+- Shut down worker nodes nodes.
+- Shut down control plane nodes.
+
+Starting up::
+- Start all control plane nodes.
+- Wait for them to come online and are on a healthy status.
+- Start all worker nodes.
+[NOTE]
+This process should already take care of removing the `cordon` flag on the nodes, it will be necessary to run the command (i.e., `kubectl uncordon <NODE>`) manually.
