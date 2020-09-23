@@ -255,7 +255,7 @@ container=$(crictl ps --label io.kubernetes.container.name="kube-proxy" --quiet)
 crictl logs -t $container
 
 crictl inspect $container
-
+After skuba 4.2.2
 pod=$(crictl ps | grep "kube-proxy" | awk -F ' ' '{ print $9 }')
 
 crictl inspectp $pod
@@ -382,7 +382,8 @@ In such a case you might see an error message in the output of your CLI or Web b
 x509: certificate signed by unknown authority
 ----
 
-This message indicates that your current system does not know the Certificate Authority (CA) that signed the SSL certificates used for encrypting the communication to the cluster. You then need to add or update the Root CA certificate in your local trust store.
+This message indicates that your current system does not know the Certificate Authority (CA) that signed the SSL certificates used for encrypting the communication to the cluster.
+You then need to add or update the Root CA certificate in your local trust store.
 
 . Obtain the root CA certificate from on of the {kube} cluster node, at the location `/etc/kubernetes/pki/ca.crt`
 . Copy the root CA certificate into your local machine directory `/etc/pki/trust/anchors/`
@@ -402,7 +403,16 @@ oauth2: cannot fetch token: 401 Unauthorized
 Response: {"error":"invalid_client","error_description":"Invalid client credentials."}
 ----
 
-This message indicates that your {kube} cluster Dex & Gangway client secret is out of sync. Please update the Dex & Gangway ConfigMap to use the same client secret.
+This message indicates that your {kube} cluster Dex & Gangway client secret is out of sync.
+
+=== Versions before {productname} 4.2.2
+
+[NOTE]
+====
+These steps apply to `skuba` &#x2264; 1.3.5
+====
+
+Please update the Dex & Gangway ConfigMap to use the same client secret.
 
 [source,bash]
 ----
@@ -410,13 +420,48 @@ kubectl get configmap oidc-dex-config > oidc-dex-config.yaml
 kubectl get configmap oidc-gangway-config > oidc-gangway-config.yaml
 ----
 
-Make sure the oidc's `secret` in `oidc-dex-config.yaml` is the same as the `clientSecret` in `oidc-gangway-config.yaml`. Then, apply the updated ConfigMap.
+Make sure the oidc's `secret` in `oidc-dex-config.yaml` is the same as the `clientSecret` in `oidc-gangway-config.yaml`.
+Then, apply the updated ConfigMap.
 
 [source,bash]
 ----
 kubectl replace -f oidc-dex-config.yaml
 kubectl replace -f oidc-gangway-config.yaml
 ----
+
+=== Versions after {productname} 4.2.2
+
+[NOTE]
+====
+These steps apply to `skuba` &#x2265; 1.4.1
+====
+
+If you have configured Dex via a kustomize patch, please update your patch to use `secretEnv: OIDC_GANGWAY_CLIENT_SECRET`.
+Change your patch as follows, from:
+
+[source,yaml]
+----
+- id: oidc
+  ...
+  name: 'OIDC'
+  secret: <client-secret>
+  trustedPeers:
+  - oidc-cli
+----
+
+to
+
+[source,yaml]
+----
+- id: oidc
+  ...
+  name: 'OIDC'
+  secretEnv: OIDC_GANGWAY_CLIENT_SECRET
+  trustedPeers:
+  - oidc-cli
+----
+
+Dex & Gangway will then use the same client secret.
 
 == Replacing a Lost Node
 
