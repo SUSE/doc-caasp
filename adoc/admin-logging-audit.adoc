@@ -20,7 +20,7 @@ The {kube} audit log only collects and stores actions performed on the level of 
   rules:
     - level: Metadata // <1>
 ====
-<1> The audit level of the event. This sample will log all requests at the Metadata level. 
+<1> The audit level of the event. This sample will log all requests at the Metadata level.
 For detailed information, refer to: https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#audit-policy
 . Create audit policy file directory on all master nodes.
 +
@@ -63,12 +63,12 @@ apiServer:
 <3> The maximum size in megabytes of the audit log file before it gets rotated. (Default: 10)
 <4> The maximum number of old audit log files to retain. (Default: 20)
 <5> Format of saved audits. Known formats are "legacy", "json". "legacy" indicates 1-line text format for each event. "json" indicates structured json format.
-<6> The audit policy configuration file path from the host node's filesystem. 
+<6> The audit policy configuration file path from the host node's filesystem.
 <7> The audit policy configuration file path on the api-server pod.
-<8> The audit log file directory from the host node's filesystem. 
+<8> The audit log file directory from the host node's filesystem.
 <9> The audit log file directory on the api-server pod.
 
-. Proceed with link:{docurl}/single-html/caasp-deployment/#bootstrap[Cluster Bootstrap].
+. Proceed with link:{docurl}html/caasp-deployment/bootstrap.html[Cluster Bootstrap].
 
 . If everything is setup correctly, you should be able to see audit logs are written to `/var/log/kube-apiserver/audit.log`.
 
@@ -137,7 +137,7 @@ spec:
 <5> Format of saved audits. Known formats are "legacy", "json". "legacy" indicates 1-line text format for each event. "json" indicates structured json format.
 <6> The audit policy configuration file path on the api-server pod.
 <7> The audit log file directory on the api-server pod.
-<8> The audit policy configuration file path from the host node's filesystem. 
+<8> The audit policy configuration file path from the host node's filesystem.
 <9> The audit log file directory from the host node's filesystem.
 
 . Restart kubelet.

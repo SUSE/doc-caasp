@@ -41,7 +41,7 @@ under `/usr/share/caasp/terraform/`, or in case of the bare metal deployment:
 ====
 
 In some environments you must configure the container runtime to access the container registries through a proxy.
-In this case, please refer to: {docurl}single-html/caasp-admin/#_configuring_httphttps_proxy_for_cri_o[{productname} Admin Guide: Configuring HTTP/HTTPS Proxy for CRI-O]
+In this case, please refer to: {docurl}html/caasp-admin_miscellaneous.html#_configuring_httphttps_proxy_for_cri_o[{productname} Admin Guide: Configuring HTTP/HTTPS Proxy for CRI-O]
 
 === Cluster Deployment
 
@@ -381,7 +381,7 @@ These names will be used by the `vSphere` cloud controller manager to reconcile 
 ====
 Each virtual machine requires to have `disk.EnableUUID` enabled to successfully mount the virtual disks.
 
-Clusters provisioned following link:{docurl}single-html/caasp-deployment/#_using_terraform[Deploying VMs from the Template] with `cpi_enable = true` automatically enables `disk.EnableUUID`.
+Clusters provisioned following link:{docurl}html/caasp-deployment/_deployment_instructions.html#_using_terraform[Deploying VMs from the Template] with `cpi_enable = true` automatically enables `disk.EnableUUID`.
 
 For clusters provisioned by any other method, ensure virtual machines are set to use `disk.EnableUUID`.
 
@@ -393,7 +393,7 @@ For more information, refer to: link:https://docs.vmware.com/en/VMware-vSphere/6
 ====
 All virtual machines must exist in a folder and provide the name of that folder as the `folder` variable in the `vsphere.conf` before bootstrap.
 
-Clusters provisioned following link:{docurl}single-html/caasp-deployment/#_using_terraform[Deploying VMs from the Template] with `cpi_enable = true` automatically create and place all cluster node virtual machines inside a `*-cluster` folder.
+Clusters provisioned following link:{docurl}html/caasp-deployment/_deployment_instructions.html#_using_terraform[Deploying VMs from the Template] with `cpi_enable = true` automatically create and place all cluster node virtual machines inside a `*-cluster` folder.
 
 For clusters provisioned by any other method, make sure to create and move all cluster node virtual machines to a folder.
 ====
@@ -536,7 +536,7 @@ sudo kubeadm upgrade node phase control-plane --etcd-upgrade=false
   sudo systemctl start kubelet
 ====
 
-After the setup you can proceed to use link:{docurl}/single-html/caasp-admin/#_vsphere_storage[vSphere Storage] in cluster.
+After the setup you can proceed to use link:{docurl}html/caasp-admin/_storage.html#_vsphere_storage[vSphere Storage] in cluster.
 
 ===== Integrate External LDAP TLS
 
@@ -682,7 +682,7 @@ Replace `<NODE_NAME>` with a unique identifier, for example, "master-one".
 By default skuba will only display the events of the bootstrap process in the terminal during execution.
 The examples in the following sections will use the `tee` tool to store a copy of the outputs in a file of your choosing.
 
-For more information on the different logging approaches utilized by {productname} components please refer to: link:{docurl}single-html/caasp-admin/#_logging[SUSE CaaS Platform - Admin Guide: Logging].
+For more information on the different logging approaches utilized by {productname} components please refer to: link:{docurl}html/caasp-admin/_logging.html[SUSE CaaS Platform - Admin Guide: Logging].
 ====
 +
 .Custom Trusted CA Certificate
@@ -691,7 +691,7 @@ For more information on the different logging approaches utilized by {productnam
 During cluster bootstrap, `skuba` automatically generates CA certificates.
 You can however also deploy the {kube} cluster with your custom trusted CA certificate.
 
-Please refer to the link:{docurl}single-html/caasp-admin/#_certificates[{productname} Administration Guide] for more information on how to deploy the {kube} cluster with a custom trusted CA certificate.
+Please refer to the link:{docurl}html/caasp-admin/_certificates.html[{productname} Administration Guide] for more information on how to deploy the {kube} cluster with a custom trusted CA certificate.
 ====
 +
 [source,bash]

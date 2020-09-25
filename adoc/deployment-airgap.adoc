@@ -166,7 +166,7 @@ manifests to use the mirrors.
 The requests are passed through the container engine which forwards them to the configured mirrors.
 For example: All images with a prefix `registry.suse.com/` will be automatically pulled from the configured (internal) mirror instead.
 
-For further information on registry mirror configuration, refer to link:{docurl}single-html/caasp-admin/#_configuring_container_registries_for_cri_o[].
+For further information on registry mirror configuration, refer to link:{docurl}html/caasp-admin/_miscellaneous.html#_configuring_container_registries_for_cri_o[].
 
 [[airgap-requirements]]
 == Requirements
@@ -676,7 +676,7 @@ prefix = "gcr.io"
 location = "registry01.mydomain.local:5000/gcr.io"
 ----
 
-For detailed information about the configuration format see link:{docurl}single-html/caasp-admin/#_configuring_container_registries_for_cri_o[].
+For detailed information about the configuration format see link:html/caasp-admin/_miscellaneous.html#_configuring_container_registries_for_cri_o[].
 
 [[airgap-helm_charts]]
 == Helm Chart Repository Mirror
@@ -699,7 +699,7 @@ Update the Helm chart repository by following the shared update procedure <<airg
 Add the webserver as a repo to `helm`.
 
 This step needs to be performed on a machine where Helm is installed and configured to talk to the Tiller server in the {productname}
-cluster.  For steps to install Helm 2 and Tiller, reference link:{docurl}single-html/caasp-admin/#_installing_tiller[] and be sure
+cluster.  For steps to install Helm 2 and Tiller, reference link:{docurl}html/caasp-admin/_software_management.html#_installing_tiller[] and be sure
 that the helm-tiller image has been mirrored as described in <<airgap-update>>.
 
 To initialize Helm 2 before the helm-tiller image is ready, use the command:
@@ -756,7 +756,7 @@ You can still proceed with this step by using the `--ignore-errors` flag.
 +
 Edit the `sync.yaml` file and add an entry for the helm-tiller image after any other entries.
 Verify the version of the image matches the version used in `helm init` as documented in
-link:{docurl}single-html/caasp-admin/#_installing_tiller[] and adjust the entry if needed.
+link:{docurl}html/caasp-admin/_software_management.html#_installing_tiller[] and adjust the entry if needed.
 +
 ----
 registry.suse.com:
@@ -830,12 +830,12 @@ helm repo update
 ----
 +
 You can now deploy additional software on your {productname}
-Refer to: link:{docurl}single-html/caasp-admin/#software-installation[].
+Refer to: link:{docurl}html/caasp-admin/_software_management.html#software-installation[].
 
 [[airgap-caasp_deployment]]
 == Deploying {productname}
 
-Use the {productname} link:{docurl}single-html/caasp-deployment/[Deployment Guide] as usual.
+Use the {productname} link:{docurl}html/caasp-deployment/[Deployment Guide] as usual.
 Some of the considerations below apply; depending of the chosen installation medium.
 
 Make sure to add the CA certificate of your {rmt} server during deployment.

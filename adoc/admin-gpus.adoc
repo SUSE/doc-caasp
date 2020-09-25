@@ -165,7 +165,7 @@ Check the kubelet log on the worker node that has a GPU. This may indicate error
 
 == Monitoring
 
-If you have configured link:{docurl}/single-html/caasp-admin/#_monitoring[Monitoring] for your cluster, you may want to use {nvidia}'s link:https://developer.nvidia.com/dcgm[Data Center GPU Manager (DCGM) to monitor your GPUs]. DCGM integrates with the Prometheus and Grafana services configured for your cluster. Follow the steps below to configure the Prometheus exporter and Grafana dashboard for your {nvidia} GPUs.
+If you have configured link:{docurl}/html/caasp-admin/_monitoring.html[Monitoring] for your cluster, you may want to use {nvidia}'s link:https://developer.nvidia.com/dcgm[Data Center GPU Manager (DCGM) to monitor your GPUs]. DCGM integrates with the Prometheus and Grafana services configured for your cluster. Follow the steps below to configure the Prometheus exporter and Grafana dashboard for your {nvidia} GPUs.
 
 === Configure a Pod Security Policy
 
@@ -263,7 +263,7 @@ $ curl http://127.0.0.1:8080/metrics
 
 === Configure Prometheus
 
-After deploying Prometheus as explained in link:{docurl}/single-html/caasp-admin/#_monitoring[Monitoring], configure Prometheus to monitor the DCGM pods. Gather the cluster IPs of the pods to monitor:
+After deploying Prometheus as explained in link:{docurl}/html/caasp-admin/_monitoring.html[Monitoring], configure Prometheus to monitor the DCGM pods. Gather the cluster IPs of the pods to monitor:
 
 [source,bash]
 ----
