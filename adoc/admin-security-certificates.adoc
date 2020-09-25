@@ -397,7 +397,9 @@ chmod 644 <CLUSTER_NAME>/pki/etcd/ca.crt
 chmod 600 <CLUSTER_NAME>/pki/etcd/ca.key
 ----
 
-* Replacing the `kubelet` CA certificate:
+* During Cluster Deployment:
+
+** With a Trusted CA Key:
 +
 [source,bash]
 ----
@@ -407,8 +409,14 @@ cp <CUSTOM_KUBELET_CA_KEY_PATH> <CLUSTER_NAME>/pki/kubelet-ca.key
 chmod 644 <CLUSTER_NAME>/pki/kubelet-ca.crt
 chmod 600 <CLUSTER_NAME>/pki/kubelet-ca.key
 ----
++
+After this process, bootstrap the cluster with `skuba node bootstrap`.
+skuba uploads the local OIDC CA certificate to the remote path specified in the local file `kubeadm-init.conf` key `oidc-ca-file`. When installing the add-on, skuba generates the OIDC server certificates and keys which are signed by the provided OIDC CA certificate and key pair and then stored to its Secret resource.
 
-* Replacing the `front-end proxy` CA certificate:
+** Without a Trusted CA Key:
++
+Use command `skuba cert generate-csr` to generate the OIDC server CSRs and keys in `<my-cluster>/pki` folder.
+After the CA signs the CSRs and issued the server certificates, put the OIDC CA certificate and the OIDC server certificates in `<my-cluster>/pki` folder.
 +
 [source,bash]
 ----
@@ -418,20 +426,17 @@ cp <CUSTOM_FRONTPROXY_CA_KEY_PATH> <CLUSTER_NAME>/pki/front-proxy-ca.key
 chmod 644 <CLUSTER_NAME>/pki/front-proxy-ca.crt
 chmod 600 <CLUSTER_NAME>/pki/front-proxy-ca.key
 ----
-
++
 After this process, bootstrap the cluster with `skuba node bootstrap`.
+skuba uploads the local OIDC CA certificate to the remote path specified in the local file `kubeadm-init.conf` key `oidc-ca-file`. At the time installing the add-on, skuba uploads the OIDC CA certificate and OIDC server certificate and key pair to its Secret resource.
 
-== Replace OIDC Server Certificate Signed By A Trusted CA Certificate
+* After Cluster Deployment:
 
-{productname} uses `oidc-dex` and `oidc-gangway` servers to do authentication and authorization.
-Administrators might choose to replace these server's certificates by issuing a trusted CA certificate after cluster deployment.
-This way, the user does not have to add specific certificates to their trusted keychain.
-
-* With a Trusted CA Key
+** With a Trusted CA Key:
 +
 Please refer to <<addon-certificate-rotation>> on how to use cert-manager and reloader to issue `oidc-dex` and `oidc-gangway` certificates signed by trusted CA certificate/key.
 
-* Without a Trusted CA Key
+** Without a Trusted CA Key:
 +
 [WARNING]
 ====
@@ -444,7 +449,7 @@ The `oidc-dex` and `oidc-gangway` server certificate and key is replaced when `s
 Make sure to reapply your changes after running `skuba addon upgrade apply`, had you modified the default settings of oidc-dex and oidc-gangway addons.
 ====
 
-** Replace the `oidc-dex` server certificate:
+*** Replace the `oidc-dex` server certificate:
 
 . Backup the original `oidc-dex` server certificate and key from secret resource.
 +
@@ -497,7 +502,7 @@ kubectl replace -f oidc-dex-cert.yaml
 kubectl rollout restart deployment/oidc-dex -n kube-system
 ----
 
-** Replace the `oidc-gangway` server certificate:
+*** Replace the `oidc-gangway` server certificate:
 
 . Backup the original `oidc-gangway` server certificate and key from secret resource.
 +
@@ -550,7 +555,7 @@ kubectl replace -f oidc-gangway-cert.yaml
 kubectl rollout restart deployment/oidc-gangway -n kube-system
 ----
 
-** Replace the OIDC CA for `kube-apiserver`:
+*** Replace the OIDC CA for `kube-apiserver`:
 
 . Copy custom OIDC CA which was used for `oidc-dex` and `oidc-gangway` to [path]`/etc/kubernetes/pki/oidc-ca.crt` on all {productname} master nodes
 +
@@ -575,6 +580,63 @@ kubectl apply -f kubeadm-config.yaml
 ----
 sed -i "s|oidc-ca-file=.*|oidc-ca-file=/etc/kubernetes/pki/oidc-ca.crt|" /etc/kubernetes/manifests/kube-apiserver.yaml
 ----
+
+=== In-Cluster Components
+
+[WARNING]
+====
+Please plan carefully when deploying with a custom CA certificate. The in-cluster component certificates can not be reconfigured once deployed and requires a full re-installation of the cluster to replace.
+====
+
+Administrators can provide custom CA certificates (root CAs or intermediate CAs) during cluster deployment and decide which CA components to replace (multiple CA certificates) or if to replace all with a single CA certificate.
+
+After you have run `skuba cluster init`, go to the `my-cluster` folder that has been generated, create a `pki` folder and put your custom CA certificate into the `pki` folder.
+
+* Replacing the {kube} CA certificate:
++
+[source,bash]
+----
+mkdir -p my-cluster/pki
+cp <CUSTOM_KUBERNETES_CA_CERT_PATH> my-cluster/pki/ca.crt
+cp <CUSTOM_KUBERNETES_CA_KEY_PATH> my-cluster/pki/ca.key
+chmod 644 my-cluster/pki/ca.crt
+chmod 600 my-cluster/pki/ca.key
+----
+
+* Replacing the `etcd` CA certificate:
++
+[source,bash]
+----
+mkdir -p my-cluster/pki/etcd
+cp <CUSTOM_ETCD_CA_CERT_PATH> my-cluster/pki/etcd/ca.crt
+cp <CUSTOM_ETCD_CA_KEY_PATH> my-cluster/pki/etcd/ca.key
+chmod 644 my-cluster/pki/etcd/ca.crt
+chmod 600 my-cluster/pki/etcd/ca.key
+----
+
+* Replacing the `kubelet` CA certificate:
++
+[source,bash]
+----
+mkdir -p my-cluster/pki
+cp <CUSTOM_KUBELET_CA_CERT_PATH> my-cluster/pki/kubelet-ca.crt
+cp <CUSTOM_KUBELET_CA_KEY_PATH> my-cluster/pki/kubelet-ca.key
+chmod 644 my-cluster/pki/kubelet-ca.crt
+chmod 600 my-cluster/pki/kubelet-ca.key
+----
+
+* Replacing the `front-end proxy` CA certificate:
++
+[source,bash]
+----
+mkdir -p my-cluster/pki
+cp <CUSTOM_FRONTPROXY_CA_CERT_PATH> my-cluster/pki/front-proxy-ca.crt
+cp <CUSTOM_FRONTPROXY_CA_KEY_PATH> my-cluster/pki/front-proxy-ca.key
+chmod 644 my-cluster/pki/front-proxy-ca.crt
+chmod 600 my-cluster/pki/front-proxy-ca.key
+----
+
+After this process, bootstrap the cluster with `skuba node bootstrap`.
 
 == Automatic Certificate Renewal
 
