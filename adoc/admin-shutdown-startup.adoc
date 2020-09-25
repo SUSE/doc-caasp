@@ -4,15 +4,138 @@
 Instructions to safely shutdown and startup a cluster.
 
 Shutting down::
-- Take a link:{docurl}/single-html/caasp-admin/#_backup[backup]
-- Scale all applications down to zero.
-- Drain/cordon all nodes except for control plane.
-- Shut down worker nodes nodes.
-- Shut down control plane nodes.
+
+Take a link:{docurl}/single-html/caasp-admin/#_backup[backup]
+
+Scale all applications down to zero. Avoid cluster services. It can be done by using:
+
+[source,bash]
+----
+kubectl scale --replicas=0 -f deployment.yaml
+----
+Or 
+[source,bash]
+----
+kubectl scale deploy my-deployment --replicas=0
+----
+
+Drain/cordon all worker nodes.
+[source,bash]
+----
+kubectl drain <node name>
+----
+
+[NOTE]
+Wait for the command to finish by itself, if it fails check for link:https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/[Help]
+
+Running `kubectl get nodes` make sure all your worker nodes have the status `Ready,SchedulingDisabled`.
+
+Proceed to shutdown all your worker nodes.
+
+Now it is necessary to find out where the `etcd` leader is running, that is going to be the last node to shut down. For that use:
+
+[source,bash]
+----
+$ kubectl get pods -n kube-system -o wide
+NAME                                         READY   STATUS    RESTARTS   AGE    IP           NODE                 NOMINATED NODE   READINESS GATES
+...
+etcd-master-pimp-general-00                      1/1     Running   0          23m     10.84.73.114   master-pimp-general-00   <none>           <none>
+...
+----
+
+Then run on ones of the pods named `etcd` this command, you can do it by either starting an interactive shell
+
+[source,bash]
+----
+kubectl exec -ti -n kube-system etcd-master01 -- sh
+
+# Now run this command
+etcdctl --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt --key=/etc/kubernetes/pki/etcd/healthcheck-client.key member list
+
+356ebc35f3e8b25, started, master02, https://172.28.0.16:2380, https://172.28.0.16:2379, true
+bdef0dced3caa0d4, started, master01, https://172.28.0.15:2380, https://172.28.0.15:2379, false
+f9ae57d57b369ede, started, master03, https://172.28.0.21:2380, https://172.28.0.21:2379, false
+----
+
+Or by directly executing the command on the pod
+[source,bash]
+----
+kubectl exec -ti -n kube-system etcd-master01 -- etcdctl --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt --key=/etc/kubernetes/pki/etcd/healthcheck-client.key member list
+
+356ebc35f3e8b25, started, master02, https://172.28.0.16:2380, https://172.28.0.16:2379, true
+bdef0dced3caa0d4, started, master01, https://172.28.0.15:2380, https://172.28.0.15:2379, false
+f9ae57d57b369ede, started, master03, https://172.28.0.21:2380, https://172.28.0.21:2379, false
+----
+
+In the results you notice the last filed is a boolean, which ever of those is on true is going to be the leader of the cluster, in this case is `master02`.
+
+So now we want to shutdown the control plane nodes, one by one, leaving our etcd leader last.
 
 Starting up::
-- Start all control plane nodes.
-- Wait for them to come online and are on a healthy status.
-- Start all worker nodes.
+
+To startup your cluster again, start first your `etcd leader` first and wait until you get status `Ready`, like this:
+[source,bash]
+----
+skuba cluster status
+
+NAME       STATUS     ROLE     OS-IMAGE                              KERNEL-VERSION         KUBELET-VERSION   CONTAINER-RUNTIME   HAS-UPDATES   HAS-DISRUPTIVE-UPDATES   CAASP-RELEASE-VERSION
+master01   NotReady   master   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-default   v1.18.6           cri-o://1.18.2      yes           yes                      4.5
+master02   Ready   master   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-default   v1.18.6           cri-o://1.18.2      yes           yes                      4.5
+master03   NotReady   master   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-default   v1.18.6           cri-o://1.18.2      yes           yes                      4.5
+worker01   NotReady,SchedulingDisabled   <none>   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-default   v1.18.6           cri-o://1.18.2      yes           yes                      4.5
+worker02   NotReady,SchedulingDisabled   <none>   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-default   v1.18.6           cri-o://1.18.2      yes           yes                      4.5
+----
+
+Start the rest of the control plane nodes, and wait for the to become `Ready`.
+
+[source,bash]
+----
+skuba cluster status
+
+NAME       STATUS     ROLE     OS-IMAGE                              KERNEL-VERSION         KUBELET-VERSION   CONTAINER-RUNTIME   HAS-UPDATES   HAS-DISRUPTIVE-UPDATES   CAASP-RELEASE-VERSION
+master01   Ready   master   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-default   v1.18.6           cri-o://1.18.2      yes           yes                      4.5
+master02   Ready   master   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-default   v1.18.6           cri-o://1.18.2      yes           yes                      4.5
+master03   Ready   master   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-default   v1.18.6           cri-o://1.18.2      yes           yes                      4.5
+worker01   NotReady,SchedulingDisabled   <none>   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-default   v1.18.6           cri-o://1.18.2      yes           yes                      4.5
+worker02   NotReady,SchedulingDisabled   <none>   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-default   v1.18.6           cri-o://1.18.2      yes           yes                      4.5
+----
+
+Start all the workers, wait until you see them on status `Ready,SchedulingDisabled`
+[source,bash]
+----
+skuba cluster status
+
+NAME       STATUS     ROLE     OS-IMAGE                              KERNEL-VERSION         KUBELET-VERSION   CONTAINER-RUNTIME   HAS-UPDATES   HAS-DISRUPTIVE-UPDATES   CAASP-RELEASE-VERSION
+master01   Ready   master   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-default   v1.18.6           cri-o://1.18.2      yes           yes                      4.5
+master02   Ready   master   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-default   v1.18.6           cri-o://1.18.2      yes           yes                      4.5
+master03   Ready   master   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-default   v1.18.6           cri-o://1.18.2      yes           yes                      4.5
+worker01   Ready,SchedulingDisabled   <none>   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-default   v1.18.6           cri-o://1.18.2      yes           yes                      4.5
+worker02   Ready,SchedulingDisabled   <none>   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-default   v1.18.6           cri-o://1.18.2      yes           yes                      4.5
+----
+
+Run the command `kubectl uncordon <WORKER-NODE>`, for each of the worker nodes, your cluster status should now be completely ready:
+[source,bash]
+----
+skuba cluster status
+
+NAME       STATUS     ROLE     OS-IMAGE                              KERNEL-VERSION         KUBELET-VERSION   CONTAINER-RUNTIME   HAS-UPDATES   HAS-DISRUPTIVE-UPDATES   CAASP-RELEASE-VERSION
+master01   Ready   master   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-default   v1.18.6           cri-o://1.18.2      yes           yes                      4.5
+master02   Ready   master   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-default   v1.18.6           cri-o://1.18.2      yes           yes                      4.5
+master03   Ready   master   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-default   v1.18.6           cri-o://1.18.2      yes           yes                      4.5
+worker01   Ready   <none>   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-default   v1.18.6           cri-o://1.18.2      yes           yes                      4.5
+worker02   Ready   <none>   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-default   v1.18.6           cri-o://1.18.2      yes           yes                      4.5
+----
+
+Bring back all your processes by scaling them up again:
+[source,bash]
+----
+kubectl scale --replicas=N -f deployment.yaml
+----
+Or 
+[source,bash]
+----
+kubectl scale deploy my-deployment --replicas=N
+----
+
 [NOTE]
-This process should already take care of removing the `cordon` flag on the nodes, it will be necessary to run the command (i.e., `kubectl uncordon <NODE>`) manually.
+Replace N with the number of replicas you want running.
