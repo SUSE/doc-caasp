@@ -338,9 +338,7 @@ helm install <RELEASE_NAME> suse/cert-exporter \
     --set customSecret.certs[1].labelSelector="{key=value}"
 ----
 
-== Using Custom Trusted CA Certificates
-
-=== During Cluster Deployment
+== Deployment with a Custom CA Certificate
 
 [WARNING]
 ====
@@ -397,9 +395,7 @@ chmod 644 <CLUSTER_NAME>/pki/etcd/ca.crt
 chmod 600 <CLUSTER_NAME>/pki/etcd/ca.key
 ----
 
-* During Cluster Deployment:
-
-** With a Trusted CA Key:
+* Replacing the `kubelet` CA certificate:
 +
 [source,bash]
 ----
@@ -409,14 +405,8 @@ cp <CUSTOM_KUBELET_CA_KEY_PATH> <CLUSTER_NAME>/pki/kubelet-ca.key
 chmod 644 <CLUSTER_NAME>/pki/kubelet-ca.crt
 chmod 600 <CLUSTER_NAME>/pki/kubelet-ca.key
 ----
-+
-After this process, bootstrap the cluster with `skuba node bootstrap`.
-skuba uploads the local OIDC CA certificate to the remote path specified in the local file `kubeadm-init.conf` key `oidc-ca-file`. When installing the add-on, skuba generates the OIDC server certificates and keys which are signed by the provided OIDC CA certificate and key pair and then stored to its Secret resource.
 
-** Without a Trusted CA Key:
-+
-Use command `skuba cert generate-csr` to generate the OIDC server CSRs and keys in `<my-cluster>/pki` folder.
-After the CA signs the CSRs and issued the server certificates, put the OIDC CA certificate and the OIDC server certificates in `<my-cluster>/pki` folder.
+* Replacing the `front-end proxy` CA certificate:
 +
 [source,bash]
 ----
@@ -426,6 +416,31 @@ cp <CUSTOM_FRONTPROXY_CA_KEY_PATH> <CLUSTER_NAME>/pki/front-proxy-ca.key
 chmod 644 <CLUSTER_NAME>/pki/front-proxy-ca.crt
 chmod 600 <CLUSTER_NAME>/pki/front-proxy-ca.key
 ----
+
+After this process, bootstrap the cluster with `skuba node bootstrap`.
+
+== Replace OIDC Server Certificate Signed By A Trusted CA Certificate
+
+* During Cluster Deployment:
+
+** With a Trusted CA Key:
++
+[source,bash]
+----
+mkdir -p <CLUSTER_NAME>/pki
+cp <CUSTOM_OIDC_CA_CERT_PATH> <CLUSTER_NAME>/pki/oidc-ca.crt
+cp <CUSTOM_OIDC_CA_KEY_PATH> <CLUSTER_NAME>/pki/oidc-ca.key
+chmod 644 <CLUSTER_NAME>/pki/oidc-ca.crt
+chmod 600 <CLUSTER_NAME>/pki/oidc-ca.key
+----
++
+After this process, bootstrap the cluster with `skuba node bootstrap`.
+skuba uploads the local OIDC CA certificate to the remote path specified in the local file `kubeadm-init.conf` key `oidc-ca-file`. When installing the add-on, skuba generates the OIDC server certificates and keys which are signed by the provided OIDC CA certificate and key pair and then stored to its Secret resource.
+
+** Without a Trusted CA Key:
++
+Use command `skuba cert generate-csr` to generate the OIDC server CSRs and keys in `<my-cluster>/pki` folder.
+After the CA signs the CSRs and issued the server certificates, put the OIDC CA certificate and the OIDC server certificates in `<my-cluster>/pki` folder.
 +
 After this process, bootstrap the cluster with `skuba node bootstrap`.
 skuba uploads the local OIDC CA certificate to the remote path specified in the local file `kubeadm-init.conf` key `oidc-ca-file`. At the time installing the add-on, skuba uploads the OIDC CA certificate and OIDC server certificate and key pair to its Secret resource.
@@ -479,6 +494,7 @@ The trusted CA certificates is `<TRUSTED_CA_CERT_PATH>`, trusted server certific
 
 . Create a secret manifest file [path]`oidc-dex-cert.yaml` and update the secret data `ca.crt`, `tls.crt`, and `tls.key` with base64; encoded with trusted CA certificate, signed oidc-dex server certificate and key respectively.
 +
+[source,yaml]
 ----
 apiVersion: v1
 kind: Secret
@@ -532,6 +548,7 @@ The trusted CA certificates is `<TRUSTED_CA_CERT_PATH>`, trusted server certific
 
 . Create a secret manifest file [path]`oidc-gangway-cert.yaml` and update the secret data `ca.crt`, `tls.crt`, and `tls.key` with base64; encoded with trusted CA certificate, signed `oidc-gangway` server certificate and key respectively.
 +
+[source,yaml]
 ----
 apiVersion: v1
 kind: Secret
@@ -580,63 +597,6 @@ kubectl apply -f kubeadm-config.yaml
 ----
 sed -i "s|oidc-ca-file=.*|oidc-ca-file=/etc/kubernetes/pki/oidc-ca.crt|" /etc/kubernetes/manifests/kube-apiserver.yaml
 ----
-
-=== In-Cluster Components
-
-[WARNING]
-====
-Please plan carefully when deploying with a custom CA certificate. The in-cluster component certificates can not be reconfigured once deployed and requires a full re-installation of the cluster to replace.
-====
-
-Administrators can provide custom CA certificates (root CAs or intermediate CAs) during cluster deployment and decide which CA components to replace (multiple CA certificates) or if to replace all with a single CA certificate.
-
-After you have run `skuba cluster init`, go to the `my-cluster` folder that has been generated, create a `pki` folder and put your custom CA certificate into the `pki` folder.
-
-* Replacing the {kube} CA certificate:
-+
-[source,bash]
-----
-mkdir -p my-cluster/pki
-cp <CUSTOM_KUBERNETES_CA_CERT_PATH> my-cluster/pki/ca.crt
-cp <CUSTOM_KUBERNETES_CA_KEY_PATH> my-cluster/pki/ca.key
-chmod 644 my-cluster/pki/ca.crt
-chmod 600 my-cluster/pki/ca.key
-----
-
-* Replacing the `etcd` CA certificate:
-+
-[source,bash]
-----
-mkdir -p my-cluster/pki/etcd
-cp <CUSTOM_ETCD_CA_CERT_PATH> my-cluster/pki/etcd/ca.crt
-cp <CUSTOM_ETCD_CA_KEY_PATH> my-cluster/pki/etcd/ca.key
-chmod 644 my-cluster/pki/etcd/ca.crt
-chmod 600 my-cluster/pki/etcd/ca.key
-----
-
-* Replacing the `kubelet` CA certificate:
-+
-[source,bash]
-----
-mkdir -p my-cluster/pki
-cp <CUSTOM_KUBELET_CA_CERT_PATH> my-cluster/pki/kubelet-ca.crt
-cp <CUSTOM_KUBELET_CA_KEY_PATH> my-cluster/pki/kubelet-ca.key
-chmod 644 my-cluster/pki/kubelet-ca.crt
-chmod 600 my-cluster/pki/kubelet-ca.key
-----
-
-* Replacing the `front-end proxy` CA certificate:
-+
-[source,bash]
-----
-mkdir -p my-cluster/pki
-cp <CUSTOM_FRONTPROXY_CA_CERT_PATH> my-cluster/pki/front-proxy-ca.crt
-cp <CUSTOM_FRONTPROXY_CA_KEY_PATH> my-cluster/pki/front-proxy-ca.key
-chmod 644 my-cluster/pki/front-proxy-ca.crt
-chmod 600 my-cluster/pki/front-proxy-ca.key
-----
-
-After this process, bootstrap the cluster with `skuba node bootstrap`.
 
 == Automatic Certificate Renewal
 
