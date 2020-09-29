@@ -555,36 +555,49 @@ sed -i "s|oidc-ca-file=.*|oidc-ca-file=/etc/kubernetes/pki/oidc-ca.crt|" /etc/ku
 {productname} renews the control plane certificates and kubeconfigs automatically in two ways:
 
 . *During node upgrade*:
-when the node is upgraded, all the kubeadm managed certificates and kubeconfigs, and kubelet client certificates get rotated.
+when the node is upgraded, all the kubeadm managed certificates and kubeconfigs get rotated. _Note that, during node upgrade, neither the kubelet client certificate nor server certificate get rotated._ The time to rotate the kubelet client and server certificate is controlled by kubelet daemon.
 
 . *Via the `kucero` addon*:
-if the administrator is not willing to upgrade the cluster, the `kucero` (KUbernetes control plane CErtificate ROtation) addon rotates all the kubeadm managed certificates and kubeconfigs and signs kubelet server CSR. The kucero is a kubeadm checker/renewer in the form of a DaemonSet, which is deployed on control plane nodes. It's job is to periodically check and renew control plane kubeadm managed certificates/kubeconfigs, and also a signer to sign kubelet server CSR.
+if the administrator is not willing to upgrade the cluster, the `kucero` (KUbernetes control plane CErtificate ROtation) addon rotates all the kubeadm managed certificates and kubeconfigs and signs kubelet server CSR. The kucero is a kubeadm checker/renewer in the form of a DaemonSet. It's job is to periodically check and renew control plane kubeadm managed certificates/kubeconfigs, and check the kubelet client and server enables auto rotation, and also a signer to sign kubelet server CSR.
 
-.kubelet client or server certificate
+.Time to rotate the kubelet client and server certificate
 [NOTE]
 ====
-During the kubelet client or server certificate signing flow, kubelet sends the kubelet client or server CSR into the {kube} cluster. The `kube-controller-manager` signs the kubelet client CSR with the Kubernetes CA cert/key pair, the `kucero` signs the kubelet server CSR with the kubelet CA cert/key pair.
+The kubelet client and server certificate renews automatically at approximately 70%-90% of the total lifetime of the certificate, the kubelet daemon would use new client and server certificates without downtime.
+====
 
-The kubelet client or server certificate renews automatically at approximately 70%-90% of the total lifetime of the certificate, the kubelet would use new client or server certificates without downtime.
+.Kubelet client and server certificate signing flow
+[NOTE]
+====
+The configuration which controls the kubelet daemon to send out the CSR within the {kube} cluster or not is controlled by the configuration `/var/lib/kubelet/config.yaml`. The key `rotateCertificates` controls the kubelet client certificate; the key `serverTLSBootstrap` controls the kubelet server certificate.
 
-The kubelet client certificate uses the `/var/lib/kubelet/pki/kubelet-client-current.pem`, this file is a symlink to the latest signed client certificate.
-The kubelet server certificate uses the `/var/lib/kubelet/pki/kubelet-server-current.pem`, this file is a symlink to the latest signed server certificate.
+When the client or server certificate is going to expire, the kubelet daemon sends the kubelet client or server CSR within the {kube} cluster. The `kube-controller-manager` signs the kubelet client CSR with the Kubernetes CA cert/key pair, the `kucero` signs the kubelet server CSR with the kubelet CA cert/key pair. Then, the kubelet daemon saves the signed certificate under the folder `/var/lib/kubelet/pki` and updates the client or server certificate symlink points to the latest signed certificate.
+
+The path of kubelet client certificate is `/var/lib/kubelet/pki/kubelet-client-current.pem`.
+The path of kubelet server certificate is `/var/lib/kubelet/pki/kubelet-server-current.pem`.
 ====
 
 === Control Plane Nodes Certificate Rotation
 
-Certificates are rotated in two ways:
+Control Plane Node Certificates are rotated in two ways:
 
 . *During node upgrade*:
 when doing a control plane update, `skuba node upgrade apply` runs `kubeadm upgrade` commands behind the scenes. `kubeadm upgrade apply` and
 `kubeadm upgrade node` renews and uses new `kubeadm` managed certificates on the node, including those stored in kubeconfig files, regardless of the remaining time for which the certificate was still valid.
 
 . *Via the kucero addon:*
+.. kubeadm managed certificates/kubeconfigs:
 a kubeadm checker/renewer to periodical checks (default interval is 1 hour) the kubeadm managed certificates/kubeconfigs, and rotates the certificates/kubeconfigs if the residual time is less than the total time (default 720 hours). Administrators can change the default time to renew the certificates/kubeconfigs by adding `--renew-before=<duration>`` (duration format is XhYmZs) to the kucero daemonset _or_ change the default polling period for checking the certificates/kubeconfigs by adding `--polling-period=<duration>` (duration format is XhYmZs).
+.. kubelet client and server certificates:
+a kubelet configuration checker/updater to periodical checks (default interval is 1 hour) if the kubelet configuration enables the client and server auto rotation. If not, kucero will helps enable the client and server auto-rotation by configuring the `rotateCertificates: true` and `serverTLSBootstrap: true` in `/var/lib/kubelet/config.yaml`. After that, the kubelet daemon will send out the CSR within {kube} cluster if the client or server is going to expire, the corresponding CSR signer and approver will signs and approves the CSR, then the kubelet daemon saves the signed certificate under the folder `/var/lib/kubelet/pki` and updates the symlink points to the latest signed certificate.
 
 === Worker Node Certificate Rotation
 
-The kubelet client certificate are signed by kube-controller-manager and the kubelet server certificates are signed by the kucero addon.
+Worker Node Certificates are rotated in one way:
+
+. *Via the kucero addon:*
+.. kubelet client and server certificates:
+a kubelet configuration checker/updater to periodical checks (default interval is 1 hour) if the kubelet configuration enables the client and server auto rotation. If not, kucero will helps enable the client and server auto-rotation by configuring the `rotateCertificates: true` and `serverTLSBootstrap: true` in `/var/lib/kubelet/config.yaml`. After that, the kubelet daemon will send out the CSR within {kube} cluster if the client or server is going to expire, the corresponding CSR signer and approver will signs and approves the CSR, then the kubelet daemon saves the signed certificate under the folder `/var/lib/kubelet/pki` and updates the symlink points to the latest signed certificate.
 
 [[addon-certificate-rotation]]
 === Addon Certificate Rotation
