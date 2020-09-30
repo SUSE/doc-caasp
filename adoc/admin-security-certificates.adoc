@@ -678,8 +678,148 @@ The kubelet client certificate are signed by kube-controller-manager and the kub
 
 The addon certificates can be automatically rotated by leveraging the functions of the open-source solutions `cert-manager` and `reloader`. `cert-manager` is for automatically rotating certificates stored in Secrets, and `reloader` is for watching and reconciling the updated Secrets to execute a rolling upgrade of the affected Deployments or DaemonSet.
 
-* Prerequisites
+. Install reloader via helm chart:
++
+[source,bash]
+----
+helm install \
+    --name <RELEASE_NAME> \
+    --namespace cert-manager \
+     suse/reloader
+----
++
+Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
++
+[source,bash]
+----
+helm install <RELEASE_NAME> \
+    --namespace cert-manager \
+    --create-namespace \
+    suse/reloader
+----
 
+. Install cert-manager via helm chart:
++
+[source,bash]
+----
+helm install \
+    --name <RELEASE_NAME> \
+    --namespace cert-manager \
+    --set global.leaderElection.namespace=cert-manager \
+    --set installCRDs=true \
+    suse/cert-manager
+----
++
+Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
++
+[source,bash]
+----
+helm install <RELEASE_NAME> \
+    --namespace cert-manager \
+    --create-namespace \
+    --set global.leaderElection.namespace=cert-manager \
+    --set installCRDs=true \
+    suse/cert-manager
+----
+
+* Cert-Manager CA Issuer Resource
++
+The cert-manager CA issuer is a {kube} resource that represents a certificate authority (CA), which can generate signed certificates by honoring certificate signing requests (CSR). Each cert-manager certificate resource requires one referenced issuer in the ready state to be able to honor CSR requests.
++
+[NOTE]
+====
+An `Issuer` is a namespaced resource, and it can not issue certificates to the certificate resources in other namespaces.
+
+If you want to create a single Issuer that can be consumed in multiple namespaces, you should consider creating a `ClusterIssuer` resource. This is almost identical to the Issuer resource, however, it is cluster-wide so it can be used to issue certificates in all namespaces.
+====
+
+* Cert-Manager Certificate Resource
++
+The cert-manager has a custom resource, Certificate, which can be used to define a requested x509 certificate which will be renewed and kept up to date by an Issuer or ClusterIssuer resource.
+
+==== Client Certificate Rotation
+
+[WARNING]
+====
+If you are running a cluster using cilium version before 1.6, the cilium data is stored in the ETCD cluster, not the custom resources (CR). {skuba} generates a client certificate to read/write the cilium date to the ETCD cluster and the client certificate will expire after 1 year. Please follow the below steps to use cert-manager to automatically renew the cilium client certificate.
+====
+
+. Check the {productname} cilium version before 1.6
++
+[source,bash]
+----
+CILIUM_OPERATOR=`kubectl get pod -l name=cilium-operator --namespace kube-system -o jsonpath='{.items[0].metadata.name}'`
+kubectl exec -it ${CILIUM_OPERATOR} --namespace kube-system -- cilium-operator --version
+----
+
+. Upload the ETCD CA cert/key pair to Secret in the `kube-system` namespace
++
+[source,bash]
+----
+kubectl create secret tls etcd-ca --cert=pki/etcd/ca.crt --key=pki/etcd/ca.key -n kube-system
+----
+
+. Create a Cert-Manager CA Issuer Resource
++
+Create a CA issuer called `etcd-ca` that will sign incoming certificate requests based on the CA certificate and private key stored in the secret `etcd-ca` used to trust newly signed certificates.
++
+[source,bash]
+----
+cat << EOF > issuer-etcd-ca.yaml
+apiVersion: cert-manager.io/v1alpha3
+kind: Issuer
+metadata:
+  name: etcd-ca
+  namespace: kube-system
+spec:
+  ca:
+    secretName: etcd-ca
+EOF
+
+kubectl create -f issuer-etcd-ca.yaml
+----
+
+. Create a Cert-Manager Certificate Resource
++
+Create a certificate resource `cilium-etcd-client` that will watch and auto-renews the secret `cilium-secret` if the certificate residual time is less than the `renewBefore` value.
++
+[source,bash]
+----
+cat << EOF > cilium-etcd-client-certificate.yaml
+apiVersion: cert-manager.io/v1alpha3
+kind: Certificate
+metadata:
+  name: cilium-etcd-client-cert
+  namespace: kube-system
+spec:
+  subject:
+    organizations:
+    - system:masters
+  commonName: cilium-etcd-client
+  duration: 8760h # 1 year
+  renewBefore: 720h # 1 month
+  secretName: cilium-secret
+  issuerRef:
+    name: etcd-ca
+    kind: Issuer
+    group: cert-manager.io
+  isCA: false
+  usages:
+    - digital signature
+    - key encipherment
+    - client auth
+  keySize: 2048
+  keyAlgorithm: rsa
+  keyEncoding: pkcs1
+EOF
+
+kubectl create -f cilium-etcd-client-certificate.yaml
+----
+
+==== Server Certificates Rotation
+
+* Prerequisites
++
 . To let `reloader` do an automatic rolling upgrade of the addon Deployments or DaemonSet, we need to label the addons:
 +
 [source,bash]
@@ -708,42 +848,13 @@ kubectl create secret tls custom-trusted-ca --cert=<CUSTOM_TRUSTED_CA_CERT> --ke
 ----
 ====
 
-. Install reloader via helm chart:
-+
-[source,bash]
-----
-helm install suse/reloader \
-    --name <RELEASE_NAME> \
-    --namespace cert-manager
-----
-
-. Install cert-manager via helm chart:
-+
-[source,bash]
-----
-helm install suse/cert-manager \
-    --name <RELEASE_NAME> \
-    --namespace cert-manager \
-    --set global.leaderElection.namespace=cert-manager \
-    --set installCRDs=true
-----
-
 * Create a Cert-Manager CA Issuer Resource
-+
-The cert-manager CA issuer is a {kube} resource that represents a certificate authority (CA), which is able to generate signed certificates by honoring certificate signing requests (CSR). Each cert-manager certificate resource requires one referenced issuer in the ready state to be able to honor CSR requests.
-+
-[NOTE]
-====
-An `Issuer` is a namespaced resource, and it can not issue certificates to the certificate resources in other namespaces.
-
-If you want to create a single Issuer that can be consumed in multiple namespaces, you should consider creating a `ClusterIssuer` resource. This is almost identical to the Issuer resource, however, it is cluster-wide so it can be used to issue certificates in all namespaces.
-====
 +
 Create a CA issuer called `kubernetes-ca` that will sign incoming certificate requests based on the CA certificate and private key stored in the secret `kubernetes-ca` used to trust newly signed certificates.
 +
 [source,bash]
 ----
-cat << EOF > issuer.yaml
+cat << EOF > issuer-kubernetes-ca.yaml
 apiVersion: cert-manager.io/v1alpha3
 kind: Issuer
 metadata:
@@ -754,7 +865,7 @@ spec:
     secretName: kubernetes-ca // <2>
 EOF
 
-kubectl apply -f issuer.yaml
+kubectl create -f issuer-kubernetes-ca.yaml
 ----
 <1> The issuer name.
 <2> The secret reference name.
@@ -765,26 +876,26 @@ If you want to use custom trusted CA certificate/key to sign the certificate, cr
 
 [source,bash]
 ----
-cat << EOF > custom-trusted-ca-issuer.yaml
+cat << EOF > custom-trusted-kubernetes-ca-issuer.yaml
 apiVersion: cert-manager.io/v1alpha3
 kind: Issuer // <1>
 metadata:
-  name: custom-trusted-ca
+  name: custom-trusted-kubernetes-ca
   namespace: kube-system
 spec:
   ca:
-    secretName: custom-trusted-ca
+    secretName: custom-trusted-kubernetes-ca
 EOF
 
-kubectl apply -f custom-trusted-ca-issuer.yaml
+kubectl create -f custom-trusted-kubernetes-ca-issuer.yaml
 ----
 <1> Issuer or ClusterIssuer.
 ====
 
 * Create a Cert-Manager Certificate Resource
 +
-The cert-manager has a custom resource, Certificate, which can be used to define a requested x509 certificate which will be renewed and kept up to date by an Issuer or ClusterIssuer resource.
-+
+Create a certificate resource that will watch and auto-renews the secret if the certificate residual time is less than the `renewBefore` value.
+
 ** oidc-dex certificate
 +
 [source,bash]
@@ -822,7 +933,7 @@ spec:
   keyEncoding: pkcs1
 EOF
 
-kubectl apply -f oidc-dex-certificate.yaml
+kubectl create -f oidc-dex-certificate.yaml
 ----
 <1> Default length of certificate validity, in the format (XhYmZs).
 <2> Certificate renewal time before validity expires, in the format (XhYmZs).
@@ -879,7 +990,7 @@ spec:
   keyEncoding: pkcs1
 EOF
 
-kubectl apply -f oidc-gangway-certificate.yaml
+kubectl create -f oidc-gangway-certificate.yaml
 ----
 <1> Default length of certificate validity, in the format (XhYmZs).
 <2> Certificate renewal time before validity expires, in the format (XhYmZs).
@@ -930,7 +1041,7 @@ spec:
   keyEncoding: pkcs1
 EOF
 
-kubectl apply -f metrics-server-certificate.yaml
+kubectl create -f metrics-server-certificate.yaml
 ----
 <1> Default length of certificate validity, in the format (XhYmZs).
 <2> Certificate renewal time before validity expires, in the format (XhYmZs).
