@@ -9,7 +9,7 @@ Collecting logs in a central location can be useful for audit or debug purposes 
 
 == Prerequisites
 
-In order to successfully use Centralized Logging, you first need to install `Helm` and `Tiller`.
+In order to successfully use Centralized Logging, you first need to install `Helm`, and `Tiller` if using Helm 2.
 Helm is used to install the log agents and provide custom logging settings.
 
 Refer to <<helm_tiller_install>>.
@@ -81,7 +81,13 @@ See <<Optional settings>> for the optional parameters and their default values.
 [source,bash]
 ----
 helm repo add suse https://kubernetes-charts.suse.com
-helm install suse/log-agent-rsyslog --name ${RELEASE_NAME} --namespace kube-system --set server.host=${SERVER_HOST} --set server.port=${SERVER_PORT}
+helm install suse/log-agent-rsyslog --name <RELEASE_NAME> --namespace kube-system --set server.host=${SERVER_HOST} --set server.port=${SERVER_PORT}
+----
+Or if you have selected the Helm 3 alternative also see <<helm_tiller_install>>:
+[source,bash]
+----
+helm repo add suse https://kubernetes-charts.suse.com
+helm install <RELEASE_NAME> suse/log-agent-rsyslog --namespace kube-system --set server.host=${SERVER_HOST} --set server.port=${SERVER_PORT}
 ----
 
 [NOTE]
@@ -104,14 +110,17 @@ After this step, all of the log agents will initialize then start to forward log
 
 - To check the installation progress, use the `helm status` command:
 ----
-helm status ${RELEASE_NAME}
+helm status <RELEASE_NAME>
 ----
 
 - To uninstall log agents, use the `helm delete` command:
 ----
-helm delete --purge ${RELEASE_NAME}
+helm delete --purge <RELEASE_NAME>
 ----
-
+Or if you have selected the Helm 3 alternative also see <<helm_tiller_install>>:
+----
+helm uninstall <RELEASE_NAME>
+----
 
 == Queuing
 
