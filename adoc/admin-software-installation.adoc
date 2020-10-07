@@ -227,12 +227,11 @@ The process for migrating an installation from Helm 2 to Helm 3 has been documen
 ** The procedure below requires an available internet connection to install the `2to3` plugin.  If the installation is in an air gapped environment, the system may need to be moved back out of the air gapped environment.
 * These instructions are written for a single cluster managed from a single Helm 2 installation. If more than one cluster is being managed by this installation of Helm 2, please reference https://github.com/helm/helm-2to3 for further details and do not do the clean-up step until all clusters are migrated.
 
-
 ==== Migration Procedure
 
 This is a procedure for migrating a {productname} deployment that has used Helm 2 to deploy applications.
 
-. Install `helm3` package in the same location you normally run `skuba` commands (alongside the helm2 package):
+. Install `helm3` package in the same location you normally run `skuba` commands (alongside the helm package):
 +
 ----
 sudo zypper in helm3
@@ -270,10 +269,10 @@ WARNING: Tiller will be cleaned up, and Helm 2 will not be usable on this cluste
 ----
 helm3 2to3 cleanup
 ----
-. You may now uninstall the `helm2` package and use the `helm` command line from the `helm3` package from now on.
+. You may now set the `helm` command line to use the the `helm3` package from now on.
 +
 ----
-sudo zypper remove helm2
+sudo update-alternatives --set helm /usr/bin/helm3
 ----
 
 ////
