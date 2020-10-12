@@ -194,6 +194,7 @@ helm install suse/cert-exporter --name ${RELEASE_NAME}
 kubectl label --overwrite secret oidc-dex-cert -n kube-system caasp.suse.com/skuba-addon=true
 kubectl label --overwrite secret oidc-gangway-cert -n kube-system caasp.suse.com/skuba-addon=true
 kubectl label --overwrite secret metrics-server-cert -n kube-system caasp.suse.com/skuba-addon=true
+kubectl label --overwrite secret cilium-secret -n kube-system caasp.suse.com/skuba-addon=true
 ----
 +
 [NOTE]
@@ -204,6 +205,7 @@ You might see the following console output:
 secret/oidc-dex-cert not labeled
 secret/oidc-gangway-cert not labeled
 secret/metrics-server-cert not labeled
+secret/cilium-secret not labeled
 ----
 This is because `skuba` has already added the labels for you.
 ====
