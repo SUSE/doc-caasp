@@ -1,79 +1,113 @@
 [#shutdown-startup]
-= Shutdown & Startup
+== Graceful Cluster Shutdown & Startup
 
-Instructions to safely shutdown and startup a cluster.
+In some scenarios like maintenance windows in your datacenter or some disaster scenarios,
+you will want to shut down the cluster in a controlled fashion and later on bring it back up safely.
+Follow the following instructions to safely stop all workloads.
 
-Shutting down::
+=== Cluster Shutdown
 
-Take a link:{docurl}/single-html/caasp-admin/#_backup[backup]
+.Document Scope
+[WARNING]
+====
+This document is only concerned with shutting down the {productname} cluster itself.
+====
 
-Scale all applications down to zero. Avoid cluster services. It can be done by using:
+.Storage Shutdown/Startup
+[WARNING]
+====
+Any real time data streaming workloads will lose data if not rerouted to an alternative cluster.
 
+Any workloads that hold data only in memory will lose this data.
+Please check with the provider of your workload/application about proper data persistence in case of shutdown.
+
+Any external storage services must be stopped/started separately. Please refer to the respective storage solution's documentation.
+====
+
+. Create a link:{docurl}/single-html/caasp-admin/#_backup[backup] of your cluster.
+. Scale all applications down to zero by using either the manifests or deployment names:
++
+[IMPORTANT]
+====
+Do not scale down cluster services.
+====
++
 [source,bash]
 ----
 kubectl scale --replicas=0 -f deployment.yaml
 ----
-Or 
++
+or
++
 [source,bash]
 ----
 kubectl scale deploy my-deployment --replicas=0
 ----
-
-Drain/cordon all worker nodes.
+. Drain/cordon all worker nodes.
++
 [source,bash]
 ----
 kubectl drain <node name>
 ----
-
++
 [NOTE]
+====
 Wait for the command to finish by itself, if it fails check for link:https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/[Help]
-
-Running `kubectl get nodes` make sure all your worker nodes have the status `Ready,SchedulingDisabled`.
-
-Proceed to shutdown all your worker nodes.
-
-Now it is necessary to find out where the `etcd` leader is running, that is going to be the last node to shut down. For that use:
-
+====
+. Run `kubectl get nodes` and make sure all your worker nodes have the status `Ready,SchedulingDisabled`.
+. Proceed to shutdown all your `worker` nodes on the machine level.
+. Now it is necessary to find out where the `etcd` leader is running, that is going to be the last node to shut down.
+Find out which pods are running `etcd`:
++
 [source,bash]
 ----
 $ kubectl get pods -n kube-system -o wide
-NAME                                         READY   STATUS    RESTARTS   AGE    IP           NODE                 NOMINATED NODE   READINESS GATES
+NAME                         READY   STATUS    RESTARTS   AGE    IP              NODE                     NOMINATED NODE   READINESS GATES
 ...
-etcd-master-pimp-general-00                      1/1     Running   0          23m     10.84.73.114   master-pimp-general-00   <none>           <none>
+etcd-master-pimp-general-00  1/1     Running   0          23m     10.84.73.114   master-pimp-general-00   <none>           <none>
 ...
 ----
 
-Then run on ones of the pods named `etcd` this command, you can do it by either starting an interactive shell
-
+. Then you need to get the list of active `etcd` members, this will also show which `master` node is currently the `etcd` leader.
+Either run a terminal session on one of the `etcd` pods:
++
 [source,bash]
 ----
 kubectl exec -ti -n kube-system etcd-master01 -- sh
 
 # Now run this command
 etcdctl --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt --key=/etc/kubernetes/pki/etcd/healthcheck-client.key member list
-
-356ebc35f3e8b25, started, master02, https://172.28.0.16:2380, https://172.28.0.16:2379, true
-bdef0dced3caa0d4, started, master01, https://172.28.0.15:2380, https://172.28.0.15:2379, false
-f9ae57d57b369ede, started, master03, https://172.28.0.21:2380, https://172.28.0.21:2379, false
 ----
-
-Or by directly executing the command on the pod
++
+or directly execute the command on the pod:
++
 [source,bash]
 ----
 kubectl exec -ti -n kube-system etcd-master01 -- etcdctl --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt --key=/etc/kubernetes/pki/etcd/healthcheck-client.key member list
-
+----
++
+The output will be the same. Note the boolean values at the end of each line.
+The current `etcd` leader will have `true`.
+In this case the node `master02` is the current `etcd` leader.
++
+[source]
+----
 356ebc35f3e8b25, started, master02, https://172.28.0.16:2380, https://172.28.0.16:2379, true
 bdef0dced3caa0d4, started, master01, https://172.28.0.15:2380, https://172.28.0.15:2379, false
 f9ae57d57b369ede, started, master03, https://172.28.0.21:2380, https://172.28.0.21:2379, false
 ----
+. Shutdown all other master nodes, leaving the current `etcd` leader for last.
+. Finally, shut down the `etcd` leader node.
++
+[TIP]
+====
+This is the first node that needs to be started back up.
+====
 
-In the results you notice the last filed is a boolean, which ever of those is on true is going to be the leader of the cluster, in this case is `master02`.
+=== Cluster Startup
 
-So now we want to shutdown the control plane nodes, one by one, leaving our etcd leader last.
-
-Starting up::
-
-To startup your cluster again, start first your `etcd leader` first and wait until you get status `Ready`, like this:
+. To start up your cluster again, first start your `etcd` leader and wait until you get status `Ready`, like this:
++
 [source,bash]
 ----
 skuba cluster status
@@ -86,8 +120,8 @@ worker01   NotReady,SchedulingDisabled   <none>   SUSE Linux Enterprise Server 1
 worker02   NotReady,SchedulingDisabled   <none>   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-default   v1.18.6           cri-o://1.18.2      yes           yes                      4.5
 ----
 
-Start the rest of the control plane nodes, and wait for the to become `Ready`.
-
+. Start the rest of the `master` nodes, and wait for them to become `Ready`:
++
 [source,bash]
 ----
 skuba cluster status
@@ -100,7 +134,8 @@ worker01   NotReady,SchedulingDisabled   <none>   SUSE Linux Enterprise Server 1
 worker02   NotReady,SchedulingDisabled   <none>   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-default   v1.18.6           cri-o://1.18.2      yes           yes                      4.5
 ----
 
-Start all the workers, wait until you see them on status `Ready,SchedulingDisabled`
+. Start all the workers, wait until you see them on status `Ready,SchedulingDisabled`:
++
 [source,bash]
 ----
 skuba cluster status
@@ -113,7 +148,8 @@ worker01   Ready,SchedulingDisabled   <none>   SUSE Linux Enterprise Server 15 S
 worker02   Ready,SchedulingDisabled   <none>   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-default   v1.18.6           cri-o://1.18.2      yes           yes                      4.5
 ----
 
-Run the command `kubectl uncordon <WORKER-NODE>`, for each of the worker nodes, your cluster status should now be completely ready:
+. Run the command `kubectl uncordon <WORKER-NODE>`, for each of the worker nodes, your cluster status should now be completely `Ready`:
++
 [source,bash]
 ----
 skuba cluster status
@@ -126,16 +162,23 @@ worker01   Ready   <none>   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-d
 worker02   Ready   <none>   SUSE Linux Enterprise Server 15 SP2   5.3.18-24.15-default   v1.18.6           cri-o://1.18.2      yes           yes                      4.5
 ----
 
-Bring back all your processes by scaling them up again:
+. Bring back all your processes by scaling them up again:
++
 [source,bash]
 ----
 kubectl scale --replicas=N -f deployment.yaml
 ----
-Or 
++
+or
++
 [source,bash]
 ----
 kubectl scale deploy my-deployment --replicas=N
 ----
-
++
 [NOTE]
 Replace N with the number of replicas you want running.
+
+== Post Startup Activities
+
+Verify that all of your workloads and applications have resumed operation properly.
