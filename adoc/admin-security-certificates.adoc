@@ -239,7 +239,7 @@ helm install suse/cert-exporter \
     --set customSecret.enabled=true \
     --set customSecret.certs[0].name=cert-manager \
     --set customSecret.certs[0].namespace=cert-manager-test \
-    --set customSecret.certs[0].includeKeys="{ca.crt,tls.crt}" \
+    --set customSecret.certs[0].includeKeys="{*.crt,*.pem}" \
     --set customSecret.certs[0].annotationSelector="{cert-manager.io/certificate-name}"
 ----
 Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
@@ -250,7 +250,7 @@ helm install <RELEASE_NAME> suse/cert-exporter \
     --set customSecret.enabled=true \
     --set customSecret.certs[0].name=cert-manager \
     --set customSecret.certs[0].namespace=cert-manager-test \
-    --set customSecret.certs[0].includeKeys="{ca.crt,tls.crt}" \
+    --set customSecret.certs[0].includeKeys="{*.crt,*.pem}" \
     --set customSecret.certs[0].annotationSelector="{cert-manager.io/certificate-name}"
 ----
 
@@ -262,7 +262,7 @@ helm install suse/cert-exporter \
     --name <RELEASE_NAME> \
     --set customSecret.enabled=true \
     --set customSecret.certs[0].name=self-signed-cert \
-    --set customSecret.certs[0].includeKeys="{ca.crt,tls.crt}" \
+    --set customSecret.certs[0].includeKeys="{*.crt,*.pem}" \
     --set customSecret.certs[0].labelSelector="{key=value}"
 ----
 Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
@@ -272,7 +272,7 @@ Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
 helm install <RELEASE_NAME> suse/cert-exporter \
     --set customSecret.enabled=true \
     --set customSecret.certs[0].name=self-signed-cert \
-    --set customSecret.certs[0].includeKeys="{ca.crt,tls.crt}" \
+    --set customSecret.certs[0].includeKeys="{*.crt,*.pem}" \
     --set customSecret.certs[0].labelSelector="{key=value}"
 ----
 
@@ -285,10 +285,10 @@ helm install suse/cert-exporter \
     --set customSecret.enabled=true \
     --set customSecret.certs[0].name=cert-manager \
     --set customSecret.certs[0].namespace=cert-manager-test \
-    --set customSecret.certs[0].includeKeys="{ca.crt,tls.crt}" \
+    --set customSecret.certs[0].includeKeys="{*.crt,*.pem}" \
     --set customSecret.certs[0].annotationSelector="{cert-manager.io/certificate-name}" \
     --set customSecret.certs[1].name=self-signed-cert \
-    --set customSecret.certs[1].includeKeys="{ca.crt,tls.crt}" \
+    --set customSecret.certs[1].includeKeys="{*.crt,*.pem}" \
     --set customSecret.certs[1].labelSelector="{key=value}"
 ----
 Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
@@ -299,10 +299,10 @@ helm install <RELEASE_NAME> suse/cert-exporter \
     --set customSecret.enabled=true \
     --set customSecret.certs[0].name=cert-manager \
     --set customSecret.certs[0].namespace=cert-manager-test \
-    --set customSecret.certs[0].includeKeys="{ca.crt,tls.crt}" \
+    --set customSecret.certs[0].includeKeys="{*.crt,*.pem}" \
     --set customSecret.certs[0].annotationSelector="{cert-manager.io/certificate-name}" \
     --set customSecret.certs[1].name=self-signed-cert \
-    --set customSecret.certs[1].includeKeys="{ca.crt,tls.crt}" \
+    --set customSecret.certs[1].includeKeys="{*.crt,*.pem}" \
     --set customSecret.certs[1].labelSelector="{key=value}"
 ----
 
@@ -317,10 +317,10 @@ helm install suse/cert-exporter \
     --set customSecret.enabled=true \
     --set customSecret.certs[0].name=cert-manager \
     --set customSecret.certs[0].namespace=cert-manager-test \
-    --set customSecret.certs[0].includeKeys="{ca.crt,tls.crt}" \
+    --set customSecret.certs[0].includeKeys="{*.crt,*.pem}" \
     --set customSecret.certs[0].annotationSelector="{cert-manager.io/certificate-name}" \
     --set customSecret.certs[1].name=self-signed-cert \
-    --set customSecret.certs[1].includeKeys="{ca.crt,tls.crt}" \
+    --set customSecret.certs[1].includeKeys="{*.crt,*.pem}" \
     --set customSecret.certs[1].labelSelector="{key=value}"
 ----
 Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
@@ -333,10 +333,10 @@ helm install <RELEASE_NAME> suse/cert-exporter \
     --set customSecret.enabled=true \
     --set customSecret.certs[0].name=cert-manager \
     --set customSecret.certs[0].namespace=cert-manager-test \
-    --set customSecret.certs[0].includeKeys="{ca.crt,tls.crt}" \
+    --set customSecret.certs[0].includeKeys="{*.crt,*.pem}" \
     --set customSecret.certs[0].annotationSelector="{cert-manager.io/certificate-name}" \
     --set customSecret.certs[1].name=self-signed-cert \
-    --set customSecret.certs[1].includeKeys="{ca.crt,tls.crt}" \
+    --set customSecret.certs[1].includeKeys="{*.crt,*.pem}" \
     --set customSecret.certs[1].labelSelector="{key=value}"
 ----
 
