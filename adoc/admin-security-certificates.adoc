@@ -752,6 +752,13 @@ CILIUM_OPERATOR=`kubectl get pod -l name=cilium-operator --namespace kube-system
 kubectl exec -it ${CILIUM_OPERATOR} --namespace kube-system -- cilium-operator --version
 ----
 
+. To let `reloader` do an automatic rolling upgrade of the cilium addon DaemonSet, we need to label the addons:
++
+[source,bash]
+----
+kubectl annotate --overwrite daemonset/cilium -n kube-system secret.reloader.stakater.com/reload=cilium-secret
+----
+
 . Upload the ETCD CA cert/key pair to Secret in the `kube-system` namespace
 +
 [source,bash]
