@@ -416,8 +416,8 @@ Please update the Dex & Gangway ConfigMap to use the same client secret.
 
 [source,bash]
 ----
-kubectl get configmap oidc-dex-config > oidc-dex-config.yaml
-kubectl get configmap oidc-gangway-config > oidc-gangway-config.yaml
+kubectl -n kube-system get configmap oidc-dex-config -o yaml > oidc-dex-config.yaml
+kubectl -n kube-system get configmap oidc-gangway-config -o yaml > oidc-gangway-config.yaml
 ----
 
 Make sure the oidc's `secret` in `oidc-dex-config.yaml` is the same as the `clientSecret` in `oidc-gangway-config.yaml`.
