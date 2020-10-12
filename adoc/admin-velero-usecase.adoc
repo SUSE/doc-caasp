@@ -104,7 +104,7 @@ velero restore logs <RESTORE_NAME>
 [source,bash]
 ----
 # Download dex.yaml
-kubectl get configmap oidc-dex-config -o yaml > oidc-dex-config.yaml
+kubectl -n kube-system get configmap oidc-dex-config -o yaml > oidc-dex-config.yaml
 
 # Edit oidc-dex-config.yaml to desired
 vim oidc-dex-config.yaml
@@ -121,7 +121,7 @@ kubectl delete pod -l app=oidc-dex
 [source,bash]
 ----
 # Download gangway.yaml
-kubectl get configmap oidc-gangway-config -o yaml > oidc-gangway-config.yaml
+kubectl -n kube-system get configmap oidc-gangway-config -o yaml > oidc-gangway-config.yaml
 
 # Edit oidc-gangway-config.yaml to desired
 vim oidc-gangway-config.yaml
