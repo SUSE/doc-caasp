@@ -19,7 +19,7 @@ from the original management workstation.
 
 Bootstrapping the cluster is the initial process of starting up a minimal
 viable cluster and joining the first master node. Only the first master node needs to be bootstrapped,
-later nodes can simply be joined as described in <<adding_nodes>>.
+later nodes can simply be joined as described in <<adding-nodes>>.
 
 Before bootstrapping any nodes to the cluster,
 you need to create an initial cluster definition folder (initialize the cluster).
@@ -28,7 +28,7 @@ This is done using `skuba cluster init` and its `--control-plane` flag.
 For a step by step guide on how to initialize the cluster, configure updates using `kured`
 and subsequently bootstrap nodes to it, refer to the _{productname} Deployment Guide_.
 
-[[adding_nodes]]
+[#adding-nodes]
 == Adding Nodes
 
 Once you have added the first master node to the cluster using `skuba node bootstrap`,
@@ -65,7 +65,7 @@ If you are using a virtual machine template for creating new cluster nodes,
 you must make sure that *before* joining the cloned machine to the cluster it is updated to the same software versions
 than the other nodes in the cluster.
 
-Refer to <<handling-updates>>.
+Refer to <<handling_updates>>.
 
 Nodes with mismatching package or container software
 versions might not be fully functional.
@@ -129,7 +129,7 @@ you will need to use a combination of commands.
 . Reinstall the node from scratch.
 . Run `skuba node join --role <DESIRED_ROLE> --user <USER_NAME> --sudo --target <IP/FQDN> <NODE_NAME>`.
 
-[[node_operations]]
+[#node_operations]
 == Node Operations
 
 === Uncordon and Cordon
