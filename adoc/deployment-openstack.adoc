@@ -2,7 +2,17 @@
 
 .Preparation Required
 [NOTE]
+====
 You must have completed <<deployment-preparations>> to proceed.
+====
+
+=== Install required kernel package
+
+The JeOS image used to install on {soc} comes only with the basic kernel pre-installed.
+This will be insufficient to run `cilium`. Please make sure that you install the
+`kernel-default` package on all cluster nodes before proceeding.
+
+=== Overview
 
 You will use {tf} to deploy the required master and worker cluster nodes (plus a load balancer) to {soc} and then use the
 `skuba` tool to bootstrap the {kube} cluster on top of those.
