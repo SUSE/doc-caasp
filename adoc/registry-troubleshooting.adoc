@@ -1,0 +1,14 @@
+== Troubleshooting
+
+The installation using Helm is fully automated and should succeed when the requirements are met. After a few seconds, the ingress controller configured path should be responding with the login screen of an admin UI, see the   "Documentation - Technical Preview release#Administration" section.
+
+In case of issues, please make sure all pods in registry namespace are running and all deployments are in the Ready state. If a pod fails to start, investigate the situation with your debugging tool of choice. (k9s, or kubectl).
+
+Private registry deploys in the given kubernetes namespace multiple deployments and one statefulset, and all of them should be healthy.
+
+Possible problems:
+
+    As mentioned in the requirements, ingress-controller needs to be set up in your kubernetes cluster
+    When accessing the Web UI, browser complains about unknown certificate. Check the TLS Setup section for a solution.
+    Images for various SUSE Private Registry components cannot be found, and Pods are not getting created. Make sure registry.suse.com is accessible from your network.
+    Pods are not starting, most of them fail with failed to connect to database pod error. Check the errors in the database pod. Does it complain with something like FailedScheduling <unknown> default-scheduler pod has unbound immediate PersistentVolumeClaims (repeated 2 times)? Possible reason is that the storageClass is missing or no storageClass is marked as default

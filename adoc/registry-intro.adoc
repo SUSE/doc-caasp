@@ -1,0 +1,43 @@
+= Introduction
+
+This document covers the SUSE specifics around deployment and usage of SUSE Private Registry Technical Preview only.
+
+In general, the goal for the Technical Preview is to get feedback, so please share your feedback/requirements with the team (ecosystem@suse.de) instead of simply assuming that things will work or when they worked once will continue to work. We would like to assemble a list of popular requirements for the next release and work on strictly automated CI test automation for all mandatory features going forward.
+
+The next release of SUSE Private Registry, which will be supported with either CaaSP or CAP,  is currently scheduled for November 2020.
+
+== Requirements
+Kubernetes Distribution
+
+SUSE Private Registry Technical Preview must be deployed on top of  CaaSP v4.5.x or CaaSP v4.2.x. No other Kubernetes distribution is supported at the moment. Also, a deployment within CAP or a deployment outside CaaSP (like on bare-metal SLES) is not supported for the tech preview release.
+Helm
+
+SUSE Private Registry can only be deployed into the Kubernetes cluster via the Helm chart, Helm 3.2 or newer is a requirement.  Use https://software.opensuse.org/package/helm to find a build for your distribution.
+Storage Backend
+
+Prior deployment of SUSE Private Registry, Kubernetes cluster has to be configured so that it provides default storageClass for persistent storage. CaaSP 4.2 provides only very limited options of supported storageClass configurations, see the CaaSP documentation https://documentation.suse.com/suse-caasp/4.2/html/caasp-admin/_storage.html for details.
+Ingress
+
+The default way of installing Harbor using the helm chart needs an Ingress service to expose the Harbor service. The Kubernetes cluster where the chart is being deployed needs to have an ingress controller enabled. Check for example how to deploy Nginx based Ingress controller with CaaSP.
+
+== Limitations
+
+Tech Preview was focusing on the core areas and had a limited scope, so not all deployment options available in the Helm chart have been tested. Specifically public cloud based CaaSP deployments have had limited testing.
+
+The provided helm chart does not deploy in a High Availability configuration.
+
+There is no supported upgrade path from Tech Preview to the next release of SUSE Private Registry in November. Although we strive for an in-place upgrade to MVP release, we use this upgrade to MVP as a learning exercise.
+
+Accuracy of the Image scanning using Trivy might be limited.
+
+Neither Notary nor podman/gpg signing is supported.
+
+There is no integration with CAP, like UAA, currently supported.
+
+== Highlights
+
+Customers that want to follow a Cloud Native Application Development and Delivery need at the heart of the delivery a Registry and a CI/CD instance to simplify the development and production of container images. SUSE Private Registry provides such a  Registry solution, which help developers to store, manage and deploy different artifacts. The SUSE Private Registry solution gives the development team a place to manage the container images, control the access, and do vulnerability scanning.
+
+SUSE Private Registry is a fully OCI compliant container image registry solution and includes additionally a Harbor based UI . Harbor allows users to configure storage, replication and provides with fine grained access control on both OCI container images and Helm charts. It's based on SUSE Linux Enterprise, using only official SUSE images.
+
+Harbor is an open source registry that secures artifacts with policies and role-based access control, ensures images are scanned and free from vulnerabilities, and signs images as trusted. Harbor, a CNCF Graduated project, delivers compliance, performance, and interoperability to help you consistently and securely manage artifacts across cloud native compute platforms like Kubernetes and Docker. For extensive documentation, please look at the upstream documentation: https://goharbor.io/docs/2.0.0/

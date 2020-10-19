@@ -1,0 +1,62 @@
+== Deployment
+
+=== Installation Steps
+
+    Add the SUSE Kubernetes Helm charts repository by running:
+
+helm repo add suse https://kubernetes-charts.suse.com
+
+2. Create a file harbor-config-values.yaml with the following content:
+harbor-config-values.yaml
+expose:
+  # Set the way how to expose the service. Default value is "ingress".
+  ingress:
+    hosts:
+      core: "<ingress_url>"
+
+# The external URL for Harbor core service. It is used to
+# 1) populate the docker/helm commands showed on portal
+# 2) populate the token service URL returned to docker/notary client
+#
+# Format: protocol://domain[:port]. Usually:
+# 1) if "expose.type" is "ingress", the "domain" should be
+# the value of "expose.ingress.hosts.core"
+#
+# If Harbor is deployed behind the proxy, set it as the URL of proxy
+externalURL: "https://<ingress_url>"
+
+
+Replace <ingress_url> with a URL that resolves to the ingress External IP.
+
+3. Review the SUSE EULA for Beta Software as available here: https://documentation.suse.com/beta/eula
+
+4. Install the Harbor helm chart from the new repository and provide the modified values that were created in previous step. For example, to install harbor as  suse-registry release into the registry namespace call
+kubectl create namespace registry
+helm install -n registry suse-registry suse/harbor  -f harbor-config-values.yaml --set suse.AcceptBetaEULA=yes
+
+Above example is for Helm v3. For Helm v2, the syntax of install command is slightly different
+helm install --namespace registry -n suse-registry suse/harbor  -f harbor-config-values.yaml --set suse.AcceptBetaEULA=yes
+
+Once the installation is complete, Helm will provide the information about the location of the newly installed registry, e.g.:
+NAME: suse-registry
+LAST DEPLOYED: Fri Jul 24 10:34:53 2020
+NAMESPACE: registry
+STATUS: deployed
+REVISION: 1
+NOTES:
+Please wait for several minutes for Harbor deployment to complete.
+Then you should be able to visit the Harbor portal at https://core.harbor.domain
+
+You will see your <ingress_url> instead of https://core.harbor.domain.
+
+5. Check the status of created pods and see if everything is running correctly:
+> kubectl -n registry get pod
+NAME                                                  READY   STATUS    RESTARTS   AGE
+suse-registry-harbor-core-c787885b6-2l7lz             1/1     Running   1          105m
+suse-registry-harbor-database-0                       1/1     Running   0          105m
+suse-registry-harbor-jobservice-698fb5bb44-88mc5      1/1     Running   1          105m
+suse-registry-harbor-nginx-b4f7748c5-8v2rp            1/1     Running   0          105m
+suse-registry-harbor-portal-bff5898cc-tt9ss           1/1     Running   0          105m
+suse-registry-harbor-redis-0                          1/1     Running   0          105m
+suse-registry-harbor-registry-7f65b6f87b-sqhzt        2/2     Running   0          105m
+suse-registry-harbor-trivy-0                          1/1     Running   0          105m
