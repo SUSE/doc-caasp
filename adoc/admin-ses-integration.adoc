@@ -378,15 +378,29 @@ The procedure below describes how to use CephFS in Pod.
 .Procedure: Using CephFS In Pods
 
 
-. link:https://docs.ceph.com/en/latest/rbd/rados-rbd-cmds/#create-a-block-device-user[Create a Block Device User] to use as CephFS admin and record the key:
+. link:https://docs.ceph.com/en/latest/rbd/rados-rbd-cmds/#create-a-block-device-user[Create a Block Device User] to use as CephFS user and record the key:
 +
 ----
-ceph auth get-or-create-key client.myCephFSAdmin mds 'allow *' mgr 'allow *' mon 'allow *' osd 'allow *'  | tr -d '\n' | base64
+ceph auth get-or-create-key client.myCephFSUser mds 'allow *' mgr 'allow *' mon 'allow r' osd 'allow rw pool=cephfs_metadata,allow rwx pool=cephfs_data'  | tr -d '\n' | base64
 ----
 +
 [NOTE]
 ====
-Reference to link:https://docs.ceph.com/en/latest/cephfs/client-auth/#cephfs-client-capabilities[CephFS Client Capabilities] to see how to restrict user authority.
+The `cephfs_data` pool should be pre-existed with SES deployment, if not you can create and initialize with:
+----
+ceph osd pool create cephfs_data 256 256
+ceph osd pool create cephfs_metadata 64 64
+ceph fs new cephfs cephfs_metadata cephfs_data
+----
+====
+[NOTE]
+====
+link:https://docs.ceph.com/en/latest/cephfs/experimental-features/#multiple-file-systems-within-a-ceph-cluster[Multiple Filesystems Within a Ceph Cluster] is still an experimental feature, and disabled by default, to setup more than one filesystem requires to have this feature enabled.
+See link:https://docs.ceph.com/en/latest/cephfs/createfs/#create-a-ceph-file-system[Create a Ceph File System] on how to create more filesystems.
+====
+[NOTE]
+====
+Reference to link:https://docs.ceph.com/en/latest/cephfs/client-auth/#cephfs-client-capabilities[CephFS Client Capabilities] to see how to further restrict user authority.
 ====
 
 . Create the Secret containing the CephFS admin key:
@@ -395,11 +409,11 @@ Reference to link:https://docs.ceph.com/en/latest/cephfs/client-auth/#cephfs-cli
   apiVersion: v1
   kind: Secret
   metadata:
-    name: ceph-admin
+    name: ceph-user
   data:
     key: QVFESE1rbGRBQUFBQUJBQWxnSmpZalBEeGlXYS9Qb1J4ZStreplace== // <1>
 ====
-<1> The CephFS admin key from the Ceph cluster.
+<1> The CephFS user key from the Ceph cluster.
 
 . Create the Pod:
 +
@@ -423,15 +437,15 @@ Reference to link:https://docs.ceph.com/en/latest/cephfs/client-auth/#cephfs-cli
         - 172.28.0.19:6789 // <2>
         - 172.28.0.5:6789
         - 172.28.0.18:6789
-        user: myCephFSAdmin // <3>
+        user: myCephFSUser // <3>
         secretRef:
-          name: ceph-admin // <4>
+          name: ceph-user // <4>
         readOnly: false
 ====
 <1> The volume mount path inside the Pod.
 <2> A list of Ceph monitor nodes IP and port. The default port is *6789*.
-<3> The CephFS admin name.
-<4> The Kubernetes Secret name contains the CephFS admin key.
+<3> The CephFS user name.
+<4> The Kubernetes Secret name contains the CephFS user key.
 
 . Once the pod is running, check the volume is mounted:
 +
@@ -448,15 +462,29 @@ kubectl exec -it pod/cephfs-inline -- df -k | grep cephfs
 
 The following procedure describes how to attach a CephFS static persistent volume to a pod:
 
-. link:https://docs.ceph.com/en/latest/rbd/rados-rbd-cmds/#create-a-block-device-user[Create a Block Device User] to use as CephFS admin and record the key:
+. link:https://docs.ceph.com/en/latest/rbd/rados-rbd-cmds/#create-a-block-device-user[Create a Block Device User] to use as CephFS user and record the key:
 +
 ----
-ceph auth get-or-create-key client.myCephFSAdmin mds 'allow *' mgr 'allow *' mon 'allow *' osd 'allow *'  | tr -d '\n' | base64
+ceph auth get-or-create-key client.myCephFSUser mds 'allow *' mgr 'allow *' mon 'allow r' osd 'allow rw pool=cephfs_metadata,allow rwx pool=cephfs_data'  | tr -d '\n' | base64
 ----
 +
 [NOTE]
 ====
-Reference to link:https://docs.ceph.com/en/latest/cephfs/client-auth/#cephfs-client-capabilities[CephFS Client Capabilities] to see how to restrict user authority.
+The `cephfs_data` pool should be pre-existed with SES deployment, if not you can create and initialize with:
+----
+ceph osd pool create cephfs_data 256 256
+ceph osd pool create cephfs_metadata 64 64
+ceph fs new cephfs cephfs_metadata cephfs_data
+----
+====
+[NOTE]
+====
+link:https://docs.ceph.com/en/latest/cephfs/experimental-features/#multiple-file-systems-within-a-ceph-cluster[Multiple Filesystems Within a Ceph Cluster] is still an experimental feature, and disabled by default, to setup more than one filesystem requires to have this feature enabled.
+See link:https://docs.ceph.com/en/latest/cephfs/createfs/#create-a-ceph-file-system[Create a Ceph File System] on how to create more filesystem.
+====
+[NOTE]
+====
+Reference to link:https://docs.ceph.com/en/latest/cephfs/client-auth/#cephfs-client-capabilities[CephFS Client Capabilities] to see how to further restrict user authority.
 ====
 
 . Create the Secret that contains the created CephFS admin key:
@@ -465,11 +493,11 @@ Reference to link:https://docs.ceph.com/en/latest/cephfs/client-auth/#cephfs-cli
   apiVersion: v1
   kind: Secret
   metadata:
-    name: ceph-admin
+    name: ceph-user
   data:
     key: QVFESE1rbGRBQUFBQUJBQWxnSmpZalBEeGlXYS9Qb1J4ZStreplace== // <1>
 ====
-<1> The CephFS admin key from the Ceph cluster.
+<1> The CephFS user key from the Ceph cluster.
 
 . Create the Persistent Volume:
 +
@@ -488,15 +516,15 @@ Reference to link:https://docs.ceph.com/en/latest/cephfs/client-auth/#cephfs-cli
         - 172.28.0.19:6789 // <2>
         - 172.28.0.5:6789
         - 172.28.0.18:6789
-      user: myCephFSAdmin // <3>
+      user: myCephFSUser // <3>
       secretRef:
-        name: ceph-admin // <4>
+        name: ceph-user // <4>
       readOnly: false
 ====
 <1> The desired volume size. Reference to link:https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#setting-requests-and-limits-for-local-ephemeral-storage[Setting requests and limits for local ephemeral storage] to see supported suffixes.
 <2> A list of Ceph monitor nodes IP and port. The default port is *6789*.
-<3> The CephFS admin name.
-<4> The Kubernetes Secret name contains the CephFS admin key.
+<3> The CephFS user name.
+<4> The Kubernetes Secret name contains the CephFS user key.
 
 . Create the Persistent Volume Claim:
 +
