@@ -108,7 +108,8 @@ velero backup create backup-1 --selector app=elasticsearch-master
 
 ** Location
 +
-Pass `--storage-location` to specify where the backup to store. For example, if we have an HA object storage server called default and secondary respectively.
+Pass `--storage-location` to specify where to store the backup. 
+For example, if we have an HA object storage server called default and secondary respectively.
 +
 [source,bash]
 ----
@@ -121,7 +122,8 @@ velero backup create backup2secondary --storage-location secondary
 
 ** Garbage Collection
 +
-Pass `--ttl` to specify how long the backup should be kept, after that, the backup will be dumped into the garbage (deleted). The default time for a backup to existing before it is deleted is 720 hours (30 days).
+Pass `--ttl` to specify how long the backup should be kept. After the specified time the backup will be deleted. 
+The default time for a backup before deletion is 720 hours (30 days).
 
 ** Exclude Specific Items from Backup
 +
