@@ -12,10 +12,10 @@ Add {suse} helm chart repository URL:
 helm repo add suse https://kubernetes-charts.suse.com
 ----
 
-=== Object Storage And It's Credentials
+=== Object Storage And Its Credentials
 
 Velero uses object storage to store backups and associated artifacts.
-It can also optionally create snapshots of persistent volume and store them in object storage by `restic`, if there is no supported volume snapshot provider.
+It can also optionally create snapshots of persistent volumes and store them in object storage via `restic` if there is no supported volume snapshot provider.
 
 Choose one of the object storage providers, which fits your environment, from the list below for backing up and restoring the {kube} cluster.
 
@@ -53,7 +53,7 @@ Install `aws` CLI locally, follow the link:https://docs.aws.amazon.com/cli/lates
 
 . AWS S3 bucket
 +
-Create a AWS S3 bucket to store backup data and restore data from the S3 bucket.
+Create an AWS S3 bucket to store backup data and restore data from the S3 bucket.
 +
 [source,bash]
 ----
@@ -71,7 +71,7 @@ aws_access_key_id=<AWS_ACCESS_KEY_ID>
 aws_secret_access_key=<AWS_SECRET_ACCESS_KEY>
 ----
 +
-For details, please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-aws/tree/v1.0.1[Velero Plugin For AWS].
+For details, please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-aws/tree/v1.1.0[Velero Plugin For AWS].
 
 ===== Google Cloud Storage
 
@@ -142,7 +142,7 @@ gcloud iam service-accounts keys create credentials-velero \
     --iam-account $SERVICE_ACCOUNT_EMAIL
 ----
 +
-For details, please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-gcp/tree/v1.0.1[Velero Plugin For GCP].
+For details, please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-gcp/tree/v1.1.0[Velero Plugin For GCP].
 
 ===== Azure Blob Storage
 
@@ -209,7 +209,7 @@ AZURE_RESOURCE_GROUP=${AZURE_RESOURCE_GROUP}
 EOF
 ----
 +
-For details, please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure/tree/v1.0.1[Velero Plugin For Azure].
+For details, please refer to link:https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure/tree/v1.1.0[Velero Plugin For Azure].
 
 ==== On-Premise (S3-Compatible Providers)
 
@@ -228,8 +228,7 @@ aws_secret_access_key=<SES_STORAGE_SECRET_ACCESS_KEY>
 ----
 
 ===== Minio
-
-Besides {ses}, there is an alternative open source S3-compatible object storage provider link:https://min.io/[minio].
+Besides {ses}, there is an alternative open-source S3-compatible object storage provider link:https://min.io/[minio].
 
 . Prepare an external host and install Minio on the host
 +
@@ -264,14 +263,14 @@ chmod +x mc
 aws_access_key_id=<MINIO_STORAGE_ACCESS_KEY_ID>
 aws_secret_access_key=<MINIO_STORAGE_SECRET_ACCESS_KEY>
 ----
-
-For the rest of the S3-compatible storage providers supported by Velero, refer to link:https://velero.io/docs/v1.3.1/supported-providers/[Velero Supported Providers].
++
+For the rest of the S3-compatible storage providers, refer to link:https://velero.io/docs/v1.4/supported-providers/[Velero: Supported Providers].
 
 === Volume Snapshotter
 
-A volume snapshotter is able to snapshot its persistent volumes if its volume driver supports volume snapshot and corresponding API.
+A volume snapshotter can snapshot its persistent volumes if its volume driver supports volume snapshot and corresponding API.
 
-If a volume provider does not support volume snapshot or volume snapshot API, or does not have Velero supported storage plugin, Velero leverages `restic` as an agnostic solution to backup and restore this sort of persistent volumes.
+If a volume provider does not support volume snapshot or volume snapshot API or does not have Velero supported storage plugin, Velero leverages `restic` as an agnostic solution to backup and restore this sort of persistent volumes.
 
 [options="header"]
 |===
@@ -279,7 +278,7 @@ If a volume provider does not support volume snapshot or volume snapshot API, or
 |Amazon Web Services (AWS) | AWS EBS | link:https://github.com/vmware-tanzu/velero-plugin-for-aws[Velero plugin for AWS]
 |===
 
-For the other `snapshotter` providers refer to link:https://velero.io/docs/v1.3.1/supported-providers/[Velero Supported Providers].
+For the other `snapshotter` providers refer to link:https://velero.io/docs/v1.4/supported-providers/[Velero: Supported Providers].
 
 === Velero CLI
 
@@ -291,20 +290,6 @@ sudo zypper install velero
 ----
 
 == Known Issues
-
-. Velero reports errors when restoring Cilium CRDs. However, this does not affect Cilium functionality.
-+
-[NOTE]
-====
-You can add a label to Cilium CRDs to skip Velero backup.
-
-[source,bash]
-----
-kubectl label -n kube-system customresourcedefinitions/ciliumendpoints.cilium.io velero.io/exclude-from-backup=true
-
-kubectl label -n kube-system customresourcedefinitions/ciliumnetworkpolicies.cilium.io velero.io/exclude-from-backup=true
-----
-====
 
 . When restoring `dex` and `gangway`, Velero reports `NodePort` cannot be restored since `dex` and `gangway` are deployed by an addon already and the same `NodePort` has been registered.
 However, this does not break the `dex` and `gangway` service access from outside.
