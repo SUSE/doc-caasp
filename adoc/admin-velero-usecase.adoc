@@ -113,7 +113,7 @@ vim oidc-dex-config.yaml
 kubectl apply -f oidc-dex-config.yaml --force
 
 # Restart oidc-dex deployment
-kubectl delete pod -l app=oidc-dex
+kubectl rollout restart deployment/oidc-dex -n kube-system
 ----
 
 .. Check gangway configuration:
@@ -130,7 +130,7 @@ vim oidc-gangway-config.yaml
 kubectl apply -f oidc-gangway-config.yaml --force
 
 # Restart oidc-gangway deployment
-kubectl delete pod -l app=oidc-dex
+kubectl rollout restart deployment/oidc-gangway -n kube-system
 ----
 
 .. Check kured is disabled automatically reboots
