@@ -33,7 +33,10 @@ The general procedure should look like this:
 . Check if all current versions of applications and deployments in the cluster will work on the new {kube} version you plan to install.
 * If an application/deployment is incompatible with the new {kube} version, update the application/deployment before performing any of the other upgrade steps.
 . Update the packages and reboot your management workstation to get all the latest changes to skuba, helm and their dependencies.
-. Run `skuba addon upgrade plan` and then `skuba addon upgrade apply` on the management workstation.
+. Run the commands on the management workstation.
+  * `skuba addon refresh localconfig`
+  * `skuba addon upgrade plan`
+  * `skuba addon upgrade apply`
 . Apply all the configuration files that you modified for addons, the upgrade will have reset the configurations to defaults.
 . Check if there are addon upgrades available for the current cluster using `skuba addon upgrade plan`.
 * Check if all the deployments in the cluster are compatible with the {kube} release that will be installed (refer to your individual deployments' documentation).
@@ -170,6 +173,14 @@ which will result in temporary connection loss for currently existing pods and s
 That warning means that Cilium is going to regenerate all internal data on the first run after upgrade.
 It can result in temporary connection loss for pods and services which might take few minutes.
 ====
+
+Each {kube} cluster version comes with different addons base manifests.
+To update your local addons cluster folder definition in-sync with
+current {kube} cluster version, please run:
+
+----
+skuba addon refresh localconfig
+----
 
 In order to get an overview of the addon updates available, you can run:
 
