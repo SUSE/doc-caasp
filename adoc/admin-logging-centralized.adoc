@@ -102,23 +102,26 @@ If not specified otherwise, Helm will install log agents with TCP as the default
 ====
 Currently, Rsyslog can cause a segfault (as described in https://github.com/rsyslog/rsyslog/issues/4200) as result of a conflict when both `imjournal` and `imfile` input modules are enabled. To avoid crashing Rsyslog, `imfile` and `imjournal` need to be mutually exclusive, which means they need to be configured in the Rsyslog helm chart to one of these:
 
-.Enables imfile, Disables imjournal
 [source,bash]
 ----
---set logs.osSystem.enabled=true \
---set logs.kubernetesSystem.enabled=false \
---set logs.kubernetesControlPlane.enabled=false \
---set logs.kubernetesUserNamespaces.enabled=false \
+--set logs.osSystem.enabled=true \ // <1>
+--set logs.kubernetesSystem.enabled=false \ // <2>
+--set logs.kubernetesControlPlane.enabled=false \ // <2>
+--set logs.kubernetesUserNamespaces.enabled=false \ // <2>
 ----
+<1> Enables imfile
+<2> Disables imjournal
 
 .Disables imfile, Enables imjournal
 [source,bash]
 ----
---set logs.osSystem.enabled=false \
---set logs.kubernetesSystem.enabled=true \
---set logs.kubernetesControlPlane.enabled=true \
---set logs.kubernetesUserNamespaces.enabled=true \
+--set logs.osSystem.enabled=false \ // <1>
+--set logs.kubernetesSystem.enabled=true \ // <2>
+--set logs.kubernetesControlPlane.enabled=true \ // <2>
+--set logs.kubernetesUserNamespaces.enabled=true \ // <2>
 ----
+<1> Disables imfile
+<2> Enables imjournal
 
 If it is required to send both `imjournal` and `imfile`, Rsyslog needs to be installed directly on the host nodes to send the `imjournal` log and again deployed via the helm chart on the Kubernetes cluster to send `imfile` logs.
 ====
