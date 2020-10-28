@@ -100,13 +100,26 @@ If not specified otherwise, Helm will install log agents with TCP as the default
 
 [WARNING]
 ====
-Running Rsyslog in the host machine as well as in the {kube} cluster with `imjournal` and `imfile` input modules enabled may causes issues. Rsyslog can crash.
-To avoid that, it is possible to disable the `imjournal` module in the helm chart installation adding the following command line argument:
+Currently, Rsyslog can cause segfault as described in https://github.com/rsyslog/rsyslog/issues/4200 as result of both `imjournal` and `imfile` input modules enabled. To avoid Rsyslog crash, `imfile` and `imjournal` need to be mutually exclusive, which mean we need to configure helm charts to one of these 
 
 [source,bash]
 ----
---set logs.osSystem.enabled=false
+--set logs.osSystem.enabled=true \
+--set logs.kubernetesSystem.enabled=false \
+--set logs.kubernetesControlPlane.enabled=false \
+--set logs.kubernetesUserNamespaces.enabled=false \
 ----
+
+
+[source,bash]
+----
+--set logs.osSystem.enabled=false \
+--set logs.kubernetesSystem.enabled=true \
+--set logs.kubernetesControlPlane.enabled=true \
+--set logs.kubernetesUserNamespaces.enabled=true \
+----
+
+ If required to send both `imjournal` and `imfile`, Rsyslog need to install on hosts to send `imjournal` log and helm chart deploy on Kubernetes to send `imfile` log.
 ====
 
 After this step, all of the log agents will initialize then start to forward logs from each node to the configured remote Rsyslog server.
