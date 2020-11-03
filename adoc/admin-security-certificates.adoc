@@ -1264,14 +1264,14 @@ openssl x509 -noout -text -in <CLUSTER_NAME>/pki.bak/metrics-server.crt | grep -
 openssl x509 -noout -text -in <CLUSTER_NAME>/pki.bak/metrics-server.crt | grep -oP '(?<=DNS:)[^,]+'
 ----
 
-. Sign the `metrics-server-cert` server certificate with the default kubernetes CA certificate
+. Sign the `metrics-server-cert` server certificate with the default {kube} CA certificate
 +
-Please refer to <<self-signed-server-certificate>> on how to sign the self signed server certificate. The default kubernetes CA certificate and key are located at `/etc/kubernetes/pki/ca.crt` and `/etc/kubernetes/pki/ca.key`. The `server.conf` for O/OU/CN _must be_ the same as original one, IP.1 is the original SAN IP address if present, DNS.1 is the original SAN DNS if present.
+Please refer to <<self-signed-server-certificate>> on how to sign the self signed server certificate. The default {kube} CA certificate and key are located at `/etc/kubernetes/pki/ca.crt` and `/etc/kubernetes/pki/ca.key`. The `server.conf` for O/OU/CN _must be_ the same as original one, `IP.1` is the original SAN IP address if present, `DNS.1` is the original SAN DNS if present.
 
 . Import your certificate into the {kube} cluster.
 The CA certificates is `<CA_CERT_PATH>`, server certificate and key are `<SIGNED_METRICS_SERVER_CERT_PATH>` and `<SIGNED_METRICS_SERVER_KEY_PATH>`.
 
-. Create a secret manifest file [path]`oidc-metrics-server-cert.yaml` and update the secret data `ca.crt`, `tls.crt`, and `tls.key` with base64; encoded with CA certificate, signed `metrics-server` server certificate and key respectively.
+. Create a secret manifest file `oidc-metrics-server-cert.yaml` and update the secret data `ca.crt`, `tls.crt`, and `tls.key` with base64; encoded with CA certificate, signed `metrics-server` server certificate and key respectively.
 +
 ----
 apiVersion: v1
