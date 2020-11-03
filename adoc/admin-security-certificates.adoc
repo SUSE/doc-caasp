@@ -1133,18 +1133,16 @@ In the admin node, regenerate the certificates:
 [source,bash]
 ----
 mkdir -p <CLUSTER_NAME>/pki.bak
-kubectl get secret oidc-dex-cert -n kube-system -o yaml | tee <CLUSTER_NAME>/pki.bak/oidc-dex-cert.yaml > /dev/null
-
-cat <CLUSTER_NAME>/pki.bak/oidc-dex-cert.yaml | grep tls.crt | awk '{print $2}' | base64 --decode | tee <CLUSTER_NAME>/pki.bak/oidc-dex.crt > /dev/null
-cat <CLUSTER_NAME>/pki.bak/oidc-dex-cert.yaml | grep tls.key | awk '{print $2}' | base64 --decode | tee <CLUSTER_NAME>/pki.bak/oidc-dex.key > /dev/null
+kubectl get secret oidc-dex-cert -n kube-system -o "jsonpath={.data['tls\.crt']}" | base64 --decode | tee <CLUSTER_NAME>/pki.bak/oidc-dex.crt > /dev/null
+kubectl get secret oidc-dex-cert -n kube-system -o "jsonpath={.data['tls\.key']}" | base64 --decode | tee <CLUSTER_NAME>/pki.bak/oidc-dex.key > /dev/null
 ----
 
 . Get the original SAN IP address(es) and DNS(s), run:
 +
 [source,bash]
 ----
-openssl x509 -noout -text -in /etc/kubernetes/pki.bak/oidc-dex.crt | grep -oP '(?<=IP Address:)[^,]+'
-openssl x509 -noout -text -in /etc/kubernetes/pki.bak/oidc-dex.crt | grep -oP '(?<=DNS:)[^,]+'
+openssl x509 -noout -text -in <CLUSTER_NAME>/pki.bak/oidc-dex.crt | grep -oP '(?<=IP Address:)[^,]+'
+openssl x509 -noout -text -in <CLUSTER_NAME>/pki.bak/oidc-dex.crt | grep -oP '(?<=DNS:)[^,]+'
 ----
 
 . Sign the `oidc-dex` server certificate with the default kubernetes CA certificate _or_ trusted CA certificate.
@@ -1191,18 +1189,16 @@ kubectl rollout restart deployment/oidc-dex -n kube-system
 [source,bash]
 ----
 mkdir -p <CLUSTER_NAME>/pki.bak
-kubectl get secret oidc-gangway-cert -n kube-system -o yaml | tee <CLUSTER_NAME>/pki.bak/oidc-gangway-cert.yaml > /dev/null
-
-cat <CLUSTER_NAME>/pki.bak/oidc-gangway-cert.yaml | grep tls.crt | awk '{print $2}' | base64 --decode | tee <CLUSTER_NAME>/pki.bak/oidc-gangway.crt > /dev/null
-cat <CLUSTER_NAME>/pki.bak/oidc-gangway-cert.yaml | grep tls.key | awk '{print $2}' | base64 --decode | tee <CLUSTER_NAME>/pki.bak/oidc-dgangwayex.key > /dev/null
+kubectl get secret oidc-gangway-cert -n kube-system -o "jsonpath={.data['tls\.crt']}" | base64 --decode | tee <CLUSTER_NAME>/pki.bak/oidc-gangway.crt > /dev/null
+kubectl get secret oidc-gangway-cert -n kube-system -o "jsonpath={.data['tls\.key']}" | base64 --decode | tee <CLUSTER_NAME>/pki.bak/oidc-gangway.key > /dev/null
 ----
 
 . Get the original SAN IP address(es) and DNS(s), run:
 +
 [source,bash]
 ----
-openssl x509 -noout -text -in /etc/kubernetes/pki.bak/oidc-gangway.crt | grep -oP '(?<=IP Address:)[^,]+'
-openssl x509 -noout -text -in /etc/kubernetes/pki.bak/oidc-gangway.crt | grep -oP '(?<=DNS:)[^,]+'
+openssl x509 -noout -text -in <CLUSTER_NAME>/pki.bak/oidc-gangway.crt | grep -oP '(?<=IP Address:)[^,]+'
+openssl x509 -noout -text -in <CLUSTER_NAME>/pki.bak/oidc-gangway.crt | grep -oP '(?<=DNS:)[^,]+'
 ----
 
 . Sign the `oidc-gangway` server certificate with the default kubernetes CA certificate _or_ trusted CA certificate.
@@ -1240,6 +1236,64 @@ data:
 ----
 kubectl replace -f oidc-gangway-cert.yaml
 kubectl rollout restart deployment/oidc-gangway -n kube-system
+----
+
+* Replace the `metrics-server` server certificate:
++
+. Backup the original `metrics-server` server certificate and key from secret resource.
++
+[source,bash]
+----
+mkdir -p <CLUSTER_NAME>/pki.bak
+kubectl get secret metrics-server-cert -n kube-system -o "jsonpath={.data['tls\.crt']}" | base64 --decode | tee <CLUSTER_NAME>/pki.bak/metrics-server.crt > /dev/null
+kubectl get secret metrics-server-cert -n kube-system -o "jsonpath={.data['tls\.key']}" | base64 --decode | tee <CLUSTER_NAME>/pki.bak/metrics-server.key > /dev/null
+----
+
+. Get the O/OU/CN, run:
++
+[source,bash]
+----
+openssl x509 -noout -subject -in <CLUSTER_NAME>/pki.bak/metrics-server.crt
+----
+
+. Get the original SAN IP address(es) and DNS(s), run:
++
+[source,bash]
+----
+openssl x509 -noout -text -in <CLUSTER_NAME>/pki.bak/metrics-server.crt | grep -oP '(?<=IP Address:)[^,]+'
+openssl x509 -noout -text -in <CLUSTER_NAME>/pki.bak/metrics-server.crt | grep -oP '(?<=DNS:)[^,]+'
+----
+
+. Sign the `metrics-server-cert` server certificate with the default {kube} CA certificate
++
+Please refer to <<self-signed-server-certificate>> on how to sign the self signed server certificate. The default {kube} CA certificate and key are located at `/etc/kubernetes/pki/ca.crt` and `/etc/kubernetes/pki/ca.key`. The `server.conf` for O/OU/CN _must be_ the same as original one, `IP.1` is the original SAN IP address if present, `DNS.1` is the original SAN DNS if present.
+
+. Import your certificate into the {kube} cluster.
+The CA certificates is `<CA_CERT_PATH>`, server certificate and key are `<SIGNED_METRICS_SERVER_CERT_PATH>` and `<SIGNED_METRICS_SERVER_KEY_PATH>`.
+
+. Create a secret manifest file `oidc-metrics-server-cert.yaml` and update the secret data `ca.crt`, `tls.crt`, and `tls.key` with base64; encoded with CA certificate, signed `metrics-server` server certificate and key respectively.
++
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: metrics-server-cert
+  namespace: kube-system
+  labels:
+    caasp.suse.com/skuba-addon: "true"
+type: kubernetes.io/tls
+data:
+  ca.crt: cat <CA_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
+  tls.crt: cat <SIGNED_METRICS_SERVER_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
+  tls.key: cat <SIGNED_METRICS_SERVER_KEY_PATH> | base64 | awk '{print}' ORS='' && echo
+----
+
+. Apply the secret manifest file and restart `metrics-server` pods.
++
+[source,bash]
+----
+kubectl replace -f metrics-server-cert.yaml
+kubectl rollout restart deployment/metrics-server -n kube-system
 ----
 
 == How To Generate Certificates
