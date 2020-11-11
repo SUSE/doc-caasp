@@ -168,7 +168,7 @@ and Storage services.
 
 If you want to enable cloud provider integration with different cloud platforms,
 initialize the cluster with the flag `--cloud-provider <CLOUD PROVIDER>`.
-The only currently available options are `openstack`, `aws` and `vsphere`,
+The only currently available options are `aws`, `azure`, `openstack` and `vsphere`,
 but more options are planned.
 
 .Cleanup
@@ -298,7 +298,107 @@ these names will be used by the `AWS` cloud controller manager to reconcile node
 You can use the "private dns" values provided by the {tf} output.
 ====
 
-[#cluster-bootstrap-vcp]
+====== Azure In-tree CPI
+
+include::common_tech_preview.adoc[]
+
+Define the cluster using the following command:
+
+[source,bash]
+----
+skuba cluster init --control-plane <LB_IP/FQDN> --cloud-provider azure my-cluster
+----
+
+Running the above command will create a directory `my-cluster/cloud/azure` with a
+`README.md` and a `azure.conf.template` in it. Copy `azure.conf.template`
+or create a `azure.conf` file inside `my-cluster/cloud/azure`, according to the supported format.
+
+The supported format and content can be found in the link:https://kubernetes.io/docs/concepts/cluster-administration/cloud-providers/#azure[official Kubernetes documentation].
+
+[WARNING]
+====
+The file `my-cluster/cloud/azure/azure.conf` must not be freely accessible.
+Please remember to set proper file permissions for it, for example `600`.
+====
+
+===== Example Azure Cloud Provider Configuration
+
+====
+    {
+        "cloud": "AzurePublicCloud",
+        "tenantId": "<AZ_TENANT_ID>", // <1>
+        "aadClientId": "<AZ_AAD_CLIENT_ID>", // <2>
+        "aadClientSecret": "<AZ_AAD_CLIENT_SECRET>", // <3>
+        "subscriptionId": "<AZ_SUBSCRIPTION_ID>", // <4>
+        "resourceGroup": "<AZ_RESOURCE_GROUP>", // <5>
+        "location": "<AZ_LOCATION>", // <6>
+        "routeTableName": "<AZ_ROUTE_TABLE_NAME>", // <7>
+        "useManagedIdentityExtension": true, // <8>
+        "useInstanceMetadata": true
+    }
+====
+<1> (required) The AAD Tenant ID for the Subscription that the cluster is deployed in.
+<2> (optional) The ClientID for an AAD application with RBAC access to talk to Azure RM APIs. This is used for service principle authentication.
+<3> (optional) The ClientSecret for an AAD application with RBAC access to talk to Azure RM APIs. This is used for service principle client secret authentication.
+<4> (required) The ID of the Azure Subscription that the cluster is deployed in.
+<5> (required) The name of the resource group that the cluster is deployed in.
+<6> (required) The location of the resource group that the cluster is deployed in.
+<7> (required) The name of the route table attached to the subnet that the cluster is deployed in.
+<8> (optional) Use managed service identity for the virtual machine to access Azure ARM APIs. Set to false if not using managed identity authentication.
+
+After setting options in the `azure.conf` file, please proceed with <<cluster-bootstrap>>.
+
+[NOTE]
+====
+Clusters provisioned following link:{docurl}single-html/caasp-deployment/#_using_terraform[Deploying VMs from the Template] with `cpi_enable = true` automatically configurs Azure virtual machine to use a system-assigned managed identity.
+
+To use service principle authentication you need to <<cluster-bootstrap-azure-create-service-principle>> and provide `aadClientId`, `aadClientSecret` and configure `useManagedIdentityExtension` to `false`.
+====
+
+[IMPORTANT]
+====
+When cloud provider integration is enabled, it's very important to bootstrap and join nodes with the node names same as ~Azure~ virtual machine's hostnames.
+These names will be used by the `Azure` cloud controller manager to reconcile node metadata.
+====
+
+[[cluster-bootstrap-azure-create-service-principle]]
+===== Create Service Principle
+[IMPORTANT]
+====
+Ensure there is sufficient azure account permission. The account needs to be either a member of the `Owner` role, or have `Contributor` plus `User Access Administrator` roles.
+====
+
+. Install Azure CLI on local machine.
++
+For installation instructions, refer to link:https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest[Install the Azure CLI].
+. Create service principle.
++
+====
+    RESOURCE_GROUP="<RESOURCE_GROUP_NAME>" // <1>
+    SUBSCRIPTION="<SUBSCRIPTION_NAME>" // <2>
+    SUBSCRIPTION_ID=`az account list --output table | grep "${SUBSCRIPTION_NAME}" | rev | awk '{print $3}' | rev`
+
+    az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/${SUBSCRIPTION_ID}"
+====
+<1> The name of the resource group that the cluster is deployed in.
+<2> The ID of the Azure Subscription that the cluster is deployed in.
+
+. Record the `appId`, `password` and `tenant` to use in Azure cloud provider configuration.
++
+====
+    Creating a role assignment under the scope of "/subscriptions/00000000-0000-0000-0000-000000000000"
+    {
+      "appId": "00000000-0000-0000-0000-000000000000", // <1>
+      "displayName": "azure-cli-2020-06-12-00-51-10",
+      "name": "http://azure-cli-2020-06-12-00-51-10",
+      "password": "P`_g:V\\v[cJ6fAu~/2Ak7$F1w1C@[lRi", // <2>
+      "tenant": "000000000000000000-0000-000000000000" // <3>
+    }
+====
+<1> The appId applies to aadClientId.
+<2> The password applies to aadClientSecret.
+<3> Then tenant applies to tenantId.
+
 ====== vSphere CPI (VCP)
 
 Define the cluster using the following command:
