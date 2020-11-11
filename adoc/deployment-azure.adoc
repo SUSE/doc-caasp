@@ -1,6 +1,6 @@
 == Deployment on Microsoft Azure
 
-Deployment on Microsoft Azure is currently a tech preview.
+include::common_tech_preview.adoc[]
 
 .Preparation Required
 [NOTE]
@@ -21,7 +21,7 @@ creation of the infrastructure described in the next paragraphs.
 
 ==== Setup service principal for terraform login credential
 
-Follow the guide link:https://www.terraform.io/docs/providers/azurerm/guides/service_principal_client_secret.html#creating-a-service-principal-in-the-azure-portal[Creating a Service Principal in the Azure Portal], and set up `ARM_CLIENT_ID`, `ARM_CLIENT_SECRET`, `ARM_SUBSCRIPTION_ID`, `and ARM_TENANT_ID` in `container-openrc.sh`.  
+Follow the guide link:https://www.terraform.io/docs/providers/azurerm/guides/service_principal_client_secret.html#creating-a-service-principal-in-the-azure-portal[Creating a Service Principal in the Azure Portal], and set up `ARM_CLIENT_ID`, `ARM_CLIENT_SECRET`, `ARM_SUBSCRIPTION_ID`, `and ARM_TENANT_ID` in `container-openrc.sh`.
 
 [source,bash]
 ----
@@ -77,7 +77,7 @@ administrator capabilities by using the `sudo` utility.
 By default, password based authentication is disabled. It's possible to log
 using the ssh key specified via the `admin_ssh_key` variable.
 It's also possible to enable password based authentication by specifying a
-value for the `admin_password` variable. 
+value for the `admin_password` variable.
 *Note*: Azure has some security checks in place to avoid the usage of weak passwords.
 
 When the bastion host creation is disabled, the access to the master nodes of
@@ -115,7 +115,7 @@ It's recommended to use Chrome or Chromium during this process.
 ====
 
 You can SSH into the first master node of the cluster to drive the creation of a {productname} cluster
-from there using this guide link:https://docs.microsoft.com/en-us/azure/bastion/bastion-connect-vm-ssh[Connect using SSH to a Linux virtual machine using Azure Bastion]. 
+from there using this guide link:https://docs.microsoft.com/en-us/azure/bastion/bastion-connect-vm-ssh[Connect using SSH to a Linux virtual machine using Azure Bastion].
 
 Once this is done, you can download a `kubeconfig` file and operate the cluster without having to go through the bastion host.
 
@@ -133,7 +133,7 @@ It is possible to join existing networks to the cluster. It can be set up by add
 
 === Enable Multiple Zones
 
-It is possible to enable multiple zones.  It can be set `enable_zone` to `true` and master/worker nodes will be distributed sequentially based on zones defined in `azure_availability_zones`. 
+It is possible to enable multiple zones.  It can be set `enable_zone` to `true` and master/worker nodes will be distributed sequentially based on zones defined in `azure_availability_zones`.
 
   * As of June 2020, the link:https://docs.microsoft.com/en-us/azure/availability-zones/az-region[Azure Availability Zones] is not available in all Azure regions.
 
