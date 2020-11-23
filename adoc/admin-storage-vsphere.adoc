@@ -1,5 +1,5 @@
 = vSphere Storage
-The vSphere cloud provider can be enabled with {productname} to allow {kube} pods to use VMWare vSphere Virtual Machine Disk (VMDK) volumes as persistent volumes.
+The vSphere cloud provider can be enabled with {productname} to allow Kubernetes pods to use VMWare vSphere Virtual Machine Disk (VMDK) volumes as persistent storage.
 
 This chapter provides the two types of persistent volume usage and description.
 
@@ -28,7 +28,7 @@ kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}{"\tregion: "}{.
 010084073045    region: vcp-provo       zone: vcp-cluster-jazz
 ----
 
-== Persistent Volume
+== Static Persistent Volume
 
 . Create new VMDK volume in datastore. The VMDK volume used in persistent volume must exist before the resource is created.
 +
@@ -153,7 +153,7 @@ NAME                                        READY   STATUS    RESTARTS   AGE
 sample-static-deployment-549dc77d76-pwdqw   1/1     Running   0          3m42s
 ----
 
-== Storage Class
+== Dynamic Persistent Volume
 
 . Create storage class - sample-sc.yaml.
 +
