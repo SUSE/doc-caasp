@@ -63,7 +63,7 @@ controller:
 
 === Deploy ingress controller from helm chart
 
-TIP: For complete instructions on how to install Helm and Tiller refer to <<helm-tiller-install>>.
+TIP: For complete instructions on how to install Helm refer to <<helm-install>>.
 
 Add the link:https://kubernetes-charts.suse.com/[SUSE helm charts repository] by running:
 
@@ -73,13 +73,6 @@ helm repo add suse https://kubernetes-charts.suse.com
 
 Then you can deploy the ingress controller and use the previously created configuration file to configure the networking type.
 
-[source,bash]
-----
-helm install --name nginx-ingress suse/nginx-ingress \
---namespace nginx-ingress \
---values nginx-ingress-config-values.yaml
-----
-Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
 [source,bash]
 ----
 kubectl create namespace nginx-ingress

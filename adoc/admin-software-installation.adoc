@@ -95,120 +95,18 @@ sudo zypper in ceph-common xfsprogs
 
 == {kube} stack
 
-[[helm-tiller-install]]
+[#helm-install]
 === Installing Helm
 
-As of {productname} {productversion}, Helm 2 is part of the {productname} package repository, so to use this,
-you only need to run the following command from the location where you normally run `skuba` commands:
-
-[source,bash]
-----
-sudo zypper install helm
-----
-
-Helm 2 is the default for {productname} 5. Helm 3 is offered as an alternate tool and may be installed in parallel to aid migration.
+As of {productname} {productversion}, Helm 3 is the default and provided by the package repository.
+To install, run the following command from the location where you normally run `skuba` commands:
 
 [source,bash]
 ----
 sudo zypper install helm3
-sudo update-alternatives --set helm /usr/bin/helm3
 ----
 
-[WARNING]
-====
-Unless you are migrating from {productname} 4.2 with Helm charts already deployed or have legacy Helm charts that only work with Helm 2, please use Helm 3.
-
-Helm 2 is planned to end support in November 2020.
-Helm 3 is offered as an alternative in {productname} 4.5.0 and will become the default tool in the following release.
-Please see <<helm-2to3-migration>> for upgrade instructions and upgrade as soon as feasible.
-====
-
-=== Installing Tiller
-
-[NOTE]
-Tiller is only a requirement for Helm 2 and has been removed from Helm 3.  If using Helm 3, please skip this section.
-
-As of {productname} {productversion}, Tiller is not part of the {productname} package repository but it is available as a
-helm chart from the chart repository. To install the Tiller server, choose either way to deploy the Tiller server:
-
-==== Unsecured Tiller Deployment
-
-This will install Tiller without additional certificate security.
-
-[source,bash,subs='attributes']
-----
-kubectl create serviceaccount --namespace kube-system tiller
-
-kubectl create clusterrolebinding tiller \
-    --clusterrole=cluster-admin \
-    --serviceaccount=kube-system:tiller
-
-helm init \
-    --tiller-image registry.suse.com/caasp/v4.5/helm-tiller:{helm_tiller_version} \
-    --service-account tiller
-----
-
-==== Secured Tiller Deployment with TLS certificate
-
-This installs tiller with TLS certificate security.
-
-===== Trusted Certificates
-
-Please reference to <<trusted-server-certificate>> and <<trusted-client-certificate>> on how to sign the trusted tiller and helm certificate.
-The server.conf for IP.1 is `127.0.0.1`.
-
-Then, import trusted certificate to {kube} cluster. In this example, trusted certificate are `ca.crt`, `tiller.crt`, `tiller.key`, `helm.crt` and `helm.key`.
-
-===== Self-signed Certificates (optional)
-
-Please reference to <<self-signed-server-certificate>> and <<self-signed-client-certificate>> on how to sign the self-signed tiller and helm certificate.
-The server.conf for IP.1 is `127.0.0.1`.
-
-Then, import trusted certificate to {kube} cluster. In this example, trusted certificate are `ca.crt`, `tiller.crt`, `tiller.key`, `helm.crt` and `helm.key`.
-
-. Deploy Tiller server with TLS certificate
-+
-[source,bash,subs="attributes"]
-----
-kubectl create serviceaccount --namespace kube-system tiller
-kubectl create clusterrolebinding tiller \
-    --clusterrole=cluster-admin \
-    --serviceaccount=kube-system:tiller
-
-helm init \
-    --tiller-tls \
-    --tiller-tls-verify \
-    --tiller-tls-cert tiller.crt \
-    --tiller-tls-key tiller.key \
-    --tls-ca-cert ca.crt \
-    --tiller-image registry.suse.com/caasp/v4.5/helm-tiller:{helm_tiller_version} \
-    --service-account tiller
-----
-
-. Configure Helm client with TLS certificate
-+
-Setup $HELM_HOME environment and copy the CA certificate, helm client certificate and key to the $HELM_HOME path.
-+
-[source,bash]
-----
-export HELM_HOME=<path/to/helm/home>
-
-cp ca.crt $HELM_HOME/ca.pem
-cp helm.crt $HELM_HOME/cert.pem
-cp helm.key $HELM_HOME/key.pem
-----
-+
-Then, for helm commands, pass flag `--tls`. For example:
-[source,bash]
-+
-----
-helm ls --tls [flags]
-helm install --tls <CHART> [flags]
-helm upgrade --tls <RELEASE_NAME> <CHART> [flags]
-helm del --tls <RELEASE_NAME> [flags]
-----
-
-[[helm-2to3-migration]]
+[#helm-2to3-migration]
 === Helm 2 to 3 Migration
 [NOTE]
 ====
@@ -223,7 +121,7 @@ Refer to:
 
 ==== Preconditions
 
-* A healthy {productname} 4.5 installation with applications deployed using Helm 2 and Tiller.
+* A healthy {productname} 4.5.x installation with applications deployed using Helm 2 and Tiller.
 * A system, which `skuba` and `helm` version 2 have run on previously.
 ** The procedure below requires an available internet connection to install the `2to3` plugin.  If the installation is in an air gapped environment, the system may need to be moved back out of the air gapped environment.
 * These instructions are written for a single cluster managed from a single Helm 2 installation. If more than one cluster is being managed by this installation of Helm 2, please reference https://github.com/helm/helm-2to3 for further details and do not do the clean-up step until all clusters are migrated.

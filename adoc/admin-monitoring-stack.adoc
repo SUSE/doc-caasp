@@ -276,15 +276,6 @@ helm repo add suse https://kubernetes-charts.suse.com
 +
 [source,bash]
 ----
-helm install --name prometheus suse/prometheus \
---namespace monitoring \
---values prometheus-config-values.yaml
-----
-+
-Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
-+
-[source,bash]
-----
 helm install prometheus suse/prometheus \
 --namespace monitoring \
 --values prometheus-config-values.yaml
@@ -638,14 +629,6 @@ helm repo add suse https://kubernetes-charts.suse.com
 +
 [source,bash]
 ----
-helm install --name grafana suse/grafana \
---namespace monitoring \
---values grafana-config-values.yaml
-----
-Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
-+
-[source,bash]
-----
 helm install grafana suse/grafana \
 --namespace monitoring \
 --values grafana-config-values.yaml
@@ -911,15 +894,6 @@ helm repo add suse https://kubernetes-charts.suse.com
 +
 [source,bash]
 ----
-helm install --name prometheus suse/prometheus \
---namespace monitoring \
---values prometheus-config-values.yaml
-----
-+
-Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
-+
-[source,bash]
-----
 helm install prometheus suse/prometheus \
 --namespace monitoring \
 --values prometheus-config-values.yaml
@@ -1052,15 +1026,6 @@ sidecar:
 helm repo add suse https://kubernetes-charts.suse.com
 ----
 . Deploy SUSE grafana helm chart and pass our configuration values file
-+
-[source,bash]
-----
-helm install --name grafana suse/grafana \
---namespace monitoring \
---values grafana-config-values.yaml
-----
-+
-Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
 +
 [source,bash]
 ----

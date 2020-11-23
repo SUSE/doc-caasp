@@ -47,7 +47,7 @@ If the deployment is not compatible you must update it to ensure it working with
 . Upgrade all worker nodes by sequentially running `skuba node upgrade plan` and `skuba node upgrade apply`.
 * Make sure to wait until all PODs/deployments/DaemonSets are up and running as expected before moving to the next node.
 . Check if new addons are available for the new version using `skuba addon upgrade plan` and do {kube} server-side dry-run validation to validates the addon base and patches manifest.
-. Once all nodes are up to date, update helm and tiller (as needed) and subsequently the helm deployments.
+. Once all nodes are up to date, update helm and subsequently the helm deployments.
 
 === Update Management Workstation
 

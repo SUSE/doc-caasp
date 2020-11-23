@@ -28,25 +28,6 @@ For the cases that the {kube} cluster do not use external storage _or_ the exter
 +
 [source,bash]
 ----
-helm install \
-    --name=velero \
-    --namespace=<NAMESPACE> \
-    --set-file credentials.secretContents.cloud=credentials-velero \
-    --set configuration.provider=aws \
-    --set configuration.backupStorageLocation.name=default \
-    --set configuration.backupStorageLocation.bucket=<BUCKET_NAME> \
-    --set configuration.backupStorageLocation.config.region=<REGION_NAME> \
-    --set snapshotsEnabled=false \
-    --set initContainers[0].name=velero-plugin-for-aws \
-    --set initContainers[0].image=registry.suse.com/caasp/v4.5/velero-plugin-for-aws:1.1.0 \
-    --set initContainers[0].volumeMounts[0].mountPath=/target \
-    --set initContainers[0].volumeMounts[0].name=plugins \
-    suse/velero
-----
-Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
-+
-[source,bash]
-----
 helm install velero \
     --namespace=<NAMESPACE> \
     --create-namespace \
@@ -79,24 +60,6 @@ velero backup-location create secondary \
 +
 [source,bash]
 ----
-helm install \
-    --name=velero \
-    --namespace=<NAMESPACE> \
-    --set-file credentials.secretContents.cloud=credentials-velero \
-    --set configuration.provider=gcp \
-    --set configuration.backupStorageLocation.name=default \
-    --set configuration.backupStorageLocation.bucket=<BUCKET_NAME> \
-    --set snapshotsEnabled=false \
-    --set initContainers[0].name=velero-plugin-for-gcp \
-    --set initContainers[0].image=registry.suse.com/caasp/v4.5/velero-plugin-for-gcp:1.1.0 \
-    --set initContainers[0].volumeMounts[0].mountPath=/target \
-    --set initContainers[0].volumeMounts[0].name=plugins \
-    suse/velero
-----
-Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
-+
-[source,bash]
-----
 helm install velero \
     --namespace=<NAMESPACE> \
     --create-namespace \
@@ -126,26 +89,6 @@ velero backup-location create secondary \
 . The resource group name __AZURE_RESOURCE_GROUP__. (The Azure resource group name)
 . The storage account ID __AZURE_STORAGE_ACCOUNT_ID__. (The Azure storage account ID)
 . The Velero installed namespace _NAMESPACE_, the default namespace is `velero`. (optional)
-+
-[source,bash]
-----
-helm install \
-    --name=velero \
-    --namespace=<NAMESPACE> \
-    --set-file credentials.secretContents.cloud=credentials-velero \
-    --set configuration.provider=azure \
-    --set configuration.backupStorageLocation.name=default \
-    --set configuration.backupStorageLocation.bucket=<BUCKET_NAME> \
-    --set configuration.backupStorageLocation.config.resourceGroup=<AZURE_RESOURCE_GROUP> \
-	--set configuration.backupStorageLocation.config.storageAccount=<AZURE_STORAGE_ACCOUNT_ID> \
-    --set snapshotsEnabled=false \
-    --set initContainers[0].name=velero-plugin-for-microsoft-azure \
-    --set initContainers[0].image=registry.suse.com/caasp/v4.5/velero-plugin-for-microsoft-azure:1.1.0 \
-    --set initContainers[0].volumeMounts[0].mountPath=/target \
-    --set initContainers[0].volumeMounts[0].name=plugins \
-    suse/velero
-----
-Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
 +
 [source,bash]
 ----
@@ -194,27 +137,6 @@ velero backup-location create secondary \
 --set configuration.backupStorageLocation.caCert=`cat <PATH_TO_THE_SELF_SIGNED_CA_CERTIFICATE> | base64 -w 0 && echo` \
 ----
 . Install Velero Deployment.
-+
-[source,bash]
-----
-helm install \
-    --name=velero \
-    --namespace=<NAMESPACE> \
-    --set-file credentials.secretContents.cloud=credentials-velero \
-    --set configuration.provider=aws \
-    --set configuration.backupStorageLocation.name=default \
-    --set configuration.backupStorageLocation.bucket=<BUCKET_NAME> \
-    --set configuration.backupStorageLocation.config.region=<REGION_NAME> \
-    --set configuration.backupStorageLocation.config.s3ForcePathStyle=true \
-    --set configuration.backupStorageLocation.config.s3Url=<S3_COMPATIBLE_STORAGE_SERVER_URL> \
-    --set snapshotsEnabled=false \
-    --set initContainers[0].name=velero-plugin-for-aws \
-    --set initContainers[0].image=registry.suse.com/caasp/v4.5/velero-plugin-for-aws:1.1.0 \
-    --set initContainers[0].volumeMounts[0].mountPath=/target \
-    --set initContainers[0].volumeMounts[0].name=plugins \
-    suse/velero
-----
-Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
 +
 [source,bash]
 ----
@@ -269,28 +191,6 @@ Otherwise, it would install restic and velero server will use restic to take a v
 +
 [source,bash]
 ----
-helm install \
-    --name=velero \
-    --namespace=<NAMESPACE> \
-    --set-file credentials.secretContents.cloud=credentials-velero \
-    --set configuration.provider=aws \
-    --set configuration.backupStorageLocation.name=default \
-    --set configuration.backupStorageLocation.bucket=<BUCKET_NAME> \
-    --set configuration.backupStorageLocation.config.region=<REGION_NAME> \
-    --set snapshotsEnabled=true \
-    --set deployRestic=true \
-    --set configuration.volumeSnapshotLocation.name=default \
-    --set configuration.volumeSnapshotLocation.config.region=<REGION_NAME> \
-    --set initContainers[0].name=velero-plugin-for-aws \
-    --set initContainers[0].image=registry.suse.com/caasp/v4.5/velero-plugin-for-aws:1.1.0 \
-    --set initContainers[0].volumeMounts[0].mountPath=/target \
-    --set initContainers[0].volumeMounts[0].name=plugins \
-    suse/velero
-----
-Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
-+
-[source,bash]
-----
 helm install velero \
     --namespace=<NAMESPACE> \
     --create-namespace \
@@ -337,26 +237,6 @@ velero backup-location create secondary \
 +
 [source,bash]
 ----
-helm install \
-    --name=velero \
-    --namespace=<NAMESPACE> \
-    --set-file credentials.secretContents.cloud=credentials-velero \
-    --set configuration.provider=gcp \
-    --set configuration.backupStorageLocation.name=default \
-    --set configuration.backupStorageLocation.bucket=<BUCKET_NAME> \
-    --set snapshotsEnabled=true \
-    --set deployRestic=true \
-    --set configuration.volumeSnapshotLocation.name=default \
-    --set initContainers[0].name=velero-plugin-for-gcp \
-    --set initContainers[0].image=registry.suse.com/caasp/v4.5/velero-plugin-for-gcp:1.1.0 \
-    --set initContainers[0].volumeMounts[0].mountPath=/target \
-    --set initContainers[0].volumeMounts[0].name=plugins \
-    suse/velero
-----
-Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
-+
-[source,bash]
-----
 helm install velero \
     --namespace=<NAMESPACE> \
     --create-namespace \
@@ -399,28 +279,6 @@ velero backup-location create secondary \
 // at below in order to use Azure Managed Disks snapshot API to take volume snapshot.
 // Otherwise, it would install restic and velero server will use restic to take volume snapshot and the volume data will stores to Azure Blob Storage bucket.
 // ====
-+
-[source,bash]
-----
-helm install \
-    --name=velero \
-    --namespace=<NAMESPACE> \
-    --set-file credentials.secretContents.cloud=credentials-velero \
-    --set configuration.provider=azure \
-    --set configuration.backupStorageLocation.name=default \
-    --set configuration.backupStorageLocation.bucket=<BUCKET_NAME> \
-    --set configuration.backupStorageLocation.config.resourceGroup=<AZURE_RESOURCE_GROUP> \
-	--set configuration.backupStorageLocation.config.storageAccount=<AZURE_STORAGE_ACCOUNT_ID> \
-    --set snapshotsEnabled=true \
-    --set deployRestic=true \
-    --set configuration.volumeSnapshotLocation.name=default \
-    --set initContainers[0].name=velero-plugin-for-microsoft-azure \
-    --set initContainers[0].image=registry.suse.com/caasp/v4.5/velero-plugin-for-microsoft-azure:1.1.0 \
-    --set initContainers[0].volumeMounts[0].mountPath=/target \
-    --set initContainers[0].volumeMounts[0].name=plugins \
-    suse/velero
-----
-Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
 +
 [source,bash]
 ----
@@ -479,30 +337,6 @@ Mostly the on-premise persistent volume does not support volume snapshot API or 
 +
 [source,bash]
 ----
-helm install \
-    --name=velero \
-    --namespace=<NAMESPACE> \
-    --set-file credentials.secretContents.cloud=credentials-velero \
-    --set configuration.provider=aws \
-    --set configuration.backupStorageLocation.name=default \
-    --set configuration.backupStorageLocation.bucket=<BUCKET_NAME> \
-    --set configuration.backupStorageLocation.config.region=<REGION_NAME> \
-    --set configuration.backupStorageLocation.config.s3ForcePathStyle=true \
-    --set configuration.backupStorageLocation.config.s3Url=<S3_COMPATIBLE_STORAGE_SERVER_URL> \
-    --set snapshotsEnabled=true \
-    --set deployRestic=true \
-    --set configuration.volumeSnapshotLocation.name=default \
-    --set configuration.volumeSnapshotLocation.config.region=<REGION_NAME> \
-    --set initContainers[0].name=velero-plugin-for-aws \
-    --set initContainers[0].image=registry.suse.com/caasp/v4.5/velero-plugin-for-aws:1.1.0 \
-    --set initContainers[0].volumeMounts[0].mountPath=/target \
-    --set initContainers[0].volumeMounts[0].name=plugins \
-    suse/velero
-----
-Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
-+
-[source,bash]
-----
 helm install velero \
     --namespace=<NAMESPACE> \
     --create-namespace \
@@ -533,4 +367,3 @@ velero backup-location create secondary \
     --bucket=<SECONDARY_BUCKET_NAME> \
     --config region=secondary,s3ForcePathStyle=true,s3Url=<S3_COMPATIBLE_STORAGE_SERVER_URL>
 ----
-

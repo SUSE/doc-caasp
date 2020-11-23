@@ -35,9 +35,6 @@ UI POD and a MariaDB one that is used to store configuration values.
 The deployment of Stratos is performed using a helm chart. Your remote
 administration machine must have Helm installed.
 
-When using a Helm release earlier than 3.0, Helm's Tiller component has to be
-installed and active on your {productname} cluster.
-
 === Persistent Storage
 
 The MariaDB instance used by Stratos requires a persistent storage to store
@@ -228,14 +225,6 @@ You can enable tech preview features of Stratos by changing the value of
 Now Stratos can be deployed using helm and the values specified inside of the
 `stratos-values.yaml` file:
 
-[source,bash]
-----
-helm install suse/console \
-  --name stratos-console \
-  --namespace stratos \
-  --values stratos-values.yaml
-----
-Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
 [source,bash]
 ----
 helm install stratos-console suse/console \

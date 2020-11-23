@@ -58,12 +58,7 @@ include::admin-velero-usecase.adoc[]
 == Uninstall
 Remove the Velero server deployment and `restic` DaemonSet if it exist.
 Then, delete Velero custom resource definitions (CRDs).
-[source,bash]
-----
-helm del --purge velero
-kubectl delete crds -l app.kubernetes.io/name=velero
-----
-Or if you have selected the Helm 3 alternative also see <<helm-tiller-install>>:
+
 [source,bash]
 ----
 helm uninstall velero -n <NAMESPACE>
