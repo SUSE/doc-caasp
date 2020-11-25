@@ -1011,23 +1011,34 @@ You need to generate `kubelet` server certificate for all the nodes on one of co
 The `kubelet` CA certificate key only exists on the control plane nodes.
 Therefore, after generating re-signed `kubelet` server certificate/key for worker nodes, you have to copy each `kubelet` server certificate/key from the control plane node to the corresponding worker node.
 ====
-. Backup the original `kubelet` certificates and keys.
+
+. Backup the original `kubelet` certificates and keys on it's node.
 +
 [source,bash]
 ----
 sudo cp -r /var/lib/kubelet/pki /var/lib/kubelet/pki.bak
 ----
+
+. Get the O/OU/CN, run the command on it's node:
 +
-. Sign each node `kubelet` server certificate with the CA certificate/key `/var/lib/kubelet/pki/kubelet-ca.crt` and `/var/lib/kubelet/pki/kubelet-ca.key`, make sure that the signed server certificate SAN is the same as the origin.
-To get the original SAN IP address(es) and DNS(s), run:
+[source,bash]
+----
+openssl x509 -noout -subject -in /var/lib/kubelet/pki.bak/kubelet.crt
+----
+
+. Get the original SAN IP address(es) and DNS(s), run the command on it's node:
 +
 [source,bash]
 ----
 openssl x509 -noout -text -in /var/lib/kubelet/pki.bak/kubelet.crt | grep -oP '(?<=IP Address:)[^,]+'
 openssl x509 -noout -text -in /var/lib/kubelet/pki.bak/kubelet.crt | grep -oP '(?<=DNS:)[^,]+'
 ----
-+
-. Finally, update the `kubelet` server certificate and key file `/var/lib/kubelet/kubelet.crt` and `/var/lib/kubelet/kubelet.key` respectively, and restart `kubelet` service.
+
+. At one of the control plane node, sign the corresponding node `kubelet` server certificate with the CA certificate/key `/var/lib/kubelt/pki/kubelet-ca.crt` and `/var/lib/kubelet/pki/kubelet-ca.key`, please refer to <<trusted-server-certificate>> on how to sign the trusted server certificate.  The `server.conf` for O/OU/CN _recommends_ be the same as original one, for IP.1 is the original SAN IP address if present, DNS.1 is the original SAN DNS if present.
+
+. Copy the signed certificate/key from one ofthe control plane node to the corresponding node.
+
+. Finally, update the `kubelet` server certificate and key file `/var/lib/kubelet/kubelet.crt` and `/var/lib/kubelet/kubelet.key` respectively, and restart `kubelet` service on it's node.
 +
 [source,bash]
 ----
