@@ -16,12 +16,13 @@ Not every worker node in the cluster need have a GPU device present. On the node
 ----
 # zypper addrepo --refresh https://download.nvidia.com/suse/sle15sp2/ nvidia
 # zypper refresh
-# zypper install x11-video-nvidiaG05
+# zypper install nvidia-glG05 nvidia-computeG05
 ----
 
 [NOTE]
 ====
-For most modern {nvidia} GPUs, the G05 driver will support your device. Some older devices may require the x11-video-nvidiaG04 driver package instead. Check {nvidia}'s documentation for your GPU device model.
+For most modern {nvidia} GPUs, the G05 driver will support your device.
+Check {nvidia}'s documentation for your GPU device model.
 ====
 
 === Install the OCI hooks
