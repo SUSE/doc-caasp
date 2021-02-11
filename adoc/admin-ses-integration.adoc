@@ -292,12 +292,12 @@ ceph auth get-or-create-key client.myPoolUser mon "allow r" osd "allow class-rea
 . Create the Storage Class:
 +
 ====
-  apiVersion: storage.k8s.io/v1beta1
+  apiVersion: storage.k8s.io/v1
   kind: StorageClass
   metadata:
     name: ceph-rbd-sc
     annotations:
-      storageclass.beta.kubernetes.io/is-default-class: "true"
+      storageclass.kubernetes.io/is-default-class: "true"
   provisioner: kubernetes.io/rbd
   parameters:
     monitors: 172.28.0.19:6789, 172.28.0.5:6789, 172.218:6789 // <1>
