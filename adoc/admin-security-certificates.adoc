@@ -446,9 +446,9 @@ metadata:
     caasp.suse.com/skuba-addon: "true"
 type: kubernetes.io/tls
 data:
-  ca.crt: cat <TRUSTED_CA_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
-  tls.crt: cat <SIGNED_OIDC_DEX_SERVER_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
-  tls.key: cat <SIGNED_OIDC_DEX_SERVER_KEY_PATH> | base64 | awk '{print}' ORS='' && echo
+  ca.crt: cat <TRUSTED_CA_CERT_PATH> | base64 | awk '\{print\}' ORS='' && echo
+  tls.crt: cat <SIGNED_OIDC_DEX_SERVER_CERT_PATH> | base64 | awk '\{print\}' ORS='' && echo
+  tls.key: cat <SIGNED_OIDC_DEX_SERVER_KEY_PATH> | base64 | awk '\{print\}' ORS='' && echo
 ----
 
 . Apply the secret manifest file and restart `oidc-dex` pods.
@@ -500,9 +500,9 @@ metadata:
     caasp.suse.com/skuba-addon: "true"
 type: kubernetes.io/tls
 data:
-  ca.crt: cat <TRUSTED_CA_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
-  tls.crt: cat <SIGNED_OIDC_GANGWAY_SERVER_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
-  tls.key: cat <SIGNED_OIDC_GANGWAY_SERVER_KEY_PATH> | base64 | awk '{print}' ORS='' && echo
+  ca.crt: cat <TRUSTED_CA_CERT_PATH> | base64 | awk '\{print\}' ORS='' && echo
+  tls.crt: cat <SIGNED_OIDC_GANGWAY_SERVER_CERT_PATH> | base64 | awk '\{print\}' ORS='' && echo
+  tls.key: cat <SIGNED_OIDC_GANGWAY_SERVER_KEY_PATH> | base64 | awk '\{print\}' ORS='' && echo
 ----
 
 . Apply the secret manifest file and restart `oidc-gangway` pods.
@@ -1097,9 +1097,9 @@ metadata:
     caasp.suse.com/skuba-addon: "true"
 type: kubernetes.io/tls
 data:
-  ca.crt: cat <CA_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
-  tls.crt: cat <SIGNED_OIDC_DEX_SERVER_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
-  tls.key: cat <SIGNED_OIDC_DEX_SERVER_KEY_PATH> | base64 | awk '{print}' ORS='' && echo
+  ca.crt: cat <CA_CERT_PATH> | base64 | awk '\{print\}' ORS='' && echo
+  tls.crt: cat <SIGNED_OIDC_DEX_SERVER_CERT_PATH> | base64 | awk '\{print\}' ORS='' && echo
+  tls.key: cat <SIGNED_OIDC_DEX_SERVER_KEY_PATH> | base64 | awk '\{print\}' ORS='' && echo
 ----
 
 . Apply the secret manifest file and restart `oidc-dex` pods.
@@ -1153,9 +1153,9 @@ metadata:
     caasp.suse.com/skuba-addon: "true"
 type: kubernetes.io/tls
 data:
-  ca.crt: cat <CA_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
-  tls.crt: cat <SIGNED_OIDC_GANGWAY_SERVER_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
-  tls.key: cat <SIGNED_OIDC_GANGWAY_SERVER_KEY_PATH> | base64 | awk '{print}' ORS='' && echo
+  ca.crt: cat <CA_CERT_PATH> | base64 | awk '\{print\}' ORS='' && echo
+  tls.crt: cat <SIGNED_OIDC_GANGWAY_SERVER_CERT_PATH> | base64 | awk '\{print\}' ORS='' && echo
+  tls.key: cat <SIGNED_OIDC_GANGWAY_SERVER_KEY_PATH> | base64 | awk '\{print\}' ORS='' && echo
 ----
 
 . Apply the secret manifest file and restart `oidc-gangway` pods.
@@ -1211,9 +1211,9 @@ metadata:
     caasp.suse.com/skuba-addon: "true"
 type: kubernetes.io/tls
 data:
-  ca.crt: cat <CA_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
-  tls.crt: cat <SIGNED_METRICS_SERVER_CERT_PATH> | base64 | awk '{print}' ORS='' && echo
-  tls.key: cat <SIGNED_METRICS_SERVER_KEY_PATH> | base64 | awk '{print}' ORS='' && echo
+  ca.crt: cat <CA_CERT_PATH> | base64 | awk '\{print\}' ORS='' && echo
+  tls.crt: cat <SIGNED_METRICS_SERVER_CERT_PATH> | base64 | awk '\{print\}' ORS='' && echo
+  tls.key: cat <SIGNED_METRICS_SERVER_KEY_PATH> | base64 | awk '\{print\}' ORS='' && echo
 ----
 
 . Apply the secret manifest file and restart `metrics-server` pods.
