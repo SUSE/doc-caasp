@@ -127,7 +127,7 @@ helm uninstall <RELEASE_NAME>
 Centralized Logging supports a configurable buffered queue.
 This can be used to improve log processing throughput and eliminate possible data loss,
 for instance after log agents shutdown, restart or in case of an unresponsive remote server.
-The queue files are located under `/var/log/containers/{RELEASE_NAME}-log-agent-rsyslog` on every node in the cluster.
+The queue files are located under `/var/log/containers/\{RELEASE_NAME\}-log-agent-rsyslog` on every node in the cluster.
 Queue files remain even after the log agents are deleted.
 
 The buffered queue can be enabled/disabled with the following parameter:
