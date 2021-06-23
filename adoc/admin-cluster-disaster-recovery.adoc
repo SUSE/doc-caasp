@@ -2,7 +2,7 @@
 
 = Cluster Disaster Recovery
 
-Etcd is a crucial component of Kubernetes - the *etcd cluster* stores the entire Kubernetes cluster state, which means critical configuration data, specifications, as well as the statuses of the running workloads. It also serves as the backend for service discovery. <<_backup_and_restore_with_velero>> explains how to use Velero to backup, restore and migrate data. However, the Kubernetes cluster needs to be accessible for Velero to operate. And since the Kubernetes cluster can become inaccessible for many reasons, for example when all of its master nodes are lost, *it is important to periodically backup etcd cluster data*.
+Etcd is a crucial component of Kubernetes - the *etcd cluster* stores the entire Kubernetes cluster state, which means critical configuration data, specifications, as well as the statuses of the running workloads. It also serves as the backend for service discovery. <<id-backup-and-restore-with-velero>> explains how to use Velero to backup, restore and migrate data. However, the Kubernetes cluster needs to be accessible for Velero to operate. And since the Kubernetes cluster can become inaccessible for many reasons, for example when all of its master nodes are lost, *it is important to periodically backup etcd cluster data*.
 
 include::admin-cluster-disaster-recovery-backup.adoc[leveloffset=+1]
 
